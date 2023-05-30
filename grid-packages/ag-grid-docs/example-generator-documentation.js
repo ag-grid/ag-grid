@@ -29,7 +29,6 @@ const parsers = {
     ts: 'typescript',
 };
 
-const useAsyncFileOperations = false;
 const encodingOptions = { encoding: 'utf8' };
 
 function writeFile(destination, contents) {
@@ -44,12 +43,12 @@ function writeFile(destination, contents) {
     const parser = parsers[extension] || extension;
     const formattedContent = format(contents, parser, destination);
 
-    if (useAsyncFileOperations) {
-        fs.writeFile(destination, formattedContent, encodingOptions, () => {
-        });
-    } else {
-        fs.writeFileSync(destination, formattedContent, encodingOptions);
+    if (fs.existsSync(destination) && fs.readFileSync(destination).toString('utf-8') === formattedContent) {
+        // Nothing to write (don't trigger a cascade of build processes).
+        return;
     }
+
+    fs.writeFileSync(destination, formattedContent, encodingOptions);
 }
 
 function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, forceConversion = false) {
@@ -109,11 +108,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
             return src;
         }
 
-        if (useAsyncFileOperations) {
-            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports((contents))));
-        } else {
-            writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
-        }
+        writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
     });
 }
 
@@ -217,7 +212,7 @@ function readAsJsFile(tsFilePath) {
     return jsFile;
 }
 
-function createExampleGenerator(exampleType, prefix, importTypes) {
+function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
@@ -313,7 +308,9 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            fs.mkdirSync(scriptsPath, { recursive: true });
+            if (!fs.existsSync(scriptsPath)) {
+                fs.mkdirSync(scriptsPath, { recursive: true });
+            }
 
             Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 
@@ -360,7 +357,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             addPackageJson(exampleType, framework, importType, destPath);
         };
 
-        fs.emptyDirSync(createExamplePath(`_gen`));
+        const genDir = createExamplePath(`_gen`);
+        if (!incremental) {
+            fs.emptyDirSync(genDir);
+        } else {
+            fs.mkdirSync(genDir, { recursive: true });
+        }
 
         if (type !== 'typescript') {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
@@ -531,12 +533,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
                     // Chart classes that need scoping
-                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community'));
+                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
                     if (chartImports) {
                         chartImports.imports.forEach(i => {
                             const toReplace = `(?<!\\.)${i}([\\s\/.])`
                             const reg = new RegExp(toReplace, "g");
-                            jsFile = jsFile.replace(reg, `agCharts.${i}$1`);
+                            jsFile = jsFile.replace(reg, `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`);
                         })
                     }
 
@@ -672,7 +674,8 @@ function getGeneratorCode(prefix) {
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
-    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes);
+    const incremental = !!trigger;
+    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes, incremental);
     const regex = new RegExp(`<${type}-example.*?name=['"](.*?)['"].*?type=['"](.*?)['"](.*?options='(.*?)')?`, 'g');
 
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);

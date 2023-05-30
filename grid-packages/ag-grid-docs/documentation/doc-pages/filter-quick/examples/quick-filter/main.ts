@@ -30,6 +30,7 @@ const gridOptions: GridOptions = {
       getQuickFilterText: (params) => {
         return getMedalString(params.value);
       },
+      cellDataType: false,
     },
     {
       headerName: 'Hidden',

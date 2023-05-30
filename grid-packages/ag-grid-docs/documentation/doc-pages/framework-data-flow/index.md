@@ -103,6 +103,6 @@ methods: {
 }
 ```
 
-![Data Flow](resources/vuex.png)
+<image-caption src="vuex.png" alt="Data Flow" maxWidth="80%" constrained="true"></image-caption>
 
 A full Vuex working example can be find in our [AG Grid Vuex](https://github.com/seanlandsman/ag-grid-vue-vuex) repo.

@@ -59,6 +59,15 @@ export const Buttons = () => {
 
                     <button className="button-style-none">Unstyled button</button>
                 </div>
+
+                <div>
+                    <p className="item-label">
+                        <span>Button as link:</span>
+                        <code>.button-as-link</code>
+                    </p>
+
+                    <button className="button-as-link">Button as link</button>
+                </div>
             </div>
 
             <div className="grid buttons-list">

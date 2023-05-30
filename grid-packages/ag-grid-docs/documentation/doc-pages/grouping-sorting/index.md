@@ -95,21 +95,21 @@ For example, consider the following column definition:
 <api-documentation source='column-properties/properties.json' section='sort' names='["comparator"]'></api-documentation>
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        {
-|            field: 'month',
-|            rowGroup: true,
-|            comparator: (a, b) => {
-|                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
-|                                'August', 'September','October', 'November', 'December'];
-|
-|                // sorts 'months' in chronological order
-|                return months.indexOf(a) - months.indexOf(b);
-|            },
-|        },
-|    ],
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         {
+|             field: 'month',
+|             rowGroup: true,
+|             comparator: (a, b) => {
+|                 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+|                                 'August', 'September','October', 'November', 'December'];
+| 
+|                 // sorts 'months' in chronological order
+|                 return months.indexOf(a) - months.indexOf(b);
+|             },
+|         },
+|     ],
+| }
 </snippet>
 
 As `rowGroup = true` is defined on this column, the supplied `comparator` will be used to sort the `month` column and 
@@ -121,16 +121,17 @@ The following example demonstrates custom group sorting. Note the following:
 
 <grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
-[[note]]
-| It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
-| This 'shared group comparator' will override over any comparators defined on the underlying columns.
+<note>
+It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
+This 'shared group comparator' will override over any comparators defined on the underlying columns.
+</note>
 
 ## Maintain Group Order
 
 When sorting on non-group columns it may be desirable to maintain the existing group order. This behaviour can be
 enabled through the `groupMaintainOrder` grid option as shown below:
 
-<snippet>
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
         { field: 'assignee', rowGroup: true, hide: true },

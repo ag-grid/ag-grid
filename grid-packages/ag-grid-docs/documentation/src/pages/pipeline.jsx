@@ -245,55 +245,52 @@ const Pipeline = ({ location }) => {
     return (
         <>
             {!IS_SSR && (
-                <div className="ag-styles">
-                    <div className={classnames('page-margin', styles.container)}>
-                        <h1>AG Grid Pipeline</h1>
-                        <section className={styles.header}>
-                            <Alert type="info">
-                                <p>
-                                    The AG Grid pipeline lists the feature requests and active bugs in our product
-                                    backlog. Use it to see the items scheduled for our next release or to look up the
-                                    status of a specific item. If you can’t find the item you’re looking for, check the{' '}
-                                    <a href="https://www.ag-grid.com/ag-grid-changelog/">Changelog</a> containing the
-                                    list of completed items.
-                                </p>
-                            </Alert>
+                <div className={classnames('page-margin', styles.container)}>
+                    <h1>AG Grid Pipeline</h1>
+                    <section className={styles.header}>
+                        <Alert type="idea">
+                            <p>
+                                The AG Grid pipeline lists the feature requests and active bugs in our product backlog.
+                                Use it to see the items scheduled for our next release or to look up the status of a
+                                specific item. If you can’t find the item you’re looking for, check the{' '}
+                                <a href="https://www.ag-grid.com/ag-grid-changelog/">Changelog</a> containing the list
+                                of completed items.
+                            </p>
+                        </Alert>
 
-                            <div className={styles.controls}>
-                                <input
-                                    type="text"
-                                    placeholder={'Search pipeline…'}
-                                    className={styles.searchBar}
-                                    ref={searchBarEl}
-                                    onChange={onQuickFilterChange}
-                                ></input>
+                        <div className={styles.controls}>
+                            <input
+                                type="text"
+                                placeholder={'Search pipeline…'}
+                                className={styles.searchBar}
+                                ref={searchBarEl}
+                                onChange={onQuickFilterChange}
+                            ></input>
 
-                                <div>{checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}</div>
-                            </div>
-                        </section>
+                            <div>{checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}</div>
+                        </div>
+                    </section>
 
-                        <Grid
-                            gridHeight={'63vh'}
-                            columnDefs={COLUMN_DEFS}
-                            isRowMaster={isRowMaster}
-                            detailRowAutoHeight={true}
-                            components={{
-                                myDetailCellRenderer: DetailCellRenderer,
-                                paddingCellRenderer: PaddingCellRenderer,
-                                chevronButtonRenderer: ChevronButtonCellRenderer,
-                                issueTypeCellRenderer: IssueTypeCellRenderer,
-                            }}
-                            defaultColDef={defaultColDef}
-                            reactUi={false}
-                            enableCellTextSelection={true}
-                            detailCellRendererParams={detailCellRendererParams}
-                            detailCellRenderer={'myDetailCellRenderer'}
-                            masterDetail={true}
-                            rowData={rowData}
-                            suppressReactUi
-                            onGridReady={gridReady}
-                        ></Grid>
-                    </div>
+                    <Grid
+                        gridHeight={'63vh'}
+                        columnDefs={COLUMN_DEFS}
+                        isRowMaster={isRowMaster}
+                        detailRowAutoHeight={true}
+                        components={{
+                            myDetailCellRenderer: DetailCellRenderer,
+                            paddingCellRenderer: PaddingCellRenderer,
+                            chevronButtonRenderer: ChevronButtonCellRenderer,
+                            issueTypeCellRenderer: IssueTypeCellRenderer,
+                        }}
+                        defaultColDef={defaultColDef}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={'myDetailCellRenderer'}
+                        masterDetail={true}
+                        rowData={rowData}
+                        suppressReactUi
+                        onGridReady={gridReady}
+                    ></Grid>
                 </div>
             )}
         </>

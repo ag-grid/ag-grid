@@ -29,15 +29,17 @@ A category range can only contain cells from a single column, whereas a series r
 
 Chart ranges can be adjusted from within the grid by dragging on the chart range handle located at the bottom right of the series range. Both the category and series ranges are connected so when the chart range is dragged in an up or down direction they will be updated together.
 
-[[note]]
-| The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
+<note>
+The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
+</note>
 
 ## Defining categories and series
 
 There are several ways for columns to be classified as chart categories or series. Columns can be explicitly configured or left for the grid to infer the type based on the data contained in the cells.
 
-[[warning]]
-| It is recommended that `ColDef.chartDataType` is specified rather than relying on the grid to infer the chart data type as `null` and `undefined` values can yield unexpected results. 
+<warning>
+| It is recommended that `ColDef.chartDataType` is specified rather than relying on the grid to infer the chart data type as `null` and `undefined` values can yield unexpected results.
+</warning>
 
 ### ColDef.chartDataType
 
@@ -50,21 +52,21 @@ Columns defined as `excluded` will not be included in charts or charting ranges.
 The following column definitions show how the different `ColDef.chartDataType` values are applied:
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        // 'category' columns
-|        { field: 'athlete', chartDataType: 'category' },
-|        { field: 'age', chartDataType: 'category' },
-|        { field: 'country' },
-|
-|        // 'excluded' from charts
-|        { field: 'date', chartDataType: 'excluded' },
-|
-|        // 'series' columns
-|        { field: 'gold', chartDataType: 'series' },
-|        { field: 'silver' }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         // 'category' columns
+|         { field: 'athlete', chartDataType: 'category' },
+|         { field: 'age', chartDataType: 'category' },
+|         { field: 'country' },
+| 
+|         // 'excluded' from charts
+|         { field: 'date', chartDataType: 'excluded' },
+| 
+|         // 'series' columns
+|         { field: 'gold', chartDataType: 'series' },
+|         { field: 'silver' }
+|     ]
+| }
 </snippet>
 
 Note from the snippet above that the `age` column contains numbers but explicitly defined as a category, however as the

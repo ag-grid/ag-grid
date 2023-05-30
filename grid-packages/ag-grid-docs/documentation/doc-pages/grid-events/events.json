@@ -17,6 +17,18 @@
                 "url": "/clipboard/"
             }
         },
+        "cutStart": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
+        "cutEnd": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
         "pasteStart": {
             "more": {
                 "name": "Clipboard Events",
@@ -138,6 +150,18 @@
             "more": {
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "rangeDeleteStart": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
+            }
+        },
+        "rangeDeleteEnd": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
             }
         }
     },

@@ -861,6 +861,10 @@
         flex: none;
     }
 
+    .ag-set-floating-filter-input input[disabled] {
+        pointer-events: none;
+    }
+
     // /**
     //  ****************************
     //  * Drag & Drop
@@ -1698,14 +1702,14 @@
 
     .ag-ltr {
         direction: ltr;
-        .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-sticky-top, .ag-body-viewport, .ag-body-horizontal-scroll {
             flex-direction: row;
         }
     }
 
     .ag-rtl {
         direction: rtl;
-        .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-sticky-top, .ag-body-viewport, .ag-body-horizontal-scroll {
             flex-direction: row-reverse;
         }
 

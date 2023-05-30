@@ -51,7 +51,7 @@ type DeepPartial<T> = {
  *
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
-export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null {
+export function jsonDiff<T extends unknown>(source: T, target: T): Partial<T> | null {
     const sourceType = classify(source);
     const targetType = classify(target);
 
@@ -168,7 +168,7 @@ export interface JsonMergeOptions {
  * @returns the combination of all of the json inputs
  */
 export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
-    const avoidDeepClone = opts?.avoidDeepClone || [];
+    const avoidDeepClone = opts?.avoidDeepClone ?? [];
     const jsonTypes = json.map((v) => classify(v));
     if (jsonTypes.some((v) => v === 'array')) {
         // Clone final array.
@@ -227,6 +227,11 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
     return result;
 }
 
+export type JsonApplyParams = {
+    constructors?: Record<string, new () => any>;
+    allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+};
+
 /**
  * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
  * by property name.
@@ -247,10 +252,8 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         path?: string;
         matcherPath?: string;
         skip?: string[];
-        constructors?: Record<string, new () => any>;
-        allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
         idx?: number;
-    } = {}
+    } & JsonApplyParams = {}
 ): Target {
     const {
         path = undefined,
@@ -262,7 +265,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
     } = params;
 
     if (target == null) {
-        throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`);
+        throw new Error(`AG Charts - target is uninitialised: ${path ?? '<root>'}`);
     }
     if (source == null) {
         return target;
@@ -297,7 +300,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 continue;
             }
 
-            const allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
+            const allowableTypes = allowedTypes[propertyMatcherPath] ?? [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
@@ -374,7 +377,7 @@ export function jsonWalk(
     ...jsons: any[]
 ) {
     const jsonType = classify(json);
-    const skip = opts.skip || [];
+    const skip = opts.skip ?? [];
 
     if (jsonType === 'array') {
         json.forEach((element: any, index: number) => {
@@ -401,6 +404,8 @@ export function jsonWalk(
     }
 }
 
+const isBrowser = typeof window !== 'undefined';
+
 type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
@@ -408,7 +413,7 @@ type Classification = 'array' | 'object' | 'primitive';
 function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
-    } else if (value instanceof HTMLElement) {
+    } else if (isBrowser && value instanceof HTMLElement) {
         return 'primitive';
     } else if (value instanceof Array) {
         return 'array';

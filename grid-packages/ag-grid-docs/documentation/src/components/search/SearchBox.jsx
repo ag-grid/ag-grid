@@ -4,6 +4,8 @@ import { connectSearchBox } from 'react-instantsearch-dom';
 import { Icon } from '../Icon';
 import styles from './SearchBox.module.scss';
 
+const IS_SSR = typeof window === 'undefined';
+
 /**
  * The search box shown in the header at the top of the page.
  */
@@ -21,11 +23,13 @@ const SearchBox = ({ delay, refine, currentRefinement, className, onFocus, resul
         );
     };
 
+    const searchPlaceholder = !IS_SSR && window.innerWidth < 620 ? 'Search...' : 'Search documentation...';
+
     return (
         <form className={classnames(className, styles.searchBox)}>
             <input
-                type="text"
-                placeholder="Search documentation..."
+                type="search"
+                placeholder={searchPlaceholder}
                 aria-label="Search"
                 onChange={onChangeDebounced}
                 onFocus={onFocus}

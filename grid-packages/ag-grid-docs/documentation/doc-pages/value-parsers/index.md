@@ -38,3 +38,14 @@ Below shows an example using value parsers. The following can be noted:
 - Column 'Good Number' is good because after an edit, the value is converted to a number using the value parser.
 
 <grid-example title='Value Parsers' name='example-parsers' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+## Use Value Parser for Import
+
+Sometimes you may want to use the value parser when performing other grid operations apart from editing that can update values. This is possible by setting the column definition property `useValueParserForImport = true`.
+
+<api-documentation source='column-properties/properties.json' section="editing" names='["useValueParserForImport"]' ></api-documentation>
+
+This applies to the following features:
+- [Paste](/clipboard/#processing-pasted-data)
+- [Fill Handle](/range-selection-fill-handle/)
+- [Copy Range Down](/range-selection/#copy-range-down)

@@ -76,17 +76,14 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     const isHappy = (value: string) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const [interimValue, setInterimValue] = useState(isHappy(props.value));
-    const [happy, setHappy] = useState<boolean | null>(null);
+    const [happy, setHappy] = useState<boolean>(isHappy(props.value));
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event: any) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
-                setInterimValue(!interimValue);
-                event.stopPropagation();
-            } else if (event.key === KEY_ENTER) {
-                setHappy(interimValue)
+                const isLeft = event.key === 'ArrowLeft';
+                setHappy(isLeft);
                 event.stopPropagation();
             }
         }
@@ -105,11 +102,6 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         };
     }, [checkAndToggleMoodIfLeftRight, ready]);
 
-    useEffect(() => {
-        if (happy !== null) {
-            props.stopEditing();
-        }
-    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
@@ -142,8 +134,8 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         padding: 4
     };
 
-    const happyStyle = interimValue ? selected : unselected;
-    const sadStyle = !interimValue ? selected : unselected;
+    const happyStyle = happy ? selected : unselected;
+    const sadStyle = !happy ? selected : unselected;
 
     return (
         <div ref={refContainer}

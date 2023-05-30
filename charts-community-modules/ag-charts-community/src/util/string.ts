@@ -41,7 +41,7 @@ export function interpolate(
             return value.toDateString();
         }
 
-        if (typeof value === 'string' || (value && value.toString)) {
+        if (typeof value === 'string' || value?.toString) {
             return String(value);
         }
 

@@ -69,17 +69,14 @@ git reset charts-community-modules/ag-charts-vue/lib
 git reset charts-community-modules/ag-charts-vue/dist
 git reset charts-community-modules/ag-charts-vue3/lib
 git reset charts-community-modules/ag-charts-vue3/dist
-git reset charts-enterprise-modules/core/dist
+git reset charts-enterprise-modules/ag-charts-enterprise/dist
 git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles
 git reset grid-enterprise-modules/all-modules/styles
-git reset grid-community-modules/angular-legacy/dist
 git reset grid-community-modules/styles/*.css
 git reset grid-community-modules/styles/_css-content.scss
 
-git reset grid-packages/ag-grid-angular-legacy/dist
 git reset grid-packages/ag-grid-community/styles
 git reset grid-packages/ag-grid-enterprise/styles
-git reset charts-community-modules/ag-charts-angular-legacy/dist
 git reset grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json

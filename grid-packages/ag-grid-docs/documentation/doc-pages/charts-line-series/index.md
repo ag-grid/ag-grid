@@ -97,7 +97,7 @@ series: [
 
 The provided `yName` will also show up in tooltip titles:
 
-![Left: tooltip with no title, Right: tooltip with title](resources/tooltip-titles.png)
+<image-caption src="tooltip-titles.png" alt="Left: tooltip with no title, Right: tooltip with title" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Line and Marker Colours
 

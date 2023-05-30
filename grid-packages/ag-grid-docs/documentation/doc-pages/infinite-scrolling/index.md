@@ -2,11 +2,12 @@
 title: "Infinite Row Model"
 ---
 
-[[note]]
+<note>
 | If you are an Enterprise user you should consider using the
-| [Server-Side Row Model](/server-side-model/) instead of the Infinite Row Model.
-| It offers the same functionality with many more features.<br /><br />
-| The differences between row models can be found in our [row models summary page](/row-models/).
+| [Server-Side Row Model](../server-side-model/) instead of the Infinite Row Model.
+| It offers the same functionality with many more features.
+| The differences between row models can be found in our [row models summary page](../row-models/).
+</note>
 
 Infinite scrolling allows the grid to lazy-load rows from the server depending on what the scroll
 position is of the grid. In its simplest form, the more the user scrolls down, the more rows get loaded.
@@ -62,14 +63,14 @@ Changing the datasource after the grid is initialised will reset the infinite sc
 This is useful if the context of your data changes, i.e. if you want to look at a different set of data.
 
 
-[[note]]
+<note>
 | If you call `setDatasource()` the grid will act assuming
 | it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
 | So your application, for example, might have one instance of a datasource that is aware of some
 | external context (e.g. the business date selected for a report, or the 'bank ATM instance' data you are
 | connecting to), and when the context changes, you want to reset, but still keep the same datasource
 | instance. In this case, just call `setDatasource()` and pass the same datasource in again.
-
+</note>
 
 ### Datasource Interface
 
@@ -89,7 +90,7 @@ The `getRows()` method takes the `IGetRowsParams` parameters:
 The `getRows()` function is called by the grid to load a block of rows into the browser-side cache of blocks.
 It takes the following as parameters:
 
-- The `startRow` and `endRow` define the range expected for the call. For example, if block size is 100, the `getRows` function will be called with `startRow: 0` and `endRow: 100` and the grid will expect a result with 100 rows (rows 0 to 99).
+- The `startRow` and `endRow` define the range expected for the call. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
 
 - The `successCallback(rowsThisBlock, lastRow)` should be called when you successfully receive data from the server. The callback has the following parameters:
     - `rowsThisBlock` should be the rows you have received for the current block.
@@ -164,13 +165,15 @@ The columns `Age`, `Country` and `Year` can be filtered. When this happens, the 
 When a row is selected, the selection will remain inside the grid, even if the grid gets sorted or filtered. Notice that when the grid loads a selected row (e.g. select first row, scroll down so the first block is removed from cache, then scroll back up again) the row is not highlighted until the row is loaded from the server. This is because the grid is waiting to see what the ID is of the row to be loaded.
 
 
-[[note]]
-| The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
+<note>
+The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
+</note>
 
 <grid-example title='Server-Side Sorting And Filtering' name='server-side' type='mixed' options=' { "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
-[[note]]
-| When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.
+<note>
+When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.
+</note>
 
 ## Specify Selectable Rows
 
@@ -234,8 +237,9 @@ Infinite scrolling has a cache working behind the scenes. The following properti
 
 <api-documentation source='grid-api/api.json' section='infiniteScrolling'></api-documentation>
 
-[[note]]
-| Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate your application. It will make your life easier if you update the data on the server and refresh the block cache.
+<note>
+Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate your application. It will make your life easier if you update the data on the server and refresh the block cache.
+</note>
 
 ### Example: Using Cache API Methods
 
@@ -278,8 +282,11 @@ As with all row models, it is possible to enable pagination with infinite scroll
 | Example 1 | Auto      | Large      | Most Recommended      |
 | Example 2 | Equal     | Equal      | Recommended Sometimes |
 
-[[note]]
-| **Having smaller infinite blocks size than your pagination page size is not supported** |<br/><br/>You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
+<note>
+|**Having smaller infinite blocks size than your pagination page size is not supported** 
+|
+|You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
+</note>
 
 ### Example 1: Auto Pagination Page Size, Large Infinite Block Size
 

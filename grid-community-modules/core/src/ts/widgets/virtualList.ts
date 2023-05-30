@@ -7,6 +7,7 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
+import { stopPropagationForAgGrid } from '../utils/event';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -112,6 +113,7 @@ export class VirtualList extends TabGuardComp {
         if (this.navigate(e.shiftKey)) {
             e.preventDefault();
         } else {
+            stopPropagationForAgGrid(e);
             this.forceFocusOutOfContainer(e.shiftKey);
         }
     }

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import isServerSideRendering from 'utils/is-server-side-rendering';
-import { getEntryFile, getExampleFiles } from './helpers';
 import { doOnEnter } from 'components/key-handlers';
-import styles from './CodeViewer.module.scss';
+import React, { useEffect, useState } from 'react';
+import isServerSideRendering from 'utils/is-server-side-rendering';
 import Code from '../Code';
+import { Icon } from '../Icon';
+import CodeOptions from './CodeOptions';
+import styles from './CodeViewer.module.scss';
+import { getEntryFile, getExampleFiles } from './helpers';
+import { trackExampleRunnerEvent } from './track-example-runner-event';
 
 /**
  * This renders the code viewer in the example runner.
@@ -12,43 +15,91 @@ import Code from '../Code';
 const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
+    const [showFiles, setShowFiles] = useState(true);
 
     let unmount = false;
     const didUnmount = () => unmount;
 
     useEffect(() => {
         updateFiles(exampleInfo, setFiles, setActiveFile, didUnmount);
-        return () => unmount = true;
+        return () => (unmount = true);
     }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
-    const exampleFiles = keys.filter(key => !files[key].isFramework);
-    const frameworkFiles = keys.filter(key => files[key].isFramework);
+    const exampleFiles = keys.filter((key) => !files[key].isFramework);
 
-    return <div className={classnames(styles['code-viewer'], { [styles['code-viewer--hidden']]: !isActive })}>
-        <div className={styles['code-viewer__files']}>
-            {frameworkFiles.length > 0 && <div className={styles['code-viewer__file-title']}>App</div>}
-            {exampleFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
-            {frameworkFiles.length > 0 &&
-                <>
-                    <div className={styles['code-viewer__file-title']}>Framework</div>
-                    {frameworkFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
-                </>}
+    return (
+        <div className={classnames(styles.codeViewer, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
+            <div className={styles.mobileHeader}>
+                <button
+                    className={'button-style-none button-as-link'}
+                    onClick={() => {
+                        setShowFiles((prevShowFiles) => !prevShowFiles);
+                    }}
+                >
+                    {showFiles ? (
+                        <span>
+                            Hide files
+                            <Icon name="arrowLeft" />
+                        </span>
+                    ) : (
+                        <span>
+                            Show files
+                            <Icon name="arrowRight" />
+                        </span>
+                    )}
+                </button>
+                <span>
+                    <span className="text-secondary">Viewing: </span>
+                    {activeFile}
+                </span>
+            </div>
+            <div className={styles.inner}>
+                <div className={styles.files}>
+                    <ul className="list-style-none">
+                        {exampleFiles.map((path) => (
+                            <FileItem
+                                key={path}
+                                path={path}
+                                isActive={activeFile === path}
+                                onClick={() => {
+                                    setActiveFile(path);
+                                    trackExampleRunnerEvent({
+                                        type: 'viewFileClick',
+                                        exampleInfo,
+                                        extraProps: {
+                                            filePath: path,
+                                        },
+                                    });
+                                }}
+                            />
+                        ))}
+                    </ul>
+
+                    <CodeOptions exampleInfo={exampleInfo} />
+                </div>
+                <div className={styles.code}>
+                    {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
+                    {files && activeFile && files[activeFile] && (
+                        <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />
+                    )}
+                </div>
+            </div>
         </div>
-        <div className={styles['code-viewer__code']}>
-            {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && files[activeFile] && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
-        </div>
-    </div>;
+    );
 };
 
 const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
-    if (isServerSideRendering()) { return; }
+    if (isServerSideRendering()) {
+        return;
+    }
 
     const { framework, internalFramework } = exampleInfo;
 
-    getExampleFiles(exampleInfo).then(files => {
-        if (didUnmount()) { return; }
+    getExampleFiles(exampleInfo).then((files) => {
+        if (didUnmount()) {
+            return;
+        }
 
         setFiles(files);
 
@@ -62,29 +113,32 @@ const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
     });
 };
 
-const FileItem = ({ path, isActive, onClick }) =>
-    <div
-        className={classnames(styles['code-viewer__file'], { [styles['code-viewer__file--active']]: isActive })}
-        title={path}
-        onClick={onClick}
-        onKeyDown={e => doOnEnter(e, onClick)}
-        role="button"
-        tabIndex="0">
-        {path}
-    </div>;
+const FileItem = ({ path, isActive, onClick }) => (
+    <li>
+        <button
+            className={classnames('button-style-none', styles.file, { [styles.isActive]: isActive })}
+            title={path}
+            onClick={onClick}
+            onKeyDown={(e) => doOnEnter(e, onClick)}
+            tabIndex="0"
+        >
+            {path}
+        </button>
+    </li>
+);
 
 const ExtensionMap = {
     sh: 'bash',
     vue: 'html',
     tsx: 'jsx',
-    json: 'js'
+    json: 'js',
 };
 
 const FileView = ({ path, code }) => {
     const parts = path.split('.');
     const extension = parts[parts.length - 1];
 
-    return <Code code={code} language={ExtensionMap[extension] || extension} />;
+    return <Code code={code} language={ExtensionMap[extension] || extension} lineNumbers={true} />;
 };
 
 export default CodeViewer;

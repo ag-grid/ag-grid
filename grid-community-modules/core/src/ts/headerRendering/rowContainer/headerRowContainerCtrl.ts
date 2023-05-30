@@ -37,6 +37,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
     private hidden: boolean = false;
+    private includeFloatingFilter: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
     private columnsRowCtrl: HeaderRowCtrl | undefined;
@@ -58,6 +59,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupDragAndDrop(this.eViewport);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -103,13 +106,13 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
 
-            if (!includeFloatingFilter) {
+            if (!this.includeFloatingFilter) {
                 destroyPreviousComp();
                 return;
             }
@@ -164,10 +167,17 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.refresh(true);
     }
 
+    private onDisplayedColumnsChanged(): void {
+        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        if (this.includeFloatingFilter !== includeFloatingFilter) {
+            this.refresh(true);
+        }
+    }
+
     private setupCenterWidth(): void {
         if (this.pinned != null) { return; }
 
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
+        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`), true));
     }
 
     public setHorizontalScroll(offset: number): void {

@@ -68,6 +68,7 @@ const HeaderLinks = ({ path, toggleButtonRef }) => {
                                     toggleButtonRef.current?.click();
                                 }
                             }}
+                            aria-label={`AG Grid ${link.name}`}
                         >
                             {link.icon}
                             <span>{link.name}</span>
@@ -109,7 +110,7 @@ const HeaderNav = ({ path }) => {
 export const SiteHeader = ({ path }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
-        <header className={classnames('ag-styles', styles.header)}>
+        <header className={styles.header}>
             <div className={classnames(styles.headerInner, 'page-margin')}>
                 <a
                     href="/"

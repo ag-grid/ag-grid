@@ -1,4 +1,4 @@
-[[only-react]]
+<framework-specific-section frameworks="react">
 |
 |## Registering Custom Components
 |
@@ -13,7 +13,10 @@
 |
 |In this example we're specifying that we want our React `CubeComponent` as a Cell Renderer in the `Cube` column:
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |//...other imports
 |import CubeComponent from './CubeComponent';
 |
@@ -23,14 +26,16 @@
 |    const columnDefs = useMemo( () => [{field: 'value', cellRenderer: CubeComponent}], []);
 |
 |    return (
-|         <AgGridReact
+|         &lt;AgGridReact
 |            columnDefs={columnDefs}
 |            ...other properties            
 |         />
 |    );
 |};
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |The advantage of referencing Components directly is cleaner code, without the extra level of indirection added when referencing by name.
 |
 |### 2. By Name
@@ -41,7 +46,10 @@
 |In this example we've registered our React `CubeComponent` and given it a name of `cubeComponent` (this can be any name you choose).
 |We then specify that we want the previously registered `cubeComponent` to be used as a Cell Renderer in the `Cube` column:
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |//...other imports
 |import CubeComponent from './CubeComponent';
 |
@@ -55,18 +63,24 @@
 |   const columnDefs = useMemo(() => [{field: 'value', cellRenderer: 'cubeComponent'}], []);
 |
 |   return (
-|         <AgGridReact
+|         &lt;AgGridReact
 |            components={components}
 |            columnDefs={columnDefs}
 |            ...other properties            
 |         />
 |   );
 |};
-|```
-|
+</snippet> 
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |The advantage of referencing components by name is definitions (eg Column Definitions) can be composed of simple types (ie JSON), which is useful should you wish to persist Column Definitions.
-|
-|[[note]]
-||A React Component in this context can be any valid React Component - A Class Based Component, a Hook or even an inline
-||Functional Component. 
-||The same rules apply regardless of the type of component used.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<note>
+|A React Component in this context can be any valid React Component - A Class Based Component, a Hook or even an inline
+|Functional Component. 
+|The same rules apply regardless of the type of component used.
+</note>
+</framework-specific-section>

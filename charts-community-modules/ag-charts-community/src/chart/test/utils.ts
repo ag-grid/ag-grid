@@ -1,4 +1,4 @@
-import { expect, beforeEach, afterEach } from '@jest/globals';
+import { expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { Canvas, createCanvas, PngConfig } from 'canvas';
 import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
@@ -9,6 +9,7 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 import { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import { AnimationManager } from '../interaction/animationManager';
 import { resetIds } from '../../util/id';
 import * as mockCanvas from './mock-canvas';
 
@@ -43,6 +44,7 @@ export function prepareTestOptions<T extends AgChartOptions<any, any>>(options: 
     options.width = CANVAS_WIDTH;
     options.height = CANVAS_HEIGHT;
     options.container = container;
+    return options;
 }
 
 export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {
@@ -69,7 +71,7 @@ export function range(start: number, end: number, step = 1): number[] {
 }
 
 export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
-    const result = [];
+    const result: Date[] = [];
 
     let next = start.getTime();
     const endTime = end.getTime();
@@ -127,7 +129,7 @@ export function wheelEvent({
 }
 
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -139,7 +141,7 @@ export function cartesianChartAssertions(params?: { type?: string; axisTypes?: s
 }
 
 export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['pie'] } = params || {};
+    const { seriesTypes = ['pie'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -150,7 +152,7 @@ export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 }
 
 export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['treemap'] } = params || {};
+    const { seriesTypes = ['treemap'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -216,14 +218,6 @@ export function scrollAction(x: number, y: number, delta: number): Promise<void>
     return new Promise((resolve) => {
         setTimeout(resolve, 50);
     });
-}
-
-export function combineAssertions(...assertions: ((chart: AgChartInstance) => void)[]) {
-    return async (chartOrProxy: AgChartInstance) => {
-        for (const assertion of assertions) {
-            await assertion(chartOrProxy);
-        }
-    };
 }
 
 export function extractImageData({
@@ -294,4 +288,23 @@ export function toMatchImage(this: any, actual: Buffer, expected: Buffer, { writ
     }
 
     return { message: () => `Images were ${result} (${diffPercentage.toFixed(2)}%) pixels different`, pass };
+}
+
+export function spyOnAnimationManager(totalDuration: number, ratio: number) {
+    jest.spyOn(AnimationManager.prototype, 'animate').mockImplementation((_id, { from, to, delay, onUpdate }) => {
+        const delayRatio = delay ? delay / totalDuration : 0;
+        if (ratio < delayRatio) {
+            onUpdate?.(from as number);
+        } else {
+            const squashedRatio = Math.max(0, Math.min(1, (ratio - delayRatio) / (1 - delayRatio)));
+            onUpdate?.(((to as number) - (from as number)) * squashedRatio + (from as number));
+        }
+        return Promise.resolve() as any;
+    });
+
+    jest.spyOn(AnimationManager.prototype, 'animateMany').mockImplementation((_id, props, { onUpdate }) => {
+        const ratioProps = props.map(({ from, to }) => ((to as number) - (from as number)) * ratio + (from as number));
+        onUpdate?.(ratioProps);
+        return Promise.resolve() as any;
+    });
 }

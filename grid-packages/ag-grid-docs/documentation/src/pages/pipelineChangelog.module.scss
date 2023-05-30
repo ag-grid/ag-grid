@@ -1,8 +1,8 @@
 @use "../design-system/" as *;
 
 .container {
-    margin-top: $size-6 !important; // !important for .ag-styles specificity
-    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+    margin-top: $size-6;
+    margin-bottom: calc($size-6 * 4);
 
     :global(.ag-filter-icon) {
         display: none;
@@ -13,7 +13,7 @@
     display: flex;
     flex-direction: column;
     gap: $size-5;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-2;
 }
 
 .controls,
@@ -34,7 +34,7 @@
 
 .searchBar {
     width: 100%;
-    margin-right: auto !important; // !important for .ag-styles specificity
+    margin-right: auto;
 
     @media screen and (min-width: $breakpoint-changelog-pipeline-large) {
         max-width: 380px;
@@ -52,5 +52,5 @@
 
 .link::after {
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
-    margin: 0 $size-half 0 $size-half !important; // !important for .ag-styles specificity
+    margin: 0 $size-half 0 $size-half;
 }

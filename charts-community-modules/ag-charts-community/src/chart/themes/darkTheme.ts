@@ -1,10 +1,7 @@
 import { AgChartThemeOptions } from '../agChartOptions';
-import { ChartTheme } from './chartTheme';
-import { CHART_TYPES } from '../chartTypes';
-
-export interface DarkThemeParams {
-    seriesLabelDefaults: any;
-}
+import { ChartTheme, OVERRIDE_SERIES_LABEL_DEFAULTS } from './chartTheme';
+import { CHART_TYPES } from '../factory/chartTypes';
+import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 export class DarkTheme extends ChartTheme {
     static fontColor = 'rgb(200, 200, 200)';
@@ -15,8 +12,6 @@ export class DarkTheme extends ChartTheme {
             color: DarkTheme.fontColor,
         },
     };
-
-    static seriesDarkThemeOverrides: Record<string, (params: DarkThemeParams) => any> = {};
 
     protected getDefaults(): (typeof ChartTheme)['defaults'] {
         const fontColor = DarkTheme.fontColor;
@@ -92,10 +87,9 @@ export class DarkTheme extends ChartTheme {
 
         const getOverridesByType = (seriesTypes: string[]) => {
             return seriesTypes.reduce((obj, seriesType) => {
-                if (Object.prototype.hasOwnProperty.call(DarkTheme.seriesDarkThemeOverrides, seriesType)) {
-                    obj[seriesType] = DarkTheme.seriesDarkThemeOverrides[seriesType]({
-                        seriesLabelDefaults: DarkTheme.seriesLabelDefaults,
-                    });
+                const template = getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateTheme(template);
                 }
                 return obj;
             }, {} as Record<string, any>);
@@ -106,6 +100,9 @@ export class DarkTheme extends ChartTheme {
                 ...chartDefaults,
                 ...chartAxesDefaults,
                 series: {
+                    line: {
+                        ...seriesLabelDefaults,
+                    },
                     bar: {
                         ...seriesLabelDefaults,
                     },
@@ -187,6 +184,14 @@ export class DarkTheme extends ChartTheme {
                 },
             },
         });
+    }
+
+    protected getTemplateParameters() {
+        const result = super.getTemplateParameters();
+
+        result.extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, DarkTheme.seriesLabelDefaults.label);
+
+        return result;
     }
 
     constructor(options?: AgChartThemeOptions) {

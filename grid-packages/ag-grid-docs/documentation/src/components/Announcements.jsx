@@ -8,8 +8,26 @@ import Version from './Version';
  * These are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => (
-    <div className={styles['announcements']}>
+    <>
         <div className={styles.versions}>
+            <Version
+                version="29.3.0"
+                date="Apr 20"
+                highlights={[
+                    {
+                        text: 'Sticky Column Group Labels',
+                        url: 'https://ag-grid.com/javascript-data-grid/column-groups/#sticky-label',
+                    },
+                    {
+                        text: 'SSRM Sticky Group Rows',
+                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#sticky-groups',
+                    },
+                    {
+                        text: 'Chart Tooltip Positioning',
+                        url: 'https://ag-grid.com/javascript-charts/tooltips/#tooltip-position',
+                    },
+                ]}
+            ></Version>
             <Version
                 version="29.2.0"
                 date="Mar 21"
@@ -64,7 +82,7 @@ const Announcements = ({ framework }) => (
                 developing for production.
             </p>
         </Announcement>
-    </div>
+    </>
 );
 
 /**

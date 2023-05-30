@@ -60,8 +60,12 @@ The tooltip position can be modified using the `tooltip.position.type` property.
 
 `tooltip.position.type` can be one of the following:
 
-- `node` - anchors the tooltip to the highlighted node. This is the default position type for `line`, `area`, `scatter` and `bubble` series, where the tooltip will be positioned above the highlighted marker node.
-- `pointer` - attaches the tooltip to the mouse pointer. This is the default position type for `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut` series where the tooltip will follow the mouse pointer.
+- `node` - Anchors the tooltip to the highlighted node
+- `pointer` - Anchors the tooltip to the mouse pointer
+
+For series with markers, such as `line`, `area`, and `scatter`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
+
+For series without markers, such as `bar`,`column`, `histogram`, `treemap` and `pie`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
 
 The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
 
@@ -77,9 +81,32 @@ tooltip: {
 
 ### Example: Tooltip Position
 
-In this example we show how to change the tooltip's default position.
+In this example we show how to change the tooltip's default position. Note that:
+
+- Instead of the tooltip being anchored to the highlighted marker node, it is anchored 80 pixels to the left and below the mouse pointer.
+- By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the tooltip arrow is removed.
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
+
+## Tooltip Arrow
+
+The chart tooltip shows an arrow below it to indicate its exact point of origin when it's unconstrained by the container and has no [position offset](#tooltip-position) supplied.
+
+Set `tooltip.showArrow` to `true` to always show the arrow, and set it to `false` to remove the arrow.
+
+```js
+tooltip: {
+  showArrow: false
+}
+```
+
+This can be useful if the tooltip's [position](#tooltip-position) has been modified and the arrow is no longer needed.
+
+### Example: Removing the Tooltip Arrow
+
+In this example, the button above the chart can be used to show or hide the tooltip arrow.
+
+<chart-example title='Removing the Tooltip Arrow' name='default-tooltip-arrow' type='generated'></chart-example>
 
 ## Styling the Default Tooltip
 
@@ -171,8 +198,9 @@ series: [
 
 The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the `chart.data` or `series.data` array. You can then process the raw values however you like before using them as a part of the returned HTML string.
 
-[[note]]
-| Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+<note>
+Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+</note>
 
 The effect of applying the tooltip renderer from the snippet above can be seen in the example below.
 
@@ -202,15 +230,19 @@ The example below shows the three types of interaction range:
 
 <chart-example title='Tooltip Range' name='interaction-range' type='generated'></chart-example>
 
-## Interaction with a Tooltip
+## Interaction with Tooltips
 
-By default, you can not hover over a tooltip or select its text. Set the `tooltip.enableInteraction` flag to `true` to enable selecting the text and clicking links within the tooltip.
+By default, you can not hover over a tooltip or select its text. Set the `series[].tooltip.interaction.enabled` flag to `true` to enable selecting the text and clicking links within the tooltip.
 
-### Example: Interaction with a Tooltip
+### Example: Interaction with Tooltips
 
 <chart-example title='Tooltip Interaction' name='tooltip-interaction' type='generated'></chart-example>
 
 ## API Reference
+
+### All Tooltips
+
+<interface-documentation interfaceName='AgSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Bar/Column Tooltips
 

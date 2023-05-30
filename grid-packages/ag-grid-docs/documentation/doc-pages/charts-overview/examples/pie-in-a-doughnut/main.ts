@@ -1,6 +1,6 @@
 import {
   AgChart,
-  AgChartOptions,
+  AgPolarChartOptions,
   AgPolarSeriesOptions,
 } from "ag-charts-community"
 import { getData2020, getData2022 } from "./data"
@@ -45,7 +45,7 @@ const sharedSeriesOptions: AgPolarSeriesOptions = {
   },
 }
 
-const options: AgChartOptions = {
+const options: AgPolarChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
   title: {

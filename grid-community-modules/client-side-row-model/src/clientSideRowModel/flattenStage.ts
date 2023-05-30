@@ -80,7 +80,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
-            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
 
             const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);

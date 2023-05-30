@@ -1,18 +1,20 @@
-[[only-vue]]
-|Below is a simple example of filter component:
-|
-|```js
+<framework-specific-section frameworks="vue">
+|Below is an example of filter component:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const YearFilter = {
 |    template: `
-|        <div style="display: inline-block; width: 400px;">
-|        <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter</div>
-|        <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
-|            <input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="All"/> All
-|        </label>
-|        <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
-|            <input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
-|        </label>
-|        </div>
+|        &lt;div style="display: inline-block; width: 400px;">
+|        &lt;div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter&lt;/div>
+|        &lt;label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+|            &lt;input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="All"/> All
+|        &lt;/label>
+|        &lt;label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+|            &lt;input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
+|        &lt;/label>
+|        &lt;/div>
 |    `,
 |    data: function () {
 |        return {
@@ -41,5 +43,5 @@
 |        }
 |    }
 |}
-|```
- 
+</snippet>
+</framework-specific-section>

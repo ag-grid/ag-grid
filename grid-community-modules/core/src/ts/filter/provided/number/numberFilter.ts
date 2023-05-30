@@ -2,7 +2,6 @@ import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } f
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { isBrowserChrome } from '../../../utils/browser';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { setAriaRole } from '../../../utils/aria';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
@@ -64,17 +63,7 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
 export function getAllowedCharPattern(filterParams?: NumberFilterParams): string | null {
     const { allowedCharPattern } = filterParams ?? {};
 
-    if (allowedCharPattern) {
-        return allowedCharPattern;
-    }
-
-    if (!isBrowserChrome()) {
-        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
-        // constraint instead
-        return '\\d\\-\\.';
-    }
-
-    return null;
+    return allowedCharPattern ?? null;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
@@ -230,5 +219,16 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     public getModelAsString(model: ISimpleFilterModel): string {
         return this.filterModelFormatter.getModelAsString(model) ?? '';
+    }
+
+    protected hasInvalidInputs(): boolean {
+        let invalidInputs = false;
+        this.forEachInput(element => {
+            if (!element.getInputElement().validity.valid) {
+                invalidInputs = true;
+                return;
+            }
+        });
+        return invalidInputs;
     }
 }

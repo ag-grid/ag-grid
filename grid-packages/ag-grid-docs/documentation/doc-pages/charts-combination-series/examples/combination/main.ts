@@ -102,7 +102,6 @@ const options: AgCartesianChartOptions = {
     }
   ] as AgCartesianAxisOptions[],
   legend: {
-    position: "bottom",
     item: {
       marker: {
         strokeWidth: 0,

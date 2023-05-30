@@ -40,47 +40,48 @@ Adding event listeners to the DOM results in a small performance hit. A grid wou
 
 The challenge is then working out which cell caused the event.
 
-```js
-// parentContainer will contain all the cells
-var parentContainer = document.createElement('div');
-
-// cells are regular DOM div objects
-var eCell = document.createElement('div');
-// attach our own properties to the DOM object.
-// once we are not using DOM properties, there is no performance hit.
-eCell.__col = colId;
-eCell.__row = rowId;
-// add the cell to the container, no listeners
-parentContainer.appendChild(eCell);
-
-// listen for clicks on the parent container only
-parentContainer.addEventListener('click', myEventListener);
-
-function myEventListener(event) {
-    // go through all elements of the event, starting from the element that caused the event
-    // and continue up to the parent container. we should find the cell element along the way.
-    var domElement = event.target;
-    var col, row;
-    while (domElement!=parentContainer) {
-        // see if the dom element has col and row info
-        if (domElement.__col && domElement.__row) {
-            // if yes, we have found the cell, and know which row and col it is
-            col = domElement.__col;
-            row = domElement.__row;
-            break;
-        }
-        domElement = domElement.parentElement;
-    }
-}
-```
+<snippet transform={false}>
+|// parentContainer will contain all the cells
+|var parentContainer = document.createElement('div');
+|
+|// cells are regular DOM div objects
+|var eCell = document.createElement('div');
+|// attach our own properties to the DOM object.
+|// once we are not using DOM properties, there is no performance hit.
+|eCell.__col = colId;
+|eCell.__row = rowId;
+|// add the cell to the container, no listeners
+|parentContainer.appendChild(eCell);
+|
+|// listen for clicks on the parent container only
+|parentContainer.addEventListener('click', myEventListener);
+|
+|function myEventListener(event) {
+|    // go through all elements of the event, starting from the element that caused the event
+|    // and continue up to the parent container. we should find the cell element along the way.
+|    var domElement = event.target;
+|    var col, row;
+|    while (domElement!=parentContainer) {
+|        // see if the dom element has col and row info
+|        if (domElement.__col && domElement.__row) {
+|            // if yes, we have found the cell, and know which row and col it is
+|            col = domElement.__col;
+|            row = domElement.__row;
+|            break;
+|        }
+|        domElement = domElement.parentElement;
+|    }
+|}
+</snippet>
 
 You might have noticed that we are attaching arbitrary attributes (`__col` and `__row`) onto the DOM element and might be wondering is this safe? I hope so, as AG Grid is used for air traffic control over Australia as far as I know. In other words, AG Grid has done this for a long time and has been tested in the field.
 
-[[note]]
-| This is a similar pattern used by React using React's Synthetic Events.
-| React uses event delegation and listens for events at the
-| root of the application. React keeps track of which rendered nodes have listeners.
-| The synthetic event system implements its own bubbling and calls the appropriate handlers.
+<note>
+This is a similar pattern used by React using React's Synthetic Events.
+React uses event delegation and listens for events at the
+root of the application. React keeps track of which rendered nodes have listeners.
+The synthetic event system implements its own bubbling and calls the appropriate handlers.
+</note>
 
 ## Hack 4 - Throw Away DOM
 
@@ -98,21 +99,21 @@ We have done many tests. The answer is to use `.innerHTML`.
 
 So AG Grid leverages the speed of `.innerHTML` by creating the HTML in one big string and then inserting it into the DOM using the method `element.insertAdjacentHTML()`. The method `element.insertAdjacentHTML()` is similar but slightly less well known equivalent of the property `.innerHTML`. The difference is that `insertAdjacentHTML()` appends to existing HTML where as `.innerHTML()` replacing the current content. Both work just as fast.
 
-```js
-// build up the row's HTML in a string
-var htmlParts = [];
-htmlParts.push('<div class="ag-row">');
-cells.forEach( function(cell) {
-    htmlParts.push('<div class="ag-cell">');
-    htmlParts.push(cell.getValue());
-    htmlParts.push('</div>');
-});
-htmlParts.push('</div>');
-
-// append the string into the DOM, one DOM hit for the entire row
-var rowHtml = htmlParts.join('');
-eContainer.insertAdjacentHTML(rowHtml);
-```
+<snippet transform={false}>
+|// build up the row's HTML in a string
+|var htmlParts = [];
+|htmlParts.push('&lt;div class="ag-row">');
+|cells.forEach( function(cell) {
+|    htmlParts.push('&lt;div class="ag-cell">');
+|    htmlParts.push(cell.getValue());
+|    htmlParts.push('&lt;/div>');
+|});
+|htmlParts.push('&lt;/div>');
+|
+|// append the string into the DOM, one DOM hit for the entire row
+|var rowHtml = htmlParts.join('');
+|eContainer.insertAdjacentHTML(rowHtml);
+</snippet>
 
 This works well when there are no custom cell renderers. So for all cells that do not use cell renderers, the grid will inject the whole row in one HTML string which is the quickest way to render HTML. When a component is used, the grid will then go back and inject the components into the HTML after the row is created.
 

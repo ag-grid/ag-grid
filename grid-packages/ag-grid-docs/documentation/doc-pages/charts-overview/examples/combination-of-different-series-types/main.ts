@@ -77,7 +77,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: "bottom",
     item: {
       marker: {
         shape: "square",

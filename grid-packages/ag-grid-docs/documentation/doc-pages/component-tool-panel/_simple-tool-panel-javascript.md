@@ -1,8 +1,10 @@
-[[only-javascript]]
+<framework-specific-section frameworks="javascript">
 |
-|Below is a simple example of a tool panel component:
-|
-|```js
+|Below is an example of a tool panel component:
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |class CustomStatsToolPanel {
 |    init(params) {
 |        this.eGui = document.createElement('div');
@@ -29,14 +31,15 @@
 |        });
 |
 |        return `
-|        <span>
-|            <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
-|            <dl style="font-size: large; padding: 30px 40px 10px 30px">
-|                <dt style="padding-bottom: 15px">Total Medals: <b>${numGold + numSilver + numBronze}</b></dt>
-|                <dt style="padding-bottom: 15px">Total Gold: <b>${numGold}</b></dt><dt style="padding-bottom: 15px">Total Silver: <b>${numSilver}</b></dt>
-|                <dt style="padding-bottom: 15px">Total Bronze: <b>${numBronze}</b></dt>
-|            </dl>
-|        </span>`;
+|        &lt;span>
+|            &lt;h2>&lt;i class="fa fa-calculator">&lt;/i> Custom Stats&lt;/h2>
+|            &lt;dl style="font-size: large; padding: 30px 40px 10px 30px">
+|                &lt;dt style="padding-bottom: 15px">Total Medals: &lt;b>${numGold + numSilver + numBronze}&lt;/b>&lt;/dt>
+|                &lt;dt style="padding-bottom: 15px">Total Gold: &lt;b>${numGold}&lt;/b>&lt;/dt>&lt;dt style="padding-bottom: 15px">Total Silver: &lt;b>${numSilver}&lt;/b>&lt;/dt>
+|                &lt;dt style="padding-bottom: 15px">Total Bronze: &lt;b>${numBronze}&lt;/b>&lt;/dt>
+|            &lt;/dl>
+|        &lt;/span>`;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

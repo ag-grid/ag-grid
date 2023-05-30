@@ -92,7 +92,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.resetRowHeights.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
 
         const refreshMapListener = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.MAP,
@@ -497,7 +497,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,            
+            type: Events.EVENT_MODEL_UPDATED,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
@@ -1066,7 +1066,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.filterManager.onNewRowsLoaded('rowDataUpdated');
 
         const event: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED            
+            type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(event);
     }
@@ -1090,6 +1090,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public resetRowHeights(): void {
+        const atLeastOne = this.resetRowHeightsForAllRowNodes();
+
+        this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
+    }
+
+    private resetRowHeightsForAllRowNodes(): boolean {
         let atLeastOne = false;
         this.forEachNode(rowNode => {
             rowNode.setRowHeight(rowNode.rowHeight, true);
@@ -1103,13 +1115,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             atLeastOne = true;
         });
 
-        // when pivotMode but pivot not active, root node is displayed on its own
-        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
-        this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+        return atLeastOne;
+    }
 
-        if (atLeastOne) {
-            this.onRowHeightChanged();
-        }
+    private onGridStylesChanges() {
+        if (this.columnModel.isAutoRowHeightActive()) { return; }
+
+        this.resetRowHeights();
     }
 
 }

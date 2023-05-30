@@ -1,13 +1,13 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "29.2.0",
+  "version": "29.3.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "npm run update-angular-components && ./node_modules/.bin/ng build && npm run hash",
     "build-prod": "npm run build",
-    "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
+    "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
     "update-angular-components": "node updateGridAndColumnProperties.js",
     "verify-properties": "node agGridPropertiesCheck.js",
@@ -31,7 +31,7 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~29.2.0",
+    "@ag-grid-community/core": "~29.3.0",
     "@angular-devkit/build-angular": "~12.2.17",
     "@angular/cli": "~12.2.17",
     "@angular/compiler-cli": "~12.2.0",

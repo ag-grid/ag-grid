@@ -116,6 +116,7 @@ var myTheme = {
         },
         column: {
           label: {
+            enabled: true,
             color: "white",
           },
         },
@@ -204,7 +205,8 @@ var data = [
   },
 ]
 
-render(
+const root = createRoot(document.getElementById('root'));
+root.render(
   <div id="charts">
     <div id="chart1">
       <Chart1 />
@@ -212,6 +214,4 @@ render(
     <div id="chart2">
       <Chart2 />
     </div>
-  </div>,
-  document.querySelector("#root")
-)
+  </div>);

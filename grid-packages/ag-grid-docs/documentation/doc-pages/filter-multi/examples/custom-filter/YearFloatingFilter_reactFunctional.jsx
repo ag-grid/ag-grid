@@ -15,7 +15,7 @@ export default forwardRef(({ parentFilterInstance }, ref) => {
     }));
 
     return (
-        <div class="year-filter">
+        <div className="year-filter">
             <label>
                 <input type="radio" checked={!isActive} onChange={() => toggleFilter(false)} /> All
             </label>

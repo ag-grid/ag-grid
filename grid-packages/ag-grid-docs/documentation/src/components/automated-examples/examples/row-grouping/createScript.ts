@@ -1,9 +1,8 @@
 import { Group } from '@tweenjs/tween.js';
-import { getCellPos, getGroupCellTogglePos } from '../../lib/agQuery';
+import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
-import { getBottomMidPos, getOffset } from '../../lib/dom';
-import { addPoints } from '../../lib/geometry';
-import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
+import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
+import { addPoints, scalePoint } from '../../lib/geometry';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -11,12 +10,22 @@ import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;
+    /**
+     * Whether the container element is scaled or not, and by how much
+     */
+    getContainerScale?: () => number;
     mouse: Mouse;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }: Params): ScriptAction[] => {
+export const createScript = ({
+    containerEl,
+    getContainerScale = () => 1,
+    mouse,
+    tweenGroup,
+    scriptDebugger,
+}: Params): ScriptAction[] => {
     const GROUP_1_HEADER_CELL_NAME = 'Category';
     const GROUP_1_COL_ID = 'category';
     const GROUP_1_GROUP_INDEX = 0;
@@ -34,6 +43,7 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
     const TARGET_GROUP_ITEM_CELL_COL_INDEX = 2;
     const TARGET_GROUP_ITEM_CELL_ROW_INDEX = TARGET_GROUP_ITEM_ROW_INDEX + 1;
 
+    const agElementFinder = createAgElementFinder({ containerEl });
     const getOffscreenPos = () => getBottomMidPos(containerEl);
 
     return [
@@ -41,18 +51,36 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
             type: 'custom',
             action: () => {
                 // Move mouse to starting position
-                moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
+                moveTarget({
+                    target: mouse.getTarget(),
+                    coords: scalePoint(getOffscreenPos(), getContainerScale()),
+                    offset: addPoints(
+                        getOffset(containerEl),
+                        getScrollOffset(),
+                        scalePoint(
+                            {
+                                x: 0,
+                                y: -120,
+                            },
+                            getContainerScale()
+                        )
+                    ),
+                    scriptDebugger,
+                });
 
                 mouse.show();
-                clearAllRowHighlights();
             },
         },
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         ...createGroupColumnScriptActions({
-            containerEl,
+            agElementFinder,
             mouse,
             headerCellName: GROUP_1_HEADER_CELL_NAME,
             tweenGroup,
@@ -63,7 +91,13 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         { type: 'wait', duration: 500 },
         {
             type: 'moveTo',
-            toPos: () => getGroupCellTogglePos({ containerEl, colIndex: 0, rowIndex: TARGET_GROUP_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('groupCellToggle', {
+                        colIndex: 0,
+                        rowIndex: TARGET_GROUP_ROW_INDEX,
+                    })
+                    ?.getPos(),
         },
         { type: 'wait', duration: 500 },
         { type: 'click' },
@@ -86,7 +120,7 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         { type: 'wait', duration: 500 },
 
         ...createGroupColumnScriptActions({
-            containerEl,
+            agElementFinder,
             mouse,
             headerCellName: GROUP_2_HEADER_CELL_NAME,
             moveToDuration: 300,
@@ -103,7 +137,13 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         // Open target group
         {
             type: 'moveTo',
-            toPos: () => getGroupCellTogglePos({ containerEl, colIndex: 0, rowIndex: TARGET_GROUP_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('groupCellToggle', {
+                        colIndex: 0,
+                        rowIndex: TARGET_GROUP_ROW_INDEX,
+                    })
+                    ?.getPos(),
         },
         { type: 'wait', duration: 500 },
         { type: 'click' },
@@ -128,7 +168,13 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         // Open target group item
         {
             type: 'moveTo',
-            toPos: () => getGroupCellTogglePos({ containerEl, colIndex: 0, rowIndex: TARGET_GROUP_ITEM_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('groupCellToggle', {
+                        colIndex: 0,
+                        rowIndex: TARGET_GROUP_ITEM_ROW_INDEX,
+                    })
+                    ?.getPos(),
         },
         { type: 'wait', duration: 500 },
         {
@@ -158,51 +204,36 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'moveTo',
             toPos: () => {
-                return addPoints(
-                    getCellPos({
-                        containerEl,
+                return agElementFinder
+                    .get('cell', {
                         colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
                         rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                    }),
-                    {
-                        x: -40,
-                        y: 10,
-                    }
-                );
+                    })
+                    ?.getPos('bottomCenter');
             },
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    getCellPos({
-                        containerEl,
+                agElementFinder
+                    .get('cell', {
                         colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
                         rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                    }),
-                    {
-                        x: 0,
-                        y: 10,
-                    }
-                ),
+                    })
+                    ?.getPos('bottomRight'),
             duration: 200,
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    getCellPos({
-                        containerEl,
+                agElementFinder
+                    .get('cell', {
                         colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
                         rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                    }),
-                    {
-                        x: -40,
-                        y: 10,
-                    }
-                ),
+                    })
+                    ?.getPos('bottomCenter'),
             duration: 200,
         },
         { type: 'wait', duration: 300 },
@@ -210,7 +241,13 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         // Close target group item
         {
             type: 'moveTo',
-            toPos: () => getGroupCellTogglePos({ containerEl, colIndex: 0, rowIndex: TARGET_GROUP_ITEM_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('groupCellToggle', {
+                        colIndex: 0,
+                        rowIndex: TARGET_GROUP_ITEM_ROW_INDEX,
+                    })
+                    ?.getPos(),
         },
         { type: 'wait', duration: 500 },
         {
@@ -240,7 +277,13 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         // Close target group
         {
             type: 'moveTo',
-            toPos: () => getGroupCellTogglePos({ containerEl, colIndex: 0, rowIndex: TARGET_GROUP_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('groupCellToggle', {
+                        colIndex: 0,
+                        rowIndex: TARGET_GROUP_ROW_INDEX,
+                    })
+                    ?.getPos(),
         },
         { type: 'wait', duration: 500 },
         {
@@ -289,6 +332,10 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         {
             type: 'custom',

@@ -11,6 +11,8 @@ type CanvasContext = CanvasFillStrokeStyles &
     CanvasPathDrawingStyles &
     CanvasDrawPath;
 
+const LINEAR_GRADIENT_REGEXP = /^linear-gradient\((.*?)deg,\s*(.*?)\s*\)$/i;
+
 export abstract class Shape extends Node {
     /**
      * Creates a light-weight instance of the given shape (that serves as a template).
@@ -113,11 +115,11 @@ export abstract class Shape extends Node {
     protected updateGradient() {
         const { fill } = this;
 
-        const match = fill?.match(/^linear-gradient\((.*?)deg,\s*(.*?)\s*\)$/i);
-        if (match) {
-            const angle = parseFloat(match[1]);
+        let linearGradientMatch: RegExpMatchArray | null;
+        if (fill?.startsWith('linear-gradient') && (linearGradientMatch = LINEAR_GRADIENT_REGEXP.exec(fill))) {
+            const angle = parseFloat(linearGradientMatch[1]);
             const colors = [];
-            const colorsPart = match[2];
+            const colorsPart = linearGradientMatch[2];
             const colorRegex = /(#[0-9a-f]+)|(rgba?\(.+?\))|([a-z]+)/gi;
             let c: RegExpExecArray | null;
             while ((c = colorRegex.exec(colorsPart))) {
@@ -237,7 +239,7 @@ export abstract class Shape extends Node {
         // manually here.
         const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
         const fillShadow = this.fillShadow;
-        if (fillShadow && fillShadow.enabled) {
+        if (fillShadow?.enabled) {
             ctx.shadowColor = fillShadow.color;
             ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
             ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;

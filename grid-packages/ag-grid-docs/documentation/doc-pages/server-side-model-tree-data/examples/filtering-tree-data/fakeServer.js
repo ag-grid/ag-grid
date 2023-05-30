@@ -102,7 +102,7 @@ function FakeServer(allData) {
             case 'equals':
                 return key + " = '" + item.filter + "'";
             case 'notEqual':
-                return key + "' != '" + item.filter + "'";
+                return key + " != '" + item.filter + "'";
             case 'contains':
                 return key + " LIKE '%" + item.filter + "%'";
             case 'notContains':

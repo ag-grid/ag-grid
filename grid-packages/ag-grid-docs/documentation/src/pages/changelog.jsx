@@ -314,69 +314,66 @@ const Changelog = ({ location }) => {
     return (
         <>
             {!IS_SSR && (
-                <div className="ag-styles">
-                    <div className={classnames('page-margin', styles.container)}>
-                        <h1>AG Grid Changelog</h1>
+                <div className={classnames('page-margin', styles.container)}>
+                    <h1>AG Grid Changelog</h1>
 
-                        <section className={styles.header}>
-                            <Alert type="info">
-                                The AG Grid Changelog lists the feature requests implemented and defects resolved across
-                                AG Grid releases. If you can’t find the item you’re looking for, check the{' '}
-                                <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for items in our
-                                backlog.
-                            </Alert>
+                    <section className={styles.header}>
+                        <Alert type="idea">
+                            The AG Grid Changelog lists the feature requests implemented and defects resolved across AG
+                            Grid releases. If you can’t find the item you’re looking for, check the{' '}
+                            <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for items in our backlog.
+                        </Alert>
 
-                            <div className={styles.controls}>
-                                <input
-                                    type="text"
-                                    className={styles.searchBar}
-                                    placeholder={'Search changelog...'}
-                                    ref={searchBarEl}
-                                    onChange={onQuickFilterChange}
-                                ></input>
+                        <div className={styles.controls}>
+                            <input
+                                type="text"
+                                className={styles.searchBar}
+                                placeholder={'Search changelog...'}
+                                ref={searchBarEl}
+                                onChange={onQuickFilterChange}
+                            ></input>
 
-                                <div>
-                                    {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
+                            <div>
+                                {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
 
-                                    <label>
-                                        Version:{' '}
-                                        <VersionDropdownMenu
-                                            versions={versions}
-                                            onChange={switchDisplayedFixVersion}
-                                            fixVersion={fixVersion}
-                                        />
-                                    </label>
-                                </div>
+                                <label>
+                                    Version:{' '}
+                                    <VersionDropdownMenu
+                                        versions={versions}
+                                        onChange={switchDisplayedFixVersion}
+                                        fixVersion={fixVersion}
+                                    />
+                                </label>
                             </div>
+                        </div>
 
-                            <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
-                        </section>
+                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+                    </section>
 
-                        <Grid
-                            gridHeight={'66vh'}
-                            columnDefs={COLUMN_DEFS}
-                            rowData={rowData}
-                            suppressReactUi
-                            components={{
-                                myDetailCellRenderer: DetailCellRenderer,
-                                paddingCellRenderer: PaddingCellRenderer,
-                                chevronButtonCellRenderer: ChevronButtonCellRenderer,
-                                depOrBreakFilterComponent: DepOrBreakFilterComponent,
-                                issueTypeCellRenderer: IssueTypeCellRenderer,
-                            }}
-                            defaultColDef={defaultColDef}
-                            detailRowAutoHeight={true}
-                            enableCellTextSelection={true}
-                            detailCellRendererParams={detailCellRendererParams}
-                            detailCellRenderer={'myDetailCellRenderer'}
-                            isRowMaster={isRowMaster}
-                            masterDetail
-                            onGridReady={gridReady}
-                            onFirstDataRendered={() => {
-                                applyFixVersionFilter();
-                            }}
-                        ></Grid>
-                    </div>
+                    <Grid
+                        gridHeight={'66vh'}
+                        columnDefs={COLUMN_DEFS}
+                        rowData={rowData}
+                        suppressReactUi
+                        components={{
+                            myDetailCellRenderer: DetailCellRenderer,
+                            paddingCellRenderer: PaddingCellRenderer,
+                            chevronButtonCellRenderer: ChevronButtonCellRenderer,
+                            depOrBreakFilterComponent: DepOrBreakFilterComponent,
+                            issueTypeCellRenderer: IssueTypeCellRenderer,
+                        }}
+                        defaultColDef={defaultColDef}
+                        detailRowAutoHeight={true}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={'myDetailCellRenderer'}
+                        isRowMaster={isRowMaster}
+                        masterDetail
+                        onGridReady={gridReady}
+                        onFirstDataRendered={() => {
+                            applyFixVersionFilter();
+                        }}
+                    ></Grid>
                 </div>
             )}
         </>

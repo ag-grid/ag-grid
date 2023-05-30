@@ -31,22 +31,22 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| The property `suppressRowTransform=true` is used to stop the grid positioning rows using CSS
-| `transform` and instead the grid will use CSS `top`.
-| For an explanation of the difference between these two methods see the article
-| [JavaScript GPU Animation with Transform and Translate](https://medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6).
-| The reason row span will not work with CSS `transform` is that CSS `transform` creates a
-| [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
-| which constrains CSS `z-index` from placing cells on top of other cells in another row.
-| Having cells extend into other rows is necessary for row span which means it will not work
-| when using CSS `transform`. The downside to not using `transform` is performance; row animation
-| (after sort or filter) will be slower.
+<note>
+The property `suppressRowTransform=true` is used to stop the grid positioning rows using CSS
+`transform` and instead the grid will use CSS `top`.
+For an explanation of the difference between these two methods see the article
+[JavaScript GPU Animation with Transform and Translate](https://medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6).
+The reason row span will not work with CSS `transform` is that CSS `transform` creates a
+[stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+which constrains CSS `z-index` from placing cells on top of other cells in another row.
+Having cells extend into other rows is necessary for row span which means it will not work
+when using CSS `transform`. The downside to not using `transform` is performance; row animation
+(after sort or filter) will be slower.
+</note>
 
+## Row Spanning Example
 
-## Row Spanning Simple Example
-
-Below is a simple example using row spanning. The example doesn't make much sense,
+Below is an example using row spanning. The example doesn't make much sense,
 it just arbitrarily sets row span on some cells for demonstration purposes.
 
 - The **Athlete** column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows for 'Ryan Lochte'.

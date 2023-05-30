@@ -1,0 +1,8 @@
+.custom-crosshair-label {
+  background-color: rgba(0, 113, 235);
+  color: rgb(255, 255, 255);
+  border-radius: 15px;
+  font: 14px arial, sans-serif;
+  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 2px;
+  padding: 2px;
+}

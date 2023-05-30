@@ -139,11 +139,9 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
 
-        if (this.gridOptionsService.is('groupRowsSticky')) {
+        if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
-            if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
-                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else {
+            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
                     this.destroyRowCtrls.bind(this)
@@ -868,7 +866,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
@@ -972,8 +970,8 @@ export class RowRenderer extends BeanStub {
         this.updateAllRowCtrls();
     }
 
-    private dispatchDisplayedRowsChanged(): void {
-        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
+        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
 
@@ -1011,7 +1009,8 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
+        
+        return this.getAllRowCtrls().filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
@@ -1034,7 +1033,11 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
-        this.removeRowCtrls([rowNode.rowIndex!]);
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            this.removeRowCtrls([rowNode.rowIndex!]);
+        }
         this.redrawAfterScroll();
     }
 

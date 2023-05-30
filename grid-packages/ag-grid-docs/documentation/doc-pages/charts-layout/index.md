@@ -6,12 +6,13 @@ This section explains the components of a chart and how they are laid out inside
 
 ## How is the chart layout calculated?
 
-![Chart Layout](cartesian-chart-layout.png)
+<image-caption src="cartesian-chart-layout.png" alt="Chart Layout" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title, subtitle and footnote. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
 
 Components are laid out in the following order; earlier elements take up space that is then unavailable for the layout
 of later elements:
+
 - Chart padding
 - Title plus its configured spacing
 - Sub-title plus its configured spacing
@@ -77,6 +78,6 @@ When the chart size changes, the layout process is performed for the new availab
 Most components are typically a fixed size, so typically it is the series-area which shrinks or grows
 and most other components just move around or adjust alignment.
 
-By default, the chart will resize automatically to fill the container element. If either the `width` or `height` configs are set, auto-sizing will be disabled unless the `autoSize` config is explicitly set to `true`.
+By default `autoSize` is `true`, meaning the chart will resize automatically to fill the `container` element. If either the `width` or `height` option is set, then that dimension becomes frozen at the specified size. If `autoSize` is set to `false` then `width` and `height` will default to the initial `container` element size.
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.

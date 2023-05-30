@@ -25,6 +25,7 @@ const options: AgChartOptions = {
     },
   ],
   tooltip: {
+    showArrow: false,
     position: {
       type: "pointer",
       xOffset: 80,

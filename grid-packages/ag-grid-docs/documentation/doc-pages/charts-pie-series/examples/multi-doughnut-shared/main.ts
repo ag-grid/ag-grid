@@ -1,6 +1,6 @@
-import { AgChart, AgChartOptions } from "ag-charts-community"
+import { AgChart, AgPolarChartOptions } from "ag-charts-community"
 
-const options: AgChartOptions = {
+const options: AgPolarChartOptions = {
   container: document.getElementById("myChart"),
   data: [
     { os: "Android", "2020": 56.9, "2023": 63.9 },
@@ -24,6 +24,7 @@ const options: AgChartOptions = {
       angleKey: "2020",
       outerRadiusRatio: 0.6,
       innerRadiusRatio: 0.3,
+      showInLegend: false,
     },
   ],
 }

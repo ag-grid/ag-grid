@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import React from 'react';
 import styles from './about.module.scss';
 import SEO from './components/SEO';
@@ -10,7 +9,7 @@ const AboutPage = () => {
                 title="Our Mission, Our Principles and Our Team at AG Grid"
                 description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
             />
-            <div className={classnames(styles.aboutPage, 'ag-styles')}>
+            <div className={styles.aboutPage}>
                 <div className="page-margin">
                     <section>
                         <h1>About AG Grid</h1>
@@ -85,14 +84,14 @@ const AboutPage = () => {
 
                         <article className={styles.team}>
                             <div>
-                                <img src="../images/team/niall.jpg" alt="Niall Crosby, Founder / CEO / CTO" />
+                                <img src="../images/team/niall.jpg" alt="Niall Crosby, CEO / Founder" />
                                 <h3>Niall Crosby</h3>
-                                <p>CEO / CTO</p>
+                                <p>CEO / Founder</p>
                             </div>
                             <div>
                                 <img src="../images/team/rob.jpg" alt="Rob Clarke, VP Engineering" />
                                 <h3>Rob Clarke</h3>
-                                <p>VP Engineering</p>
+                                <p>CTO</p>
                             </div>
                             <div>
                                 <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
@@ -110,7 +109,7 @@ const AboutPage = () => {
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <img src="../images/team/andy.jpeg" alt="Andrew Glazier, Developer" />
+                                <img src="../images/team/andy.jpg" alt="Andrew Glazier, Developer" />
                                 <h3>Andrew Glazier</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
@@ -155,6 +154,11 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/david.jpg" alt="David Glickman, Technical Product Analyst" />
                                 <h3>David Glickman</h3>
+                                <p>Technical Product Analyst</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/zoheil.jpg" alt="Zoheil Khaleqi, Technical Product Analyst" />
+                                <h3>Zoheil Khaleqi</h3>
                                 <p>Technical Product Analyst</p>
                             </div>
                             <div>
@@ -252,6 +256,11 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
                                 <h3>Tobi Aguda</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/kylie.jpg" alt="Kylie Slevin, Customer Experience Manager" />
+                                <h3>Kylie Slevin</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>

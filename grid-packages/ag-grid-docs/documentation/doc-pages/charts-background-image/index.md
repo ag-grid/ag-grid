@@ -9,7 +9,7 @@ This section describes how to add a background image to a chart.
 
 The `url` is required for the background image.
 
-It is positioned in the center by default. The `left`, `top`, `right` and `bottom` properties specify the distance between the chart borders and the image. The `width` and `height` properties override the size of the image.
+It is positioned in the center by default. The `left`, `top`, `right` and `bottom` properties specify the position of the image and the distance to the chart border. The `width` and `height` properties override the size of the image.
 
 ```js
 background: {
@@ -23,9 +23,7 @@ background: {
 },
 ```
 
-[Custom Background Image Example](https://plnkr.co/edit/b24vwpgBhAqQO1kq?open=main.js)
-
-<!-- <chart-example title='Background Image' name='background-image' type='generated'></chart-example> -->
+<chart-example title='Background Image' name='background-image' type='generated' options='{ "enterprise": true }'></chart-example> 
 
 ### API Reference
 
@@ -55,12 +53,16 @@ interface AgChartBackgroundImage {
     /** Distance from the bottom border of the chart to the bottom border of the image. If neither top nor bottom specified, the image is centred vertically. */
     bottom?: PixelSize;
 
-    /** Width of the image. If both left and right specified, width is ignored. If width is not determined but height does,
-     * width computed to preserve the original width/height ratio. Otherwise the original width is used. */
+    /**
+     * Width of the image. If both left and width are specified, right is ignored. If only height is provided,
+     * width will be computed to preserve the original width/height ratio. If neither is provided, the original width is used.
+     */
     width?: PixelSize;
 
-    /** Height of the image. If both top and bottom specified, height is ignored. If height is not determined but width does,
-     * height computed to preserve the original width/height ratio. Otherwise the original height is used. */
+    /**
+     * Height of the image. If both top and height are specified, bottom is ignored. If only width is provided,
+     * height will be computed to preserve the original width/height ratio.  If neither is provided, the original height is used.
+     */
     height?: PixelSize;
 
     /** Opacity of the image. */

@@ -55,7 +55,6 @@ This example demonstrates:
   - Display of a per-sector callout label.
   - A fallback label for use in the legend if `legendItemKey` is not provided.
   - Tooltips on segment hover including the callout label and sector value.
-  - Some callout labels are not displayed, where the sector is smaller than `calloutLabel.minAngle` (defaults to `20`).
 - Use of `sectorLabelKey` and `sectorLabel`, enabling:
   - Display of a per-sector inside label.
   - Some sector labels are not displayed, where the sector is too small to fit the label text.
@@ -195,7 +194,7 @@ series: [
 
 In the example below, we match the series with a `legendItemKey` of `'os'` comparing the market share of each operating system in two different years.
 
-<chart-example title='Multi-Doughnut Chart with Shared Series' name='multi-doughnut-shared' type='generated'></chart-example>
+<chart-example title='Multi-Doughnut Chart with Shared Legend' name='multi-doughnut-shared' type='generated'></chart-example>
 
 ## API Reference
 

@@ -11,8 +11,6 @@ const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.EVENT_CALLBACKS;
 
-const VERIFY_MODE = process.argv.some(v => v === '--check');
-
 function buildGlob(basePath) {
     const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`] };
     return glob.sync(`${basePath}/**/*.ts`, opts);
@@ -233,8 +231,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
                 // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
-                extended = a.params[0];
-                const fullInterface = interfaces[extended];
+                extended = a.params[0].replace(/<.*>/, '');
                 a.params.slice(1).forEach(toRemove => {
                     toRemove.split("|").forEach(property => {
                         const typeName = property.replace(/'/g, "").trim();
@@ -452,25 +449,16 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
     return nodeMembers;
 }
 
-function writeFormattedFile(dir, filename, data) {
+function writeFile(dir, filename, data) {
     const fullPath = dir + filename;
 
-    const currentContent = fs.readFileSync(fullPath).toString('utf-8');
-    const config = prettierJs.resolveConfig.sync(fullPath, {});
-    const fileOptions = { ...config, filepath: fullPath };
-    const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
+    const alreadyExists = fs.existsSync(fullPath);
+    const currentContent = alreadyExists ? fs.readFileSync(fullPath).toString('utf-8') : '';
+    const newContent = JSON.stringify(data);
 
-    if (VERIFY_MODE) {
-        if (currentContent !== newContent) {
-            console.warn(`Needs to be updated: ${fullPath}`);
-            process.exit(1);
-        }
-    } else if (currentContent !== newContent) {
-        // Only write if content changed.
-        fs.writeFileSync(fullPath, JSON.stringify(data));
-        gulp.src(fullPath)
-            .pipe(prettier({}))
-            .pipe(gulp.dest(dir))
+    if (currentContent !== newContent) {
+        // Only write if content changed to avoid false-positive change detection.
+        fs.writeFileSync(fullPath, newContent);
     }
 }
 
@@ -552,20 +540,20 @@ function getChartInterfaceProps() {
 }
 
 const generateMetaFiles = () => {
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     // Charts.
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getChartInterfaces());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', getChartInterfaceProps());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getChartInterfaces());
+    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', getChartInterfaceProps());
     // Tests.
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));
+    writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
+    writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));
 };
 
 console.log(`--------------------------------------------------------------------------------`);

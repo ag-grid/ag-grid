@@ -90,43 +90,41 @@ export const StyleGuide = () => {
     }, []);
 
     return (
-        <div className="ag-styles">
-            <div className="style-guide page-margin">
-                <header>
-                    <h1>AG Style Guide</h1>
-                    <p>All elements and components used in the AG Style Guide.</p>
-                </header>
+        <div className="style-guide page-margin">
+            <header>
+                <h1>AG Style Guide</h1>
+                <p>All elements and components used in the AG Style Guide.</p>
+            </header>
 
-                <main>
-                    {bodySections.map(({ id, name, content }) => {
+            <main>
+                {bodySections.map(({ id, name, content }) => {
+                    return (
+                        <section key={id} id={id}>
+                            <h2>{name}</h2>
+                            {content}
+                        </section>
+                    );
+                })}
+            </main>
+
+            <aside>
+                <ul className="list-style-none">
+                    {SECTIONS.map(({ groupName, children }) => {
                         return (
-                            <section key={id} id={id}>
-                                <h2>{name}</h2>
-                                {content}
-                            </section>
+                            <React.Fragment key={groupName}>
+                                <li className="group-name">{groupName}</li>
+                                {children.map(({ id, name }) => {
+                                    return (
+                                        <li key={id}>
+                                            <a href={`#${id}`}>{name}</a>
+                                        </li>
+                                    );
+                                })}
+                            </React.Fragment>
                         );
                     })}
-                </main>
-
-                <aside>
-                    <ul className="list-style-none">
-                        {SECTIONS.map(({ groupName, children }) => {
-                            return (
-                                <React.Fragment key={groupName}>
-                                    <li className="group-name">{groupName}</li>
-                                    {children.map(({ id, name }) => {
-                                        return (
-                                            <li key={id}>
-                                                <a href={`#${id}`}>{name}</a>
-                                            </li>
-                                        );
-                                    })}
-                                </React.Fragment>
-                            );
-                        })}
-                    </ul>
-                </aside>
-            </div>
+                </ul>
+            </aside>
         </div>
     );
 };

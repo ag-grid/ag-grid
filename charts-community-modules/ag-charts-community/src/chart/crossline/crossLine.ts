@@ -339,14 +339,14 @@ export class CrossLine {
             return;
         }
 
-        const { autoRotation, labelRotation } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation } = calculateLabelRotation({
             rotation,
             parallel,
             regularFlipRotation,
             parallelFlipRotation,
         });
 
-        crossLineLabel.rotation = autoRotation + labelRotation;
+        crossLineLabel.rotation = defaultRotation + configuredRotation;
 
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';
@@ -383,7 +383,8 @@ export class CrossLine {
             end = start;
         }
 
-        [start, end] = [checkDatum(start, isContinuous), checkDatum(end, isContinuous)];
+        start = checkDatum(start, isContinuous) != null ? start : undefined;
+        end = checkDatum(end, isContinuous) != null ? end : undefined;
 
         if (isContinuous && start === end) {
             end = undefined;

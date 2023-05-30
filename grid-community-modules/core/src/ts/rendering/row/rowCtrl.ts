@@ -6,7 +6,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
-import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
+import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
@@ -38,7 +38,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[]): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -121,6 +121,7 @@ export class RowCtrl extends BeanStub {
     private updateColumnListsPending = false;
 
     private businessKeySanitised: string | null = null;
+    private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
     constructor(
         rowNode: RowNode,
@@ -150,9 +151,13 @@ export class RowCtrl extends BeanStub {
     }
 
     private initRowBusinessKey(): void {
-        const businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
-        if (typeof businessKeyForNodeFunc !== 'function') { return; }
-        const businessKey = businessKeyForNodeFunc(this.rowNode);
+        this.businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
+        this.updateRowBusinessKey();
+    }
+
+    private updateRowBusinessKey(): void {
+        if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
+        const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
     }
 
@@ -242,14 +247,8 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        const rowIdSanitised = escapeString(this.rowNode.id);
-
-        if (rowIdSanitised != null) {
-            comp.setRowId(rowIdSanitised);
-        }
-        if (this.businessKeySanitised != null) {
-            comp.setRowBusinessKey(this.businessKeySanitised);
-        }
+        this.setRowCompRowId(comp);
+        this.setRowCompRowBusinessKey(comp);
 
         if (this.isFullWidth() && !this.beans.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
@@ -297,6 +296,18 @@ export class RowCtrl extends BeanStub {
         this.executeProcessRowPostCreateFunc();
     }
 
+    private setRowCompRowBusinessKey(comp: IRowComp): void {
+        if (this.businessKeySanitised == null) { return; }
+            comp.setRowBusinessKey(this.businessKeySanitised);
+    }
+
+    private setRowCompRowId(comp: IRowComp) {
+        const rowId = escapeString(this.rowNode.id);
+        if (rowId == null) { return; }
+
+        comp.setRowId(rowId);
+    }
+
     private executeSlideAndFadeAnimations(gui: RowGui): void {
         const {containerType} = gui;
 
@@ -341,7 +352,7 @@ export class RowCtrl extends BeanStub {
         const params = this.createFullWidthParams(gui.element, pinned);
 
         if (this.rowType == RowType.FullWidthDetail) {
-            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
+            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.context.getGridId())) {
                 return;
             }
         }
@@ -427,7 +438,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -436,7 +447,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
 
@@ -444,7 +455,7 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl();
+                this.updateColumnListsImpl(true);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -491,7 +502,7 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(): void {
+    private updateColumnListsImpl(useFlushSync = false): void {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -512,7 +523,7 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
 
@@ -673,6 +684,13 @@ export class RowCtrl extends BeanStub {
             })
         );
 
+        // as data has changed update the dom row id attributes
+        this.allRowGuis.forEach(gui => {
+            this.setRowCompRowId(gui.rowComp);
+            this.updateRowBusinessKey();
+            this.setRowCompRowBusinessKey(gui.rowComp);
+        });
+
         // check for selected also, as this could be after lazy loading of the row data, in which case
         // the id might of just gotten set inside the row and the row selected state may of changed
         // as a result. this is what happens when selected rows are loaded in virtual pagination.
@@ -740,7 +758,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
 
     public getRowPosition(): RowPosition {
@@ -1550,6 +1568,17 @@ export class RowCtrl extends BeanStub {
     }
 
     private updateRowIndexes(gui?: RowGui): void {
+        /**
+         * When using the SSRM, applying a filter and then synchronously changing
+         * pinned columns, with row animations, the rows are waiting to be removed
+         * after the animation. Because a column is synchronously being made pinned,
+         * init is being called again causing updateRowIndexes to be called for a destroyed
+         * row, with null row index.
+         */
+        if (!this.rowNode.displayed) {
+            return;
+        }
+
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;

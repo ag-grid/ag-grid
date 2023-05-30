@@ -1,6 +1,5 @@
-[[only-angular]]
-|
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -12,7 +11,7 @@
 |
 |@Component({
 |    selector: 'my-editor',
-|    template: `<input (keydown)="onKeyDown($event)" ...rest of input/>`
+|    template: `&lt;input (keydown)="onKeyDown($event)" ...rest of input/>`
 |})
 |export class MyCellEditor implements ICellEditorAngularComp {
 |    /* Component Editor Lifecycle method */
@@ -40,5 +39,5 @@
 |   
 |    ..rest of the component
 |})
-|
-|```
+</snippet>
+</framework-specific-section>

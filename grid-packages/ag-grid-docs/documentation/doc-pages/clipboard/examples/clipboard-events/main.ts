@@ -1,4 +1,4 @@
-import { Grid, CellValueChangedEvent, GridOptions, PasteEndEvent, PasteStartEvent } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, CutEndEvent, CutStartEvent, GridOptions, PasteEndEvent, PasteStartEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -25,12 +25,22 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
 
   onCellValueChanged: onCellValueChanged,
+  onCutStart: onCutStart,
+  onCutEnd: onCutEnd,
   onPasteStart: onPasteStart,
   onPasteEnd: onPasteEnd,
 }
 
 function onCellValueChanged(params: CellValueChangedEvent) {
   console.log('Callback onCellValueChanged:', params)
+}
+
+function onCutStart(params: CutStartEvent) {
+  console.log('Callback onCutStart:', params)
+}
+
+function onCutEnd(params: CutEndEvent) {
+  console.log('Callback onCutEnd:', params)
 }
 
 function onPasteStart(params: PasteStartEvent) {

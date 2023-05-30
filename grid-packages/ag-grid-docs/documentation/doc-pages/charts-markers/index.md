@@ -1,5 +1,5 @@
 ---
-title: "Markers"
+title: "Series Markers"
 ---
 
 Data points in `line`, `area` and `scatter` series can be represented by markers.

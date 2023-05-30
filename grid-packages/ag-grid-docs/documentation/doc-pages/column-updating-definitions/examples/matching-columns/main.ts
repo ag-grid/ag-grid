@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ValueGetterParams, ColDef } from '@ag-grid-community/core'
 
 const athleteColumn = {
   headerName: 'Athlete',
@@ -7,7 +7,7 @@ const athleteColumn = {
   },
 }
 
-function getColDefsMedalsIncluded() {
+function getColDefsMedalsIncluded(): ColDef<IOlympicData>[] {
   return [
     athleteColumn,
     {
@@ -34,7 +34,7 @@ function getColDefsMedalsIncluded() {
   ]
 }
 
-function getColDefsMedalsExcluded() {
+function getColDefsMedalsExcluded(): ColDef<IOlympicData>[] {
   return [
     athleteColumn,
     {

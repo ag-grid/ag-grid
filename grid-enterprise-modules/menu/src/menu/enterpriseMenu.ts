@@ -95,7 +95,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 nudgeY: -23,
                 position: 'under',
                 keepWithinBounds: true,
-                shouldSetMaxHeight: true
             });
 
             if (defaultTab) {
@@ -320,7 +319,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule);
+            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
         }
 
         return true;

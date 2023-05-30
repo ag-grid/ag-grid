@@ -47,19 +47,13 @@ export interface AgEvent {
 export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent { }
 
 export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: string | undefined;
-}
-
-/**
- * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,
- * and the original ToolPanelVisibleChangedEvent will be dropped
- */
-export interface InternalToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
     /** Key of tool panel. */
     key: string;
     /** True if now visible; false if now hidden. */
     visible: boolean;
+    /** True if switching between tool panels. False if showing/hiding. */
+    switchingToolPanel: boolean;
 }
 
 export interface ToolPanelSizeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -249,6 +243,14 @@ export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEv
 
 export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext> { }
 
+export interface CutStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'api' | 'ui' | 'contextMenu';
+}
+
+export interface CutEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'api' | 'ui' | 'contextMenu';
+}
+
 export interface PasteStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: string;
 }
@@ -263,6 +265,14 @@ export interface FillStartEvent<TData = any, TContext = any> extends AgGridEvent
 export interface FillEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     initialRange: CellRange;
     finalRange: CellRange;
+}
+
+export interface RangeDeleteStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'deleteKeyPressed';
+}
+
+export interface RangeDeleteEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'deleteKeyPressed';
 }
 
 export interface UndoStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -540,18 +550,18 @@ export interface FullWidthCellKeyPressEvent<TData = any, TContext = any> extends
 /** CELL EVENTS */
 /**------------*/
 export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
-    column: Column;
-    colDef: ColDef<TData>;
+    column: Column<TValue>;
+    colDef: ColDef<TData, TValue>;
     /** The value for the cell if available otherwise undefined. */
-    value: TValue | undefined;
+    value: TValue | null | undefined;
 }
 
-/** Use for cell events that will always have a value and data property. */
+/** Use for cell events that will always have a data property. */
 interface CellWithDataEvent<TData = any, TValue = any> extends RowWithDataEvent<TData> {
-    column: Column;
-    colDef: ColDef<TData>;
+    column: Column<TValue>;
+    colDef: ColDef<TData, TValue>;
     /** The value for the cell */
-    value: TValue;
+    value: TValue | null | undefined;
 }
 
 export interface CellKeyDownEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
@@ -570,26 +580,26 @@ export interface CellMouseOutEvent<TData = any, TValue = any> extends CellEvent<
 
 export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> { }
+export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> {
     /** The old value before editing */
-    oldValue: any;
+    oldValue: TValue | null | undefined;
     /** The new value after editing */
-    newValue: any;
+    newValue: TValue | null | undefined;
     /** Property indicating if the value of the editor has changed */
     valueChanged: boolean;
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: any;
-    newValue: any;
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: any;
-    newValue: any;
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
     source: string | undefined;
 }
 
@@ -631,6 +641,6 @@ export interface RightPinnedWidthChangedEvent<TData = any, TContext = any> exten
 
 export interface RowContainerHeightChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 
-export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
+export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { afterScroll: boolean } // not documented
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented

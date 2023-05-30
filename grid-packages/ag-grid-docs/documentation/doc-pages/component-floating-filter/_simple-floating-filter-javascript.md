@@ -1,11 +1,13 @@
-[[only-javascript]]
+<framework-specific-section frameworks="javascript">
 |Below is an example of floating filter component:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |class NumberFloatingFilterComponent {
 |    init(params) {
 |        this.eGui = document.createElement('div');
-|        this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
+|        this.eGui.innerHTML = '&gt; &lt;input style="width: 30px" type="number" min="0" />';
 |        this.currentValue = null;
 |        this.eFilterInput = this.eGui.querySelector('input');
 |        this.eFilterInput.style.color = params.color;
@@ -43,4 +45,5 @@
 |        return this.eGui;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

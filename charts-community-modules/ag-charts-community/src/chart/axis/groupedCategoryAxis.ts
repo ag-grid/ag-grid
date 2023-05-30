@@ -55,7 +55,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
     set range(value: number[]) {
         this.requestedRange = value.slice();
-        this.updateRange();
     }
     get range(): number[] {
         return this.requestedRange.slice();
@@ -81,7 +80,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             layout.resize(
                 Math.abs(range[1] - range[0]),
                 layout.depth * lineHeight,
-                (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2,
+                (Math.min(range[0], range[1]) || 0) + (s.bandwidth ?? 0) / 2,
                 -layout.depth * lineHeight,
                 range[1] - range[0] < 0
             );
@@ -147,9 +146,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const domain = new Array<any>().concat(...domains);
 
-        const values = extent(domain) || domain;
+        const values = extent(domain) ?? domain;
 
         this.dataDomain = this.normaliseDataDomain(values);
+        this.scale.domain = this.dataDomain;
     }
 
     normaliseDataDomain(d: any[]): any[] {
@@ -183,6 +183,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      */
     update(primaryTickCount?: number): number | undefined {
         this.calculateDomain();
+        this.updateRange();
 
         const {
             scale,
@@ -192,16 +193,15 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             requestedRange,
         } = this;
 
-        scale.domain = this.dataDomain;
-
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
         const bandwidth = rangeLength / scale.domain.length || 0;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
+        const sideFlag = label.getSideFlag();
 
-        this.updatePosition();
+        this.updatePosition({ rotation, sideFlag });
 
         const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
@@ -217,10 +217,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
         const isLabelTree = tickTreeLayout ? tickTreeLayout.depth > 1 : false;
         const ticks = tickScale.ticks();
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        const sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -230,7 +226,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // and then rotated, zero rotation means 12 (not 3) o-clock.
         // -1 = flip
         //  1 = don't flip (default)
-        const { autoRotation, labelRotation, parallelFlipFlag } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation, parallelFlipFlag } = calculateLabelRotation({
             rotation: label.rotation,
             parallel,
             regularFlipRotation: normalizeAngle360(rotation - Math.PI / 2),
@@ -256,7 +252,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             node.translationY = datum.screenX;
             if (index === 0) {
                 // use the phantom root as the axis title
-                if (title && title.enabled && labels.length > 0) {
+                if (title?.enabled && labels.length > 0) {
                     node.visible = true;
                     node.text = title.text;
                     node.fontSize = title.fontSize;
@@ -291,7 +287,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             label.x = labelX;
             label.rotationCenterX = labelX;
             if (!datum.children.length) {
-                label.rotation = labelRotation;
+                label.rotation = configuredRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
 
@@ -307,7 +303,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 if (bbox && bbox.width > availableRange) {
                     label.visible = false;
                 } else if (isHorizontal) {
-                    label.rotation = autoRotation;
+                    label.rotation = defaultRotation;
                 } else {
                     label.rotation = -Math.PI / 2;
                 }

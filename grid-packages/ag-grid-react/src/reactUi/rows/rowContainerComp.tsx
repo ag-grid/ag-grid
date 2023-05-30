@@ -1,6 +1,6 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
 import React, { useMemo, useRef, useState, memo, useContext } from 'react';
-import { classesList } from '../utils';
+import { classesList, agFlushSync } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
@@ -40,20 +40,24 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered() {
+    function updateRowCtrlsOrdered(useFlushSync: boolean) {
 
-        setRowCtrlsOrdered(prev => {
-            const rowCtrls = rowCtrlsRef.current;
+        agFlushSync(useFlushSync, () => {
+            setRowCtrlsOrdered(prev => {
+                const rowCtrls = rowCtrlsRef.current;
 
-            if (domOrderRef.current) {
-                return rowCtrls;
-            }
-            // if dom order not important, we don't want to change the order
-            // of the elements in the dom, as this would break transition styles
-            const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
-            const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-            return [...oldRows, ...newRows];
-        });
+                if (domOrderRef.current) {
+                    return rowCtrls;
+                }
+                // if dom order not important, we don't want to change the order
+                // of the elements in the dom, as this would break transition styles
+                const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
+                const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
+                return [...oldRows, ...newRows];
+            });
+
+        })
+
 
     }
 
@@ -62,16 +66,17 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height: string) => eViewport.current!.style.height = height,
-            setRowCtrls: rowCtrls => {
+            setRowCtrls: (rowCtrls, useFlushSync) => {
                 if(rowCtrlsRef.current !== rowCtrls){
+                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: domOrder => {
                 if(domOrderRef.current != domOrder){
                     domOrderRef.current = domOrder;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(false);
                 }
             },
             setContainerWidth: width => eContainer.current!.style.width = width

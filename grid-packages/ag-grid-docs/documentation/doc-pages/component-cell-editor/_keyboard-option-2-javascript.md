@@ -1,6 +1,6 @@
-[[only-javascript]]
-|
-|```js
+<framework-specific-section frameworks="javascript">
+
+<snippet transform={false}>
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
@@ -13,4 +13,5 @@
 |    const gridShouldDoNothing = params.editing && (key === KEY_UP || key === KEY_DOWN);
 |    return gridShouldDoNothing;
 |}
-|```
+</snippet>
+</framework-specific-section>

@@ -1,7 +1,8 @@
+@use "sass:map";
 @use '../design-system' as *;
 
 .doc-page-wrapper {
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+    --docs-page-max-width: 68em;
 
     display: flex;
     justify-content: space-between;
@@ -12,6 +13,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
         padding-right: var(--horizontal-margin);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        --docs-page-max-width: 74em;
     }
 }
 
@@ -32,34 +37,18 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-7;
-        max-width: 60em;
+        max-width: var(--docs-page-max-width);
     }
 
-    h2:first-child,
-    h3:first-child,
-    h4:first-child {
-        margin-bottom: $size-half; // Required because of .ag-styles wrapper
-    }
+    &.noSideMenu {
+        @media screen and (min-width: $breakpoint-docs-nav-large) {
+            padding-right: $horizontal-margin;
+            max-width: none;
+        }
 
-    h2:first-child {
-        margin-top: $size-6;
-    }
-
-    h3:first-child,
-    h4:first-child {
-        margin-top: $size-4;
-    }
-
-    // Required because of .ag-styles wrapper
-    p,
-    ul,
-    ol {
-        margin-bottom: $size-2 !important;
-    }
-
-    // Required because of .ag-styles wrapper
-    li p:last-child {
-        margin-bottom: $size-1 !important;
+        @media screen and (min-width: 1600px) {
+            padding-right: calc(50vw - $max-page-width / 2);
+        }
     }
 
     h1,
@@ -69,7 +58,7 @@
     h5,
     h6 {
         &:hover :global(.docs-header-icon) {
-            opacity: 0.3333;
+            opacity: 0.5;
         }
     }
 
@@ -77,7 +66,7 @@
         position: relative;
         padding-left: 0;
         margin-left: $size-1;
-        font-size: inherit !important; // !important for .ag-styles specificity
+        font-size: inherit;
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
 
@@ -91,7 +80,7 @@
             height: 0.85em;
             top: -0.1em;
             visibility: visible;
-            fill: var(--sky-blue);
+            fill: var(--azure-blue);
         }
     }
 
@@ -102,35 +91,10 @@
         margin-left: 0.25rem;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 3rem;
-        table-layout: fixed;
-
-        th,
-        td {
-            border-bottom: 1px solid #dee2e6;
-            border-top: 1px solid #dee2e6;
-            padding: 0.5rem 1rem;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #f9fcff;
-        }
-
-        tr:nth-child(2n) {
-            td {
-                background-color: #f9fcff;
-            }
-        }
-    }
-
     a {
         &:hover {
             text-decoration: none;
-            color: $ag-orange;
+            color: var(--ag-grid-orange);
         }
     }
 
@@ -140,22 +104,12 @@
         }
     }
 
-    kbd {
-        background-color: #f7f7f7;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
-        color: #333;
-        display: inline-block;
-        font-family: Arial, Helvetica, sans-serif;
-        line-height: 1.4;
-        margin: 0 0.1em;
-        padding: 0.1em 0.6em;
-        text-shadow: 0 1px 0 #fff;
-    }
-
     ul li > p {
         margin-bottom: 0.25rem;
+    }
+
+    :global(.alert) {
+        margin-bottom: $size-2;
     }
 }
 
@@ -164,18 +118,18 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         padding-right: 166px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+        line-height: var(--line-height-ultra-tight);
     }
 
     > span {
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1;
     }
 }
 
@@ -218,9 +172,58 @@
 }
 
 // Hack to target "intro" section of docs page
-.pageSections > div > div:first-child {
+.pageSections > div > p:first-child {
     --font-size-extra-large: #{$font-size-extra-large};
 
     font-size: var(--font-size-extra-large);
     margin-bottom: $size-4;
+
+    code {
+        font-size: 0.8em;
+    }
+}
+
+// Reduce spacing between page intro & first heading
+.pageSections > div > div:nth-child(2) {
+    margin-bottom: -$size-2;
+}
+
+// Hack to target markdown images and not images within components
+.pageSections > div > div *:not([class]) img {
+    max-width: 100%;
+}
+
+.pageSections > div {
+    > h2 {
+        margin-top: $size-6;
+    }
+
+    > h3,
+    > h4 {
+        margin-top: $size-4;
+    }
+
+    p,
+    > ul,
+    > ol,
+    > table,
+    > pre {
+        font-size: var(--font-size-medium);
+    }
+
+    > h1,
+    > h2,
+    > h3,
+    > h4,
+    > h5,
+    > h6,
+    > p,
+    > ul,
+    > ol,
+    > table,
+    > hr {
+        @media screen and (min-width: $max-page-width) {
+            @include font-size-responsive();
+        }
+    }
 }

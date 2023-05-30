@@ -220,6 +220,9 @@ export class GridOptionsService {
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
+    public getGridId(): string {
+        return this.api.getGridId();
+    }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
@@ -376,20 +379,13 @@ export class GridOptionsService {
         return document;
     }
 
-    public getRootNode(): Document | ShadowRoot {
-        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
+    public getWindow() {
+        const eDocument = this.getDocument();
+        return eDocument.defaultView || window;
     }
 
-    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
-        const getRowId = this.getCallback('getRowId');
-        if (getRowId) {
-            return getRowId;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.gridOptions.getRowNodeId;
-        if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
-        }
+    public getRootNode(): Document | ShadowRoot {
+        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
@@ -403,20 +399,30 @@ export class GridOptionsService {
         return this.is('animateRows');
     }
 
+    public isGroupRowsSticky(): boolean {
+        if (
+            this.is('suppressGroupRowsSticky') ||
+            this.is('paginateChildRows') ||
+            this.is('groupHideOpenParents')
+        ) { return false; }
+
+        return true;
+    }
+
     public isTreeData(): boolean {
-        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
     }
     public isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
     }
     public isEnableRangeSelection(): boolean {
-        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule);
+        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
     }
 
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !autoGroupColumnDef?.comparator;
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.isTreeData();
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {

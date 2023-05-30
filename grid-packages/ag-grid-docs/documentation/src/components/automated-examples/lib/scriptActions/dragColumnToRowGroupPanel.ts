@@ -1,43 +1,52 @@
 import { Group } from '@tweenjs/tween.js';
-import { getHeaderCell, getHeaderCellPos } from '../agQuery';
-import { AG_DND_GHOST_SELECTOR } from '../constants';
+import { AgElementFinder } from '../agElements';
+import { AG_DND_GHOST_SELECTOR, DRAG_COLUMN_GHOST_CLASS } from '../constants';
 import { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
-import { createTween } from './createTween';
+import { createMoveMouse } from './createMoveMouse';
 import { moveTarget } from './move';
 
 interface DragColumnToRowGroupPanelParams {
-    containerEl?: HTMLElement;
     mouse: Mouse;
     headerCellName: string;
     duration: number;
     easing?: EasingFunction;
     tweenGroup: Group;
+    agElementFinder: AgElementFinder;
+    scriptDebugger?: ScriptDebugger;
 }
 
 export async function dragColumnToRowGroupPanel({
-    containerEl,
     mouse,
     headerCellName,
     duration,
     easing,
     tweenGroup,
+    agElementFinder,
+    scriptDebugger,
 }: DragColumnToRowGroupPanelParams) {
-    const fromPos = getHeaderCellPos({ containerEl, headerCellText: headerCellName });
+    const headerCell = agElementFinder.get('headerCell', {
+        text: headerCellName,
+    });
+    const fromPos = headerCell?.getPos();
 
     if (!fromPos) {
-        console.error('Header not found:', headerCellName);
+        scriptDebugger?.errorLog('Header not found:', headerCellName);
         return;
     }
+
+    const dropArea = agElementFinder.get('columnDropArea');
+    const dropAreaY = dropArea?.getPos()?.y;
     const rowGroupPanelOffset = {
         x: 20,
-        y: -50,
+        y: dropAreaY === undefined ? -50 : dropAreaY - fromPos.y,
     };
     const toPos = addPoints(fromPos, rowGroupPanelOffset)!;
 
-    const headerElem = getHeaderCell({ containerEl, headerCellText: headerCellName });
+    const headerElem = headerCell?.get();
     const mouseDownEvent: MouseEvent = new MouseEvent('mousedown', {
         clientX: fromPos.x,
         clientY: fromPos.y,
@@ -49,11 +58,14 @@ export async function dragColumnToRowGroupPanel({
 
     const offset = mouse.getOffset();
     const scrollOffset = getScrollOffset();
-    await createTween({
-        group: tweenGroup,
-        fromPos,
+
+    await createMoveMouse({
+        mouse,
         toPos,
-        onChange: ({ coords }) => {
+        duration,
+        tweenGroup,
+        easing,
+        tweenOnChange: ({ coords }) => {
             const currentScrollOffset = getScrollOffset();
             const currentScrollDiff = minusPoint(scrollOffset, currentScrollOffset);
             const mouseCoords = addPoints(coords, currentScrollDiff);
@@ -64,11 +76,15 @@ export async function dragColumnToRowGroupPanel({
             });
             document.dispatchEvent(mouseMoveEvent);
 
+            // Add extra class to drag and drop ghost, so it can be styled
+            document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
+                el.classList.add(DRAG_COLUMN_GHOST_CLASS);
+            });
+
             // Move mouse as well
             moveTarget({ target: mouse.getTarget(), coords, offset });
         },
-        duration,
-        easing,
+        scriptDebugger,
     });
 
     const draggedHeaderItem = document.querySelector(AG_DND_GHOST_SELECTOR);
@@ -79,7 +95,7 @@ export async function dragColumnToRowGroupPanel({
         });
         document.dispatchEvent(mouseUpEvent);
     } else {
-        console.error('No dragged header item:', headerCellName);
+        scriptDebugger?.errorLog('No dragged header item:', headerCellName);
     }
 
     // Clean up any dangling drag items

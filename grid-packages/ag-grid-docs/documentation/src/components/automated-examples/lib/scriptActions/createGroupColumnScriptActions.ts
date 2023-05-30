@@ -1,12 +1,12 @@
 import { Group } from '@tweenjs/tween.js';
 import { ApplyColumnStateParams } from 'ag-grid-community';
-import { getHeaderCellPos } from '../agQuery';
+import { AgElementFinder } from '../agElements';
 import { Mouse } from '../createMouse';
 import { ScriptAction } from '../scriptRunner';
 import { EasingFunction } from '../tween';
 
 interface CreateGroupColumnScriptActionsParams {
-    containerEl?: HTMLElement;
+    agElementFinder: AgElementFinder;
     mouse: Mouse;
     headerCellName: string;
     moveToDuration?: number;
@@ -20,7 +20,7 @@ interface CreateGroupColumnScriptActionsParams {
 }
 
 export function createGroupColumnScriptActions({
-    containerEl,
+    agElementFinder,
     mouse,
     headerCellName,
     moveToDuration,
@@ -32,7 +32,12 @@ export function createGroupColumnScriptActions({
     return [
         {
             type: 'moveTo',
-            toPos: () => getHeaderCellPos({ containerEl, headerCellText: headerCellName }),
+            toPos: () =>
+                agElementFinder
+                    .get('headerCell', {
+                        text: headerCellName,
+                    })
+                    ?.getPos(),
             duration: moveToDuration,
             easing,
         },

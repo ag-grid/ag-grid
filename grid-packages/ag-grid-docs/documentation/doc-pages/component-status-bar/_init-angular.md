@@ -1,5 +1,5 @@
-[[only-angular]]
-|```ts
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 |class ClickableStatusBarComponent() {
 |  agInit(params: IStatusPanelParams) {
 |    this.params = params;
@@ -13,5 +13,5 @@
 |  
 |   updateStatusBar(){ ... }
 |}
-|```
-
+</snippet>
+</framework-specific-section>

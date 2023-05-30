@@ -160,6 +160,10 @@ export interface ProcessCellForExportParams<TData = any, TContext = any> extends
     node?: IRowNode<TData> | null;
     column: Column;
     type: string; // clipboard, dragCopy (ctrl+D), export
+    /** Utility function to parse a value using the column's `colDef.valueParser` */
+    parseValue: (value: string) => any;
+    /** Utility function to format a value using the column's `colDef.valueFormatter` */
+    formatValue: (value: any) => string;
 }
 
 export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

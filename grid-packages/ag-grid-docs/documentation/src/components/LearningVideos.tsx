@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
 import classnames from 'classnames';
+import React, { useEffect, useState } from 'react';
+// @ts-ignore
+import { hostPrefix } from '../utils/consts';
 // @ts-ignore
 import styles from './LearningVideos.module.scss';
-// @ts-ignore
-import {hostPrefix} from '../utils/consts';
 
 type VideoData = {
     title: string;
@@ -11,63 +11,55 @@ type VideoData = {
     thumbnail: {
         image: string;
         altText: string;
-    }
+    };
     keyPoints?: string[];
     runningTime: string;
-}
+};
 
-const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
+const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => {
     return (
-        <div className={classnames(styles["learning-videos__video"])}>
-            <a href={url} target="_blank">
-                <div className={classnames(styles["learning-videos__video__anchor-body"])}>
-                    <div className={classnames(styles['learning-videos__video__anchor-body__index'])}>{index}</div>
-                    <div className={classnames(styles["learning-videos__video__anchor-body__body"])}>
-                        <div className={classnames(styles["learning-videos__video__anchor-body__body__video-content"])}>
-                            <img alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
-                            <h5 className={classnames(styles["learning-videos__video__anchor-body__body__video-content__running-time"])}>{runningTime}</h5>
-                        </div>
-                        <div className={classnames(styles["learning-videos__video__anchor-body__body__video-notes"])}>
-                            <h4>{title}</h4>
-                            <div>
-                                <ul>
-                                    {
-                                        keyPoints.map((keyPoint: string) => <li key={keyPoint}>{keyPoint}</li>)
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    )
-}
-const LearningVideos = ({framework}: {framework: string}) => {
-    const [videos, setVideos] = useState<{[framework: string]: VideoData[]}>({});
+        <a className={styles.video} href={url} target="_blank">
+            <img alt={thumbnail.altText} src={`${hostPrefix}/videos/${thumbnail.image}`} />
+
+            <div className={styles.body}>
+                <h2>
+                    {title} ({runningTime})
+                </h2>
+                <ul>
+                    {keyPoints?.map((keyPoint: string) => (
+                        <li key={keyPoint}>{keyPoint}</li>
+                    ))}
+                </ul>
+            </div>
+        </a>
+    );
+};
+const LearningVideos = ({ framework }: { framework: string }) => {
+    const [videos, setVideos] = useState<{ [framework: string]: VideoData[] }>({});
     useEffect(() => {
         const controller = new AbortController();
-        const {signal} = controller;
+        const { signal } = controller;
 
-        fetch(`${hostPrefix}/videos/videos.json`, {signal})
-            .then(response => response.json())
-            .then(resultData => setVideos(resultData))
-            .catch(() => {
-            })
+        fetch(`${hostPrefix}/videos/videos.json`, { signal })
+            .then((response) => response.json())
+            .then((resultData) => setVideos(resultData))
+            .catch(() => {});
         return () => controller.abort();
-    }, [])
+    }, []);
 
     const frameworkVideos = videos && videos[framework] && videos[framework].length > 0 ? videos[framework] : [];
 
     return (
-        <div className={classnames(styles["learning-videos"])}>
-            {frameworkVideos.map((video: VideoData, index: number) => {
-                return (<Video {...video} index={index + 1} key={video.url}/>)
+        <ol className={classnames('list-style-none', styles.learningVideos)}>
+            {frameworkVideos.map((video: VideoData) => {
+                return (
+                    <li key={video.url}>
+                        <Video {...video} />
+                    </li>
+                );
             })}
-        </div>
-    )
+        </ol>
+    );
 };
 
 export default LearningVideos;
-
-

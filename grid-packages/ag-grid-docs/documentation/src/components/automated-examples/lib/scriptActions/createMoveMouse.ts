@@ -1,11 +1,9 @@
 import { Group, Tween } from '@tweenjs/tween.js';
-import { AG_ROW_HOVER_CLASSNAME, AG_ROW_SELECTOR } from '../constants';
 import { Mouse } from '../createMouse';
 import { getOffset } from '../dom';
 import { Point } from '../geometry';
 import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction, getTweenDuration } from '../tween';
-import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { moveMouse } from './move';
 
 interface CreateMoveMouseParams {
@@ -27,7 +25,6 @@ interface CreateMoveMouseParams {
 
 function getTargetPos(target: HTMLElement): Point | undefined {
     if (!target) {
-        console.error('No target');
         return;
     }
 
@@ -62,7 +59,7 @@ export const createMoveMouse = ({
     const coords = { ...fromPos } as Point;
 
     if (!fromPos) {
-        console.error(`No 'fromPos'`, {
+        scriptDebugger?.errorLog(`No 'fromPos'`, {
             startingFromPos,
             target: mouse.getTarget(),
             toPos,
@@ -86,16 +83,6 @@ export const createMoveMouse = ({
             .to(toPos, tweenDuration)
             .onUpdate((object: Point, elapsed) => {
                 moveMouse({ mouse, coords: object, offset, scriptDebugger });
-
-                const hoverOverEl = document.elementFromPoint(object.x, object.y);
-                if (hoverOverEl) {
-                    clearAllRowHighlights();
-
-                    const row = hoverOverEl.closest(AG_ROW_SELECTOR);
-                    if (row) {
-                        row.classList.add(AG_ROW_HOVER_CLASSNAME);
-                    }
-                }
                 tweenOnChange && tweenOnChange({ coords: object, elapsed });
             })
             .onComplete(() => {

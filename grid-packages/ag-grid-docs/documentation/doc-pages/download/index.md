@@ -7,9 +7,10 @@ If your project does not use package manager and you don't want to refer AG Grid
 you can download the AG Grid's source files and keep them in your project structure.
 
 
-[[note]]
-| **Disclaimer:** This makes upgrading more complex and prone to errors. We recommend using AG Grid
-| from an NPM package or from CDN.
+<note>
+**Disclaimer:** This makes upgrading more complex and prone to errors. We recommend using AG Grid
+from an NPM package or from CDN.
+</note>
 
 ## Download AG Grid bundle
 

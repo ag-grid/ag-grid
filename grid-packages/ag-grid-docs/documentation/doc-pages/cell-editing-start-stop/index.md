@@ -52,22 +52,22 @@ If the grid is editing, `getEditingCells()` returns back details of the editing 
 Below is a code example of using the editing API methods.
 
 <snippet>
-|// start editing country cell on first row
-|gridOptions.api.startEditingCell({
-|    rowIndex: 0,
-|    colKey: 'country'
-|});
-|
-|// stop editing
-|gridOptions.api.stopEditing();
-|
-|// print details of editing cell
-|const cellDefs = gridOptions.api.getEditingCells();
-|cellDefs.forEach(cellDef => {
-|    console.log(cellDef.rowIndex);
-|    console.log(cellDef.column.getId());
-|    console.log(cellDef.floating);
-|});
+| // start editing country cell on first row
+| gridOptions.api.startEditingCell({
+|     rowIndex: 0,
+|     colKey: 'country'
+| });
+| 
+| // stop editing
+| gridOptions.api.stopEditing();
+| 
+| // print details of editing cell
+| const cellDefs = gridOptions.api.getEditingCells();
+| cellDefs.forEach(cellDef => {
+|     console.log(cellDef.rowIndex);
+|     console.log(cellDef.column.getId());
+|     console.log(cellDef.floating);
+| });
 </snippet>
 
 The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:
@@ -96,8 +96,8 @@ By default pressing <kbd>Enter</kbd> will start editing on a cell, or stop editi
 
 To allow consistency with Excel the grid has the following properties:
 
-- `enterMovesDown`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
-- `enterMovesDownAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+- `enterNavigatesVertically`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
+- `enterNavigatesVerticallyAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
 The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pressed.
 
@@ -138,5 +138,6 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 
 <grid-example title='Stop Editing When Cells Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
-[[note]]
-| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](/component-cell-editor/) for more information.
+<note>
+Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../component-cell-editor/) for more information.
+</note>

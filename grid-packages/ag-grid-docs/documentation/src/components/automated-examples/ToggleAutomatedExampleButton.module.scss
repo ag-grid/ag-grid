@@ -6,31 +6,24 @@
 }
 
 .button {
-    $replay-small-width: 188px;
-    $control-small-width: 215px;
-    $replay-large-width: 224px;
-    $control-large-width: 254px;
+    $replay-width: 224px;
+    $control-width: 254px;
 
     position: relative;
-    width: $replay-small-width;
-    padding: 0.25em 0.5em 0.4em 0.5em !important; // !important for .ag-styles specificity;
+    width: $replay-width;
+    padding: 0.25em 0.5em 0.4em 0.5em !important;
     text-align: left;
     transition: background-color $default-transition-timing, border $default-transition-timing,
-        box-shadow $default-transition-timing, width $default-transition-timing !important; // !important for .ag-styles specificity
+        box-shadow $default-transition-timing, width $default-transition-timing !important;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        display: none !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
-        width: $replay-large-width;
+        display: none;
     }
 
     :global(.icon) {
-        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+        --icon-size: 1.5em;
 
-        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+        margin: -1em 0 -1em 0.25em;
     }
 
     span {
@@ -38,11 +31,7 @@
     }
 
     &.isActive {
-        width: $control-small-width;
-
-        @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-            width: $control-large-width;
-        }
+        width: $control-width;
     }
 }
 

@@ -16,6 +16,7 @@ import {
     repeat,
     deproxy,
     prepareTestOptions,
+    spyOnAnimationManager,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -132,6 +133,32 @@ describe('PolarSeries', () => {
         }
     });
 
+    describe('initial animation', () => {
+        const compare = async () => {
+            await waitForChartStability(chart);
+
+            const imageData = extractImageData(ctx);
+            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+        };
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for PIE_SERIES should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgPolarChartOptions = examples.PIE_SERIES;
+                prepareTestOptions(options);
+
+                chart = deproxy(AgChart.create(options));
+                await waitForChartStability(chart);
+                await compare();
+            });
+        }
+    });
+
     describe('no series cases', () => {
         beforeEach(() => {
             // Increase timeout for legend toggle case.
@@ -153,7 +180,7 @@ describe('PolarSeries', () => {
             const reference = await snapshot();
 
             options.data?.forEach((_, idx) => {
-                chart.series[0].toggleSeriesItem(idx, false);
+                (chart.series[0] as any).toggleSeriesItem(idx, false);
             });
             chart.update(ChartUpdateType.FULL);
 
@@ -161,7 +188,7 @@ describe('PolarSeries', () => {
             (expect(afterUpdate) as any).not.toMatchImage(reference);
 
             options.data?.forEach((_, idx) => {
-                chart.series[0].toggleSeriesItem(idx, true);
+                (chart.series[0] as any).toggleSeriesItem(idx, true);
             });
             chart.update(ChartUpdateType.FULL);
 

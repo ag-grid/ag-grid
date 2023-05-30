@@ -27,6 +27,7 @@ import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
+import { throttle } from "../../utils/function";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -150,15 +151,21 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
+    private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {
+        return {
+            cellCtrl: getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+        }
+    }
+
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, keyboardEvent.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowComp = getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, keyboardEvent.target, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(keyboardEvent.target);
 
         if (keyboardEvent.defaultPrevented) { return; }
-        if (cellComp) {
-            this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
-        } else if (rowComp && rowComp.isFullWidth()) {
-            this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
+        if (cellCtrl) {
+            this.processCellKeyboardEvent(cellCtrl, eventName, keyboardEvent);
+        } else if (rowCtrl && rowCtrl.isFullWidth()) {
+            this.processFullWidthRowKeyboardEvent(rowCtrl, eventName, keyboardEvent);
         }
     }
 
@@ -256,15 +263,14 @@ export class RowContainerEventsFeature extends BeanStub {
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
         if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
-        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
-        if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
-        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
+        if (keyCode === KeyCode.V) { return this.onCtrlAndV(keyboardEvent); }
+        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
         if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
+        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-
         const { pinnedRowModel, paginationProxy, rangeService } = this;
 
         if (rangeService && paginationProxy.isRowsToRender()) {
@@ -303,28 +309,41 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndC(event: KeyboardEvent): void {
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
 
-        this.clipboardService.copyToClipboard();
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
+
         event.preventDefault();
+        this.clipboardService.copyToClipboard();
     }
 
     private onCtrlAndX(event: KeyboardEvent): void {
         if (
             !this.clipboardService ||
             this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')) { return; }
+            this.gridOptionsService.is('suppressCutToClipboard')
+        ) { return; }
 
-        this.clipboardService.cutToClipboard();
-        event.preventDefault();
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
+
+            event.preventDefault();
+            this.clipboardService.cutToClipboard(undefined, 'ui');
     }
 
-    private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+
+    private onCtrlAndV(event: KeyboardEvent): void {
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
+        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();

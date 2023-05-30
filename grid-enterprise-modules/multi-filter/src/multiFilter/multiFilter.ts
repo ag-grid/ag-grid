@@ -150,7 +150,6 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             cssClasses: ['ag-multi-filter-menu-item'],
             isCompact: true,
             isAnotherSubMenuOpen: () => false,
-            shouldSetMaxHeight: true,
         }));
 
         menuItem.setParentComponent(this);
@@ -187,9 +186,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            const params: IAfterGuiAttachedParams = { container: this.lastOpenedInContainer!, suppressFocus: true };
-
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached!(params));
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached!({
+                container: this.lastOpenedInContainer!,
+                suppressFocus: true
+            }));
         }
 
         return group;

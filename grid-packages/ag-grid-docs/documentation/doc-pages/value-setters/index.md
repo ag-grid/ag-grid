@@ -15,23 +15,23 @@ This page discusses alternatives to this approach.
 A Value Setter is the inverse of a [Value Getter](/value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        // Option 1: using field for getting and setting the value
-|        { field: 'name' },
-|
-|        // Options 2: using valueGetter and valueSetter - value getter used to get data
-|        {
-|            valueGetter: params => {
-|                return params.data.name;
-|            },
-|            valueSetter: params => {
-|                params.data.name = params.newValue;
-|                return true;
-|            }
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         // Option 1: using field for getting and setting the value
+|         { field: 'name' },
+| 
+|         // Options 2: using valueGetter and valueSetter - value getter used to get data
+|         {
+|             valueGetter: params => {
+|                 return params.data.name;
+|             },
+|             valueSetter: params => {
+|                 params.data.name = params.newValue;
+|                 return true;
+|             }
+|         }
+|     ]
+| }
 </snippet>
 
 A value setter should return `true` if the value was updated successfully and `false` if the value was not updated (including if the value was not changed). When you return `true`, the grid knows it must refresh the cell.
@@ -60,8 +60,8 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 
 <api-documentation source='grid-events/events.json' section='editing' names='["cellEditRequest"]'></api-documentation>
 
-[[only-javascript]]
-|```ts
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
 |const gridOptions = {
 |    readOnlyEdit: true,
 |    onCellEditRequest: event => {
@@ -69,48 +69,50 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 |        // the application should update the data somehow
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>
 
-[[only-angular]]
-|```ts
-|<ag-grid-angular
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
+|&lt;ag-grid-angular
 |    [readOnlyEdit]="true"
 |    (cellEditRequest)="onCellEditRequest($event)"
 |    /* other grid options ... */>
-|</ag-grid-angular>
+|&lt;/ag-grid-angular>
 |
 |this.onCellEditRequest = event => {
 |    console.log('Cell Editing updated a cell, but the grid did nothing!');
 |    // the application should update the data somehow
 |};
-|```
+</snippet>
+</framework-specific-section>
 
-
-[[only-react]]
-|```jsx
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |const readOnlyEdit = true;
 |const onCellEditRequest = event => {
 |    console.log('Cell Editing updated a cell, but the grid did nothing!');
 |    // the application should update the data somehow
 |};
 |
-|<AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}></AgGridReact>
-|```
+|&lt;AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}>&lt;/AgGridReact>
+</snippet>
+</framework-specific-section>
 
-
-[[only-vue]]
-|```ts
-|<ag-grid-vue
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
+|&lt;ag-grid-vue
 |    :readOnlyEdit="true"
 |    @cell-edit-request="onCellEditRequest"
 |    /* other grid options ... */>
-|</ag-grid-vue>
+|&lt;/ag-grid-vue>
 |
 |this.onCellEditRequest = event => {
 |    console.log('Cell Editing updated a cell, but the grid did nothing!');
 |    // the application should update the data somehow
 |};
-|```
+</snippet>
+</framework-specific-section>
 
 The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 

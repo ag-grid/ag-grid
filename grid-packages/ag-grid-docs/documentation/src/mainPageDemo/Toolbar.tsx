@@ -32,7 +32,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
     }
 
     return (
-        <div className={classnames('ag-styles', styles.toolbar)}>
+        <div className={styles.toolbar}>
             <div className={classnames('page-margin', styles.controlsContainer)}>
                 <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>
@@ -72,7 +72,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
                     <a
                         className={styles.videoTour}
-                        href="https://youtu.be/29ja0liMuv4"
+                        href="https://youtu.be/bcMvTUVbMvI"
                         target="_blank"
                         rel="noreferrer"
                     >

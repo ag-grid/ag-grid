@@ -1,80 +1,72 @@
-.icons-panel {
-    &__container {
-        composes: nav nav-tabs bg-primary pl-2 pt-2 from global;
-    }
+@use '../design-system' as *;
 
-    &__item {
-        composes: nav-item mr-2 from global;
-    }
+.iconList {
+    display: flex;
+    flex-wrap: wrap;
+    height: 34rem;
+    overflow-y: scroll;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    box-shadow: inset 0 -1px 0 0 var(--border-color);
+    container-type: size;
+}
 
-    &__nav-link {
-        composes: nav-link from global;
+.iconItem {
+    $container-small: 640px;
+    $container-large: 820px;
 
-        background-color: transparent;
-        color: $light;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $size-half;
+    width: 50%;
+    padding: $size-2 $size-1;
+    border-bottom: 1px solid var(--border-color);
 
-        &:focus {
-            outline: none;
-        }
-
-        &--active {
-            composes: active from global;
-
-            background-color: $light;
-            color: black;
-        }
-
-        &:hover {
-            color: $light;
-        }
-    }
-
-    &__wrapper {
-        composes: tab-content border border-top-0 from global;
-
-        height: 34rem;
-        overflow: hidden;
-    }
-
-    &__body {
-        composes: tab-pane show active container px-0 from global;
-
-        position: relative;
-        height: 34rem;
-        overflow-y: scroll;
-    }
-
-    &__icon-list {
-        composes: row mx-0 w-100 flex-fill from global;
-    }
-
-    &__icon-tile {
-        composes: col col-3 p-0 d-flex flex-column align-items-center justify-content-center from global;
-
-        height: 5rem;
-        border: 1px solid transparent;
-        border-right-color: lightgrey;
-        border-bottom-color: lightgray;
-        font-size: 0.8rem;
-
-        img {
-            height: 32px;
-        }
-
-        &__name {
-            composes: m-0 from global;
+    @container (max-width: #{$container-small}) {
+        &:not(:nth-child(2n)) {
+            border-right: 1px solid var(--border-color);
         }
     }
 
-    &__download {
-        composes: bg-primary p-2 from global;
+    @container (min-width: #{$container-small}) and (max-width: #{$container-large}) {
+        width: 33.3333%;
 
-        a {
-            color: $light;
-
-            &:hover {
-                text-decoration: none;
-            }
+        &:not(:nth-child(3n)) {
+            border-right: 1px solid var(--border-color);
         }
+    }
+
+    @container (min-width: #{$container-large}) {
+        width: 25%;
+
+        &:not(:nth-child(4n)) {
+            border-right: 1px solid var(--border-color);
+        }
+    }
+
+    img {
+        display: block;
+        height: 32px;
+    }
+
+    p.iconName {
+        margin-bottom: 0;
+        text-align: center;
+    }
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: $size-2;
+}
+
+.downloadButton {
+    padding-right: 0.5em;
+
+    svg {
+        --icon-size: 1.5em !important;
     }
 }

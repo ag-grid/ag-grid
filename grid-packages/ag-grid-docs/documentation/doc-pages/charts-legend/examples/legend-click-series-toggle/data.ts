@@ -390,6 +390,7 @@ export function getData() {
       "Plant biomass percent": 3,
       "Animal biomass percent": 4,
       "Landfill gas percent": 37,
+      "Sewage gas percent": 4,
     },
     {
       year: new Date(2007, 0, 1),

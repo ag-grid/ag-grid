@@ -162,6 +162,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
+            'ag-charts-enterprise': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
             /* END OF MODULES - DO NOT DELETE */
         },
         meta: {
@@ -176,3 +180,7 @@
         }
     });
 })(this);
+
+window.addEventListener('error', e => {
+    console.error('ERROR', e.message, e.filename)
+});

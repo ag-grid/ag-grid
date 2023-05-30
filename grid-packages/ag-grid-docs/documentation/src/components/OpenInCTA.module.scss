@@ -1,0 +1,19 @@
+@use '../design-system' as *;
+
+.cta {
+    --text-color: var(--link-color);
+
+    transition: color $default-transition-timing;
+
+    &:hover {
+        --text-color: var(--link-hover-color);
+    }
+
+    svg {
+        --icon-size: 1.25em;
+
+        position: relative;
+        bottom: 0.125em;
+        transition: fill $default-transition-timing;
+    }
+}

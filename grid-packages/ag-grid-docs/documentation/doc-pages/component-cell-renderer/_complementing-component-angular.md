@@ -1,10 +1,9 @@
-[[only-angular]]
-|
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// define cellRenderer to be reused
 |@Component({
 |    selector: 'colour-cell',
-|    template: `<span [style.colour]="params.color">{{params.value}}</span>`
+|    template: `&lt;span [style.colour]="params.color">{{params.value}}&lt;/span>`
 |})
 |class ColourCellRenderer implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;
@@ -24,11 +23,11 @@
 |@Component({
 |    selector: 'my-app',
 |    template: `
-|        <ag-grid-angular
+|        &lt;ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
 |                ...other properties>        
-|        </ag-grid-angular>`
+|        &lt;/ag-grid-angular>`
 |})
 |export class AppComponent {
 |    private columnDefs = [
@@ -53,4 +52,5 @@
 |   ..other methods
 |}
 |
-|```
+</snippet>
+</framework-specific-section>

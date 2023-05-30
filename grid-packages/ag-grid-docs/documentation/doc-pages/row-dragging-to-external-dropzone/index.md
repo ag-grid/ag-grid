@@ -10,14 +10,14 @@ to create a seamless data drag and drop experience.
 <api-documentation source='grid-api/api.json' section='rowDrag' names='["addRowDropZone", "removeRowDropZone"]'></api-documentation>
 
 
-[[note]]
-| If you read the [Managed Dragging](/row-dragging/#managed-dragging) section of the Row Dragging
-| documentation you probably noticed that when you `sort`, `filter` and
-| `rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this
-| rule is when you register external drop zones using `addRowDropZone`. In this case, you
-| will be able to drag from one container to another, but will not be able to drag the rows within the
-| grid.
-
+<note>
+If you read the [Managed Dragging](../row-dragging/#managed-dragging) section of the Row Dragging
+documentation you probably noticed that when you `sort`, `filter` and
+`rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this
+rule is when you register external drop zones using `addRowDropZone`. In this case, you
+will be able to drag from one container to another, but will not be able to drag the rows within the
+grid.
+</note>
 
 ## Adding and Removing Row Drop Targets
 

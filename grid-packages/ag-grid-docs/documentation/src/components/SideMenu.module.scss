@@ -4,10 +4,12 @@
     $top-bar-height: 58px;
 
     --right-padding: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
-    --fw-selector-width: 412px;
+    --side-nav-max-width: calc(
+        var(--max-page-width) + var(--horizontal-margin) + #{$size-7} - var(--docs-page-max-width)
+    );
 
     display: none;
-    width: clamp(220px, 22vw, var(--fw-selector-width));
+    width: clamp(220px, 22vw, var(--side-nav-max-width));
     padding-top: $size-4;
     padding-right: $size-4;
     padding-bottom: $size-7;
@@ -34,13 +36,14 @@
             padding-bottom: $size-7;
             position: sticky;
             top: $top-bar-height;
-            height: calc(100vh - #{$top-bar-height});
+            max-height: calc(100vh - #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;
 
             @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+                width: calc(var(--side-nav-max-width) + var(--right-padding));
+                margin-left: $size-2;
                 padding-right: var(--right-padding);
-                width: calc(var(--fw-selector-width) + var(--right-padding));
             }
         }
     }
@@ -57,21 +60,25 @@
 
     position: relative;
     padding-left: $size-2;
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 }
 
 .sideNav a {
     display: inline-block;
     padding: 0;
     color: var(--secondary-text-color);
+    opacity: 0.75;
     transition: opacity $default-transition-timing, color $default-transition-timing;
 
     &:global(.active) {
         color: var(--text-color);
+        opacity: 1;
+        cursor: default;
     }
 
-    &:hover {
+    &:not(:global(.active)):hover {
         color: var(--link-color);
+        opacity: 1;
     }
 
     &::before {
@@ -86,45 +93,44 @@
         transition: background-color 0.33s ease-in-out, opacity 0.33s ease-in-out;
     }
 
-    &:hover::before {
+    &:not(:global(.active)):hover::before {
         background-color: var(--link-color);
-        opacity: 0.33;
+        opacity: 0.5;
     }
 
     &:global(.active)::before {
-        opacity: 0.66;
+        opacity: 1;
     }
 }
 
-.sideNav .level-1 {
+.sideNav .level1 {
     font-size: var(--font-size-large);
-    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
+    margin-bottom: var(--item-gap) !important;
 }
 
-.sideNav .level-2 {
-    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
+.sideNav .level2 {
+    margin-bottom: var(--item-gap) !important;
 }
 
-.sideNav .level-3 {
-    margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
+.sideNav .level3 {
+    margin-bottom: calc(var(--item-gap) / 2) !important;
     padding-left: $size-4;
-    opacity: 0.8;
 }
 
-.sideNav .level-1 + .level-3,
-.sideNav .level-2 + .level-3 {
-    margin-top: calc(var(--item-gap) * -0.8);
+.sideNav .level1 + .level3,
+.sideNav .level2 + .level3 {
+    margin-top: calc(var(--item-gap) * -0.6);
 }
 
-.sideNav .level-3 + .level-2 {
+.sideNav .level3 + .level2 {
     margin-top: var(--item-gap);
 }
 
-.sideNav .level-4,
-.sideNav .level-5,
-.sideNav .level-6 {
+.sideNav .level4,
+.sideNav .level5,
+.sideNav .level6 {
     font-size: var(--font-size-extra-small);
-    margin-bottom: calc(var(--item-gap) / 4);
+    margin-bottom: calc(var(--item-gap) / 2);
     padding-left: $size-4;
     opacity: 0.8;
 }

@@ -7,13 +7,10 @@ on the opposite side of the chart.
 ## Configuring Secondary Axes
 
 For each secondary axis an axis configuration is required to associate the axis with the appropriate series using 
-the `keys` axis property. A sample configuration is shown below: 
+the `keys` axis property. A sample configuration is shown below:
 
-To associate a secondary axis with a given series, an extra axis configuration required where the `keys` axis property 
-associates the appropriate series to the axis, as demonstrated in the sample configuration provided below.
-
-"An extra axis configuration is needed to associate a secondary axis with a given series, where the `keys` axis property 
-associates the appropriate series to the axis. A sample configuration is shown below:"
+An extra axis configuration is needed to associate a secondary axis with a given series, where the `keys` axis property 
+links the appropriate series to the axis. A sample configuration is shown below:
 
 ```js
 axes: [
@@ -41,7 +38,7 @@ In the snippet above, a secondary y-axis is positioned to the `right` of the cha
 
 The following example demonstrates a secondary y-axis. Note the following:
 
-- The axis `keys` property on the primary axis (left) matches the `yKeys` of the `column` series
-- The axis `keys` property on the secondary axis (right) matches the `yKey` of the `line` series
+- The axis `keys` property on the primary axis (left) matches the `yKeys` of the `column` series.
+- The axis `keys` property on the secondary axis (right) matches the `yKey` of the `line` series.
 
 <chart-example title='Secondary y-axis' name='multiple-axes' type='generated'></chart-example>

@@ -79,11 +79,6 @@ export class Events {
     /** For when the tool panel is shown / hidden */
     public static EVENT_TOOL_PANEL_VISIBLE_CHANGED: 'toolPanelVisibleChanged' = 'toolPanelVisibleChanged';
     public static EVENT_TOOL_PANEL_SIZE_CHANGED: 'toolPanelSizeChanged' = 'toolPanelSizeChanged';
-    /**
-     * This is a replacement event for EVENT_TOOL_PANEL_VISIBLE_CHANGED. In v30, the original event interface will be dropped
-     * and replaced with the new event (but using the old event type and interface name)
-     */
-    public static EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED: 'internalToolPanelVisibleChanged' = 'internalToolPanelVisibleChanged';
 
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_START: 'columnPanelItemDragStart' = 'columnPanelItemDragStart';
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_END: 'columnPanelItemDragEnd' = 'columnPanelItemDragEnd';
@@ -91,11 +86,17 @@ export class Events {
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED: 'modelUpdated' = 'modelUpdated';
 
+    public static EVENT_CUT_START: 'cutStart' = 'cutStart';
+    public static EVENT_CUT_END: 'cutEnd' = 'cutEnd';
+
     public static EVENT_PASTE_START: 'pasteStart' = 'pasteStart';
     public static EVENT_PASTE_END: 'pasteEnd' = 'pasteEnd';
 
     public static EVENT_FILL_START: 'fillStart' = 'fillStart';
     public static EVENT_FILL_END: 'fillEnd' = 'fillEnd';
+
+    public static EVENT_RANGE_DELETE_START: 'rangeDeleteStart' = 'rangeDeleteStart';
+    public static EVENT_RANGE_DELETE_END: 'rangeDeleteEnd' = 'rangeDeleteEnd';
 
     /** Undo operation has started. */
     public static EVENT_UNDO_STARTED: 'undoStarted' = 'undoStarted';

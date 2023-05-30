@@ -12,7 +12,9 @@ import {
     SelectionHandleType,
     _, CellCtrl,
     FillOperationParams,
-    WithoutGridCommon
+    WithoutGridCommon,
+    ValueParserService,
+    ValueFormatterService
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 import { findLineByLeastSquares } from './utils';
@@ -22,11 +24,19 @@ interface FillValues {
     value: any;
 }
 
+interface ValueContext {
+    value: any;
+    column: Column;
+    rowNode: RowNode;
+}
+
 type Direction = 'x' | 'y';
 
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
@@ -185,7 +195,7 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         let withinInitialRange = true;
-        const values: any[] = [];
+        const values: ValueContext[] = [];
         const initialValues: any[] = [];
         let idx = 0;
 
@@ -227,7 +237,7 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         };
 
-        const fillValues = (currentValues: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
+        const fillValues = (currentValues: ValueContext[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
             let currentValue: any;
             let skipValue: boolean = false;
 
@@ -236,11 +246,19 @@ export class FillHandle extends AbstractSelectionHandle {
                 initialValues.push(currentValue);
                 withinInitialRange = updateInitialSet();
             } else {
-                const { value, fromUserFunction } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
+                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     const cellValue = this.valueService.getValue(col, rowNode);
 
+                    if (!fromUserFunction && col !== sourceCol) {
+                        if (sourceCol?.getColDef()?.useValueFormatterForExport) {
+                            currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
+                        }
+                        if (col.getColDef().useValueParserForImport) {
+                            currentValue = this.valueParserService.parseValue(col, rowNode, currentValue, cellValue);
+                        }
+                    }
                     if (!fromUserFunction || cellValue !== currentValue) {
                         rowNode.setDataValue(col, currentValue, 'rangeService');
                     } else {
@@ -250,7 +268,11 @@ export class FillHandle extends AbstractSelectionHandle {
             }
 
             if (!skipValue) {
-                currentValues.push(currentValue);
+                currentValues.push({
+                    value: currentValue,
+                    column: col,
+                    rowNode
+                });
             }
         };
 
@@ -271,17 +293,17 @@ export class FillHandle extends AbstractSelectionHandle {
             columns,
             startColumn: columns[0]
         };
-        this.rangeService.clearCellRangeCellValues([cellRange]);
+        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     }
 
     private processValues(
         event: MouseEvent,
-        values: any[],
+        values: ValueContext[],
         initialValues: any[],
         col: Column,
         rowNode: RowNode,
         idx: number
-    ): { value: any, fromUserFunction: boolean } {
+    ): { value: any, fromUserFunction: boolean, sourceCol?: Column, sourceRowNode?: RowNode } {
         const userFillOperation = this.gridOptionsService.getCallback('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
@@ -295,7 +317,7 @@ export class FillHandle extends AbstractSelectionHandle {
         if (userFillOperation) {
             const params: WithoutGridCommon<FillOperationParams> = {
                 event,
-                values,
+                values: values.map(({ value }) => value),
                 initialValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
@@ -309,9 +331,9 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         }
 
-        const allNumbers = !values.some(val => {
-            const asFloat = parseFloat(val);
-            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        const allNumbers = !values.some(({ value }) => {
+            const asFloat = parseFloat(value);
+            return isNaN(asFloat) || asFloat.toString() !== value.toString();
         });
 
         // values should be copied in order if the alt key is pressed
@@ -322,12 +344,13 @@ export class FillHandle extends AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return { value: parseFloat(_.last(values )) + 1 * multiplier, fromUserFunction: false };
+                return { value: parseFloat(_.last(values).value) + 1 * multiplier, fromUserFunction: false };
             }
-            return { value: values[idx % values.length], fromUserFunction: false };
+            const { value, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
+            return { value, fromUserFunction: false, sourceCol, sourceRowNode };
         }
 
-        return { value: _.last(findLineByLeastSquares(values.map(Number))), fromUserFunction: false };
+        return { value: _.last(findLineByLeastSquares(values.map(({ value }) => Number(value)))), fromUserFunction: false };
 
     }
 

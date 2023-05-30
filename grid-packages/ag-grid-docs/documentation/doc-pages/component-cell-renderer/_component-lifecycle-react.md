@@ -1,4 +1,4 @@
-[[only-react]]
+<framework-specific-section frameworks="react">
 |## Cell Renderer Component Lifecycle
 |
 |The lifecycle of the cell renderer is as follows:
@@ -10,3 +10,4 @@
 |
 |In other words, component instantiation and destruction are always called exactly once. The component's GUI will
 |typically get rendered once unless the component is destroyed first. The component's props are updated/`refresh()` is optionally called multiple times.
+</framework-specific-section>

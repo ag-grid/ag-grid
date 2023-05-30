@@ -9,6 +9,8 @@ import { isProductionEnvironment } from '../utils/consts';
 import { findParentItems } from './menu-find-parent-items';
 import styles from './Menu.module.scss';
 
+const DOCS_BUTTON_ID = 'top-bar-docs-button';
+
 function filterProductionMenuData(data) {
     if (!isProductionEnvironment()) {
         // No filtering needed for non-production builds.
@@ -29,7 +31,7 @@ function filterProductionMenuData(data) {
 }
 
 function toElementId(str) {
-    return str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
+    return 'menu-' + str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
 }
 
 const menuData = filterProductionMenuData(rawMenuData);
@@ -41,7 +43,8 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, a
                 onClick={toggleActive}
                 tabIndex="0"
                 className={classnames(styles.sectionHeader, isActive && styles.active, 'button-style-none')}
-                data-toggle="collapse"
+                // Temporarily removed to prevent imediate expanded & collapse
+                // data-toggle="collapse"
                 data-target={`#${toElementId(title)}`}
                 aria-expanded={isActive}
                 aria-controls={`#${toElementId(title)}`}
@@ -110,7 +113,10 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
         </>
     );
 
-    const isActiveParent = activeParentItems.some((parentItem) => parentItem.url === item.url);
+    const isActiveParent = activeParentItems.some((parentItem) => {
+        const hasUrl = Boolean(parentItem.url);
+        return hasUrl ? parentItem.url === item.url : parentItem.title === item.title;
+    });
 
     return (
         <li key={item.title}>
@@ -119,6 +125,16 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
                     to={convertToFrameworkUrl(item.url, currentFramework)}
                     activeClassName={styles.activeMenuItem}
                     className={isActiveParent ? styles.activeItemParent : undefined}
+                    onClick={() => {
+                        const docsButton = document.getElementById(DOCS_BUTTON_ID);
+                        const docsButtonIsVisible = Boolean(
+                            docsButton.offsetWidth || docsButton.offsetHeight || docsButton.getClientRects().length
+                        );
+                        const isOpen = !docsButton.classList.contains('collapsed');
+                        if (isOpen && docsButtonIsVisible) {
+                            docsButton.click();
+                        }
+                    }}
                 >
                     {title}
                 </Link>
@@ -166,8 +182,11 @@ const Menu = ({ currentFramework, currentPage, path }) => {
         .reduce((combined, group) => [...combined, ...group.items], [])
         .filter((group) => groupItemHasApplicableChild(group.items));
 
-    const pathSegment = `/${path.split('/').reverse()[1]}/`;
-    const activeParentItems = findParentItems(combinedMenuItems, pathSegment);
+    const activeParentItems = findParentItems({
+        combinedMenuItems,
+        page: currentPage,
+        path,
+    });
 
     const containsPage = (items, frameworks) =>
         items.reduce((hasPage, item) => {
@@ -190,7 +209,7 @@ const Menu = ({ currentFramework, currentPage, path }) => {
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <aside className={classnames(styles['menu'], 'ag-styles', 'font-size-responsive')}>
+        <aside className={classnames(styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {combinedMenuItems.map((item) => {
                     const { title } = item;

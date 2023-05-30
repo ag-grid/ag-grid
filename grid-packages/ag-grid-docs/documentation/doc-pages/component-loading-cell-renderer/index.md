@@ -8,7 +8,7 @@ Loading cell renderers allow you to add your own loading renderers to AG Grid. U
 
 md-include:simple-renderer-javascript.md
 md-include:simple-renderer-angular.md
-md-include:simple-renderer-react.md
+md-include:simple-renderer-react.md 
 md-include:simple-renderer-vue.md
  
 ## Example: Custom Loading Cell Renderer
@@ -33,11 +33,11 @@ md-include:component-interface-vue.md
 
 It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. For this you'll make use of the
 
-[[only-angular-or-react]]
+<framework-specific-section frameworks="javascript,angular,react">
 md-include:component-dynamic-angular-react-js.md
-[[only-javascript]]
-md-include:component-dynamic-angular-react-js.md
-md-include:component-dynamic-vue.md
+</framework-specific-section>
+
+md-include:component-dynamic-vue.md 
 
 ## Registering Loading Cell Renderer Components
 

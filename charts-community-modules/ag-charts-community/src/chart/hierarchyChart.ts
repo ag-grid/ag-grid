@@ -7,9 +7,6 @@ export class HierarchyChart extends Chart {
 
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
-
-        const root = this.scene.root!;
-        this.legend.attachLegend(root);
     }
 
     protected _data: any = {};
@@ -31,11 +28,13 @@ export class HierarchyChart extends Chart {
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
         this.hoverRect = hoverRect;
 
-        this.series.forEach((series) => {
-            series.rootGroup.translationX = Math.floor(shrinkRect.x);
-            series.rootGroup.translationY = Math.floor(shrinkRect.y);
-            series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
-        });
+        await Promise.all(
+            this.series.map(async (series) => {
+                series.rootGroup.translationX = Math.floor(shrinkRect.x);
+                series.rootGroup.translationY = Math.floor(shrinkRect.y);
+                await series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
+            })
+        );
 
         const { seriesRoot } = this;
         seriesRoot.setClipRectInGroupCoordinateSpace(

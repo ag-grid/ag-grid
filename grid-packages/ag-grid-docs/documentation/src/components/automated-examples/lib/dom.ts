@@ -1,9 +1,20 @@
 import { Point } from './geometry';
 
+export type PositionLocation =
+    | 'topLeft'
+    | 'topCenter'
+    | 'topRight'
+    | 'centerLeft'
+    | 'center'
+    | 'centerRight'
+    | 'bottomLeft'
+    | 'bottomCenter'
+    | 'bottomRight';
+
 export function getOffset(element: HTMLElement | SVGElement): Point {
     let offset;
     if (element instanceof SVGElement) {
-        const parentRect = element.parentElement.getBoundingClientRect();
+        const parentRect = element.parentElement!.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
         offset = {
             x: -parentRect.x - elementRect.width / 2,
@@ -27,40 +38,65 @@ export function getScrollOffset(): Point {
     };
 }
 
-export function getBoundingClientRectMidpoint(element: HTMLElement): Point {
-    const { x, y, width, height } = element.getBoundingClientRect();
-    return {
-        x: x + width / 2,
-        y: y + height / 2,
-    };
-}
-
-/**
- * @deprecated use findElementWithInnerText instead
- */
-export function findElementWithInnerHTML({
-    containerEl = document.body,
-    selector,
-    text,
+export function getBoundingClientPosition({
+    element,
+    positionLocation = 'center',
 }: {
-    containerEl?: HTMLElement;
-    selector: string;
-    text: string;
-}): HTMLElement | undefined {
-    let element!: HTMLElement;
-    containerEl.querySelectorAll(selector).forEach((el) => {
-        const htmlElement = el as HTMLElement;
-        const sanitisedElementText = htmlElement.innerHTML
-            .trim()
-            .replace(/\u200e/g, '') // Left to Right mark eg, in localisation text
-            .replace(/\u200f/g, ''); // Right to Left mark eg, in localisation text
-        if (sanitisedElementText === text.trim()) {
-            element = htmlElement;
-            return;
-        }
-    });
+    element: HTMLElement;
+    positionLocation?: PositionLocation;
+}): Point {
+    let position: Point;
 
-    return element;
+    const { x, y, width, height } = element.getBoundingClientRect();
+
+    if (positionLocation === 'topLeft') {
+        position = {
+            x,
+            y,
+        };
+    } else if (positionLocation === 'topCenter') {
+        position = {
+            x: x + width / 2,
+            y,
+        };
+    } else if (positionLocation === 'topRight') {
+        position = {
+            x: x + width,
+            y,
+        };
+    } else if (positionLocation === 'centerLeft') {
+        position = {
+            x: x,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'center') {
+        position = {
+            x: x + width / 2,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'centerRight') {
+        position = {
+            x: x + width,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'bottomLeft') {
+        position = {
+            x,
+            y: y + height,
+        };
+    } else if (positionLocation === 'bottomCenter') {
+        position = {
+            x: x + width / 2,
+            y: y + height,
+        };
+    } else if (positionLocation === 'bottomRight') {
+        position = {
+            x: x + width,
+            y: y + height,
+        };
+    }
+
+    return position!;
 }
 
 export function findElementWithInnerText({
@@ -128,20 +164,35 @@ export function isElementChildOfClass({
     return false;
 }
 
-export function isInViewport(element: HTMLElement, threshold: number): boolean {
+export function isInViewport({
+    element,
+    threshold,
+    scrollContainer,
+}: {
+    element: HTMLElement;
+    threshold: number;
+    scrollContainer?: HTMLElement;
+}): boolean {
     if (!element) {
         return false;
     }
 
-    const containerEl = window;
-    const { top, bottom, height } = element.getBoundingClientRect();
-    const amountInView = (containerEl.innerHeight - top) / height;
+    const windowHeight = window.innerHeight;
+    const elRect = element.getBoundingClientRect();
+    const amountInView = (windowHeight - elRect.top) / elRect.height;
 
-    if (top >= 0 && bottom <= containerEl.innerHeight) {
-        return true;
-    } else if (top < containerEl.innerHeight && bottom >= 0 && amountInView > threshold) {
-        return true;
+    const withinWindow = elRect.top >= 0 && elRect.bottom <= windowHeight;
+    const withinVisibilityThreshold = elRect.top < windowHeight && elRect.bottom >= 0 && amountInView > threshold;
+    const isWithinWindow = withinWindow || withinVisibilityThreshold;
+
+    let isWithinViewport = isWithinWindow;
+    if (scrollContainer) {
+        const scrollContainerRect = scrollContainer.getBoundingClientRect();
+        const scrollYDiff = elRect.y - scrollContainerRect.y;
+        const withinScrollY = scrollYDiff > 0 && scrollYDiff < scrollContainerRect.height;
+
+        isWithinViewport = isWithinViewport && withinScrollY;
     }
 
-    return false;
+    return isWithinViewport;
 }

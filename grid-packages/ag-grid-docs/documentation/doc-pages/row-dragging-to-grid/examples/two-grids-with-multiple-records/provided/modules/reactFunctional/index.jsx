@@ -143,9 +143,7 @@ const GridExample = () => {
                 remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
-            nodes.forEach(function (node) {
-                node.setSelected(false);
-            });
+            params.api.setNodesSelected({ nodes, newValue: false });
         }
     }, [leftApi, radioChecked]);
 
@@ -173,17 +171,17 @@ const GridExample = () => {
             <div className="panel-body">
                 <div style={{ display: 'inline-flex' }} onChange={onRadioChange} >
                     <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />
-                    <label for="move">Remove Source Rows</label>
+                    <label htmlFor="move">Remove Source Rows</label>
                     <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />
-                    <label for="deselect">Only Deselect Source Rows</label>
+                    <label htmlFor="deselect">Only Deselect Source Rows</label>
                     <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />
-                    <label for="none">None</label>
+                    <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
-                <label for="toggleCheck">Checkbox Select</label>
+                <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
@@ -195,7 +193,7 @@ const GridExample = () => {
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
@@ -216,7 +214,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

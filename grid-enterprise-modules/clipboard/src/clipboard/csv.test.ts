@@ -20,21 +20,21 @@ describe('stringToArray', () => {
         const input = '"a1","a2"\n"b1","b2"\n"c1","c2"';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['a1', 'a2'], ['b1', 'b2'], ['c1', 'c2']]);
+        expect(output).toStrictEqual([['"a1"', '"a2"'], ['"b1"', '"b2"'], ['"c1"', '"c2"']]);
     });
 
     it('supports mixture of quoted and unquoted fields', () => {
         const input = '"a1",a2\nb1,"b2"\n"c1","c2"';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['a1', 'a2'], ['b1', 'b2'], ['c1', 'c2']]);
+        expect(output).toStrictEqual([['"a1"', 'a2'], ['b1', '"b2"'], ['"c1"', '"c2"']]);
     });
 
     it('preserves newlines inside quoted fields', () => {
         const input = '"this is a\nfield with a newline",another';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['this is a\nfield with a newline', 'another']]);
+        expect(output).toStrictEqual([['"this is a\nfield with a newline"', 'another']]);
     });
 
     it('preserves quotes inside unquoted fields', () => {

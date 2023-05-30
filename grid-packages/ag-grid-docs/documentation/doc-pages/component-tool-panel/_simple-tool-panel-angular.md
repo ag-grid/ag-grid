@@ -1,8 +1,9 @@
-[[only-angular]]
-|
-|Below is a simple example of a tool panel component:
-|
-|```js
+<framework-specific-section frameworks="angular">
+|Below is an example of a tool panel component:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |import {Component} from "@angular/core";
 |import {IToolPanelParams, IRowNode} from "ag-grid-community";
 |import {IToolPanelAngularComp} from "ag-grid-angular";
@@ -10,17 +11,17 @@
 |@Component({
 |    selector: 'custom-stats',
 |    template: `
-|      <div style="text-align: center">
-|      <span>
-|                <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
-|                <dl style="font-size: large; padding: 30px 40px 10px 30px">
-|                    <dt class="totalStyle">Total Medals: <b>{{ numMedals }}</b></dt>
-|                    <dt class="totalStyle">Total Gold: <b>{{ numGold }}</b></dt>
-|                    <dt class="totalStyle">Total Silver: <b>{{ numSilver }}</b></dt>
-|                    <dt class="totalStyle">Total Bronze: <b>{{ numBronze }}</b></dt>
-|                </dl>
-|            </span>
-|      </div>`,
+|      &lt;div style="text-align: center">
+|      &lt;span>
+|                &lt;h2>&lt;i class="fa fa-calculator">&lt;/i> Custom Stats&lt;/h2>
+|                &lt;dl style="font-size: large; padding: 30px 40px 10px 30px">
+|                    &lt;dt class="totalStyle">Total Medals: &lt;b>{{ numMedals }}&lt;/b>&lt;/dt>
+|                    &lt;dt class="totalStyle">Total Gold: &lt;b>{{ numGold }}&lt;/b>&lt;/dt>
+|                    &lt;dt class="totalStyle">Total Silver: &lt;b>{{ numSilver }}&lt;/b>&lt;/dt>
+|                    &lt;dt class="totalStyle">Total Bronze: &lt;b>{{ numBronze }}&lt;/b>&lt;/dt>
+|                &lt;/dl>
+|            &lt;/span>
+|      &lt;/div>`,
 |    styles: [`
 |        .totalStyle {
 |            padding-bottom: 15px
@@ -63,4 +64,5 @@
 |        this.numBronze = numBronze;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

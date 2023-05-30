@@ -15,10 +15,11 @@
     }
 
     input[type='range'] {
-        min-width: 14em;
+        min-width: 12em;
+        margin-left: 0;
 
         @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-            margin-left: $size-1 !important; // !important for .ag-styles specificity;
+            margin-left: $size-1;
             min-width: 8em;
         }
 

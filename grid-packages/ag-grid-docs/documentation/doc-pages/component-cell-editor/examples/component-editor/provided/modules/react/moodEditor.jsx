@@ -9,12 +9,8 @@ export default class MoodEditor extends Component {
         this.onSadClick = this.onSadClick.bind(this);
 
         this.state = {
-            happy: false
+            happy: this.props.value === 'Happy'
         };
-    }
-
-    componentWillMount() {
-        this.setHappy(this.props.value === 'Happy');
     }
 
     componentDidMount() {

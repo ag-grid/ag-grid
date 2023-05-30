@@ -42,7 +42,7 @@ export class StickyRowFeature extends BeanStub {
     public checkStickyRows(): void {
         let height = 0;
 
-        if (!this.gridOptionsService.is('groupRowsSticky')) {
+        if (!this.gridOptionsService.isGroupRowsSticky()) {
             this.refreshNodesAndContainerHeight([], height);
             return;
         }
@@ -125,6 +125,19 @@ export class StickyRowFeature extends BeanStub {
         }
 
         this.refreshNodesAndContainerHeight(stickyRows, height);
+    }
+
+    public refreshStickyNode(stickRowNode:  RowNode): void {
+        const allStickyNodes: RowNode[] = [];
+        for (let i = 0; i < this.stickyRowCtrls.length; i++) {
+            const currentNode = this.stickyRowCtrls[i].getRowNode();
+            if (currentNode !== stickRowNode) {
+                allStickyNodes.push(currentNode);
+            }
+        }
+
+        this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight);
+        this.checkStickyRows();
     }
 
     private refreshNodesAndContainerHeight(allStickyNodes: RowNode[], height: number): void {

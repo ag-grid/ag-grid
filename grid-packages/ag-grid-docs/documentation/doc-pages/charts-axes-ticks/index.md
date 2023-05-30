@@ -3,8 +3,9 @@ title: "Axis Ticks"
 ---
 Axis ticks are markers placed at regular intervals along each axis, and are also used to determine where and how often to show the axis labels and grid lines.
 
-[[note]]
-| Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+<note>
+Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+</note>
 
 ## Tick Placement
 
@@ -12,7 +13,7 @@ Tick placement can be customised by using one of the following strategies:
 
 - [Tick Interval](#tick-interval) - used to place a tick at regular intervals
 - [Tick Values](#tick-values) - used to place a tick at specified values
-- [Min / Max Spacing](#tick-min-and-max-spacing) - used to control the pixel gap between ticks
+- [Min / Max Spacing](#tick-min--max-spacing) - used to control the pixel gap between ticks
 
 ### Tick Interval
 
@@ -49,8 +50,9 @@ Other available `time` intervals are: `year`, `month`, `day`, `hour`, `minute`, 
 
 If the `interval` property of a time axis is set to a `number`, this will be interpreted as milliseconds.
 
-[[note]]
-| If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+<note>
+If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+</note>
 
 The example below demonstrates the usage of time intervals:
 - `time.month` will produce monthly ticks.
@@ -62,7 +64,7 @@ tick: {
 }
 ```
 
-<chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
+<chart-example title='Time Axis Tick Interval' name='time-axis-label-format' type='generated'></chart-example>
 
 ### Tick Values
 
@@ -83,7 +85,7 @@ The following example demonstrates how to specify exact tick values:
 
 ### Tick Min / Max Spacing
 
-The `tick.minSpacing` and `tick.maxSpacing` options alter the default behavior by defining the approximate minimum and
+The `tick.minSpacing` and `tick.maxSpacing` options alter the default behaviour by defining the approximate minimum and
 maximum pixel gaps that should exist between ticks. You can provide one or both options as needed. An appropriate number
 of ticks will be generated to meet the specified `tick.minSpacing` and `tick.maxSpacing` constraints taking the rendered
 size of the chart into account. A sample configuration is shown below:
@@ -95,10 +97,17 @@ tick: {
 }
 ```
 
-The following example demonstrates how to specify min / max tick spacing:
+The following example demonstrates how to specify min / max tick spacing. Note the following:
+
+- There is a button at the top of the chart to apply min / max spacing.
+- There is a grab handle in the bottom right to allow resizing of the chart to see how the ticks change with available space.
 
 <chart-example title='Min / Max Spacing' name='axis-tick-min-max-spacing' type='generated'></chart-example>
 
+<note>
+| When `minSpacing` and `maxSpacing` are very close in value, the actual spacing between the ticks may be outside the requested range. This is because the specified constraints may result in ticks with non-standard intervals rather than round intervals such as 1x, 2x, 5x, and 10x. To avoid this, set `maxSpacing` to be 2-3 times larger than `minSpacing`.
+</note>
+
 ## Next Up
 
-Continue to the next section to learn about [Axis Labels](/charts-axes-labels/).
+Continue to the next section to learn about [Axis Domain](/charts-axes-domain/).

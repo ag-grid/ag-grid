@@ -45,6 +45,9 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
             enabled: false,
           },
         },
+        legend: {
+          position: 'right',
+        },
       },
     },
     chartContainer: document.querySelector('#pieChart') as any,

@@ -7,7 +7,6 @@ import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../uti
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import {
-    CSS_CLASS_CELL_SELECTABLE,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyCtrl,
     IGridBodyComp,
@@ -117,9 +116,9 @@ export class GridBodyComp extends Component {
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
-            setCellSelectableCss: (cssClass, selectable) => {
+            setCellSelectableCss: (cssClass: string, selectable: boolean) => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable));
+                    .forEach(ct => ct.classList.toggle(cssClass, selectable));
             },
             setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };

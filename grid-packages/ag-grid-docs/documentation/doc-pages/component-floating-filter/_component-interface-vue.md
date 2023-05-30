@@ -1,12 +1,14 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |## Custom Floating Filter Interface
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
 |row values available to you via `this.params`.
 |
 |The interface for a custom filter component is as follows:
-|
-|```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
 |interface IFloatingFilter {
 |
 |    // Gets called every time the parent filter changes. Your floating
@@ -31,8 +33,10 @@
 |    // destroyed, either when new columns are set into the grid, or the grid itself is destroyed.
 |    destroy?(): void;
 |}
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 |### Custom Filter Parameters
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
@@ -40,4 +44,4 @@
 |
 |If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-|
+</framework-specific-section>

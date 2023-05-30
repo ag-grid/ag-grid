@@ -1,4 +1,12 @@
-import { Grid, CellRange, GridOptions, RangeSelectionChangedEvent, ProcessCellForExportParams } from '@ag-grid-community/core'
+import {
+  Grid,
+  CellRange,
+  GridOptions,
+  RangeSelectionChangedEvent,
+  ProcessCellForExportParams,
+  RangeDeleteStartEvent,
+  RangeDeleteEndEvent 
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -43,6 +51,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     }
     return params.value
   },
+  onRangeDeleteStart: (event: RangeDeleteStartEvent) => {
+    console.log('onRangeDeleteStart', event);
+  },
+  onRangeDeleteEnd: (event: RangeDeleteEndEvent) => {
+    console.log('onRangeDeleteEnd', event);
+  }
 }
 
 function onAddRange() {

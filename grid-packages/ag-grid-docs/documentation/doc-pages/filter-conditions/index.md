@@ -71,36 +71,36 @@ The number of `filterValues` and corresponding inputs is controlled by the optio
 Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        {
-|            field: 'age',
-|            filter: 'agNumberColumnFilter',
-|            filterParams: {
-|                filterOptions: [
-|                    'lessThan',
-|                    {
-|                        displayKey: 'lessThanWithNulls',
-|                        displayName: 'Less Than with Nulls',
-|                        predicate: ([filterValue], cellValue) => cellValue == null || cellValue < filterValue,
-|                    },
-|                    'greaterThan',
-|                    {
-|                        displayKey: 'greaterThanWithNulls',
-|                        displayName: 'Greater Than with Nulls',
-|                        predicate: ([filterValue], cellValue) => cellValue == null || cellValue > filterValue,
-|                    },
-|                    {
-|                        displayKey: 'betweenExclusive',
-|                        displayName: 'Between (Exclusive)',
-|                        predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
-|                        numberOfInputs: 2,
-|                    }
-|                ]
-|            }
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         {
+|             field: 'age',
+|             filter: 'agNumberColumnFilter',
+|             filterParams: {
+|                 filterOptions: [
+|                     'lessThan',
+|                     {
+|                         displayKey: 'lessThanWithNulls',
+|                         displayName: 'Less Than with Nulls',
+|                         predicate: ([filterValue], cellValue) => cellValue == null || cellValue < filterValue,
+|                     },
+|                     'greaterThan',
+|                     {
+|                         displayKey: 'greaterThanWithNulls',
+|                         displayName: 'Greater Than with Nulls',
+|                         predicate: ([filterValue], cellValue) => cellValue == null || cellValue > filterValue,
+|                     },
+|                     {
+|                         displayKey: 'betweenExclusive',
+|                         displayName: 'Between (Exclusive)',
+|                         predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
+|                         numberOfInputs: 2,
+|                     }
+|                 ]
+|             }
+|         }
+|     ]
+| }
 </snippet>
 
 The following example demonstrates several custom filter options:

@@ -4,17 +4,17 @@ title: "Full Width Rows"
 
 Under normal operation, AG Grid will render each row as a horizontal list of cells. Each cell in the row will correspond to one column definition. It is possible to switch this off and allow you to provide one component to span the entire width of the grid and not use columns. This is useful if you want to embed a complex component inside the grid instead of rendering a list of cells. This technique can be used for displaying panels of information.
 
-[[note]]
-| You may be wondering what full width rows are useful for. Their usage is very rare and most
-| applications will not use them. If you cannot think of a use case for it, then don't worry,
-| do not use it. Full width rows were initially introduced into AG Grid to support
-| [Master / Detail](/master-detail/) before the grid provided direct support for master / detail.
-| Now that master / detail is directly supported, the usefulness of full width is reduced.
+<note>
+|You may be wondering what full width rows are useful for. Their usage is very rare and most
+|applications will not use them. If you cannot think of a use case for it, then don't worry,
+|do not use it. Full width rows were initially introduced into AG Grid to support
+|[Master / Detail](../master-detail/) before the grid provided direct support for master / detail.
+|Now that master / detail is directly supported, the usefulness of full width is reduced.
+</note>
 
-## Simple Example of Full Width Rows
+## Example of Full Width Rows
 
-
-Below shows a simple example using full width. The following can be noted:
+Below shows an example using full width. The following can be noted:
 
 - The rows for countries France, Italy and Peru have full width components instead of cells.
 
@@ -51,18 +51,15 @@ The `isFullWidthRow(params)` callback receives a `params` object containing the 
 
 ## Sorting and Filtering
 
-
 Sorting and Filtering are NOT impacted by full width. Full width is a rendering time feature. The sorting
 and filtering applied to the data is done before rendering and is not impacted.
 
 ## Detailed Full Width Example
 
 Below shows a detailed full width example including pinned rows and columns.
-The example's data is minimalistic to focus on how
-the full width impacts rows. For demonstration, the pinned rows are shaded blue (with
-full width a darker shade of blue) and body full width rows are green.
-The following points should be noted:
+The example's data is minimalistic to focus on how the full width impacts rows. For demonstration, the pinned rows are shaded blue (with full width a darker shade of blue) and body full width rows are green.
 
+The following points should be noted:
 
 - Full width can be applied to any row, including pinned rows. The example demonstrates full width in pinned top, pinned bottom and body rows.
 
@@ -78,6 +75,20 @@ The following points should be noted:
 
 <grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
 
+## Embedded Full Width Rows
+
+By default, Full Width Rows remain in place while the grid is scrolled horizontally. However, this may be undesirable 
+for some applications which need to horizontally scroll the full-width rows together the rest of the rows.
+
+In order to have Full Width Rows scroll like normal rows, set `embedFullWidthRows=true` in the gridOptions.
+
+The example below demonstrates the behaviour when Full Width Rows are embedded in the same container as regular rows. Note the following:
+
+- A different instance of the Full Width Cell Renderer is created for each one of the following sections: **Pinned Left**, **Pinned Right**, **Non Pinned**.
+- Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
+- Full Width Rows in the **pinned** sections take the whole width of the section.
+
+<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
 
 ## Full Width Keyboard Navigation
 
