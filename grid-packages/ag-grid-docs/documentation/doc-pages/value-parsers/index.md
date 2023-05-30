@@ -49,3 +49,9 @@ This applies to the following features:
 - [Paste](/clipboard/#processing-pasted-data)
 - [Fill Handle](/range-selection-fill-handle/)
 - [Copy Range Down](/range-selection/#copy-range-down)
+
+If `useValueParserForImport` is enabled, it is recommended to also [Use a Value Formatter for Export](/value-formatters/#use-value-formatter-for-export), where a [Value Formatter](/value-formatters/) is defined that does the reverse of the value parser.
+
+The following example demonstrates using the value parser for import with each of the supported features mentioned above. `useValueFormatterForExport` is also enabled to ensure the features work as expected.
+
+<grid-example title='Use Value Parser for Import' name='use-value-parser-for-import' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>

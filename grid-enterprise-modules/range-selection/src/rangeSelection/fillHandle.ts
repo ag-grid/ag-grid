@@ -251,12 +251,18 @@ export class FillHandle extends AbstractSelectionHandle {
                 if (col.isCellEditable(rowNode)) {
                     const cellValue = this.valueService.getValue(col, rowNode);
 
-                    if (!fromUserFunction && col !== sourceCol) {
+                    if (!fromUserFunction) {
                         if (sourceCol?.getColDef()?.useValueFormatterForExport) {
                             currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
                         }
                         if (col.getColDef().useValueParserForImport) {
-                            currentValue = this.valueParserService.parseValue(col, rowNode, currentValue, cellValue);
+                            currentValue = this.valueParserService.parseValue(
+                                col,
+                                rowNode,
+                                // if no sourceCol, then currentValue is a number
+                                sourceCol ? currentValue : _.toStringOrNull(currentValue),
+                                cellValue
+                            );
                         }
                     }
                     if (!fromUserFunction || cellValue !== currentValue) {
