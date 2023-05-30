@@ -917,7 +917,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         // Toggle items where the legendItemName matches the legendItemName of the clicked item
         Object.keys(this.legendItemNames)
-            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
+            .filter(
+                (id) =>
+                    this.legendItemNames[id] !== undefined && this.legendItemNames[id] === this.legendItemNames[itemId]
+            )
             .forEach((yKey) => {
                 if (yKey !== itemId) {
                     super.toggleSeriesItem(yKey, enabled);
@@ -948,7 +951,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 // Toggle other items that have matching legendItemNames which have not already been processed.
                 Object.keys(this.legendItemNames)
-                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
+                    .filter(
+                        (id) =>
+                            this.legendItemNames[id] !== undefined &&
+                            this.legendItemNames[id] === this.legendItemNames[yKey]
+                    )
                     .forEach((nameYKey) => {
                         newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
                     });
