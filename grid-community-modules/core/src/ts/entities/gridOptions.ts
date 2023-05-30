@@ -459,7 +459,10 @@ export interface GridOptions<TData = any> {
     aggFuncs?: { [key: string]: IAggFunc<TData>; };
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
-    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
+
+    /** When using aggregations, the grid will always calculate the root level aggregation value. Default: `false` */
+    alwaysAggregateAtRootLevel?: boolean;
+    /** @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel  */
     suppressAggAtRootLevel?: boolean;
     /** When using change detection, only the updated column will be re-aggregated. Default: `false` */
     aggregateOnlyChangedColumns?: boolean;

@@ -678,12 +678,7 @@
             }
         },
         "suppressAggFuncInHeader": {},
-        "suppressAggAtRootLevel": {
-            "more": {
-                "name": "Big Data Small Transactions",
-                "url": "/data-update-transactions/#example-small-changes-big-data"
-            }
-        },
+        "alwaysAggregateAtRootLevel": {},
         "aggregateOnlyChangedColumns": {
             "more": {
                 "name": "Change Detection",

@@ -228,6 +228,7 @@ export class GridOptionsValidator {
         onColumnValueChangeRequest: { version: '29.2' },
         onColumnAggFuncChangeRequest: { version: '29.2' },
         serverSideFilterAllLevels: { version: '30', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
+        suppressAggAtRootLevel: { version: '30', newProp: 'alwaysAggregateAtRootLevel' },
     }
 
     private checkForDeprecated() {
