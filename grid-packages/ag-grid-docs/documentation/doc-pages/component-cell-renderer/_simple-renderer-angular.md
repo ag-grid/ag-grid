@@ -1,8 +1,5 @@
 <framework-specific-section frameworks="angular">
-|Below is an example of cell renderer class:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+Below is an example of cell renderer class:
 <snippet transform={false} language="ts">
 |import {Component} from "@angular/core";
 |import {ICellRendererAngularComp} from 'ag-grid-angular';
