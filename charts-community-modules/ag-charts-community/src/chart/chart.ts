@@ -807,33 +807,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.applyLegendOptions?.(this.legend!);
 
         if (legendType === 'category') {
-            // Validate each series that shares a legend item label uses the same fill colour
-            const labelMarkerFills: { [key: string]: { [key: string]: Set<string> } } = {};
-
-            legendData.forEach((d) => {
-                const seriesType = this.series.find((s) => s.id === d.seriesId)?.type;
-                if (!seriesType) return;
-
-                const dc = d as CategoryLegendDatum;
-                labelMarkerFills[seriesType] ??= { [dc.label.text]: new Set() };
-                labelMarkerFills[seriesType][dc.label.text] ??= new Set();
-                if (dc.marker.fill != null) {
-                    labelMarkerFills[seriesType][dc.label.text].add(dc.marker.fill);
-                }
-            });
-
-            Object.keys(labelMarkerFills).forEach((seriesType) => {
-                Object.keys(labelMarkerFills[seriesType]).forEach((name) => {
-                    const fills = labelMarkerFills[seriesType][name];
-                    if (fills.size > 1) {
-                        Logger.warnOnce(
-                            `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour. '${[
-                                ...fills.values(),
-                            ].join("','")}'`
-                        );
-                    }
-                });
-            });
+            this.validateLegendData(legendData);
 
             // Merge legend items that share the same label text
             const usedLabels = new Set();
@@ -847,6 +821,36 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         this.legend!.data = legendData;
+    }
+
+    protected validateLegendData(legendData: ChartLegendDatum[]) {
+        // Validate each series that shares a legend item label uses the same fill colour
+        const labelMarkerFills: { [key: string]: { [key: string]: Set<string> } } = {};
+
+        legendData.forEach((d) => {
+            const seriesType = this.series.find((s) => s.id === d.seriesId)?.type;
+            if (!seriesType) return;
+
+            const dc = d as CategoryLegendDatum;
+            labelMarkerFills[seriesType] ??= { [dc.label.text]: new Set() };
+            labelMarkerFills[seriesType][dc.label.text] ??= new Set();
+            if (dc.marker.fill != null) {
+                labelMarkerFills[seriesType][dc.label.text].add(dc.marker.fill);
+            }
+        });
+
+        Object.keys(labelMarkerFills).forEach((seriesType) => {
+            Object.keys(labelMarkerFills[seriesType]).forEach((name) => {
+                const fills = labelMarkerFills[seriesType][name];
+                if (fills.size > 1) {
+                    Logger.warnOnce(
+                        `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour. '${[
+                            ...fills.values(),
+                        ].join("','")}'`
+                    );
+                }
+            });
+        });
     }
 
     protected async performLayout() {
