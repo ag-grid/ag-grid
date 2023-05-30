@@ -104,7 +104,7 @@ describe('Legend', () => {
     describe('Clicking a legend', () => {
         it('should hide the related series', async () => {
             const options = {
-                ...examples.PIE_IN_A_DOUGHNUT,
+                ...examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
             };
 
             prepareTestOptions(options);
@@ -121,7 +121,7 @@ describe('Legend', () => {
 
         it('when clicked twice should hide and re-show the related series', async () => {
             const options = {
-                ...examples.PIE_IN_A_DOUGHNUT,
+                ...examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
             };
 
             prepareTestOptions(options);
@@ -142,7 +142,7 @@ describe('Legend', () => {
     describe('Double clicking a legend', () => {
         it('should hide all other series except this one', async () => {
             const options = {
-                ...examples.PIE_IN_A_DOUGHNUT,
+                ...examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
             };
 
             prepareTestOptions(options);
@@ -159,7 +159,7 @@ describe('Legend', () => {
 
         it('when double clicked twice should show all series', async () => {
             const options = {
-                ...examples.PIE_IN_A_DOUGHNUT,
+                ...examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
             };
 
             prepareTestOptions(options);

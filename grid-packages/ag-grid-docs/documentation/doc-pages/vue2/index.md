@@ -19,9 +19,9 @@ are building applications that would not be possible if AG Grid did not exist.
 
 <tabs>
 
-<tabs-links>
-  <open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" />
-</tabs-links>
+<div tabs-links="true">
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" />
+</div>
 
 <div tab-label="App.vue">
 

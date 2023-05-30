@@ -12,3 +12,16 @@
 .heading {
     margin-top: 0;
 }
+
+.externalLinks {
+    display: flex;
+    align-items: center;
+    gap: $size-2;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-right: $size-2;
+
+    li {
+        margin-bottom: 0.125em;
+    }
+}

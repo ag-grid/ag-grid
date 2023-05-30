@@ -18,6 +18,7 @@ import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
+import { Logger } from '../../../util/logger';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isNumber } from '../../../util/value';
@@ -880,6 +881,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const legendData: CategoryLegendDatum[] = [];
 
+        this.validateLegendData();
+
         this.yKeys.forEach((stack, stackIndex) => {
             for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 const yKey = stack[levelIndex];
@@ -909,6 +912,27 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
+    validateLegendData() {
+        const { hideInLegend, legendItemNames } = this;
+
+        let hasAnyLegendItemName = false;
+
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => {
+                if (hideInLegend.indexOf(yKey) >= 0) {
+                    return;
+                }
+
+                const hasLegendItemName = legendItemNames[yKey] !== undefined;
+                if (hasAnyLegendItemName && !hasLegendItemName) {
+                    Logger.warnOnce(`a series is missing the legendItemName property, unexpected behaviour may occur.`);
+                }
+
+                hasAnyLegendItemName = hasLegendItemName;
+            });
+        });
+    }
+
     onLegendItemClick(event: LegendItemClickChartEvent) {
         const { itemId, enabled, series } = event;
 
@@ -917,7 +941,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         // Toggle items where the legendItemName matches the legendItemName of the clicked item
         Object.keys(this.legendItemNames)
-            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
+            .filter(
+                (id) =>
+                    this.legendItemNames[id] !== undefined && this.legendItemNames[id] === this.legendItemNames[itemId]
+            )
             .forEach((yKey) => {
                 if (yKey !== itemId) {
                     super.toggleSeriesItem(yKey, enabled);
@@ -948,7 +975,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 // Toggle other items that have matching legendItemNames which have not already been processed.
                 Object.keys(this.legendItemNames)
-                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
+                    .filter(
+                        (id) =>
+                            this.legendItemNames[id] !== undefined &&
+                            this.legendItemNames[id] === this.legendItemNames[yKey]
+                    )
                     .forEach((nameYKey) => {
                         newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
                     });

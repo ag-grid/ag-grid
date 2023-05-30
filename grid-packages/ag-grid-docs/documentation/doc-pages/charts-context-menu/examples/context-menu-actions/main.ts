@@ -13,8 +13,12 @@ const options: AgCartesianChartOptions = {
     extraActions: [
       {
         label: "Say hello",
-        action: ({ datum, event }) => {
-          window.alert(`Hello ${datum?.value ?? "world"}`)
+        action: ({ datum }) => {
+          if (datum) {
+            window.alert(`Hello, ${datum.value}!`)
+          } else {
+            window.alert("Hello, world!")
+          }
         },
       },
     ],

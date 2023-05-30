@@ -239,8 +239,8 @@ export class SortService extends BeanStub {
         if (!this.gridOptionsService.is('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
-            groupDisplayCols.forEach(groupDisplayCol => {
+            const groupDisplayCols = this.columnModel.getGroupAutoColumns();
+            groupDisplayCols?.forEach(groupDisplayCol => {
 
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {

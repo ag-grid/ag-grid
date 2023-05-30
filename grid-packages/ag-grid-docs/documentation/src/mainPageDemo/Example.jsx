@@ -134,7 +134,7 @@ function ratingRenderer(params) {
 }
 
 const booleanCellRenderer = (props) => {
-    const [valueCleaned] = useState(booleanCleaner(props.value));
+    const valueCleaned = booleanCleaner(props.value);
     if (valueCleaned === true) {
         return <span title="true" className="ag-icon ag-icon-tick content-icon" />;
     }

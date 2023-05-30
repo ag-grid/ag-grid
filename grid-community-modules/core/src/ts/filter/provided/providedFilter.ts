@@ -242,7 +242,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 `<button
                     type="${buttonType}"
                     ref="${type}FilterButton"
-                    class="ag-standard-button ag-filter-apply-panel-button"
+                    class="ag-button ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`
             );

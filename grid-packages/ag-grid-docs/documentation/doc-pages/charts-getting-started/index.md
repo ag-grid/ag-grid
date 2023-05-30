@@ -20,9 +20,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <framework-specific-section frameworks="javascript">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="plunkr" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" />
-</tabs-links>
+</div>
 
 <div tab-label="main.js">
 <snippet transform={false} lineNumbers="true">
@@ -106,9 +106,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <framework-specific-section frameworks="react">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" />
-</tabs-links>
+</div>
 
 <div tab-label="index.js">
 <snippet language="jsx" transform={false} lineNumbers="true">
@@ -185,9 +185,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <framework-specific-section frameworks="angular">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" />
-</tabs-links>
+</div>
 
 <div tab-label="app.component.ts">
 <snippet language="jsx" transform={false} lineNumbers="true">
@@ -282,9 +282,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 
 <framework-specific-section frameworks="vue">
 <tabs>
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" />
-</tabs-links>
+</div>
 
 <div tab-label="App.vue">
 <snippet language="html" transform={false} lineNumbers="true">

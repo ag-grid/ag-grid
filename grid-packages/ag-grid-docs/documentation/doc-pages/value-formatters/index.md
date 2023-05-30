@@ -52,3 +52,9 @@ This applies to the following features:
 - [Copy Range Down](/range-selection/#copy-range-down)
 - [CSV Export](/csv-export/)
 - [Excel Export](/excel-export-customising-content/)
+
+If [Cell Editing](/cell-editing/) is enabled along with `useValueFormatterForExport`, it is recommended to also [Use a Value Parser for Import](/value-parsers/#use-value-parser-for-import), where a [Value Parser](/value-parsers/) is defined that does the reverse of the value formatter.
+
+The following example demonstrates using the value formatter for export with each of the supported features mentioned above. `useValueParserForImport` is also enabled to ensure the features work as expected.
+
+<grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] }'></grid-example>

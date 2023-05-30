@@ -97,6 +97,10 @@ tick: {
 }
 ```
 
+<note>
+Category axes do not support `maxSpacing`, as ticks are derived from the domain of category values.
+</note>
+
 The following example demonstrates how to specify min / max tick spacing. Note the following:
 
 - There is a button at the top of the chart to apply min / max spacing.

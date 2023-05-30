@@ -377,7 +377,7 @@ export class DataTypeService extends BeanStub {
 
     public validateColDef(colDef: ColDef): void {
         if (colDef.cellDataType === 'object') {
-            if (colDef.valueFormatter === this.dataTypeDefinitions.object.valueFormatter && !this.hasObjectValueFormatter) {
+            if (colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 doOnce(() => console.warn(
                     'AG Grid: Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"'
                 ), 'dataTypeObjectValueFormatter');

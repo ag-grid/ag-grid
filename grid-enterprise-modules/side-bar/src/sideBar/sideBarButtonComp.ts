@@ -38,7 +38,7 @@ export class SideBarButtonComp extends Component {
     private createTemplate(): string {
         const res = /* html */
             `<div class="ag-side-button" role="presentation">
-                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-side-button-button">
+                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
                     <span ref ="eLabel" class="ag-side-button-label"></span>
                 </button>

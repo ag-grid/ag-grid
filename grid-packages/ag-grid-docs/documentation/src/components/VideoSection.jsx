@@ -17,7 +17,7 @@ const VideoSection = ({ id, title, header, children }) => {
         <>
             {hasWindow && (
                 <div className={styles.videoSection}>
-                    <p className={classnames({ [styles.header]: header })}>{children}</p>
+                    <div className={classnames({ [styles.header]: header })}>{children}</div>
                     <iframe
                         className={styles.ytIframe}
                         title={title}

@@ -25,7 +25,6 @@ import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
-import { TabsLinks } from '../components/tabs/TabsLinks';
 import styles from './doc-page.module.scss';
 
 /**
@@ -99,7 +98,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
             'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
             tabs: (props) => <Tabs {...props} />,
-            'tabs-links': TabsLinks,
             'learning-videos': (props) => LearningVideos({ framework }),
             'video-section': VideoSection,
             note: Note,
