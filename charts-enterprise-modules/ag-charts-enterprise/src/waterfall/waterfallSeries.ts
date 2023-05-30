@@ -579,7 +579,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         let format: any | undefined = undefined;
 
-        const isPositive = datum.itemId === 'positive';
+        const isPositive = nodeDatum.itemId === 'positive';
         const { fill, strokeWidth, name } = this.getItemConfig(isPositive);
 
         const color = format?.fill ?? fill ?? 'gray';
@@ -601,7 +601,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         const title = sanitizeHtml(yName);
         const content =
-            `<b>${sanitizeHtml(name ?? xName ?? xKey)}</b>: ${xString}<br>` +
+            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` +
             `<b>${sanitizeHtml(name ?? yName ?? yKey)}</b>: ${yString}`;
 
         const defaults: AgTooltipRendererResult = {
