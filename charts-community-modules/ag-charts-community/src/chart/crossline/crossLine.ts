@@ -11,6 +11,7 @@ import {
     labeldDirectionHandling,
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,
+    calculateLabelChartPadding,
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
@@ -423,7 +424,7 @@ export class CrossLine {
             return;
         }
 
-        const { chartPadding } = calculateLabelTranslation({
+        const chartPadding = calculateLabelChartPadding({
             yDirection: direction === ChartAxisDirection.Y,
             padding: labelPadding,
             position,

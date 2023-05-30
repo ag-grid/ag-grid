@@ -75,7 +75,7 @@ const verticalCrossLineTranslationDirections: Record<CrossLineLabelPosition, Cro
     insideBottomRight: { xTranslationDirection: 1, yTranslationDirection: -1 },
 };
 
-export const calculateLabelTranslation = ({
+export function calculateLabelTranslation({
     yDirection,
     padding = 0,
     position = 'top',
@@ -85,7 +85,7 @@ export const calculateLabelTranslation = ({
     padding: number;
     position: CrossLineLabelPosition;
     bbox: BBox;
-}) => {
+}) {
     const crossLineTranslationDirections = yDirection
         ? horizontalCrosslineTranslationDirections
         : verticalCrossLineTranslationDirections;
@@ -95,13 +95,27 @@ export const calculateLabelTranslation = ({
     const xTranslation = xTranslationDirection * (padding + w / 2);
     const yTranslation = yTranslationDirection * (padding + h / 2);
 
-    const chartPadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
     const result = {
         xTranslation,
         yTranslation,
-        chartPadding,
     };
-    if (position.startsWith('inside')) return result;
+
+    return result;
+}
+
+export function calculateLabelChartPadding({
+    yDirection,
+    bbox,
+    padding = 0,
+    position = 'top',
+}: {
+    yDirection: boolean;
+    padding: number;
+    position: CrossLineLabelPosition;
+    bbox: BBox;
+}) {
+    const chartPadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
+    if (position.startsWith('inside')) return chartPadding;
 
     if (position === 'top' && !yDirection) {
         chartPadding.top = padding + bbox.height;
@@ -113,8 +127,8 @@ export const calculateLabelTranslation = ({
         chartPadding.right = padding + bbox.width;
     }
 
-    return result;
-};
+    return chartPadding;
+}
 
 export const POSITION_TOP_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
     if (yDirection) {
