@@ -190,7 +190,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any
         if (ComponentUtil.ALL_PROPERTIES_SET.has(propKey as any)) {
             if (prevProps[propKey] !== nextProps[propKey]) {
                 if (debugLogging) {
-                    debug(` agGridReact: [${propKey}] property changed`);
+                    console.log(` agGridReact: [${propKey}] property changed`);
                 }
 
                 changes[propKey] = {
@@ -204,7 +204,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any
     ComponentUtil.EVENT_CALLBACKS.forEach((funcName) => {
         if (prevProps[funcName] !== nextProps[funcName]) {
             if (debugLogging) {
-                debug(`agGridReact: [${funcName}] event callback changed`);
+                console.log(`agGridReact: [${funcName}] event callback changed`);
             }
 
             changes[funcName] = {

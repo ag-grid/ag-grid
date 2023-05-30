@@ -825,7 +825,7 @@ title: "Testing AG Grid"
 | We also use the Grid API to initiate and end testing as we're can't readily perform double clicks in a unit
 | testing environment (but could if doing e2e with something like Protractor for example).
 |
-|##Testing React Hooks with Enzyme
+| ## Testing React Hooks with Enzyme
 |
 |By default testing libraries won't return an accessible instance of a hook - in order to get access to methods you'll need
 |to wrap your component with a `forwardRef` and then expose methods you want to test with the `useImperativeHandle` hook.
