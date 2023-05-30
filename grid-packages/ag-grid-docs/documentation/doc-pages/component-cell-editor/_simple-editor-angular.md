@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-Below is an example of cell renderer class:
+Below is an example of cell editor:
 <snippet transform={false}>
 |import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
 |import { ICellEditorAngularComp } from "ag-grid-angular";

@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="javascript">
-Below is an example of cell renderer class:
+Below is an example of cell editor:
 <snippet transform={false}>
 |class DoublingEditor {
 |    init(params) {

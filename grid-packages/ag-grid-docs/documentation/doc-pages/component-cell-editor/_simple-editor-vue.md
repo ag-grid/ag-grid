@@ -1,6 +1,5 @@
 <framework-specific-section frameworks="vue">
-Below is an example of cell editor component:
-
+Below is an example of cell editor:
 <snippet transform={false}>
 |const DoublingEditor = {
 |    template: `&lt;input type="number" v-model="value" ref="input" style="width: 100%" />`,

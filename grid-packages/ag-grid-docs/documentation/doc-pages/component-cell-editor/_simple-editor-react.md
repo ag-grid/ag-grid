@@ -1,6 +1,5 @@
 <framework-specific-section frameworks="react">
 Below is an example of Cell Editor:
-
 <snippet transform={false} language="jsx">
 |const DoublingEditor = forwardRef((props, ref) => {
 |    const [value, setValue] = useState(parseInt(props.value));
