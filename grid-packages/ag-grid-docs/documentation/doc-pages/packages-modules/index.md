@@ -51,7 +51,7 @@ If you want to minimize your bundle size then you should definitely use `modules
     }
 </style>
 
-<div class="pm-outer ag-styles">
+<div class="pm-outer">
     <a href="../packages/" class="tile">
         <img src="resources/packages.svg" alt="Grid Packages Overview" />
         <span class="button">Packages Overview</span>

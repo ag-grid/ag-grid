@@ -166,7 +166,7 @@ const MySolidApp = ()=> {
 
 The example below demonstrates using [Cell Renderer](/component-cell-renderer/) to customise the cells in the Age Column. Note that the Cell Renderer is a standard Solid Component and is set onto the grid using the Column Definitions.
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/renderer.png" alt="Simple Renderer" style="width: 30%;" />
     <div>Fig 1. Simple Cell Renderer Component</div>
     <div class="text-right" style="margin-top: 8px">
@@ -191,7 +191,7 @@ const api = {
 props.ref(api);
 ```
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/editor.png" alt="Simple Editor" style="width: 30%;" />
     <div>Fig 2. Simple Cell Editor Component</div>
     <div class="text-right" style="margin-top: 8px">
@@ -206,7 +206,7 @@ See [Cell Editors](/component-cell-editor/) for full details on creating React C
 
 This example demonstrates custom [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) using Solid components.
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/header.png" alt="Simple Header" style="width: 30%;" />
     <div>Fig 3. Simple Header Component</div>
     <div class="text-right" style="margin-top: 8px">
@@ -222,7 +222,7 @@ See [Column Headers](/component-header/) and [Column Group Headers](/component-h
 
 Below is an example of AG Grid Solid showing more advanced features such as [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Integrated Charting](/integrated-charts/).
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/advanced.png" alt="Advanced Grid" style="width: 30%;" />
     <div>Fig 4. Advanced Grid</div>
     <div class="text-right" style="margin-top: 8px">
@@ -235,7 +235,7 @@ Below is an example of AG Grid Solid showing more advanced features such as [Row
 
 When the master grid is AG Grid Solid, then the detail grids also use AG Grid Solid. In the example both Master and Detail grids are using Solid Cell Renderers.
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/master-detail.png" alt="Master Detail Grid" style="width: 30%;" />
     <div>Fig 5. Master Detail Grid</div>
     <div class="text-right" style="margin-top: 8px">
@@ -264,7 +264,7 @@ import AgGridSolid from '@ag-grid-community/solid';
 
 The example below shows an AG Grid Solid example using modules.
 
-<div class="ag-styles" style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
     <img src="resources/simple.png" alt="Module Imports" style="width: 30%;" />
     <div>Fig 6. Simple Grid using Modules</div>
     <div class="text-right" style="margin-top: 8px">
