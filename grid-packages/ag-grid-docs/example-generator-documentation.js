@@ -87,7 +87,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
 
 
                     const ensureRegistryUsed = ['[modules]=', ':modules=', 'modules={', 'modules:'];
-                    if (ensureRegistryUsed.some(toCheck => src.includes(toCheck))) {
+                    if (ensureRegistryUsed.some(toCheck => src.includes(toCheck)) && !sourceFile.includes('/provided/')) {
                         throw new Error(sourceFile + ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().')
                     }
                 }

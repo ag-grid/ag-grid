@@ -196,17 +196,17 @@ The steps required are:
 Using the same real-world example from above the `package.json` dependencies will be the same but how we register the modules is different.
 
 <framework-specific-section frameworks="javascript">
-| We pass the modules to the new grid via the `modules` property of the GridOptions parameter.
+| We pass the modules to the new grid via the `modules` property of the `GridParams`.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-| import { CsvExportModule } from "@ag-grid-community/csv-export";
-| import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
-| import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
+|import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+|import { CsvExportModule } from "@ag-grid-community/csv-export";
+|import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+|import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-| new Grid(&lt;dom element>, gridOptions, { modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]});
+|new Grid(&lt;dom element>, gridOptions, { modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]});
 </snippet>  
 </framework-specific-section>
 
@@ -216,19 +216,19 @@ Using the same real-world example from above the `package.json` dependencies wil
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
-| import { Component } from '@angular/core';
-| import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-| import { CsvExportModule } from "@ag-grid-community/csv-export";
-| import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
-| import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
+|import { Component } from '@angular/core';
+|import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+|import { CsvExportModule } from "@ag-grid-community/csv-export";
+|import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+|import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-| public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
+|public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
 |
-| &lt;ag-grid-angular>
-|     [rowData]="rowData"
-|     [columnDefs]="columnDefs"
-|     [modules]="modules"
-| &lt;/ag-grid-angular>
+|&lt;ag-grid-angular>
+|    [rowData]="rowData"
+|    [columnDefs]="columnDefs"
+|    [modules]="modules"
+|&lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
 
@@ -238,59 +238,73 @@ Using the same real-world example from above the `package.json` dependencies wil
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-| import React, { Component } from 'react';
-| import { createRoot } from 'react-dom/client';
-| import { AgGridReact } from '@ag-grid-community/react';
-| import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-| import { CsvExportModule } from "@ag-grid-community/csv-export";
-| import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
-| import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
-| 
-| export default class GridExample extends Component {
-|     // ...rest of class..
-| 
-|     render() {
-|         return (
-|             &lt;div style=&lt;span>{&lt;/span>{height: 400, width: 900}} className="ag-theme-alpine">
-|                 &lt;AgGridReact
-|                     // properties
-|                     columnDefs={this.state.columnDefs}
-|                     rowData={this.props.rowData}
-|                     modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]}
-| 
-|                     // events
-|                     onGridReady={this.onGridReady}>
-|                 &lt;/AgGridReact>
-|             &lt;/div>
-|         )
-|     }
-| };
+|import React, { Component } from 'react';
+|import { createRoot } from 'react-dom/client';
+|import { AgGridReact } from '@ag-grid-community/react';
+|import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+|import { CsvExportModule } from "@ag-grid-community/csv-export";
+|import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+|import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
+|
+|export default class GridExample extends Component {
+|    // ...rest of class..
+|
+|    render() {
+|        return (
+|            &lt;div style=&lt;span>{&lt;/span>{height: 400, width: 900}} className="ag-theme-alpine">
+|                &lt;AgGridReact
+|                    // properties
+|                    columnDefs={this.state.columnDefs}
+|                    rowData={this.props.rowData}
+|                    modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]}
+|
+|                    // events
+|                    onGridReady={this.onGridReady}>
+|                &lt;/AgGridReact>
+|            &lt;/div>
+|        )
+|    }
+|};
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false}>
-| import { createApp } from 'vue';
-| import { AgGridVue } from '@ag-grid-community/vue3';
-| import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-| import { CsvExportModule } from "@ag-grid-community/csv-export";
-| import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
-| import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
+|import { createApp } from 'vue';
+|import { AgGridVue } from '@ag-grid-community/vue3';
+|import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+|import { CsvExportModule } from "@ag-grid-community/csv-export";
+|import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+|import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 |
-| data() {
-|     return {
-|         columnDefs: ...column defs...,
-|         rowData: ....row data...,
-|         modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]
-|     }
-| }
-| &lt;ag-grid-vue
-|     :columnDefs="columnDefs"
-|     :rowData="rowData"
-|     :modules="modules">
-| &lt;/ag-grid-vue>
+|data() {
+|    return {
+|        columnDefs: ...column defs...,
+|        rowData: ....row data...,
+|        modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]
+|    }
+|}
+|&lt;ag-grid-vue
+|    :columnDefs="columnDefs"
+|    :rowData="rowData"
+|    :modules="modules">
+|&lt;/ag-grid-vue>
 </snippet>
 </framework-specific-section>   
+
+The following example shows how you can configure individual grids using a combination of shared Global registrations as well as individual grid module registration. Note the following:
+
+ - Globally registered modules:  `['ClientSideRowModelModule', 'MenuModule', 'GridChartsModule']`.
+ - Left Grid individually registers: `['ClipboardModule', 'SetFilterModule']`
+ - Right Grid individually registers: `['ExcelExportModule']`
+
+ To see the difference in features open the ContextMenu and open the column filter:
+
+ - The Left grid has options for charting, clipboard and CSV export.
+ - The Right grid has options for charting and CSV and Excel export.
+ - The Left grid uses the `SetFilter` while the Right grid only has the `TextFilter`
+ 
+ <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules'></grid-example>
 
 ## Core Modules
 

@@ -45,6 +45,9 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
+        // Update casing of props
+        exampleImportType: props.exampleimporttype ?? undefined,
+        useTypescript: props.usetypescript ?? undefined,
         framework,
         pageName,
         library,

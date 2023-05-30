@@ -25,10 +25,11 @@ export const ExampleRunner = (props) => {
             {({exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set}) => {
                 const innerProps = {
                     ...props,
-                    exampleImportType,
+                    // Allow overriding of the global context values per example
+                    exampleImportType: props.exampleImportType ?? exampleImportType,                    
                     useFunctionalReact,
                     useVue3: enableVue3 ? useVue3 : false,
-                    useTypescript,
+                    useTypescript: props.useTypescript ?? useTypescript
                 };
 
                 return <ExampleRunnerInner {...innerProps} />;
