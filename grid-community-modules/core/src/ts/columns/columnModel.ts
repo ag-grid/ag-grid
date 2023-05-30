@@ -230,7 +230,6 @@ export class ColumnModel extends BeanStub {
 
     private groupAutoColumns: Column[] | null;
 
-    private groupDisplayColumns: Column[];
     private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
     private ready = false;
@@ -3093,15 +3092,12 @@ export class ColumnModel extends BeanStub {
     }
 
     private calculateColumnsForGroupDisplay(): void {
-        this.groupDisplayColumns = [];
         this.groupDisplayColumnsMap = {};
 
         const checkFunc = (col: Column) => {
             const colDef = col.getColDef();
             const underlyingColumn = colDef.showRowGroup;
             if (colDef && exists(underlyingColumn)) {
-                this.groupDisplayColumns.push(col);
-
                 if (typeof underlyingColumn === 'string') {
                     this.groupDisplayColumnsMap[underlyingColumn] = col;
                 } else if (underlyingColumn === true) {
@@ -3112,15 +3108,7 @@ export class ColumnModel extends BeanStub {
             }
         };
 
-        this.gridColumns.forEach(checkFunc);
-
-        if (this.groupAutoColumns) {
-            this.groupAutoColumns.forEach(checkFunc);
-        }
-    }
-
-    public getGroupDisplayColumns(): Column[] {
-        return this.groupDisplayColumns;
+        this.groupAutoColumns?.forEach(checkFunc);
     }
 
     public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column | undefined {
@@ -3131,7 +3119,6 @@ export class ColumnModel extends BeanStub {
         const columnsForDisplay = this.calculateColumnsForDisplay();
 
         this.buildDisplayedTrees(columnsForDisplay);
-        this.calculateColumnsForGroupDisplay();
 
         // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
@@ -3958,10 +3945,13 @@ export class ColumnModel extends BeanStub {
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
+                // when auto groups have changed, we recalculate this
+                this.calculateColumnsForGroupDisplay();
                 return true;
             }
         } else {
             this.groupAutoColumns = null;
+            this.calculateColumnsForGroupDisplay();
         }
         return false;
     }
