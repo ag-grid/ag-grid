@@ -199,7 +199,7 @@ export class CartesianChart extends Chart {
         const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const paddedBounds = this.applySeriesPadding(bounds);
-        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
+        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(axisWidths) : {};
         const axisBound = this.buildAxisBound(paddedBounds, axisWidths, crossLinePadding, visibility);
 
         const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
@@ -241,16 +241,13 @@ export class CartesianChart extends Chart {
         return { clipSeries, seriesRect, axisWidths: newAxisWidths, visibility };
     }
 
-    private buildCrossLinePadding(
-        lastPassSeriesRect: BBox,
-        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>
-    ) {
+    private buildCrossLinePadding(axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
         const crossLinePadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
 
         this.axes.forEach((axis) => {
             if (axis.crossLines) {
                 axis.crossLines.forEach((crossLine) => {
-                    crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
+                    crossLine.calculatePadding(crossLinePadding);
                 });
             }
         });

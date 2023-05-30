@@ -1,5 +1,6 @@
 import { BBox } from '../../scene/bbox';
 import { Point } from '../../scene/point';
+import { AgCartesianAxisPosition } from '../agChartOptions';
 
 export type CrossLineLabelPosition =
     | 'top'
@@ -77,27 +78,42 @@ const verticalCrossLineTranslationDirections: Record<CrossLineLabelPosition, Cro
 export const calculateLabelTranslation = ({
     yDirection,
     padding = 0,
-    position,
+    position = 'top',
     bbox,
 }: {
     yDirection: boolean;
     padding: number;
     position: CrossLineLabelPosition;
     bbox: BBox;
-}): { xTranslation: number; yTranslation: number } => {
+}) => {
     const crossLineTranslationDirections = yDirection
         ? horizontalCrosslineTranslationDirections
         : verticalCrossLineTranslationDirections;
-    const { xTranslationDirection, yTranslationDirection } =
-        crossLineTranslationDirections[position] ?? crossLineTranslationDirections['top'];
+    const { xTranslationDirection, yTranslationDirection } = crossLineTranslationDirections[position];
     const w = yDirection ? bbox.width : bbox.height;
     const h = yDirection ? bbox.height : bbox.width;
     const xTranslation = xTranslationDirection * (padding + w / 2);
     const yTranslation = yTranslationDirection * (padding + h / 2);
-    return {
+
+    const chartPadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
+    const result = {
         xTranslation,
         yTranslation,
+        chartPadding,
     };
+    if (position.startsWith('inside')) return result;
+
+    if (position === 'top' && !yDirection) {
+        chartPadding.top = padding + bbox.height;
+    } else if (position === 'bottom' && !yDirection) {
+        chartPadding.bottom = padding + bbox.height;
+    } else if (position === 'left' && yDirection) {
+        chartPadding.left = padding + bbox.width;
+    } else if (position === 'right' && yDirection) {
+        chartPadding.right = padding + bbox.width;
+    }
+
+    return result;
 };
 
 export const POSITION_TOP_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
