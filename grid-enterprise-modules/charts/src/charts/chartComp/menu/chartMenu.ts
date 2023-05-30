@@ -45,9 +45,9 @@ export class ChartMenu extends Component {
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
 
-    private static TEMPLATE = `<div>
+    private static TEMPLATE = /* html */ `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
-        <button class="ag-chart-menu-close" ref="eHideButton">
+        <button class="ag-button ag-chart-menu-close" ref="eHideButton">
             <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>
         </button>
     </div>`;

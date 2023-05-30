@@ -20,6 +20,14 @@
         min-width: unset;
     }
 
+    .ag-button {
+        border-radius: 0px;
+    }
+
+    .ag-button {
+        color: var(--ag-foreground-color);
+    }
+
     .ag-label-align-right .ag-label {
         @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
     }

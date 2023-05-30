@@ -74,7 +74,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 { getUserCompDetails() && <UserComp compDetails={getUserCompDetails()!} ref={setRef}/> }
             </div>
             <div ref={eButtonWrapper!} aria-hidden={getButtonWrapperAriaHidden()} class={getButtonWrapperCssClassesString()} role="presentation">
-                <button ref={eButtonShowMainFilter!} type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" tabIndex={-1}></button>
+                <button ref={eButtonShowMainFilter!} type="button" aria-label="Open Filter Menu" class="ag-button ag-floating-filter-button-button" tabIndex={-1}></button>
             </div>
         </div>
     );
