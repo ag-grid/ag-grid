@@ -584,7 +584,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData>; } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
-    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
+    /** When using aggregations, the grid will always calculate the root level aggregation value. Default: `false`     */
+    @Input() public alwaysAggregateAtRootLevel: boolean | undefined = undefined;
+    /** @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel      */
     @Input() public suppressAggAtRootLevel: boolean | undefined = undefined;
     /** When using change detection, only the updated column will be re-aggregated. Default: `false`     */
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
@@ -1193,6 +1195,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_pivotMode: boolean | null | '';
     static ngAcceptInputType_suppressAggFuncInHeader: boolean | null | '';
     static ngAcceptInputType_suppressColumnVirtualisation: boolean | null | '';
+    static ngAcceptInputType_alwaysAggregateAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressAggAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressFocusAfterRefresh: boolean | null | '';
     static ngAcceptInputType_functionsPassive: boolean | null | '';

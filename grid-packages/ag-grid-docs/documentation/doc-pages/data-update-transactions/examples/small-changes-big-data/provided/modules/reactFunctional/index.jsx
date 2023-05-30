@@ -232,7 +232,6 @@ const GridExample = () => {
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
                         animateRows={true}
-                        suppressAggAtRootLevel={true}
                         suppressRowClickSelection={true}
                         autoGroupColumnDef={autoGroupColumnDef}
                         isGroupOpenByDefault={isGroupOpenByDefault}

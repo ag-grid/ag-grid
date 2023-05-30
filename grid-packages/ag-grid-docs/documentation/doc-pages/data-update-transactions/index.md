@@ -126,8 +126,6 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 - Select a row and click **Update**, **Delete** OR **Duplicate** (duplicate results in an add operation). Note in the console that the number of aggregations, compares and filters is drastically fewer. The total time to execute is also drastically less.
 
-- [Suppressing Top Level Aggregations](/aggregation/#suppressing-top-level-aggregations) is enabled via `suppressAggAtRootLevel=true` to improve performance.
-
 <grid-example title='Small Changes Big Data' name='small-changes-big-data' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 <note>

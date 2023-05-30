@@ -15,7 +15,8 @@ import {
     IAggFuncParams,
     _,
     GetGroupRowAggParams,
-    WithoutGridCommon
+    WithoutGridCommon,
+    PostConstruct,
 } from "@ag-grid-community/core";
 import { AggFuncService } from "./aggFuncService";
 
@@ -36,6 +37,17 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private filteredOnly: boolean;
 
+    private alwaysAggregateAtRootLevel: boolean;
+    private groupIncludeTotalFooter: boolean;
+
+    @PostConstruct
+    private init(): void {
+        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
+        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', (propChange) => this.alwaysAggregateAtRootLevel = propChange.currentValue);
+        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
+        this.addManagedPropertyListener('groupIncludeTotalFooter', (propChange) => this.groupIncludeTotalFooter = propChange.currentValue);
+    }
+    
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     public execute(params: StageExecuteParams): any {
@@ -93,13 +105,12 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                 return;
             }
 
-            //Optionally prevent the aggregation at the root Node
-            //https://ag-grid.atlassian.net/browse/AG-388
+            //Optionally enable the aggregation at the root Node
             const isRootNode = rowNode.level === -1;
-            if (isRootNode) {
+            // if total footer is displayed, the value is in use
+            if (isRootNode && !this.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
-                const suppressAggAtRootLevel = this.gridOptionsService.is('suppressAggAtRootLevel');
-                if (suppressAggAtRootLevel && notPivoting) { return; }
+                if (!this.alwaysAggregateAtRootLevel && notPivoting) { return; }
             }
 
             this.aggregateRowNode(rowNode, aggDetails);
