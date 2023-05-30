@@ -30,7 +30,6 @@ import {
     LESS_THAN,
     NUMBER_OR_NAN,
     AND,
-    GREATER_THAN,
 } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
@@ -134,7 +133,7 @@ export class AxisLine {
     color?: string = 'rgba(195, 195, 195, 1)';
 }
 
-class AxisTick<S extends Scale<D, number>, D = any> {
+export class BaseAxisTick<S extends Scale<D, number, I>, D = any, I = any> {
     @Validate(BOOLEAN)
     enabled = true;
 
@@ -180,9 +179,8 @@ class AxisTick<S extends Scale<D, number>, D = any> {
     @Default(NaN)
     minSpacing: number = NaN;
 
-    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
-    @Default(NaN)
-    maxSpacing: number = NaN;
+    // Maybe initialised and validated in sub-classes - DO NOT ASSIGN A VALUE HERE.
+    maxSpacing?: number;
 }
 
 export class AxisLabel {
@@ -382,7 +380,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     readonly line = new AxisLine();
-    readonly tick = new AxisTick<S>();
+    readonly tick: BaseAxisTick<S> = this.createTick();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -650,6 +648,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      */
     seriesAreaPadding = 0;
 
+    protected createTick(): BaseAxisTick<S> {
+        return new BaseAxisTick();
+    }
+
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
@@ -770,7 +772,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         const { maxTickCount } = this.estimateTickCount({
             minSpacing: tick.minSpacing,
-            maxSpacing: tick.maxSpacing,
+            maxSpacing: tick.maxSpacing ?? NaN,
         });
 
         const continuous = scale instanceof ContinuousScale;
@@ -891,7 +893,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const { scale, tick } = this;
         const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
             minSpacing: tick.minSpacing,
-            maxSpacing: tick.maxSpacing,
+            maxSpacing: tick.maxSpacing ?? NaN,
         });
 
         const continuous = scale instanceof ContinuousScale;
@@ -1039,7 +1041,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private filterTicks(ticks: any, tickCount: number): any[] {
-        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing ?? NaN);
         const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
         return ticks.filter((_: any, i: number) => i % keepEvery === 0);
     }
