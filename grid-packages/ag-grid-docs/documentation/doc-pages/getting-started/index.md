@@ -21,9 +21,9 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="plunkr" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" />
-</tabs-links>
+</div>
 
 <div tab-label="main.js">
 </framework-specific-section>
@@ -408,9 +408,9 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="angular">
 <tabs>
 
- <tabs-links>
+ <div tabs-links="true">
  <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" />
- </tabs-links>
+ </div>
 
 <div tab-label="app.component.ts">
 </framework-specific-section>
@@ -941,9 +941,9 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="react">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-react-hello-world" />
-</tabs-links>
+</div>
 
 <div tab-label="index.js">
 </framework-specific-section>
@@ -1385,9 +1385,9 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="vue">
 <tabs>
 
-<tabs-links>
+<div tabs-links="true">
 <open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/main.js" />
-</tabs-links>
+</div>
 
 <div tab-label="App.vue">
 </framework-specific-section>

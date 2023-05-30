@@ -1,18 +1,18 @@
 import classnames from 'classnames';
-import React, { FunctionalComponent, ReactNode, useState } from 'react';
+import React, { FunctionComponent, ReactNode, useState } from 'react';
 import styles from './Tabs.module.scss';
 
 const TAB_LABEL_PROP = 'tab-label'; // NOTE: kebab case to match markdown html props
-const TABS_LINK_TYPE_NAME = 'TabsLinks';
+const TABS_LINKS_PROP = 'tabs-links';
 
 interface Props {
     heading: string;
     children: ReactNode;
 }
 
-export const Tabs: FunctionalComponent<Props> = ({ children }) => {
-    const contentChildren = children.filter((child) => child.props && child.props[TAB_LABEL_PROP]);
-    const linksChildren = children.filter((child) => child.type?.name === TABS_LINK_TYPE_NAME);
+export const Tabs: FunctionComponent<Props> = ({ children }) => {
+    const contentChildren = children?.filter((child) => child.props && child.props[TAB_LABEL_PROP]);
+    const linksChildren = children?.filter((child) => child.props && child.props[TABS_LINKS_PROP]);
 
     const [selected, setSelected] = useState(contentChildren[0]?.props[TAB_LABEL_PROP]);
 
@@ -42,7 +42,7 @@ export const Tabs: FunctionalComponent<Props> = ({ children }) => {
                     })}
                 </ul>
 
-                {linksChildren}
+                {linksChildren && <div className={styles.externalLinks}>{linksChildren}</div>}
             </header>
             <div className="tabs-content" role="tabpanel" aria-labelledby={`${selected} tab`}>
                 {contentChildren.find(({ props }) => props[TAB_LABEL_PROP] === selected)}
