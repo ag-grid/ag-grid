@@ -433,6 +433,10 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         return new Rect();
     }
 
+    private getItemConfig(isPositive: boolean): WaterfallSeriesItem {
+        return isPositive ? this.positiveItem : this.negativeItem;
+    }
+
     protected async updateDatumSelection(opts: {
         nodeData: WaterfallNodeDatum[];
         datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>;
@@ -479,7 +483,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 strokeWidth: itemStrokeWidth,
                 lineDash: itemLineDash,
                 lineDashOffset: itemLineDashOffset,
-            } = isPositive ? positiveItem : negativeItem;
+            } = this.getItemConfig(isPositive);
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             const strokeWidth =
@@ -567,7 +571,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
             return '';
         }
 
-        const { formatter, tooltip, xName, yName, id: seriesId, positiveItem, negativeItem } = this;
+        const { formatter, tooltip, xName, yName, id: seriesId } = this;
 
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
@@ -576,7 +580,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         let format: any | undefined = undefined;
 
         const isPositive = datum.itemId === 'positive';
-        const { fill, strokeWidth, name } = isPositive ? positiveItem : negativeItem;
+        const { fill, strokeWidth, name } = this.getItemConfig(isPositive);
 
         const color = format?.fill ?? fill ?? 'gray';
 
