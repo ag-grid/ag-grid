@@ -556,7 +556,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
 
         if (!params || !params.suppressFocus) {
-            eMiniFilter.getFocusableElement().focus();
+            eMiniFilter.getFocusableElement().focus({ preventScroll: true });
         }
     }
 

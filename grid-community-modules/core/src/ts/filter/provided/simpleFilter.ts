@@ -698,7 +698,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             if (!firstInput) { return; }
 
             if (firstInput instanceof AgAbstractInputField) {
-                firstInput.getInputElement().focus();
+                firstInput.getInputElement().focus({ preventScroll: true });
             }
         }
     }

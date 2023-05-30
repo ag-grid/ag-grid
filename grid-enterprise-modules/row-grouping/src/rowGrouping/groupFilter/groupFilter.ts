@@ -199,7 +199,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             filterWrapper.filterPromise?.then(filter => {
                 filter?.afterGuiAttached?.(this.afterGuiAttachedParams);
                 if (!this.afterGuiAttachedParams?.suppressFocus && this.eGroupFieldSelect && !this.eGroupFieldSelect.isDisabled()) {
-                    this.eGroupFieldSelect.getFocusableElement().focus();
+                    this.eGroupFieldSelect.getFocusableElement().focus({ preventScroll: true });
                 }
             });
         });
