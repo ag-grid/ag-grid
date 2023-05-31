@@ -551,7 +551,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
 
         const getNextGoodRowNode = () => {
             while (true) {
