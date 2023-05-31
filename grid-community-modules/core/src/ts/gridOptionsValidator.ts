@@ -228,7 +228,7 @@ export class GridOptionsValidator {
         onColumnValueChangeRequest: { version: '29.2' },
         onColumnAggFuncChangeRequest: { version: '29.2' },
         serverSideFilterAllLevels: { version: '30', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
-        suppressAggAtRootLevel: { version: '30', newProp: 'alwaysAggregateAtRootLevel' },
+        suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
     }
 
     private checkForDeprecated() {
