@@ -347,8 +347,6 @@ export class CartesianChart extends Chart {
             return [seriesRect.height, 0];
         };
 
-        axis.label.mirrored = ['top', 'right'].includes(position);
-
         const axisOffset = newAxisWidths[position] ?? 0;
         switch (position) {
             case 'top':

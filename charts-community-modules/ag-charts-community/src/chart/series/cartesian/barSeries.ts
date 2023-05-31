@@ -163,14 +163,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     @Validate(OPT_STRING)
-    protected _xKey?: string = undefined;
-    set xKey(value: string | undefined) {
-        this._xKey = value;
-        this.processedData = undefined;
-    }
-    get xKey(): string | undefined {
-        return this._xKey;
-    }
+    xKey?: string = undefined;
 
     @Validate(OPT_STRING)
     xName?: string = undefined;
@@ -266,13 +259,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     @Validate(BOOLEAN)
-    protected _grouped: boolean = false;
-    set grouped(value: boolean) {
-        this._grouped = value;
-    }
-    get grouped(): boolean {
-        return this._grouped;
-    }
+    grouped: boolean = false;
 
     stackGroups: Record<string, string[]> = {};
 
@@ -300,21 +287,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     legendItemNames: { [key in string]: string } = {};
 
-    /**
-     * The value to normalize the bars to.
-     * Should be a finite positive value or `undefined`.
-     * Defaults to `undefined` - bars are not normalized.
-     */
     @Validate(OPT_NUMBER())
-    private _normalizedTo?: number;
-    set normalizedTo(value: number | undefined) {
-        const absValue = value ? Math.abs(value) : undefined;
-
-        this._normalizedTo = absValue;
-    }
-    get normalizedTo(): number | undefined {
-        return this._normalizedTo;
-    }
+    normalizedTo?: number;
 
     @Validate(NUMBER(0))
     strokeWidth: number = 1;
@@ -327,6 +301,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.processYNames();
 
         const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
+        const normalizedToAbs = Math.abs(normalizedTo ?? NaN);
 
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
         const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
@@ -338,7 +313,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
             .filter((stack) => stack.length > 0);
 
-        const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const normaliseTo = normalizedToAbs && isFinite(normalizedToAbs) ? normalizedToAbs : undefined;
         const extraProps = [];
         if (normaliseTo) {
             extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));

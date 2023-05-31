@@ -98,34 +98,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     labelName?: string = 'Label';
 
     @Validate(OPT_STRING)
-    protected _xKey?: string = undefined;
-    set xKey(value: string | undefined) {
-        this._xKey = value;
-        this.processedData = undefined;
-    }
-    get xKey(): string | undefined {
-        return this._xKey;
-    }
+    xKey?: string = undefined;
 
     @Validate(OPT_STRING)
-    protected _yKey?: string = undefined;
-    set yKey(value: string | undefined) {
-        this._yKey = value;
-        this.processedData = undefined;
-    }
-    get yKey(): string | undefined {
-        return this._yKey;
-    }
+    yKey?: string = undefined;
 
     @Validate(OPT_STRING)
-    protected _sizeKey?: string = undefined;
-    set sizeKey(value: string | undefined) {
-        this._sizeKey = value;
-        this.processedData = undefined;
-    }
-    get sizeKey(): string | undefined {
-        return this._sizeKey;
-    }
+    sizeKey?: string = undefined;
 
     @Validate(OPT_STRING)
     colorKey?: string = undefined;

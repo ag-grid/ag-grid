@@ -24,7 +24,6 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     @Validate(STRING_ARRAY)
     keys: string[] = [];
 
-    direction: ChartAxisDirection = ChartAxisDirection.Y;
     boundSeries: BoundSeries[] = [];
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
@@ -33,6 +32,10 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
 
     get type(): AgCartesianAxisType {
         return (this.constructor as any).type ?? '';
+    }
+
+    get direction() {
+        return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
     }
 
     protected useCalculatedTickCount() {
@@ -47,45 +50,42 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     }
 
     @Validate(POSITION)
-    protected _position: AgCartesianAxisPosition = 'left';
-    set position(value: AgCartesianAxisPosition) {
-        if (this._position !== value) {
-            this._position = value;
-            switch (value) {
-                case 'top':
-                    this.direction = ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = true;
-                    this.label.parallel = true;
-                    break;
-                case 'right':
-                    this.direction = ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = true;
-                    this.label.parallel = false;
-                    break;
-                case 'bottom':
-                    this.direction = ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = false;
-                    this.label.parallel = true;
-                    break;
-                case 'left':
-                    this.direction = ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = false;
-                    this.label.parallel = false;
-                    break;
-            }
+    position: AgCartesianAxisPosition = 'left';
 
-            if (this.axisContext) {
-                this.axisContext.position = value;
-                this.axisContext.direction = this.direction;
-            }
-        }
+    public update(primaryTickCount?: number) {
+        this.updateDirection();
+
+        return super.update(primaryTickCount);
     }
-    get position(): AgCartesianAxisPosition {
-        return this._position;
+
+    protected updateDirection() {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
     }
 
     protected calculateDomain() {

@@ -158,15 +158,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     @Validate(OPT_STRING)
-    protected _xKey?: string = undefined;
-    set xKey(value: string | undefined) {
-        this._xKey = value;
-        this.processedData = undefined;
-    }
-
-    get xKey(): string | undefined {
-        return this._xKey;
-    }
+    xKey?: string = undefined;
 
     @Validate(OPT_STRING)
     xName?: string = undefined;

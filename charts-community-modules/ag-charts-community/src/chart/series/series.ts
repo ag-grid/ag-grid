@@ -334,12 +334,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         // Override point for sub-classes.
     }
 
-    set grouped(g: boolean) {
-        if (g === true) {
-            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
-        }
-    }
-
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;

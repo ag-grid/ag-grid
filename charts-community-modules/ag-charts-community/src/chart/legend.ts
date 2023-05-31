@@ -158,20 +158,6 @@ export class Legend {
 
     private readonly truncatedItems: Set<string> = new Set();
 
-    set translationX(value: number) {
-        this.group.translationX = value;
-    }
-    get translationX(): number {
-        return this.group.translationX;
-    }
-
-    set translationY(value: number) {
-        this.group.translationY = value;
-    }
-    get translationY(): number {
-        return this.group.translationY;
-    }
-
     private _data: CategoryLegendDatum[] = [];
     set data(value: CategoryLegendDatum[]) {
         this._data = value;
@@ -917,11 +903,8 @@ export class Legend {
 
         const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
 
-        let translationX = 0;
-        let translationY = 0;
-
-        this.translationX = 0;
-        this.translationY = 0;
+        this.group.translationX = 0;
+        this.group.translationY = 0;
         this.performLayout(legendWidth, legendHeight);
         const legendBBox = this.computePagedBBox();
 
@@ -939,6 +922,9 @@ export class Legend {
             }
         };
         if (this.visible) {
+            let translationX;
+            let translationY;
+
             switch (this.position) {
                 case 'top':
                 case 'bottom':
@@ -956,8 +942,8 @@ export class Legend {
             }
 
             // Round off for pixel grid alignment to work properly.
-            this.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
-            this.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
+            this.group.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
+            this.group.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
         }
 
         if (this.visible && this.enabled && this.data.length) {
@@ -965,8 +951,8 @@ export class Legend {
             newShrinkRect.shrink(legendPadding, this.position);
 
             const legendPositionedBBox = legendBBox.clone();
-            legendPositionedBBox.x += this.translationX;
-            legendPositionedBBox.y += this.translationY;
+            legendPositionedBBox.x += this.group.translationX;
+            legendPositionedBBox.y += this.group.translationY;
             this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
         } else {
             this.tooltipManager.updateExclusiveRect(this.id);

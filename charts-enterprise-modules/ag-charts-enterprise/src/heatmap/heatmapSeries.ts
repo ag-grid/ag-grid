@@ -8,7 +8,6 @@ type AgHeatmapSeriesFormat = any;
 
 const {
     Validate,
-    ActionOnSet,
     DataModel,
     SeriesNodePickMode,
     valueProperty,
@@ -76,22 +75,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     labelKey?: string = undefined;
 
     @Validate(OPT_STRING)
-    @ActionOnSet<HeatmapSeries>({
-        newValue(_xKey: string) {
-            this.processedData = undefined;
-        },
-    })
     xKey?: string = undefined;
 
     @Validate(OPT_STRING)
     xName?: string = undefined;
 
     @Validate(OPT_STRING)
-    @ActionOnSet<HeatmapSeries>({
-        newValue(_yKey: string) {
-            this.processedData = undefined;
-        },
-    })
     yKey?: string = undefined;
 
     @Validate(OPT_STRING)
@@ -101,11 +90,6 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     labelName?: string = 'Label';
 
     @Validate(OPT_STRING)
-    @ActionOnSet<HeatmapSeries>({
-        newValue(_colorKey: string) {
-            this.processedData = undefined;
-        },
-    })
     colorKey?: string = 'color';
 
     @Validate(OPT_STRING)

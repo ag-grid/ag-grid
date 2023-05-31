@@ -21,6 +21,10 @@ export class Matrix {
 
     private readonly elements: number[];
 
+    get e() {
+        return [...this.elements];
+    }
+
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
     }
@@ -53,48 +57,6 @@ export class Matrix {
     private get identity(): boolean {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 && e[3] === 1 && e[4] === 0 && e[5] === 0;
-    }
-
-    set a(value: number) {
-        this.elements[0] = value;
-    }
-    get a(): number {
-        return this.elements[0];
-    }
-
-    set b(value: number) {
-        this.elements[1] = value;
-    }
-    get b(): number {
-        return this.elements[1];
-    }
-
-    set c(value: number) {
-        this.elements[2] = value;
-    }
-    get c(): number {
-        return this.elements[2];
-    }
-
-    set d(value: number) {
-        this.elements[3] = value;
-    }
-    get d(): number {
-        return this.elements[3];
-    }
-
-    set e(value: number) {
-        this.elements[4] = value;
-    }
-    get e(): number {
-        return this.elements[4];
-    }
-
-    set f(value: number) {
-        this.elements[5] = value;
-    }
-    get f(): number {
-        return this.elements[5];
     }
 
     /**

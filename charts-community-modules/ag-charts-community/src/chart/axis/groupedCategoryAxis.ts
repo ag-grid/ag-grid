@@ -42,7 +42,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
-        this.requestedRange = scale.range.slice();
+        this.range = scale.range.slice();
         this.refreshScale();
 
         tickScale.paddingInner = 1;
@@ -54,15 +54,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         this.labelSelection = Selection.select(tickLabelGroup, Text);
     }
 
-    set range(value: number[]) {
-        this.requestedRange = value.slice();
-    }
-    get range(): number[] {
-        return this.requestedRange.slice();
-    }
-
     protected updateRange() {
-        const { requestedRange: rr, visibleRange: vr, scale } = this;
+        const { range: rr, visibleRange: vr, scale } = this;
         const span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         const shift = span * vr[0];
         const start = rr[0] - shift;
@@ -183,6 +176,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * it will also make it harder to reason about the program.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateDirection();
         this.calculateDomain();
         this.updateRange();
 
@@ -191,7 +185,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             label,
             label: { parallel },
             tickScale,
-            requestedRange,
+            range: requestedRange,
             title,
             title: { formatter = (p: AgAxisCaptionFormatterParams) => p.value } = {},
             _titleCaption,

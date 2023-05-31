@@ -109,27 +109,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     @Validate(OPT_STRING)
-    protected _xKey?: string = undefined;
-    set xKey(value: string | undefined) {
-        this._xKey = value;
-        this.processedData = undefined;
-    }
-    get xKey(): string | undefined {
-        return this._xKey;
-    }
+    xKey?: string = undefined;
 
     @Validate(OPT_STRING)
     xName?: string = undefined;
 
     @Validate(OPT_STRING)
-    protected _yKey?: string = undefined;
-    set yKey(value: string | undefined) {
-        this._yKey = value;
-        this.processedData = undefined;
-    }
-    get yKey(): string | undefined {
-        return this._yKey;
-    }
+    yKey?: string = undefined;
 
     @Validate(OPT_STRING)
     yName?: string = undefined;

@@ -454,14 +454,14 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     protected refreshScale() {
-        this.requestedRange = this.scale.range.slice();
+        this.range = this.scale.range.slice();
         this.crossLines?.forEach((crossLine) => {
             this.initCrossLine(crossLine);
         });
     }
 
     protected updateRange() {
-        const { requestedRange: rr, visibleRange: vr, scale } = this;
+        const { range: rr, visibleRange: vr, scale } = this;
         const span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         const shift = span * vr[0];
         const start = rr[0] - shift;
@@ -512,29 +512,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         return 0; // in range
     }
 
-    protected requestedRange: number[] = [0, 1];
-    set range(value: number[]) {
-        this.requestedRange = value.slice();
-    }
-    get range(): number[] {
-        return this.requestedRange;
-    }
-
-    protected _visibleRange: number[] = [0, 1];
-    set visibleRange(value: number[]) {
-        if (value && value.length === 2) {
-            let [min, max] = value;
-            min = Math.max(0, min);
-            max = Math.min(1, max);
-            min = Math.min(min, max);
-            max = Math.max(min, max);
-            this._visibleRange = [min, max];
-            this.updateRange();
-        }
-    }
-    get visibleRange(): number[] {
-        return this._visibleRange.slice();
-    }
+    range: number[] = [0, 1];
+    visibleRange: number[] = [0, 1];
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
@@ -1121,7 +1100,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     private updateVisibility() {
-        const { requestedRange } = this;
+        const { range: requestedRange } = this;
 
         const requestedRangeMin = Math.min(...requestedRange);
         const requestedRangeMax = Math.max(...requestedRange);
@@ -1191,7 +1170,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     private calculateAvailableRange(): number {
-        const { requestedRange } = this;
+        const { range: requestedRange } = this;
 
         const min = Math.min(...requestedRange);
         const max = Math.max(...requestedRange);
@@ -1387,7 +1366,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     private updateLine() {
         // Render axis line.
-        const { lineNode, requestedRange } = this;
+        const { lineNode, range: requestedRange } = this;
 
         lineNode.x1 = 0;
         lineNode.x2 = 0;
@@ -1400,7 +1379,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
         const identityFormatter = (params: { value?: string }) => params.value;
-        const { rotation, title, _titleCaption, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
+        const { rotation, title, _titleCaption, lineNode, range: requestedRange, tickLineGroup, tickLabelGroup } = this;
         const { formatter = identityFormatter } = this.title ?? {};
 
         if (!title) {
