@@ -227,7 +227,7 @@ export class GridOptionsValidator {
         onColumnPivotChangeRequest: { version: '29.2' },
         onColumnValueChangeRequest: { version: '29.2' },
         onColumnAggFuncChangeRequest: { version: '29.2' },
-        serverSideFilterAllLevels: { version: '30', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
+        serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
         suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
     }
 
