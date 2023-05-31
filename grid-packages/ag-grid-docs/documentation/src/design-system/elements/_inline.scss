@@ -43,3 +43,12 @@ kbd {
     box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, 'white');
     text-shadow: 0 1px 0 map.get($abstract-colors, 'white');
 }
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+svg {
+    overflow: hidden;
+}
