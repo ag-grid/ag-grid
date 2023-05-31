@@ -1173,6 +1173,13 @@ export interface AgCartesianSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string;
 }
 
+export interface AgRadarLineSeriesLabelFormatterParams {
+    /** The ID of the series. */
+    readonly seriesId: string;
+    /** The value of radiusKey as specified on series options. */
+    readonly value: number;
+}
+
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;

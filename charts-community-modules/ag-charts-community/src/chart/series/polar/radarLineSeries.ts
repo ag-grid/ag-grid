@@ -1,5 +1,6 @@
 import { Group } from '../../../scene/group';
 import { Path } from '../../../scene/shape/path';
+import { Text } from '../../../scene/shape/text';
 import { getMarker } from '../../marker/util';
 import { Selection } from '../../../scene/selection';
 import { BandScale } from '../../../scale/bandScale';
@@ -12,8 +13,10 @@ import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
+import { isEqual } from '../../../util/number';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { interpolate } from '../../../util/string';
+import { Label } from '../../label';
 import {
     NUMBER,
     OPT_COLOR_STRING,
@@ -25,6 +28,7 @@ import {
 } from '../../../util/validation';
 import {
     AgPieSeriesTooltipRendererParams,
+    AgRadarLineSeriesLabelFormatterParams,
     AgRadarLineSeriesMarkerFormat,
     AgRadarLineSeriesMarkerFormatterParams,
     AgTooltipRendererResult,
@@ -65,7 +69,16 @@ class RadarLineSeriesNodeDoubleClickEvent extends RadarLineSeriesNodeBaseClickEv
 interface RadarLineNodeDatum extends SeriesNodeDatum {
     readonly label?: {
         text: string;
+        x: number;
+        y: number;
+        hAlign: CanvasTextAlign;
+        vAlign: CanvasTextBaseline;
     };
+}
+
+class RadarLineSeriesLabel extends Label {
+    @Validate(OPT_FUNCTION)
+    formatter?: (params: AgRadarLineSeriesLabelFormatterParams) => string = undefined;
 }
 
 class RadarLineSeriesTooltip extends SeriesTooltip {
@@ -91,10 +104,13 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
 
     readonly marker = new RadarLineSeriesMarker();
 
+    readonly label = new RadarLineSeriesLabel();
+
     private radiusScale: LinearScale = new LinearScale();
 
     private pathSelection: Selection<Path, boolean>;
     private markerSelection: Selection<Marker, RadarLineNodeDatum>;
+    private labelSelection: Selection<Text, RadarLineNodeDatum>;
     private angleAxisSelection: Selection<Path, RadarLineNodeDatum>;
     private radiusAxisSelection: Selection<Path, boolean>;
 
@@ -164,7 +180,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     readonly highlightStyle = new HighlightStyle();
 
     constructor() {
-        super({});
+        super({ useLabelLayer: true });
 
         this.angleScale = new BandScale();
         // Each sector is a ratio of the whole, where all ratios add up to 1.
@@ -190,6 +206,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             const MarkerShape = getMarker();
             return new MarkerShape();
         });
+
+        this.labelSelection = Selection.select(this.labelGroup!, Text);
 
         this.animationState = new RadarLineStateMachine('empty', {
             empty: {
@@ -270,7 +288,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
         const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
 
-        const { angleScale, radiusScale } = this;
+        const { angleScale, radiusScale, label, marker, id: seriesId } = this;
         const { size: markerSize } = this.marker;
 
         const nodeData = processedData.data.map((group): RadarLineNodeDatum => {
@@ -282,14 +300,41 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             const angle = angleScale.convert(angleDatum);
             const radius = radiusScale.convert(radiusDatum);
 
-            const x = this.centerX + Math.cos(angle) * radius;
-            const y = this.centerY + Math.sin(angle) * radius;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            const x = this.centerX + cos * radius;
+            const y = this.centerY + sin * radius;
+
+            let labelNodeDatum: RadarLineNodeDatum['label'];
+            if (label.enabled) {
+                let labelText = '';
+                if (label.formatter) {
+                    labelText = label.formatter({ value: radiusDatum, seriesId });
+                } else if (typeof radiusDatum === 'number' && isFinite(radiusDatum)) {
+                    labelText = radiusDatum.toFixed(2);
+                } else if (radiusDatum) {
+                    labelText = String(radiusDatum);
+                }
+                if (labelText) {
+                    const labelX = x + cos * marker.size;
+                    const labelY = y + sin * marker.size;
+                    labelNodeDatum = {
+                        text: labelText,
+                        x: labelX,
+                        y: labelY,
+                        hAlign: isEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right',
+                        vAlign: isEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom',
+                    };
+                }
+            }
 
             return {
                 series: this,
                 datum,
                 point: { x, y, size: markerSize },
                 nodeMidPoint: { x, y },
+                label: labelNodeDatum,
             };
         });
 
@@ -308,15 +353,16 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.drawTempAxis();
         this.updatePath();
         this.updateMarkers();
+        this.updateLabels();
     }
 
     private drawTempAxis() {
         const radius = this.radiusScale.range[1];
         const cx = this.centerX;
         const cy = this.centerY;
-        this.angleAxisSelection.update(this.nodeData).each((node, nodeDatum) => {
+        this.angleAxisSelection.update(this.nodeData).each((node, datum) => {
             node.path.clear();
-            const angle = this.angleScale.convert(nodeDatum.datum[this.angleKey]);
+            const angle = this.angleScale.convert(datum.datum[this.angleKey]);
             node.path.moveTo(cx, cy);
             node.path.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
             node.stroke = 'gray';
@@ -339,8 +385,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.pathSelection.update(this.seriesItemEnabled ? [true] : []).each((node) => {
             const { path } = node;
             path.clear();
-            this.nodeData.forEach((nodeDatum, index) => {
-                const point = nodeDatum.point!;
+            this.nodeData.forEach((datum, index) => {
+                const point = datum.point!;
                 if (index === 0) {
                     path.moveTo(point.x, point.y);
                 } else {
@@ -361,7 +407,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         const { marker, markerSelection } = this;
         const { shape, enabled } = marker;
         const nodeData = shape && enabled ? this.nodeData : [];
-        markerSelection.update(nodeData).each((node, nodeDatum) => {
+        markerSelection.update(nodeData).each((node, datum) => {
             node.fill = marker.fill;
             node.stroke = marker.stroke;
             node.strokeWidth = marker.strokeWidth ?? 1;
@@ -369,10 +415,34 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             node.strokeOpacity = marker.strokeOpacity ?? 1;
             node.size = marker.size;
 
-            const { x, y } = nodeDatum.point!;
+            const { x, y } = datum.point!;
             node.translationX = x;
             node.translationY = y;
             node.visible = node.size > 0 && !isNaN(x) && !isNaN(y);
+        });
+    }
+
+    private updateLabels() {
+        const { label, labelSelection } = this;
+        labelSelection.update(this.nodeData).each((node, datum) => {
+            if (label.enabled && datum.label) {
+                node.x = datum.label.x;
+                node.y = datum.label.y;
+
+                node.fill = label.color;
+
+                node.fontFamily = label.fontFamily;
+                node.fontSize = label.fontSize;
+                node.fontStyle = label.fontStyle;
+                node.fontWeight = label.fontWeight;
+                node.text = datum.label.text;
+                node.textAlign = datum.label.hAlign;
+                node.textBaseline = datum.label.vAlign;
+
+                node.visible = true;
+            } else {
+                node.visible = false;
+            }
         });
     }
 
