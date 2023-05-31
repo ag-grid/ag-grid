@@ -13,6 +13,7 @@ import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
 import { ModuleContext } from '../../util/module';
+import { AgAxisCaptionFormatterParams } from '../agChartOptions';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
@@ -191,6 +192,9 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             label: { parallel },
             tickScale,
             requestedRange,
+            title,
+            title: { formatter = (p: AgAxisCaptionFormatterParams) => p.value } = {},
+            _titleCaption,
         } = this;
 
         const rangeStart = scale.range[0];
@@ -203,12 +207,9 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         this.updatePosition({ rotation, sideFlag });
 
-        const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        if (title) {
-            title.node.visible = false;
-        }
+        _titleCaption.node.visible = false;
         const lineHeight = this.lineHeight;
 
         // Render ticks and labels.
@@ -254,7 +255,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 // use the phantom root as the axis title
                 if (title?.enabled && labels.length > 0) {
                     node.visible = true;
-                    node.text = title.text;
+                    node.text = formatter(this.getTitleFormatterParams());
                     node.fontSize = title.fontSize;
                     node.fontStyle = title.fontStyle;
                     node.fontWeight = title.fontWeight;

@@ -302,6 +302,15 @@ export interface AgChartCaptionOptions {
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 
+export interface AgAxisCaptionFormatterParams {
+    /** Default value to be used for the axis title (as specified in chart options or theme). */
+    value?: string;
+    /** Direction of the axis the title belongs to. */
+    direction: 'x' | 'y';
+    /** Keys bound to the axis the title belongs to. */
+    keys: string[];
+}
+
 export interface AgAxisCaptionOptions {
     /** Whether or not the title should be shown. */
     enabled?: boolean;
@@ -317,6 +326,8 @@ export interface AgAxisCaptionOptions {
     fontFamily?: FontFamily;
     /** The colour to use for the title. */
     color?: CssColor;
+    /** Formatter to allow dynamic axis title calculation. */
+    formatter?: (params: AgAxisCaptionFormatterParams) => string;
 }
 
 export interface AgNavigatorMaskOptions {
