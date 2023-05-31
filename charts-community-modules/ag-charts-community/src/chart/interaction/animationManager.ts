@@ -220,8 +220,9 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     private startAnimationCycle() {
         const frame = (time: number) => {
+            this.requestId = requestAnimationFrame(frame);
+
             if (!this.readyToPlay) {
-                this.requestId = requestAnimationFrame(frame);
                 return;
             }
 
@@ -234,8 +235,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             });
 
             this.listeners.dispatch('animation-frame', { type: 'animation-frame', deltaMs });
-
-            this.requestId = requestAnimationFrame(frame);
         };
 
         this.requestId = requestAnimationFrame(frame);
