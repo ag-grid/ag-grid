@@ -25,8 +25,6 @@
 }
 
 .mobileHeader {
-    --icon-size: 1.125em;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -35,6 +33,7 @@
     padding: 0 $size-2;
     border-bottom: 2px solid var(--bright-blue-gray);
     overflow-x: auto;
+    overflow-y: hidden;
 
     @container (width > 640px) {
         display: none;
@@ -46,6 +45,8 @@
     }
 
     svg {
+        --icon-size: 1.125em;
+
         position: relative;
         margin-left: $size-half;
         bottom: 0.125em;
