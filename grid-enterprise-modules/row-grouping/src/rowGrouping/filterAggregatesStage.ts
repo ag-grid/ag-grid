@@ -18,7 +18,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
     public execute(params: StageExecuteParams): void {
         const isPivotMode = this.columnModel.isPivotMode();
         const isAggFilterActive = this.filterManager.isAggregateFilterPresent()
-            || (isPivotMode && this.filterManager.isQuickFilterPresent());
+            || this.filterManager.isAggregateQuickFilterPresent();
 
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
