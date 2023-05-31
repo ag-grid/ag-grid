@@ -125,7 +125,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon.svg" />`,
+                    icon: `<img src="${hostPrefix}/images/automated-examples/replay-demo-icon.svg" />`,
                 },
             ],
             onStateChange(state) {

@@ -114,7 +114,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon-dark.svg" />`,
+                    icon: `<img src="${hostPrefix}/images/automated-examples/replay-demo-icon-dark.svg" />`,
                 },
             ],
             onStateChange(state) {
