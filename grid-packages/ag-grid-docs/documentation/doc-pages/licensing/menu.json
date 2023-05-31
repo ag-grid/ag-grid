@@ -1934,6 +1934,11 @@
                 "title": "Heatmap",
                 "url": "/charts-heatmap-series/",
                 "enterprise": "charts"
+              },
+              {
+                "title": "Waterfall",
+                "url": "/charts-waterfall-series/",
+                "enterprise": "charts"
               }
             ]
           },
