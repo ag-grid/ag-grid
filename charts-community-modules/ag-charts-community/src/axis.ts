@@ -840,7 +840,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     private getTickStrategies({ index, secondaryAxis }: { index: number; secondaryAxis: boolean }): TickStrategy[] {
-        const { scale, label } = this;
+        const { scale, label, tick } = this;
         const continuous = scale instanceof ContinuousScale;
         const filterTicks = !(continuous && this.tick.count === undefined) && index !== 0;
         const avoidLabelCollisions = label.enabled && label.avoidCollisions;
@@ -862,6 +862,12 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             this.createTickData(tickGenerationType, index, tickData, terminate, primaryTickCount);
 
         strategies.push(tickGenerationStrategy);
+
+        if (!continuous && !isNaN(tick.minSpacing)) {
+            const tickFilterStrategy = ({ index, tickData, primaryTickCount, terminate }: TickStrategyParams) =>
+                this.createTickData(TickGenerationType.FILTER, index, tickData, terminate, primaryTickCount);
+            strategies.push(tickFilterStrategy);
+        }
 
         if (label.autoWrap) {
             const autoWrapStrategy = ({ index, tickData, textProps }: TickStrategyParams) =>
