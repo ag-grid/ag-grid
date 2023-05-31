@@ -183,11 +183,6 @@
     }
 }
 
-// Reduce spacing between page intro & first heading
-.pageSections > div > div:nth-child(2) {
-    margin-bottom: -$size-2;
-}
-
 // Hack to target markdown images and not images within components
 .pageSections > div > div *:not([class]) img {
     max-width: 100%;
