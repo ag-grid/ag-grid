@@ -71,8 +71,12 @@ export class StickyRowFeature extends BeanStub {
             }
             // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
             else {
-                const storeBounds = stickyRow.childStore?.getStoreBounds();
-                lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
+                if (stickyRow.master) {
+                    lastChildBottom = stickyRow.detailNode.rowTop! + stickyRow.detailNode.rowHeight!;
+                } else {
+                    const storeBounds = stickyRow.childStore?.getStoreBounds();
+                    lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
+                }
             }
 
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
