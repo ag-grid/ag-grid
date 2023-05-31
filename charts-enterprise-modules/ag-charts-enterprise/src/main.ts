@@ -27,6 +27,14 @@ import {
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
+import {
+    WaterfallColumnModule,
+    AgWaterfallSeriesOptions,
+    AgWaterfallSeriesTooltip,
+    AgWaterfallSeriesLabelOptions,
+    AgWaterfallSeriesLabelPlacement,
+    AgWaterfallSeriesItemOptions,
+} from './waterfall/main';
 
 export * from 'ag-charts-community';
 
@@ -36,6 +44,7 @@ _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
+_ModuleSupport.registerModule(WaterfallColumnModule);
 _ModuleSupport.registerModule(ZoomModule);
 
 export { AgCrosshairOptions, AgCrosshairLabel, AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult };
@@ -48,6 +57,13 @@ export {
     AgHeatmapSeriesTooltipRendererParams,
 };
 export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
+export {
+    AgWaterfallSeriesOptions,
+    AgWaterfallSeriesTooltip,
+    AgWaterfallSeriesLabelOptions,
+    AgWaterfallSeriesLabelPlacement,
+    AgWaterfallSeriesItemOptions,
+};
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
@@ -80,7 +96,10 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
+type TAddonType = 'heatmap' | 'waterfall-column';
+type TAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
+
+export type AgChartOptions = AgCommunityChartOptions<TAddonType, TAddonSeries>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();

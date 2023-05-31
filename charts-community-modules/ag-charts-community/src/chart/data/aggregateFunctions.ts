@@ -138,3 +138,18 @@ export function accumulatedValue(): DatumPropertyDefinition<any>['processor'] {
         };
     };
 }
+
+export function trailingAccumulatedValue(): DatumPropertyDefinition<any>['processor'] {
+    return () => {
+        let value = 0;
+
+        return (datum: any) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
+            const trailingValue = value;
+            value += datum;
+            return trailingValue;
+        };
+    };
+}

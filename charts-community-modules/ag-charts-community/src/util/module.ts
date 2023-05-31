@@ -56,6 +56,7 @@ interface BaseModule {
     optionsKey: string;
     packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
+    identifier?: string;
 
     optionConstructors?: JsonApplyParams['constructors'];
 }
@@ -114,7 +115,11 @@ export abstract class BaseModuleInstance {
 export const REGISTERED_MODULES: Module[] = [];
 export function registerModule(module: Module) {
     const otherModule = REGISTERED_MODULES.find((other) => {
-        return module.type === other.type && module.optionsKey === other.optionsKey;
+        return (
+            module.type === other.type &&
+            module.optionsKey === other.optionsKey &&
+            module.identifier === other.identifier
+        );
     });
 
     if (otherModule) {

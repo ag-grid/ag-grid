@@ -1,3 +1,5 @@
+import { Logger } from './logger';
+
 type Listener<H extends Function> = {
     symbol?: Symbol;
     handler: H;
@@ -20,7 +22,16 @@ export class Listeners<Types extends string, Handler extends (...any: any[]) => 
 
     public dispatch(type: Types, ...params: Parameters<Handler>): ReturnType<Handler>[] {
         const listeners: Listener<Handler>[] = this.registeredListeners[type] ?? [];
-        return listeners.map((l) => l.handler(...params));
+        const results: ReturnType<Handler>[] = [];
+        for (const listener of listeners) {
+            try {
+                results.push(listener.handler(...params));
+            } catch (e) {
+                Logger.errorOnce(e);
+                results.push(undefined as any);
+            }
+        }
+        return results;
     }
 
     public cancellableDispatch(

@@ -8,6 +8,7 @@ export * from './chart/data/dataModel';
 export * from './chart/updateService';
 export * from './chart/layout/layoutService';
 export * from './chart/interaction/animationManager';
+export * from './chart/interaction/chartEventManager';
 export * from './chart/interaction/cursorManager';
 export * from './chart/interaction/highlightManager';
 export * from './chart/interaction/interactionManager';
@@ -16,5 +17,8 @@ export * from './chart/interaction/zoomManager';
 export * from './chart/layers';
 export * from './chart/series/series';
 export * from './chart/series/cartesian/cartesianSeries';
+export * from './chart/chartAxis';
+export * from './chart/legendDatum';
+export * as Motion from './motion/easing';
 
 export { ChartUpdateType } from './chart/chartUpdateType';

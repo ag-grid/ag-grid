@@ -24,7 +24,7 @@ import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
-import { accumulatedValue } from '../data/aggregateFunctions';
+import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 
 /**
  * Processed series datum used in node selections,
@@ -62,22 +62,22 @@ export type SeriesNodePickMatch = {
 
 export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
     const result: DatumPropertyDefinition<K> = {
-        ...opts,
         property: propName,
         type: 'key',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+        ...opts,
     };
     return result;
 }
 
 export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
     const result: DatumPropertyDefinition<K> = {
-        ...opts,
         property: propName,
         type: 'value',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+        ...opts,
     };
     return result;
 }
@@ -110,6 +110,18 @@ export function accumulativeValueProperty<K>(
     const result: DatumPropertyDefinition<K> = {
         ...valueProperty(propName, continuous, opts),
         processor: accumulatedValue(),
+    };
+    return result;
+}
+
+export function trailingAccumulatedValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: trailingAccumulatedValue(),
     };
     return result;
 }

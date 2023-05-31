@@ -1,10 +1,6 @@
-import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import { _ModuleSupport, _Scale, _Scene, _Util, AgTooltipRendererResult } from 'ag-charts-community';
 import { GradientLegendDatum } from '../gradient-legend/gradientLegendDatum';
-
-type AgHeatmapSeriesTooltipRendererParams = any;
-type AgTooltipRendererResult = any;
-type AgHeatmapSeriesFormatterParams<_T> = any;
-type AgHeatmapSeriesFormat = any;
+import { AgHeatmapSeriesFormat, AgHeatmapSeriesTooltipRendererParams, AgHeatmapSeriesFormatterParams } from './typings';
 
 const {
     Validate,
@@ -275,8 +271,8 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
 
         const {
-            xKey,
-            yKey,
+            xKey = '',
+            yKey = '',
             labelKey,
             colorKey,
             formatter,
