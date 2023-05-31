@@ -6,8 +6,17 @@ import { Selection } from '../../../scene/selection';
 import { BandScale } from '../../../scale/bandScale';
 import { LinearScale } from '../../../scale/linearScale';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, valueProperty } from '../series';
+import {
+    SeriesNodeDatum,
+    HighlightStyle,
+    SeriesTooltip,
+    SeriesNodeBaseClickEvent,
+    valueProperty,
+    SeriesNodePickMode,
+    SeriesNodePickMatch,
+} from '../series';
 import { PointerEvents, RedrawType, SceneChangeDetection } from '../../../scene/node';
+import { Point } from '../../../scene/point';
 import { toFixed } from '../../../util/number';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { PolarSeries } from './polarSeries';
@@ -180,7 +189,10 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     readonly highlightStyle = new HighlightStyle();
 
     constructor() {
-        super({ useLabelLayer: true });
+        super({
+            useLabelLayer: true,
+            pickModes: [SeriesNodePickMode.NEAREST_NODE, SeriesNodePickMode.EXACT_SHAPE_MATCH],
+        });
 
         this.angleScale = new BandScale();
         // Each sector is a ratio of the whole, where all ratios add up to 1.
@@ -581,6 +593,39 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     protected toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
+    }
+
+    protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
+        const { x, y } = point;
+        const { radiusScale, rootGroup, nodeData, centerX: cx, centerY: cy, marker } = this;
+        const hitPoint = rootGroup.transformPoint(x, y);
+        const radius = radiusScale.range[1];
+
+        const distanceFromCenter = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+        if (distanceFromCenter > radius + marker.size) {
+            return;
+        }
+
+        let minDistance = Infinity;
+        let closestDatum: RadarLineNodeDatum | undefined;
+
+        for (const datum of nodeData) {
+            const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
+            if (isNaN(datumX) || isNaN(datumY)) {
+                continue;
+            }
+
+            const distance = Math.sqrt((hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestDatum = datum;
+            }
+        }
+
+        if (closestDatum) {
+            const distance = Math.max(minDistance - (closestDatum.point?.size ?? 0), 0);
+            return { datum: closestDatum, distance };
+        }
     }
 
     animateEmptyUpdateReady() {}
