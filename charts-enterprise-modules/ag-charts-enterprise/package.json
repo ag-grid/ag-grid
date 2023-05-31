@@ -26,6 +26,7 @@
         "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
         "test": "./node_modules/ag-charts-community/test.sh",
         "test:lint": "npm run test-circular-deps",
+        "test-watch": "./node_modules/ag-charts-community/test.sh watch",
         "test-update": "./node_modules/ag-charts-community/test.sh update",
         "test-circular-deps": "npx madge --circular --extensions ts src/",
         "predocker:init": "docker build -t charts:latest node_modules/ag-charts-community/.docker",
