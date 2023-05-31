@@ -41,6 +41,8 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="leftRowData"
                         :columnDefs="columns"
+                        :enableRangeSelection="true"
+                        :enableCharts="true"
                         :modules="leftModules"
                         >
                     </ag-grid-vue>
@@ -54,6 +56,8 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rightRowData"
                         :columnDefs="columns"
+                        :enableRangeSelection="true"
+                        :enableCharts="true"
                         :modules="rightModules"
                         >
                     </ag-grid-vue>
