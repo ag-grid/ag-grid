@@ -95,8 +95,7 @@ If the data changes after the aggregation is done, you can tell the grid to reco
 
 ## Enabling Top Level Aggregations
 
-When aggregations are present, the grid omits aggregating all the top level rows into one parent row as this total aggregation is not shown in the grid. Some applications may wish to use this value via the API, so the property `alwaysAggregateAtRootLevel` can be enabled to force this value to always calculate.
-
+When aggregations are present, the grid omits aggregating all the top level rows into one parent row as this total aggregation is not shown in the grid. Some applications may wish to use this value via the API, so the property `alwaysAggregateAtRootLevel` can be enabled to force this value to always calculate. The grid will still selectively calculate the top level aggregation in scenarios where it is needed, eg if `groupIncludeTotalFooter` is enabled, or if the root level is being displayed for pivoting.
 ## Next Up
 
 Continue to the next section to learn about [Tree Data](/tree-data/).
