@@ -180,27 +180,13 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
     }
 
     @Validate(OPT_STRING)
-    protected _xKey?: string = undefined;
-    set xKey(value: string | undefined) {
-        this._xKey = value;
-        this.processedData = undefined;
-    }
-    get xKey(): string | undefined {
-        return this._xKey;
-    }
+    xKey?: string = undefined;
 
     @Validate(OPT_STRING)
     xName?: string = undefined;
 
     @Validate(OPT_STRING)
-    protected _yKey?: string = undefined;
-    set yKey(value: string | undefined) {
-        this._yKey = value;
-        this.processedData = undefined;
-    }
-    get yKey(): string | undefined {
-        return this._yKey;
-    }
+    yKey?: string = undefined;
 
     @Validate(OPT_STRING)
     yName?: string = undefined;
@@ -309,6 +295,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         const barWidth = xScale.bandwidth || 10;
 
         const { yKey = '', xKey = '', processedData } = this;
+        if (processedData?.type !== 'ungrouped') return [];
 
         const contexts: _ModuleSupport.SeriesNodeDataContext<WaterfallNodeDatum>[] = [];
 
@@ -322,9 +309,9 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
             const x = xScale.convert(keys[xIndex]);
 
-            const rawValue = +values[yIndex];
+            const rawValue = values[yIndex];
 
-            const cumulativeValue = +values[yCurrIndex];
+            const cumulativeValue = values[yCurrIndex];
             const trailingValue = values[yPrevIndex];
 
             const currY = yScale.convert(cumulativeValue, { strict: false });
