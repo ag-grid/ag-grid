@@ -702,20 +702,12 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum, index) => {
-                const yTransition = {
-                    from: 0,
-                    to: 0,
-                };
-                if (datum.itemId === 'positive') {
-                    yTransition.from = datum.y + datum.height;
-                    yTransition.to = datum.y;
-                } else {
-                    yTransition.from = datum.y;
-                    yTransition.to = datum.y;
-                }
                 this.animationManager?.animateMany(
                     `${this.id}_empty-update-ready_${rect.id}`,
-                    [yTransition, { from: 0, to: datum.height }],
+                    [
+                        { from: datum.itemId === 'positive' ? datum.y + datum.height : datum.y, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
                     {
                         disableInteractions: true,
                         duration,
