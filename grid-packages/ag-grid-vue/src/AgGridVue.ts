@@ -27,7 +27,7 @@ export class AgGridVue extends Vue {
     public componentDependencies!: string[];
 
     /**
-     * Used to register AG Grid Modules directly with this instance of the grid. 
+     * Used to register AG Grid Modules directly with this instance of the grid.
      * See [Providing Modules To Individual Grids](https://www.ag-grid.com/vue-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
     @Prop({default: () => []})
