@@ -488,8 +488,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnModel.getGroupAutoColumns();
-        const newGroupDisplayColIds = groupDisplayColumns ? groupDisplayColumns.map(c => c.getId()).join('-') : '';
+        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
+        const newGroupDisplayColIds = groupDisplayColumns ?
+            groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
         if (afterColumnsChanged) {
             // we only need to redo grouping if doing normal grouping (ie not tree data)
@@ -644,7 +645,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnModel.getGroupAutoColumns() ?? [];
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
