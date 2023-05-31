@@ -4,11 +4,9 @@ import { Alert } from './alert/Alert';
 
 const Note = ({ children }) => {
     return (
-        <div className="font-size-responsive">
-            <Alert type="info">
-                <div dangerouslySetInnerHTML={{ __html: markdownToHtml(children.toString()) }}></div>
-            </Alert>
-        </div>
+        <Alert type="info" className="font-size-responsive">
+            <div dangerouslySetInnerHTML={{ __html: markdownToHtml(children.toString()) }}></div>
+        </Alert>
     );
 };
 

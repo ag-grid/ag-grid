@@ -1,18 +1,18 @@
 import classnames from 'classnames';
 import GlobalContextConsumer from 'components/GlobalContext';
-import {Icon} from 'components/Icon';
+import { Icon } from 'components/Icon';
 import fs from 'fs';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import isServerSideRendering from 'utils/is-server-side-rendering';
-import {OpenInCTA} from '../OpenInCTA';
+import { OpenInCTA } from '../OpenInCTA';
 import CodeViewer from './CodeViewer';
 import styles from './ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
-import {getExampleInfo, getIndexHtmlUrl, openPlunker} from './helpers';
-import {getIndexHtml} from './index-html-helper';
-import {trackExampleRunnerEvent} from './track-example-runner-event';
-import {useExampleFileNodes} from './use-example-file-nodes';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
+import { getIndexHtml } from './index-html-helper';
+import { trackExampleRunnerEvent } from './track-example-runner-event';
+import { useExampleFileNodes } from './use-example-file-nodes';
 
 /**
  * The example runner is used for displaying examples in the documentation, showing the example executing
@@ -22,7 +22,7 @@ import {useExampleFileNodes} from './use-example-file-nodes';
 export const ExampleRunner = (props) => {
     return (
         <GlobalContextConsumer>
-            {({exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set}) => {
+            {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
                 const innerProps = {
                     ...props,
                     // Allow overriding of the global context values per example
@@ -450,18 +450,18 @@ const saveChartIndexHtmlPermutations = (
 };
 
 const ExampleRunnerInner = ({
-                                pageName,
-                                framework,
-                                name,
-                                title,
-                                type,
-                                options,
-                                library,
-                                exampleImportType,
-                                useFunctionalReact,
-                                useVue3,
-                                useTypescript,
-                            }) => {
+    pageName,
+    framework,
+    name,
+    title,
+    type,
+    options,
+    library,
+    exampleImportType,
+    useFunctionalReact,
+    useVue3,
+    useTypescript,
+}) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
@@ -498,11 +498,10 @@ const ExampleRunnerInner = ({
 
     const [hasWindow, setHasWindow] = useState(false);
     useEffect(() => {
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
             setHasWindow(true);
         }
     }, []);
-
 
     /*
      * During server side rendering, we generate the relevant index.html(s) for each example, so that in production
@@ -543,23 +542,20 @@ const ExampleRunnerInner = ({
         }
     }
 
-    const exampleStyle = {
-        width: '100%',
-        height: exampleInfo.options.exampleHeight || '500px',
-    };
+    const exampleHeight = exampleInfo.options.exampleHeight || '500px';
 
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <>
-            {hasWindow &&
+        <div style={{ minHeight: `calc(${exampleHeight} + 48px)` }}>
+            {hasWindow && (
                 <div id={exampleInfo.linkId} className={classnames('tabs-outer', styles.tabsContainer)}>
                     <header className={classnames('tabs-header', styles.header)}>
                         <ul className="tabs-nav-list" role="tablist">
                             {/* eslint-disable-line */}
                             <li className="tabs-nav-item" role="presentation">
                                 <button
-                                    className={classnames('button-style-none', 'tabs-nav-link', {active: !showCode})}
+                                    className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
                                     onClick={(e) => {
                                         setShowCode(false);
                                         e.preventDefault();
@@ -568,7 +564,7 @@ const ExampleRunnerInner = ({
                                     title="Run example"
                                     disabled={!showCode}
                                 >
-                                    Preview <Icon name="executableProgram"/>
+                                    Preview <Icon name="executableProgram" />
                                 </button>
                             </li>
                             <li className="tabs-nav-item" role="presentation">
@@ -576,7 +572,7 @@ const ExampleRunnerInner = ({
                                     className={classnames(
                                         'button-style-none',
                                         'tabs-nav-link',
-                                        {active: showCode},
+                                        { active: showCode },
                                         styles.codeTabButton
                                     )}
                                     onClick={(e) => {
@@ -587,18 +583,18 @@ const ExampleRunnerInner = ({
                                     title="View Example Source Code"
                                     disabled={showCode}
                                 >
-                                    Code <Icon name="code"/>
+                                    Code <Icon name="code" />
                                 </button>
                             </li>
                         </ul>
 
                         <ul className={classnames('list-style-none', styles.externalLinks)}>
                             <li>
-                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)}/>
+                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
                             </li>
                             {!exampleInfo.options.noPlunker && (
                                 <li>
-                                    <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)}/>
+                                    <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
                                 </li>
                             )}
                         </ul>
@@ -607,12 +603,12 @@ const ExampleRunnerInner = ({
                         className={classnames('tabs-content', styles.content)}
                         role="tabpanel"
                         aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
-                        style={exampleStyle}
+                        style={{ height: exampleHeight, width: '100%' }}
                     >
                         <VisibilitySensor partialVisibility={true}>
-                            {({isVisible}) => {
+                            {({ isVisible }) => {
                                 if (isVisible) {
-                                    trackExampleRunnerEvent({type: 'isVisible', exampleInfo, trackOnce: true});
+                                    trackExampleRunnerEvent({ type: 'isVisible', exampleInfo, trackOnce: true });
                                 }
 
                                 return (
@@ -624,17 +620,18 @@ const ExampleRunnerInner = ({
                                 );
                             }}
                         </VisibilitySensor>
-                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo}/>
+                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
                 </div>
-            }
-        </>);
+            )}
+        </div>
+    );
 };
 
 const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includes(type);
 
 const writeIndexHtmlFile = (exampleInfo) => {
-    const {appLocation, type} = exampleInfo;
+    const { appLocation, type } = exampleInfo;
     const indexHtml = getIndexHtml(exampleInfo, true);
 
     fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
