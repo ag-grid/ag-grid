@@ -304,7 +304,7 @@ The following example shows how you can configure individual grids using a combi
  - The Right grid has options for charting and CSV and Excel export.
  - The Left grid uses the `SetFilter` while the Right grid only has the `TextFilter`
  
- <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules'></grid-example>
+ <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard", "charts","csv", "excel", "setfilter"] }' ></grid-example>
 
 ## Core Modules
 
