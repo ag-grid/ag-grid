@@ -192,6 +192,11 @@ Object {
         "fontWeight": "bold",
       },
     },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
@@ -392,6 +397,11 @@ Object {
         "fontWeight": "bold",
       },
     },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
@@ -412,6 +422,11 @@ Object {
   },
   "chartId": "id-88hjk9w5qz5",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "pie": Object {
       "background": Object {
         "fill": "white",
@@ -524,6 +539,11 @@ Object {
   },
   "chartId": "id-88hjk9w5qz5",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "pie": Object {
       "background": Object {
         "fill": "white",
@@ -638,6 +658,11 @@ Object {
   },
   "chartId": "id-760p8yfq12q",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "pie": Object {
       "background": Object {
         "fill": "white",
@@ -750,6 +775,11 @@ Object {
   },
   "chartId": "id-231v1fkl9zn",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "scatter": Object {
       "axes": Object {
         "category": Object {
@@ -1083,6 +1113,11 @@ Object {
         "fontWeight": "bold",
       },
     },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
@@ -1306,6 +1341,11 @@ Object {
         "fontSize": 16,
         "fontWeight": "bold",
         "text": "Title",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -1540,7 +1580,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -1568,6 +1616,11 @@ Object {
   },
   "chartId": "id-nsogsnb8jor",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "line": Object {
       "autoSize": true,
       "axes": Object {
@@ -1786,7 +1839,10 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
       },
     },
   },
@@ -1814,6 +1870,11 @@ Object {
   },
   "chartId": "id-0apvr5tp12kl",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "line": Object {
       "autoSize": true,
       "axes": Object {
@@ -2026,7 +2087,10 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
       },
       "type": "groupedCategory",
     },
@@ -2274,7 +2338,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -2302,6 +2374,11 @@ Object {
   },
   "chartId": "id-3iq3jaaivcd",
   "chartOptions": Object {
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
+      },
+    },
     "scatter": Object {
       "autoSize": true,
       "axes": Object {
@@ -2479,7 +2556,10 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
       },
     },
   },
@@ -2725,7 +2805,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -3087,7 +3175,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -3442,7 +3538,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
@@ -3790,7 +3894,15 @@ Object {
         "class": "ag-chart-tooltip",
         "delay": 0,
         "enabled": true,
-        "tracking": true,
+        "position": Object {
+          "type": "node",
+        },
+        "range": "nearest",
+      },
+    },
+    "common": Object {
+      "legend": Object {
+        "enabled": true,
       },
     },
   },
