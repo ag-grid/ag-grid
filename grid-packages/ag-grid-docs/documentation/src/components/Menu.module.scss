@@ -48,7 +48,7 @@ ul.menuInner {
     }
 
     li li {
-        margin-bottom: 0;
+        margin-bottom: 0 !important;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {

@@ -1,3 +1,5 @@
+@use './core' as *;
+
 *,
 *::before,
 *::after {
@@ -14,4 +16,8 @@ html {
     line-height: var(--line-height);
     font-weight: var(--font-weight);
     color: var(--text-color);
+
+    @media (min-width: $breakpoint-docs-nav-medium) {
+        scroll-padding-top: 92px;
+    }
 }

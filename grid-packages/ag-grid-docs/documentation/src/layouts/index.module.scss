@@ -22,7 +22,7 @@ main {
     flex-direction: column;
     flex-grow: 1;
 
-    @media (min-width: 992px) {
+    @media (min-width: $breakpoint-docs-nav-medium) {
         flex-direction: row;
     }
 }

@@ -461,19 +461,6 @@ const renameSitemapXml = () => {
     });
 };
 
-const addAgStylesToReactMarkdown = () => {
-    // adds ag styles to blocks created by FrameworkSpecificSelection
-
-    return applyCustomisation('react-markdown', '5.0.3', {
-        name: `Add ag styles to framework specific blocks`,
-        apply: () => updateFileContents(
-            './node_modules/react-markdown/lib/renderers.js',
-            'var className = props.className;',
-            'var className = "ag-styles font-size-responsive";'
-        )
-    });
-};
-
 const checkForRehypePluginExistance = () => {
 
     return applyCustomisation('gatsby-transformer-rehype', '2.0.1', {
@@ -519,7 +506,6 @@ const success = [
     ignoreFsUsages(),
     jsxErrorProcessingIssue(),
     excludeDodgyLintRules(),
-    addAgStylesToReactMarkdown(),
     checkForRehypePluginExistance(),
     suppressHydrationErrors()
 ].every(x => x);

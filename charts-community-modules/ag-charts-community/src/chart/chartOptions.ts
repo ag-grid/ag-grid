@@ -1,3 +1,4 @@
+import { AxisTitle } from '../axis';
 import { Caption } from '../caption';
 import { DropShadow } from '../scene/dropShadow';
 import { JsonApplyParams } from '../util/json';
@@ -16,6 +17,7 @@ const JSON_APPLY_OPTIONS: JsonApplyParams = {
         shadow: DropShadow,
         innerCircle: DoughnutInnerCircle,
         'axes[].crossLines[]': CrossLine,
+        'axes[].title': AxisTitle,
         'series[].innerLabels[]': DoughnutInnerLabel,
     },
     allowedTypes: {
