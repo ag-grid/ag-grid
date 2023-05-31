@@ -215,7 +215,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         const markerGroup = new Group();
         this.contentGroup.append(markerGroup);
         this.markerSelection = Selection.select(markerGroup, () => {
-            const MarkerShape = getMarker();
+            const { shape } = this.marker;
+            const MarkerShape = getMarker(shape);
             return new MarkerShape();
         });
 
