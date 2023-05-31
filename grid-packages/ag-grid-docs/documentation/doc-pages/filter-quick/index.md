@@ -71,15 +71,15 @@ When in use, the Quick Filter cache text can be manually reset in one of the fol
 
 [Updating Data](/data-update/), [Cell Editing](/cell-editing/), [Excluding/Including Hidden Columns](#exclude-hidden-columns) from the Quick Filter, and [Updating Column Definitions](/column-updating-definitions/) will automatically reset the cache text on any affected Row Nodes.
 
-## Exclude Hidden Columns
+## Include Hidden Columns
 
-By default the Quick Filter will check all column values, including ones that are currently hidden from the grid. If you have a large number of hidden columns and you're not interested in filtering against them, you can set the grid option `excludeHiddenColumnsFromQuickFilter = true` to provide a performance improvement.
+By default the Quick Filter will only check visible column values. If you want to check hidden column values, then you can set the grid option `includeHiddenColumnsInQuickFilter = true`. Note that if you have a large number of hidden columns then this can have a performance impact.
 
-This can also be set via the API method `setExcludeHiddenColumnsFromQuickFilter`.
+This can also be set via the API method `setIncludeHiddenColumnsInQuickFilter`.
 
-<api-documentation source='grid-options/properties.json' section='filter' names='["excludeHiddenColumnsFromQuickFilter"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='filter' names='["includeHiddenColumnsInQuickFilter"]'></api-documentation>
 
-<api-documentation source='grid-api/api.json' section='filter' names='["setExcludeHiddenColumnsFromQuickFilter"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["setIncludeHiddenColumnsInQuickFilter"]'></api-documentation>
 
 ## Example: Quick Filter
 
@@ -89,7 +89,7 @@ The example below shows the Quick Filter working on different data types. Each c
 - `Age` - Complex object with 'dot' in field, Quick Filter works fine.
 - `Country` - Complex object and value getter used, again Quick Filter works fine.
 - `Results` - Complex object, Quick Filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
-- `Hidden` - A hidden column with all values being the string 'hidden'. Enter `hidden` into the filter and it will match all rows. Click the `Exclude Hidden Columns` button to set `excludeHiddenColumnsFromQuickFilter = true`, and no rows will be matched. Note the Quick Filter cache will be cleared automatically when the option is changed.
+- `Hidden` - A hidden column with all values being the string 'hidden'. Enter `hidden` into the filter and no rows will be matched. Click the `Include Hidden Columns` button to set `includeHiddenColumnsInQuickFilter = true`, and all rows will be matched. Note the Quick Filter cache will be cleared automatically when the option is changed.
 
 The example also demonstrates having the Quick Filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve Quick Filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 

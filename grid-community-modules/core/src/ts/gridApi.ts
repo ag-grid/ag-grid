@@ -700,13 +700,19 @@ export class GridApi<TData = any> {
     }
 
     /** 
-     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
-     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
-     * This can give a significant performance improvement when there are a large number of hidden columns,
-     * and you are only interested in filtering on what's visible.
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
-        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
+        this.setIncludeHiddenColumnsInQuickFilter(!value);
+    }
+
+    /** 
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
+        this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', value);
     }
 
     /**

@@ -46,12 +46,12 @@ const gridOptions: GridOptions = {
   cacheQuickFilter: true,
 }
 
-var excludeHiddenColumns = false;
+var includeHiddenColumns = false;
 
-function onExcludeHiddenColumnsToggled() {
-  excludeHiddenColumns = !excludeHiddenColumns;
-  gridOptions.api!.setExcludeHiddenColumnsFromQuickFilter(excludeHiddenColumns);
-  document.querySelector('#excludeHiddenColumns')!.innerHTML = `${excludeHiddenColumns ? 'Include' : 'Exclude'} Hidden Columns`;
+function onIncludeHiddenColumnsToggled() {
+  includeHiddenColumns = !includeHiddenColumns;
+  gridOptions.api!.setIncludeHiddenColumnsInQuickFilter(includeHiddenColumns);
+  document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 function onFilterTextBoxChanged() {

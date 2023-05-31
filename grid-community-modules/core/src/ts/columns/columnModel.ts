@@ -3366,9 +3366,9 @@ export class ColumnModel extends BeanStub {
         if (this.groupAutoColumns) {
             columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
         }
-        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
-            : columnsForQuickFilter;
+        this.columnsForQuickFilter = this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')
+            ? columnsForQuickFilter
+            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
 
     private placeLockedColumns(cols: Column[]): Column[] {
