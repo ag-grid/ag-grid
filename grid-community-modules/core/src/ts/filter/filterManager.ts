@@ -55,7 +55,7 @@ export class FilterManager extends BeanStub {
     // A cached version of gridOptions.isExternalFilterPresent so its not called for every row
     private externalFilterPresent: boolean;
 
-    private aggFilteringOrPivotMode: boolean;
+    private aggFiltering: boolean;
 
     @PostConstruct
     public init(): void {
@@ -63,7 +63,6 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
-            this.updateAggFilteringOrPivotMode()
             this.refreshFiltersForAggregations();
             this.resetQuickFilterCache();
         });
@@ -84,8 +83,8 @@ export class FilterManager extends BeanStub {
         this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
 
-        this.updateAggFilteringOrPivotMode();
-        this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFilteringOrPivotMode());
+        this.updateAggFiltering();
+        this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
     }
 
     private isExternalFilterPresentCallback() {
@@ -416,16 +415,16 @@ export class FilterManager extends BeanStub {
         return this.quickFilter !== null;
     }
 
-    private updateAggFilteringOrPivotMode(): void {
-        this.aggFilteringOrPivotMode = this.columnModel.isPivotMode() || !!this.gridOptionsService.getGroupAggFiltering();
+    private updateAggFiltering(): void {
+        this.aggFiltering = !!this.gridOptionsService.getGroupAggFiltering();
     }
 
     public isAggregateQuickFilterPresent(): boolean {
-        return this.isQuickFilterPresent() && this.aggFilteringOrPivotMode;
+        return this.isQuickFilterPresent() && (this.aggFiltering || this.columnModel.isPivotMode());
     }
 
     private isNonAggregateQuickFilterPresent(): boolean {
-        return this.isQuickFilterPresent() && !this.aggFilteringOrPivotMode;
+        return this.isQuickFilterPresent() && !(this.aggFiltering || this.columnModel.isPivotMode());
     }
 
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
