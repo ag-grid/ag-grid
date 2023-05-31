@@ -27,7 +27,7 @@ import {
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
-import { WaterfallColumnModule } from './waterfall/main';
+import { WaterfallColumnModule, AgWaterfallSeriesOptions } from './waterfall/main';
 
 export * from 'ag-charts-community';
 
@@ -82,7 +82,10 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
+type TAddonType = 'heatmap' | 'waterfall-column';
+type TAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
+
+export type AgChartOptions = AgCommunityChartOptions<TAddonType, TAddonSeries>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();
