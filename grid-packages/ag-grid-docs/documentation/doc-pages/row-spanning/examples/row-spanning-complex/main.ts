@@ -49,6 +49,7 @@ const columnDefs: ColDef[] = [
             'show-cell': 'value !== undefined',
         },
         width: 200,
+        cellDataType: false,
     },
     { field: 'a' },
     { field: 'b' },

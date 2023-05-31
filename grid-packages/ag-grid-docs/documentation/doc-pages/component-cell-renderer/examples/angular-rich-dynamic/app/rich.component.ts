@@ -37,7 +37,8 @@ export class RichComponent {
                 headerName: "Ratio Component",
                 field: "ratios",
                 cellRenderer: RatioParentComponent,
-                width: 350
+                width: 350,
+                cellDataType: false,
             },
             {
                 headerName: "Clickable Component",

@@ -46,6 +46,7 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
+    cellDataType: false,
   },
   rowData: getData(),
   sideBar: 'filters',

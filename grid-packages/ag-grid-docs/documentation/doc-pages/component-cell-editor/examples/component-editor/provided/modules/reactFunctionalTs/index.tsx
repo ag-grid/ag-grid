@@ -249,7 +249,7 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         return {
             // the final value to send to the grid, on completion of editing
             getValue() {
-                return value;
+                return value === '' || value == null ? null : parseInt(value);
             },
 
             // Gets called once before editing starts, to give editor a chance to
@@ -263,7 +263,8 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
             isCancelAfterEnd() {
                 // will reject the number if it greater than 1,000,000
                 // not very practical, but demonstrates the method.
-                return value > 1000000;
+                const finalValue = this.getValue();
+                return finalValue != null && finalValue > 1000000;
             }
         };
     });

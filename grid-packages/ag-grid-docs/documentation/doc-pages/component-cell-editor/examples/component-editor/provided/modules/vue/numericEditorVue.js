@@ -17,7 +17,8 @@ export default {
     },
     methods: {
         getValue() {
-            return this.value;
+            const value = this.value;
+            return value === '' || value == null ? null : parseInt(value);
         },
 
         isCancelBeforeStart() {
@@ -50,7 +51,8 @@ export default {
         // will reject the number if it greater than 1,000,000
         // not very practical, but demonstrates the method.
         isCancelAfterEnd() {
-            return this.value > 1000000;
+            const value = this.getValue();
+            return value != null && value > 1000000;
         },
 
         onKeyDown(event) {

@@ -38,7 +38,8 @@ export default class NumericEditor extends Component {
     /* Component Editor Lifecycle methods */
     // the final value to send to the grid, on completion of editing
     getValue() {
-        return this.state.value;
+        const value = this.state.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     // Gets called once before editing starts, to give editor a chance to
@@ -52,7 +53,8 @@ export default class NumericEditor extends Component {
     isCancelAfterEnd() {
         // will reject the number if it greater than 1,000,000
         // not very practical, but demonstrates the method.
-        return this.state.value > 1000000;
+        const value = this.getValue();
+        return value != null && value > 1000000;
     };
 
     /* Utility methods */

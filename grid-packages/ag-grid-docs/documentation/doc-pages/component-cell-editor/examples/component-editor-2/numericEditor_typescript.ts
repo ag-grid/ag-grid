@@ -61,16 +61,17 @@ export class NumericEditor implements ICellEditorComp {
         return this.cancelBeforeStart;
     }
 
-    // example - will reject the number if it contains the value 007
+    // example - will reject the number if it greater than 1,000,000
     // - not very practical, but demonstrates the method.
     isCancelAfterEnd() {
         const value = this.getValue();
-        return value.indexOf('007') >= 0;
+        return value != null && value > 1000000;
     }
 
     // returns the new value after editing
     getValue() {
-        return this.eInput.value;
+        const value = this.eInput.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     // any cleanup we need to be done here

@@ -15,7 +15,7 @@ const KEY_TAB = 'Tab';
 })
 export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
-    public value!: number;
+    public value!: string;
     public highlightAllOnFocus = true;
     private cancelBeforeStart = false;
 
@@ -53,8 +53,9 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         this.highlightAllOnFocus = highlightAllOnFocus;
     }
 
-    getValue(): any {
-        return this.value;
+    getValue(): number | null {
+        const value = this.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     isCancelBeforeStart(): boolean {
@@ -64,7 +65,8 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     // will reject the number if it greater than 1,000,000
     // not very practical, but demonstrates the method.
     isCancelAfterEnd(): boolean {
-        return this.value > 1000000;
+        const value = this.getValue();
+        return value != null && value > 1000000;
     }
 
     onKeyDown(event: any): void {
