@@ -22,6 +22,7 @@ const sharedSeriesOptions: AgPolarSeriesOptions = {
   },
   fills: ["#49afda", "#57cc8b", "#f4b944", "#fb7451", "#b7b5ba"],
   strokeWidth: 0,
+  legendItemKey: "browser",
   tooltip: {
     renderer: ({ datum, color, sectorLabelKey }) => {
       return [
