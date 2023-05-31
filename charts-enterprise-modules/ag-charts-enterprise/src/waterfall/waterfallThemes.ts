@@ -2,8 +2,6 @@ import { _Theme } from 'ag-charts-community';
 
 export const WATERFALL_SERIES_THEME = {
     __extends__: _Theme.EXTENDS_SERIES_DEFAULTS,
-    labelName: 'Label',
-    colorRange: ['red', 'blue'],
     label: {
         enabled: false,
         fontSize: 12,

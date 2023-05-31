@@ -27,7 +27,14 @@ import {
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
-import { WaterfallColumnModule, AgWaterfallSeriesOptions } from './waterfall/main';
+import {
+    WaterfallColumnModule,
+    AgWaterfallSeriesOptions,
+    AgWaterfallSeriesTooltip,
+    AgWaterfallSeriesLabelOptions,
+    AgWaterfallSeriesLabelPlacement,
+    AgWaterfallSeriesItemOptions,
+} from './waterfall/main';
 
 export * from 'ag-charts-community';
 
@@ -50,6 +57,13 @@ export {
     AgHeatmapSeriesTooltipRendererParams,
 };
 export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
+export {
+    AgWaterfallSeriesOptions,
+    AgWaterfallSeriesTooltip,
+    AgWaterfallSeriesLabelOptions,
+    AgWaterfallSeriesLabelPlacement,
+    AgWaterfallSeriesItemOptions,
+};
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {

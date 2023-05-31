@@ -4,14 +4,10 @@ import {
     _Scene,
     _Util,
     AgCartesianSeriesLabelFormatterParams,
+    AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
 } from 'ag-charts-community';
-import {
-    AgWaterfallSeriesFormat,
-    AgWaterfallSeriesLabelPlacement,
-    AgWaterfallSeriesTooltipRendererParams,
-    AgWaterfallSeriesFormatterParams,
-} from './typings';
+import { AgWaterfallSeriesFormat, AgWaterfallSeriesLabelPlacement, AgWaterfallSeriesFormatterParams } from './typings';
 
 const {
     Validate,
@@ -84,7 +80,7 @@ export class WaterfallSeriesNodeDoubleClickEvent extends WaterfallSeriesNodeBase
 
 class WaterfallSeriesTooltip extends _ModuleSupport.SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: AgWaterfallSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 class WaterfallSeriesLabel extends _Scene.Label {
