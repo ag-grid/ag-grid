@@ -11,6 +11,7 @@ import {
     labeldDirectionHandling,
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,
+    calculateLabelChartPadding,
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
@@ -402,8 +403,14 @@ export class CrossLine {
         return this.crossLineLabel.computeTransformedBBox();
     }
 
-    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>, seriesRect: BBox) {
-        const { isRange, startLine, endLine } = this;
+    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>) {
+        const {
+            isRange,
+            startLine,
+            endLine,
+            direction,
+            label: { padding: labelPadding = 0, position = 'top' },
+        } = this;
         if (!isRange && !startLine && !endLine) {
             return;
         }
@@ -413,33 +420,20 @@ export class CrossLine {
         const labelX = crossLineLabelBBox?.x;
         const labelY = crossLineLabelBBox?.y;
 
-        if (labelX == undefined || labelY == undefined) {
+        if (!crossLineLabelBBox || labelX == undefined || labelY == undefined) {
             return;
         }
 
-        const labelWidth = crossLineLabelBBox?.width ?? 0;
-        const labelHeight = crossLineLabelBBox?.height ?? 0;
+        const chartPadding = calculateLabelChartPadding({
+            yDirection: direction === ChartAxisDirection.Y,
+            padding: labelPadding,
+            position,
+            bbox: crossLineLabelBBox,
+        });
 
-        if (labelWidth > seriesRect.width || labelHeight > seriesRect.height) {
-            // If label is bigger than seriesRect, trying to pad is just going to cause
-            // layout instability.
-            return;
-        }
-
-        if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
-            const paddingRight = labelX + labelWidth - (seriesRect.x + seriesRect.width);
-            padding.right = (padding.right ?? 0) >= paddingRight ? padding.right : paddingRight;
-        } else if (labelX <= seriesRect.x) {
-            const paddingLeft = seriesRect.x - labelX;
-            padding.left = (padding.left ?? 0) >= paddingLeft ? padding.left : paddingLeft;
-        }
-
-        if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
-            const paddingBottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
-            padding.bottom = (padding.bottom ?? 0) >= paddingBottom ? padding.bottom : paddingBottom;
-        } else if (labelY <= seriesRect.y) {
-            const paddingTop = seriesRect.y - labelY;
-            padding.top = (padding.top ?? 0) >= paddingTop ? padding.top : paddingTop;
-        }
+        padding.left = Math.max(padding.left ?? 0, chartPadding.left ?? 0);
+        padding.right = Math.max(padding.right ?? 0, chartPadding.right ?? 0);
+        padding.top = Math.max(padding.top ?? 0, chartPadding.top ?? 0);
+        padding.bottom = Math.max(padding.bottom ?? 0, chartPadding.bottom ?? 0);
     }
 }
