@@ -55,12 +55,15 @@ export class FilterManager extends BeanStub {
     // A cached version of gridOptions.isExternalFilterPresent so its not called for every row
     private externalFilterPresent: boolean;
 
+    private aggFilteringOrPivotMode: boolean;
+
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
+            this.updateAggFilteringOrPivotMode()
             this.refreshFiltersForAggregations();
             this.resetQuickFilterCache();
         });
@@ -80,6 +83,9 @@ export class FilterManager extends BeanStub {
 
         this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
+
+        this.updateAggFilteringOrPivotMode();
+        this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFilteringOrPivotMode());
     }
 
     private isExternalFilterPresentCallback() {
@@ -410,6 +416,18 @@ export class FilterManager extends BeanStub {
         return this.quickFilter !== null;
     }
 
+    private updateAggFilteringOrPivotMode(): void {
+        this.aggFilteringOrPivotMode = this.columnModel.isPivotMode() || !!this.gridOptionsService.getGroupAggFiltering();
+    }
+
+    public isAggregateQuickFilterPresent(): boolean {
+        return this.isQuickFilterPresent() && this.aggFilteringOrPivotMode;
+    }
+
+    private isNonAggregateQuickFilterPresent(): boolean {
+        return this.isQuickFilterPresent() && !this.aggFilteringOrPivotMode;
+    }
+
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
         return this.doesRowPassFilter({ rowNode: node, filterInstanceToSkip: filterToSkip });
     }
@@ -445,6 +463,11 @@ export class FilterManager extends BeanStub {
         rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
     }): boolean {
+        // check quick filter
+        if (this.isAggregateQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
+            return false;
+        }
+
         if (this.isAggregateFilterPresent() && !this.doAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
@@ -462,7 +485,7 @@ export class FilterManager extends BeanStub {
         // but fails the column filter, it fails overall
 
         // first up, check quick filter
-        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
+        if (this.isNonAggregateQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
 

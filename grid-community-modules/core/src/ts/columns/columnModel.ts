@@ -3362,13 +3362,10 @@ export class ColumnModel extends BeanStub {
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterColumns(): void {
-        let columnsForQuickFilter;
+        let columnsForQuickFilter = (this.isPivotMode() ? this.secondaryColumns : this.primaryColumns) ?? [];
         if (this.groupAutoColumns) {
-            columnsForQuickFilter = (this.primaryColumns ?? []).concat(this.groupAutoColumns);
-        } else if (this.primaryColumns) {
-            columnsForQuickFilter = this.primaryColumns;
+            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
         }
-        columnsForQuickFilter = columnsForQuickFilter ?? [];
         this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
             ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
             : columnsForQuickFilter;
