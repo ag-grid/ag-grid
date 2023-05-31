@@ -37,7 +37,7 @@ export class NumericCellEditor implements ICellEditorComp {
 
         // only start edit if key pressed is a number, not a letter
         const isCharacter = eventKey && eventKey.length === 1;
-        var isNotANumber = isCharacter && ('1234567890'.indexOf(eventKey) < 0);
+        var isNotANumber = isCharacter && ('1234567890'.indexOf(eventKey!) < 0);
         this.cancelBeforeStart = !!isNotANumber;
     }
 
