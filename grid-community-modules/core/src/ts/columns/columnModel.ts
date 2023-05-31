@@ -3113,10 +3113,6 @@ export class ColumnModel extends BeanStub {
         };
 
         this.gridColumns.forEach(checkFunc);
-
-        if (this.groupAutoColumns) {
-            this.groupAutoColumns.forEach(checkFunc);
-        }
     }
 
     public getGroupDisplayColumns(): Column[] {
@@ -3131,7 +3127,6 @@ export class ColumnModel extends BeanStub {
         const columnsForDisplay = this.calculateColumnsForDisplay();
 
         this.buildDisplayedTrees(columnsForDisplay);
-        this.calculateColumnsForGroupDisplay();
 
         // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
@@ -3258,6 +3253,7 @@ export class ColumnModel extends BeanStub {
         this.orderGridColsLike(sortOrderToRecover);
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
