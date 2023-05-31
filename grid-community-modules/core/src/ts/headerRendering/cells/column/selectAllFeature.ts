@@ -38,7 +38,7 @@ export class SelectAllFeature extends BeanStub {
         this.currentPageOnly = !!colDef?.headerCheckboxSelectionCurrentPageOnly;
     }
 
-    public onSpaceKeyPressed(e: KeyboardEvent): void {
+    public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
         const eDocument = this.gridOptionsService.getDocument();
 

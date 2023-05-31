@@ -72,8 +72,7 @@ function onBtStartEditing(key?: string, char?: string, pinned?: RowPinnedType) {
     colKey: 'lastName',
     // set to 'top', 'bottom' or undefined
     rowPinned: pinned,
-    key: key,
-    charPress: char,
+    key: key
   })
 }
 

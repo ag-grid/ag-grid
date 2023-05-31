@@ -12,7 +12,7 @@ export default class NumericEditor extends Component {
 
         this.inputRef = createRef(null);
 
-        this.cancelBeforeStart = this.props.charPress && ('1234567890'.indexOf(this.props.charPress) < 0);
+        this.cancelBeforeStart = this.props.eventKey && this.props.eventKey.length === 1 && ('1234567890'.indexOf(this.props.eventKey) < 0);
 
         this.state = this.createInitialState(props);
 
@@ -61,18 +61,19 @@ export default class NumericEditor extends Component {
     createInitialState(props) {
         let startValue;
         let highlightAllOnFocus = true;
+        const eventKey = props.eventKey;
 
-        if (props.eventKey === KEY_BACKSPACE) {
+        if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
-        } else if (props.charPress) {
+        } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = props.charPress;
+            startValue = eventKey;
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.eventKey === KEY_F2) {
+            if (eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -89,7 +90,7 @@ export default class NumericEditor extends Component {
             return;
         }
 
-        if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
+        if (!this.finishedEditingPressed(event) && !this.isNumericKey(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     }
@@ -106,7 +107,7 @@ export default class NumericEditor extends Component {
         return !!/\d/.test(charStr);
     }
 
-    isKeyPressedNumeric(event) {
+    isNumericKey(event) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

@@ -53,7 +53,6 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
     private setupListeners(element: HTMLElement, listener: () => void): void {
         this.addManagedListener(element, 'input', listener);
-        this.addManagedListener(element, 'keypress', listener);
         this.addManagedListener(element, 'keydown', listener);
     }
 }

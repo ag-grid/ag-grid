@@ -103,5 +103,5 @@ export interface ClearCellRangeParams {
     /** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */
     dispatchWrapperEvents?: boolean,
     /** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */
-    wrapperEventSource?: 'deleteKeyPressed'
+    wrapperEventSource?: 'deleteKey'
 }

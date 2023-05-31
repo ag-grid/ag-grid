@@ -9,8 +9,8 @@ import { IContextMenuFactory } from "../../interfaces/iContextMenuFactory";
 import { isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { CtrlsService } from "../../ctrlsService";
-import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
-import { CellKeyDownEvent, CellKeyPressEvent, Events, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent } from "../../events";
+import { isEventFromPrintableCharacter, isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
+import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from "../../events";
 import { NavigationService } from "./../navigationService";
 import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
@@ -22,12 +22,9 @@ import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
 import { IRangeService } from "../../interfaces/IRangeService";
-import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
-import { throttle } from "../../utils/function";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -53,18 +50,15 @@ export class RowContainerEventsFeature extends BeanStub {
 
     @PostConstruct
     public postConstruct(): void {
+        this.addKeyboardListeners();
         this.addMouseListeners();
         this.mockContextMenuForIPad();
-        this.addKeyboardEvents();
     }
 
-    private addKeyboardEvents(): void {
-        const eventNames = ['keydown', 'keypress'];
-
-        eventNames.forEach(eventName => {
-            const listener = this.processKeyboardEvent.bind(this, eventName);
-            this.addManagedListener(this.element, eventName, listener);
-        });
+    private addKeyboardListeners(): void {
+        const eventName = 'keydown';
+        const listener = this.processKeyboardEvent.bind(this, eventName);
+        this.addManagedListener(this.element, eventName, listener);
     }
 
     private addMouseListeners(): void {
@@ -177,23 +171,21 @@ export class RowContainerEventsFeature extends BeanStub {
         const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
-            switch (eventName) {
-                case 'keydown':
-                    // first see if it's a scroll key, page up / down, home / end etc
-                    const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
+            if (eventName === 'keydown') {
+                // first see if it's a scroll key, page up / down, home / end etc
+                const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
 
-                    // if not a scroll key, then we pass onto cell
-                    if (!wasScrollKey) {
-                        cellCtrl.onKeyDown(keyboardEvent);
-                    }
+                // if not a scroll key, then we pass onto cell
+                if (!wasScrollKey) {
+                    cellCtrl.onKeyDown(keyboardEvent);
+                }
 
-                    // perform clipboard and undo / redo operations
-                    this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
+                // perform clipboard and undo / redo operations
+                this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
 
-                    break;
-                case 'keypress':
-                    cellCtrl.onKeyPress(keyboardEvent);
-                    break;
+                if (isEventFromPrintableCharacter(keyboardEvent)) {
+                    cellCtrl.processCharacter(keyboardEvent);
+                }
             }
         }
 
@@ -202,10 +194,6 @@ export class RowContainerEventsFeature extends BeanStub {
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
-        if (eventName === 'keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellCtrl.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
-            this.eventService.dispatchEvent(cellKeyPressEvent);
-        }
     }
 
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
@@ -238,11 +226,6 @@ export class RowContainerEventsFeature extends BeanStub {
         if (eventName === 'keydown') {
             const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent(Events.EVENT_CELL_KEY_DOWN, keyboardEvent);
             this.eventService.dispatchEvent(cellKeyDownEvent);
-        }
-
-        if (eventName === 'keypress') {
-            const cellKeyPressEvent: FullWidthCellKeyPressEvent = rowComp.createRowEvent(Events.EVENT_CELL_KEY_PRESS, keyboardEvent);
-            this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
 

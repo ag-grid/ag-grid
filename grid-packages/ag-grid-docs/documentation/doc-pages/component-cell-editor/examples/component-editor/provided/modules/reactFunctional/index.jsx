@@ -155,13 +155,14 @@ const NumericEditor = memo(forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
+        const eventKey = props.eventKey;
 
-        if (props.eventKey === KEY_BACKSPACE) {
+        if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
-        } else if (props.charPress) {
+        } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = props.charPress;
+            startValue = eventKey;
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
@@ -204,7 +205,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
     }, []);
 
     /* Utility Methods */
-    const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
+    const cancelBeforeStart = props.eventKey && props.eventKey.length === 1 && ('1234567890'.indexOf(props.eventKey) < 0);
 
     const isLeftOrRight = event => {
         return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
@@ -214,7 +215,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         return !!/\d/.test(charStr);
     };
 
-    const isKeyPressedNumeric = event => {
+    const isNumericKey = event => {
         const charStr = event.key;
         return isCharNumeric(charStr);
     };
@@ -234,7 +235,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
             return;
         }
 
-        if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
+        if (!finishedEditingPressed(event) && !isNumericKey(event)) {
             if (event.preventDefault) event.preventDefault();
         }
 

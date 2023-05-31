@@ -1,4 +1,4 @@
-import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', hide: true },

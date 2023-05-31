@@ -7,11 +7,13 @@ export default forwardRef((props, ref) => {
     const getInitialValue = props => {
         let startValue = props.value;
 
-        const isBackspace = props.eventKey === KEY_BACKSPACE;
+        const eventKey = props.eventKey;
+        const isBackspace = eventKey === KEY_BACKSPACE;
+
         if (isBackspace) {
             startValue = '';
-        } else if (props.charPress) {
-            startValue = props.charPress;
+        } else if (eventKey && eventKey.length === 1) {
+            startValue = eventKey;
         }
 
         if (startValue !== null && startValue !== undefined) {

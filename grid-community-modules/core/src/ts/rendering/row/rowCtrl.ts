@@ -914,8 +914,8 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(agEvent);
 
         // ctrlKey for windows, metaKey for Apple
-        const multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        const shiftKeyPressed = mouseEvent.shiftKey;
+        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const isShiftKey = mouseEvent.shiftKey;
 
         // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
         // handle this is broken. to observe, change the logic below and allow groups to be selected.
@@ -949,17 +949,17 @@ export class RowCtrl extends BeanStub {
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
                 this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
-            } else if (multiSelectKeyPressed) {
+            } else if (isMultiKey) {
                 if (rowDeselectionWithCtrl) {
                     this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !isShiftKey, rangeSelect: isShiftKey, event: mouseEvent, source });
             }
         } else {
-            const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+            const clearSelection = multiSelectOnClick ? false : !isMultiKey;
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: isShiftKey, event: mouseEvent, source });
         }
     }
 
@@ -1119,16 +1119,16 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(key: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null, event: KeyboardEvent | null = null): void {
+    public startRowEditing(key: string | null = null, sourceRenderedCell: CellCtrl | null = null, event: KeyboardEvent | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
         const atLeastOneEditing = this.getAllCellCtrls().reduce((prev: boolean, cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellCtrl.startEditing(key, charPress, cellStartedEdit, event);
+                cellCtrl.startEditing(key, cellStartedEdit, event);
             } else {
-                cellCtrl.startEditing(null, null, cellStartedEdit, event);
+                cellCtrl.startEditing(null, cellStartedEdit, event);
             }
             if (prev) { return true; }
 

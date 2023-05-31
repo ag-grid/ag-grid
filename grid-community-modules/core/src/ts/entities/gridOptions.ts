@@ -9,7 +9,6 @@ import {
     CellEditingStartedEvent,
     CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent,
     CellKeyDownEvent,
-    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -39,7 +38,7 @@ import {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandCollapseAllEvent, FilterChangedEvent,
-    FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent, GridColumnsChangedEvent,
+    FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GridColumnsChangedEvent,
     GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -1045,8 +1044,6 @@ export interface GridOptions<TData = any> {
     // *** Keyboard Navigation *** //
     /** DOM event `keyDown` happened on a cell. */
     onCellKeyDown?(event: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>): void;
-    /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>): void;
 
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */

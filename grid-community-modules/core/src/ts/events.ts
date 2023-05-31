@@ -97,7 +97,7 @@ export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends 
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `rowGroupChanged` - grouping changed which updated the selection
  * - `selectableChanged`- selectable status of row has changed when `groupSelectsChildren = true`
- * - `spacePressed` - space key pressed on row
+ * - `spaceKey` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
  * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
@@ -112,7 +112,7 @@ export type SelectionEventSourceType =
     'rowDataChanged' |
     'rowGroupChanged' |
     'selectableChanged' |
-    'spacePressed' |
+    'spaceKey' |
     'uiSelectAll' |
     'uiSelectAllFiltered' |
     'uiSelectAllCurrentPage';
@@ -268,11 +268,11 @@ export interface FillEndEvent<TData = any, TContext = any> extends AgGridEvent<T
 }
 
 export interface RangeDeleteStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'deleteKeyPressed';
+    source: 'deleteKey';
 }
 
 export interface RangeDeleteEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'deleteKeyPressed';
+    source: 'deleteKey';
 }
 
 export interface UndoStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -543,8 +543,6 @@ export interface RowEditingStoppedEvent<TData = any, TContext = any> extends Row
 
 export interface FullWidthCellKeyDownEvent<TData = any, TContext = any> extends RowEvent<TData, TContext> { }
 
-export interface FullWidthCellKeyPressEvent<TData = any, TContext = any> extends RowEvent<TData, TContext> { }
-
 /**------------*/
 
 /** CELL EVENTS */
@@ -565,8 +563,6 @@ interface CellWithDataEvent<TData = any, TValue = any> extends RowWithDataEvent<
 }
 
 export interface CellKeyDownEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
-
-export interface CellKeyPressEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
 export interface CellClickedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 

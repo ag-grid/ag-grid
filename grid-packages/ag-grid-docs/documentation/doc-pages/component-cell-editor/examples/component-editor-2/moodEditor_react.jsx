@@ -107,7 +107,7 @@ export default class MoodEditor extends Component {
         return (
             <div ref="container"
                 style={mood}
-                tabIndex={1} // important - without this the keypresses wont be caught
+                tabIndex={1} // important - without this the events wont be caught
             >
                 <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={this.onHappyClick} style={happyStyle} />
                 <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={this.onSadClick} style={sadStyle} />

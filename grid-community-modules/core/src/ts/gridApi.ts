@@ -148,8 +148,6 @@ export interface StartEditingCellParams {
     rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
-    /** The charPress to pass to the cell editor */
-    charPress?: string;
 }
 
 export function unwrapUserComp<T>(comp: T): T {
@@ -1787,7 +1785,7 @@ export class GridApi<TData = any> {
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        cell.startRowOrCellEdit(params.key, params.charPress);
+        cell.startRowOrCellEdit(params.key);
     }
 
     /** Add an aggregation function with the specified key. */

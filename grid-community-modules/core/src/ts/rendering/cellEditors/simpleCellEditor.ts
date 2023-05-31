@@ -37,15 +37,16 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
+            const eventKey = params.eventKey;
 
-            if (params.eventKey === KeyCode.BACKSPACE || params.eventKey === KeyCode.DELETE) {
+            if (eventKey === KeyCode.BACKSPACE || params.eventKey === KeyCode.DELETE) {
                 startValue = '';
-            } else if (params.charPress) {
-                startValue = params.charPress;
+            } else if (eventKey && eventKey.length === 1) {
+                startValue = eventKey;
             } else {
                 startValue = this.cellEditorInput.getStartValue();
 
-                if (params.eventKey !== KeyCode.F2) {
+                if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
                 }
             }

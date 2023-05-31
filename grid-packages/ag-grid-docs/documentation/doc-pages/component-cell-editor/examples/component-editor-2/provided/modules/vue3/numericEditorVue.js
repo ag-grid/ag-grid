@@ -26,18 +26,19 @@ export default {
         setInitialState(params) {
             let startValue;
             let highlightAllOnFocus = true;
+            const eventKey = params.eventKey;
 
-            if (params.eventKey === KEY_BACKSPACE) {
+            if (eventKey === KEY_BACKSPACE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
-            } else if (params.charPress) {
+            } else if (eventKey && eventKey.length === 1) {
                 // if a letter was pressed, we start with the letter
-                startValue = params.charPress;
+                startValue = eventKey;
                 highlightAllOnFocus = false;
             } else {
                 // otherwise we start with the current value
                 startValue = params.value;
-                if (params.eventKey === KEY_F2) {
+                if (eventKey === KEY_F2) {
                     highlightAllOnFocus = false;
                 }
             }
@@ -61,7 +62,7 @@ export default {
 
             if (
                 !this.finishedEditingPressed(event) &&
-                !this.isKeyPressedNumeric(event)
+                !this.isNumericKey(event)
             ) {
                 if (event.preventDefault) event.preventDefault();
             }
@@ -71,7 +72,7 @@ export default {
             return /\d/.test(charStr);
         },
 
-        isKeyPressedNumeric(event) {
+        isNumericKey(event) {
             const charStr = event.key;
             return this.isCharNumeric(charStr);
         },
@@ -95,7 +96,7 @@ export default {
 
         // only start edit if key pressed is a number, not a letter
         this.cancelBeforeStart =
-            this.params.charPress && '1234567890'.indexOf(this.params.charPress) < 0;
+            this.params.eventKey && this.params.eventKey.length === 1 && '1234567890'.indexOf(this.params.eventKey) < 0;
     },
     mounted() {
         setTimeout(() => {

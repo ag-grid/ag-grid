@@ -1,6 +1,6 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { CellStyle, NewValueParams } from "../../entities/colDef";
+import { CellStyle } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
 import { CellPosition } from "../../entities/cellPositionUtils";
@@ -354,17 +354,17 @@ export class CellCtrl extends BeanStub {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
+    public startEditing(key: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, charPress, cellStartedEdit, event); });
+            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, cellStartedEdit, event); });
             return;
         }
 
-        const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
+        const editorParams = this.createCellEditorParams(key, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
 
@@ -478,11 +478,10 @@ export class CellCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 
-    private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
+    private createCellEditorParams(key: string | null, cellStartedEdit: boolean): ICellEditorParams {
         return {
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
-            charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
             rowIndex: this.getCellPosition().rowIndex,
@@ -777,8 +776,8 @@ export class CellCtrl extends BeanStub {
         return event;
     }
 
-    public onKeyPress(event: KeyboardEvent): void {
-        this.cellKeyboardListenerFeature?.onKeyPress(event);
+    public processCharacter(event: KeyboardEvent): void {
+        this.cellKeyboardListenerFeature?.processCharacter(event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {
@@ -859,12 +858,12 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.cellComp) { return; }
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, charPress, this);
+            this.rowCtrl.startRowEditing(key, this);
         } else {
-            this.startEditing(key, charPress, true, event);
+            this.startEditing(key, true, event);
         }
     }
 

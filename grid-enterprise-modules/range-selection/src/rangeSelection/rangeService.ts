@@ -345,7 +345,7 @@ export class RangeService extends BeanStub implements IRangeService {
         const {
             cellEventSource = 'rangeService',
             dispatchWrapperEvents,
-            wrapperEventSource = 'deleteKeyPressed'
+            wrapperEventSource = 'deleteKey'
         } = params;
 
         if (dispatchWrapperEvents) {
@@ -611,12 +611,12 @@ export class RangeService extends BeanStub implements IRangeService {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
-        const multiKeyPressed = ctrlKey || metaKey;
+        const isMultiKey = ctrlKey || metaKey;
         const allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
-        const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+        const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
 
-        if (!multiSelectKeyPressed && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
+        if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 
@@ -632,7 +632,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
+        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
 
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);

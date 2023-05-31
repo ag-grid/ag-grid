@@ -536,7 +536,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', e => this.onMiniFilterKeyDown(e));
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -834,7 +834,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         super.handleCancelEnd(e);
     }
 
-    private onMiniFilterKeyPress(e: KeyboardEvent): void {
+    private onMiniFilterKeyDown(e: KeyboardEvent): void {
         const { excelMode, readOnly } = this.setFilterParams || {};
         if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();

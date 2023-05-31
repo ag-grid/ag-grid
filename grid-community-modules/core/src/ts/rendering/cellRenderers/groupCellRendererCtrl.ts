@@ -683,9 +683,9 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const enterKeyPressed = event.key === KeyCode.ENTER;
+        const isEnterKey = event.key === KeyCode.ENTER;
 
-        if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
+        if (!isEnterKey || this.params.suppressEnterExpand) { return; }
 
         const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
 

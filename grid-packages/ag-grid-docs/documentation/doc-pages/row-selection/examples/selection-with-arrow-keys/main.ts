@@ -28,8 +28,8 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
   var KEY_UP = 'ArrowUp'
   var KEY_DOWN = 'ArrowDown'
 
-  var noUpOrDownKeyPressed = params.key !== KEY_DOWN && params.key !== KEY_UP
-  if (noUpOrDownKeyPressed || !suggestedNextCell) {
+  var noUpOrDownKey = params.key !== KEY_DOWN && params.key !== KEY_UP
+  if (noUpOrDownKey || !suggestedNextCell) {
     return suggestedNextCell
   }
 

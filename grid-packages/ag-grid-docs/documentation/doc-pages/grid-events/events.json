@@ -279,12 +279,6 @@
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
             }
-        },
-        "cellKeyPress": {
-            "more": {
-                "name": "Keyboard Events",
-                "url": "/keyboard-navigation/#keyboard-events"
-            }
         }
     },
     "pagination": {

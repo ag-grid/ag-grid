@@ -8,7 +8,7 @@ export interface PathItem<T> {
     data: T;
 }
 
-function initListeners({ onSpacePress, mousePositionSelector, onMouseMove }) {
+function initListeners({ onSpace, mousePositionSelector, onMouseMove }) {
     // Show mouse position
     document.addEventListener('mousemove', (event) => {
         const el = document.querySelector(mousePositionSelector);
@@ -22,9 +22,9 @@ function initListeners({ onSpacePress, mousePositionSelector, onMouseMove }) {
     });
 
     // Listen to keyboard
-    document.addEventListener('keypress', function onEvent(event) {
+    document.addEventListener('keydown', function onEvent(event) {
         if (event.code === 'Space') {
-            onSpacePress && onSpacePress();
+            onSpace && onSpace();
         }
     });
 }
@@ -108,7 +108,7 @@ export function initPathRecorderUI() {
         onMouseMove: ({ pos }) => {
             recorder.record({ pos });
         },
-        onSpacePress: () => {
+        onSpace: () => {
             toggleIsRecording();
         },
     });

@@ -29,7 +29,6 @@ import {
     CellEditingStoppedEvent,
     CellFocusedEvent,
     CellKeyDownEvent,
-    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -76,7 +75,6 @@ import {
     FilterOpenedEvent,
     FirstDataRenderedEvent,
     FullWidthCellKeyDownEvent,
-    FullWidthCellKeyPressEvent,
     GetChartToolbarItems,
     GetContextMenuItems,
     GetDataPath,
@@ -1063,8 +1061,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData>> = new EventEmitter<ChartDestroyed<TData>>();
     /** DOM event `keyDown` happened on a cell.     */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
-    /** DOM event `keyPress` happened on a cell.     */
-    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */

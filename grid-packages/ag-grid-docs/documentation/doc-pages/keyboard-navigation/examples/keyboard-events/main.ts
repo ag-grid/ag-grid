@@ -1,4 +1,5 @@
-import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, CellKeyDownEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { KeyboardEvent } from 'react';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 170 },
@@ -23,20 +24,19 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
     resizable: true,
   },
-  onCellKeyDown: onCellKeyDown,
-  onCellKeyPress: onCellKeyPress,
+  onCellKeyDown: onCellKeyDown
 }
 
 function onCellKeyDown(e: CellKeyDownEvent) {
-  console.log('onCellKeyDown', e)
-}
+  console.log('onCellKeyDown', e);
+  if (!e.event) { return; }
 
-function onCellKeyPress(e: CellKeyPressEvent) {
-  console.log('onCellKeyPress', e)
-  if (e.event) {
-    var keyPressed = (e.event as KeyboardEvent).key
-    console.log('Key Pressed = ' + keyPressed)
-    if (keyPressed === 's') {
+  const keyboardEvent = e.event as unknown as KeyboardEvent;
+  const key = keyboardEvent.key;
+
+  if (key.length) {
+    console.log('Key Pressed = ' + key)
+    if (key === 's') {
       var rowNode = e.node
       var newSelection = !rowNode.isSelected()
       console.log(
@@ -48,6 +48,7 @@ function onCellKeyPress(e: CellKeyPressEvent) {
       rowNode.setSelected(newSelection)
     }
   }
+  
 }
 
 // setup the grid after the page has finished loading

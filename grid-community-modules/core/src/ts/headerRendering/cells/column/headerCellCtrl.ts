@@ -172,14 +172,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyPressed(e);
+            this.selectAllFeature.onSpaceKeyDown(e);
         }
         if (e.key === KeyCode.ENTER) {
-            this.onEnterKeyPressed(e);
+            this.onEnterKeyDown(e);
         }
     }
 
-    private onEnterKeyPressed(e: KeyboardEvent): void {
+    private onEnterKeyDown(e: KeyboardEvent): void {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.getUserCompInstance() as HeaderComp;
         if (!headerComp) { return; }

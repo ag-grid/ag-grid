@@ -15,33 +15,34 @@ export class NumericEditor implements ICellEditorComp {
 
         if (params.eventKey === KEY_BACKSPACE) {
             this.eInput.value = '';
-        } else if (this.isCharNumeric(params.charPress)) {
-            this.eInput.value = params.charPress!;
+        } else if (this.isCharNumeric(params.eventKey)) {
+            this.eInput.value = params.eventKey!;
         } else {
             if (params.value !== undefined && params.value !== null) {
                 this.eInput.value = params.value;
             }
         }
 
-        this.eInput.addEventListener('keypress', event => {
-            if (!this.isKeyPressedNumeric(event)) {
+        this.eInput.addEventListener('keydown', event => {
+            if (!event.key || event.key.length !== 1) { return; }
+            if (!this.isNumericKey(event)) {
                 this.eInput.focus();
                 if (event.preventDefault) event.preventDefault();
-            } else if (this.isKeyPressedNavigation(event) || this.isBackspace(event)) {
+            } else if (this.isNavigationKey(event) || this.isBackspace(event)) {
                 event.stopPropagation();
             }
         });
 
         // only start edit if key pressed is a number, not a letter
-        const charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
-        this.cancelBeforeStart = !!charPressIsNotANumber;
+        const isNotANumber = params.eventKey && params.eventKey.length === 1 && ('1234567890'.indexOf(params.eventKey) < 0);
+        this.cancelBeforeStart = !!isNotANumber;
     }
 
     isBackspace(event: any) {
         return event.key === KEY_BACKSPACE;
     }
 
-    isKeyPressedNavigation(event: any) {
+    isNavigationKey(event: any) {
         return event.key === 'ArrowLeft'
             || event.key === 'ArrowRight';
     }
@@ -89,7 +90,7 @@ export class NumericEditor implements ICellEditorComp {
         return charStr && !!/\d/.test(charStr);
     }
 
-    isKeyPressedNumeric(event: any) {
+    isNumericKey(event: any) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

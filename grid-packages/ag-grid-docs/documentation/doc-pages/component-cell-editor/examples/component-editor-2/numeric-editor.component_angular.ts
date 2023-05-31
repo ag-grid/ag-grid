@@ -27,24 +27,26 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         this.setInitialState(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = !!(params.charPress && ('1234567890'.indexOf(params.charPress) < 0));
+        const isCharacter = params.eventKey && params.eventKey.length === 1;
+        this.cancelBeforeStart = !!(isCharacter && ('1234567890'.indexOf(params.eventKey!) < 0));
     }
 
     setInitialState(params: ICellEditorParams) {
         let startValue;
         let highlightAllOnFocus = true;
+        const eventKey = params.eventKey;
 
-        if (params.eventKey === KEY_BACKSPACE) {
+        if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
-        } else if (params.charPress) {
+        } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = params.charPress;
+            startValue = eventKey;
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
             startValue = params.value;
-            if (params.eventKey === KEY_F2) {
+            if (eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -75,7 +77,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
             return;
         }
 
-        if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
+        if (!this.finishedEditingPressed(event) && !this.isNumericKey(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     }
@@ -107,7 +109,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         return !!/\d/.test(charStr);
     }
 
-    private isKeyPressedNumeric(event: any): boolean {
+    private isNumericKey(event: any): boolean {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

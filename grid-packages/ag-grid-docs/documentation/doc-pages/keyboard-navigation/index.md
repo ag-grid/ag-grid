@@ -176,11 +176,11 @@ In the following example there is an input box provided to test tabbing into the
 
 ## Keyboard Events
 
-It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyPress` (gets called when a DOM `keyPress` event fires on a cell) and `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).
+It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).
 
 <note>
 These keyboard events are monitored by the grid panel, so they will not be fired
-when the `keydown` or `keypress` happen inside of a popup editor, as popup elements are
+when the `keydown` happens inside of a popup editor, as popup elements are
 rendered in a different DOM tree.
 </note>
 
@@ -188,8 +188,8 @@ The grid events wrap the DOM events and provides additional information such as 
 
 The example below shows processing grid cell keyboard events. The following can be noted:
 
-- Each time a `cellKeyPress` or `cellKeyDown` is fired, the details of the event are logged to the console.
-- When the user hits <kbd>S</kbd> on a row, the row selection is toggled. This is achieved through the `cellKeyPress` listener.
+- Each time a `cellKeyDown` is fired, the details of the event are logged to the console.
+- When the user hits <kbd>S</kbd> on a row, the row selection is toggled.
 
 <grid-example title='Keyboard Events' name='keyboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 

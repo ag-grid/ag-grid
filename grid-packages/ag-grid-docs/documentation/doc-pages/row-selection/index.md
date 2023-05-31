@@ -319,8 +319,8 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 |         const KEY_UP = 'ArrowUp';
 |         const KEY_DOWN = 'ArrowDown';
 | 
-|         const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
-|         if (noUpOrDownKeyPressed) {
+|         const noUpOrDownKey = params.key !== KEY_DOWN && params.key !== KEY_UP;
+|         if (noUpOrDownKey) {
 |             return suggestedNextCell;
 |         }
 | 

@@ -124,7 +124,6 @@ export class Events {
     public static EVENT_SELECTION_CHANGED: 'selectionChanged' = 'selectionChanged';
 
     public static EVENT_CELL_KEY_DOWN: 'cellKeyDown' = 'cellKeyDown';
-    public static EVENT_CELL_KEY_PRESS: 'cellKeyPress' = 'cellKeyPress';
 
     public static EVENT_CELL_MOUSE_OVER: 'cellMouseOver' = 'cellMouseOver';
     public static EVENT_CELL_MOUSE_OUT: 'cellMouseOut' = 'cellMouseOut';

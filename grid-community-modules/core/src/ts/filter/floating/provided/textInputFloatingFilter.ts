@@ -50,7 +50,6 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     public addValueChangedListener(listener: () => void): void {
         const inputGui = this.eFloatingFilterTextInput.getGui();
         this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keypress', listener);
         this.addManagedListener(inputGui, 'keydown', listener);
     }
 }
@@ -113,9 +112,9 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const enterKeyPressed = e.key === KeyCode.ENTER;
+        const isEnterKey = e.key === KeyCode.ENTER;
 
-        if (this.applyActive && !enterKeyPressed) { return; }
+        if (this.applyActive && !isEnterKey) { return; }
 
         let value = this.floatingFilterInputService.getValue();
 
