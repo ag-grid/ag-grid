@@ -6,7 +6,7 @@ import { BandScale } from '../../../scale/bandScale';
 import { LinearScale } from '../../../scale/linearScale';
 import { BBox } from '../../../scene/bbox';
 import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, valueProperty } from '../series';
-import { RedrawType, SceneChangeDetection } from '../../../scene/node';
+import { PointerEvents, RedrawType, SceneChangeDetection } from '../../../scene/node';
 import { toFixed } from '../../../util/number';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { PolarSeries } from './polarSeries';
@@ -321,6 +321,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             node.path.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
             node.stroke = 'gray';
             node.strokeWidth = 1;
+            node.pointerEvents = PointerEvents.None;
         });
         this.radiusAxisSelection.update(this.seriesItemEnabled ? [true] : []).each((node) => {
             node.path.clear();
@@ -329,7 +330,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             node.path.closePath();
             node.stroke = 'gray';
             node.strokeWidth = 1;
-            node.fill = 'transparent';
+            node.fill = undefined;
+            node.pointerEvents = PointerEvents.None;
         });
     }
 
@@ -346,10 +348,12 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
                 }
             });
             path.closePath();
-            node.fill = 'transparent';
+            node.pointerEvents = PointerEvents.None;
+            node.lineJoin = 'round';
+            node.fill = undefined;
             node.stroke = this.stroke;
             node.strokeOpacity = this.strokeOpacity;
-            node.strokeWidth = this.strokeWidth;
+            node.strokeWidth = this.getStrokeWidth(this.strokeWidth);
         });
     }
 
@@ -366,6 +370,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             node.size = marker.size;
 
             const { x, y } = nodeDatum.point!;
+            node.translationX = x;
+            node.translationY = y;
             node.visible = node.size > 0 && !isNaN(x) && !isNaN(y);
         });
     }
