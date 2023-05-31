@@ -548,7 +548,8 @@ export class LazyCache extends BeanStub {
         const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRow);
 
         this.nodeMap.forEach(lazyNode => {
-            if (this.rowLoader.isRowLoading(lazyNode.index)) {
+            // failed loads are still useful, so we don't purge them
+            if (this.rowLoader.isRowLoading(lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
             }
             if (lazyNode.node.stub && (lazyNode.index < firstRowBlockStart || lazyNode.index > lastRowBlockEnd)) {
@@ -772,15 +773,36 @@ export class LazyCache extends BeanStub {
 
     public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
         if (!this.live) return;
-        const failedNodes = this.nodeMap.filter(node => node.index >= firstRowIndex && node.index < firstRowIndex + numberOfRowsExpected);
-        failedNodes.forEach(node => node.node.failedLoad = true);
+        const wasRefreshing = this.nodesToRefresh.size > 0;
+
+        for(let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
+            let { node }: { node?: RowNode } = this.nodeMap.getBy('index', i) ?? {};
+            if (node) {
+                this.nodesToRefresh.delete(node);
+            }
+            if (!node || !node.stub) {
+                if (node && !node.stub) {
+                    // if node is not a stub, we destroy it and recreate as nodes can't go from data to stub
+                    this.destroyRowAtIndex(i);
+                }
+                node = this.createRowAtIndex(i);
+            }
+            // this node has been refreshed, even if it wasn't successful
+            node.__needsRefreshWhenVisible = false;
+            node.failedLoad = true;
+        }
+
+        const finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
 
         this.fireStoreUpdatedEvent();
     }
 
     public markNodesForRefresh() {
         this.nodeMap.forEach(lazyNode => {
-            if (lazyNode.node.stub) {
+            if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
             }
             this.nodesToRefresh.add(lazyNode.node);
