@@ -29,6 +29,9 @@ const {
     OPT_COLOR_STRING,
     OPT_LINE_DASH,
     createLabelData,
+    getRectConfig,
+    updateRect,
+    checkCrisp,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
 const { sanitizeHtml, checkDatum } = _Util;
@@ -50,8 +53,8 @@ interface WaterfallNodeDatum extends _ModuleSupport.CartesianSeriesNodeDatum, Re
     readonly width: number;
     readonly height: number;
     readonly label: WaterfallNodeLabelDatum;
-    readonly fill?: string;
-    readonly stroke?: string;
+    readonly fill: string;
+    readonly stroke: string;
     readonly strokeWidth: number;
 }
 
@@ -397,74 +400,50 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>;
         isHighlight: boolean;
     }) {
-        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const { datumSelection, isHighlight } = opts;
         const {
             seriesItemEnabled,
             shadow,
             formatter,
-            xKey = '',
-            highlightStyle: {
-                item: {
-                    fill: highlightedFill,
-                    fillOpacity: highlightFillOpacity,
-                    stroke: highlightedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth,
-                },
-            },
+            highlightStyle: { item: itemHighlightStyle },
             id: seriesId,
         } = this;
 
-        const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
-        const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed;
+        const crisp = checkCrisp(this.xAxis?.visibleRange);
+
         const positivesActive = !!seriesItemEnabled.get('positive');
         const negativesActive = !!seriesItemEnabled.get('negative');
 
+        const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
+
         datumSelection.each((rect, datum) => {
             const isPositive = datum.itemId === 'positive';
+            const { fillOpacity, strokeOpacity, strokeWidth, lineDash, lineDashOffset } =
+                this.getItemConfig(isPositive);
+            const style: _ModuleSupport.RectConfig = {
+                fill: datum.fill,
+                stroke: datum.stroke,
+                fillOpacity,
+                strokeOpacity,
+                lineDash,
+                lineDashOffset,
+                fillShadow: shadow,
+                strokeWidth: this.getStrokeWidth(strokeWidth, datum),
+            };
             const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
+            const visible = categoryAlongX ? datum.width > 0 : datum.height > 0 && isActive;
 
-            const {
-                fillOpacity: itemFillOpacity,
-                strokeOpacity: itemStrokeOpacity,
-                strokeWidth: itemStrokeWidth,
-                lineDash: itemLineDash,
-                lineDashOffset: itemLineDashOffset,
-            } = this.getItemConfig(isPositive);
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : this.getStrokeWidth(itemStrokeWidth, datum);
-            const fillOpacity = isDatumHighlighted ? highlightFillOpacity ?? itemFillOpacity : itemFillOpacity;
-
-            let format: AgWaterfallSeriesFormat | undefined = undefined;
-            if (formatter) {
-                format = formatter({
-                    datum: datum.datum,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    highlighted: isDatumHighlighted,
-                    xKey,
-                    yKey: datum.yKey,
-                    itemId: datum.itemId,
-                    seriesId,
-                });
-            }
-            rect.crisp = crisp;
-            rect.fill = format?.fill ?? fill;
-            rect.stroke = format?.stroke ?? stroke;
-            rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            rect.fillOpacity = fillOpacity;
-            rect.strokeOpacity = itemStrokeOpacity;
-            rect.lineDash = itemLineDash;
-            rect.lineDashOffset = itemLineDashOffset;
-            rect.fillShadow = shadow;
-            // Prevent stroke from rendering for zero height columns and zero width bars.
-            rect.visible =
-                this.getCategoryDirection() === ChartAxisDirection.X ? datum.width > 0 : datum.height > 0 && isActive;
+            const config = getRectConfig({
+                datum,
+                isHighlighted: isHighlight,
+                style,
+                highlightStyle: itemHighlightStyle,
+                formatter,
+                seriesId,
+            });
+            config.crisp = crisp;
+            config.visible = visible;
+            updateRect({ rect, config });
         });
     }
 
