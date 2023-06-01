@@ -340,27 +340,16 @@ export class GridBodyScrollFeature extends BeanStub {
             }
         }
 
-        // if called via API,  the Fake Scrollbar might not be rendered
-        waitUntil(
-            () => isVisible(fakeHScrollGui),
-            () => {
-                setScrollLeft(this.centerRowContainerCtrl.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
-                // we need to manually do the event handling (rather than wait for the event)
-                // for the alignedGridsService, as if we don't, the aligned grid service gets
-                // notified async, and then it's 'consuming' flag doesn't get used right, and
-                // we can end up with an infinite loop
-                this.doHorizontalScroll(hScrollPosition);
-            }
-        );
+        setScrollLeft(this.centerRowContainerCtrl.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
+        // we need to manually do the event handling (rather than wait for the event)
+        // for the alignedGridsService, as if we don't, the aligned grid service gets
+        // notified async, and then it's 'consuming' flag doesn't get used right, and
+        // we can end up with an infinite loop
+        this.doHorizontalScroll(hScrollPosition);
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
-        const fakeVScrollGui = this.ctrlsService.getFakeVScrollComp().getGui();
-        // if called via API,  the Fake Scrollbar might not be rendered
-        waitUntil(
-            () => isVisible(fakeVScrollGui),
-            () => { this.eBodyViewport.scrollTop = vScrollPosition; }
-        );
+        this.eBodyViewport.scrollTop = vScrollPosition;
     }
 
     public getVScrollPosition(): { top: number, bottom: number; } {
