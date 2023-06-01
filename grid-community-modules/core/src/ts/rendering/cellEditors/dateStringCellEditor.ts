@@ -1,5 +1,5 @@
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { DataTypeService } from "src/ts/columns/dataTypeService";
+import { DataTypeService } from "../../columns/dataTypeService";
 import { Autowired } from "../../context/context";
 import { serialiseDate } from "../../utils/date";
 import { AgInputDateField } from "../../widgets/agInputDateField";

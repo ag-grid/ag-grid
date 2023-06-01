@@ -126,7 +126,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
                 // NumberFilter is typed as number, but actually receives string values
-                filterInstance.onFloatingFilterChanged(this.getLastType() || null, value as any || null);
+                filterInstance.onFloatingFilterChanged(this.getLastType() || null, value as never || null);
             }
         });
     }

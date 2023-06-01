@@ -7,7 +7,6 @@
   "types": "./dist/esm/es5/main.d.ts",
   "scripts": {
     "clean": "rimraf dist .hash",
-    "jest": "jest",
     "build-cjs": "rimraf dist/tsconfig.esm.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
@@ -15,7 +14,7 @@
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
-    "testxx": "npx jest --passWithNoTests",
+    "test": "npx jest",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -48,25 +47,20 @@
     "not blackberry > 0"
   ],
   "homepage": "https://www.ag-grid.com/",
-  "jest": {
-    "setupFiles": [
-      "jest-canvas-mock"
-    ],
-    "testEnvironment": "node"
-  },
   "dependencies": {
     "@ag-grid-community/core": "~29.3.0",
     "@ag-grid-enterprise/core": "~29.3.0",
     "ag-charts-community": "~7.3.0"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^29.5.0",
     "@types/node": "12.20.20",
+    "jest": "^29.5.0",
     "jest-canvas-mock": "2.5.1",
-    "jest": "^25.4.0",
-    "ts-jest": "^25.4.0",
-    "typescript": "~4.3.5",
-    "rimraf": "3.0.2"
+    "jest-environment-jsdom": "^29.5.0",
+    "rimraf": "3.0.2",
+    "ts-jest": "^29.1.0",
+    "typescript": "~4.3.5"
   },
   "publishConfig": {
     "access": "public"
