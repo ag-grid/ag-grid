@@ -4,6 +4,7 @@ const EVENT_NAME = {
     rowGrouping: 'Homepage Example Row Grouping',
     integratedCharts: 'Homepage Example Integrated Charts',
     exampleRunner: 'Example Runner',
+    apiDocumentation: 'API Documentation',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -77,4 +78,11 @@ export const trackOnceExampleRunner = (props: object) => {
         trackExampleRunner(props);
         trackingCache[cacheKey] = true;
     }
+};
+
+export const trackApiDocumentation = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.apiDocumentation,
+        props,
+    });
 };

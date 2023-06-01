@@ -25,6 +25,7 @@ import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
+import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
 
 /**
@@ -172,6 +173,12 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     pageName={pageName}
                     pageTitle={title}
                     hideMenu={() => setShowSideMenu(false)}
+                    tracking={(args) => {
+                        trackApiDocumentation({
+                            ...args,
+                            framework,
+                        });
+                    }}
                 />
             )}
         </div>

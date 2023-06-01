@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { Icon } from 'components/Icon';
 import React, { useEffect, useRef, useState } from 'react';
+import { trackApiDocumentation } from '../utils/analytics';
 import styles from './ApiDocumentation.module.scss';
 import {
     ApiProps,
@@ -626,7 +627,15 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     {showAdditionalDetails && (
                         <button
                             className={classnames(styles.seeMore, 'button-style-none')}
-                            onClick={() => setExpanded(!isExpanded)}
+                            onClick={() => {
+                                setExpanded(!isExpanded);
+                                trackApiDocumentation({
+                                    type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
+                                    framework,
+                                    id,
+                                    name,
+                                });
+                            }}
                             role="presentation"
                         >
                             {!isExpanded ? 'More' : 'Hide'} details{' '}
@@ -636,7 +645,20 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     {more != null && more.url && !config.hideMore && (
                         <span>
                             <span className="text-secondary">See:</span>{' '}
-                            <a href={convertUrl(more.url, framework)}>{more.name}</a>
+                            <a
+                                href={convertUrl(more.url, framework)}
+                                onClick={() => {
+                                    trackApiDocumentation({
+                                        type: 'seeMoreLink',
+                                        framework,
+                                        id,
+                                        name,
+                                        seeMoreName: more.name,
+                                    });
+                                }}
+                            >
+                                {more.name}
+                            </a>
                         </span>
                     )}
                 </div>
