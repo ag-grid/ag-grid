@@ -78,13 +78,15 @@ export class ComboChartProxy extends CartesianChartProxy {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
+                const grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
+                const groupedOpts = grouped ? { grouped: true } : {};
                 return {
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
                     yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
                     stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
+                    ...groupedOpts,
                 }
             }
         });
