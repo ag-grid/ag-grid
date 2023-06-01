@@ -1,15 +1,14 @@
-import fw_logos from './fw-logos';
-import agGridSvg from './ag-grid.svg';
 import agGridInvertedSvg from './ag-grid-inverted.svg';
+import agGridSvg from './ag-grid.svg';
 import angularJsSvg from './angularjs.svg';
-import stackblitzSvg from './stackblitz.svg';
+import codesandboxSvg from './codesandbox.svg';
+import fw_logos from './fw-logos';
+import plunkerSvg from './plunker.svg';
+import reactHooksSvg from './reactHooks.svg';
 import reactuiSvg from './reactui.svg';
+import stackblitzSvg from './stackblitz.svg';
 import thinksterSvg from './thinkster.svg';
 import youtubeSvg from './youtube.svg';
-import reactHooksSvg from './reactHooks.svg'
-import codesandboxSvg from './codesandbox.svg'
-
-import plunkerSvg from './plunker.svg'
 
 const logos = {
     ...fw_logos,
@@ -22,7 +21,7 @@ const logos = {
     reactHooks: reactHooksSvg,
     thinkster: thinksterSvg,
     youtube: youtubeSvg,
-    codesandbox:codesandboxSvg
+    codesandbox: codesandboxSvg,
 };
 
 export default logos;

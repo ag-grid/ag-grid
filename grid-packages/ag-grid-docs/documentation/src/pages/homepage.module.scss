@@ -1,5 +1,5 @@
 @use "sass:math";
-@use '../../../../design-system' as *;
+@use '../design-system' as *;
 
 $z-index-base: 10000; // For automated example mouse
 $z-index-debug-canvas: $z-index-base + 10;
@@ -183,6 +183,10 @@ gatsby-fast-refresh {
     p {
         margin-bottom: 0;
         text-align: center;
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: var(--font-size-extra-large);
+        }
     }
 }
 

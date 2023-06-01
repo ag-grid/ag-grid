@@ -182,7 +182,7 @@ function renderUnionNestedObject(
             <Fragment key={discriminatorType}>
                 <span onClick={() => setExpanded(!isExpanded)} className={styles.expandable}>
                     {isExpanded && <div className={styles.expanderBar}></div>}
-                    <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
+                    <span className={classnames('token', 'punctuation')}>
                         {isExpanded && renderJsonNodeExpander(isExpanded)}
                         {' { '}
                     </span>
@@ -208,13 +208,13 @@ function renderUnionNestedObject(
         <Fragment key={index}>
             <span onClick={() => setExpanded(!isExpanded)} className={styles.expandable}>
                 {isExpanded && <div className={styles.expanderBar}></div>}
-                <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
+                <span className={classnames('token', 'punctuation')}>
                     {renderJsonNodeExpander(isExpanded)}
                     {' {'}
                 </span>
                 {
                     isExpanded ?
-                        <div className={classnames(styles.jsonObject, styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
+                        <div className={classnames(styles.jsonObject, styles.unexpandable)} onClick={(e) => e.stopPropagation()} role="presentation">
                             <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
@@ -454,7 +454,7 @@ function renderArrayType(
                 <Fragment>
                     {maybeRenderPropertyDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-                    <div className={styles["json-object"]} role="presentation">
+                    <div className={styles.jsonObject} role="presentation">
                         <ModelSnippet model={desc.elements.model} path={path.concat('[]')} config={config}></ModelSnippet>
                     </div>
                     <span className={classnames('token', 'punctuation')}>}</span>

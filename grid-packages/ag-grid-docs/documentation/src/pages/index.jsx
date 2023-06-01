@@ -6,9 +6,9 @@ import FrameworkSelector from '../components/FrameworkSelector';
 import { Quotes } from '../components/quotes/Quotes';
 import { quotesData } from '../components/quotes/quotesData';
 import { agGridVersion } from '../utils/consts';
-// @ts-ignore
-import styles from './components/assets/homepage/homepage.module.scss';
 import Seo from './components/SEO';
+// @ts-ignore
+import styles from './homepage.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -112,9 +112,9 @@ const Default = () => {
                     <div className={styles.customerLogos}>
                         <img src="./images/customer-logos/nasa.svg" alt="NASA logo" />
                         <img src="./images/customer-logos/netflix.svg" alt="Netflix logo" />
+                        <img src="./images/customer-logos/ibm.svg" alt="IBM logo" />
                         <img src="./images/customer-logos/nike.svg" alt="Nike logo" />
                         <img src="./images/customer-logos/visa.svg" alt="Visa logo" />
-                        <img src="./images/customer-logos/ibm.svg" alt="IBM logo" />
                         <img src="./images/customer-logos/samsung.svg" alt="Samsung logo" />
                         <img src="./images/customer-logos/bank-of-america.svg" alt="Bank of America logo" />
                         <img src="./images/customer-logos/at-and-t.svg" alt="AT & T logo" />
