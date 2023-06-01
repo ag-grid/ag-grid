@@ -640,10 +640,6 @@ export class CellCtrl extends BeanStub {
     }
 
     private navigateAfterEdit(shiftKey: boolean): void {
-        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
-
-        if (fullRowEdit) { return; }
-
         const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
 
         if (enterNavigatesVerticallyAfterEdit) {
