@@ -15,13 +15,13 @@ const e2eTests = tests
 const unitTests = tests.map(pathToGlob).filter((path) => !e2eTests.includes(path));
 
 const commonConfig = {
-    globals: {
-        'ts-jest': {
-            tsconfig: 'tsconfig.test.json',
-        },
-    },
     transform: {
-        '^.+\\.tsx?$': 'ts-jest',
+        '^.+\\.tsx?$': [
+            'ts-jest',
+            {
+                tsconfig: 'tsconfig.test.json',
+            },
+        ],
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     testEnvironment: 'jsdom',

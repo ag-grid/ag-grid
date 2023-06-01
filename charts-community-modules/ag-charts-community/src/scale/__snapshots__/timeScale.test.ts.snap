@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every 2 days case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-01-03T00:00:00.000Z,
   2022-01-05T00:00:00.000Z,
@@ -17,7 +17,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every 3 weeks case 1`] = `
-Array [
+[
   2022-01-16T00:00:00.000Z,
   2022-02-06T00:00:00.000Z,
   2022-02-27T00:00:00.000Z,
@@ -30,7 +30,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every half day case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-01-01T12:00:00.000Z,
   2022-01-02T00:00:00.000Z,
@@ -64,7 +64,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every hour case 1`] = `
-Array [
+[
   2022-01-01T09:00:00.000Z,
   2022-01-01T10:00:00.000Z,
   2022-01-01T11:00:00.000Z,
@@ -78,7 +78,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every minute case 1`] = `
-Array [
+[
   2022-01-01T12:00:00.000Z,
   2022-01-01T12:01:00.000Z,
   2022-01-01T12:02:00.000Z,
@@ -144,7 +144,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every month case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-02-01T00:00:00.000Z,
   2022-03-01T00:00:00.000Z,
@@ -162,7 +162,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every two months case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-03-01T00:00:00.000Z,
   2022-04-30T23:00:00.000Z,
@@ -174,7 +174,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every year case 1`] = `
-Array [
+[
   2021-01-01T00:00:00.000Z,
   2022-01-01T00:00:00.000Z,
   2023-01-01T00:00:00.000Z,
@@ -182,7 +182,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured milliseconds interval for every year, negative milliseconds case 1`] = `
-Array [
+[
   2021-01-01T00:00:00.000Z,
   2022-01-01T00:00:00.000Z,
   2023-01-01T00:00:00.000Z,
@@ -190,7 +190,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every 3 days case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-01-04T00:00:00.000Z,
   2022-01-07T00:00:00.000Z,
@@ -202,7 +202,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every 6 months case 1`] = `
-Array [
+[
   2021-01-01T00:00:00.000Z,
   2021-06-30T23:00:00.000Z,
   2022-01-01T00:00:00.000Z,
@@ -212,7 +212,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every day case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-01-02T00:00:00.000Z,
   2022-01-03T00:00:00.000Z,
@@ -232,7 +232,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every hour case 1`] = `
-Array [
+[
   2022-01-01T09:00:00.000Z,
   2022-01-01T10:00:00.000Z,
   2022-01-01T11:00:00.000Z,
@@ -246,7 +246,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every minute case 1`] = `
-Array [
+[
   2022-01-01T12:00:00.000Z,
   2022-01-01T12:01:00.000Z,
   2022-01-01T12:02:00.000Z,
@@ -312,7 +312,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every month case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-02-01T00:00:00.000Z,
   2022-03-01T00:00:00.000Z,
@@ -324,7 +324,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every two months case 1`] = `
-Array [
+[
   2022-01-01T00:00:00.000Z,
   2022-03-01T00:00:00.000Z,
   2022-04-30T23:00:00.000Z,
@@ -336,7 +336,7 @@ Array [
 `;
 
 exports[`TimeScale should create ticks with configured time interval for every year case 1`] = `
-Array [
+[
   2021-01-01T00:00:00.000Z,
   2022-01-01T00:00:00.000Z,
   2023-01-01T00:00:00.000Z,

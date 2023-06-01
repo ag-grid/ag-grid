@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DataModel empty data set processing should generated the expected results 1`] = `
-Object {
-  "data": Array [],
-  "defs": Object {
-    "keys": Array [
-      Object {
+{
+  "data": [],
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "year",
@@ -13,8 +13,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -22,7 +22,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -30,7 +30,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -38,7 +38,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -48,22 +48,22 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "keys": Array [
-      Array [],
+  "domain": {
+    "keys": [
+      [],
     ],
-    "values": Array [
-      Array [],
-      Array [],
-      Array [],
-      Array [],
+    "values": [
+      [],
+      [],
+      [],
+      [],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "year": 0,
     },
-    "values": Object {
+    "values": {
       "chrome": 1,
       "firefox": 2,
       "ie": 0,
@@ -76,180 +76,180 @@ Object {
 `;
 
 exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with area bucket calculation 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           0.012,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "curb-weight": 2548,
         },
-        Object {
+        {
           "curb-weight": 2548,
         },
-        Object {
+        {
           "curb-weight": 2823,
         },
-        Object {
+        {
           "curb-weight": 2337,
         },
-        Object {
+        {
           "curb-weight": 2824,
         },
-        Object {
+        {
           "curb-weight": 2507,
         },
-        Object {
+        {
           "curb-weight": 2844,
         },
-        Object {
+        {
           "curb-weight": 2954,
         },
-        Object {
+        {
           "curb-weight": 2395,
         },
-        Object {
+        {
           "curb-weight": 2395,
         },
-        Object {
+        {
           "curb-weight": 2710,
         },
-        Object {
+        {
           "curb-weight": 2765,
         },
       ],
-      "keys": Array [
+      "keys": [
         2000,
         3000,
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2548,
         ],
-        Array [
+        [
           2548,
         ],
-        Array [
+        [
           2823,
         ],
-        Array [
+        [
           2337,
         ],
-        Array [
+        [
           2824,
         ],
-        Array [
+        [
           2507,
         ],
-        Array [
+        [
           2844,
         ],
-        Array [
+        [
           2954,
         ],
-        Array [
+        [
           2395,
         ],
-        Array [
+        [
           2395,
         ],
-        Array [
+        [
           2710,
         ],
-        Array [
+        [
           2765,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           0.004,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "curb-weight": 3086,
         },
-        Object {
+        {
           "curb-weight": 3053,
         },
-        Object {
+        {
           "curb-weight": 3055,
         },
-        Object {
+        {
           "curb-weight": 3230,
         },
-        Object {
+        {
           "curb-weight": 3380,
         },
-        Object {
+        {
           "curb-weight": 3505,
         },
       ],
-      "keys": Array [
+      "keys": [
         3000,
         4500,
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3086,
         ],
-        Array [
+        [
           3053,
         ],
-        Array [
+        [
           3055,
         ],
-        Array [
+        [
           3230,
         ],
-        Array [
+        [
           3380,
         ],
-        Array [
+        [
           3505,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           0.001,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "curb-weight": 1488,
         },
-        Object {
+        {
           "curb-weight": 1874,
         },
       ],
-      "keys": Array [
+      "keys": [
         0,
         2000,
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1488,
         ],
-        Array [
+        [
           1874,
         ],
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "curb-weight",
@@ -257,8 +257,8 @@ Object {
         "valueType": "range",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -268,59 +268,59 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         0.012,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         2000,
         3000,
       ],
-      Array [
+      [
         3000,
         4500,
       ],
-      Array [
+      [
         0,
         2000,
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         1488,
         3505,
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         1488,
         3505,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "curb-weight": 0,
     },
-    "values": Object {
+    "values": {
       "curb-weight": 0,
     },
   },
-  "reduced": Object {
-    "sortedGroupDomain": Array [
-      Array [
+  "reduced": {
+    "sortedGroupDomain": [
+      [
         0,
         2000,
       ],
-      Array [
+      [
         2000,
         3000,
       ],
-      Array [
+      [
         3000,
         4500,
       ],
@@ -332,197 +332,197 @@ Object {
 `;
 
 exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with average bucket calculation 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           25.5455,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 130,
           "highway-mpg": 27,
         },
-        Object {
+        {
           "engine-size": 130,
           "highway-mpg": 27,
         },
-        Object {
+        {
           "engine-size": 109,
           "highway-mpg": 30,
         },
-        Object {
+        {
           "engine-size": 136,
           "highway-mpg": 22,
         },
-        Object {
+        {
           "engine-size": 136,
           "highway-mpg": 25,
         },
-        Object {
+        {
           "engine-size": 136,
           "highway-mpg": 25,
         },
-        Object {
+        {
           "engine-size": 136,
           "highway-mpg": 25,
         },
-        Object {
+        {
           "engine-size": 131,
           "highway-mpg": 20,
         },
-        Object {
+        {
           "engine-size": 131,
           "highway-mpg": 22,
         },
-        Object {
+        {
           "engine-size": 108,
           "highway-mpg": 29,
         },
-        Object {
+        {
           "engine-size": 108,
           "highway-mpg": 29,
         },
       ],
-      "keys": Array [
+      "keys": [
         "100 - 150",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           27,
         ],
-        Array [
+        [
           27,
         ],
-        Array [
+        [
           30,
         ],
-        Array [
+        [
           22,
         ],
-        Array [
+        [
           25,
         ],
-        Array [
+        [
           25,
         ],
-        Array [
+        [
           25,
         ],
-        Array [
+        [
           20,
         ],
-        Array [
+        [
           22,
         ],
-        Array [
+        [
           29,
         ],
-        Array [
+        [
           29,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           24.4286,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 152,
           "highway-mpg": 26,
         },
-        Object {
+        {
           "engine-size": 164,
           "highway-mpg": 28,
         },
-        Object {
+        {
           "engine-size": 164,
           "highway-mpg": 28,
         },
-        Object {
+        {
           "engine-size": 164,
           "highway-mpg": 25,
         },
-        Object {
+        {
           "engine-size": 209,
           "highway-mpg": 22,
         },
-        Object {
+        {
           "engine-size": 209,
           "highway-mpg": 22,
         },
-        Object {
+        {
           "engine-size": 209,
           "highway-mpg": 20,
         },
       ],
-      "keys": Array [
+      "keys": [
         ">150",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           26,
         ],
-        Array [
+        [
           28,
         ],
-        Array [
+        [
           28,
         ],
-        Array [
+        [
           25,
         ],
-        Array [
+        [
           22,
         ],
-        Array [
+        [
           22,
         ],
-        Array [
+        [
           20,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           48,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 61,
           "highway-mpg": 53,
         },
-        Object {
+        {
           "engine-size": 90,
           "highway-mpg": 43,
         },
       ],
-      "keys": Array [
+      "keys": [
         "<100",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           53,
         ],
-        Array [
+        [
           43,
         ],
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "engine-size",
@@ -530,8 +530,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -541,26 +541,26 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         48,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "100 - 150",
       ],
-      Array [
+      [
         ">150",
       ],
-      Array [
+      [
         "<100",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         130,
         152,
         109,
@@ -573,30 +573,30 @@ Object {
         90,
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         20,
         53,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "engine-size": 0,
     },
-    "values": Object {
+    "values": {
       "highway-mpg": 0,
     },
   },
-  "reduced": Object {
-    "sortedGroupDomain": Array [
-      Array [
+  "reduced": {
+    "sortedGroupDomain": [
+      [
         "100 - 150",
       ],
-      Array [
+      [
         ">150",
       ],
-      Array [
+      [
         "<100",
       ],
     ],
@@ -607,54 +607,54 @@ Object {
 `;
 
 exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with hard-coded buckets 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           11,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 130,
         },
-        Object {
+        {
           "engine-size": 130,
         },
-        Object {
+        {
           "engine-size": 109,
         },
-        Object {
+        {
           "engine-size": 136,
         },
-        Object {
+        {
           "engine-size": 136,
         },
-        Object {
+        {
           "engine-size": 136,
         },
-        Object {
+        {
           "engine-size": 136,
         },
-        Object {
+        {
           "engine-size": 131,
         },
-        Object {
+        {
           "engine-size": 131,
         },
-        Object {
+        {
           "engine-size": 108,
         },
-        Object {
+        {
           "engine-size": 108,
         },
       ],
-      "keys": Array [
+      "keys": [
         "100 - 150",
       ],
-      "values": Array [
+      "values": [
         undefined,
         undefined,
         undefined,
@@ -668,40 +668,40 @@ Object {
         undefined,
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           7,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 152,
         },
-        Object {
+        {
           "engine-size": 164,
         },
-        Object {
+        {
           "engine-size": 164,
         },
-        Object {
+        {
           "engine-size": 164,
         },
-        Object {
+        {
           "engine-size": 209,
         },
-        Object {
+        {
           "engine-size": 209,
         },
-        Object {
+        {
           "engine-size": 209,
         },
       ],
-      "keys": Array [
+      "keys": [
         ">150",
       ],
-      "values": Array [
+      "values": [
         undefined,
         undefined,
         undefined,
@@ -711,33 +711,33 @@ Object {
         undefined,
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           2,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "engine-size": 61,
         },
-        Object {
+        {
           "engine-size": 90,
         },
       ],
-      "keys": Array [
+      "keys": [
         "<100",
       ],
-      "values": Array [
+      "values": [
         undefined,
         undefined,
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "engine-size",
@@ -745,28 +745,28 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [],
+    "values": [],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         11,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "100 - 150",
       ],
-      Array [
+      [
         ">150",
       ],
-      Array [
+      [
         "<100",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         130,
         152,
         109,
@@ -779,23 +779,23 @@ Object {
         90,
       ],
     ],
-    "values": Array [],
+    "values": [],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "engine-size": 0,
     },
-    "values": Object {},
+    "values": {},
   },
-  "reduced": Object {
-    "sortedGroupDomain": Array [
-      Array [
+  "reduced": {
+    "sortedGroupDomain": [
+      [
         "100 - 150",
       ],
-      Array [
+      [
         ">150",
       ],
-      Array [
+      [
         "<100",
       ],
     ],
@@ -806,180 +806,180 @@ Object {
 `;
 
 exports[`DataModel grouped processing - grouped example should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           6.1,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 3.2,
           "total": 2.9,
           "type": "Whole economy",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Whole economy",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2.9,
           3.2,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           7.9,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 4.2,
           "total": 3.7,
           "type": "Finance and business services",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Finance and business services",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3.7,
           4.2,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           6.7,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 3.4,
           "total": 3.3,
           "type": "Public sector",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Public sector",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3.3,
           3.4,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           6.8,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 3.6,
           "total": 3.2,
           "type": "Construction",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Construction",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3.2,
           3.6,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           5.9,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 3.2,
           "total": 2.7,
           "type": "Private sector",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Private sector",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2.7,
           3.2,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           5.6,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 2.9,
           "total": 2.7,
           "type": "Manufacturing",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Manufacturing",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2.7,
           2.9,
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           2.6,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "regular": 1.5,
           "total": 1.1,
           "type": "Wholesaling, retailing, hotels and restaurants",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Wholesaling, retailing, hotels and restaurants",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1.1,
           1.5,
         ],
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "type",
@@ -987,8 +987,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -996,7 +996,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -1006,38 +1006,38 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         7.9,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "Whole economy",
       ],
-      Array [
+      [
         "Finance and business services",
       ],
-      Array [
+      [
         "Public sector",
       ],
-      Array [
+      [
         "Construction",
       ],
-      Array [
+      [
         "Private sector",
       ],
-      Array [
+      [
         "Manufacturing",
       ],
-      Array [
+      [
         "Wholesaling, retailing, hotels and restaurants",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Whole economy",
         "Finance and business services",
         "Public sector",
@@ -1047,22 +1047,22 @@ Object {
         "Wholesaling, retailing, hotels and restaurants",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         1.1,
         3.7,
       ],
-      Array [
+      [
         1.5,
         4.2,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "type": 0,
     },
-    "values": Object {
+    "values": {
       "regular": 1,
       "total": 0,
     },
@@ -1073,17 +1073,17 @@ Object {
 `;
 
 exports[`DataModel grouped processing - stacked and normalised example should generated the expected results for 100% stacked area example 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 0.8,
           "imported": 0.2,
@@ -1094,11 +1094,11 @@ Object {
           "windSolarHydro": 0.7,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Jan",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           29.946524064171125,
           50.26737967914438,
           8.556149732620321,
@@ -1108,15 +1108,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 1.1,
           "imported": 0.1,
@@ -1127,11 +1127,11 @@ Object {
           "windSolarHydro": 0.5,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Feb",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           31.46067415730337,
           49.438202247191015,
           8.988764044943819,
@@ -1141,15 +1141,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 1.4,
           "imported": 0.1,
@@ -1160,11 +1160,11 @@ Object {
           "windSolarHydro": 0.6,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Mar",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           30.167597765363126,
           50.27932960893854,
           8.938547486033519,
@@ -1174,15 +1174,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.6,
           "imported": 0.1,
@@ -1193,11 +1193,11 @@ Object {
           "windSolarHydro": 0.5,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Apr",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           38.56209150326798,
           41.1764705882353,
           8.49673202614379,
@@ -1207,15 +1207,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.5,
           "imported": 0.2,
@@ -1226,11 +1226,11 @@ Object {
           "windSolarHydro": 0.5,
         },
       ],
-      "keys": Array [
+      "keys": [
         "May",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           42.10526315789474,
           33.83458646616542,
           9.774436090225565,
@@ -1240,15 +1240,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.5,
           "imported": 0.1,
@@ -1259,11 +1259,11 @@ Object {
           "windSolarHydro": 0.4,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Jun",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           46.03174603174603,
           30.158730158730158,
           10.317460317460318,
@@ -1273,15 +1273,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.4,
           "imported": 0.2,
@@ -1292,11 +1292,11 @@ Object {
           "windSolarHydro": 0.4,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Jul",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           44.44444444444444,
           30.952380952380953,
           10.317460317460318,
@@ -1306,15 +1306,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.4,
           "imported": 0.1,
@@ -1325,11 +1325,11 @@ Object {
           "windSolarHydro": 0.4,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Aug",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           46.456692913385815,
           29.13385826771653,
           10.236220472440943,
@@ -1339,15 +1339,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.3,
           "coal": 0.7,
           "imported": 0.1,
@@ -1358,11 +1358,11 @@ Object {
           "windSolarHydro": 0.6,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Sep",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           44.27480916030535,
           31.297709923664122,
           9.923664122137406,
@@ -1372,15 +1372,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 0.6,
           "imported": 0.1,
@@ -1391,11 +1391,11 @@ Object {
           "windSolarHydro": 0.6,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Oct",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           37.41496598639456,
           40.13605442176871,
           10.884353741496598,
@@ -1405,15 +1405,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 0.9,
           "imported": 0.1,
@@ -1424,11 +1424,11 @@ Object {
           "windSolarHydro": 0.7,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Nov",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           35.54216867469879,
           43.97590361445783,
           9.638554216867469,
@@ -1438,15 +1438,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "bioenergyWaste": 1.6,
           "coal": 0.7,
           "imported": 0.1,
@@ -1457,11 +1457,11 @@ Object {
           "windSolarHydro": 0.6,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Dec",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           33.33333333333333,
           47.126436781609186,
           9.195402298850574,
@@ -1472,9 +1472,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "month",
@@ -1482,8 +1482,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -1491,7 +1491,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -1499,7 +1499,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -1507,7 +1507,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -1515,7 +1515,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 4,
         "missing": false,
@@ -1523,7 +1523,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 5,
         "missing": false,
@@ -1533,53 +1533,53 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         100,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "Jan",
       ],
-      Array [
+      [
         "Feb",
       ],
-      Array [
+      [
         "Mar",
       ],
-      Array [
+      [
         "Apr",
       ],
-      Array [
+      [
         "May",
       ],
-      Array [
+      [
         "Jun",
       ],
-      Array [
+      [
         "Jul",
       ],
-      Array [
+      [
         "Aug",
       ],
-      Array [
+      [
         "Sep",
       ],
-      Array [
+      [
         "Oct",
       ],
-      Array [
+      [
         "Nov",
       ],
-      Array [
+      [
         "Dec",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Jan",
         "Feb",
         "Mar",
@@ -1594,38 +1594,38 @@ Object {
         "Dec",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         5.4,
         5.9,
       ],
-      Array [
+      [
         3.7,
         9.4,
       ],
-      Array [
+      [
         1.3,
         1.6,
       ],
-      Array [
+      [
         1,
         1.3,
       ],
-      Array [
+      [
         0.4,
         0.7,
       ],
-      Array [
+      [
         0.1,
         0.2,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "month": 0,
     },
-    "values": Object {
+    "values": {
       "bioenergyWaste": 2,
       "imported": 5,
       "naturalGas": 1,
@@ -1634,8 +1634,8 @@ Object {
       "windSolarHydro": 4,
     },
   },
-  "reduced": Object {
-    "aggValuesExtent": Array [
+  "reduced": {
+    "aggValuesExtent": [
       0,
       100,
     ],
@@ -1646,17 +1646,17 @@ Object {
 `;
 
 exports[`DataModel grouped processing - stacked and normalised example should generated the expected results for 100% stacked columns example 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "asian": 7317,
           "black": 3742,
           "chinese": 284,
@@ -1666,11 +1666,11 @@ Object {
           "white": 24801,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Nursery",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           59.712524678576585,
           9.755862666730872,
           17.616892184716136,
@@ -1680,15 +1680,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "asian": 527391,
           "black": 258774,
           "chinese": 22844,
@@ -1698,11 +1698,11 @@ Object {
           "white": 3475379,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Primary",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           74.28693389376268,
           6.388321614734185,
           11.273090029365255,
@@ -1712,15 +1712,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "asian": 377168,
           "black": 198080,
           "chinese": 13317,
@@ -1730,11 +1730,11 @@ Object {
           "white": 2436365,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Secondary",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           74.49944393701765,
           5.587263359806844,
           11.53308567100458,
@@ -1744,15 +1744,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "asian": 12328,
           "black": 8546,
           "chinese": 404,
@@ -1762,11 +1762,11 @@ Object {
           "white": 91696,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Special",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           74.84837848647854,
           6.0615954746181915,
           10.062934151776604,
@@ -1776,15 +1776,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "asian": 605,
           "black": 1104,
           "chinese": 4,
@@ -1794,11 +1794,11 @@ Object {
           "white": 12347,
         },
       ],
-      "keys": Array [
+      "keys": [
         "Referral units",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           78.45841011628646,
           9.201245472453454,
           3.844443032344157,
@@ -1809,9 +1809,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "type",
@@ -1819,8 +1819,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -1828,7 +1828,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -1836,7 +1836,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -1844,7 +1844,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -1852,7 +1852,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 4,
         "missing": false,
@@ -1860,7 +1860,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 5,
         "missing": false,
@@ -1870,32 +1870,32 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         100,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "Nursery",
       ],
-      Array [
+      [
         "Primary",
       ],
-      Array [
+      [
         "Secondary",
       ],
-      Array [
+      [
         "Special",
       ],
-      Array [
+      [
         "Referral units",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Nursery",
         "Primary",
         "Secondary",
@@ -1903,38 +1903,38 @@ Object {
         "Referral units",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         12347,
         3475379,
       ],
-      Array [
+      [
         1448,
         298866,
       ],
-      Array [
+      [
         605,
         527391,
       ],
-      Array [
+      [
         1104,
         258774,
       ],
-      Array [
+      [
         4,
         22844,
       ],
-      Array [
+      [
         229,
         95064,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "type": 0,
     },
-    "values": Object {
+    "values": {
       "asian": 2,
       "black": 3,
       "chinese": 4,
@@ -1943,8 +1943,8 @@ Object {
       "white": 0,
     },
   },
-  "reduced": Object {
-    "aggValuesExtent": Array [
+  "reduced": {
+    "aggValuesExtent": [
       0,
       100,
     ],
@@ -1955,17 +1955,17 @@ Object {
 `;
 
 exports[`DataModel grouped processing - stacked example should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           0,
           6002,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 388,
           "localAuthority": 274,
           "ownerOccupied": 4567,
@@ -1973,11 +1973,11 @@ Object {
           "type": "Semi-detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Semi-detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           4567,
           773,
           274,
@@ -1985,15 +1985,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           4433,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 422,
           "localAuthority": 231,
           "ownerOccupied": 2842,
@@ -2001,11 +2001,11 @@ Object {
           "type": "Medium/large terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Medium/large terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2842,
           938,
           231,
@@ -2013,15 +2013,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           3972,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 19,
           "localAuthority": 4,
           "ownerOccupied": 3655,
@@ -2029,11 +2029,11 @@ Object {
           "type": "Detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3655,
           294,
           4,
@@ -2041,15 +2041,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           3584,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 919,
           "localAuthority": 621,
           "ownerOccupied": 905,
@@ -2057,11 +2057,11 @@ Object {
           "type": "Purpose-built flat low rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat low rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           905,
           1139,
           621,
@@ -2069,15 +2069,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           2298,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 295,
           "localAuthority": 168,
           "ownerOccupied": 1013,
@@ -2085,11 +2085,11 @@ Object {
           "type": "Small terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Small terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1013,
           822,
           168,
@@ -2097,15 +2097,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           2108,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 228,
           "localAuthority": 180,
           "ownerOccupied": 1486,
@@ -2113,11 +2113,11 @@ Object {
           "type": "Bungalow",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Bungalow",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1486,
           214,
           180,
@@ -2125,15 +2125,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           928,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 100,
           "localAuthority": 37,
           "ownerOccupied": 252,
@@ -2141,11 +2141,11 @@ Object {
           "type": "Converted flat",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Converted flat",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           252,
           539,
           37,
@@ -2153,15 +2153,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           0,
           408,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 68,
           "localAuthority": 109,
           "ownerOccupied": 97,
@@ -2169,11 +2169,11 @@ Object {
           "type": "Purpose-built flat high rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat high rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           97,
           134,
           109,
@@ -2182,9 +2182,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "type",
@@ -2192,8 +2192,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -2201,7 +2201,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -2209,7 +2209,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -2217,7 +2217,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -2227,41 +2227,41 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         0,
         6002,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "Semi-detached house",
       ],
-      Array [
+      [
         "Medium/large terraced house",
       ],
-      Array [
+      [
         "Detached house",
       ],
-      Array [
+      [
         "Purpose-built flat low rise",
       ],
-      Array [
+      [
         "Small terraced house",
       ],
-      Array [
+      [
         "Bungalow",
       ],
-      Array [
+      [
         "Converted flat",
       ],
-      Array [
+      [
         "Purpose-built flat high rise",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Semi-detached house",
         "Medium/large terraced house",
         "Detached house",
@@ -2272,38 +2272,38 @@ Object {
         "Purpose-built flat high rise",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         97,
         4567,
       ],
-      Array [
+      [
         134,
         1139,
       ],
-      Array [
+      [
         4,
         621,
       ],
-      Array [
+      [
         19,
         919,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "type": 0,
     },
-    "values": Object {
+    "values": {
       "housingAssociation": 3,
       "localAuthority": 2,
       "ownerOccupied": 0,
       "privateRented": 1,
     },
   },
-  "reduced": Object {
-    "aggValuesExtent": Array [
+  "reduced": {
+    "aggValuesExtent": [
       0,
       6002,
     ],
@@ -2314,17 +2314,17 @@ Object {
 `;
 
 exports[`DataModel grouped processing - stacked with accumulation and normalised example should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "aggValues": Array [
-        Array [
+{
+  "data": [
+    {
+      "aggValues": [
+        [
           76.0913,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 388,
           "localAuthority": 274,
           "ownerOccupied": 4567,
@@ -2332,11 +2332,11 @@ Object {
           "type": "Semi-detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Semi-detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           76.09130289903365,
           88.97034321892703,
           93.5354881706098,
@@ -2344,15 +2344,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           64.1101,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 422,
           "localAuthority": 231,
           "ownerOccupied": 2842,
@@ -2360,11 +2360,11 @@ Object {
           "type": "Medium/large terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Medium/large terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           64.11008346492217,
           85.26956914053689,
           90.48048725468081,
@@ -2372,15 +2372,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           92.0191,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 19,
           "localAuthority": 4,
           "ownerOccupied": 3655,
@@ -2388,11 +2388,11 @@ Object {
           "type": "Detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           92.01913393756294,
           99.42094662638469,
           99.52165156092649,
@@ -2400,15 +2400,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           25.2511,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 919,
           "localAuthority": 621,
           "ownerOccupied": 905,
@@ -2416,11 +2416,11 @@ Object {
           "type": "Purpose-built flat low rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat low rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           25.251116071428573,
           57.03125,
           74.35825892857143,
@@ -2428,15 +2428,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           44.0818,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 295,
           "localAuthority": 168,
           "ownerOccupied": 1013,
@@ -2444,11 +2444,11 @@ Object {
           "type": "Small terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Small terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           44.081810269799824,
           79.852045256745,
           87.16275021758051,
@@ -2456,15 +2456,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           70.4934,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 228,
           "localAuthority": 180,
           "ownerOccupied": 1486,
@@ -2472,11 +2472,11 @@ Object {
           "type": "Bungalow",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Bungalow",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           70.4933586337761,
           80.64516129032258,
           89.18406072106262,
@@ -2484,15 +2484,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           27.1552,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 100,
           "localAuthority": 37,
           "ownerOccupied": 252,
@@ -2500,11 +2500,11 @@ Object {
           "type": "Converted flat",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Converted flat",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           27.155172413793103,
           85.23706896551724,
           89.22413793103448,
@@ -2512,15 +2512,15 @@ Object {
         ],
       ],
     },
-    Object {
-      "aggValues": Array [
-        Array [
+    {
+      "aggValues": [
+        [
           23.7745,
           100,
         ],
       ],
-      "datum": Array [
-        Object {
+      "datum": [
+        {
           "housingAssociation": 68,
           "localAuthority": 109,
           "ownerOccupied": 97,
@@ -2528,11 +2528,11 @@ Object {
           "type": "Purpose-built flat high rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat high rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           23.774509803921568,
           56.61764705882353,
           83.33333333333333,
@@ -2541,9 +2541,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "type",
@@ -2551,8 +2551,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -2561,7 +2561,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -2570,7 +2570,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -2579,7 +2579,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -2590,41 +2590,41 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "aggValues": Array [
-      Array [
+  "domain": {
+    "aggValues": [
+      [
         23.7745,
         100,
       ],
     ],
-    "groups": Array [
-      Array [
+    "groups": [
+      [
         "Semi-detached house",
       ],
-      Array [
+      [
         "Medium/large terraced house",
       ],
-      Array [
+      [
         "Detached house",
       ],
-      Array [
+      [
         "Purpose-built flat low rise",
       ],
-      Array [
+      [
         "Small terraced house",
       ],
-      Array [
+      [
         "Bungalow",
       ],
-      Array [
+      [
         "Converted flat",
       ],
-      Array [
+      [
         "Purpose-built flat high rise",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Semi-detached house",
         "Medium/large terraced house",
         "Detached house",
@@ -2635,38 +2635,38 @@ Object {
         "Purpose-built flat high rise",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         97,
         4567,
       ],
-      Array [
+      [
         231,
         5340,
       ],
-      Array [
+      [
         340,
         5614,
       ],
-      Array [
+      [
         408,
         6002,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "type": 0,
     },
-    "values": Object {
+    "values": {
       "housingAssociation": 3,
       "localAuthority": 2,
       "ownerOccupied": 0,
       "privateRented": 1,
     },
   },
-  "reduced": Object {
-    "aggValuesExtent": Array [
+  "reduced": {
+    "aggValuesExtent": [
       23.7745,
       100,
     ],
@@ -2677,11 +2677,11 @@ Object {
 `;
 
 exports[`DataModel grouped processing - stacked with accumulation example should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "datum": Array [
-        Object {
+{
+  "data": [
+    {
+      "datum": [
+        {
           "housingAssociation": 388,
           "localAuthority": 274,
           "ownerOccupied": 4567,
@@ -2689,11 +2689,11 @@ Object {
           "type": "Semi-detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Semi-detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           4567,
           5340,
           5614,
@@ -2701,9 +2701,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 422,
           "localAuthority": 231,
           "ownerOccupied": 2842,
@@ -2711,11 +2711,11 @@ Object {
           "type": "Medium/large terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Medium/large terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           2842,
           3780,
           4011,
@@ -2723,9 +2723,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 19,
           "localAuthority": 4,
           "ownerOccupied": 3655,
@@ -2733,11 +2733,11 @@ Object {
           "type": "Detached house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Detached house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           3655,
           3949,
           3953,
@@ -2745,9 +2745,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 919,
           "localAuthority": 621,
           "ownerOccupied": 905,
@@ -2755,11 +2755,11 @@ Object {
           "type": "Purpose-built flat low rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat low rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           905,
           2044,
           2665,
@@ -2767,9 +2767,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 295,
           "localAuthority": 168,
           "ownerOccupied": 1013,
@@ -2777,11 +2777,11 @@ Object {
           "type": "Small terraced house",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Small terraced house",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1013,
           1835,
           2003,
@@ -2789,9 +2789,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 228,
           "localAuthority": 180,
           "ownerOccupied": 1486,
@@ -2799,11 +2799,11 @@ Object {
           "type": "Bungalow",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Bungalow",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           1486,
           1700,
           1880,
@@ -2811,9 +2811,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 100,
           "localAuthority": 37,
           "ownerOccupied": 252,
@@ -2821,11 +2821,11 @@ Object {
           "type": "Converted flat",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Converted flat",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           252,
           791,
           828,
@@ -2833,9 +2833,9 @@ Object {
         ],
       ],
     },
-    Object {
-      "datum": Array [
-        Object {
+    {
+      "datum": [
+        {
           "housingAssociation": 68,
           "localAuthority": 109,
           "ownerOccupied": 97,
@@ -2843,11 +2843,11 @@ Object {
           "type": "Purpose-built flat high rise",
         },
       ],
-      "keys": Array [
+      "keys": [
         "Purpose-built flat high rise",
       ],
-      "values": Array [
-        Array [
+      "values": [
+        [
           97,
           231,
           340,
@@ -2856,9 +2856,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "type",
@@ -2866,8 +2866,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -2876,7 +2876,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -2885,7 +2885,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -2894,7 +2894,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "missing": false,
@@ -2905,35 +2905,35 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "groups": Array [
-      Array [
+  "domain": {
+    "groups": [
+      [
         "Semi-detached house",
       ],
-      Array [
+      [
         "Medium/large terraced house",
       ],
-      Array [
+      [
         "Detached house",
       ],
-      Array [
+      [
         "Purpose-built flat low rise",
       ],
-      Array [
+      [
         "Small terraced house",
       ],
-      Array [
+      [
         "Bungalow",
       ],
-      Array [
+      [
         "Converted flat",
       ],
-      Array [
+      [
         "Purpose-built flat high rise",
       ],
     ],
-    "keys": Array [
-      Array [
+    "keys": [
+      [
         "Semi-detached house",
         "Medium/large terraced house",
         "Detached house",
@@ -2944,30 +2944,30 @@ Object {
         "Purpose-built flat high rise",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         97,
         4567,
       ],
-      Array [
+      [
         231,
         5340,
       ],
-      Array [
+      [
         340,
         5614,
       ],
-      Array [
+      [
         408,
         6002,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "type": 0,
     },
-    "values": Object {
+    "values": {
       "housingAssociation": 3,
       "localAuthority": 2,
       "ownerOccupied": 0,
@@ -2980,189 +2980,189 @@ Object {
 `;
 
 exports[`DataModel missing and invalid data processing should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "datum": Object {
+{
+  "data": [
+    {
+      "datum": {
         "chrome": "illegal value",
         "firefox": 26.85,
         "safari": 2.79,
         "year": "2009",
       },
-      "keys": Array [
+      "keys": [
         "2009",
       ],
-      "values": Array [
+      "values": [
         null,
         NaN,
         26.85,
         2.79,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "firefox": 31.15,
         "ie": 54.39,
         "safari": 4.22,
         "year": "2010",
       },
-      "keys": Array [
+      "keys": [
         "2010",
       ],
-      "values": Array [
+      "values": [
         54.39,
         null,
         31.15,
         4.22,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 15.01,
         "ie": 44.03,
         "safari": 5.94,
         "year": "2011",
       },
-      "keys": Array [
+      "keys": [
         "2011",
       ],
-      "values": Array [
+      "values": [
         44.03,
         15.01,
         null,
         5.94,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 25.99,
         "firefox": 22.69,
         "ie": "illegal value",
         "year": "2012",
       },
-      "keys": Array [
+      "keys": [
         "2012",
       ],
-      "values": Array [
+      "values": [
         NaN,
         25.99,
         22.69,
         null,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 31.71,
         "firefox": undefined,
         "safari": undefined,
         "year": "2013",
       },
-      "keys": Array [
+      "keys": [
         "2013",
       ],
-      "values": Array [
+      "values": [
         null,
         31.71,
         NaN,
         NaN,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "firefox": 14.77,
         "ie": 17.75,
         "safari": 12.63,
         "year": "2014",
       },
-      "keys": Array [
+      "keys": [
         "2014",
       ],
-      "values": Array [
+      "values": [
         17.75,
         null,
         14.77,
         12.63,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 42.27,
         "ie": -13.3,
         "safari": "illegal value",
         "year": "2015",
       },
-      "keys": Array [
+      "keys": [
         "2015",
       ],
-      "values": Array [
+      "values": [
         -13.3,
         42.27,
         null,
         NaN,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 47.79,
         "firefox": 8.97,
         "ie": -8.94,
         "year": "2016",
       },
-      "keys": Array [
+      "keys": [
         "2016",
       ],
-      "values": Array [
+      "values": [
         -8.94,
         47.79,
         8.97,
         null,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 51.76,
         "firefox": 6.75,
         "safari": 14.54,
         "year": "2017",
       },
-      "keys": Array [
+      "keys": [
         "2017",
       ],
-      "values": Array [
+      "values": [
         null,
         51.76,
         6.75,
         14.54,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "firefox": "illegal value",
         "ie": 3.2,
         "safari": 14.44,
         "year": "2018",
       },
-      "keys": Array [
+      "keys": [
         "2018",
       ],
-      "values": Array [
+      "values": [
         3.2,
         null,
         NaN,
         14.44,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "chrome": 61.72,
         "ie": 2.7,
         "safari": 15.23,
         "year": "2019",
       },
-      "keys": Array [
+      "keys": [
         "2019",
       ],
-      "values": Array [
+      "values": [
         2.7,
         61.72,
         null,
@@ -3170,9 +3170,9 @@ Object {
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "year",
@@ -3180,8 +3180,8 @@ Object {
         "valueType": "category",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "invalidValue": NaN,
@@ -3192,7 +3192,7 @@ Object {
         "validation": [Function],
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "invalidValue": NaN,
@@ -3203,7 +3203,7 @@ Object {
         "validation": [Function],
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "invalidValue": NaN,
@@ -3214,7 +3214,7 @@ Object {
         "validation": [Function],
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 3,
         "invalidValue": NaN,
@@ -3227,9 +3227,9 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "keys": Array [
-      Array [
+  "domain": {
+    "keys": [
+      [
         "2009",
         "2010",
         "2011",
@@ -3243,30 +3243,30 @@ Object {
         "2019",
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         -13.3,
         54.39,
       ],
-      Array [
+      [
         null,
         61.72,
       ],
-      Array [
+      [
         null,
         31.15,
       ],
-      Array [
+      [
         null,
         15.23,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "year": 0,
     },
-    "values": Object {
+    "values": {
       "chrome": 1,
       "firefox": 2,
       "ie": 0,
@@ -3279,73 +3279,73 @@ Object {
 `;
 
 exports[`DataModel repeated property processing should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "datum": Object {
+{
+  "data": [
+    {
+      "datum": {
         "browser": "Chrome",
         "share": 0.6869,
         "year": 2020,
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         0,
         0.6869,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "browser": "Edge",
         "share": 0.0463,
         "year": 2020,
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         0.1478760779303737,
         0.05,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "browser": "Safari",
         "share": 0.087,
         "year": 2020,
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         0.4257425742574256,
         0.087,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "browser": "Firefox",
         "share": 0.0955,
         "year": 2020,
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         0.7307569466624081,
         0.0955,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "browser": "Other",
         "share": 0.0843,
         "year": 2020,
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         1,
         0.0843,
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [],
-    "values": Array [
-      Object {
+  "defs": {
+    "keys": [],
+    "values": [
+      {
         "id": "angle",
         "index": 0,
         "missing": false,
@@ -3354,7 +3354,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": "radius",
         "index": 1,
         "missing": false,
@@ -3366,22 +3366,22 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "keys": Array [],
-    "values": Array [
-      Array [
+  "domain": {
+    "keys": [],
+    "values": [
+      [
         0,
         1,
       ],
-      Array [
+      [
         0.05,
         0.6869,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {},
-    "values": Object {
+  "indices": {
+    "keys": {},
+    "values": {
       "share": 1,
     },
   },
@@ -3391,109 +3391,109 @@ Object {
 `;
 
 exports[`DataModel ungrouped processing - accumulated and normalised properties should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "datum": Object {
+{
+  "data": [
+    {
+      "datum": {
         "population": 4159000,
         "religion": "Christian",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         2.978445409938555,
         "Christian",
         4159000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 97000,
         "religion": "Buddhist",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         3.049570275710106,
         "Buddhist",
         97000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 456000,
         "religion": "Hindu",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         3.383930469440284,
         "Hindu",
         456000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 168000,
         "religion": "Jewish",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         3.507115803972454,
         "Jewish",
         168000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 1215000,
         "religion": "Muslim",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         4.398009741214046,
         "Muslim",
         1215000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 123000,
         "religion": "Sikh",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         4.488199003996527,
         "Sikh",
         123000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 174000,
         "religion": "Other",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         4.61578381476199,
         "Other",
         174000,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "population": 2274000,
         "religion": "None",
       },
-      "keys": Array [],
-      "values": Array [
+      "keys": [],
+      "values": [
         6.283185307179586,
         "None",
         2274000,
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [],
-    "values": Array [
-      Object {
+  "defs": {
+    "keys": [],
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -3502,14 +3502,14 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "index": 1,
         "missing": false,
         "property": "religion",
         "type": "value",
         "valueType": "category",
       },
-      Object {
+      {
         "id": undefined,
         "index": 2,
         "missing": false,
@@ -3519,14 +3519,14 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "keys": Array [],
-    "values": Array [
-      Array [
+  "domain": {
+    "keys": [],
+    "values": [
+      [
         0,
         6.283185307179586,
       ],
-      Array [
+      [
         "Christian",
         "Buddhist",
         "Hindu",
@@ -3536,15 +3536,15 @@ Object {
         "Other",
         "None",
       ],
-      Array [
+      [
         97000,
         8666000,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {},
-    "values": Object {
+  "indices": {
+    "keys": {},
+    "values": {
       "population": 2,
       "religion": 1,
     },
@@ -3555,740 +3555,740 @@ Object {
 `;
 
 exports[`DataModel ungrouped processing should generated the expected results 1`] = `
-Object {
-  "data": Array [
-    Object {
-      "datum": Object {
+{
+  "data": [
+    {
+      "datum": {
         "date": 2019-01-07T00:00:00.000Z,
         "diesel": 130.33,
         "petrol": 120.27,
       },
-      "keys": Array [
+      "keys": [
         2019-01-07T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         120.27,
         130.33,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-01-14T00:00:00.000Z,
         "diesel": 129.47,
         "petrol": 119.53,
       },
-      "keys": Array [
+      "keys": [
         2019-01-14T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.53,
         129.47,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-01-21T00:00:00.000Z,
         "diesel": 128.92,
         "petrol": 119.12,
       },
-      "keys": Array [
+      "keys": [
         2019-01-21T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.12,
         128.92,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-01-28T00:00:00.000Z,
         "diesel": 129.1,
         "petrol": 119.29,
       },
-      "keys": Array [
+      "keys": [
         2019-01-28T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.29,
         129.1,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-02-04T00:00:00.000Z,
         "diesel": 129.13,
         "petrol": 119.13,
       },
-      "keys": Array [
+      "keys": [
         2019-02-04T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.13,
         129.13,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-02-11T00:00:00.000Z,
         "diesel": 129.17,
         "petrol": 118.97,
       },
-      "keys": Array [
+      "keys": [
         2019-02-11T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         118.97,
         129.17,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-02-18T00:00:00.000Z,
         "diesel": 129.23,
         "petrol": 119.05,
       },
-      "keys": Array [
+      "keys": [
         2019-02-18T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.05,
         129.23,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-02-25T00:00:00.000Z,
         "diesel": 129.66,
         "petrol": 119.22,
       },
-      "keys": Array [
+      "keys": [
         2019-02-25T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.22,
         129.66,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-03-04T00:00:00.000Z,
         "diesel": 130.25,
         "petrol": 119.72,
       },
-      "keys": Array [
+      "keys": [
         2019-03-04T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         119.72,
         130.25,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-03-11T00:00:00.000Z,
         "diesel": 130.59,
         "petrol": 120.1,
       },
-      "keys": Array [
+      "keys": [
         2019-03-11T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         120.1,
         130.59,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-03-18T00:00:00.000Z,
         "diesel": 130.85,
         "petrol": 120.48,
       },
-      "keys": Array [
+      "keys": [
         2019-03-18T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         120.48,
         130.85,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-03-25T00:00:00.000Z,
         "diesel": 131.15,
         "petrol": 120.83,
       },
-      "keys": Array [
+      "keys": [
         2019-03-25T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         120.83,
         131.15,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-03-31T23:00:00.000Z,
         "diesel": 131.48,
         "petrol": 121.7,
       },
-      "keys": Array [
+      "keys": [
         2019-03-31T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         121.7,
         131.48,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-04-07T23:00:00.000Z,
         "diesel": 132.08,
         "petrol": 122.75,
       },
-      "keys": Array [
+      "keys": [
         2019-04-07T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         122.75,
         132.08,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-04-14T23:00:00.000Z,
         "diesel": 132.96,
         "petrol": 124.06,
       },
-      "keys": Array [
+      "keys": [
         2019-04-14T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.06,
         132.96,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-04-21T23:00:00.000Z,
         "diesel": 133.99,
         "petrol": 125.43,
       },
-      "keys": Array [
+      "keys": [
         2019-04-21T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.43,
         133.99,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-04-28T23:00:00.000Z,
         "diesel": 134.6,
         "petrol": 126.36,
       },
-      "keys": Array [
+      "keys": [
         2019-04-28T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.36,
         134.6,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-05-05T23:00:00.000Z,
         "diesel": 135.41,
         "petrol": 127.5,
       },
-      "keys": Array [
+      "keys": [
         2019-05-05T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.5,
         135.41,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-05-12T23:00:00.000Z,
         "diesel": 135.36,
         "petrol": 127.97,
       },
-      "keys": Array [
+      "keys": [
         2019-05-12T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.97,
         135.36,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-05-19T23:00:00.000Z,
         "diesel": 135.82,
         "petrol": 128.51,
       },
-      "keys": Array [
+      "keys": [
         2019-05-19T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.51,
         135.82,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-05-26T23:00:00.000Z,
         "diesel": 136.45,
         "petrol": 129.14,
       },
-      "keys": Array [
+      "keys": [
         2019-05-26T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         129.14,
         136.45,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-06-02T23:00:00.000Z,
         "diesel": 136.39,
         "petrol": 129.41,
       },
-      "keys": Array [
+      "keys": [
         2019-06-02T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         129.41,
         136.39,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-06-09T23:00:00.000Z,
         "diesel": 135.4,
         "petrol": 128.89,
       },
-      "keys": Array [
+      "keys": [
         2019-06-09T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.89,
         135.4,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-06-16T23:00:00.000Z,
         "diesel": 133.76,
         "petrol": 127.66,
       },
-      "keys": Array [
+      "keys": [
         2019-06-16T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.66,
         133.76,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-06-23T23:00:00.000Z,
         "diesel": 131.81,
         "petrol": 126.66,
       },
-      "keys": Array [
+      "keys": [
         2019-06-23T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.66,
         131.81,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-06-30T23:00:00.000Z,
         "diesel": 131.55,
         "petrol": 126.49,
       },
-      "keys": Array [
+      "keys": [
         2019-06-30T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.49,
         131.55,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-07-07T23:00:00.000Z,
         "diesel": 131.68,
         "petrol": 126.86,
       },
-      "keys": Array [
+      "keys": [
         2019-07-07T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.86,
         131.68,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-07-14T23:00:00.000Z,
         "diesel": 131.86,
         "petrol": 127.13,
       },
-      "keys": Array [
+      "keys": [
         2019-07-14T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.13,
         131.86,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-07-21T23:00:00.000Z,
         "diesel": 132.21,
         "petrol": 127.81,
       },
-      "keys": Array [
+      "keys": [
         2019-07-21T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.81,
         132.21,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-07-28T23:00:00.000Z,
         "diesel": 132.6,
         "petrol": 128.03,
       },
-      "keys": Array [
+      "keys": [
         2019-07-28T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.03,
         132.6,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-08-04T23:00:00.000Z,
         "diesel": 132.61,
         "petrol": 128.37,
       },
-      "keys": Array [
+      "keys": [
         2019-08-04T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.37,
         132.61,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-08-11T23:00:00.000Z,
         "diesel": 132.59,
         "petrol": 128.36,
       },
-      "keys": Array [
+      "keys": [
         2019-08-11T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.36,
         132.59,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-08-18T23:00:00.000Z,
         "diesel": 132.6,
         "petrol": 128.17,
       },
-      "keys": Array [
+      "keys": [
         2019-08-18T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.17,
         132.6,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-08-25T23:00:00.000Z,
         "diesel": 132.51,
         "petrol": 128.22,
       },
-      "keys": Array [
+      "keys": [
         2019-08-25T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         128.22,
         132.51,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-09-01T23:00:00.000Z,
         "diesel": 132.29,
         "petrol": 127.86,
       },
-      "keys": Array [
+      "keys": [
         2019-09-01T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.86,
         132.29,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-09-08T23:00:00.000Z,
         "diesel": 131.89,
         "petrol": 127.79,
       },
-      "keys": Array [
+      "keys": [
         2019-09-08T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         127.79,
         131.89,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-09-15T23:00:00.000Z,
         "diesel": 131.35,
         "petrol": 126.92,
       },
-      "keys": Array [
+      "keys": [
         2019-09-15T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.92,
         131.35,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-09-22T23:00:00.000Z,
         "diesel": 131.52,
         "petrol": 126.78,
       },
-      "keys": Array [
+      "keys": [
         2019-09-22T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.78,
         131.52,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-09-29T23:00:00.000Z,
         "diesel": 131.83,
         "petrol": 126.92,
       },
-      "keys": Array [
+      "keys": [
         2019-09-29T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.92,
         131.83,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-10-06T23:00:00.000Z,
         "diesel": 131.82,
         "petrol": 126.87,
       },
-      "keys": Array [
+      "keys": [
         2019-10-06T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.87,
         131.82,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-10-13T23:00:00.000Z,
         "diesel": 131.89,
         "petrol": 126.91,
       },
-      "keys": Array [
+      "keys": [
         2019-10-13T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.91,
         131.89,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-10-20T23:00:00.000Z,
         "diesel": 131.28,
         "petrol": 126.4,
       },
-      "keys": Array [
+      "keys": [
         2019-10-20T23:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         126.4,
         131.28,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-10-28T00:00:00.000Z,
         "diesel": 130.6,
         "petrol": 125.77,
       },
-      "keys": Array [
+      "keys": [
         2019-10-28T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.77,
         130.6,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-11-04T00:00:00.000Z,
         "diesel": 130.38,
         "petrol": 125.56,
       },
-      "keys": Array [
+      "keys": [
         2019-11-04T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.56,
         130.38,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-11-11T00:00:00.000Z,
         "diesel": 130.42,
         "petrol": 125.59,
       },
-      "keys": Array [
+      "keys": [
         2019-11-11T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.59,
         130.42,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-11-18T00:00:00.000Z,
         "diesel": 130.35,
         "petrol": 125.58,
       },
-      "keys": Array [
+      "keys": [
         2019-11-18T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.58,
         130.35,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-11-25T00:00:00.000Z,
         "diesel": 130.08,
         "petrol": 125.32,
       },
-      "keys": Array [
+      "keys": [
         2019-11-25T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         125.32,
         130.08,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-12-02T00:00:00.000Z,
         "diesel": 129.79,
         "petrol": 124.81,
       },
-      "keys": Array [
+      "keys": [
         2019-12-02T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.81,
         129.79,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-12-09T00:00:00.000Z,
         "diesel": 129.79,
         "petrol": 124.75,
       },
-      "keys": Array [
+      "keys": [
         2019-12-09T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.75,
         129.79,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-12-16T00:00:00.000Z,
         "diesel": 129.56,
         "petrol": 124.33,
       },
-      "keys": Array [
+      "keys": [
         2019-12-16T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.33,
         129.56,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-12-23T00:00:00.000Z,
         "diesel": 129.81,
         "petrol": 124.16,
       },
-      "keys": Array [
+      "keys": [
         2019-12-23T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.16,
         129.81,
       ],
     },
-    Object {
-      "datum": Object {
+    {
+      "datum": {
         "date": 2019-12-30T00:00:00.000Z,
         "diesel": 130.54,
         "petrol": 124.96,
       },
-      "keys": Array [
+      "keys": [
         2019-12-30T00:00:00.000Z,
       ],
-      "values": Array [
+      "values": [
         124.96,
         130.54,
       ],
     },
   ],
-  "defs": Object {
-    "keys": Array [
-      Object {
+  "defs": {
+    "keys": [
+      {
         "index": 0,
         "missing": false,
         "property": "date",
@@ -4296,8 +4296,8 @@ Object {
         "valueType": "range",
       },
     ],
-    "values": Array [
-      Object {
+    "values": [
+      {
         "id": undefined,
         "index": 0,
         "missing": false,
@@ -4305,7 +4305,7 @@ Object {
         "type": "value",
         "valueType": "range",
       },
-      Object {
+      {
         "id": undefined,
         "index": 1,
         "missing": false,
@@ -4315,29 +4315,29 @@ Object {
       },
     ],
   },
-  "domain": Object {
-    "keys": Array [
-      Array [
+  "domain": {
+    "keys": [
+      [
         2019-01-07T00:00:00.000Z,
         2019-12-30T00:00:00.000Z,
       ],
     ],
-    "values": Array [
-      Array [
+    "values": [
+      [
         118.97,
         129.41,
       ],
-      Array [
+      [
         128.92,
         136.45,
       ],
     ],
   },
-  "indices": Object {
-    "keys": Object {
+  "indices": {
+    "keys": {
       "date": 0,
     },
-    "values": Object {
+    "values": {
       "diesel": 1,
       "petrol": 0,
     },

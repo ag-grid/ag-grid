@@ -87,7 +87,7 @@
         "jest-canvas-mock": "^2.4.0",
         "jest-environment-jsdom": "^29.5.0",
         "jest-image-snapshot": "^6.0.0",
-        "jest-runner": "^27.5.1",
+        "jest-runner": "^29.5.0",
         "jest-serial-runner": "^1.2.1",
         "lint-staged": "^13.1.2",
         "madge": "6.0.0",

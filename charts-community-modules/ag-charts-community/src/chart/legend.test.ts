@@ -85,7 +85,7 @@ describe('Legend', () => {
     });
 
     describe('Large series count chart legend pagination', () => {
-        const positions = ['right', 'bottom'];
+        const positions = ['right' as const, 'bottom' as const];
 
         it.each(positions)('should render legend correctly at position [%s]', async (position) => {
             const options = {
