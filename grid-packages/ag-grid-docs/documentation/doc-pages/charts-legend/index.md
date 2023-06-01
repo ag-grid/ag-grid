@@ -216,6 +216,10 @@ If a callback function is configured via [`legend.listeners.legendItemClick`](/c
 
 The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
 
+<note>
+NOTE: Pie series sectors do not toggle when a legend item is double clicked.
+</note>
+
 ### Example: Series Visibility Toggling
 
 This example demonstrates toggling the visiblity of series via clicks and double clicks, and logs a message to the browser console when the legend is clicked.
