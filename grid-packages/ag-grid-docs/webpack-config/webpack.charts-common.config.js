@@ -11,7 +11,7 @@ module.exports = {
     },
     resolve: {
         // favour cjs over es6 (docs only rebuilds cjs...)
-        mainFields: ["main", "module"],
+        // mainFields: ["main", "module"],
         extensions: [".ts", ".tsx", ".js"]
     },
     module: {

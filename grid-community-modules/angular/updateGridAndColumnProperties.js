@@ -2,7 +2,7 @@ const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
-const { ComponentUtil } = require("@ag-grid-community/core");
+const ComponentUtil = require("@ag-grid-community/core/dist/cjs/es5/components/componentUtil.js").ComponentUtil;
 const { getFormatterForTS } = require('./../../scripts/formatAST');
 
 const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);

@@ -370,35 +370,35 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
         return frameworks.some(framework => request.includes(framework))
     }
 
-    class AgEs5CjsResolver {
-        constructor(source, target) {
-            this.source = source || 'resolve';
-            this.target = target || 'resolve';
-        }
-
-        apply(resolver) {
-            var target = resolver.ensureHook(this.target);
-            resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
-                const req = request.request;
-                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
-                    !req.includes('css') &&
-                    !frameworkRequest(req)) {
-
-                    // point the request to the commonjs es5 dir - this is what gets updated on local build changes
-                    const newRequest = `${__dirname}/node_modules/${req}/dist/cjs/es5/main.js`;
-
-                    const obj = {
-                        path: request.path,
-                        request: newRequest,
-                        query: request.query,
-                        directory: request.directory
-                    };
-                    return resolver.doResolve(target, obj, null, resolveContext, callback);
-                }
-                callback();
-            });
-        }
-    }
+    // class AgEs5CjsResolver {
+    //     constructor(source, target) {
+    //         this.source = source || 'resolve';
+    //         this.target = target || 'resolve';
+    //     }
+    //
+    //     apply(resolver) {
+    //         var target = resolver.ensureHook(this.target);
+    //         resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
+    //             const req = request.request;
+    //             if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+    //                 !req.includes('css') &&
+    //                 !frameworkRequest(req)) {
+    //
+    //                 // point the request to the commonjs es5 dir - this is what gets updated on local build changes
+    //                 const newRequest = `${__dirname}/node_modules/${req}/dist/esm/es5/main.js`;
+    //
+    //                 const obj = {
+    //                     path: request.path,
+    //                     request: newRequest,
+    //                     query: request.query,
+    //                     directory: request.directory
+    //                 };
+    //                 return resolver.doResolve(target, obj, null, resolveContext, callback);
+    //             }
+    //             callback();
+    //         });
+    //     }
+    // }
 
     const newConfig = {
         /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
@@ -411,10 +411,10 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     };
-    if (isDevelopment()) {
-        // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
-        newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
-    }
+    // if (isDevelopment()) {
+    //     // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
+    //     newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
+    // }
     actions.setWebpackConfig(newConfig);
 
     const config = getConfig();
