@@ -122,6 +122,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     private labelSelection: Selection<Text, RadarLineNodeDatum>;
     private angleAxisSelection: Selection<Path, RadarLineNodeDatum>;
     private radiusAxisSelection: Selection<Path, boolean>;
+    private highlightSelection: Selection<Marker, RadarLineNodeDatum>;
 
     private animationState: RadarLineStateMachine;
 
@@ -212,15 +213,18 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.contentGroup.append(pathGroup);
         this.pathSelection = Selection.select(pathGroup, Path);
 
-        const markerGroup = new Group();
-        this.contentGroup.append(markerGroup);
-        this.markerSelection = Selection.select(markerGroup, () => {
+        const markerFactory = () => {
             const { shape } = this.marker;
             const MarkerShape = getMarker(shape);
             return new MarkerShape();
-        });
+        };
+        const markerGroup = new Group();
+        this.contentGroup.append(markerGroup);
+        this.markerSelection = Selection.select(markerGroup, markerFactory);
 
         this.labelSelection = Selection.select(this.labelGroup!, Text);
+
+        this.highlightSelection = Selection.select(this.highlightGroup, markerFactory);
 
         this.animationState = new RadarLineStateMachine('empty', {
             empty: {
@@ -365,7 +369,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
 
         this.drawTempAxis();
         this.updatePath();
-        this.updateMarkers();
+        this.updateMarkers(this.markerSelection, false);
+        this.updateMarkers(this.highlightSelection, true);
         this.updateLabels();
     }
 
@@ -416,15 +421,19 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         });
     }
 
-    private updateMarkers() {
-        const { marker, markerSelection } = this;
+    private updateMarkers(selection: Selection<Marker, RadarLineNodeDatum>, highlight: boolean) {
+        const { marker } = this;
         const { shape, enabled } = marker;
         const nodeData = shape && enabled ? this.nodeData : [];
-        markerSelection.update(nodeData).each((node, datum) => {
-            node.fill = marker.fill;
-            node.stroke = marker.stroke;
-            node.strokeWidth = marker.strokeWidth ?? 1;
-            node.fillOpacity = marker.fillOpacity ?? 1;
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedData = highlight && highlightedDatum ? [highlightedDatum] : [];
+        const selectionData = highlight ? highlightedData : nodeData;
+        const highlightedStyle = highlight ? this.highlightStyle.item : undefined;
+        selection.update(selectionData).each((node, datum) => {
+            node.fill = highlightedStyle?.fill ?? marker.fill;
+            node.stroke = highlightedStyle?.stroke ?? marker.stroke;
+            node.strokeWidth = highlightedStyle?.strokeWidth ?? marker.strokeWidth ?? 1;
+            node.fillOpacity = highlightedStyle?.fillOpacity ?? marker.fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? 1;
             node.size = marker.size;
 
