@@ -3,13 +3,14 @@
     "compilerOptions": {
         "composite": true,
         "outDir": "dist-test",
-        "rootDir": "src",
+        "baseUrl": ".",
         "noUnusedParameters": true,
         "noUnusedLocals": true,
         "paths": {
-            "ag-charts-community": ["../../charts-community-modules/ag-charts-community/src/main.ts"]
+            "ag-charts-community": ["node_modules/ag-charts-community/src/main.ts"],
+            "ag-charts-community-test": ["node_modules/ag-charts-community/src/main-test.ts"],
+            "@jest/globals": ["node_modules/@jest/globals/build/index.js"]
         }
     },
-    "references": [{ "path": "../../charts-community-modules/ag-charts-community/tsconfig.test.json" }],
-    "include": ["**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]
+    "include": ["**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts", "node_modules/ag-charts-community/src/**/*.ts"]
 }

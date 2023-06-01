@@ -11,7 +11,6 @@
         "strict": true,
         "declarationMap": true
     },
-    "files": ["src/chart/test/utils.ts", "src/chart/test/mock-canvas.ts"],
     "include": ["src/**/*"],
-    "exclude": ["**/*.test.ts", "**/test/*.ts"]
+    "exclude": ["src/main-test.ts", "**/*.test.ts", "**/test/*.ts"]
 }

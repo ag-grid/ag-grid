@@ -8,5 +8,5 @@
         "noUnusedLocals": true
         // "strict": true
     },
-    "include": ["**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]
+    "include": ["main-test.ts", "**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]
 }

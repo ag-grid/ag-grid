@@ -17,7 +17,7 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     hoverAction,
     prepareTestOptions,
-} from 'ag-charts-community/dist/cjs/es5/main-test';
+} from 'ag-charts-community-test';
 
 expect.extend({ toMatchImageSnapshot });
 

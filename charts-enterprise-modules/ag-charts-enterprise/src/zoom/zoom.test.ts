@@ -9,7 +9,7 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     clickAction,
     prepareTestOptions,
-} from 'ag-charts-community/dist/cjs/es5/main-test';
+} from 'ag-charts-community-test';
 
 expect.extend({ toMatchImageSnapshot });
 
