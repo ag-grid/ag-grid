@@ -43,7 +43,7 @@ export const Containers = () => {
 
             <p className="item-label">
                 <span>Tabbed section:</span>
-                <code>&lt;Tabs&gt;</code>
+                <code>&lt;Tabs&gt;&lt;div tab-label="..."&gt;...&lt;/div&gt;&lt;/Tabs&gt;</code>
             </p>
             <Tabs>
                 <div tab-label="Section ONE">
@@ -63,10 +63,13 @@ export const Containers = () => {
             </Tabs>
 
             <p className="item-label">
-                <span>Tabbed section with heading:</span>
-                <code>&lt;Tabs heading="Heading" &gt;</code>
+                <span>Tabbed section with links:</span>
+                <code>&lt;Tabs&gt;&lt;div tabs-links="true"&gt;...&lt;/div&gt;...&lt;/Tabs&gt;</code>
             </p>
-            <Tabs heading="A few tabbed sections">
+            <Tabs>
+                <div tabs-links="true">
+                    <a href="https://ag-grid.com/">AG Grid</a>
+                </div>
                 <div tab-label="Section ONE">
                     <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum autem
                     deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate labore
