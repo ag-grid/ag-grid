@@ -11,7 +11,6 @@ const TYPES: Record<string, ChartType> = {
     scatter: 'cartesian',
     treemap: 'hierarchy',
     pie: 'polar',
-    'radar-line': 'polar',
 };
 
 const DEFAULTS: Record<string, {}> = {};

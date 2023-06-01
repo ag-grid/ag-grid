@@ -1,56 +1,42 @@
-import { Group } from '../../../scene/group';
-import { Path } from '../../../scene/shape/path';
-import { Text } from '../../../scene/shape/text';
-import { getMarker } from '../../marker/util';
-import { Selection } from '../../../scene/selection';
-import { BandScale } from '../../../scale/bandScale';
-import { LinearScale } from '../../../scale/linearScale';
-import { BBox } from '../../../scene/bbox';
 import {
-    SeriesNodeDatum,
+    _ModuleSupport,
+    _Scale,
+    _Scene,
+    _Util,
+    AgPieSeriesFormatterParams,
+    AgPieSeriesTooltipRendererParams,
+    AgPieSeriesFormat,
+    AgTooltipRendererResult,
+} from 'ag-charts-community';
+
+import {
+    AgRadarLineSeriesLabelFormatterParams,
+    AgRadarLineSeriesMarkerFormat,
+    AgRadarLineSeriesMarkerFormatterParams,
+} from './typings';
+
+const {
+    ChartAxisDirection,
+    DataModel,
     HighlightStyle,
-    SeriesTooltip,
-    SeriesNodeBaseClickEvent,
-    valueProperty,
-    SeriesNodePickMode,
-    SeriesNodePickMatch,
-} from '../series';
-import { PointerEvents, RedrawType, SceneChangeDetection } from '../../../scene/node';
-import { Point } from '../../../scene/point';
-import { toFixed } from '../../../util/number';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import { PolarSeries } from './polarSeries';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { toTooltipHtml } from '../../tooltip/tooltip';
-import { isEqual } from '../../../util/number';
-import { sanitizeHtml } from '../../../util/sanitize';
-import { interpolate } from '../../../util/string';
-import { Label } from '../../label';
-import {
     NUMBER,
     OPT_COLOR_STRING,
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_STRING,
     STRING,
+    SeriesNodePickMode,
+    StateMachine,
     Validate,
-} from '../../../util/validation';
-import {
-    AgPieSeriesTooltipRendererParams,
-    AgRadarLineSeriesLabelFormatterParams,
-    AgRadarLineSeriesMarkerFormat,
-    AgRadarLineSeriesMarkerFormatterParams,
-    AgTooltipRendererResult,
-    AgPieSeriesFormat,
-    AgPieSeriesFormatterParams,
-} from '../../agChartOptions';
-import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
-import { StateMachine } from '../../../motion/states';
-import { DataModel } from '../../data/dataModel';
-import { SeriesMarker } from '../seriesMarker';
-import { Marker } from '../../marker/marker';
+    valueProperty,
+} = _ModuleSupport;
 
-class RadarLineSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
+const { BandScale, LinearScale } = _Scale;
+
+const { Group, Path, PointerEvents, Selection, Text, getMarker, toTooltipHtml } = _Scene;
+const { interpolateString, isNumberEqual, sanitizeHtml, toFixed } = _Util;
+
+class RadarLineSeriesNodeBaseClickEvent extends _ModuleSupport.SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
     readonly radiusKey: string;
 
@@ -75,7 +61,7 @@ class RadarLineSeriesNodeDoubleClickEvent extends RadarLineSeriesNodeBaseClickEv
     readonly type = 'nodeDoubleClick';
 }
 
-interface RadarLineNodeDatum extends SeriesNodeDatum {
+interface RadarLineNodeDatum extends _ModuleSupport.SeriesNodeDatum {
     readonly label?: {
         text: string;
         x: number;
@@ -85,21 +71,21 @@ interface RadarLineNodeDatum extends SeriesNodeDatum {
     };
 }
 
-class RadarLineSeriesLabel extends Label {
+class RadarLineSeriesLabel extends _Scene.Label {
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgRadarLineSeriesLabelFormatterParams) => string = undefined;
 }
 
-class RadarLineSeriesTooltip extends SeriesTooltip {
+class RadarLineSeriesTooltip extends _ModuleSupport.SeriesTooltip {
     @Validate(OPT_FUNCTION)
     renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
     @Validate(OPT_STRING)
     format?: string = undefined;
 }
 
-export class RadarLineSeriesMarker extends SeriesMarker {
+export class RadarLineSeriesMarker extends _ModuleSupport.SeriesMarker {
     @Validate(OPT_FUNCTION)
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @_Scene.SceneChangeDetection({ redraw: _Scene.RedrawType.MAJOR })
     formatter?: (params: AgRadarLineSeriesMarkerFormatterParams<any>) => AgRadarLineSeriesMarkerFormat = undefined;
 }
 
@@ -107,7 +93,7 @@ type RadarLineAnimationState = 'empty' | 'ready';
 type RadarLineAnimationEvent = 'update';
 class RadarLineStateMachine extends StateMachine<RadarLineAnimationState, RadarLineAnimationEvent> {}
 
-export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
+export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDatum> {
     static className = 'RadarLineSeries';
     static type = 'radar-line' as const;
 
@@ -115,19 +101,19 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
 
     readonly label = new RadarLineSeriesLabel();
 
-    private radiusScale: LinearScale = new LinearScale();
+    private radiusScale: _Scale.LinearScale = new LinearScale();
 
-    private pathSelection: Selection<Path, boolean>;
-    private markerSelection: Selection<Marker, RadarLineNodeDatum>;
-    private labelSelection: Selection<Text, RadarLineNodeDatum>;
-    private angleAxisSelection: Selection<Path, RadarLineNodeDatum>;
-    private radiusAxisSelection: Selection<Path, boolean>;
-    private highlightSelection: Selection<Marker, RadarLineNodeDatum>;
+    private pathSelection: _Scene.Selection<_Scene.Path, boolean>;
+    private markerSelection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>;
+    private labelSelection: _Scene.Selection<_Scene.Text, RadarLineNodeDatum>;
+    private angleAxisSelection: _Scene.Selection<_Scene.Path, RadarLineNodeDatum>;
+    private radiusAxisSelection: _Scene.Selection<_Scene.Path, boolean>;
+    private highlightSelection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>;
 
     private animationState: RadarLineStateMachine;
 
     private nodeData: RadarLineNodeDatum[] = [];
-    private angleScale: BandScale<string>;
+    private angleScale: _Scale.BandScale<string>;
 
     tooltip: RadarLineSeriesTooltip = new RadarLineSeriesTooltip();
 
@@ -241,7 +227,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
-    getDomain(direction: ChartAxisDirection): any[] {
+    getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
             return this.angleScale.domain;
         } else {
@@ -325,8 +311,8 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
                         text: labelText,
                         x: labelX,
                         y: labelY,
-                        hAlign: isEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right',
-                        vAlign: isEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom',
+                        hAlign: isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right',
+                        vAlign: isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom',
                     };
                 }
             }
@@ -343,12 +329,12 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         return [{ itemId: radiusKey, nodeData, labelData: nodeData }];
     }
 
-    updateRadiusScale(bbox: BBox) {
+    updateRadiusScale(bbox: _Scene.BBox) {
         const radius = Math.min(bbox.width, bbox.height) / 2;
         this.radiusScale.range = [0, radius];
     }
 
-    async update({ seriesRect }: { seriesRect: BBox }) {
+    async update({ seriesRect }: { seriesRect: _Scene.BBox }) {
         this.updateRadiusScale(seriesRect);
         this.maybeRefreshNodeData();
 
@@ -407,7 +393,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         });
     }
 
-    private updateMarkers(selection: Selection<Marker, RadarLineNodeDatum>, highlight: boolean) {
+    private updateMarkers(selection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>, highlight: boolean) {
         const { marker, visible } = this;
         const { shape, enabled } = marker;
         let selectionData: RadarLineNodeDatum[] = [];
@@ -531,7 +517,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             if (tooltipFormat) {
                 return toTooltipHtml(
                     {
-                        content: interpolate(tooltipFormat, params),
+                        content: interpolateString(tooltipFormat, params),
                     },
                     defaults
                 );
@@ -544,14 +530,14 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): ChartLegendDatum[] {
+    getLegendData(): _ModuleSupport.ChartLegendDatum[] {
         const { id, data, angleKey, radiusKey, radiusName, visible, marker, stroke, strokeOpacity } = this;
 
         if (!(data?.length && angleKey && radiusKey)) {
             return [];
         }
 
-        const legendData: CategoryLegendDatum[] = [
+        const legendData: _ModuleSupport.CategoryLegendDatum[] = [
             {
                 legendType: 'category',
                 id: id,
@@ -573,7 +559,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         return legendData;
     }
 
-    onLegendItemClick(event: LegendItemClickChartEvent) {
+    onLegendItemClick(event: _ModuleSupport.LegendItemClickChartEvent) {
         const { enabled, itemId, series } = event;
 
         if (series.id === this.id) {
@@ -581,7 +567,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         }
     }
 
-    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+    onLegendItemDoubleClick(event: _ModuleSupport.LegendItemDoubleClickChartEvent) {
         const { enabled, itemId, series, numVisibleItems } = event;
 
         if (series.id !== this.id) return;
@@ -593,7 +579,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.toggleSeriesItem(itemId, newEnabled);
     }
 
-    protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
+    protected pickNodeClosestDatum(point: _Scene.Point): _ModuleSupport.SeriesNodePickMatch | undefined {
         const { x, y } = point;
         const { radiusScale, rootGroup, nodeData, centerX: cx, centerY: cy, marker } = this;
         const hitPoint = rootGroup.transformPoint(x, y);

@@ -515,34 +515,6 @@ export class ChartTheme {
                     margin: 2,
                 },
             },
-            'radar-line': {
-                ...ChartTheme.getSeriesDefaults(),
-                strokeWidth: 2,
-                strokeOpacity: 1,
-                lineDash: [0],
-                lineDashOffset: 0,
-                marker: {
-                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                },
-                label: {
-                    enabled: false,
-                    fontStyle: undefined,
-                    fontWeight: undefined,
-                    fontSize: 12,
-                    fontFamily: ChartTheme.fontFamily,
-                    color: 'rgb(70, 70, 70)',
-                    formatter: undefined,
-                },
-                tooltip: {
-                    ...ChartTheme.getSeriesDefaults().tooltip,
-                    format: undefined,
-                    position: {
-                        type: 'node' as AgTooltipPositionType,
-                    },
-                },
-            },
         },
     };
 
