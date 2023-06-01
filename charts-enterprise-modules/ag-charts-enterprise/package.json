@@ -24,7 +24,7 @@
         "fix": "run-s fix:*",
         "fix:prettier": "npx prettier -w .",
         "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
-        "test": "./node_modules/ag-charts-community/test.sh",
+        "testxx": "./node_modules/ag-charts-community/test.sh",
         "test:lint": "npm run test-circular-deps",
         "test-watch": "./node_modules/ag-charts-community/test.sh watch",
         "test-update": "./node_modules/ag-charts-community/test.sh update",
