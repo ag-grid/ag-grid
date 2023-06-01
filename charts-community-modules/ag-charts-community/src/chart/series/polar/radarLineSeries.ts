@@ -129,18 +129,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     private nodeData: RadarLineNodeDatum[] = [];
     private angleScale: BandScale<string>;
 
-    // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
-    seriesItemEnabled: boolean[] = [];
-
     tooltip: RadarLineSeriesTooltip = new RadarLineSeriesTooltip();
-
-    set data(input: any[] | undefined) {
-        this._data = input;
-        this.processSeriesItemEnabled();
-    }
-    get data() {
-        return this._data;
-    }
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
@@ -247,13 +236,9 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         this.animationState.debug;
     }
 
-    visibleChanged() {
-        this.processSeriesItemEnabled();
-    }
-
-    private processSeriesItemEnabled() {
-        const { data, visible } = this;
-        this.seriesItemEnabled = data?.map(() => visible) ?? [];
+    addChartEventListeners(): void {
+        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -375,10 +360,11 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     }
 
     private drawTempAxis() {
+        const { visible } = this;
         const radius = this.radiusScale.range[1];
         const cx = this.centerX;
         const cy = this.centerY;
-        this.angleAxisSelection.update(this.nodeData).each((node, datum) => {
+        this.angleAxisSelection.update(visible ? this.nodeData : []).each((node, datum) => {
             node.path.clear();
             const angle = this.angleScale.convert(datum.datum[this.angleKey]);
             node.path.moveTo(cx, cy);
@@ -387,9 +373,9 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
             node.strokeWidth = 1;
             node.pointerEvents = PointerEvents.None;
         });
-        this.radiusAxisSelection.update(this.seriesItemEnabled ? [true] : []).each((node) => {
+        this.radiusAxisSelection.update(visible ? [true] : []).each((node) => {
             node.path.clear();
-            node.path.moveTo(this.centerX + radius, this.centerY);
+            node.path.moveTo(cx + radius, cy);
             node.path.arc(this.centerX, this.centerY, radius, 0, 2 * Math.PI);
             node.path.closePath();
             node.stroke = 'gray';
@@ -400,7 +386,7 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     }
 
     private updatePath() {
-        this.pathSelection.update(this.seriesItemEnabled ? [true] : []).each((node) => {
+        this.pathSelection.update(this.visible ? [true] : []).each((node) => {
             const { path } = node;
             path.clear();
             this.nodeData.forEach((datum, index) => {
@@ -422,12 +408,19 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
     }
 
     private updateMarkers(selection: Selection<Marker, RadarLineNodeDatum>, highlight: boolean) {
-        const { marker } = this;
+        const { marker, visible } = this;
         const { shape, enabled } = marker;
-        const nodeData = shape && enabled ? this.nodeData : [];
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
-        const highlightedData = highlight && highlightedDatum ? [highlightedDatum] : [];
-        const selectionData = highlight ? highlightedData : nodeData;
+        let selectionData: RadarLineNodeDatum[] = [];
+        if (visible && shape && enabled) {
+            if (highlight) {
+                const highlighted = this.highlightManager?.getActiveHighlight();
+                if (highlighted?.datum) {
+                    selectionData = [highlighted as RadarLineNodeDatum];
+                }
+            } else {
+                selectionData = this.nodeData;
+            }
+        }
         const highlightedStyle = highlight ? this.highlightStyle.item : undefined;
         selection.update(selectionData).each((node, datum) => {
             node.fill = highlightedStyle?.fill ?? marker.fill;
@@ -598,11 +591,6 @@ export class RadarLineSeries extends PolarSeries<RadarLineNodeDatum> {
         const newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
 
         this.toggleSeriesItem(itemId, newEnabled);
-    }
-
-    protected toggleSeriesItem(itemId: number, enabled: boolean): void {
-        this.seriesItemEnabled[itemId] = enabled;
-        this.nodeDataRefresh = true;
     }
 
     protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
