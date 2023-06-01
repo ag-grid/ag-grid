@@ -43,11 +43,11 @@
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
-                main: './dist/ag-grid-community.esm.min.js',
+                main: './dist/ag-grid-community.auto.esm.min.js',
                 defaultExtension: 'js'
             },
             'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.esm.min.js',
+                main: './dist/ag-grid-enterprise.auto.esm.min.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
