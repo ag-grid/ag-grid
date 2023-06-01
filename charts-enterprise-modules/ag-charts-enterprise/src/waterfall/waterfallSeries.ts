@@ -122,12 +122,6 @@ class WaterfallSeriesItem {
 }
 
 type SeriesItemType = 'positive' | 'negative';
-type Bounds = {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-};
 
 export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
     _ModuleSupport.SeriesNodeDataContext<any>,
