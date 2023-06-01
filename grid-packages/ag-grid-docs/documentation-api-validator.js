@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { ComponentUtil } = require("@ag-grid-community/core");
+const ComponentUtil = require("@ag-grid-community/core/dist/cjs/es5/components/componentUtil.js").ComponentUtil;
 
 function extractPropertyKeys(filePath) {
     const fileContents = fs.readFileSync(filePath);
