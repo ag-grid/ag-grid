@@ -2,12 +2,7 @@
     "extends": "../../module-build/tsconfig.test.json",
     "compilerOptions": {
         "outDir": "dist-test",
-        "baseUrl": ".",
-        "paths": {
-            "@ag-grid-community/core": ["node_modules/@ag-grid-community/core/src/ts/main.ts"],
-            "@ag-grid-community/csv-export": ["node_modules/@ag-grid-community/csv-export/src/main.ts"],
-            "@ag-grid-enterprise/core": ["node_modules/@ag-grid-enterprise/core/src/main.ts"]
-        }
+        "baseUrl": "."
     },
     "include": ["**/*.test.ts", "src/ts/**/mock.ts"]
 }

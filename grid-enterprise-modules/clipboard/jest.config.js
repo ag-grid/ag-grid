@@ -1,4 +1,3 @@
-const { pathsToModuleNameMapper } = require('ts-jest');
 const { compilerOptions } = require('./tsconfig.test');
 
 module.exports = {
@@ -12,7 +11,10 @@ module.exports = {
         ],
     },
     modulePaths: [compilerOptions.baseUrl],
-    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths /*, { prefix: '<rootDir>/' } */),
+    moduleNameMapper: {
+        '@ag-grid-community/core': ['node_modules/@ag-grid-community/core/dist/cjs/es6/main.js'],
+        '@ag-grid-enterprise/core': ['node_modules/@ag-grid-enterprise/core/dist/cjs/es6/main.js'],
+    },
     testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
