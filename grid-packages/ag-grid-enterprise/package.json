@@ -2,7 +2,7 @@
   "name": "ag-grid-enterprise",
   "version": "29.3.0",
   "description": "AG Grid Enterprise Features",
-  "main": "./dist/ag-grid-enterprise.cjs.js",
+  "main": "./dist/ag-grid-enterprise.auto.esm.js",
   "module": "./dist/ag-grid-enterprise.auto.esm.js",
   "types": "main.d.ts",
   "scripts": {

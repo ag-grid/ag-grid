@@ -27,8 +27,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './dist/esm/es5/main.js',
             format: 'es',
             env: 'development',
-            extension: '.esm.js'
-
+            extension: '.esm.js',
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
         },
         {
             name: 'es-modules-prod',
@@ -36,6 +36,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'es',
             env: 'production',
             extension: '.esm.min.js',
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
         }
     ]
 

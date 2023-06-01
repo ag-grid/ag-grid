@@ -211,12 +211,12 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     if (isDevelopment()) {
         configuration.gridCommunityPaths = {
             ...configuration.gridCommunityPaths,
-            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.esm.js`
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.auto.esm.js`
         };
         configuration.gridEnterprisePaths = {
             ...configuration.gridEnterprisePaths,
-            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.esm.js`,
-            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.esm.js`
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.auto.esm.js`,
+            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.auto.esm.js`
         }
         configuration.gridMap = {
             ...configuration.gridMap,

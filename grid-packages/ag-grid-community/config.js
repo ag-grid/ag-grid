@@ -25,6 +25,20 @@ const builds = {
         format: 'cjs',
         env: 'production',
         banner
+    },
+    'community-esm-dev': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-community.esm.js'),
+        format: 'esm',
+        env: 'development',
+        banner
+    },
+    'community-esm-prod': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-community.esm.min.js'),
+        format: 'esm',
+        env: 'production',
+        banner
     }
 };
 
