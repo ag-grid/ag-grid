@@ -30,7 +30,8 @@
             'vue-class-component': {
                 defaultExtension: 'js'
             },
-            'vue-property-decorator': {
+            'vue-property-decorator': 
+                {
                 defaultExtension: 'js'
             },
             app: {
@@ -41,11 +42,11 @@
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
-                main: './dist/ag-grid-community.esm.js',
+                main: './dist/ag-grid-community.auto.esm.js',
                 defaultExtension: 'js'
             },
             'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.esm.js',
+                main: './dist/ag-grid-enterprise.auto.esm.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {

@@ -46,11 +46,11 @@
                 defaultExtension: "ts",
             },
             'ag-grid-community': {
-                main: './dist/ag-grid-community.esm.js',
+                main: './dist/ag-grid-community.auto.esm.js',
                 defaultExtension: 'js'
             },
             'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.esm.js',
+                main: './dist/ag-grid-enterprise.auto.esm.js',
                 defaultExtension: 'js'
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
