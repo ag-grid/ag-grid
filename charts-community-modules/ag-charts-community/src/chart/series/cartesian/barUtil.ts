@@ -1,10 +1,17 @@
 import { isNumber } from '../../../util/value';
 import { Point } from '../../../scene/point';
-import { AgBarSeriesFormat, AgCartesianSeriesLabelFormatterParams } from '../../agChartOptions';
+import {
+    AgBarSeriesFormat,
+    AgCartesianSeriesLabelFormatterParams,
+    FontFamily,
+    FontWeight,
+    FontStyle,
+} from '../../agChartOptions';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { CartesianSeriesNodeDatum } from './cartesianSeries';
 import { SeriesItemHighlightStyle } from '../series';
+import { Text } from '../../../scene/shape/text';
 
 type Bounds = {
     x: number;
@@ -32,6 +39,15 @@ export type RectConfig = {
     fillShadow?: DropShadow;
     crisp?: boolean;
     visible?: boolean;
+};
+
+export type LabelConfig = {
+    enabled: boolean;
+    fontFamily: FontFamily;
+    fontSize: number;
+    fontWeight?: FontWeight;
+    fontStyle?: FontStyle;
+    color?: string;
 };
 
 export function createLabelData({
@@ -186,4 +202,34 @@ export function checkCrisp(visibleRange: number[] = []): boolean {
     const isZoomed = visibleMin !== 0 || visibleMax !== 1;
     const crisp = !isZoomed;
     return crisp;
+}
+
+export function updateLabel<LabelDatumType extends LabelDatum>({
+    labelNode,
+    labelDatum,
+    config,
+    visible,
+}: {
+    labelNode: Text;
+    labelDatum?: LabelDatumType;
+    config?: LabelConfig;
+    visible: boolean;
+}) {
+    if (labelDatum && config && config.enabled) {
+        const { x, y, text, textAlign, textBaseline } = labelDatum;
+        const { fontStyle, fontWeight, fontSize, fontFamily, color } = config;
+        labelNode.fontStyle = fontStyle;
+        labelNode.fontWeight = fontWeight;
+        labelNode.fontSize = fontSize;
+        labelNode.fontFamily = fontFamily;
+        labelNode.textAlign = textAlign;
+        labelNode.textBaseline = textBaseline;
+        labelNode.text = text;
+        labelNode.x = x;
+        labelNode.y = y;
+        labelNode.fill = color;
+        labelNode.visible = visible;
+    } else {
+        labelNode.visible = false;
+    }
 }

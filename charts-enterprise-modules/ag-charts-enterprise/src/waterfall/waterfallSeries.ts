@@ -32,6 +32,7 @@ const {
     getRectConfig,
     updateRect,
     checkCrisp,
+    updateLabel,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
 const { sanitizeHtml, checkDatum } = _Util;
@@ -460,34 +461,18 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
     protected async updateLabelNodes(opts: { labelSelection: _Scene.Selection<_Scene.Text, any> }) {
         const { labelSelection } = opts;
-        const {
-            seriesItemEnabled,
-            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
-        } = this;
+        const { seriesItemEnabled } = this;
 
         const positivesActive = !!seriesItemEnabled.get('positive');
         const negativesActive = !!seriesItemEnabled.get('negative');
 
         labelSelection.each((text, datum) => {
-            const label = datum.label;
+            const labelDatum = datum.label;
 
             const isPositive = datum.itemId === 'positive';
             const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
-            if (label && labelEnabled) {
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-                text.text = label.text;
-                text.x = label.x;
-                text.y = label.y;
-                text.fill = color;
-                text.visible = isActive;
-            } else {
-                text.visible = false;
-            }
+
+            updateLabel({ labelNode: text, labelDatum, config: this.label, visible: isActive });
         });
     }
 

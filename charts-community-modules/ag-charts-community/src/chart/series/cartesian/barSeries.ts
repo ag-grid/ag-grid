@@ -55,11 +55,22 @@ import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 import * as easing from '../../../motion/easing';
-import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp } from './barUtil';
+import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
+
+interface BarNodeLabelDatum extends Readonly<Point> {
+    readonly text: string;
+    readonly fontStyle?: FontStyle;
+    readonly fontWeight?: FontWeight;
+    readonly fontSize: number;
+    readonly fontFamily: string;
+    readonly textAlign: CanvasTextAlign;
+    readonly textBaseline: CanvasTextBaseline;
+    readonly fill: string;
+}
 
 interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
@@ -71,16 +82,7 @@ interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly stroke?: string;
     readonly colorIndex: number;
     readonly strokeWidth: number;
-    readonly label?: Readonly<Point> & {
-        readonly text: string;
-        readonly fontStyle?: FontStyle;
-        readonly fontWeight?: FontWeight;
-        readonly fontSize: number;
-        readonly fontFamily: string;
-        readonly textAlign: CanvasTextAlign;
-        readonly textBaseline: CanvasTextBaseline;
-        readonly fill: string;
-    };
+    readonly label?: BarNodeLabelDatum;
 }
 
 enum BarSeriesNodeTag {
@@ -669,28 +671,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected async updateLabelNodes(opts: { labelSelection: Selection<Text, BarNodeDatum> }) {
         const { labelSelection } = opts;
-        const {
-            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
-        } = this;
 
         labelSelection.each((text, datum) => {
-            const label = datum.label;
+            const labelDatum = datum.label;
 
-            if (label && labelEnabled) {
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-                text.text = label.text;
-                text.x = label.x;
-                text.y = label.y;
-                text.fill = color;
-                text.visible = true;
-            } else {
-                text.visible = false;
-            }
+            updateLabel({ labelNode: text, labelDatum, config: this.label, visible: true });
         });
     }
 
