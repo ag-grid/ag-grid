@@ -28,9 +28,10 @@ const {
     OPT_FUNCTION,
     OPT_COLOR_STRING,
     OPT_LINE_DASH,
+    createLabelData,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
-const { sanitizeHtml, isNumber, checkDatum } = _Util;
+const { sanitizeHtml, checkDatum } = _Util;
 
 const WATERFALL_LABEL_PLACEMENTS: AgWaterfallSeriesLabelPlacement[] = ['start', 'end', 'inside'];
 const OPT_WATERFALL_LABEL_PLACEMENT: _ModuleSupport.ValidatePredicate = (v: any, ctx) =>
@@ -343,6 +344,9 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
             const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
+            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+            const { formatter, placement, padding } = this.label;
+
             const nodeDatum: WaterfallNodeDatum = {
                 index: dataIndex,
                 series: this,
@@ -360,7 +364,15 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 fill: fill,
                 stroke: stroke,
                 strokeWidth,
-                label: this.createLabelData(isPositive, rawValue, rect),
+                label: createLabelData({
+                    value: rawValue,
+                    rect,
+                    placement,
+                    seriesId: this.id,
+                    padding,
+                    formatter,
+                    barAlongX,
+                }),
             };
 
             contexts[contextIndex].nodeData.push(nodeDatum);
@@ -368,51 +380,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         });
 
         return contexts;
-    }
-
-    private createLabelData(isPositive: boolean, rawValue: any, rect: Bounds): WaterfallNodeLabelDatum {
-        const { formatter, placement, padding } = this.label;
-        let labelText: string;
-        if (formatter) {
-            labelText = formatter({
-                value: isNumber(rawValue) ? rawValue : undefined,
-                seriesId: this.id,
-            });
-        } else {
-            labelText = isNumber(rawValue) ? rawValue.toFixed(2) : '';
-        }
-
-        const labelX = rect.x + rect.width / 2;
-        let labelY = rect.y + rect.height / 2;
-
-        const labelTextAlign: CanvasTextAlign = 'center';
-        let labelTextBaseline: CanvasTextBaseline;
-
-        switch (placement) {
-            case 'start': {
-                labelY = isPositive ? rect.y + rect.height + padding : rect.y - padding;
-                labelTextBaseline = isPositive ? 'top' : 'bottom';
-                break;
-            }
-            case 'end': {
-                labelY = isPositive ? rect.y - padding : rect.y + rect.height + padding;
-                labelTextBaseline = isPositive ? 'bottom' : 'top';
-                break;
-            }
-            case 'inside':
-            default: {
-                labelTextBaseline = 'middle';
-                break;
-            }
-        }
-
-        return {
-            text: labelText,
-            textAlign: labelTextAlign,
-            textBaseline: labelTextBaseline,
-            x: labelX,
-            y: labelY,
-        };
     }
 
     protected nodeFactory() {

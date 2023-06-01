@@ -21,7 +21,6 @@ import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Logger } from '../../../util/logger';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -56,6 +55,7 @@ import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 import * as easing from '../../../motion/easing';
+import { createLabelData } from './barUtil';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -441,16 +441,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             processedData,
         } = this;
 
-        const {
-            fontStyle: labelFontStyle,
-            fontWeight: labelFontWeight,
-            fontSize: labelFontSize,
-            fontFamily: labelFontFamily,
-            color: labelColor,
-            formatter: labelFormatter,
-            placement: labelPlacement,
-        } = label;
-
         let xBandWidth = xScale.bandwidth;
 
         if (xScale instanceof ContinuousScale) {
@@ -524,50 +514,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     const y = yScale.convert(prevY + currY, { strict: false });
                     const bottomY = yScale.convert(prevY, { strict: false });
 
-                    let labelText: string;
-                    if (labelFormatter) {
-                        labelText = labelFormatter({
-                            value: isNumber(yValue) ? yValue : undefined,
-                            seriesId,
-                        });
-                    } else {
-                        labelText = isNumber(yValue) ? yValue.toFixed(2) : '';
-                    }
-
-                    let labelX: number;
-                    let labelY: number;
-
                     const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
-                    if (barAlongX) {
-                        labelY = barX + barWidth / 2;
-                        if (labelPlacement === 'inside') {
-                            labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
-                        } else {
-                            labelX = y + (yValue >= 0 ? 1 : -1) * 4;
-                        }
-                    } else {
-                        labelX = barX + barWidth / 2;
-                        if (labelPlacement === 'inside') {
-                            labelY = y + ((yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y)) / 2;
-                        } else {
-                            labelY = y + (yValue >= 0 ? -3 : 4);
-                        }
-                    }
-
-                    let labelTextAlign: CanvasTextAlign;
-                    let labelTextBaseline: CanvasTextBaseline;
-
-                    if (labelPlacement === 'inside') {
-                        labelTextAlign = 'center';
-                        labelTextBaseline = 'middle';
-                    } else {
-                        const xAlign = yValue >= 0 ? 'start' : 'end';
-                        labelTextAlign = barAlongX ? xAlign : 'center';
-                        const yBaseline = yValue >= 0 ? 'bottom' : 'top';
-                        labelTextBaseline = barAlongX ? 'middle' : yBaseline;
-                    }
-
-                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const rect = {
                         x: barAlongX ? Math.min(y, bottomY) : barX,
                         y: barAlongX ? barX : Math.min(y, bottomY),
@@ -578,6 +525,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         x: rect.x + rect.width / 2,
                         y: rect.y + rect.height / 2,
                     };
+
+                    const {
+                        fontStyle: labelFontStyle,
+                        fontWeight: labelFontWeight,
+                        fontSize: labelFontSize,
+                        fontFamily: labelFontFamily,
+                        color: labelColor,
+                        formatter,
+                        placement,
+                    } = label;
+
+                    const {
+                        text: labelText,
+                        textAlign: labelTextAlign,
+                        textBaseline: labelTextBaseline,
+                        x: labelX,
+                        y: labelY,
+                    } = createLabelData({ value: yValue, rect, formatter, placement, seriesId, barAlongX });
+
+                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const nodeData: BarNodeDatum = {
                         index: dataIndex,
                         series: this,
