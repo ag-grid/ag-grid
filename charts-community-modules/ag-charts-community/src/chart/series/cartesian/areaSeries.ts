@@ -49,6 +49,7 @@ import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
+import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import * as easing from '../../../motion/easing';
 
 interface FillSelectionDatum {
@@ -785,6 +786,36 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         return legendData;
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, series, numVisibleItems } = event;
+
+        const newEnableds: { [key: string]: boolean } = {};
+
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+        const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+
+        if (series.id === this.id) {
+            const singleEnabledInEachSeries =
+                Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
+
+            this.yKeys.forEach((yKey) => {
+                const matches = yKey === itemId;
+
+                const newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
+
+                newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
+            });
+        } else {
+            this.yKeys.forEach((yKey) => {
+                newEnableds[yKey] = singleEnabledWasClicked;
+            });
+        }
+
+        Object.keys(newEnableds).forEach((yKey) => {
+            super.toggleSeriesItem(yKey, newEnableds[yKey]);
+        });
     }
 
     animateEmptyUpdateReady({
