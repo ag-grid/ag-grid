@@ -620,7 +620,6 @@ export abstract class CartesianSeries<
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
         const { enabled, itemId, series, numVisibleItems } = event;
 
-        if (series.id !== this.id) return;
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
 
         const wasClicked = series.id === this.id;
