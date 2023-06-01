@@ -43,7 +43,8 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, a
                 onClick={toggleActive}
                 tabIndex="0"
                 className={classnames(styles.sectionHeader, isActive && styles.active, 'button-style-none')}
-                data-toggle="collapse"
+                // Temporarily removed to prevent immediate expand & collapse
+                // data-toggle="collapse"
                 data-target={`#${toElementId(title)}`}
                 aria-expanded={isActive}
                 aria-controls={`#${toElementId(title)}`}
@@ -67,10 +68,6 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, a
 const MenuGroup = ({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
     const containerRef = useRef(null);
     useEffect(() => {
-        if (!containerRef.current) {
-            return;
-        }
-
         // NOTE: Using plain JavaScript DOM to add/remove class, so it doesn't
         // interfere with bootstrap animations and allows for menu group to be
         // shown on first load.
@@ -80,10 +77,7 @@ const MenuGroup = ({ group, currentFramework, isTopLevel, isActive, activeParent
         } else {
             containerRef.current?.classList.remove('show');
         }
-    }, [
-        // NOTE: Don't depend on `isActive`, otherwise it will clash with bootstrap expand/collapse
-        containerRef.current,
-    ]);
+    }, [isActive, containerRef.current]);
 
     return (
         <ul
