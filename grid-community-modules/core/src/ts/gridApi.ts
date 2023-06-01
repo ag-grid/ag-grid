@@ -701,6 +701,12 @@ export class GridApi<TData = any> {
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
+        logDeprecation<GridApi>(
+            '30',
+            'setExcludeHiddenColumnsFromQuickFilter',
+            undefined,
+            'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `setIncludeHiddenColumnsInQuickFilter`'
+        );
         this.setIncludeHiddenColumnsInQuickFilter(!value);
     }
 
