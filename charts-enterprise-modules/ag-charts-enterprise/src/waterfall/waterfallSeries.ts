@@ -488,6 +488,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                     highlighted: isDatumHighlighted,
                     xKey,
                     yKey: datum.yKey,
+                    itemId: datum.itemId,
                     seriesId,
                 });
             }
@@ -572,13 +573,14 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         if (formatter) {
             format = formatter({
-                datum: nodeDatum,
+                datum,
                 xKey,
                 yKey,
                 fill,
                 strokeWidth,
                 highlighted: false,
                 seriesId,
+                itemId: nodeDatum.itemId,
             });
         }
 

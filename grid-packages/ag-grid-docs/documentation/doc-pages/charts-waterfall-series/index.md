@@ -49,7 +49,7 @@ export type AgWaterfallSeriesLabelPlacement = 'start' | 'end' | 'inside';
 /** Configuration for Waterfall series. */
 export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     /** Configuration for the Waterfall series. */
-    type?: 'Waterfall';
+    type?: 'waterfall-column';
     /** Configuration for the labels shown on top of data points. */
     label?: AgWaterfallSeriesLabelOptions;
     /** The key to use to retrieve x-values from the data. */
@@ -64,9 +64,9 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     labelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     labelName?: string;
-    /** Configuration for the positive series items. */
-    negativeItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the negative series items. */
+    negativeItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the positive series items. */
     positiveItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
