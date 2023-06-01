@@ -48,7 +48,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
     return (
-        <div className={classnames(styles["expandable-snippet"])} role="presentation">
+        <div className={styles.expandableSnippet} role="presentation">
             <pre className={classnames('code', 'language-ts')}>
                 <code className={'language-ts'}>
                     <BuildSnippet breadcrumbs={breadcrumbs} model={model} config={config}/>
@@ -71,7 +71,7 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
     config = {},
 }) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
-        <div className={styles['json-object']} role="presentation">
+        <div className={styles.jsonObject} role="presentation">
             <ModelSnippet model={model} config={config} path={[]}></ModelSnippet>
         </div>
     </Fragment>);
@@ -140,7 +140,7 @@ function renderUnion(
     }
 
     return (
-        <div className={styles["json-object-union"]} role="presentation">
+        <div className={styles.jsonObjectUnion} role="presentation">
         {
             model.options
                 .map((desc, idx) => {
@@ -154,7 +154,7 @@ function renderUnion(
                             return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, path, config);
                     }
                 })
-                .map((el, idx) => <div key={idx} className={classnames(styles["json-union-item"])}>{el}</div>)
+                .map((el, idx) => <div key={idx} className={styles.jsonUnionItem}>{el}</div>)
         }
         </div>
     );
@@ -180,17 +180,17 @@ function renderUnionNestedObject(
     if (discriminatorType) {
         return (
             <Fragment key={discriminatorType}>
-                <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                    {isExpanded && <div className={classnames(styles['expander-bar'])}></div>}
+                <span onClick={() => setExpanded(!isExpanded)} className={styles.expandable}>
+                    {isExpanded && <div className={styles.expanderBar}></div>}
                     <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                         {isExpanded && renderJsonNodeExpander(isExpanded)}
                         {' { '}
                     </span>
-                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, discriminatorType, discriminator, isExpanded, true, 'union-type-property')}
+                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, discriminatorType, discriminator, isExpanded, true, 'unionTypeProperty')}
                     {!isExpanded && <span className={classnames('token', 'punctuation')}>; </span>}
                     {
                         isExpanded ?
-                            <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()} role="presentation">
+                            <div className={styles.jsonObject} onClick={(e) => e.stopPropagation()} role="presentation">
                                 <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                             </div> :
                             <span className={classnames('token', 'operator')}> ... </span>
@@ -206,15 +206,15 @@ function renderUnionNestedObject(
 
     return (
         <Fragment key={index}>
-            <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                {isExpanded && <div className={classnames(styles['expander-bar'])}></div>}
+            <span onClick={() => setExpanded(!isExpanded)} className={styles.expandable}>
+                {isExpanded && <div className={styles.expanderBar}></div>}
                 <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                     {renderJsonNodeExpander(isExpanded)}
                     {' {'}
                 </span>
                 {
                     isExpanded ?
-                        <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
+                        <div className={classnames(styles.jsonObject, styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
                             <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
@@ -298,10 +298,10 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     return (
         <div
             className={classnames(
-                expandable && styles["expandable"],
-                styles['json-property'],
-                deprecated && styles['deprecated'],
-                styles['json-property-type-' + desc.type]
+                expandable && styles.expandable,
+                styles.jsonProperty,
+                deprecated && styles.deprecated,
+                styles['type-' + desc.type]
             )}
             onClick={() => expandable ? setJSONNodeExpanded(!isJSONNodeExpanded) : null}
             role="presentation"
@@ -334,7 +334,7 @@ function maybeRenderPropertyDocumentation(
     return (
         <Fragment>
             <div
-                className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                className={classnames('token', 'comment', styles.jsdocExpandable)}
                 onClick={(e) => e.stopPropagation()}
                 dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"
@@ -357,7 +357,7 @@ function maybeRenderModelDocumentation(
     return (
         <Fragment>
             <div
-                className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                className={classnames('token', 'comment', styles.jsdocExpandable)}
                 onClick={(e) => e.stopPropagation()}
                 dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"
@@ -368,7 +368,7 @@ function maybeRenderModelDocumentation(
 }
 
 function renderJsonNodeExpander(isExpanded: boolean) {
-    return <Icon name="chevronRight" svgClasses={classnames(styles['expander'], { 'fa-rotate-90': isExpanded })} />
+    return <Icon name="chevronRight" svgClasses={classnames(styles.expander, isExpanded && styles.active)} />
 }
 
 function renderPropertyDeclaration(
@@ -377,12 +377,12 @@ function renderPropertyDeclaration(
     propDesc: { required: boolean },
     isExpanded: boolean,
     expandable: boolean,
-    style = 'property-name',
+    style = 'propertyName',
 ) {
     const { required } = propDesc;
     return (
         <Fragment>
-            {expandable && <div className={classnames(styles['expander-bar'])}></div>}
+            {isExpanded && <div className={styles.expanderBar}></div>}
             <span className={classnames('token', 'name', styles[style])}>
                 {expandable && renderJsonNodeExpander(isExpanded)}
                 {propName}
@@ -417,7 +417,7 @@ function renderNestedObject(
         <Fragment>
             <span className={classnames('token', 'punctuation')}>{' { '}</span>
             {maybeRenderPropertyDocumentation(meta, true, config)}
-            <div className={classnames(styles['json-object'])} role="presentation">
+            <div className={styles.jsonObject} role="presentation">
                 <ModelSnippet model={desc.model} config={config} path={path}></ModelSnippet>
             </div>
             <span className={classnames('token', 'punctuation')}>}</span>
@@ -524,7 +524,7 @@ function renderFunction(
         <Fragment>
             {maybeRenderModelDocumentation(desc, config)}
             <span className={classnames('token', 'punctuation')}>(</span>
-                <div className={styles['json-object']} role="presentation">
+                <div className={styles.jsonObject} role="presentation">
                 {
                     paramEntries.map(([prop, model], idx) => (
                         <Fragment key={prop}>
@@ -603,7 +603,7 @@ export function renderObjectBreadcrumb(
             }
             {
                 breadcrumbs.length > 1 ?
-                    <div className={styles['json-object']} role="presentation">
+                    <div className={styles.jsonObject} role="presentation">
                         <div role="presentation">...</div>
                         {renderObjectBreadcrumb(breadcrumbs.slice(1), bodyContent)}
                     </div> :

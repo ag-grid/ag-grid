@@ -52,8 +52,10 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     }, [hideMenu]);
 
     useEffect(() => {
+        // Init scrollspy & refresh at the same time as there's no way to detect if it's already been initialised
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-    }, []);
+        $('body').scrollspy('refresh');
+    }, [allHeadings]);
 
     return (
         allHeadings.length > 0 && (
