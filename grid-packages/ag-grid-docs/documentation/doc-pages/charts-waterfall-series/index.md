@@ -19,6 +19,21 @@ series: [{
 
 <chart-example title='Basic Waterfall Column' name='basic-waterfall-column' type='generated' options='{ "enterprise": true }'></chart-example>
 
+
+## Waterfall Bar
+
+To create a basic waterfall bar chart, use the `waterfall-bar` series type and specify the `xKey` and `yKey` properties:
+
+```js
+series: [{
+    type: 'waterfall-bar',
+    xKey: 'date',
+    yKey: 'amount',
+}]
+```
+
+<chart-example title='Basic Waterfall Bar' name='basic-waterfall-bar' type='generated' options='{ "enterprise": true }'></chart-example>
+
 ### API Reference
 
 <!-- TODO: replace with usual api reference component -->
@@ -49,7 +64,7 @@ export type AgWaterfallSeriesLabelPlacement = 'start' | 'end' | 'inside';
 /** Configuration for Waterfall series. */
 export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     /** Configuration for the Waterfall series. */
-    type?: 'waterfall-column';
+    type?: 'waterfall-bar' | 'waterfall-column';
     /** Configuration for the labels shown on top of data points. */
     label?: AgWaterfallSeriesLabelOptions;
     /** The key to use to retrieve x-values from the data. */

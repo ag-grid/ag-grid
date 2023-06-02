@@ -30,7 +30,7 @@ describe('Chart', () => {
         expect(console.warn).not.toBeCalled();
     });
 
-    const EXAMPLE_OPTIONS: AgChartOptions = {
+    const WATERFALL_COLUMN_OPTIONS: AgChartOptions = {
         data: [
             { year: '2020', spending: 10 },
             { year: '2021', spending: 20 },
@@ -75,8 +75,26 @@ describe('Chart', () => {
         (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
     };
 
-    it(`should render placeholder chart as expected`, async () => {
-        const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
+    function switchSeriesType<T>(opts: T, type: 'waterfall-bar' | 'waterfall-column'): T {
+        return {
+            ...opts,
+            series: opts['series']?.map((s) => ({
+                ...s,
+                type,
+            })),
+        };
+    }
+
+    it(`should render a waterfall-column chart as expected`, async () => {
+        const options: AgChartOptions = { ...WATERFALL_COLUMN_OPTIONS };
+        prepareTestOptions(options as any);
+
+        chart = AgEnterpriseCharts.create(options);
+        await compare();
+    });
+
+    it(`should render a waterfall-bar chart as expected`, async () => {
+        const options: AgChartOptions = { ...switchSeriesType(WATERFALL_COLUMN_OPTIONS, 'waterfall-bar') };
         prepareTestOptions(options as any);
 
         chart = AgEnterpriseCharts.create(options);

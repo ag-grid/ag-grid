@@ -28,6 +28,7 @@ import {
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 import {
+    WaterfallBarModule,
     WaterfallColumnModule,
     AgWaterfallSeriesOptions,
     AgWaterfallSeriesTooltip,
@@ -44,6 +45,7 @@ _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
+_ModuleSupport.registerModule(WaterfallBarModule);
 _ModuleSupport.registerModule(WaterfallColumnModule);
 _ModuleSupport.registerModule(ZoomModule);
 
@@ -96,7 +98,7 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-type TAddonType = 'heatmap' | 'waterfall-column';
+type TAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
 type TAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
 
 export type AgChartOptions = AgCommunityChartOptions<TAddonType, TAddonSeries>;
