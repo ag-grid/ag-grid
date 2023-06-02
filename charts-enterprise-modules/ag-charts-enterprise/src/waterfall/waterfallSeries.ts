@@ -447,6 +447,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 highlightStyle: itemHighlightStyle,
                 formatter,
                 seriesId,
+                itemId: datum.itemId,
             });
             config.crisp = crisp;
             config.visible = visible;
