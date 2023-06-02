@@ -32,6 +32,10 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],
             },
+            directionNames: {
+                [ChartAxisDirection.X]: ['angleName'],
+                [ChartAxisDirection.Y]: ['radiusName'],
+            },
         });
     }
 

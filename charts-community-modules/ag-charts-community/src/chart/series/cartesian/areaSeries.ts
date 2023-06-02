@@ -146,8 +146,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             pathsZIndexSubOrderOffset: [0, 1000],
             hasMarkers: true,
             directionKeys: {
-                x: ['xKey'],
-                y: ['yKeys'],
+                [ChartAxisDirection.X]: ['xKey'],
+                [ChartAxisDirection.Y]: ['yKeys'],
+            },
+            directionNames: {
+                [ChartAxisDirection.X]: ['xName'],
+                [ChartAxisDirection.Y]: ['yNames'],
             },
         });
 

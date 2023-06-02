@@ -159,6 +159,10 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 [ChartAxisDirection.X]: ['xKey'],
                 [ChartAxisDirection.Y]: ['yKey'],
             },
+            directionNames: {
+                [ChartAxisDirection.X]: ['xName'],
+                [ChartAxisDirection.Y]: ['yName'],
+            },
         });
 
         this.label.enabled = false;

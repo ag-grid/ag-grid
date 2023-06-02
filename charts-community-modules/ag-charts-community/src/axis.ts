@@ -1384,7 +1384,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
-        const identityFormatter = (params: { value?: string }) => params.value;
+        const identityFormatter = (params: AgAxisCaptionFormatterParams) => params.defaultValue;
         const { rotation, title, _titleCaption, lineNode, range: requestedRange, tickLineGroup, tickLabelGroup } = this;
         const { formatter = identityFormatter } = this.title ?? {};
 

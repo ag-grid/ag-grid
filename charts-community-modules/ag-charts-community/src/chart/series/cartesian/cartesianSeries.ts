@@ -64,6 +64,11 @@ const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
     [ChartAxisDirection.Y]: ['yKey'],
 };
 
+const DEFAULT_DIRECTION_NAMES: { [key in ChartAxisDirection]?: string[] } = {
+    [ChartAxisDirection.X]: ['xName'],
+    [ChartAxisDirection.Y]: ['yName'],
+};
+
 export class CartesianSeriesNodeBaseClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {
     readonly xKey: string;
     readonly yKey: string;
@@ -127,12 +132,14 @@ export abstract class CartesianSeries<
         opts: Partial<SeriesOpts> & {
             pickModes?: SeriesNodePickMode[];
             directionKeys?: { [key in ChartAxisDirection]?: string[] };
+            directionNames?: { [key in ChartAxisDirection]?: string[] };
         } = {}
     ) {
         super({
             useSeriesGroupLayer: true,
             pickModes: opts.pickModes,
             directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
+            directionNames: opts.directionNames ?? DEFAULT_DIRECTION_NAMES,
         });
 
         const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;

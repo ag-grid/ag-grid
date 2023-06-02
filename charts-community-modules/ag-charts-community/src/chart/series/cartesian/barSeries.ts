@@ -144,6 +144,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 [ChartAxisDirection.X]: ['xKey'],
                 [ChartAxisDirection.Y]: ['yKeys'],
             },
+            directionNames: {
+                [ChartAxisDirection.X]: ['xName'],
+                [ChartAxisDirection.Y]: ['yNames'],
+            },
         });
 
         this.label.enabled = false;
