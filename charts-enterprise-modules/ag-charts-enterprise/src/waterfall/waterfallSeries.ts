@@ -68,7 +68,7 @@ class WaterfallSeriesNodeBaseClickEvent extends _ModuleSupport.CartesianSeriesNo
         yKey: string,
         nativeEvent: MouseEvent,
         datum: WaterfallNodeDatum,
-        series: WaterfallSeries
+        series: WaterfallBarSeries | WaterfallColumnSeries
     ) {
         super(xKey, yKey, nativeEvent, datum, series);
         this.labelKey = labelKey;
@@ -127,12 +127,12 @@ class WaterfallSeriesItem {
 
 type SeriesItemType = 'positive' | 'negative';
 
-export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
+export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     _ModuleSupport.SeriesNodeDataContext<any>,
     _Scene.Rect
 > {
-    static className = 'WaterfallSeries';
-    static type: 'waterfallBar' | 'waterfallColumn' = 'waterfallColumn' as const;
+    static className = 'WaterfallBarSeries';
+    static type: 'waterfall-bar' | 'waterfall-column' = 'waterfall-bar' as const;
 
     readonly label = new WaterfallSeriesLabel();
     readonly positiveItem = new WaterfallSeriesItem();
@@ -315,6 +315,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
             const isPositive = rawValue >= 0;
             const y = isPositive ? currY : prevY;
             const bottomY = isPositive ? prevY : currY;
+            const barHeight = Math.abs(bottomY - y);
 
             const itemId = isPositive ? 'positive' : 'negative';
             let contextIndex = contextIndexMap.get(itemId);
@@ -328,11 +329,13 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 labelData: [],
             };
 
+            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+
             const rect = {
-                x,
-                y,
-                width: barWidth,
-                height: Math.abs(bottomY - y),
+                x: barAlongX ? bottomY : x,
+                y: barAlongX ? x : y,
+                width: barAlongX ? barHeight : barWidth,
+                height: barAlongX ? barWidth : barHeight,
             };
 
             const nodeMidPoint = {
@@ -342,7 +345,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
             const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
-            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
             const { formatter, placement, padding } = this.label;
 
             const nodeDatum: WaterfallNodeDatum = {
@@ -574,7 +576,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         return legendData;
     }
 
-    // TODO: fix legend
     onLegendItemClick(event: _ModuleSupport.LegendItemClickChartEvent) {
         const { enabled, itemId, series } = event;
 
@@ -587,7 +588,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
     onLegendItemDoubleClick(event: _ModuleSupport.LegendItemDoubleClickChartEvent) {
         const { enabled, itemId, series: maybeSeries } = event;
 
-        if (maybeSeries.type !== 'waterfallColumn') return;
+        if (maybeSeries.type !== this.type) return;
 
         const { seriesItemEnabled } = this;
 
@@ -628,8 +629,8 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 this.animationManager?.animateMany(
                     `${this.id}_empty-update-ready_${rect.id}`,
                     [
-                        { from: datum.itemId === 'positive' ? datum.y + datum.height : datum.y, to: datum.y },
-                        { from: 0, to: datum.height },
+                        { from: datum.itemId === 'positive' ? datum.x : datum.x + datum.width, to: datum.x },
+                        { from: 0, to: datum.width },
                     ],
                     {
                         disableInteractions: true,
@@ -637,12 +638,12 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                         delay: 200 * index,
                         ease: Motion.linear,
                         repeat: 0,
-                        onUpdate([y, height]) {
-                            rect.y = y;
-                            rect.height = height;
+                        onUpdate([x, width]) {
+                            rect.x = x;
+                            rect.width = width;
 
-                            rect.x = datum.x;
-                            rect.width = datum.width;
+                            rect.y = datum.y;
+                            rect.height = datum.height;
                         },
                     }
                 );
@@ -705,14 +706,79 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
     }
 
     protected getBarDirection() {
-        return ChartAxisDirection.Y;
+        return ChartAxisDirection.X;
     }
 
     protected getCategoryDirection() {
-        return _ModuleSupport.ChartAxisDirection.X;
+        return ChartAxisDirection.Y;
     }
 
     getBandScalePadding() {
         return { inner: 0.2, outer: 0.3 };
+    }
+}
+
+export class WaterfallColumnSeries extends WaterfallBarSeries {
+    static className = 'WaterfallColumnSeries';
+    static type = 'waterfall-column' as const;
+
+    protected getBarDirection() {
+        return ChartAxisDirection.Y;
+    }
+
+    protected getCategoryDirection() {
+        return ChartAxisDirection.X;
+    }
+
+    animateEmptyUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<_Scene.Selection<_Scene.Rect, WaterfallNodeDatum>>;
+        labelSelections: Array<_Scene.Selection<_Scene.Text, WaterfallNodeDatum>>;
+    }) {
+        const duration = 1000;
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum, index) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: datum.itemId === 'positive' ? datum.y + datum.height : datum.y, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration,
+                        delay: 200 * index,
+                        ease: Motion.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label, _, index) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: duration - duration / 10 + 200 * index,
+                    duration: duration / 10,
+                    ease: Motion.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
     }
 }

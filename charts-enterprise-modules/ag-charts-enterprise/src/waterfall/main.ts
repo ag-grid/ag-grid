@@ -1,2 +1,2 @@
-export { WaterfallColumnModule } from './waterfallModule';
+export { WaterfallBarModule, WaterfallColumnModule } from './waterfallModule';
 export * from './typings';
