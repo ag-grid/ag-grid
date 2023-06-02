@@ -862,7 +862,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
         const { enabled, itemId, numVisibleItems, series } = event;
 
-        if (series.id !== this.id) return;
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
         const singleEnabledInEachSeries =
             Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
