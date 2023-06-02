@@ -1471,7 +1471,24 @@ export interface AgPieSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgPieTitleOptions extends AgChartCaptionOptions {
+export interface AgPieTitleOptions {
+    /** Whether or not the text should be shown. */
+    enabled?: boolean;
+    /** The text to display. */
+    text?: string;
+    /** The font style to use for the text. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the text. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the text. */
+    fontSize?: FontSize;
+    /** The font family to use for the text. */
+    fontFamily?: FontFamily;
+    /** The colour to use for the text. */
+    color?: CssColor;
+    /** Spacing added to help position the text. */
+    spacing?: number;
+    /** Whether or not the title text should be shown in the legend. */
     showInLegend?: boolean;
 }
 
