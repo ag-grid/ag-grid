@@ -12,3 +12,16 @@ export const WATERFALL_COLUMN_DEFAULTS: AgCartesianChartOptions = {
         },
     ],
 };
+
+export const WATERFALL_BAR_DEFAULTS: AgCartesianChartOptions = {
+    axes: [
+        {
+            type: 'category',
+            position: 'left',
+        },
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+    ],
+};

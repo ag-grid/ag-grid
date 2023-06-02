@@ -154,6 +154,7 @@ export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, Format
     highlightStyle,
     formatter,
     seriesId,
+    itemId,
     stackGroup,
 }: {
     datum: DatumType;
@@ -162,6 +163,7 @@ export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, Format
     highlightStyle: SeriesItemHighlightStyle;
     formatter?: FormatterType;
     seriesId: string;
+    itemId?: string;
     stackGroup?: string;
 }): RectConfig {
     const itemFill = isHighlighted ? highlightStyle.fill ?? style.fill : style.fill;
@@ -181,6 +183,7 @@ export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, Format
             strokeWidth: itemStrokeWidth,
             highlighted: isHighlighted,
             seriesId,
+            itemId,
             stackGroup,
         });
     }

@@ -302,7 +302,6 @@ export interface AgChartCaptionOptions {
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 
-/** Metadata about a series bound to an axis. */
 export interface AgAxisBoundSeries {
     /** Key used by the series for values on the related axis. */
     key: string;
