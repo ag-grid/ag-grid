@@ -195,6 +195,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -400,6 +401,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar success
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -425,6 +427,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut su
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "pie": {
@@ -542,6 +545,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie success
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "pie": {
@@ -661,6 +665,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie-callout
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "pie": {
@@ -778,6 +783,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter suc
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "scatter": {
@@ -1116,6 +1122,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 23.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -1346,6 +1353,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -1589,6 +1597,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -1619,6 +1628,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line succes
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "line": {
@@ -1873,6 +1883,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.2.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "line": {
@@ -2347,6 +2358,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -2377,6 +2389,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
     "scatter": {
@@ -2814,6 +2827,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -3184,6 +3198,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.2.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -3547,6 +3562,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
@@ -3903,6 +3919,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 28.0.0 successfull
     "common": {
       "legend": {
         "enabled": true,
+        "position": "right",
       },
     },
   },
