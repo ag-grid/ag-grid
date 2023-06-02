@@ -122,10 +122,18 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-type TAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
-type TAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
+type CartesianAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
+type CartesianAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
 
-export type AgChartOptions = AgCommunityChartOptions<TAddonType, TAddonSeries>;
+type PolarAddonType = 'radar-line';
+type PolarAddonSeries = AgRadarLineSeriesOptions;
+
+export type AgChartOptions = AgCommunityChartOptions<
+    CartesianAddonType,
+    CartesianAddonSeries,
+    PolarAddonType,
+    PolarAddonSeries
+>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();
