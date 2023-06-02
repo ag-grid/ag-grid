@@ -202,17 +202,6 @@ export class GridOptionsValidator {
     private deprecatedProperties: DeprecatedReference<GridOptions> = {
         rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
 
-        suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
-        clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
-        getRowNodeId: { version: '27.1', newProp: 'getRowId', message: 'The difference: if getRowId() is implemented then immutable data is enabled by default.' },
-        defaultGroupOrderComparator: { version: '27.2', newProp: 'initialGroupOrderComparator' },
-        groupRowAggNodes: { version: '27.2', newProp: 'getGroupRowAgg' },
-        postSort: { version: '27.2', newProp: 'postSortRows' },
-        isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
-        localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
-        enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
-        enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
-
         serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
         serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
         suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
@@ -227,9 +216,12 @@ export class GridOptionsValidator {
         onColumnPivotChangeRequest: { version: '29.2' },
         onColumnValueChangeRequest: { version: '29.2' },
         onColumnAggFuncChangeRequest: { version: '29.2' },
+
         serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
         suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
         excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
+        enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
+        enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
     }
 
     private checkForDeprecated() {
