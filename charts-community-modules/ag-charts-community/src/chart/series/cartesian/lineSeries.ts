@@ -536,8 +536,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDashOffset = this.lineDashOffset;
 
             const duration = 1000;
-            const lineDuration = duration * 0.8;
-            const markerDuration = duration - lineDuration;
+            const markerDuration = 200;
 
             const animationOptions = {
                 from: 0,
@@ -556,7 +555,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
-                duration: lineDuration,
+                duration,
                 onUpdate(xValue) {
                     linePath.clear({ trackChanges: true });
 
@@ -589,7 +588,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             markerSelections[contextDataIndex].each((marker, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * lineDuration : 0;
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
@@ -605,7 +604,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             labelSelections[contextDataIndex].each((label, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * lineDuration : 0;
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,

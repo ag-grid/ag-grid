@@ -585,8 +585,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
     }) {
         const duration = 1000;
-        const barDuration = duration * 0.8;
-        const labelDuration = duration - barDuration;
+        const labelDuration = 200;
 
         let startingY = 0;
         datumSelections.forEach((datumSelection) =>
@@ -605,7 +604,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     ],
                     {
                         disableInteractions: true,
-                        duration: barDuration,
+                        duration,
                         ease: easing.easeOut,
                         repeat: 0,
                         onUpdate([y, height]) {
@@ -625,7 +624,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
-                    delay: barDuration,
+                    delay: duration,
                     duration: labelDuration,
                     ease: easing.linear,
                     repeat: 0,

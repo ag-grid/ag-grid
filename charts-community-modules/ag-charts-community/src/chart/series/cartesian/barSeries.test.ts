@@ -141,7 +141,7 @@ describe('BarSeries', () => {
 
         for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
             it(`for COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS should animate at ${ratio * 100}%`, async () => {
-                spyOnAnimationManager(1000, ratio);
+                spyOnAnimationManager(1200, ratio);
 
                 const options: AgChartOptions = { ...examples.COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS };
                 prepareTestOptions(options);
@@ -154,7 +154,7 @@ describe('BarSeries', () => {
 
         for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
             it(`for BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS should animate at ${ratio * 100}%`, async () => {
-                spyOnAnimationManager(1000, ratio);
+                spyOnAnimationManager(1200, ratio);
 
                 const options: AgChartOptions = { ...examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS };
                 prepareTestOptions(options);

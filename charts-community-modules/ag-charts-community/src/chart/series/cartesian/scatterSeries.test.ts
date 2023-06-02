@@ -93,7 +93,7 @@ describe('ScatterSeries', () => {
 
         for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
             it(`for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE should animate at ${ratio * 100}%`, async () => {
-                spyOnAnimationManager(1000, ratio);
+                spyOnAnimationManager(1200, ratio);
 
                 const options: AgChartOptions = examples.BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE;
                 prepareTestOptions(options);

@@ -833,6 +833,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const [fill, stroke] = paths[seriesIdx];
 
             const duration = 1000;
+            const markerDuration = 200;
 
             const animationOptions = {
                 from: 0,
@@ -980,7 +981,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
-                    duration: duration / 10,
+                    duration: markerDuration,
                     onUpdate(size) {
                         marker.size = size;
                     },
@@ -993,7 +994,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     from: 0,
                     to: 1,
                     delay,
-                    duration: duration / 10,
+                    duration: markerDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate: (opacity) => {

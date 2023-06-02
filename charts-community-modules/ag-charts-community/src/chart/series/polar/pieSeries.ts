@@ -1510,10 +1510,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     animateEmptyUpdateReady() {
         const duration = 1000;
-        const rotation = Math.PI / -2 + toRadians(this.rotation);
+        const labelDuration = 200;
 
-        const sectorDuration = duration * 0.8;
-        const labelDuration = duration - sectorDuration;
+        const rotation = Math.PI / -2 + toRadians(this.rotation);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
             const datum: PieNodeDatum = node.datum;
@@ -1526,7 +1525,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 ],
                 {
                     disableInteractions: true,
-                    duration: sectorDuration,
+                    duration,
                     ease: easing.easeOut,
                     repeat: 0,
                     onUpdate([startAngle, endAngle]) {
@@ -1540,7 +1539,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const labelAnimationOptions = {
             from: 0,
             to: 1,
-            delay: sectorDuration,
+            delay: duration,
             duration: labelDuration,
             ease: easing.linear,
             repeat: 0,
