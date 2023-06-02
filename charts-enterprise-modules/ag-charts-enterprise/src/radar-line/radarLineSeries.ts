@@ -34,7 +34,7 @@ const {
 const { BandScale, LinearScale } = _Scale;
 
 const { Group, Path, PointerEvents, Selection, Text, getMarker, toTooltipHtml } = _Scene;
-const { interpolateString, isNumberEqual, sanitizeHtml, toFixed } = _Util;
+const { extent, interpolateString, isNumberEqual, sanitizeHtml, toFixed } = _Util;
 
 class RadarLineSeriesNodeBaseClickEvent extends _ModuleSupport.SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -219,6 +219,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 },
             },
         });
+        // TODO: To be deleted when animations are enabled (prevents TSLint warning).
         this.animationState.debug;
     }
 
@@ -228,10 +229,14 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
+        const { dataModel, processedData } = this;
+        if (!processedData || !dataModel) return [];
+
         if (direction === ChartAxisDirection.X) {
-            return this.angleScale.domain;
+            return dataModel.getDomain(`angleValue`, processedData);
         } else {
-            return this.radiusScale.domain;
+            const domain = dataModel.getDomain(`radiusValue`, processedData);
+            return this.fixNumericExtent(extent([0].concat(domain)));
         }
     }
 
@@ -247,12 +252,11 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 valueProperty(radiusKey, false, { id: 'radiusValue', invalidValue: undefined }),
             ],
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.processedData = this.dataModel.processData(data);
 
-        const angleValueIdx = this.dataModel.resolveProcessedDataIndexById('angleValue')?.index ?? -1;
-        const radiusValueIdx = this.dataModel.resolveProcessedDataIndexById('radiusValue')?.index ?? -1;
-        this.angleScale.domain = this.processedData!.domain.values[angleValueIdx];
-        this.radiusScale.domain = [0, Math.max(...this.processedData!.domain.values[radiusValueIdx])];
+        // TODO: Assign domain in radar axes.
+        this.angleScale.domain = this.getDomain(_ModuleSupport.ChartAxisDirection.X);
+        this.radiusScale.domain = this.getDomain(_ModuleSupport.ChartAxisDirection.Y);
     }
 
     maybeRefreshNodeData() {
@@ -351,7 +355,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         const cx = this.centerX;
         const cy = this.centerY;
         this.angleAxisSelection.update(visible ? this.nodeData : []).each((node, datum) => {
-            node.path.clear();
+            node.path.clear({ trackChanges: true });
             const angle = this.angleScale.convert(datum.datum[this.angleKey]);
             node.path.moveTo(cx, cy);
             node.path.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
@@ -360,7 +364,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             node.pointerEvents = PointerEvents.None;
         });
         this.radiusAxisSelection.update(visible ? [true] : []).each((node) => {
-            node.path.clear();
+            node.path.clear({ trackChanges: true });
             node.path.moveTo(cx + radius, cy);
             node.path.arc(this.centerX, this.centerY, radius, 0, 2 * Math.PI);
             node.path.closePath();
@@ -374,7 +378,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     private updatePath() {
         this.pathSelection.update(this.visible ? [true] : []).each((node) => {
             const { path } = node;
-            path.clear();
+            path.clear({ trackChanges: true });
             this.nodeData.forEach((datum, index) => {
                 const point = datum.point!;
                 if (index === 0) {
