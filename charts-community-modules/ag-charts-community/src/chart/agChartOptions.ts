@@ -306,7 +306,7 @@ export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 export interface AgAxisBoundSeries {
     /** Key used by the series for values on the related axis. */
     key: string;
-    /** Optional name used by the series for values on the enclosing axis. */
+    /** Optional name used by the series for values on the related axis. */
     name?: string;
 }
 
