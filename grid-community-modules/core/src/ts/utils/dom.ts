@@ -385,7 +385,7 @@ export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle |
         const parsedValue = valueAsString.replace(/\s*!important/g, '');
         const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
 
-        eElement.style.setProperty(parsedKey, value, priority);
+        eElement.style.setProperty(parsedKey, parsedValue, priority);
     }
 }
 
