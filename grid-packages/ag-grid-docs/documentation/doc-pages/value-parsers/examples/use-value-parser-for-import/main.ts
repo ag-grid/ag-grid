@@ -33,13 +33,15 @@ function currencyFormatter(params: ValueFormatterParams) {
 
 function currencyParser(params: ValueParserParams) {
   let value = params.newValue;
-  if (!value || value === '') {
+  if (value == null || value === '') {
     return null;
   }
+  value = String(value);
+
   if (value.startsWith('£')) {
     value = value.slice(1);
   }
-  return value;
+  return parseFloat(value);
 }
 
 function createRowData() {
