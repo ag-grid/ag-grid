@@ -302,13 +302,21 @@ export interface AgChartCaptionOptions {
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 
+/** Metadata about a series bound to an axis. */
+export interface AgAxisBoundSeries {
+    /** Key used by the series for values on the related axis. */
+    key: string;
+    /** Optional name used by the series for values on the enclosing axis. */
+    name?: string;
+}
+
 export interface AgAxisCaptionFormatterParams {
     /** Default value to be used for the axis title (as specified in chart options or theme). */
-    value?: string;
+    defaultValue?: string;
     /** Direction of the axis the title belongs to. */
     direction: 'x' | 'y';
-    /** Keys bound to the axis the title belongs to. */
-    keys: string[];
+    /** Metadata about series bound to the axis the title belongs to. */
+    boundSeries: AgAxisBoundSeries[];
 }
 
 export interface AgAxisCaptionOptions {

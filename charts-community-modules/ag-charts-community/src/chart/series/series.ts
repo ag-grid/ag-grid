@@ -243,7 +243,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     yAxis?: ChartAxis;
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
-    directionKeys: { [key in ChartAxisDirection]?: string[] };
+    private directionKeys: { [key in ChartAxisDirection]?: string[] };
+    private directionNames: { [key in ChartAxisDirection]?: string[] };
 
     // Flag to determine if we should recalculate node data.
     protected nodeDataRefresh = true;
@@ -296,12 +297,14 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         useLabelLayer = false,
         pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
         directionKeys = {} as { [key in ChartAxisDirection]?: string[] },
+        directionNames = {} as { [key in ChartAxisDirection]?: string[] },
     } = {}) {
         super();
 
         const { rootGroup } = this;
 
         this.directionKeys = directionKeys;
+        this.directionNames = directionNames;
 
         this.contentGroup = rootGroup.appendChild(
             new Group({
@@ -346,11 +349,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         // Override point for sub-classes.
     }
 
-    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
+    private getDirectionValues(
+        direction: ChartAxisDirection,
+        properties: { [key in ChartAxisDirection]?: string[] }
+    ): string[] {
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys?.[resolvedDirection];
+        const keys = properties?.[resolvedDirection];
         const values: string[] = [];
 
         const flatten = (...array: any[]) => {
@@ -362,6 +366,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         const addValue = (value: any) => {
             if (Array.isArray(value)) {
                 flatten(...value);
+            } else if (typeof value === 'object') {
+                flatten(Object.values(value));
             } else {
                 values.push(value);
             }
@@ -372,12 +378,18 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         keys.forEach((key) => {
             const value = (this as any)[key];
 
-            if (!value) return;
-
             addValue(value);
         });
 
         return values;
+    }
+
+    getKeys(direction: ChartAxisDirection): string[] {
+        return this.getDirectionValues(direction, this.directionKeys);
+    }
+
+    getNames(direction: ChartAxisDirection): (string | undefined)[] {
+        return this.getDirectionValues(direction, this.directionNames);
     }
 
     protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection {

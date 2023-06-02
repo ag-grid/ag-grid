@@ -4,7 +4,7 @@ import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
-import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
+import { AgAxisCaptionFormatterParams, AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
 import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 
@@ -13,6 +13,7 @@ interface BoundSeries {
     getDomain(direction: ChartAxisDirection): any[];
     isEnabled(): boolean;
     getKeys(direction: ChartAxisDirection): string[];
+    getNames(direction: ChartAxisDirection): (string | undefined)[];
     visible: boolean;
     getBandScalePadding?(): { inner: number; outer: number };
 }
@@ -182,10 +183,21 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     }
 
     protected getTitleFormatterParams() {
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, [] as AgAxisCaptionFormatterParams['boundSeries']);
         return {
             direction: this.direction,
-            keys: this.boundSeries.reduce((acc, next) => [...acc, ...next.getKeys(this.direction)], [] as string[]),
-            value: this.title?.text,
+            boundSeries,
+            defaultValue: this.title?.text,
         };
     }
 }
