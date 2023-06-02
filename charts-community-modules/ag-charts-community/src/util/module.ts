@@ -13,6 +13,7 @@ import { Scene } from '../integrated-charts-scene';
 import { Series } from '../chart/series/series';
 import { ChartLegend } from '../chart/legendDatum';
 import { JsonApplyParams } from './json';
+import { CallbackCache } from './callbackCache';
 
 export interface ModuleContext {
     scene: Scene;
@@ -27,6 +28,7 @@ export interface ModuleContext {
     dataService: DataService;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
+    callbackCache: CallbackCache;
 }
 
 export interface ModuleContextWithParent<P> extends ModuleContext {
@@ -45,7 +47,7 @@ export interface AxisContext {
     scaleInvert(position: number): any;
 }
 
-export type SeriesConstructor = new () => Series<any>;
+export type SeriesConstructor = new (moduleContext: ModuleContext) => Series<any>;
 export type LegendConstructor = new (moduleContext: ModuleContext) => ChartLegend;
 
 export interface ModuleInstance {

@@ -184,6 +184,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             scale,
             label,
             label: { parallel },
+            moduleCtx: { callbackCache },
             tickScale,
             range: requestedRange,
             title,
@@ -249,7 +250,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 // use the phantom root as the axis title
                 if (title?.enabled && labels.length > 0) {
                     node.visible = true;
-                    node.text = formatter(this.getTitleFormatterParams());
+                    node.text = callbackCache.call(formatter, this.getTitleFormatterParams());
                     node.fontSize = title.fontSize;
                     node.fontStyle = title.fontStyle;
                     node.fontWeight = title.fontWeight;
@@ -260,7 +261,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 }
             } else {
                 node.text = labelFormatter
-                    ? labelFormatter({
+                    ? callbackCache.call(labelFormatter, {
                           value: String(datum.label),
                           index,
                       })

@@ -32,6 +32,7 @@ import {
 } from '../../agChartOptions';
 import { DataModel, UngroupedDataItem } from '../../data/dataModel';
 import * as easing from '../../../motion/easing';
+import { ModuleContext } from '../../../util/module';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -90,8 +91,9 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
-    constructor() {
+    constructor(moduleCtx: ModuleContext) {
         super({
+            moduleCtx,
             hasMarkers: true,
             pickModes: [
                 SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
@@ -162,6 +164,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             xAxis,
             yAxis,
             marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
+            ctx: { callbackCache },
         } = this;
 
         if (!processedData || !dataModel || !xAxis || !yAxis) {
@@ -219,7 +222,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
                 let labelText = '';
                 if (label.formatter) {
-                    labelText = label.formatter({ value: yDatum, seriesId });
+                    labelText = callbackCache.call(label.formatter, { value: yDatum, seriesId });
                 } else if (typeof yDatum === 'number' && isFinite(yDatum)) {
                     labelText = yDatum.toFixed(2);
                 } else if (yDatum) {
@@ -300,6 +303,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 },
             },
             id: seriesId,
+            ctx: { callbackCache },
         } = this;
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth ?? this.strokeWidth;
@@ -318,7 +322,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
-                format = formatter({
+                format = callbackCache.call(formatter, {
                     datum: datum.datum,
                     xKey,
                     yKey,
@@ -672,7 +676,14 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     private animateFormatter(datum: LineNodeDatum) {
-        const { marker, xKey = '', yKey = '', stroke: lineStroke, id: seriesId } = this;
+        const {
+            marker,
+            xKey = '',
+            yKey = '',
+            stroke: lineStroke,
+            id: seriesId,
+            ctx: { callbackCache },
+        } = this;
         const { size, formatter } = marker;
 
         const fill = marker.fill;
@@ -681,7 +692,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: datum.datum,
                 xKey,
                 yKey,

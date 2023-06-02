@@ -25,6 +25,7 @@ import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
+import { ModuleContext } from '../../util/module';
 
 /**
  * Processed series datum used in node selections,
@@ -292,14 +293,27 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     _declarationOrder: number = -1;
 
-    constructor({
-        useSeriesGroupLayer = true,
-        useLabelLayer = false,
-        pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
-        directionKeys = {} as { [key in ChartAxisDirection]?: string[] },
-        directionNames = {} as { [key in ChartAxisDirection]?: string[] },
-    } = {}) {
+    protected readonly ctx: ModuleContext;
+
+    constructor(opts: {
+        moduleCtx: ModuleContext;
+        useSeriesGroupLayer?: boolean;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
+        directionKeys?: { [key in ChartAxisDirection]?: string[] };
+        directionNames?: { [key in ChartAxisDirection]?: string[] };
+    }) {
         super();
+
+        this.ctx = opts.moduleCtx;
+
+        const {
+            useSeriesGroupLayer = true,
+            useLabelLayer = false,
+            pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
+            directionKeys = {},
+            directionNames = {},
+        } = opts;
 
         const { rootGroup } = this;
 

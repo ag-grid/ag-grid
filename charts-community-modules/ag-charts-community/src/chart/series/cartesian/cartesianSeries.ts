@@ -29,6 +29,7 @@ import { getMarker } from '../../marker/util';
 import { DataModel, ProcessedData } from '../../data/dataModel';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
+import { ModuleContext } from '../../../util/module';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -130,14 +131,15 @@ export abstract class CartesianSeries<
 
     protected constructor(
         opts: Partial<SeriesOpts> & {
+            moduleCtx: ModuleContext;
             pickModes?: SeriesNodePickMode[];
             directionKeys?: { [key in ChartAxisDirection]?: string[] };
             directionNames?: { [key in ChartAxisDirection]?: string[] };
-        } = {}
+        }
     ) {
         super({
+            ...opts,
             useSeriesGroupLayer: true,
-            pickModes: opts.pickModes,
             directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
             directionNames: opts.directionNames ?? DEFAULT_DIRECTION_NAMES,
         });

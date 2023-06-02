@@ -7,8 +7,8 @@ import { ScatterSeries } from '../series/cartesian/scatterSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { TreemapSeries } from '../series/hierarchy/treemapSeries';
 import { ChartType, registerChartSeriesType } from './chartTypes';
+import { ModuleContext, SeriesConstructor } from '../../util/module';
 
-type SeriesConstructor = new () => Series<any>;
 const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
     area: AreaSeries,
     bar: BarSeries,
@@ -38,10 +38,10 @@ export function registerSeries(
     registerChartSeriesType(seriesType, chartType);
 }
 
-export function getSeries(chartType: string): Series<any> {
+export function getSeries(chartType: string, moduleCtx: ModuleContext): Series<any> {
     const seriesConstructor = SERIES_FACTORIES[chartType] ?? BUILT_IN_SERIES_FACTORIES[chartType];
     if (seriesConstructor) {
-        return new seriesConstructor();
+        return new seriesConstructor(moduleCtx);
     }
 
     throw new Error(`AG Charts - unknown series type: ${chartType}`);

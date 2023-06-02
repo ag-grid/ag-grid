@@ -46,8 +46,8 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         return this.scale instanceof LinearScale;
     }
 
-    protected constructor(private readonly moduleCtx: ModuleContext, scale: S) {
-        super(scale);
+    protected constructor(moduleCtx: ModuleContext, scale: S) {
+        super(moduleCtx, scale);
     }
 
     @Validate(POSITION)

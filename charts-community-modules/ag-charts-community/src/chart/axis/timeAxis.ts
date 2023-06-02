@@ -77,7 +77,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     }
 
     formatDatum(datum: Date): string {
-        return this.datumFormatter(datum);
+        return this.moduleCtx.callbackCache.call(this.datumFormatter, datum);
     }
 
     calculatePadding(_min: number, _max: number) {
