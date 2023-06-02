@@ -250,6 +250,7 @@ function migrateV30(model: ChartModel) {
     // Actual v30 changes.
     model = jsonDelete('chartOptions.*.series.flipXY', model);
     model = jsonAdd('chartOptions.common.legend.enabled', true, model);
+    model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
 
     return model;
 }
