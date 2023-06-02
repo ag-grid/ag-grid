@@ -145,7 +145,7 @@ export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> extends Se
     readonly type = 'nodeDoubleClick';
 }
 
-class SeriesItemHighlightStyle {
+export class SeriesItemHighlightStyle {
     @Validate(OPT_COLOR_STRING)
     fill?: string = 'yellow';
 

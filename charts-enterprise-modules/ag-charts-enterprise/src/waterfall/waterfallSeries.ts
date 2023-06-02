@@ -28,9 +28,14 @@ const {
     OPT_FUNCTION,
     OPT_COLOR_STRING,
     OPT_LINE_DASH,
+    createLabelData,
+    getRectConfig,
+    updateRect,
+    checkCrisp,
+    updateLabel,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
-const { sanitizeHtml, isNumber, checkDatum } = _Util;
+const { sanitizeHtml, checkDatum } = _Util;
 
 const WATERFALL_LABEL_PLACEMENTS: AgWaterfallSeriesLabelPlacement[] = ['start', 'end', 'inside'];
 const OPT_WATERFALL_LABEL_PLACEMENT: _ModuleSupport.ValidatePredicate = (v: any, ctx) =>
@@ -49,8 +54,8 @@ interface WaterfallNodeDatum extends _ModuleSupport.CartesianSeriesNodeDatum, Re
     readonly width: number;
     readonly height: number;
     readonly label: WaterfallNodeLabelDatum;
-    readonly fill?: string;
-    readonly stroke?: string;
+    readonly fill: string;
+    readonly stroke: string;
     readonly strokeWidth: number;
 }
 
@@ -121,12 +126,6 @@ class WaterfallSeriesItem {
 }
 
 type SeriesItemType = 'positive' | 'negative';
-type Bounds = {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-};
 
 export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
     _ModuleSupport.SeriesNodeDataContext<any>,
@@ -343,6 +342,9 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
             const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
+            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+            const { formatter, placement, padding } = this.label;
+
             const nodeDatum: WaterfallNodeDatum = {
                 index: dataIndex,
                 series: this,
@@ -360,7 +362,15 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 fill: fill,
                 stroke: stroke,
                 strokeWidth,
-                label: this.createLabelData(isPositive, rawValue, rect),
+                label: createLabelData({
+                    value: rawValue,
+                    rect,
+                    placement,
+                    seriesId: this.id,
+                    padding,
+                    formatter,
+                    barAlongX,
+                }),
             };
 
             contexts[contextIndex].nodeData.push(nodeDatum);
@@ -368,51 +378,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         });
 
         return contexts;
-    }
-
-    private createLabelData(isPositive: boolean, rawValue: any, rect: Bounds): WaterfallNodeLabelDatum {
-        const { formatter, placement, padding } = this.label;
-        let labelText: string;
-        if (formatter) {
-            labelText = formatter({
-                value: isNumber(rawValue) ? rawValue : undefined,
-                seriesId: this.id,
-            });
-        } else {
-            labelText = isNumber(rawValue) ? rawValue.toFixed(2) : '';
-        }
-
-        const labelX = rect.x + rect.width / 2;
-        let labelY = rect.y + rect.height / 2;
-
-        const labelTextAlign: CanvasTextAlign = 'center';
-        let labelTextBaseline: CanvasTextBaseline;
-
-        switch (placement) {
-            case 'start': {
-                labelY = isPositive ? rect.y + rect.height + padding : rect.y - padding;
-                labelTextBaseline = isPositive ? 'top' : 'bottom';
-                break;
-            }
-            case 'end': {
-                labelY = isPositive ? rect.y - padding : rect.y + rect.height + padding;
-                labelTextBaseline = isPositive ? 'bottom' : 'top';
-                break;
-            }
-            case 'inside':
-            default: {
-                labelTextBaseline = 'middle';
-                break;
-            }
-        }
-
-        return {
-            text: labelText,
-            textAlign: labelTextAlign,
-            textBaseline: labelTextBaseline,
-            x: labelX,
-            y: labelY,
-        };
     }
 
     protected nodeFactory() {
@@ -436,74 +401,50 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>;
         isHighlight: boolean;
     }) {
-        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const { datumSelection, isHighlight } = opts;
         const {
             seriesItemEnabled,
             shadow,
             formatter,
-            xKey = '',
-            highlightStyle: {
-                item: {
-                    fill: highlightedFill,
-                    fillOpacity: highlightFillOpacity,
-                    stroke: highlightedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth,
-                },
-            },
+            highlightStyle: { item: itemHighlightStyle },
             id: seriesId,
         } = this;
 
-        const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
-        const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed;
+        const crisp = checkCrisp(this.xAxis?.visibleRange);
+
         const positivesActive = !!seriesItemEnabled.get('positive');
         const negativesActive = !!seriesItemEnabled.get('negative');
 
+        const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
+
         datumSelection.each((rect, datum) => {
             const isPositive = datum.itemId === 'positive';
+            const { fillOpacity, strokeOpacity, strokeWidth, lineDash, lineDashOffset } =
+                this.getItemConfig(isPositive);
+            const style: _ModuleSupport.RectConfig = {
+                fill: datum.fill,
+                stroke: datum.stroke,
+                fillOpacity,
+                strokeOpacity,
+                lineDash,
+                lineDashOffset,
+                fillShadow: shadow,
+                strokeWidth: this.getStrokeWidth(strokeWidth, datum),
+            };
             const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
+            const visible = categoryAlongX ? datum.width > 0 : datum.height > 0 && isActive;
 
-            const {
-                fillOpacity: itemFillOpacity,
-                strokeOpacity: itemStrokeOpacity,
-                strokeWidth: itemStrokeWidth,
-                lineDash: itemLineDash,
-                lineDashOffset: itemLineDashOffset,
-            } = this.getItemConfig(isPositive);
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : this.getStrokeWidth(itemStrokeWidth, datum);
-            const fillOpacity = isDatumHighlighted ? highlightFillOpacity ?? itemFillOpacity : itemFillOpacity;
-
-            let format: AgWaterfallSeriesFormat | undefined = undefined;
-            if (formatter) {
-                format = formatter({
-                    datum: datum.datum,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    highlighted: isDatumHighlighted,
-                    xKey,
-                    yKey: datum.yKey,
-                    itemId: datum.itemId,
-                    seriesId,
-                });
-            }
-            rect.crisp = crisp;
-            rect.fill = format?.fill ?? fill;
-            rect.stroke = format?.stroke ?? stroke;
-            rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            rect.fillOpacity = fillOpacity;
-            rect.strokeOpacity = itemStrokeOpacity;
-            rect.lineDash = itemLineDash;
-            rect.lineDashOffset = itemLineDashOffset;
-            rect.fillShadow = shadow;
-            // Prevent stroke from rendering for zero height columns and zero width bars.
-            rect.visible =
-                this.getCategoryDirection() === ChartAxisDirection.X ? datum.width > 0 : datum.height > 0 && isActive;
+            const config = getRectConfig({
+                datum,
+                isHighlighted: isHighlight,
+                style,
+                highlightStyle: itemHighlightStyle,
+                formatter,
+                seriesId,
+            });
+            config.crisp = crisp;
+            config.visible = visible;
+            updateRect({ rect, config });
         });
     }
 
@@ -520,34 +461,18 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
     protected async updateLabelNodes(opts: { labelSelection: _Scene.Selection<_Scene.Text, any> }) {
         const { labelSelection } = opts;
-        const {
-            seriesItemEnabled,
-            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
-        } = this;
+        const { seriesItemEnabled } = this;
 
         const positivesActive = !!seriesItemEnabled.get('positive');
         const negativesActive = !!seriesItemEnabled.get('negative');
 
         labelSelection.each((text, datum) => {
-            const label = datum.label;
+            const labelDatum = datum.label;
 
             const isPositive = datum.itemId === 'positive';
             const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
-            if (label && labelEnabled) {
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-                text.text = label.text;
-                text.x = label.x;
-                text.y = label.y;
-                text.fill = color;
-                text.visible = isActive;
-            } else {
-                text.visible = false;
-            }
+
+            updateLabel({ labelNode: text, labelDatum, config: this.label, visible: isActive });
         });
     }
 

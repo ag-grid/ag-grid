@@ -21,7 +21,6 @@ import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Logger } from '../../../util/logger';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -56,10 +55,22 @@ import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 import * as easing from '../../../motion/easing';
+import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
+
+interface BarNodeLabelDatum extends Readonly<Point> {
+    readonly text: string;
+    readonly fontStyle?: FontStyle;
+    readonly fontWeight?: FontWeight;
+    readonly fontSize: number;
+    readonly fontFamily: string;
+    readonly textAlign: CanvasTextAlign;
+    readonly textBaseline: CanvasTextBaseline;
+    readonly fill: string;
+}
 
 interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
@@ -71,16 +82,7 @@ interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly stroke?: string;
     readonly colorIndex: number;
     readonly strokeWidth: number;
-    readonly label?: Readonly<Point> & {
-        readonly text: string;
-        readonly fontStyle?: FontStyle;
-        readonly fontWeight?: FontWeight;
-        readonly fontSize: number;
-        readonly fontFamily: string;
-        readonly textAlign: CanvasTextAlign;
-        readonly textBaseline: CanvasTextBaseline;
-        readonly fill: string;
-    };
+    readonly label?: BarNodeLabelDatum;
 }
 
 enum BarSeriesNodeTag {
@@ -441,16 +443,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             processedData,
         } = this;
 
-        const {
-            fontStyle: labelFontStyle,
-            fontWeight: labelFontWeight,
-            fontSize: labelFontSize,
-            fontFamily: labelFontFamily,
-            color: labelColor,
-            formatter: labelFormatter,
-            placement: labelPlacement,
-        } = label;
-
         let xBandWidth = xScale.bandwidth;
 
         if (xScale instanceof ContinuousScale) {
@@ -524,50 +516,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     const y = yScale.convert(prevY + currY, { strict: false });
                     const bottomY = yScale.convert(prevY, { strict: false });
 
-                    let labelText: string;
-                    if (labelFormatter) {
-                        labelText = labelFormatter({
-                            value: isNumber(yValue) ? yValue : undefined,
-                            seriesId,
-                        });
-                    } else {
-                        labelText = isNumber(yValue) ? yValue.toFixed(2) : '';
-                    }
-
-                    let labelX: number;
-                    let labelY: number;
-
                     const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
-                    if (barAlongX) {
-                        labelY = barX + barWidth / 2;
-                        if (labelPlacement === 'inside') {
-                            labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
-                        } else {
-                            labelX = y + (yValue >= 0 ? 1 : -1) * 4;
-                        }
-                    } else {
-                        labelX = barX + barWidth / 2;
-                        if (labelPlacement === 'inside') {
-                            labelY = y + ((yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y)) / 2;
-                        } else {
-                            labelY = y + (yValue >= 0 ? -3 : 4);
-                        }
-                    }
-
-                    let labelTextAlign: CanvasTextAlign;
-                    let labelTextBaseline: CanvasTextBaseline;
-
-                    if (labelPlacement === 'inside') {
-                        labelTextAlign = 'center';
-                        labelTextBaseline = 'middle';
-                    } else {
-                        const xAlign = yValue >= 0 ? 'start' : 'end';
-                        labelTextAlign = barAlongX ? xAlign : 'center';
-                        const yBaseline = yValue >= 0 ? 'bottom' : 'top';
-                        labelTextBaseline = barAlongX ? 'middle' : yBaseline;
-                    }
-
-                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const rect = {
                         x: barAlongX ? Math.min(y, bottomY) : barX,
                         y: barAlongX ? barX : Math.min(y, bottomY),
@@ -578,6 +527,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         x: rect.x + rect.width / 2,
                         y: rect.y + rect.height / 2,
                     };
+
+                    const {
+                        fontStyle: labelFontStyle,
+                        fontWeight: labelFontWeight,
+                        fontSize: labelFontSize,
+                        fontFamily: labelFontFamily,
+                        color: labelColor,
+                        formatter,
+                        placement,
+                    } = label;
+
+                    const {
+                        text: labelText,
+                        textAlign: labelTextAlign,
+                        textBaseline: labelTextBaseline,
+                        x: labelX,
+                        y: labelY,
+                    } = createLabelData({ value: yValue, rect, formatter, placement, seriesId, barAlongX });
+
+                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const nodeData: BarNodeDatum = {
                         index: dataIndex,
                         series: this,
@@ -640,71 +609,49 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     protected async updateDatumNodes(opts: { datumSelection: Selection<Rect, BarNodeDatum>; isHighlight: boolean }) {
-        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const { datumSelection, isHighlight } = opts;
         const {
             fills,
             strokes,
-            fillOpacity: seriesFillOpacity,
+            fillOpacity,
             strokeOpacity,
+            lineDash,
+            lineDashOffset,
             shadow,
             formatter,
-            xKey = '',
-            highlightStyle: {
-                item: {
-                    fill: highlightedFill,
-                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
-                    stroke: highlightedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth,
-                },
-            },
             id: seriesId,
+            highlightStyle: { item: itemHighlightStyle },
         } = this;
 
-        const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
-        const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed;
+        const crisp = checkCrisp(this.xAxis?.visibleRange);
+        const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
+
         datumSelection.each((rect, datum) => {
             const { colorIndex } = datum;
-            const fill =
-                isDatumHighlighted && highlightedFill !== undefined
-                    ? highlightedFill
-                    : fills[colorIndex % fills.length];
-            const stroke =
-                isDatumHighlighted && highlightedStroke !== undefined
-                    ? highlightedStroke
-                    : strokes[colorIndex % fills.length];
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : this.getStrokeWidth(this.strokeWidth, datum);
-            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
-            const stackGroup = this.getStackGroup(datum.yKey);
+            const style: RectConfig = {
+                fill: fills[colorIndex % fills.length],
+                stroke: strokes[colorIndex % fills.length],
+                fillOpacity,
+                strokeOpacity,
+                lineDash,
+                lineDashOffset,
+                fillShadow: shadow,
+                strokeWidth: this.getStrokeWidth(this.strokeWidth, datum),
+            };
+            const visible = categoryAlongX ? datum.width > 0 : datum.height > 0;
 
-            let format: AgBarSeriesFormat | undefined = undefined;
-            if (formatter) {
-                format = formatter({
-                    datum: datum.datum,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    highlighted: isDatumHighlighted,
-                    xKey,
-                    yKey: datum.yKey,
-                    seriesId,
-                    stackGroup,
-                });
-            }
-            rect.crisp = crisp;
-            rect.fill = format?.fill ?? fill;
-            rect.stroke = format?.stroke ?? stroke;
-            rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            rect.fillOpacity = fillOpacity;
-            rect.strokeOpacity = strokeOpacity;
-            rect.lineDash = this.lineDash;
-            rect.lineDashOffset = this.lineDashOffset;
-            rect.fillShadow = shadow;
-            // Prevent stroke from rendering for zero height columns and zero width bars.
-            rect.visible = this.getCategoryDirection() === ChartAxisDirection.X ? datum.width > 0 : datum.height > 0;
+            const config = getRectConfig({
+                datum,
+                isHighlighted: isHighlight,
+                style,
+                highlightStyle: itemHighlightStyle,
+                formatter,
+                seriesId,
+                stackGroup: this.getStackGroup(datum.yKey),
+            });
+            config.crisp = crisp;
+            config.visible = visible;
+            updateRect({ rect, config });
         });
     }
 
@@ -724,28 +671,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected async updateLabelNodes(opts: { labelSelection: Selection<Text, BarNodeDatum> }) {
         const { labelSelection } = opts;
-        const {
-            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
-        } = this;
 
         labelSelection.each((text, datum) => {
-            const label = datum.label;
+            const labelDatum = datum.label;
 
-            if (label && labelEnabled) {
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-                text.text = label.text;
-                text.x = label.x;
-                text.y = label.y;
-                text.fill = color;
-                text.visible = true;
-            } else {
-                text.visible = false;
-            }
+            updateLabel({ labelNode: text, labelDatum, config: this.label, visible: true });
         });
     }
 

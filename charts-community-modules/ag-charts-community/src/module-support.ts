@@ -17,6 +17,7 @@ export * from './chart/interaction/zoomManager';
 export * from './chart/layers';
 export * from './chart/series/series';
 export * from './chart/series/cartesian/cartesianSeries';
+export * from './chart/series/cartesian/barUtil';
 export * from './chart/chartAxis';
 export * from './chart/legendDatum';
 export * as Motion from './motion/easing';
