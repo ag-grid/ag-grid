@@ -187,7 +187,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             tickScale,
             range: requestedRange,
             title,
-            title: { formatter = (p: AgAxisCaptionFormatterParams) => p.value } = {},
+            title: { formatter = (p: AgAxisCaptionFormatterParams) => p.defaultValue } = {},
             _titleCaption,
         } = this;
 
