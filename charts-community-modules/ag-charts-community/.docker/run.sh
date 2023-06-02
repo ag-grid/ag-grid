@@ -51,6 +51,13 @@ if [ -t 0 ] ; then
     DOCKER_OPTS="${DOCKER_OPTS} -it"
 fi
 
+# Function to handle SIGINT
+cleanup_docker_test() {
+    echo "Terminating Docker container..."
+    docker stop ${MODULE_NAME}-test
+    exit
+}
+
 case $1 in
     init)
         # More FS write access is needed during init, as lerna temporarily modifies package.json.
@@ -67,6 +74,8 @@ case $1 in
     ;;
 
     run)
+        trap 'cleanup_docker_test' SIGINT
+
         shift 1
         # Local repo is mounted read-only, except the module being tested (allows snapshot writing).
         docker run ${DOCKER_OPTS} \
@@ -78,6 +87,7 @@ case $1 in
             ${EXTRA_VOL_MOUNTS} \
             -w ${DOCKER_MODULE_PATH} \
             --name ${MODULE_NAME}-test \
+            --init \
             charts:latest \
             $@
     ;;
