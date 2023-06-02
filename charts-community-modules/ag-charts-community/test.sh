@@ -3,6 +3,7 @@
 set -u
 
 SCRIPT_DIR=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+PROJECTS=""
 
 if [[ $(basename $(pwd)) == "ag-charts-enterprise" ]] ; then
   FONTDIR=$PWD/src/test
@@ -16,7 +17,7 @@ function testDev {
     export FONTCONFIG_PATH=$FONTDIR
     export FONTCONFIG_FILE=$FONTDIR/fonts.conf
     export PANGOCAIRO_BACKEND=fontconfig
-    npx jest ${1:-}
+    npx jest ${PROJECTS} ${1:-}
 }
 
 function testCI {
@@ -27,9 +28,9 @@ function testCI {
     npx jest --runInBand
 }
 
-if [[ "$OSTYPE" != "linux-gnu"* ]] ; then 
-    echo "Linux is the only supported execution environment for Charts e2e tests."
-    exit 0
+if [[ "$OSTYPE" != "linux-gnu"* ]] ; then
+    echo -e "\033[41m\033[30mLinux is the only supported execution environment for Charts e2e tests.\033[0m"
+    PROJECTS="--selectProjects unit"
 fi
 
 if [[ "${TEAMCITY_PROJECT_NAME:-}" == "" ]] ; then

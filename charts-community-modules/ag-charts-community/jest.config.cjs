@@ -29,7 +29,7 @@ const commonConfig = {
 };
 
 module.exports = {
-    globalSetup: './jest.setup.js',
+    globalSetup: './jest.setup.cjs',
     projects: [
         {
             displayName: 'unit',
