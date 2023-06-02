@@ -170,12 +170,14 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         });
 
-        this.selectionService.setNodesSelected({
-            newValue: false,
-            clearSelection: false,
-            nodes: nodesToDeselect,
-            source: 'rowDataChanged',
-        });
+        if (nodesToDeselect.length) {
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                clearSelection: false,
+                nodes: nodesToDeselect,
+                source: 'rowDataChanged',
+            });
+        }
     }
 
     /**
