@@ -1,5 +1,5 @@
 import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class AreaChartProxy extends CartesianChartProxy {
@@ -8,7 +8,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
@@ -29,7 +29,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateChartParams) {
+    public getSeries(params: UpdateParams) {
         const series: AgAreaSeriesOptions[] = params.fields.map(f => (
             {
                 type: this.standaloneChartType,

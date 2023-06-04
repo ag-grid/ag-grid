@@ -40,7 +40,6 @@ export interface ChartModelParams {
 export class ChartDataModel extends BeanStub {
 
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
-    public static SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
 
     @Autowired('rangeService') private readonly rangeService: IRangeService;
 
@@ -51,9 +50,9 @@ export class ChartDataModel extends BeanStub {
     // this is used to associate chart ranges with charts
     public readonly chartId: string;
 
-    public readonly suppressChartRanges: boolean;
-    public readonly aggFunc?: string | IAggFunc;
-    public readonly pivotChart: boolean;
+    public suppressChartRanges: boolean;
+    public aggFunc?: string | IAggFunc;
+    public pivotChart: boolean;
 
     public chartType: ChartType;
     public chartThemeName: string;
@@ -70,12 +69,12 @@ export class ChartDataModel extends BeanStub {
     private chartColumnService: ChartColumnService;
     private datasource: ChartDatasource;
 
-    private referenceCellRange: CellRange;
-    private suppliedCellRange: CellRange;
+    public referenceCellRange: CellRange;
+    public suppliedCellRange: CellRange;
+
+    public crossFiltering = false;
 
     private grouping = false;
-
-    private crossFiltering = false;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -98,6 +97,36 @@ export class ChartDataModel extends BeanStub {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
+        this.updateCellRanges();
+    }
+
+    public updateModel(params: ChartModelParams): void {
+        const {
+            cellRange,
+            chartType,
+            pivotChart,
+            chartThemeName,
+            aggFunc,
+            suppressChartRanges,
+            unlinkChart,
+            crossFiltering
+        } = params;
+
+        if (cellRange !== this.suppliedCellRange) {
+            this.dimensionCellRange = undefined;
+            this.valueCellRange = undefined;
+        }
+
+        this.chartType = chartType;
+        this.pivotChart = pivotChart;
+        this.chartThemeName = chartThemeName;
+        this.aggFunc = aggFunc;
+        this.referenceCellRange = cellRange;
+        this.suppliedCellRange = cellRange;
+        this.suppressChartRanges = suppressChartRanges;
+        this.unlinked = !!unlinkChart;
+        this.crossFiltering = !!crossFiltering;
+
         this.updateCellRanges();
     }
 

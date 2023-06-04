@@ -40,7 +40,7 @@ export interface FieldDefinition {
     displayName: string | null;
 }
 
-export interface UpdateChartParams {
+export interface UpdateParams {
     data: any[];
     grouping: boolean;
     category: {
@@ -52,6 +52,7 @@ export interface UpdateChartParams {
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext,
     seriesChartTypes: SeriesChartType[];
+    updatedOverrides?: AgChartThemeOverrides;
 }
 
 export abstract class ChartProxy {
@@ -81,7 +82,7 @@ export abstract class ChartProxy {
 
     public abstract crossFilteringReset(): void;
 
-    public abstract update(params: UpdateChartParams): void;
+    public abstract update(params: UpdateParams): void;
 
     public getChart() {
         return deproxy(this.chart);
@@ -152,7 +153,7 @@ export abstract class ChartProxy {
         return data;
     }
 
-    protected getCommonChartOptions() {
+    protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides) {
         // Only apply active overrides if chart is initialised.
         const existingOptions: any = this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {};
         const formattingPanelOverrides = this.chart != null ?
@@ -163,7 +164,7 @@ export abstract class ChartProxy {
             ...existingOptions,
             theme: {
                 ...createAgChartTheme(this.chartProxyParams, this),
-                ...formattingPanelOverrides,
+                ...(updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides),
             },
             container: this.chartProxyParams.parentElement,
             mode: 'integrated',
@@ -176,9 +177,7 @@ export abstract class ChartProxy {
         }
 
         const inUseTheme = this.chart?.getOptions().theme as AgChartTheme;
-        const overrides = inUseTheme?.overrides ?? {};
-        
-        return overrides;
+        return inUseTheme?.overrides ?? {};
     }
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {

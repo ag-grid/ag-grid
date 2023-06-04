@@ -640,6 +640,19 @@
                 "include": []
             }
         },
+        "updateChart": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "CellRangeParams",
+                    "CreateRangeChartParams",
+                    "RowPinnedType",
+                    "ChartType",
+                    "SeriesChartType",
+                    "ChartParamsCellRange"
+                ],
+                "include": []
+            }
+        },
         "getChartRef": {},
         "getChartModels": {
             "more": {

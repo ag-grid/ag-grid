@@ -103,32 +103,8 @@ const gridOptions: GridOptions = {
   },
 }
 
-function createChart(type: ChartType) {
-  var oldChartRef = chartRef;
-  var params: CreateRangeChartParams = {
-    cellRange: {
-      columns: [
-        'product',
-        'current',
-        'previous',
-        'pl1',
-        'pl2',
-        'gainDx',
-        'sxPx',
-      ]
-    },
-    chartContainer: document.querySelector('#myChart') as any,
-    chartType: type,
-    suppressChartRanges: true,
-    aggFunc: 'sum',
-  }
-
-  chartRef = gridOptions.api!.createRangeChart(params)
-
-  // destroy existing chart
-  if (oldChartRef) {
-    oldChartRef.destroyChart()
-  }
+function updateChart(chartType: ChartType) {
+  gridOptions.api!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
 function numberCellFormatter(params: ValueFormatterParams) {

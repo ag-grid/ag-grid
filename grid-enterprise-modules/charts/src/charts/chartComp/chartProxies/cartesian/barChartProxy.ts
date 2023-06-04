@@ -1,6 +1,6 @@
 import { _ } from "@ag-grid-community/core";
 import { AgBarSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { hexToRGBA } from "../../utils/color";
@@ -11,7 +11,7 @@ export class BarChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const isBar = this.standaloneChartType === 'bar';
         const axes: AgCartesianAxisOptions[] = [
             {
@@ -32,7 +32,7 @@ export class BarChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateChartParams): AgBarSeriesOptions[] {
+    public getSeries(params: UpdateParams): AgBarSeriesOptions[] {
         const groupedCharts = ['groupedColumn', 'groupedBar'];
         const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
 

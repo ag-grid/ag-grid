@@ -19,7 +19,8 @@ import {
     OpenChartToolPanelParams,
     Optional,
     PreDestroy,
-    SeriesChartType
+    SeriesChartType,
+    UpdateChartParams
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
@@ -48,7 +49,19 @@ export class ChartService extends BeanStub implements IChartService {
         lastSelectedChartId: '',
     };
 
-    public updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides): void {
+    public updateChart(params: UpdateChartParams): void {
+        if (this.activeChartComps.size === 0) {
+            console.warn(`AG Grid - No active charts to update.`);
+            return;
+        }
+
+        const chartComp = [...this.activeChartComps].find(chartComp => chartComp.getChartId() === params.chartId);
+        if (!chartComp) {
+            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            return;
+        }
+
+        chartComp.update(params);
     }
 
     public getChartModels(): ChartModel[] {
@@ -198,9 +211,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
-            : undefined;
+        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -260,9 +271,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
-            : undefined;
+        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -332,7 +341,7 @@ export class ChartService extends BeanStub implements IChartService {
             // if container exists, means developer initiated chart create via API, so place in provided container
             container.appendChild(chartComp.getGui());
 
-            // if the chart container was placed outside of an element that
+            // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             const theme = this.environment.getTheme();
@@ -341,7 +350,7 @@ export class ChartService extends BeanStub implements IChartService {
                 container.classList.add(theme.theme!);
             }
         } else if (createChartContainerFunc) {
-            // otherwise, user created chart via grid UI, check if developer provides containers (eg if the application
+            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
             // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         } else {

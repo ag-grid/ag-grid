@@ -18,6 +18,7 @@ import {
     RefSelector,
     SeriesChartType,
     WithoutGridCommon,
+    UpdateChartParams,
 } from "@ag-grid-community/core";
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
@@ -335,31 +336,25 @@ export class GridChartComp extends Component {
         }
     }
 
-    private update(): void {
-        if (this.shouldRecreateChart()) {
-            this.createChart();
+    public update(params?: UpdateChartParams): void {
+        // update chart model for api.updateChart()
+        if (params?.chartId) {
+            const validUpdate = this.chartController.update(params);
+            if (!validUpdate) {
+                return; // warning already logged!
+            }
         }
 
-        this.updateChart();
+        const chartTypeChanged = this.chartTypeChanged(params);
+
+        // recreate chart if chart type has changed
+        if (chartTypeChanged) this.createChart();
+
+        // update chart options if chart type hasn't changed or if overrides are supplied
+        this.updateChart(params?.chartThemeOverrides);
     }
 
-    private shouldRecreateChart(): boolean {
-        return this.chartType !== this.chartController.getChartType() || this.chartThemeName !== this.chartController.getChartThemeName();
-    }
-
-    public getCurrentChartType(): ChartType {
-        return this.chartType;
-    }
-
-    public getChartModel(): ChartModel {
-        return this.chartController.getChartModel();
-    }
-
-    public getChartImageDataURL(fileFormat?: string): string {
-        return this.chartProxy.getChartImageDataURL(fileFormat);
-    }
-
-    public updateChart(): void {
+    private updateChart(updatedOverrides?: AgChartThemeOverrides): void {
         const { chartProxy } = this;
 
         const selectedCols = this.chartController.getSelectedValueColState();
@@ -371,7 +366,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        let chartUpdateParams = this.chartController.getChartUpdateParams();
+        let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
 
         this.chartProxy.getChart().waitForUpdate().then(() => {
@@ -379,6 +374,19 @@ export class GridChartComp extends Component {
         });
 
         this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+    }
+
+    private chartTypeChanged(updateParams?: UpdateChartParams): boolean {
+        const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
+        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== updatedChartType);
+    }
+
+    public getChartModel(): ChartModel {
+        return this.chartController.getChartModel();
+    }
+
+    public getChartImageDataURL(fileFormat?: string): string {
+        return this.chartProxy.getChartImageDataURL(fileFormat);
     }
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
@@ -424,10 +432,6 @@ export class GridChartComp extends Component {
 
     public getChartId(): string {
         return this.chartController.getChartId();
-    }
-
-    public getChartController(): ChartController {
-        return this.chartController;
     }
 
     public getUnderlyingChart() {

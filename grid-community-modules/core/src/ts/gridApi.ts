@@ -64,7 +64,7 @@ import {
     CreateRangeChartParams,
     GetChartImageDataUrlParams,
     IChartService,
-    OpenChartToolPanelParams,
+    OpenChartToolPanelParams, UpdateChartParams, UpdateRangeChartParams,
 } from './interfaces/IChartService';
 import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
@@ -1636,6 +1636,13 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Used to programmatically create pivot charts from a grid. */
+    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
+            return this.chartService.createPivotChart(params);
+        }
+    }
+
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
@@ -1643,17 +1650,17 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Used to programmatically update a chart. */
+    public updateChart(params: UpdateChartParams): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+            this.chartService.updateChart(params);
+        }
+    }
+
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
             return this.chartService.restoreChart(chartModel, chartContainer);
-        }
-    }
-
-    /** Used to programmatically create pivot charts from a grid. */
-    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
-            return this.chartService.createPivotChart(params);
         }
     }
 
