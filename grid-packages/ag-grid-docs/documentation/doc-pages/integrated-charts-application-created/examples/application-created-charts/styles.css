@@ -8,7 +8,6 @@
 
 .my-grid {
     flex-grow: 1;
-    height: 5px;
     border: 1px solid lightslategrey;
 }
 
@@ -20,7 +19,8 @@
     background: rgb(34, 38, 41);
 }
 
-.ag-theme-alpine {
-    --ag-grid-size: 3px;
+.ag-theme-alpine-dark {
+    --ag-grid-size: 0.49em;
     --ag-list-item-height: 20px;
+    --ag-font-size: 10px;
 }

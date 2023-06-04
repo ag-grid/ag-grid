@@ -3,8 +3,8 @@ import { AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } fr
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [
-  { field: 'product', chartDataType: 'category' },
-  { field: 'book', chartDataType: 'category' },
+  { field: 'product', chartDataType: 'category', minWidth: 90 },
+  { field: 'book', chartDataType: 'category', minWidth: 90 },
 
   { field: 'current', type: 'measure' },
   { field: 'previous', type: 'measure' },
@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
 
   { field: 'trade', type: 'measure' },
   { field: 'submitterID', type: 'measure' },
-  { field: 'submitterDealID', type: 'measure', minWidth: 170 },
+  { field: 'submitterDealID', type: 'measure' },
 
   { field: 'portfolio' },
   { field: 'dealType' },
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
     editable: true,
     sortable: true,
     flex: 1,
-    minWidth: 150,
+    minWidth: 115,
     filter: true,
     resizable: true,
   },
