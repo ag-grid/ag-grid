@@ -228,6 +228,7 @@ export class RowCtrl extends BeanStub {
     private initialiseRowComp(gui: RowGui): void {
         const gos = this.gridOptionsService;
 
+        this.listenOnDomOrder(gui);
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
@@ -553,6 +554,17 @@ export class RowCtrl extends BeanStub {
         }
 
         return REMOVE_CELL;
+    }
+
+    private listenOnDomOrder(gui: RowGui): void {
+        const listener = () => {
+            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
+            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+        };
+
+        this.addManagedPropertyListener('domLayout', listener);
+        listener();
     }
 
     private setAnimateFlags(animateIn: boolean): void {
