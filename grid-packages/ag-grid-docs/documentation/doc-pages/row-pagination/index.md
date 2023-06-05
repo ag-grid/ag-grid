@@ -92,7 +92,7 @@ In the example below, note the following:
 - Expanding a group will push rows to the next page to limit the total number of rows to 10.
 
 <note>
-When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [Suppressing Sticky Groups](../grouping/#suppressing-sticky-groups).
+When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](../grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
 </note>
 
 <grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>

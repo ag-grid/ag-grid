@@ -41,12 +41,6 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 
 <grid-example title='Default Row Grouping' name='default-row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Suppressing Sticky Groups
-
-By default the group nodes stick to the top of the Grid, to disable this behaviour, set the `suppressGroupRowsSticky` property to true. This behaviour applies to all row group levels.
-
-<grid-example title='Suppressing Sticky Groups' name='suppress-group-row-sticky' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
-
 ## Row Grouping Customisations
 
 The previous example demonstrated the [Default Row Grouping](../grouping/#example-default-row-grouping) behavior, 
