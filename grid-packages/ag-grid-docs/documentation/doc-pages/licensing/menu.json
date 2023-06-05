@@ -165,11 +165,6 @@
             "showInCollapsed": true
           },
           {
-            "title": "Cell Data Types",
-            "url": "/cell-data-types/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Updating Definitions",
             "box-title": "State",
             "url": "/column-updating-definitions/",
@@ -203,6 +198,11 @@
             "title": "Column Moving",
             "box-title": "Moving",
             "url": "/column-moving/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Cell Data Types",
+            "url": "/cell-data-types/",
             "showInCollapsed": true
           },
           {

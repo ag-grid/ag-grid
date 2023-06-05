@@ -16,6 +16,10 @@ colDef.valueFormatter = params => {
 }
 ```
 
+<note>
+If using [Cell Data Types](../cell-data-types/), value formatters are set by default to handle the display of each of the different data types.
+</note>
+
 ## Value Formatter vs Cell Renderer
 
 

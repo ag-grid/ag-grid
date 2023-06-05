@@ -1,5 +1,3 @@
-import { parseDateTimeFromString, serialiseDate } from "../utils/date";
-import { toStringOrNull } from "../utils/generic";
 import { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from "./colDef";
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
@@ -138,51 +136,3 @@ export type CoreDataTypeDefinition<TData = any> =
     | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'>
     | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'>
     | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>;
-
-function defaultDateFormatMatcher(value: string): boolean {
-    return !!value.match('\\d{4}-\\d{2}-\\d{2}')
-}
-
-export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
-    number: {
-        baseDataType: 'number',
-        valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? null : Number(params.newValue),
-        valueFormatter: (params: ValueFormatterLiteParams<any, number>) => params.value == null ? '' : String(params.value),
-        dataTypeMatcher: (value: any) => typeof value === 'number',
-    },
-    text: {
-        baseDataType: 'text',
-        valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : toStringOrNull(params.newValue),
-        dataTypeMatcher: (value: any) => typeof value === 'string',
-    },
-    boolean: {
-        baseDataType: 'boolean',
-        valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
-        valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
-        dataTypeMatcher: (value: any) => typeof value === 'boolean',
-    },
-    date: {
-        baseDataType: 'date',
-        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-        valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-            if (params.value == null) { return ''; }
-            if (!(params.value instanceof Date)) { return new Date(NaN).toString(); }
-            if (isNaN(params.value.getTime())) { return params.value.toString() }
-            return serialiseDate(params.value, false) ?? '';
-        },
-        dataTypeMatcher: (value: any) => value instanceof Date,
-    },
-    dateString: {
-        baseDataType: 'dateString',
-        dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
-        dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
-        valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
-        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
-        dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
-    },
-    object: {
-        baseDataType: 'object',
-        valueParser: () => null,
-        valueFormatter: (params: ValueFormatterLiteParams<any, any>) => toStringOrNull(params.value) ?? '',
-    }
-}

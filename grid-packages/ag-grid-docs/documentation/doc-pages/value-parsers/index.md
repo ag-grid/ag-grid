@@ -6,7 +6,7 @@ After editing cells in the grid you have the opportunity to parse the value befo
 
 ## Value Parser
 
-For example suppose you are editing a number using the default editor. The result will be a String, however you will probably want to store the result as a number. Use a Value Parser to convert the String to a Number.
+For example suppose you are editing a number using a text editor. The result will be a `string`, however you will probably want to store the result as a `number`. Use a Value Parser to convert the `string` to a `number`.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -27,6 +27,10 @@ const gridOptions = {
 </snippet>
 
 <api-documentation source='column-properties/properties.json' section="editing" names='["valueParser"]' ></api-documentation>
+
+<note>
+If using [Cell Data Types](../cell-data-types/), Value Parsers are set by default to handle the conversion of each of the different data types.
+</note>
 
 The return value of a value parser should be the result of the parse, i.e. return the value you want stored in the data.
 
