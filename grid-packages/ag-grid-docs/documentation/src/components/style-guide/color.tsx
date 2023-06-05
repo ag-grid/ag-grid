@@ -157,10 +157,42 @@ const SemanticColors = () => {
     );
 };
 
+const ColorScale = ({ name }) => {
+    console.log(name);
+
+    return (
+        <div>
+            {Object.keys(designSystemColors).map((color) => {
+                return (
+                    color.includes(`${name}-`) && (
+                        <div key={color} style={{ display: 'flex', alignItems: 'center' }}>
+                            <span style={{ width: '14em' }}>{color}</span>
+                            <span
+                                style={{
+                                    display: 'inline-block',
+                                    width: '4em',
+                                    height: '2em',
+                                    backgroundColor: designSystemColors[color],
+                                }}
+                            ></span>
+                        </div>
+                    )
+                );
+            })}
+        </div>
+    );
+};
+
 export const Color = () => {
     return (
         <div className={styles.colorSubsections}>
             <AbstractColors />
+            <ColorScale name="neutral" />
+            <ColorScale name="primary-blue" />
+            <ColorScale name="brand-blue" />
+            <ColorScale name="background-blue" />
+            <ColorScale name="red" />
+            <ColorScale name="orange" />
             <SemanticColors />
         </div>
     );
