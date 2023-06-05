@@ -26,6 +26,18 @@ import {
     HeatmapModule,
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
+import {
+    RadarLineModule,
+    AgRadarLineSeriesLabelFormatterParams,
+    AgRadarLineSeriesLabelOptions,
+    AgRadarLineSeriesMarker,
+    AgRadarLineSeriesMarkerFormat,
+    AgRadarLineSeriesMarkerFormatter,
+    AgRadarLineSeriesMarkerFormatterParams,
+    AgRadarLineSeriesOptions,
+    AgRadarLineSeriesTooltip,
+    AgRadarLineSeriesTooltipRendererParams,
+} from './radar-line/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 import {
     WaterfallBarModule,
@@ -45,6 +57,7 @@ _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
+_ModuleSupport.registerModule(RadarLineModule);
 _ModuleSupport.registerModule(WaterfallBarModule);
 _ModuleSupport.registerModule(WaterfallColumnModule);
 _ModuleSupport.registerModule(ZoomModule);
@@ -57,6 +70,17 @@ export {
     AgHeatmapSeriesOptions,
     AgHeatmapSeriesTooltip,
     AgHeatmapSeriesTooltipRendererParams,
+};
+export {
+    AgRadarLineSeriesLabelFormatterParams,
+    AgRadarLineSeriesLabelOptions,
+    AgRadarLineSeriesMarker,
+    AgRadarLineSeriesMarkerFormat,
+    AgRadarLineSeriesMarkerFormatter,
+    AgRadarLineSeriesMarkerFormatterParams,
+    AgRadarLineSeriesOptions,
+    AgRadarLineSeriesTooltip,
+    AgRadarLineSeriesTooltipRendererParams,
 };
 export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
 export {
@@ -98,10 +122,18 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-type TAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
-type TAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
+type CartesianAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
+type CartesianAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
 
-export type AgChartOptions = AgCommunityChartOptions<TAddonType, TAddonSeries>;
+type PolarAddonType = 'radar-line';
+type PolarAddonSeries = AgRadarLineSeriesOptions;
+
+export type AgChartOptions = AgCommunityChartOptions<
+    CartesianAddonType,
+    CartesianAddonSeries,
+    PolarAddonType,
+    PolarAddonSeries
+>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();

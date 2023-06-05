@@ -1928,7 +1928,7 @@ export type AgCartesianSeriesOptions<TAddon = never> =
     | AgHistogramSeriesOptions
     | TAddon;
 
-export type AgPolarSeriesOptions = AgPieSeriesOptions;
+export type AgPolarSeriesOptions<TAddon = never> = AgPieSeriesOptions | TAddon;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
@@ -1945,11 +1945,11 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarChartOptions extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
-    type?: 'pie';
+    type?: 'pie' | TAddonType;
     /** Series configurations. */
-    series?: AgPolarSeriesOptions[];
+    series?: AgPolarSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart legend. */
     legend?: AgPolarChartLegendOptions;
 }
@@ -1964,9 +1964,14 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     legend?: AgHierarchyChartLegendOptions;
 }
 
-export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
-    | AgCartesianChartOptions<TAddonType, TAddonSeries>
-    | AgPolarChartOptions
+export type AgChartOptions<
+    CartesianAddonType = never,
+    CartesianAddonSeries = never,
+    PolarAddonType = never,
+    PolarAddonSeries = never
+> =
+    | AgCartesianChartOptions<CartesianAddonType, CartesianAddonSeries>
+    | AgPolarChartOptions<PolarAddonType, PolarAddonSeries>
     | AgHierarchyChartOptions;
 
 export interface AgChartInstance {

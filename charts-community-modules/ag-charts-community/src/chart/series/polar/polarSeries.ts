@@ -25,10 +25,19 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
 
-    constructor(opts: { moduleCtx: ModuleContext; useLabelLayer: boolean }) {
+    constructor({
+        moduleCtx,
+        useLabelLayer = false,
+        pickModes = [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+    }: {
+        moduleCtx: ModuleContext;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
+    }) {
         super({
-            ...opts,
-            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            moduleCtx,
+            useLabelLayer,
+            pickModes,
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],
