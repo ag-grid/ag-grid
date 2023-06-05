@@ -19,6 +19,9 @@ export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, 
     doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
 }
 
+// Vue adds these properties to all objects, so we ignore them when checking for invalid properties
+const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__']
+
 @Bean('gridOptionsValidator')
 export class GridOptionsValidator {
 
@@ -103,7 +106,7 @@ export class GridOptionsValidator {
 
             this.checkProperties(
                 userProperties,
-                validProperties,
+                [...validProperties, ...VUE_FRAMEWORK_PROPS],
                 validProperties,
                 propertyName,
                 'https://www.ag-grid.com/javascript-data-grid/column-properties/'
@@ -164,7 +167,7 @@ export class GridOptionsValidator {
             ...ComponentUtil.EVENT_CALLBACKS
         ];
 
-        const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi', '__ob__', '__v_skip', '__metadata__', ...Object.keys(this.deprecatedProperties)];
+        const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi', ...VUE_FRAMEWORK_PROPS, ...Object.keys(this.deprecatedProperties)];
 
         this.checkProperties(
             userProperties,
