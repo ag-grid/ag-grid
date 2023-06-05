@@ -6,9 +6,9 @@ import { Rect } from '../scene/shape/rect';
 import { Sector } from '../scene/shape/sector';
 import {
     AgAreaSeriesOptions,
-    AgBarSeriesOptions,
     AgCartesianChartOptions,
     AgChartInteractionRange,
+    AgColumnSeriesOptions,
     AgLineSeriesOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -309,7 +309,7 @@ describe('Chart', () => {
     describe(`Column Series Pointer Events`, () => {
         testPointerEvents({
             ...cartesianTestParams,
-            seriesOptions: <AgBarSeriesOptions>{
+            seriesOptions: <AgColumnSeriesOptions>{
                 type: 'column',
                 data: datasets.economy.data,
                 xKey: datasets.economy.categoryKey,

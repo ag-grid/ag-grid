@@ -10,9 +10,6 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
-    }
     if(bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
@@ -48,9 +45,6 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
 
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
-    }
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
     }
     if(bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
