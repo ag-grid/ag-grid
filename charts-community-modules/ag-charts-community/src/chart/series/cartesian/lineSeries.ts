@@ -655,6 +655,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             const { path: linePath } = lineNode;
 
+            lineNode.stroke = this.stroke;
+            lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            lineNode.strokeOpacity = this.strokeOpacity;
+
+            lineNode.lineDash = this.lineDash;
+            lineNode.lineDashOffset = this.lineDashOffset;
+
             linePath.clear({ trackChanges: true });
 
             nodeData.forEach((datum) => {
