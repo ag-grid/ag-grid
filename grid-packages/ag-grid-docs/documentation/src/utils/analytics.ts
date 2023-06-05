@@ -8,6 +8,7 @@ const EVENT_NAME = {
     demoToolbar: 'Demo Toolbar',
     infoEmail: 'Info Email',
     buyButton: 'Buy Button',
+    page404: '404',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -28,6 +29,25 @@ const trackPlausible = ({ eventName, props }: { eventName: string; props?: objec
     }
 };
 
+/**
+ * Track plausible event once using an object cache
+ */
+const createTrackPlausibleOnce = (key, trackingFn: (props: object) => void) => (props: object) => {
+    const cacheKey = `${key}.${JSON.stringify(props)}`;
+
+    if (!trackingCache[cacheKey]) {
+        trackingFn(props);
+        trackingCache[cacheKey] = true;
+    }
+};
+
+export const track404 = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.page404,
+        props,
+    });
+};
+
 const trackHomepageExample = ({ name, props }: { name: string; props: object }) => {
     trackPlausible({
         eventName: name,
@@ -42,14 +62,10 @@ export const trackHomepageExampleRowGrouping = (props: object) => {
     });
 };
 
-export const trackOnceHomepageExampleRowGrouping = (props: object) => {
-    const cacheKey = `${EVENT_NAME.rowGrouping}.${JSON.stringify(props)}`;
-
-    if (!trackingCache[cacheKey]) {
-        trackHomepageExampleRowGrouping(props);
-        trackingCache[cacheKey] = true;
-    }
-};
+export const trackOnceHomepageExampleRowGrouping = createTrackPlausibleOnce(
+    EVENT_NAME.rowGrouping,
+    trackHomepageExampleRowGrouping
+);
 
 export const trackHomepageExampleIntegratedCharts = (props: object) => {
     trackHomepageExample({
@@ -58,14 +74,10 @@ export const trackHomepageExampleIntegratedCharts = (props: object) => {
     });
 };
 
-export const trackOnceHomepageExampleIntegratedCharts = (props: object) => {
-    const cacheKey = `${EVENT_NAME.integratedCharts}.${JSON.stringify(props)}`;
-
-    if (!trackingCache[cacheKey]) {
-        trackHomepageExampleIntegratedCharts(props);
-        trackingCache[cacheKey] = true;
-    }
-};
+export const trackOnceHomepageExampleIntegratedCharts = createTrackPlausibleOnce(
+    EVENT_NAME.integratedCharts,
+    trackHomepageExampleIntegratedCharts
+);
 
 export const trackExampleRunner = (props: object) => {
     trackPlausible({
@@ -74,14 +86,7 @@ export const trackExampleRunner = (props: object) => {
     });
 };
 
-export const trackOnceExampleRunner = (props: object) => {
-    const cacheKey = `${EVENT_NAME.exampleRunner}.${JSON.stringify(props)}`;
-
-    if (!trackingCache[cacheKey]) {
-        trackExampleRunner(props);
-        trackingCache[cacheKey] = true;
-    }
-};
+export const trackOnceExampleRunner = createTrackPlausibleOnce(EVENT_NAME.exampleRunner, trackExampleRunner);
 
 export const trackApiDocumentation = (props: object) => {
     trackPlausible({
@@ -97,14 +102,7 @@ export const trackDemoToolbar = (props: object) => {
     });
 };
 
-export const trackOnceDemoToolbar = (props: object) => {
-    const cacheKey = `${EVENT_NAME.demoToolbar}.${JSON.stringify(props)}`;
-
-    if (!trackingCache[cacheKey]) {
-        trackDemoToolbar(props);
-        trackingCache[cacheKey] = true;
-    }
-};
+export const trackOnceDemoToolbar = createTrackPlausibleOnce(EVENT_NAME.demoToolbar, trackDemoToolbar);
 
 export const trackInfoEmail = (props: object) => {
     trackPlausible({
@@ -113,14 +111,7 @@ export const trackInfoEmail = (props: object) => {
     });
 };
 
-export const trackOnceInfoEmail = (props: object) => {
-    const cacheKey = `${EVENT_NAME.infoEmail}.${JSON.stringify(props)}`;
-
-    if (!trackingCache[cacheKey]) {
-        trackDemoToolbar(props);
-        trackingCache[cacheKey] = true;
-    }
-};
+export const trackOnceInfoEmail = createTrackPlausibleOnce(EVENT_NAME.infoEmail, trackInfoEmail);
 
 export const trackBuyButton = (props: object) => {
     trackPlausible({
