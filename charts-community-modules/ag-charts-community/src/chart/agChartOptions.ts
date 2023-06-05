@@ -1333,7 +1333,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     type?: 'bar';
     /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
     grouped?: boolean;
-    /** An option indicating if the bars/columns should be stacked. */
+    /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
     /** An ID to be used to group stacked items. */
     stackGroup?: string;
@@ -1414,7 +1414,7 @@ export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOpti
     type?: 'column';
     /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
     grouped?: boolean;
-    /** An option indicating if the columns/columns should be stacked. */
+    /** An option indicating if the columns should be stacked. */
     stacked?: boolean;
     /** An ID to be used to group stacked items. */
     stackGroup?: string;
