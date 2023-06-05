@@ -19,7 +19,6 @@ const validateIfDefined = <T>(validationFn: (value: T) => boolean) => {
 };
 
 const isString = (value: any): boolean => typeof value === 'string';
-const isHTMLElement = (value: any): boolean => value instanceof HTMLElement;
 const isBoolean = (value: any): boolean => typeof value === 'boolean';
 const isValidSeriesChartType = (value: any): boolean => typeof value === 'object';
 const createWarnMessage = (property: string, expectedType: string): ((value: any) => string) =>
