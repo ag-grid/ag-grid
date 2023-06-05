@@ -214,6 +214,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to true to format values using the column's `valueFormatter` when exporting data from the grid.
      * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
+     * If custom handling is provided for the export operation, this property will be ignored.
      * Default: `false`
      */
     useValueFormatterForExport?: boolean;
@@ -253,6 +254,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to true to parse values using the column's `valueParser` when importing data to the grid.
      * This applies to clipboard operations and the fill handle.
+     * If custom handling is provided for the import operation, this property will be ignored.
      * Default: `false`
      */
     useValueParserForImport?: boolean;
