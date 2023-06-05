@@ -53,7 +53,7 @@ export const Layout = ({
                     </div>
                 </div>
             </div>
-            {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} />}
+            {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} path={path} />}
         </GlobalContextProvider>
     );
 };

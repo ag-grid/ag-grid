@@ -111,10 +111,10 @@ const Default = () => {
                     </p>
                     <div className={styles.customerLogos}>
                         <img src="./images/customer-logos/nasa.svg" alt="NASA logo" />
-                        <img src="./images/customer-logos/netflix.svg" alt="Netflix logo" />
+                        <img src="./images/customer-logos/microsoft.svg" alt="Microsoft logo" />
                         <img src="./images/customer-logos/ibm.svg" alt="IBM logo" />
                         <img src="./images/customer-logos/nike.svg" alt="Nike logo" />
-                        <img src="./images/customer-logos/visa.svg" alt="Visa logo" />
+                        <img src="./images/customer-logos/netflix.svg" alt="Netflix logo" />
                         <img src="./images/customer-logos/samsung.svg" alt="Samsung logo" />
                         <img src="./images/customer-logos/bank-of-america.svg" alt="Bank of America logo" />
                         <img src="./images/customer-logos/at-and-t.svg" alt="AT & T logo" />

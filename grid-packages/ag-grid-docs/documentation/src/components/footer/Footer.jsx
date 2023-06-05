@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import { Icon } from '../Icon';
@@ -27,7 +28,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
         </div>
     ));
 
-const Footer = ({ framework }) => (
+const Footer = ({ framework, path }) => (
     <footer className={styles.footer}>
         <div className="page-margin">
             <div className={styles.row}>
@@ -39,6 +40,15 @@ const Footer = ({ framework }) => (
                 </p>
                 <p className="font-size-small thin-text">&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
+
+            {/* Only show customer logo trademark info on homepage */}
+            {(path === '/' || path === undefined) && (
+                <div className={classNames(styles.row, styles.trademarks)}>
+                    <p className="font-size-small thin-text">
+                        The Microsoft logo is a trademark of the Microsoft group of companies.
+                    </p>
+                </div>
+            )}
         </div>
     </footer>
 );

@@ -82,3 +82,9 @@
         transition: opacity $default-transition-timing;
     }
 }
+
+.trademarks {
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+        margin-top: -$size-2;
+    }
+}
