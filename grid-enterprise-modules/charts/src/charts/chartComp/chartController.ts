@@ -402,7 +402,7 @@ export class ChartController extends BeanStub {
         const currentChartType = Object.keys(chartTypeMap).find(type => chartTypeMap[type]()) ?? 'Range Chart';
 
         const valid = params.type ===
-            `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(' ', '')}Update`;
+            `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
             console.warn(`AG Grid - Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`);
