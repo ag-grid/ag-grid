@@ -35,7 +35,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     let scriptPath;
     let chartScriptPath;
 
-    if (library === 'charts' || options.enableChartApi) {
+    if (library === 'charts') {
         if (options.enterprise) {
             chartScriptPath = isUsingPublishedPackages()
                 ? `https://cdn.jsdelivr.net/npm/ag-charts-enterprise@${agChartsVersion}/dist/ag-charts-enterprise.min.js`

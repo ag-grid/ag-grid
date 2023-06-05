@@ -11,9 +11,6 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
         "import { AgGridVue } from '@ag-grid-community/vue';",
     ];
 
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
-    }
     if(bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
@@ -48,9 +45,6 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
 
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
-    }
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
     }
     if(bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");

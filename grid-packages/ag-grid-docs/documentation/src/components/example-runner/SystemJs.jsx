@@ -330,7 +330,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
 
     let systemJsMap;
     let systemJsPaths;
-    if (library === 'charts' || options.enableChartApi) {
+    if (library === 'charts') {
         systemJsMap = configuration.chartMap;
         systemJsPaths = configuration.chartPaths;
     }
