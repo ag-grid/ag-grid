@@ -450,6 +450,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 highlightStyle: itemHighlightStyle,
                 formatter,
                 seriesId,
+                itemId: datum.itemId,
                 ctx,
             });
             config.crisp = crisp;

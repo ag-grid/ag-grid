@@ -1,6 +1,6 @@
 import { AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, FieldDefinition, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
 
@@ -10,7 +10,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
@@ -71,7 +71,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateChartParams): any {
+    public getSeries(params: UpdateParams): any {
         const { fields, category, seriesChartTypes } = params;
 
         return fields.map(field => {

@@ -55,3 +55,8 @@ If `useValueParserForImport` is enabled, it is recommended to also [Use a Value 
 The following example demonstrates using the value parser for import with each of the supported features mentioned above. `useValueFormatterForExport` is also enabled to ensure the features work as expected.
 
 <grid-example title='Use Value Parser for Import' name='use-value-parser-for-import' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
+
+Note that if you are providing your own custom handling for the following features, then `useValueParserForImport` is ignored and the value will be either the original value or that set in the custom handler:
+- If `processCellFromClipboard` is provided when using paste.
+- If `fillOperation` is provided when using fill handle.
+- If `processCellFromClipboard` is provided when using copy range down.

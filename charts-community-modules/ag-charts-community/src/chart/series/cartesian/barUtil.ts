@@ -161,6 +161,7 @@ export function getRectConfig<
     highlightStyle,
     formatter,
     seriesId,
+    itemId,
     stackGroup,
     ctx: { callbackCache },
 }: {
@@ -170,6 +171,7 @@ export function getRectConfig<
     highlightStyle: SeriesItemHighlightStyle;
     formatter?: (params: FormatterParams) => AgBarSeriesFormat | undefined;
     seriesId: string;
+    itemId?: string;
     stackGroup?: string;
     ctx: ModuleContext;
 }): RectConfig {
@@ -190,6 +192,7 @@ export function getRectConfig<
             strokeWidth: itemStrokeWidth,
             highlighted: isHighlighted,
             seriesId,
+            itemId,
             stackGroup,
         } as FormatterParams);
     }

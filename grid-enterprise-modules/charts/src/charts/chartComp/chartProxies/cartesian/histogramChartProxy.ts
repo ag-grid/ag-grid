@@ -1,5 +1,5 @@
 import { AgCartesianAxisOptions, AgHistogramSeriesOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class HistogramChartProxy extends CartesianChartProxy {
@@ -8,7 +8,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getSeries(params: UpdateChartParams): AgHistogramSeriesOptions[] {
+    public getSeries(params: UpdateParams): AgHistogramSeriesOptions[] {
         const firstField = params.fields[0]; // multiple series are not supported!
         return [
             {
@@ -21,7 +21,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
         ];
     }
 
-    public getAxes(_params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {
                 type: 'number',

@@ -1027,7 +1027,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public createDndSource(): DndSourceComp {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.eGui);
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.eGui);
         this.beans.context.createBean(dndSourceComp);
 
         return dndSourceComp;

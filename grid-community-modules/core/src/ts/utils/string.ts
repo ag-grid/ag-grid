@@ -149,3 +149,12 @@ export function camelCaseToHumanText(camelCase: string | undefined): string | nu
 
     return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
 }
+
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+export function camelCaseToHyphenated(camelCase: string): string {
+    return camelCase.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);
+}

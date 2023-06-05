@@ -127,12 +127,4 @@ export class PropertyKeys {
         ...PropertyKeys.FUNCTION_PROPERTIES,
         ...PropertyKeys.BOOLEAN_PROPERTIES
     ];
-
-    /**
-     * Used when performing property checks. This avoids noise caused when using frameworks, which can add their own
-     * framework-specific properties to colDefs, gridOptions etc.
-     */
-    public static FRAMEWORK_PROPERTIES = [
-        '__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
-    ];
 }

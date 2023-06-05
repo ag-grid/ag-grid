@@ -58,3 +58,10 @@ If [Cell Editing](/cell-editing/) is enabled along with `useValueFormatterForExp
 The following example demonstrates using the value formatter for export with each of the supported features mentioned above. `useValueParserForImport` is also enabled to ensure the features work as expected.
 
 <grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] }'></grid-example>
+
+Note that if you are providing your own custom handling for the following features, then `useValueFormatterForExport` is ignored and the value will be either the original value or that set in the custom handler:
+- If `processCellForClipboard` is provided when using copy/cut.
+- If `fillOperation` is provided when using fill handle.
+- If `processCellForClipboard` is provided when using copy range down.
+- If `processCellCallback` is provided when using CSV export.
+- If `processCellCallback` is provided when using Excel export.

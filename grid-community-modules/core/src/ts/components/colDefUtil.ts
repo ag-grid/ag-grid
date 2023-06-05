@@ -139,16 +139,4 @@ export class ColDefUtil {
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];
-
-    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to colDefs, gridOptions etc
-    public static FRAMEWORK_PROPERTIES = [
-        '__ob__',
-        '__v_skip',
-        '__metadata__',
-        'mappedColumnProperties',
-        'hasChildColumns',
-        'toColDef',
-        'createColDefFromGridColumn'
-    ];
 }
