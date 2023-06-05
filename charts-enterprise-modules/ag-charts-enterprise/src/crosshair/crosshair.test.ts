@@ -7,6 +7,7 @@ import {
     AgCartesianAxisOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
+    AgColumnSeriesOptions,
 } from 'ag-charts-community';
 
 import { AgEnterpriseCharts, _ModuleSupport } from '../main';
@@ -157,7 +158,7 @@ const SIMPLE_LINE_OPTIONS: AgCartesianChartOptions = {
 const SIMPLE_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: CATEGORY_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column' })) as AgBarSeriesOptions[],
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column' })) as AgColumnSeriesOptions[],
 };
 
 const LINE_SECONDARY_AXIS_OPTIONS: AgCartesianChartOptions = {
@@ -168,13 +169,13 @@ const LINE_SECONDARY_AXIS_OPTIONS: AgCartesianChartOptions = {
 const STACKED_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: SIMPLE_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: true })) as AgBarSeriesOptions[],
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: true })) as AgColumnSeriesOptions[],
 };
 
 const GROUPED_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: CATEGORY_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: false })) as AgBarSeriesOptions[],
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: false })) as AgColumnSeriesOptions[],
 };
 
 const STACKED_BAR_OPTIONS: AgCartesianChartOptions = {

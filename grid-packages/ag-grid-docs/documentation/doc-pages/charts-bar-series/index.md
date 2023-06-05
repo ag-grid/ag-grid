@@ -111,11 +111,15 @@ The above formatter produces an attractive chart where the labels don't stick ou
 It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
 </note>
 
-To learn more about label configuration please refer to the [API reference](#reference-AgBarSeriesOptions-label) below.
+To learn more about label configuration please refer to the [API reference](#reference-AgColumnSeriesOptions-label) below.
+
+### API Reference
+
+<interface-documentation interfaceName='AgColumnSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Bar Series
 
-`'bar'` series configuration is exactly the same as `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
+`'bar'` series configuration is similar to the `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
 
 To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 'column'` in the `series` options.
 
@@ -132,6 +136,6 @@ With this simple change we go from [stacked columns](#stacked-columns) to stacke
 
 <chart-example title='Stacked Bar Series' name='stacked-bar' type='generated'></chart-example>
 
-## API Reference
+### API Reference
 
 <interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

@@ -11,6 +11,7 @@ import {
     AgTreemapSeriesOptions,
     AgChartInstance,
     AgBaseAxisOptions,
+    AgColumnSeriesOptions,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
@@ -18,7 +19,7 @@ import { HierarchyChart } from './hierarchyChart';
 import { Series } from './series/series';
 import { getSeries } from './factory/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
-import { BarSeries } from './series/cartesian/barSeries';
+import { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
@@ -56,6 +57,8 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
     : T extends BarSeries
     ? AgBarSeriesOptions
+    : T extends ColumnSeries
+    ? AgColumnSeriesOptions
     : T extends AreaSeries
     ? AgAreaSeriesOptions
     : T extends ScatterSeries

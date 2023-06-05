@@ -7,6 +7,7 @@ import {
     AgPieSeriesOptions,
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
+    AgColumnSeriesOptions,
 } from '../agChartOptions';
 
 type Transforms<
@@ -113,13 +114,27 @@ function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
     }) as T;
 }
 
+function columnSeriesTransform<T extends AgColumnSeriesOptions>(options: T): T {
+    const result = {
+        ...options,
+    };
+    delete result['yKey'];
+    delete result['yName'];
+
+    return transform(result, {
+        yNames: yNamesMapping,
+        yKeys: yKeysMapping,
+        legendItemNames: legendItemNamesMapping,
+    }) as T;
+}
+
 type SeriesTypes = NonNullable<AgChartOptions['series']>[number];
 type SeriesType<T extends SeriesTypes['type']> = T extends 'area'
     ? AgAreaSeriesOptions
     : T extends 'bar'
     ? AgBarSeriesOptions
     : T extends 'column'
-    ? AgBarSeriesOptions
+    ? AgColumnSeriesOptions
     : T extends 'histogram'
     ? AgHistogramSeriesOptions
     : T extends 'line'
@@ -140,7 +155,7 @@ const SERIES_TRANSFORMS: {
 } = {
     area: identityTransform,
     bar: barSeriesTransform,
-    column: barSeriesTransform,
+    column: columnSeriesTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,
