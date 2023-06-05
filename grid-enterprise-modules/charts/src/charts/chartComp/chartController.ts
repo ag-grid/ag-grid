@@ -97,13 +97,13 @@ export class ChartController extends BeanStub {
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
-                chartModelParams.suppressChartRanges = !!params.suppressChartRanges;
+                chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.crossFiltering = true;
-                chartModelParams.suppressChartRanges = !!params.suppressChartRanges;
+                chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 break;
         }
 
