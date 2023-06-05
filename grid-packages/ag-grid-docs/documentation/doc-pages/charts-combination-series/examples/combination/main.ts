@@ -1,15 +1,22 @@
-import { getData } from "./data";
-
-import { AgCartesianChartOptions, AgCartesianAxisOptions, AgCartesianSeriesOptions, AgBarSeriesOptions, AgLineSeriesOptions, AgCartesianSeriesTooltipRendererParams, AgChart } from "ag-charts-community"
+import {
+  AgCartesianAxisOptions,
+  AgCartesianChartOptions,
+  AgCartesianSeriesOptions,
+  AgCartesianSeriesTooltipRendererParams,
+  AgChart,
+  AgColumnSeriesOptions,
+  AgLineSeriesOptions,
+} from "ag-charts-community"
+import { getData } from "./data"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
-  const { yValue, xValue } = params;
+  const { yValue, xValue } = params
   return {
-    content: `${xValue}: ${yValue}%`
-  };
-};
+    content: `${xValue}: ${yValue}%`,
+  }
+}
 
-const WOMEN: AgBarSeriesOptions = {
+const WOMEN: AgColumnSeriesOptions = {
   type: "column",
   xKey: "year",
   yKey: "women",
@@ -17,11 +24,11 @@ const WOMEN: AgBarSeriesOptions = {
   grouped: true,
   strokeWidth: 0,
   tooltip: {
-    renderer: tooltipRenderer
+    renderer: tooltipRenderer,
   },
-};
+}
 
-const MEN: AgBarSeriesOptions = {
+const MEN: AgColumnSeriesOptions = {
   type: "column",
   xKey: "year",
   yKey: "men",
@@ -29,9 +36,9 @@ const MEN: AgBarSeriesOptions = {
   grouped: true,
   strokeWidth: 0,
   tooltip: {
-    renderer: tooltipRenderer
+    renderer: tooltipRenderer,
   },
-};
+}
 
 const PORTIONS: AgLineSeriesOptions = {
   type: "line",
@@ -40,24 +47,24 @@ const PORTIONS: AgLineSeriesOptions = {
   yName: "Portions",
   strokeWidth: 3,
   marker: {
-      enabled: false,
+    enabled: false,
   },
   tooltip: {
-    renderer: tooltipRenderer
+    renderer: tooltipRenderer,
   },
-};
+}
 
 const COLUMN_AND_LINE: AgCartesianSeriesOptions[] = [
-  { ...WOMEN, type: 'column' },
-  { ...MEN, type: 'column' },
-  { ...PORTIONS, type: 'line' },
-];
+  { ...WOMEN, type: "column" },
+  { ...MEN, type: "column" },
+  { ...PORTIONS, type: "line" },
+]
 
 const AREA_AND_COLUMN: AgCartesianSeriesOptions[] = [
-  { ...PORTIONS, type: 'area' },
-  { ...WOMEN, type: 'column' },
-  { ...MEN, type: 'column' },
-];
+  { ...PORTIONS, type: "area" },
+  { ...WOMEN, type: "column" },
+  { ...MEN, type: "column" },
+]
 
 const options: AgCartesianChartOptions = {
   container: document.querySelector("#myChart") as HTMLElement,
@@ -66,7 +73,7 @@ const options: AgCartesianChartOptions = {
   theme: {
     palette: {
       fills: ["#7cecb3", "#7cb5ec", "#ecb37c", "#ec7cb5", "#7c7dec"],
-      strokes: ["#7cecb3", "#7cb5ec", "#ecb37c", "#ec7cb5", "#7c7dec"]
+      strokes: ["#7cecb3", "#7cb5ec", "#ecb37c", "#ec7cb5", "#7c7dec"],
     },
   },
   title: {
@@ -78,9 +85,11 @@ const options: AgCartesianChartOptions = {
     {
       type: "category",
       position: "bottom",
-      gridStyle: [{
-        stroke: undefined
-      }],
+      gridStyle: [
+        {
+          stroke: undefined,
+        },
+      ],
     },
     {
       // primary y axis
@@ -88,7 +97,7 @@ const options: AgCartesianChartOptions = {
       position: "left",
       keys: ["women", "men", "children", "adults"],
       title: {
-          text: "Adults Who Eat 5 A Day (%)",
+        text: "Adults Who Eat 5 A Day (%)",
       },
     },
     {
@@ -97,9 +106,9 @@ const options: AgCartesianChartOptions = {
       position: "right",
       keys: ["portions"],
       title: {
-          text: "Portions Consumed (Per Day)",
+        text: "Portions Consumed (Per Day)",
       },
-    }
+    },
   ] as AgCartesianAxisOptions[],
   legend: {
     item: {
@@ -108,18 +117,18 @@ const options: AgCartesianChartOptions = {
       },
     },
   },
-};
+}
 
-var chart = AgChart.create(options);
+var chart = AgChart.create(options)
 
 function columnLine() {
-  console.log("Column & Line", COLUMN_AND_LINE);
-  options.series = COLUMN_AND_LINE;
-  AgChart.update(chart, options);
+  console.log("Column & Line", COLUMN_AND_LINE)
+  options.series = COLUMN_AND_LINE
+  AgChart.update(chart, options)
 }
 
 function areaColumn() {
-  console.log("Column & Area", AREA_AND_COLUMN);
-  options.series = AREA_AND_COLUMN;
-  AgChart.update(chart, options);
+  console.log("Column & Area", AREA_AND_COLUMN)
+  options.series = AREA_AND_COLUMN
+  AgChart.update(chart, options)
 }
