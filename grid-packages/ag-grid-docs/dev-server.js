@@ -813,17 +813,20 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 
             const app = express();
 
-            // necessary for plunkers and localhost
-            app.options("/*", function (req, res, next) {
-                res.header('Access-Control-Allow-Origin', '*');
-                res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-                res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-                res.send(200);
-            });
-            app.use(function (req, res, next) {
+            const updateCorsHeaders = (req, res) => {
+                // necessary for plunkers and localhost
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
                 res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+                res.setHeader('Access-Control-Allow-Private-Network', 'true');
+            }
+
+            app.options("/*", function (req, res, next) {
+                updateCorsHeaders(req, res);
+                res.sendStatus(200);
+            });
+            app.use(function (req, res, next) {
+                updateCorsHeaders(req, res);
                 return next();
             });
 
