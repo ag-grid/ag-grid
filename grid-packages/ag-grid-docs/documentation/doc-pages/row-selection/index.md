@@ -287,13 +287,13 @@ The grid API has the following methods for selection:
 
 If you want to select only filtered-out row nodes, you could do this using the following:
 
-<snippet>
-| // loop through each node when it is filtered out
-| const nodes = [];
-| gridOptions.api.forEachNodeAfterFilter(node => {
-|     nodes.push(node);
-| });
-| gridOptions.api.setNodesSelected({ nodes, newValue: true });
+<snippet transform={false}>
+|// loop through each node when it is filtered out
+|const nodes = [];
+|gridOptions.api.forEachNodeAfterFilter(node => {
+|    nodes.push(node);
+|});
+|gridOptions.api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
 ### Example: Using forEachNode
