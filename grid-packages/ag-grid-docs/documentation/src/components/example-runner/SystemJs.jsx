@@ -15,7 +15,7 @@ import {
 
 import { isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
-import {isBuildServerBuild} from "../../utils/consts";
+import {isBuildServerBuild, isPreProductionBuild} from "../../utils/consts";
 
 const localConfiguration = {
     gridMap: {
@@ -276,7 +276,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
     let configuration = isUsingPublishedPackages() ? publishedConfiguration :
-        isBuildServerBuild() ? buildAndArchivesConfiguration : localConfiguration;
+        (isBuildServerBuild() || isPreProductionBuild()) ? buildAndArchivesConfiguration : localConfiguration;
 
     if (isDevelopment()) {
         configuration.gridCommunityPaths = {
