@@ -122,6 +122,7 @@ export class ChartController extends BeanStub {
         }
 
         this.model.updateCellRanges();
+        this.model.updateData();
         this.setChartRange();
     }
 
@@ -141,6 +142,7 @@ export class ChartController extends BeanStub {
 
     public updateForPanelChange(updatedCol: ColState): void {
         this.model.updateCellRanges(updatedCol);
+        this.model.updateData();
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
     }

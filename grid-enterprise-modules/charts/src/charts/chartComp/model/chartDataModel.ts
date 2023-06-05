@@ -98,6 +98,7 @@ export class ChartDataModel extends BeanStub {
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
         this.updateCellRanges();
+        this.updateData();
     }
 
     public updateModel(params: ChartModelParams): void {
@@ -128,6 +129,10 @@ export class ChartDataModel extends BeanStub {
         this.crossFiltering = !!crossFiltering;
 
         this.updateCellRanges();
+
+        if (!this.unlinked) {
+            this.updateData();
+        }
     }
 
     public updateCellRanges(updatedColState?: ColState): void {
@@ -152,7 +157,6 @@ export class ChartDataModel extends BeanStub {
         }
 
         this.comboChartModel.updateSeriesChartTypes();
-        this.updateData();
     }
 
     public updateData(): void {
