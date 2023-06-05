@@ -1,6 +1,5 @@
 import { withPrefix } from 'gatsby';
 import { stringify } from 'query-string';
-import { encodeQueryParams } from 'use-query-params';
 import { agGridVersion, localPrefix } from 'utils/consts';
 import isDevelopment from 'utils/is-development';
 import { ParameterConfig } from '../../pages/example-runner';
@@ -293,18 +292,18 @@ export const getIndexHtmlUrl = (exampleInfo) => {
             options,
         } = exampleInfo;
 
-        const queryParams = encodeQueryParams(ParameterConfig, {
-            pageName,
-            library,
-            framework,
-            useFunctionalReact,
-            useVue3,
-            importType,
-            name,
-            title,
-            type,
-            options,
-        });
+        const queryParams = {
+            pageName: encodeURIComponent(pageName),
+            library: encodeURIComponent(library),
+            framework: encodeURIComponent(framework),
+            useFunctionalReact: encodeURIComponent(useFunctionalReact),
+            useVue3: encodeURIComponent(useVue3),
+            importType: encodeURIComponent(importType),
+            name: encodeURIComponent(name),
+            title: encodeURIComponent(title),
+            type: encodeURIComponent(type),
+            options: encodeURIComponent(options),
+        };
 
         return withPrefix(`/example-runner/?${stringify(queryParams)}`);
     } else {

@@ -76,7 +76,6 @@
     "gatsby-plugin-sass": "6.9.0",
     "gatsby-plugin-sharp": "5.9.0",
     "gatsby-plugin-sitemap": "6.9.0",
-    "gatsby-plugin-use-query-params": "1.0.1",
     "gatsby-react-router-scroll": "6.9.0",
     "gatsby-remark-attr": "0.1.0",
     "gatsby-remark-autolink-headers": "6.9.0",
@@ -104,8 +103,7 @@
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "7.2.0",
     "sass": "1.62.1",
-    "typescript": "~4.5.2",
-    "use-query-params": "2.2.1"
+    "typescript": "~4.5.2"
   },
   "devDependencies": {
     "react-markdown": "5.0.3",

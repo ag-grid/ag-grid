@@ -133,7 +133,6 @@ const plugins = [
     },
   },
   "gatsby-plugin-react-helmet", // This is used for putting information into the header, e.g. meta tags
-  "gatsby-plugin-use-query-params", // This provides access to query parameters
   {
     // This generates the sitemap
     resolve: "gatsby-plugin-sitemap",
