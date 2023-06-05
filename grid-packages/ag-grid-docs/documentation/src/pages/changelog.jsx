@@ -355,7 +355,6 @@ const Changelog = ({ location }) => {
                         gridHeight={'66vh'}
                         columnDefs={COLUMN_DEFS}
                         rowData={rowData}
-                        suppressReactUi
                         components={{
                             myDetailCellRenderer: DetailCellRenderer,
                             paddingCellRenderer: PaddingCellRenderer,
