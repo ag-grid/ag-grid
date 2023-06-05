@@ -228,8 +228,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         this.dataModel = new DataModel<any, any, true>({
             props: [
                 keyProperty(xKey, isContinuousX),
-                accumulativeValueProperty(yKey, true, { id: `yCurrent`, validation, invalidValue: 0 }),
-                trailingAccumulatedValueProperty(yKey, true, { id: `yPrevious`, validation, invalidValue: 0 }),
+                accumulativeValueProperty(yKey, true, { id: `yCurrent`, validation }),
+                trailingAccumulatedValueProperty(yKey, true, { id: `yPrevious`, validation }),
                 valueProperty(yKey, true, { id: `yRaw` }), // Raw value pass-through.
             ],
             dataVisible: this.visible,
@@ -310,6 +310,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const x = xScale.convert(keys[xIndex]);
 
             const rawValue = values[yIndex];
+            const isPositive = rawValue >= 0;
+            const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
             const cumulativeValue = values[yCurrIndex];
             const trailingValue = values[yPrevIndex];
@@ -317,10 +319,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const prevY = yScale.convert(trailingValue, { strict: false });
 
-            const isPositive = rawValue >= 0;
             const y = isPositive ? currY : prevY;
             const bottomY = isPositive ? prevY : currY;
-            const barHeight = Math.abs(bottomY - y);
+            const barHeight = Math.max(strokeWidth, Math.abs(bottomY - y));
 
             const itemId = isPositive ? 'positive' : 'negative';
             let contextIndex = contextIndexMap.get(itemId);
@@ -347,8 +348,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 x: rect.x + rect.width / 2,
                 y: rect.y + rect.height / 2,
             };
-
-            const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
             const { formatter, placement, padding } = this.label;
 
@@ -411,7 +410,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }) {
         const { datumSelection, isHighlight } = opts;
         const {
-            seriesItemEnabled,
             shadow,
             formatter,
             highlightStyle: { item: itemHighlightStyle },
@@ -420,9 +418,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         } = this;
 
         const crisp = checkCrisp(this.xAxis?.visibleRange);
-
-        const positivesActive = !!seriesItemEnabled.get('positive');
-        const negativesActive = !!seriesItemEnabled.get('negative');
 
         const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
 
@@ -440,8 +435,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 fillShadow: shadow,
                 strokeWidth: this.getStrokeWidth(strokeWidth, datum),
             };
-            const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
-            const visible = categoryAlongX ? datum.width > 0 : datum.height > 0 && isActive;
+            const visible = categoryAlongX ? datum.width > 0 : datum.height > 0;
 
             const config = getRectConfig({
                 datum,
