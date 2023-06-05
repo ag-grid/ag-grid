@@ -28,7 +28,7 @@ The following example demonstrates how Range Charts can be created programmatica
 
 - Clicking **'Top 5 Medal Winners'** will chart the first five rows of Gold and Silver medals by Country.
 - Clicking **'Bronze Medals by Country'** will chart Bronze by Country using all rows (the provided cell range does not specify rows).
-- Note the **'Bronze Medals by Country'** chart is unlinked from the grid as `chartUnlinked=true`. Notice that sorting in the grid does not affect the chart and there is no chart range in the grid.
+- Note the **'Bronze Medals by Country'** chart is unlinked from the grid as `unlinkChart=true`. Notice that sorting in the grid does not affect the chart and there is no chart range in the grid.
 
 <grid-example title='Charts in Grid Popup Window' name='chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
