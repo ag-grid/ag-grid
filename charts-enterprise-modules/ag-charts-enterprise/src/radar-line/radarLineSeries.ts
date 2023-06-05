@@ -164,8 +164,9 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
 
     readonly highlightStyle = new HighlightStyle();
 
-    constructor() {
+    constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super({
+            moduleCtx,
             useLabelLayer: true,
             pickModes: [SeriesNodePickMode.NEAREST_NODE, SeriesNodePickMode.EXACT_SHAPE_MATCH],
         });
