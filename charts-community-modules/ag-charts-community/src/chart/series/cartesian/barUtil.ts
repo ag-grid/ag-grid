@@ -6,12 +6,14 @@ import {
     FontFamily,
     FontWeight,
     FontStyle,
+    AgBarSeriesOptions,
 } from '../../agChartOptions';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { CartesianSeriesNodeDatum } from './cartesianSeries';
 import { SeriesItemHighlightStyle } from '../series';
 import { Text } from '../../../scene/shape/text';
+import { ModuleContext } from '../../../util/module';
 
 type Bounds = {
     x: number;
@@ -58,6 +60,7 @@ export function createLabelData({
     padding = 0,
     formatter,
     barAlongX,
+    ctx: { callbackCache },
 }: {
     value: any;
     rect: Bounds;
@@ -65,11 +68,12 @@ export function createLabelData({
     seriesId: string;
     padding?: number;
     formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string;
+    ctx: ModuleContext;
     barAlongX: boolean;
 }): LabelDatum {
     let labelText: string;
     if (formatter) {
-        labelText = formatter({
+        labelText = callbackCache.call(formatter, {
             value: isNumber(value) ? value : undefined,
             seriesId,
         });
@@ -147,25 +151,29 @@ export function updateRect({ rect, config }: { rect: Rect; config: RectConfig })
     rect.visible = visible;
 }
 
-export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, FormatterType extends (params: any) => {}>({
+export function getRectConfig<
+    Params extends Parameters<NonNullable<AgBarSeriesOptions['formatter']>>[0],
+    ExtraParams extends {}
+>({
     datum,
     isHighlighted,
     style,
     highlightStyle,
     formatter,
     seriesId,
-    itemId,
     stackGroup,
+    ctx: { callbackCache },
+    ...opts
 }: {
-    datum: DatumType;
+    datum: CartesianSeriesNodeDatum;
     isHighlighted: boolean;
     style: RectConfig;
     highlightStyle: SeriesItemHighlightStyle;
-    formatter?: FormatterType;
+    formatter?: (params: Params & ExtraParams) => AgBarSeriesFormat;
     seriesId: string;
-    itemId?: string;
     stackGroup?: string;
-}): RectConfig {
+    ctx: ModuleContext;
+} & ExtraParams): RectConfig {
     const itemFill = isHighlighted ? highlightStyle.fill ?? style.fill : style.fill;
     const itemStroke = isHighlighted ? highlightStyle.stroke ?? style.stroke : style.stroke;
     const itemStrokeWidth = isHighlighted ? highlightStyle.strokeWidth ?? style.strokeWidth : style.strokeWidth;
@@ -174,7 +182,7 @@ export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, Format
 
     let format: AgBarSeriesFormat | undefined = undefined;
     if (formatter) {
-        format = formatter({
+        format = callbackCache.call(formatter as any, {
             datum: datum.datum,
             xKey: datum.xKey,
             yKey: datum.yKey,
@@ -183,8 +191,8 @@ export function getRectConfig<DatumType extends CartesianSeriesNodeDatum, Format
             strokeWidth: itemStrokeWidth,
             highlighted: isHighlighted,
             seriesId,
-            itemId,
             stackGroup,
+            ...opts,
         });
     }
 

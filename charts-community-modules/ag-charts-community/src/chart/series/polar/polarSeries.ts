@@ -3,6 +3,7 @@ import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { DataModel, ProcessedData } from '../../data/dataModel';
+import { ModuleContext } from '../../../util/module';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**
@@ -24,9 +25,9 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
 
-    constructor({ useLabelLayer = false }) {
+    constructor(opts: { moduleCtx: ModuleContext; useLabelLayer: boolean }) {
         super({
-            useLabelLayer,
+            ...opts,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],

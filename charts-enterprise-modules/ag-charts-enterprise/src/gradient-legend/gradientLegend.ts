@@ -120,7 +120,7 @@ export class GradientLegend {
 
     private readonly layoutService: _ModuleSupport.ModuleContext['layoutService'];
 
-    constructor(ctx: _ModuleSupport.ModuleContext) {
+    constructor(private readonly ctx: _ModuleSupport.ModuleContext) {
         this.layoutService = ctx.layoutService;
         const layoutListener = this.layoutService.addListener('start-layout', (e) => this.update(e.shrinkRect));
         this.destroyFns.push(() => this.layoutService.removeListener(layoutListener));
@@ -326,7 +326,7 @@ export class GradientLegend {
     private formatDomain(domain: number[]) {
         const formatter = this.item.label.formatter;
         if (formatter) {
-            return (d: number) => formatter({ value: d } as any);
+            return (d: number) => this.ctx.callbackCache.call(formatter, { value: d } as any);
         }
         return tickFormat(domain, ',.2g');
     }

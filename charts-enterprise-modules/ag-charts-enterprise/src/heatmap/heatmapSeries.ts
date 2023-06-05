@@ -110,8 +110,9 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
     readonly tooltip: HeatmapSeriesTooltip = new HeatmapSeriesTooltip();
 
-    constructor() {
+    constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super({
+            moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             hasMarkers: false,
@@ -285,6 +286,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
                 },
             },
             id: seriesId,
+            ctx: { callbackCache },
         } = this;
 
         const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
@@ -305,7 +307,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
             let format: AgHeatmapSeriesFormat | undefined = undefined;
             if (formatter) {
-                format = formatter({
+                format = callbackCache.call(formatter, {
                     datum: datum.datum,
                     fill,
                     stroke,
@@ -384,6 +386,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             colorKey,
             colorName,
             colorScale,
+            ctx: { callbackCache },
         } = this;
 
         const colorValue = colorKey ? nodeDatum.datum[colorKey] ?? 0 : 0;
@@ -392,7 +395,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         let format: AgHeatmapSeriesFormat | undefined = undefined;
 
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: nodeDatum,
                 xKey,
                 yKey,

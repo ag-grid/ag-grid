@@ -51,6 +51,7 @@ import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
 import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import * as easing from '../../../motion/easing';
+import { ModuleContext } from '../../../util/module';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -140,8 +141,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
-    constructor() {
+    constructor(moduleCtx: ModuleContext) {
         super({
+            moduleCtx,
             pathsPerSeries: 2,
             pathsZIndexSubOrderOffset: [0, 1000],
             hasMarkers: true,
@@ -287,7 +289,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     async createNodeData() {
-        const { xAxis, yAxis, data, processedData: { data: groupedData } = {} } = this;
+        const {
+            xAxis,
+            yAxis,
+            data,
+            processedData: { data: groupedData } = {},
+            ctx: { callbackCache },
+        } = this;
 
         if (!xAxis || !yAxis || !data) {
             return [];
@@ -421,7 +429,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     let labelText: string;
 
                     if (label.formatter) {
-                        labelText = label.formatter({ value: yDatum, seriesId });
+                        labelText = callbackCache.call(label.formatter, { value: yDatum, seriesId });
                     } else {
                         labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
                     }
@@ -542,6 +550,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
+            ctx: { callbackCache },
         } = this;
 
         const { size, formatter } = marker;
@@ -567,7 +576,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
-                format = formatter({
+                format = callbackCache.call(formatter, {
                     datum: datum.datum,
                     xKey,
                     yKey: datum.yKey,
@@ -1062,7 +1071,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     private animateFormatter(datum: MarkerSelectionDatum) {
-        const { marker, fills, strokes, xKey = '', yKeys, id: seriesId } = this;
+        const {
+            marker,
+            fills,
+            strokes,
+            xKey = '',
+            yKeys,
+            id: seriesId,
+            ctx: { callbackCache },
+        } = this;
         const { size, formatter } = marker;
 
         const yKeyIndex = yKeys.indexOf(datum.yKey);
@@ -1073,7 +1090,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: datum.datum,
                 xKey,
                 yKey: datum.yKey,

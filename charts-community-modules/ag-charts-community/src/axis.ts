@@ -62,6 +62,7 @@ import {
 } from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
+import { ModuleContext } from './util/module';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -441,7 +442,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         this.crossLineGroup.removeChild(crossLine.group);
     }
 
-    constructor(scale: S) {
+    constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
         this._scale = scale;
         this.refreshScale();
 
@@ -1385,7 +1386,16 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
         const identityFormatter = (params: AgAxisCaptionFormatterParams) => params.defaultValue;
-        const { rotation, title, _titleCaption, lineNode, range: requestedRange, tickLineGroup, tickLabelGroup } = this;
+        const {
+            rotation,
+            title,
+            _titleCaption,
+            lineNode,
+            range: requestedRange,
+            tickLineGroup,
+            tickLabelGroup,
+            moduleCtx: { callbackCache },
+        } = this;
         const { formatter = identityFormatter } = this.title ?? {};
 
         if (!title) {
@@ -1431,7 +1441,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
 
-            titleNode.text = formatter(this.getTitleFormatterParams());
+            titleNode.text = callbackCache.call(formatter, this.getTitleFormatterParams());
         }
 
         titleNode.visible = titleVisible;
@@ -1439,17 +1449,22 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     // For formatting (nice rounded) tick values.
     formatTick(datum: any, index: number): string {
-        const { label, labelFormatter, fractionDigits } = this;
+        const {
+            label,
+            labelFormatter,
+            fractionDigits,
+            moduleCtx: { callbackCache },
+        } = this;
 
         if (label.formatter) {
-            return label.formatter({
+            return callbackCache.call(label.formatter, {
                 value: fractionDigits > 0 ? datum : String(datum),
                 index,
                 fractionDigits,
                 formatter: labelFormatter,
             });
         } else if (labelFormatter) {
-            return labelFormatter(datum);
+            return callbackCache.call(labelFormatter, datum);
         }
         // The axis is using a logScale or the`datum` is an integer, a string or an object
         return String(datum);

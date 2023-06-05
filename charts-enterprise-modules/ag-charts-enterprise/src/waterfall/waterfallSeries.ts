@@ -151,8 +151,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgWaterfallSeriesFormatterParams<any>) => AgWaterfallSeriesFormat = undefined;
 
-    constructor() {
+    constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super({
+            moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             directionKeys: {
@@ -280,7 +281,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async createNodeData() {
-        const { data, dataModel, visible } = this;
+        const { data, dataModel, visible, ctx } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
@@ -376,6 +377,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                     padding,
                     formatter,
                     barAlongX,
+                    ctx,
                 }),
             };
 
@@ -414,6 +416,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             formatter,
             highlightStyle: { item: itemHighlightStyle },
             id: seriesId,
+            ctx,
         } = this;
 
         const crisp = checkCrisp(this.xAxis?.visibleRange);
@@ -448,6 +451,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 formatter,
                 seriesId,
                 itemId: datum.itemId,
+                ctx,
             });
             config.crisp = crisp;
             config.visible = visible;
@@ -484,7 +488,13 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     getTooltipHtml(nodeDatum: WaterfallNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const {
+            xKey,
+            yKey,
+            xAxis,
+            yAxis,
+            ctx: { callbackCache },
+        } = this;
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
@@ -504,7 +514,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const color = format?.fill ?? fill ?? 'gray';
 
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum,
                 xKey,
                 yKey,

@@ -56,6 +56,7 @@ import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../.
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
+import { ModuleContext } from '../../../util/module';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -136,8 +137,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgBarSeriesFormatterParams<any>) => AgBarSeriesFormat = undefined;
 
-    constructor() {
+    constructor(moduleCtx: ModuleContext) {
         super({
+            moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             directionKeys: {
@@ -445,6 +447,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             label,
             id: seriesId,
             processedData,
+            ctx,
         } = this;
 
         let xBandWidth = xScale.bandwidth;
@@ -548,7 +551,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         textBaseline: labelTextBaseline,
                         x: labelX,
                         y: labelY,
-                    } = createLabelData({ value: yValue, rect, formatter, placement, seriesId, barAlongX });
+                    } = createLabelData({ value: yValue, rect, formatter, placement, seriesId, barAlongX, ctx });
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const nodeData: BarNodeDatum = {
@@ -625,6 +628,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             formatter,
             id: seriesId,
             highlightStyle: { item: itemHighlightStyle },
+            ctx,
         } = this;
 
         const crisp = checkCrisp(this.xAxis?.visibleRange);
@@ -652,6 +656,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 formatter,
                 seriesId,
                 stackGroup: this.getStackGroup(datum.yKey),
+                ctx,
             });
             config.crisp = crisp;
             config.visible = visible;
@@ -684,7 +689,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey, yKeys, processedData } = this;
+        const {
+            xKey,
+            yKeys,
+            processedData,
+            ctx: { callbackCache },
+        } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
@@ -724,7 +734,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         let format: AgBarSeriesFormat | undefined = undefined;
 
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum,
                 fill,
                 stroke,

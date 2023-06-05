@@ -53,6 +53,7 @@ import {
 import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS } from '../../data/processors';
 import * as easing from '../../../motion/easing';
+import { ModuleContext } from '../../../util/module';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -128,8 +129,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
-    constructor() {
-        super({ pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
+    constructor(moduleCtx: ModuleContext) {
+        super({ moduleCtx, pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
 
         this.label.enabled = false;
     }
@@ -315,7 +316,12 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     async createNodeData() {
-        const { xAxis, yAxis, processedData } = this;
+        const {
+            xAxis,
+            yAxis,
+            processedData,
+            ctx: { callbackCache },
+        } = this;
 
         if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
@@ -361,7 +367,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const selectionDatumLabel =
                 total !== 0
                     ? {
-                          text: labelFormatter({ value: total, seriesId }),
+                          text: callbackCache.call(labelFormatter, { value: total, seriesId }),
                           fontStyle: labelFontStyle,
                           fontWeight: labelFontWeight,
                           fontSize: labelFontSize,

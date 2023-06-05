@@ -39,6 +39,7 @@ import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
+import { CallbackCache } from '../util/callbackCache';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -204,6 +205,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly updateService: UpdateService;
     protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
+    protected readonly callbackCache: CallbackCache;
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
     protected readonly legendModules: Record<string, { instance: ModuleInstance }> = {};
     private legendType: string | undefined;
@@ -249,6 +251,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.updateService = new UpdateService((type = ChartUpdateType.FULL, { forceNodeDataRefresh }) =>
             this.update(type, { forceNodeDataRefresh })
         );
+        this.callbackCache = new CallbackCache();
 
         this.animationManager = new AnimationManager(this.interactionManager);
         this.animationManager.skipAnimations = true;
@@ -336,6 +339,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             layoutService,
             updateService,
             mode,
+            callbackCache,
         } = this;
         return {
             scene,
@@ -350,6 +354,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             layoutService,
             updateService,
             mode,
+            callbackCache,
         };
     }
 
@@ -391,6 +396,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
+
+        this.callbackCache.invalidateCache();
 
         this._destroyed = true;
 
@@ -437,6 +444,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
             try {
                 await callbacks[0]();
+                this.callbackCache.invalidateCache();
             } catch (e) {
                 Logger.error('update error', e);
             }

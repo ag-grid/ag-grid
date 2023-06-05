@@ -52,6 +52,7 @@ import { StateMachine } from '../../../motion/states';
 import * as easing from '../../../motion/easing';
 import { DataModel } from '../../data/dataModel';
 import { normalisePropertyTo } from '../../data/processors';
+import { ModuleContext } from '../../../util/module';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -323,8 +324,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     surroundingRadius?: number = undefined;
 
-    constructor() {
-        super({ useLabelLayer: true });
+    constructor(moduleCtx: ModuleContext) {
+        super({ moduleCtx, useLabelLayer: true });
 
         this.angleScale = new LinearScale();
         // Each sector is a ratio of the whole, where all ratios add up to 1.
@@ -499,7 +500,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
         sectorLabel?: { text: string };
     } {
-        const { calloutLabel, sectorLabel, legendItemKey } = this;
+        const {
+            calloutLabel,
+            sectorLabel,
+            legendItemKey,
+            ctx: { callbackCache },
+        } = this;
 
         const calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
         const sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
@@ -516,7 +522,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (!calloutLabelVisible) {
                 calloutLabelText = undefined;
             } else if (calloutLabel.formatter) {
-                calloutLabelText = calloutLabel.formatter(labelFormatterParams);
+                calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
             } else {
                 calloutLabelText = String(datum[calloutLabelKey]);
             }
@@ -525,7 +531,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         let sectorLabelText;
         if (sectorLabelKey) {
             if (sectorLabel.formatter) {
-                sectorLabelText = sectorLabel.formatter(labelFormatterParams);
+                sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
             } else {
                 sectorLabelText = String(datum[sectorLabelKey]);
             }
@@ -606,7 +612,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private getSectorFormat(datum: any, itemId: any, index: number, highlight: any) {
-        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
+        const {
+            angleKey,
+            radiusKey,
+            fills,
+            strokes,
+            fillOpacity: seriesFillOpacity,
+            formatter,
+            id: seriesId,
+            ctx: { callbackCache },
+        } = this;
 
         const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
@@ -619,7 +634,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         let format: AgPieSeriesFormat | undefined;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum,
                 angleKey,
                 radiusKey,

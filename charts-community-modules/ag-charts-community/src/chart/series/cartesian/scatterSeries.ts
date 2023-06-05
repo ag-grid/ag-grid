@@ -29,6 +29,7 @@ import {
 } from '../../agChartOptions';
 import { DataModel } from '../../data/dataModel';
 import * as easing from '../../../motion/easing';
+import { ModuleContext } from '../../../util/module';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -122,8 +123,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
-    constructor() {
+    constructor(moduleCtx: ModuleContext) {
         super({
+            moduleCtx,
             pickModes: [
                 SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
                 SeriesNodePickMode.NEAREST_NODE,
@@ -201,7 +203,16 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { visible, xAxis, yAxis, yKey = '', xKey = '', label, labelKey } = this;
+        const {
+            visible,
+            xAxis,
+            yAxis,
+            yKey = '',
+            xKey = '',
+            label,
+            labelKey,
+            ctx: { callbackCache },
+        } = this;
 
         const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`);
         const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`);
@@ -235,7 +246,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
             let text: string;
             if (label.formatter) {
-                text = label.formatter({ value: yDatum, seriesId, datum });
+                text = callbackCache.call(label.formatter, { value: yDatum, seriesId, datum });
             } else {
                 text = labelKey ? String(datum[labelKey]) : '';
             }
@@ -321,6 +332,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 },
             },
             id: seriesId,
+            ctx: { callbackCache },
         } = this;
         const { formatter } = marker;
 
@@ -342,7 +354,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
             let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
-                format = formatter({
+                format = callbackCache.call(formatter, {
                     datum: datum.datum,
                     xKey,
                     yKey,
@@ -428,7 +440,18 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             return '';
         }
 
-        const { marker, tooltip, xName, yName, sizeKey, sizeName, labelKey, labelName, id: seriesId } = this;
+        const {
+            marker,
+            tooltip,
+            xName,
+            yName,
+            sizeKey,
+            sizeName,
+            labelKey,
+            labelName,
+            id: seriesId,
+            ctx: { callbackCache },
+        } = this;
 
         const { stroke } = marker;
         const fill = nodeDatum.fill ?? marker.fill;
@@ -438,7 +461,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
 
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: nodeDatum,
                 xKey,
                 yKey,
@@ -599,6 +622,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             yKey = '',
             marker: { strokeWidth: markerStrokeWidth },
             id: seriesId,
+            ctx: { callbackCache },
         } = this;
         const { formatter } = this.marker;
 
@@ -609,7 +633,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: datum.datum,
                 xKey,
                 yKey,

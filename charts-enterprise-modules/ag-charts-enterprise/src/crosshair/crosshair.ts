@@ -43,7 +43,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
     private activeHighlight?: _ModuleSupport.HighlightChangeEvent['currentHighlight'] = undefined;
-    constructor(ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
+    constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
         super();
 
         const mouseMove = ctx.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
@@ -146,10 +146,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private formatValue(val: any): string {
-        const { labelFormatter, axisLayout } = this;
+        const {
+            labelFormatter,
+            axisLayout,
+            ctx: { callbackCache },
+        } = this;
 
         if (labelFormatter) {
-            return labelFormatter(val);
+            return callbackCache.call(labelFormatter, val);
         }
 
         const isInteger = val % 1 === 0;

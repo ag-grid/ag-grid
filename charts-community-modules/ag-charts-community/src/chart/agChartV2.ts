@@ -514,7 +514,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
         return;
     }
 
-    chart.series = createSeries(optSeries);
+    chart.series = createSeries(chart, optSeries);
 }
 
 function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
@@ -558,13 +558,14 @@ function applyLegend(chart: Chart, options: AgChartOptions) {
     });
 }
 
-function createSeries(options: SeriesOptionsTypes[]): Series[] {
+function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     const series: Series<any>[] = [];
+    const moduleContext = chart.getModuleContext();
 
     let index = 0;
     for (const seriesOptions of options ?? []) {
         const path = `series[${index++}]`;
-        const seriesInstance = getSeries(seriesOptions.type!);
+        const seriesInstance = getSeries(seriesOptions.type!, moduleContext);
         applySeriesValues(seriesInstance, seriesOptions, { path, index });
         series.push(seriesInstance);
     }
