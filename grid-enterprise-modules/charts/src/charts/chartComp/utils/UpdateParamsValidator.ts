@@ -87,11 +87,6 @@ export class UpdateParamsValidator {
             warnMessage: createWarnMessage('chartThemeName', 'string')
         },
         {
-            property: 'chartContainer',
-            validationFn: isHTMLElement,
-            warnMessage: createWarnMessage('chartContainer', 'HTMLElement')
-        },
-        {
             property: 'chartThemeOverrides',
             validationFn: UpdateParamsValidator.validateAgChartThemeOverrides,
             warnMessage: createWarnMessage('chartThemeOverrides', 'AgChartThemeOverrides')
@@ -143,7 +138,7 @@ export class UpdateParamsValidator {
             },
         ];
 
-        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartContainer', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
+        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
     }
 
     private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean {
@@ -151,7 +146,7 @@ export class UpdateParamsValidator {
             ...UpdateParamsValidator.commonValidations,
         ];
 
-        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartContainer', 'chartThemeOverrides', 'unlinkChart'], 'UpdatePivotChartParams');
+        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart'], 'UpdatePivotChartParams');
     }
 
     private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean {
@@ -160,7 +155,7 @@ export class UpdateParamsValidator {
             ...UpdateParamsValidator.cellRangeValidations,
         ];
 
-        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartContainer', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
+        return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
     }
 
     private static validateProperties<T>(params: T, validations: ValidationFunction<T>[], validPropertyNames: (keyof T)[], paramsType: string): boolean {

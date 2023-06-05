@@ -130,8 +130,6 @@ export interface UpdateRangeChartParams {
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
-    /** Provide to display the chart outside the grid in your own container. */
-    chartContainer?: HTMLElement;
     /** Allows specific chart options in the current theme to be overridden. */
     chartThemeOverrides?: AgChartThemeOverrides;
     /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
@@ -154,8 +152,6 @@ export interface UpdatePivotChartParams {
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
-    /** Provide to display the chart outside the grid in your own container. */
-    chartContainer?: HTMLElement;
     /** Allows specific chart options in the current theme to be overridden. */
     chartThemeOverrides?: AgChartThemeOverrides;
     /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
@@ -170,8 +166,6 @@ export interface UpdateCrossFilterChartParams {
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
-    /** Provide to display the chart outside the grid in your own container. */
-    chartContainer?: HTMLElement;
     /** Allows specific chart options in the current theme to be overridden. */
     chartThemeOverrides?: AgChartThemeOverrides;
     /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
