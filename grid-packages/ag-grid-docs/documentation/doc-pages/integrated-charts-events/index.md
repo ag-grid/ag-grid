@@ -61,7 +61,29 @@ Try changing the chart cell range in the grid and notice the subtitle is updated
 
 ## Standalone Chart Events
 
-The example below shows how we can subscribe to [Standalone Charts Events](/charts-events/):
+It is possible to subscribe to the [Standalone Charts Events](/charts-events/) using the theme based configuration 
+via the `chartThemeOverrides` grid option:
+
+<snippet>
+| const gridOptions = { 
+|   chartThemeOverrides: {
+|     common: {
+|       legend: {
+|         listeners: {
+|           legendItemClick: (e) => console.log('legendItemClick', e)
+|         }
+|       },
+|       listeners: {
+|         seriesNodeClick: (e) => console.log('seriesNodeClick', e)
+|       }
+|     }
+|   }
+| }
+</snippet>
+
+Note that `chartThemeOverrides` maps to the `overrides` [Theme](/charts-api-themes/) property. 
+
+The example below demonstrates Standalone Charts Events subscription:
 
 - Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
 - Click on a legend item and observe that the `legendItemClick` listener emits a console message.

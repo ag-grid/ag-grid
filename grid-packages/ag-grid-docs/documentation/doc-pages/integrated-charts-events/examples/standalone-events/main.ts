@@ -24,11 +24,11 @@ const gridOptions: GridOptions = {
     common: {
       legend: {
         listeners: {
-          legendItemClick: (e: AgChartLegendClickEvent) => console.log('legendItemClick', e),
-        },
+          legendItemClick: (e: AgChartLegendClickEvent) => console.log('legendItemClick', e)
+        }
       },
       listeners: {
-        seriesNodeClick: (e: AgSeriesNodeClickParams<any>) => console.log('seriesNodeClick', e),
+        seriesNodeClick: (e: AgSeriesNodeClickParams<any>) => console.log('seriesNodeClick', e)
       },
     },
   },
