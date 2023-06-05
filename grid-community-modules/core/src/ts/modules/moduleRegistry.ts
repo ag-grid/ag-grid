@@ -43,6 +43,13 @@ export class ModuleRegistry {
         modules.forEach(module => ModuleRegistry.register(module, moduleBased, gridId));
     }
 
+    private static isValidModuleVersion(module: Module): boolean {
+        const [moduleMajor, moduleMinor] = module.version.split('.') || [];
+        const [currentModuleMajor, currentModuleMinor] = ModuleRegistry.currentModuleVersion.split('.') || [];
+
+        return moduleMajor === currentModuleMajor && moduleMinor === currentModuleMinor;
+    }
+
     private static runVersionChecks(module: Module) {
         if (!ModuleRegistry.currentModuleVersion) {
             ModuleRegistry.currentModuleVersion = module.version;
@@ -50,7 +57,7 @@ export class ModuleRegistry {
 
         if (!module.version) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`);
-        } else if (module.version !== ModuleRegistry.currentModuleVersion) {
+        } else if (!ModuleRegistry.isValidModuleVersion(module)) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`);
         }
 
