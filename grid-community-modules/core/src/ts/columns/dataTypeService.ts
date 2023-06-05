@@ -12,7 +12,8 @@ import {
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DateStringDataTypeDefinition,
-    DEFAULT_DATA_TYPES,
+    ValueFormatterLiteParams,
+    ValueParserLiteParams,
 } from '../entities/dataType';
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -25,9 +26,10 @@ import { ValueService } from '../valueService/valueService';
 import { Column } from '../entities/column';
 import { doOnce } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
-import { exists } from '../utils/generic';
+import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
+import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -57,8 +59,9 @@ export class DataTypeService extends BeanStub {
     }
 
     private processDataTypeDefinitions(): void {
+        const defaultDataTypes = this.getDefaultDataTypes();
         this.dataTypeDefinitions = {};
-        Object.entries(DEFAULT_DATA_TYPES).forEach(([cellDataType, dataTypeDefinition]) => {
+        Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {
             this.dataTypeDefinitions[cellDataType] = {
                 ...dataTypeDefinition,
                 groupSafeValueFormatter: this.createGroupSafeValueFormatter(dataTypeDefinition)
@@ -68,7 +71,7 @@ export class DataTypeService extends BeanStub {
         this.dataTypeMatchers = {};
 
         Object.entries(dataTypeDefinitions).forEach(([cellDataType, dataTypeDefinition]) => {
-            const mergedDataTypeDefinition = this.processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions, [cellDataType]);
+            const mergedDataTypeDefinition = this.processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions, [cellDataType], defaultDataTypes);
             if (mergedDataTypeDefinition) {
                 this.dataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
                 if (dataTypeDefinition.dataTypeMatcher) {
@@ -76,7 +79,7 @@ export class DataTypeService extends BeanStub {
                 }
             }
         });
-        this.checkObjectValueHandlers();
+        this.checkObjectValueHandlers(defaultDataTypes);
 
         ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
             const overriddenDataTypeMatcher = this.dataTypeMatchers[cellDataType];
@@ -84,7 +87,7 @@ export class DataTypeService extends BeanStub {
                 // remove to maintain correct ordering
                 delete this.dataTypeMatchers[cellDataType];
             }
-            this.dataTypeMatchers[cellDataType] = overriddenDataTypeMatcher ?? DEFAULT_DATA_TYPES[cellDataType].dataTypeMatcher;
+            this.dataTypeMatchers[cellDataType] = overriddenDataTypeMatcher ?? defaultDataTypes[cellDataType].dataTypeMatcher;
         });
     }
 
@@ -112,12 +115,13 @@ export class DataTypeService extends BeanStub {
     private processDataTypeDefinition(
         dataTypeDefinition: DataTypeDefinition,
         dataTypeDefinitions: { [key: string]: DataTypeDefinition },
-        alreadyProcessedDataTypes: string[]
+        alreadyProcessedDataTypes: string[],
+        defaultDataTypes: { [key: string]: CoreDataTypeDefinition }
     ): DataTypeDefinition & GroupSafeValueFormatter | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
         const extendsCellDataType = dataTypeDefinition.extendsDataType;
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
-            const baseDataTypeDefinition = DEFAULT_DATA_TYPES[extendsCellDataType];
+            const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
@@ -139,7 +143,8 @@ export class DataTypeService extends BeanStub {
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
                 extendedDataTypeDefinition,
                 dataTypeDefinitions,
-                [...alreadyProcessedDataTypes, extendsCellDataType]
+                [...alreadyProcessedDataTypes, extendsCellDataType],
+                defaultDataTypes
             );
             if (!mergedExtendedDataTypeDefinition) {
                 return undefined;
@@ -326,9 +331,9 @@ export class DataTypeService extends BeanStub {
         });
     }
 
-    private checkObjectValueHandlers(): void {
+    private checkObjectValueHandlers(defaultDataTypes: { [key: string]: CoreDataTypeDefinition }): void {
         const resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
-        const defaultObjectDataTypeDefinition = DEFAULT_DATA_TYPES.object;
+        const defaultObjectDataTypeDefinition = defaultDataTypes.object;
         this.hasObjectValueParser = resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser;
         this.hasObjectValueFormatter = resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
     }
@@ -523,6 +528,61 @@ export class DataTypeService extends BeanStub {
                     );
                 }
                 break;
+            }
+        }
+    }
+
+    private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
+        const defaultDateFormatMatcher = (value: string) => !!value.match('\\d{4}-\\d{2}-\\d{2}');
+        const translate = this.localeService.getLocaleTextFunc();
+        return {
+            number: {
+                baseDataType: 'number',
+                valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? null : Number(params.newValue),
+                valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
+                    if (params.value == null) { return ''; }
+                    if (typeof params.value !== 'number' || isNaN(params.value)) {
+                        return translate('invalidNumber', 'Invalid Number');
+                    }
+                    return String(params.value);
+                },
+                dataTypeMatcher: (value: any) => typeof value === 'number',
+            },
+            text: {
+                baseDataType: 'text',
+                valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : toStringOrNull(params.newValue),
+                dataTypeMatcher: (value: any) => typeof value === 'string',
+            },
+            boolean: {
+                baseDataType: 'boolean',
+                valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
+                valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
+                dataTypeMatcher: (value: any) => typeof value === 'boolean',
+            },
+            date: {
+                baseDataType: 'date',
+                valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
+                    if (params.value == null) { return ''; }
+                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                        return translate('invalidDate', 'Invalid Date');
+                    }
+                    return serialiseDate(params.value, false) ?? '';
+                },
+                dataTypeMatcher: (value: any) => value instanceof Date,
+            },
+            dateString: {
+                baseDataType: 'dateString',
+                dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
+                dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
+                valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
+                valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
+                dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
+            },
+            object: {
+                baseDataType: 'object',
+                valueParser: () => null,
+                valueFormatter: (params: ValueFormatterLiteParams<any, any>) => toStringOrNull(params.value) ?? '',
             }
         }
     }

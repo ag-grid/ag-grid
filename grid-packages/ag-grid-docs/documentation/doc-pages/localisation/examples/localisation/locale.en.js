@@ -341,4 +341,6 @@ const AG_GRID_LOCALE_EN = {
     // Data types
     true: 'True',
     false: 'False',
+    invalidDate: 'Invalid Date',
+    invalidNumber: 'Invalid Number',
 }

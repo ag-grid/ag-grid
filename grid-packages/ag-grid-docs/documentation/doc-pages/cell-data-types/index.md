@@ -4,15 +4,15 @@ title: "Cell Data Types"
 
 Working with values of different data types is made easy by using cell data types.
 
+This allows different grid features to work without any additional configuration, including [Rendering](/cell-content/), [Editing](/cell-editing/), [Filtering](/filtering/), [Sorting](/row-sorting/), [Row Grouping](/grouping/) and Import & Export ([CSV Export](/csv-export/), [Excel Export](/excel-export/), [Clipboard](/clipboard/)).
+
 ## Enable Cell Data Types
 
-Cell data types are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
+There are six pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'` and `'object'`.
+
+These are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
 
 Specific cell data types can also be defined by setting the `cellDataType` property on the column definition.
-
-There are six pre-defined data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'` and `'object'`.
-
-<api-documentation source='column-properties/properties.json' section="columns" names='["cellDataType"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 |const gridOptions = {
@@ -26,12 +26,12 @@ There are six pre-defined data types: `'text'`, `'number'`, `'boolean'`, `'date'
 |}
 </snippet>
 
-The following example demonstrates cell data types (inferred from the row data):
+The following example demonstrates the six pre-defined cell data types (inferred from the row data):
 - The **Athlete** column has a `'text'` data type.
 - The **Age** column has a `'number'` data type.
 - The **Gold** column has a `'boolean'` data type.
-- The **Date** column has a `'date'` data type.
-- The **Date (String)** column has a `'dateString'` data type.
+- The **Date** column has a `'date'` data type (cell values are `Date` objects).
+- The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
 - The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
 <grid-example title='Enable Cell Data Types' name='enable-cell-data-types' type='generated'></grid-example>
