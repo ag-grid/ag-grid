@@ -1,3 +1,4 @@
+@use "sass:map";
 @use 'core' as *;
 
 #{$css-variables-root} {
@@ -5,6 +6,14 @@
     @each $name, $hex in $abstract-colors {
         --#{$name}: #{$hex};
     }
+
+    // create a CSS variable for all scale colors
+    @each $name, $scale in $color-scales {
+        @each $key, $value in map.get($color-scales, $name) {
+            --#{$name}-#{unquote($key)}: #{$value};
+        }
+    }
+
     // create a CSS variable for every semantic color
     @each $name, $var-name in $semantic-colors {
         --#{$name}: var(--#{$var-name});

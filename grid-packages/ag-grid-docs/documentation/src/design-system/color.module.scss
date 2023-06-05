@@ -1,3 +1,4 @@
+@use "sass:map";
 @use 'core' as *;
 
 // Export colors for JavaScript
@@ -8,5 +9,11 @@
 
     @each $key, $value in $semantic-colors {
         semantic-color-#{unquote($key)}: $value;
+    }
+
+    @each $name, $scale in $color-scales {
+        @each $key, $value in map.get($color-scales, $name) {
+            #{$name}-#{unquote($key)}: $value;
+        }
     }
 }
