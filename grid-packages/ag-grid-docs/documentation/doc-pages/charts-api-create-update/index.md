@@ -79,6 +79,7 @@ e `AgChartInstance`:
 | However when using [Integrated Charts](../integrated-charts-events/#accessing-chart-instance) it may be
 | necessary to use this API to perform chart updates in Grid callbacks.
 </note>
+<api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 </framework-specific-section>
 
 ## Destroying Charts
