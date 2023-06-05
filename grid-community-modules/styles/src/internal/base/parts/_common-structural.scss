@@ -928,7 +928,6 @@
 
     .ag-popup-editor {
         position: absolute;
-        z-index: 1;
         @include ag.selectable(none);
     }
 
