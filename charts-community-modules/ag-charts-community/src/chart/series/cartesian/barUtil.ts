@@ -6,7 +6,7 @@ import {
     FontFamily,
     FontWeight,
     FontStyle,
-    AgBarSeriesFormatterParams,
+    AgBarSeriesOptions,
 } from '../../agChartOptions';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
@@ -152,8 +152,8 @@ export function updateRect({ rect, config }: { rect: Rect; config: RectConfig })
 }
 
 export function getRectConfig<
-    DatumType extends CartesianSeriesNodeDatum,
-    FormatterParams extends AgBarSeriesFormatterParams<DatumType>
+    Params extends Parameters<NonNullable<AgBarSeriesOptions['formatter']>>[0],
+    ExtraParams extends {}
 >({
     datum,
     isHighlighted,
@@ -161,20 +161,19 @@ export function getRectConfig<
     highlightStyle,
     formatter,
     seriesId,
-    itemId,
     stackGroup,
     ctx: { callbackCache },
+    ...opts
 }: {
-    datum: DatumType;
+    datum: CartesianSeriesNodeDatum;
     isHighlighted: boolean;
     style: RectConfig;
     highlightStyle: SeriesItemHighlightStyle;
-    formatter?: (params: FormatterParams) => AgBarSeriesFormat | undefined;
+    formatter?: (params: Params & ExtraParams) => AgBarSeriesFormat;
     seriesId: string;
-    itemId?: string;
     stackGroup?: string;
     ctx: ModuleContext;
-}): RectConfig {
+} & ExtraParams): RectConfig {
     const itemFill = isHighlighted ? highlightStyle.fill ?? style.fill : style.fill;
     const itemStroke = isHighlighted ? highlightStyle.stroke ?? style.stroke : style.stroke;
     const itemStrokeWidth = isHighlighted ? highlightStyle.strokeWidth ?? style.strokeWidth : style.strokeWidth;
@@ -183,7 +182,7 @@ export function getRectConfig<
 
     let format: AgBarSeriesFormat | undefined = undefined;
     if (formatter) {
-        format = callbackCache.call(formatter, {
+        format = callbackCache.call(formatter as any, {
             datum: datum.datum,
             xKey: datum.xKey,
             yKey: datum.yKey,
@@ -192,9 +191,9 @@ export function getRectConfig<
             strokeWidth: itemStrokeWidth,
             highlighted: isHighlighted,
             seriesId,
-            itemId,
             stackGroup,
-        } as FormatterParams);
+            ...opts,
+        });
     }
 
     return {
