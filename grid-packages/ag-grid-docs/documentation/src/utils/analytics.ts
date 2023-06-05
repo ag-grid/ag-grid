@@ -5,6 +5,9 @@ const EVENT_NAME = {
     integratedCharts: 'Homepage Example Integrated Charts',
     exampleRunner: 'Example Runner',
     apiDocumentation: 'API Documentation',
+    demoToolbar: 'Demo Toolbar',
+    infoEmail: 'Info Email',
+    buyButton: 'Buy Button',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -83,6 +86,45 @@ export const trackOnceExampleRunner = (props: object) => {
 export const trackApiDocumentation = (props: object) => {
     trackPlausible({
         eventName: EVENT_NAME.apiDocumentation,
+        props,
+    });
+};
+
+export const trackDemoToolbar = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.demoToolbar,
+        props,
+    });
+};
+
+export const trackOnceDemoToolbar = (props: object) => {
+    const cacheKey = `${EVENT_NAME.demoToolbar}.${JSON.stringify(props)}`;
+
+    if (!trackingCache[cacheKey]) {
+        trackDemoToolbar(props);
+        trackingCache[cacheKey] = true;
+    }
+};
+
+export const trackInfoEmail = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.infoEmail,
+        props,
+    });
+};
+
+export const trackOnceInfoEmail = (props: object) => {
+    const cacheKey = `${EVENT_NAME.infoEmail}.${JSON.stringify(props)}`;
+
+    if (!trackingCache[cacheKey]) {
+        trackDemoToolbar(props);
+        trackingCache[cacheKey] = true;
+    }
+};
+
+export const trackBuyButton = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.buyButton,
         props,
     });
 };

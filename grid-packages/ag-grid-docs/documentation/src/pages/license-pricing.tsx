@@ -1,15 +1,33 @@
 import classnames from 'classnames';
 import ukraineFlagSVG from 'images/ukraine-flag.svg';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Icon } from '../components/Icon';
+import { InfoEmailLink } from '../components/InfoEmailLink';
 import { Licenses } from '../components/licenses/Licenses';
 import NPMIcon from '../images/inline-svgs/npm.svg';
+import { trackOnceInfoEmail } from '../utils/analytics';
 import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
 
 const LicensePricing = () => {
+    useEffect(() => {
+        const onSelectionChange = () => {
+            const selection = document.getSelection()?.toString();
+            if (selection?.includes('info@ag-grid.com')) {
+                trackOnceInfoEmail({
+                    type: 'selectedEmail',
+                });
+            }
+        };
+        document.addEventListener('selectionchange', onSelectionChange);
+
+        return () => {
+            document.removeEventListener('selectionchange', onSelectionChange);
+        };
+    });
+
     return (
         <div className={classnames('page-margin', styles.container)}>
             <div className={styles.topSection}>
@@ -22,9 +40,9 @@ const LicensePricing = () => {
                     </p>
 
                     <p className={styles.salesEmail}>
-                        <a className="button font-size-extra-large" href="mailto:info@ag-grid.com">
-                            <Icon name="email" /> info@ag-grid.com
-                        </a>
+                        <InfoEmailLink isButton withIcon className="font-size-extra-large" trackingType="headerButton">
+                            info@ag-grid.com
+                        </InfoEmailLink>
                     </p>
 
                     <div className={styles.videoPrompt}>
@@ -56,9 +74,13 @@ const LicensePricing = () => {
                     developers. For more than 10 developers or any questions regarding your purchase, please email us.
                 </p>
 
-                <a className="font-size-massive" href="mailto:info@ag-grid.com?subject=AG Grid Developer license query">
+                <InfoEmailLink
+                    emailSubject="AG Grid Developer license query"
+                    className="font-size-massive"
+                    trackingType="bulkDiscount"
+                >
                     info@ag-grid.com
-                </a>
+                </InfoEmailLink>
             </div>
 
             <div className={styles.communityEnterprise}>
@@ -131,9 +153,12 @@ const LicensePricing = () => {
                         and supported by our technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
-                        <a href="mailto:info@ag-grid.com?subject=AG Grid Trial license request">
+                        <InfoEmailLink
+                            emailSubject="AG Grid Trial license request"
+                            trackingType="enterpriseEvaluationKey"
+                        >
                             get a temporary evaluation key
-                        </a>
+                        </InfoEmailLink>
                         .
                     </p>
 
@@ -144,7 +169,13 @@ const LicensePricing = () => {
 
                     <p>
                         Expanded definitions are available further down the page. For any other questions please{' '}
-                        <a href="mailto:info@ag-grid.com?subject=AG Grid Developer license query">get in contact</a>.
+                        <InfoEmailLink
+                            emailSubject="AG Grid Developer license query"
+                            trackingType="enterpriseGetInContact"
+                        >
+                            get in contact
+                        </InfoEmailLink>
+                        .
                     </p>
 
                     <a
@@ -176,7 +207,13 @@ const LicensePricing = () => {
                     </p>
                     <p>
                         If you have any other questions, or want to investigate volume pricing please{' '}
-                        <a href="mailto:info@ag-grid.com?subject=AG Grid Developer license query">get in contact</a>.
+                        <InfoEmailLink
+                            emailSubject="AG Grid Developer license query"
+                            trackingType="questionsGetInContact"
+                        >
+                            get in contact
+                        </InfoEmailLink>
+                        .
                     </p>
                 </div>
 
@@ -299,9 +336,9 @@ const LicensePricing = () => {
 
                         <p>
                             If you have a deployment that doesn't fit within our licensing model, please{' '}
-                            <a href="mailto:info@ag-grid.com?subject=AG Grid Developer license query">
+                            <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="deployment">
                                 start a conversation with us
-                            </a>{' '}
+                            </InfoEmailLink>{' '}
                             and we will do our best to get to something that works.
                         </p>
                     </div>
@@ -314,12 +351,13 @@ const LicensePricing = () => {
                     license related questions please contact our friendly sales team.{' '}
                 </p>
 
-                <a
+                <InfoEmailLink
+                    emailSubject="AG Grid Developer license query"
                     className="font-size-extra-large"
-                    href="mailto:info@ag-grid.com?subject=AG Grid Developer license query"
+                    trackingType="footer"
                 >
                     info@ag-grid.com
-                </a>
+                </InfoEmailLink>
             </div>
         </div>
     );

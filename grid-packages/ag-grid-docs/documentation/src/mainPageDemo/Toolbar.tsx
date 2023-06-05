@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import React from 'react';
 import { Icon } from '../components/Icon';
+import { trackDemoToolbar, trackOnceDemoToolbar } from '../utils/analytics';
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
@@ -8,12 +9,21 @@ const IS_SSR = typeof window === 'undefined';
 
 export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme }) => {
     function onDataSizeChanged(event) {
-        setDataSize(event.target.value);
+        const value = event.target.value;
+        setDataSize(value);
+        trackDemoToolbar({
+            type: 'dataSize',
+            value
+        });
     }
 
     function onThemeChanged(event) {
         const newTheme = event.target.value || 'ag-theme-none';
         setGridTheme(newTheme);
+        trackDemoToolbar({
+            type: 'theme',
+            value: newTheme
+        });
 
         if (!IS_SSR) {
             let url = window.location.href;
@@ -29,6 +39,9 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     function onFilterChanged(event) {
         gridRef.current.api.setQuickFilter(event.target.value);
+        trackOnceDemoToolbar({
+            type: 'filterChange',
+        })
     }
 
     return (
