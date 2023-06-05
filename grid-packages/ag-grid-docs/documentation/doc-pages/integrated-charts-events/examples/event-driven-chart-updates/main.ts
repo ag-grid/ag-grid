@@ -1,5 +1,5 @@
 import { Grid, ChartCreated, ChartDestroyed, ChartRangeSelectionChanged, ColDef, GridApi, GridOptions, ChartOptionsChanged, FirstDataRenderedEvent, CreateRangeChartParams } from '@ag-grid-community/core';
-import { AgChart, AgChartLegendClickEvent, AgSeriesNodeClickParams } from 'ag-charts-community';
+import { AgChart } from 'ag-charts-community';
 
 const columnDefs: ColDef[] = [
   { field: 'Month', width: 150, chartDataType: 'category' },
@@ -22,27 +22,56 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemeOverrides: {
     common: {
-      legend: {
-        listeners: {
-          legendItemClick: (e: AgChartLegendClickEvent) => console.log('legendItemClick', e),
-        },
-      },
-      listeners: {
-        seriesNodeClick: (e: AgSeriesNodeClickParams<any>) => console.log('seriesNodeClick', e),
-      },
+      title: { enabled: true, text: 'Monthly Weather' },
+      subtitle: { enabled: true },
+      legend: { enabled: true }
     },
   },
   onFirstDataRendered: onFirstDataRendered,
+  onChartCreated: onChartCreated,
+  onChartRangeSelectionChanged: onChartRangeSelectionChanged,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   const createRangeChartParams: CreateRangeChartParams = {
-    cellRange: { columns: ['Month', 'Sunshine (hours)', 'Rainfall (mm)'] },
-    chartType: 'groupedColumn',
+    cellRange: {
+      rowStartIndex: 0,
+      rowEndIndex: 5,
+      columns: ['Month', 'Sunshine (hours)'],
+    },
+    chartType: 'stackedColumn',
     chartContainer: document.querySelector('#myChart') as any,
   }
 
   params.api.createRangeChart(createRangeChartParams);
+}
+
+function onChartCreated(event: ChartCreated) {
+  console.log('Created chart with ID ' + event.chartId);
+  updateTitle(gridOptions.api!, event.chartId);
+}
+
+function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
+  console.log('Changed range selection of chart with ID ' + event.chartId);
+  updateTitle(gridOptions.api!, event.chartId);
+}
+
+function updateTitle(api: GridApi, chartId: string) {
+  const cellRange = api.getCellRanges()![1];
+  if (!cellRange) return;
+  const columnCount = cellRange.columns.length;
+  const rowCount = cellRange.endRow!.rowIndex - cellRange.startRow!.rowIndex + 1;
+  const subtitle = `Using series data from ${columnCount} column(s) and ${rowCount} row(s)`;
+
+  api!.updateChart({
+    type: 'rangeChartUpdate',
+    chartId: chartId,
+    chartThemeOverrides: {
+      common: {
+        subtitle: { text: subtitle },
+      },
+    },
+  });
 }
 
 // setup the grid after the page has finished loading

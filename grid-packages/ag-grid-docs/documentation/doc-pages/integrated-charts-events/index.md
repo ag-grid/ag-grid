@@ -48,51 +48,22 @@ The following example demonstrates when the described events occur by writing to
 
 <grid-example title='Events' name='events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Accessing Chart Instance
+## Event Driven Chart Updates 
 
-Charts in the grid are produced by the [Standalone Charts](/charts-overview/) library, which is integrated
-directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
-instance that is produced by Standalone Charts, in order to interact with the chart directly.
+The following example updates the chart when `ChartRangeSelectionChanged` events are raised. Note that charts can be 
+updated using the following Grid API method:
 
-The chart instance can be obtained from the `chartRef` using the `getChartRef(chartId)` API.
+<api-documentation source='grid-api/api.json' section='charts' names='["updateChart"]'></api-documentation>
 
-<api-documentation source='grid-api/api.json' section='charts' names='["getChartRef"]'></api-documentation>
+Try changing the chart cell range in the grid and notice the subtitle is updated with chart range info.
 
-Here is the implementation:
+<grid-example title='Event Driven Chart Updates' name='event-driven-chart-updates' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "exampleHeight": 710 }'></grid-example>
 
-<snippet transform={false}>
-|function onChartCreated(event) {
-|    const chartRef = gridOptions.api.getChartRef(event.chartId);
-|    const chart = chartRef.chart;
-|}
-</snippet>
-
-Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#chartcreated) event which is supplied to the `onChartCreated` callback. The `chartId` is provided in all chart events.
-
-## Updating Chart Instance
-
-<framework-specific-section frameworks="javascript">
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update) section.
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update-1) section.
-</framework-specific-section>
-
-The example below shows how the chart instance can be used, creating a subtitle and updating
-it dynamically as you change the range selection.
-
-<grid-example title='Accessing & Updating Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+## Standalone Chart Events
 
 The example below shows how we can subscribe to [Standalone Charts Events](/charts-events/):
 
 - Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
 - Click on a legend item and observe that the `legendItemClick` listener emits a console message.
-- Change chart type from the Settings panel, and observe that the `seriesNodeClick` and `legendItemClick`
-  listeners are working as before.
 
 <grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-## Other Resources
-
-To learn about events see [Standalone Chart Events](/charts-events/).
