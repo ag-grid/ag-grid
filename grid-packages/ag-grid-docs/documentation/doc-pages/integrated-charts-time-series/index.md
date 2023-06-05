@@ -24,7 +24,7 @@ provide.
 Columns that contain date object values will be automatically plotted using a [Time Axis](/charts-axes-types/#time)
 unless it has been explicitly changed through the `chartDataType` column definition property.
 
-Numeric timestamps in a unix format are also allowed, but the column should be explicitly configured to use a time axis
+Numeric timestamps in the Javascript format are also allowed, but the column should be explicitly configured to use a time axis
 via `chartDataType='time'` on the column definition.
 
 The following snippet shows how different time series values can be configured to enable a time axis:
@@ -38,8 +38,8 @@ const gridOptions = {
     ],
     rowData: [
         {
-            someDate: new Date(2019, 0, 1), // date object
-            someTimestamp: 1167609600000, // numeric timestamp (unix format)
+            someDate: new Date('Mon Apr 17 2023 12:43:17'), // date object
+            someTimestamp: 1681735397000, // numeric timestamp (Javascript format)
         },
         // ... more rows
     ]

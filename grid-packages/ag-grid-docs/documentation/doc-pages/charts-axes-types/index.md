@@ -57,13 +57,13 @@ For a full list of configuration options see [Number Axis Options](#number-axis-
 ## Time
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis
-can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps.
-The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to
-place a tick every 5 minutes, every month, or every Friday.
+can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Javascript 
+timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could
+choose to place a tick every 5 minutes, every month, or every Friday.
 
 The time axis also supports specifier strings to control the way time values are presented as labels. For example, 
 the `%H:%M:%S` specifier string will instruct the axis to format a time value like `new Date('Mon Apr 17 2023 12:43:17')` 
-or `1681735397` as `'12:43:17'`. Time axes are typically used as x-axes and placed at the bottom of a chart. The 
+or `1681735397000` as `'12:43:17'`. Time axes are typically used as x-axes and placed at the bottom of a chart. The 
 simplest time axis config looks like this:
 
 ```js
