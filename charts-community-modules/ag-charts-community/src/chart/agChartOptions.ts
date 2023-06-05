@@ -82,7 +82,7 @@ export interface AgChartThemeOverrides {
     /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
     cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
     /** Specifies defaults for column charts. */
-    column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
+    column?: AgCartesianThemeOptions<AgColumnSeriesOptions>;
     /** Specifies defaults for bar charts. */
     bar?: AgCartesianThemeOptions<AgBarSeriesOptions>;
     /** Specifies defaults for line charts. */
@@ -1359,7 +1359,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     fillOpacity?: Opacity;
     /** The opacity of the stroke for the bars. */
     strokeOpacity?: Opacity;
-    /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    /** Defines how the bar strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
@@ -1369,7 +1369,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     label?: AgBarSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgBarSeriesTooltip;
-    /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    /** Function used to return formatting for individual bars, based on the given parameters. If the current bar is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: (params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
@@ -1412,13 +1412,13 @@ export interface AgColumnSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for column series. */
 export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'column';
-    /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
+    /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
     grouped?: boolean;
-    /** An option indicating if the bars/columns should be stacked. */
+    /** An option indicating if the columns/columns should be stacked. */
     stacked?: boolean;
     /** An ID to be used to group stacked items. */
     stackGroup?: string;
-    /** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */
+    /** The number to normalise the column stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the column stacks will all be scaled proportionally so that each of their totals is 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
@@ -1430,27 +1430,27 @@ export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOpti
     yName?: string;
     /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
     legendItemName?: string;
-    /** The colour to use for the fill of the bars. */
+    /** The colour to use for the fill of the columns. */
     fill?: CssColor;
-    /** The colours to use for the stroke of the bars. */
+    /** The colours to use for the stroke of the columns. */
     stroke?: CssColor;
-    /** The width in pixels of the stroke for the bars. */
+    /** The width in pixels of the stroke for the columns. */
     strokeWidth?: PixelSize;
-    /** The opacity of the fill for the bars. */
+    /** The opacity of the fill for the columns. */
     fillOpacity?: Opacity;
-    /** The opacity of the stroke for the bars. */
+    /** The opacity of the stroke for the columns. */
     strokeOpacity?: Opacity;
-    /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
-    /** Configuration for the labels shown on bars. */
+    /** Configuration for the labels shown on columns. */
     label?: AgColumnSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgColumnSeriesTooltip;
-    /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    /** Function used to return formatting for individual columns, based on the given parameters. If the current column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: (params: AgColumnSeriesFormatterParams<DatumType>) => AgColumnSeriesFormat;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
