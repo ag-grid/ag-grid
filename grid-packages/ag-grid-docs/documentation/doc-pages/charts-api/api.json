@@ -907,6 +907,95 @@
       }
     }
   },
+  "AgColumnSeriesOptions": {
+    "xKey": {
+      "isRequired": true
+    },
+    "yKey": {
+      "isRequired": true
+    },
+    "grouped": {
+      "default": false
+    },
+    "normalizedTo": {
+      "min": 1,
+      "max": 100
+    },
+    "fillOpacity": {
+      "default": 1,
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "shadow": {
+      "enabled": {
+        "default": true
+      },
+      "color": {
+        "default": "rgba(0, 0, 0, 0.5)"
+      },
+      "xOffset": {
+        "default": 0,
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "yOffset": {
+        "default": 0,
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "blur": {
+        "default": 5,
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "min": 0,
+      "max": 200,
+      "unit": "px"
+    },
+    "label": {
+      "enabled": {
+        "default": true
+      },
+      "placement": {
+        "default": "inside",
+        "options": ["inside", "outside"]
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)"
+      },
+      "fontStyle": {
+        "default": "normal"
+      },
+      "fontWeight": {
+        "default": "normal"
+      },
+      "fontSize": {
+        "default": 12
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif"
+      }
+    }
+  },
   "AgHistogramSeriesOptions": {
     "xKey": {
       "isRequired": true

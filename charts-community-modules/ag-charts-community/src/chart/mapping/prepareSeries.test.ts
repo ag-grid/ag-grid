@@ -1,9 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
 import 'jest-canvas-mock';
 import { groupSeriesByType, reduceSeries, processSeriesOptions } from './prepareSeries';
-import { AgBarSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
+import { AgColumnSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
 
-const colSeriesIPhone: AgBarSeriesOptions = {
+const colSeriesIPhone: AgColumnSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'iphone',
@@ -15,7 +15,7 @@ const lineSeriesMac: AgLineSeriesOptions = {
     yKey: 'mac',
     yName: 'Mac',
 };
-const colSeriesMac: AgBarSeriesOptions = {
+const colSeriesMac: AgColumnSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'mac',
@@ -27,20 +27,20 @@ const lineSeriesIPhone: AgLineSeriesOptions = {
     yKey: 'iphone',
     yName: 'iPhone',
 };
-const colSeriesWearables: AgBarSeriesOptions = {
+const colSeriesWearables: AgColumnSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'wearables',
     yName: 'Wearables',
 };
-const colSeriesServices: AgBarSeriesOptions = {
+const colSeriesServices: AgColumnSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'services',
     yName: 'Services',
 };
 
-const seriesOptions: Array<AgBarSeriesOptions | AgLineSeriesOptions> = [
+const seriesOptions: Array<AgColumnSeriesOptions | AgLineSeriesOptions> = [
     {
         ...colSeriesIPhone,
         fill: 'pink',
