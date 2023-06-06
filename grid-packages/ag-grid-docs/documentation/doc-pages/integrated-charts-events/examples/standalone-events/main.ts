@@ -1,5 +1,5 @@
 import { Grid, ChartCreated, ChartDestroyed, ChartRangeSelectionChanged, ColDef, GridApi, GridOptions, ChartOptionsChanged, FirstDataRenderedEvent, CreateRangeChartParams } from '@ag-grid-community/core';
-import { AgChart, AgChartLegendClickEvent, AgSeriesNodeClickParams } from 'ag-charts-community';
+import { AgChartLegendClickEvent, AgSeriesNodeClickParams } from 'ag-charts-community';
 
 const columnDefs: ColDef[] = [
   { field: 'Month', width: 150, chartDataType: 'category' },
