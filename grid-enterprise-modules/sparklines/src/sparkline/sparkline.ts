@@ -336,7 +336,7 @@ export abstract class Sparkline {
         ) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
-            this.scene.render();
+            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
         }
 
         const tooltipEnabled = this.processedOptions?.tooltip?.enabled ?? true;
@@ -352,7 +352,7 @@ export abstract class Sparkline {
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
-        this.scene.render();
+        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
 
     protected smallestInterval?: { x: number; y: number } = undefined;
@@ -467,7 +467,7 @@ export abstract class Sparkline {
         // produce data joins and update selection's nodes
         this.update();
 
-        this.scene.render();
+        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
 
     /**
@@ -542,7 +542,7 @@ export abstract class Sparkline {
             // produce data joins and update selection's nodes
             this.update();
 
-            this.scene.render();
+            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
 
             this.layoutId = 0;
         });
