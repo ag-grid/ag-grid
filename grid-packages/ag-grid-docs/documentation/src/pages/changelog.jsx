@@ -372,7 +372,7 @@ const Changelog = ({ location }) => {
                             </div>
                         </div>
 
-                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} useMarkdown={markDownContent} />
+                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} markDownContent={markDownContent} />
                     </section>
 
                     <Grid
