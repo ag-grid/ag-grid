@@ -87,16 +87,6 @@ export class ChartMenu extends Component {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
-
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshMenu.bind(this));
-    }
-
-    public refreshMenu() {
-        // primarily used to refresh link / unlink chart toolbar icon on chart api updates
-        if (this.eMenu) {
-            this.destroyBean(this.eMenu);
-        }
-        this.createButtons();
     }
 
     public isVisible(): boolean {
