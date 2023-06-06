@@ -45,11 +45,11 @@
                 defaultExtension: "ts",
             },
             'ag-charts-community': {
-                main: './dist/esm/es5/main.js',
+                main: './dist/esm/es6/main.js',
                 defaultExtension: 'js'
             },
             'ag-charts-enterprise': {
-                main: './dist/esm/es5/main.js',
+                main: './dist/esm/es6/main.js',
                 defaultExtension: 'js'
             },
         }

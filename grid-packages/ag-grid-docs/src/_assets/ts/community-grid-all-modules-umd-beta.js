@@ -5,9 +5,9 @@ export * from "../../../../../grid-community-modules/core/src/ts/main";
 export * from "../../../../../charts-community-modules/ag-charts-community/src/main";
 
 /* MODULES - Don't delete this line */
-const ClientSideRowModelModule = require("../../../../../grid-community-modules/client-side-row-model/dist/esm/es5/clientSideRowModelModule").ClientSideRowModelModule;
-const CsvExportModule = require("../../../../../grid-community-modules/csv-export/dist/esm/es5/csvExportModule").CsvExportModule;
-const InfiniteRowModelModule = require("../../../../../grid-community-modules/infinite-row-model/dist/esm/es5/infiniteRowModelModule").InfiniteRowModelModule;
+const ClientSideRowModelModule = require("../../../../../grid-community-modules/client-side-row-model/dist/esm/es6/clientSideRowModelModule").ClientSideRowModelModule;
+const CsvExportModule = require("../../../../../grid-community-modules/csv-export/dist/esm/es6/csvExportModule").CsvExportModule;
+const InfiniteRowModelModule = require("../../../../../grid-community-modules/infinite-row-model/dist/esm/es6/infiniteRowModelModule").InfiniteRowModelModule;
 ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(CsvExportModule);
 ModuleRegistry.register(InfiniteRowModelModule);

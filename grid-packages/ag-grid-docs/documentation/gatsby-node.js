@@ -385,7 +385,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     //                 !frameworkRequest(req)) {
     //
     //                 // point the request to the commonjs es5 dir - this is what gets updated on local build changes
-    //                 const newRequest = `${__dirname}/node_modules/${req}/dist/esm/es5/main.js`;
+    //                 const newRequest = `${__dirname}/node_modules/${req}/dist/esm/es6/main.js`;
     //
     //                 const obj = {
     //                     path: request.path,

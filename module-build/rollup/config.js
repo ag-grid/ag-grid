@@ -24,7 +24,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
         },
         {
             name: 'es-modules-dev',
-            inputMainFile: './dist/esm/es5/main.js',
+            inputMainFile: './dist/esm/es6/main.js',
             format: 'es',
             env: 'development',
             extension: '.esm.js',
@@ -32,7 +32,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
         },
         {
             name: 'es-modules-prod',
-            inputMainFile: './dist/esm/es5/main.js',
+            inputMainFile: './dist/esm/es6/main.js',
             format: 'es',
             env: 'production',
             extension: '.esm.min.js',
