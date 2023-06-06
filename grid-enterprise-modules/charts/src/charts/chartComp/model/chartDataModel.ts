@@ -131,7 +131,10 @@ export class ChartDataModel extends BeanStub {
 
         this.updateCellRanges();
 
-        this.comboChartModel.update(seriesChartTypes);
+        const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
 
         if (!this.unlinked) {
             this.updateData();
