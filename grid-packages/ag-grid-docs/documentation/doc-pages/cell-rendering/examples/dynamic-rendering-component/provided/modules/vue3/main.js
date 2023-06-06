@@ -56,7 +56,10 @@ const VueExample = {
                 },
                 { field: "type" }
             ],
-            defaultColDef: { flex: 1 },
+            defaultColDef: {
+                flex: 1,
+                cellDataType: false,
+            },
             rowData: [
                 {
                     value: 14,
