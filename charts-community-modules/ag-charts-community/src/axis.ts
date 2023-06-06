@@ -843,8 +843,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     private getTickStrategies({ index, secondaryAxis }: { index: number; secondaryAxis: boolean }): TickStrategy[] {
         const { scale, label, tick } = this;
         const continuous = scale instanceof ContinuousScale;
-        const filterTicks = !(continuous && this.tick.count === undefined) && index !== 0;
         const avoidLabelCollisions = label.enabled && label.avoidCollisions;
+        const filterTicks = !(continuous && this.tick.count === undefined) && index !== 0 && avoidLabelCollisions;
         const autoRotate = label.autoRotate === true && label.rotation === undefined;
 
         const strategies: TickStrategy[] = [];
@@ -870,12 +870,16 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             strategies.push(tickFilterStrategy);
         }
 
+        if (!avoidLabelCollisions) {
+            return strategies;
+        }
+
         if (label.autoWrap) {
             const autoWrapStrategy = ({ index, tickData, textProps }: TickStrategyParams) =>
                 this.wrapLabels(tickData, index, textProps);
 
             strategies.push(autoWrapStrategy);
-        } else if (avoidLabelCollisions && autoRotate) {
+        } else if (autoRotate) {
             const autoRotateStrategy = ({ index, tickData, labelOverlap, terminate }: TickStrategyParams) => ({
                 index,
                 tickData,
