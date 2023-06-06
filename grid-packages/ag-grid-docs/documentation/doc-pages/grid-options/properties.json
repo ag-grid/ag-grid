@@ -118,6 +118,12 @@
                 "url": "/column-definitions/#custom-column-types"
             }
         },
+        "dataTypeDefinitions": {
+            "more": {
+                "name": "Custom Cell Data Type Definitions",
+                "url": "/cell-data-types/#providing-custom-cell-data-types"
+            }
+        },
         "maintainColumnOrder": {
             "more": {
                 "name": "Maintain Column Order",
@@ -264,12 +270,6 @@
             "more": {
                 "name": "Read Only Edit",
                 "url": "/value-setters/#read-only-edit"
-            }
-        },
-        "dataTypeDefinitions": {
-            "more": {
-                "name": "Custom Cell Data Type Definitions",
-                "url": "/cell-data-types/#providing-custom-cell-data-types"
             }
         }
     },

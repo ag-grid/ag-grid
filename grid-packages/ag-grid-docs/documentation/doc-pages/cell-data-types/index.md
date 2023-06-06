@@ -143,7 +143,7 @@ The example below shows the same data types in AG Grid Enterprise:
 
 Custom cell data types can be added by setting the grid option `dataTypeDefinitions`.
 
-<api-documentation source='grid-options/properties.json' section='editing' names='["dataTypeDefinitions"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='columns' names='["dataTypeDefinitions"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 |const gridOptions = {
