@@ -420,6 +420,14 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     const config = getConfig();
     const {rules} = config.module;
 
+    const miniCssExtractPlugin = config.plugins.find(
+        plugin => plugin.constructor.name === 'MiniCssExtractPlugin'
+    )
+
+    if (miniCssExtractPlugin) {
+        miniCssExtractPlugin.options.ignoreOrder = true
+    }
+
     rules.forEach(rule => {
         const urlLoaders = Array.isArray(rule.use) ? rule.use.filter(use => use.loader.indexOf('/url-loader/') >= 0) : [];
 
