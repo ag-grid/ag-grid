@@ -25,6 +25,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 import { GridOptionsService } from "../../gridOptionsService";
+import { PostConstruct } from "../../context/context";
 
 enum RowType {
     Normal = 'Normal',
@@ -151,6 +152,10 @@ export class RowCtrl extends BeanStub {
 
         this.setRowType();
 
+    }
+
+    @PostConstruct
+    public init() {
         this.addListeners();
     }
 
