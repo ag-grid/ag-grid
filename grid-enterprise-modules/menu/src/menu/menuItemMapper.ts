@@ -117,12 +117,14 @@ export class MenuItemMapper extends BeanStub {
             case 'rowGroup':
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
                     action: () => this.columnModel.addRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
                     action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
                 };

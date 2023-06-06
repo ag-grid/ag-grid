@@ -43,6 +43,7 @@ const gridOptions: GridOptions<IRow> = {
   ],
   defaultColDef: {
     flex: 1,
+    cellDataType: false,
   },
   rowData: rowData,
   onRowEditingStarted: (event: RowEditingStartedEvent<IRow>) => {
