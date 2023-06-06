@@ -288,12 +288,14 @@ export class PositionableFeature extends BeanStub {
             setFixedHeight(eGui, height);
             height = getAbsoluteHeight(eGui);
             isPercent = true;
-        } else if (this.positioned) {
+        } else {
             height = Math.max(this.minHeight!, height as number);
-            const availableHeight = this.getAvailableHeight();
+            if (this.positioned) {
+                const availableHeight = this.getAvailableHeight();
 
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
 
