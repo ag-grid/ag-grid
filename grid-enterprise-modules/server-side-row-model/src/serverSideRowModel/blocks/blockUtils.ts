@@ -120,6 +120,9 @@ export class BlockUtils extends BeanStub {
 
         if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
             rowNode.createFooter();
+            if (rowNode.sibling) {
+                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
+            }
         }
     }
 
