@@ -2,19 +2,11 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import Collapsible from './Collapsible';
 
-const ReleaseVersionNotes = ({ releaseNotes, markdownContent }) => {
+const ReleaseVersionNotes = ({ title, releaseNotes, markdownContent }) => {
 
-    if (!!markdownContent) {
-        return <Collapsible title="Release Notes">
-            <ReactMarkdown>{markdownContent}</ReactMarkdown>
-        </Collapsible>
-    }
-
-    return releaseNotes ?
-        (<Collapsible title="Release Notes">
-            <div dangerouslySetInnerHTML={{ __html: releaseNotes }}></div>
-        </Collapsible>
-    ) : null;
+    return <Collapsible title={'Release Notes ' + title}>
+        {!!markdownContent ? <ReactMarkdown>{markdownContent}</ReactMarkdown> : releaseNotes ? <div dangerouslySetInnerHTML={{ __html: releaseNotes }}></div> : null}
+    </Collapsible>
 };
 
 export default ReleaseVersionNotes;
