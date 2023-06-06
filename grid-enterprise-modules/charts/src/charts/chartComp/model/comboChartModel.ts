@@ -14,12 +14,18 @@ export class ComboChartModel extends BeanStub {
     public constructor(chartDataModel: ChartDataModel) {
         super();
         this.chartDataModel = chartDataModel;
-        this.seriesChartTypes = chartDataModel.params.seriesChartTypes || [];
+        this.seriesChartTypes = chartDataModel.params.seriesChartTypes ?? [];
     }
 
     @PostConstruct
     private init(): void {
         this.initComboCharts();
+    }
+
+    public update(seriesChartTypes?: SeriesChartType[]): void {
+        this.seriesChartTypes = seriesChartTypes ?? this.seriesChartTypes;
+        this.initComboCharts();
+        this.updateSeriesChartTypes();
     }
 
     private initComboCharts() {
@@ -55,7 +61,7 @@ export class ComboChartModel extends BeanStub {
         this.updateChartSeriesTypesForBuiltInCombos();
     }
 
-    public updateSeriesChartTypesForCustomCombo() {
+    private updateSeriesChartTypesForCustomCombo() {
         const seriesChartTypesSupplied = this.seriesChartTypes && this.seriesChartTypes.length > 0;
         if (!seriesChartTypesSupplied && !this.suppressComboChartWarnings) {
             console.warn(`AG Grid: 'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
@@ -101,7 +107,7 @@ export class ComboChartModel extends BeanStub {
         this.suppressComboChartWarnings = true;
     }
 
-    public updateChartSeriesTypesForBuiltInCombos() {
+    private updateChartSeriesTypesForBuiltInCombos() {
         const { chartType, valueColState } = this.chartDataModel;
 
         let primaryChartType: ChartType = chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';

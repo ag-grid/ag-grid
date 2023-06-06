@@ -110,7 +110,8 @@ export class ChartDataModel extends BeanStub {
             aggFunc,
             suppressChartRanges,
             unlinkChart,
-            crossFiltering
+            crossFiltering,
+            seriesChartTypes
         } = params;
 
         if (cellRange !== this.suppliedCellRange) {
@@ -129,6 +130,8 @@ export class ChartDataModel extends BeanStub {
         this.crossFiltering = !!crossFiltering;
 
         this.updateCellRanges();
+
+        this.comboChartModel.update(seriesChartTypes);
 
         if (!this.unlinked) {
             this.updateData();
