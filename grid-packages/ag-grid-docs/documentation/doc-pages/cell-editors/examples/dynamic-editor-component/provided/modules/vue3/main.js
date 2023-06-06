@@ -75,6 +75,7 @@ const VueExample = {
             columnApi: null,
             defaultColDef: {
                 flex: 1,
+                cellDataType: false,
             },
             rowData: null,
         }
