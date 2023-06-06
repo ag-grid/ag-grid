@@ -352,6 +352,10 @@ export class GridChartComp extends Component {
 
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(params?.chartThemeOverrides);
+
+        if (params?.chartId) {
+            this.chartController.raiseChartApiUpdateEvent();
+        }
     }
 
     private updateChart(updatedOverrides?: AgChartThemeOverrides): void {

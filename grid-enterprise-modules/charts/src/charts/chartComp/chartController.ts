@@ -31,6 +31,7 @@ export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-pastel', 'ag-viv
 export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
+    public static EVENT_CHART_API_UPDATE = 'chartApiUpdate';
     public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
     public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
@@ -438,6 +439,14 @@ export class ChartController extends BeanStub {
     public raiseChartUpdatedEvent(): void {
         const event = {
             type: ChartController.EVENT_CHART_UPDATED
+        };
+
+        this.dispatchEvent(event);
+    }
+
+    public raiseChartApiUpdateEvent(): void {
+        const event = {
+            type: ChartController.EVENT_CHART_API_UPDATE
         };
 
         this.dispatchEvent(event);

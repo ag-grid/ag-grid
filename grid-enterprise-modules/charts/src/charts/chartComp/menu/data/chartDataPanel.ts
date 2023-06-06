@@ -59,6 +59,7 @@ export class ChartDataPanel extends Component {
     public init() {
         this.updatePanels();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.updatePanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.updatePanels.bind(this));
         this.createAutoScrollService();
     }
 
@@ -97,7 +98,7 @@ export class ChartDataPanel extends Component {
             const seriesChartTypeIndex = this.getDataPanelDef().groups?.reduce((prevVal, { type }, index) => {
                 if (type === 'seriesChartType') {
                     return index;
-                };
+                }
 
                 return prevVal;
             }, -1);

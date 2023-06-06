@@ -57,6 +57,7 @@ export class ChartSettingsPanel extends Component {
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.resetPalettes(true));
         this.scrollSelectedIntoView();
     }
 
