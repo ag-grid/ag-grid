@@ -79,10 +79,12 @@ const localConfiguration = {
         "ag-charts-vue": `${localPrefix}/ag-charts-vue`,
         "ag-charts-vue3": `${localPrefix}/ag-charts-vue3`
     },
-    chartPaths: {
+    chartCommunityPaths: {
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.esm.js`,
+    },
+    chartEnterprisePaths: {
         "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.esm.js`,
-    }
+    },
 };
 
 const buildAndArchivesConfiguration = {
@@ -110,7 +112,6 @@ const buildAndArchivesConfiguration = {
         "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export/dist/csv-export.cjs.js`,
         "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model/dist/infinite-row-model.cjs.js`,
         /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
     },
     gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
@@ -137,8 +138,6 @@ const buildAndArchivesConfiguration = {
         "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar/dist/status-bar.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/viewport-row-model.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
-        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
 
     },
     chartMap: {
@@ -147,8 +146,10 @@ const buildAndArchivesConfiguration = {
         "ag-charts-vue": `${localPrefix}/ag-charts-vue`,
         "ag-charts-vue3": `${localPrefix}/ag-charts-vue3`
     },
-    chartPaths: {
+    chartCommunityPaths: {
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
+    },
+    chartEnterprisePaths: {
         "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
     }
 };
@@ -211,7 +212,8 @@ const publishedConfiguration = {
         "ag-charts-community": `${NPM_CDN}/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.min.js`,
         "ag-charts-enterprise": `${NPM_CDN}/ag-charts-enterprise@${agChartsVersion}/dist/ag-charts-enterprise.cjs.min.js`,
     },
-    chartPaths: {}
+    chartCommunityPaths: {},
+    chartEnterprisePaths: {},
 };
 
 
@@ -264,7 +266,8 @@ function getRelevantConfig(configuration, framework) {
         gridCommunityPaths: buildCopy(configuration.gridCommunityPaths),
         gridEnterprisePaths: buildCopy(configuration.gridEnterprisePaths),
         chartMap: buildChartCopy(configuration.chartMap),
-        chartPaths: buildChartCopy(configuration.chartPaths),
+        chartCommunityPaths: buildChartCopy(configuration.chartCommunityPaths),
+        chartEnterprisePaths: buildChartCopy(configuration.chartEnterprisePaths),
     }
 }
 
@@ -323,8 +326,14 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
         configuration.chartMap = {
             ...configuration.chartMap,
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
-            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
         };
+
+        if (isEnterprise) {
+            configuration.chartMap = {
+                ...configuration.chartMap,
+                "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
+            };
+        }
     }
     configuration = getRelevantConfig(configuration, framework);
 
@@ -332,7 +341,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     let systemJsPaths;
     if (library === 'charts') {
         systemJsMap = configuration.chartMap;
-        systemJsPaths = configuration.chartPaths;
+        systemJsPaths = { ...isEnterprise ? configuration.chartEnterprisePaths : configuration.chartCommunityPaths };
     }
 
     if (library === 'grid') {
