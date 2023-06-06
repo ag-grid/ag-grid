@@ -50,7 +50,7 @@ import {
     GroupByFn,
     PropertyDefinition,
 } from '../../data/dataModel';
-import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
+import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/module';
@@ -232,7 +232,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             if (aggregation === 'count') {
                 // Nothing to do.
             } else if (aggregation === 'sum') {
-                aggProp = sum([yKey]);
+                aggProp = groupSum([yKey]);
             } else if (aggregation === 'mean') {
                 aggProp = groupAverage([yKey]);
             }
