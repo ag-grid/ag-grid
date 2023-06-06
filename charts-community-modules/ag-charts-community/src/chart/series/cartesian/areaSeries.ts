@@ -426,10 +426,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     }
 
                     // label data
-                    let labelText: string;
-
+                    let labelText;
                     if (label.formatter) {
-                        labelText = callbackCache.call(label.formatter, { value: yDatum, seriesId });
+                        labelText = callbackCache.call(label.formatter, { value: yDatum, seriesId }) ?? '';
                     } else {
                         labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
                     }
@@ -605,7 +604,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 return;
             }
 
-            // Only for cutom marker shapes
+            // Only for custom marker shapes
             node.path.clear({ trackChanges: true });
             node.updatePath();
             node.checkPathDirty();

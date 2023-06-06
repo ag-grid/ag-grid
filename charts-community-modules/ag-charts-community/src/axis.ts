@@ -1457,14 +1457,17 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         } = this;
 
         if (label.formatter) {
-            return callbackCache.call(label.formatter, {
-                value: fractionDigits > 0 ? datum : String(datum),
-                index,
-                fractionDigits,
-                formatter: labelFormatter,
-            });
+            const defaultValue = fractionDigits > 0 ? datum : String(datum);
+            return (
+                callbackCache.call(label.formatter, {
+                    value: defaultValue,
+                    index,
+                    fractionDigits,
+                    formatter: labelFormatter,
+                }) ?? defaultValue
+            );
         } else if (labelFormatter) {
-            return callbackCache.call(labelFormatter, datum);
+            return callbackCache.call(labelFormatter, datum) ?? String(datum);
         }
         // The axis is using a logScale or the`datum` is an integer, a string or an object
         return String(datum);

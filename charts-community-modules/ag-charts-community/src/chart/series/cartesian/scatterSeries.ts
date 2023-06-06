@@ -244,10 +244,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 continue;
             }
 
-            let text: string;
+            let text;
             if (label.formatter) {
                 text = callbackCache.call(label.formatter, { value: yDatum, seriesId, datum });
-            } else {
+            }
+            if (text === undefined) {
                 text = labelKey ? String(datum[labelKey]) : '';
             }
 

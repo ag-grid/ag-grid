@@ -438,11 +438,16 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         colorScale.update();
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
-            let label = '';
+            let label;
             if (labelFormatter) {
                 label = this.ctx.callbackCache.call(labelFormatter, { datum });
+            }
+            if (label !== undefined) {
+                // Label retrieved from formatter successfully.
             } else if (labelKey) {
                 label = datum[labelKey] ?? '';
+            } else {
+                label = '';
             }
             let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
             colorScaleValue = validateColor(colorScaleValue);
@@ -558,7 +563,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const stroke = datum.isLeaf ? tileStroke : groupStroke;
         const strokeWidth = datum.isLeaf ? tileStrokeWidth : groupStrokeWidth;
 
-        return callbackCache.call(formatter, {
+        const result = callbackCache.call(formatter, {
             seriesId: this.id,
             datum: datum.datum,
             depth: datum.depth,
@@ -572,6 +577,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             gradient,
             highlighted: isHighlighted,
         });
+
+        return result ?? {};
     }
 
     async updateNodes() {

@@ -367,7 +367,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const selectionDatumLabel =
                 total !== 0
                     ? {
-                          text: callbackCache.call(labelFormatter, { value: total, seriesId }),
+                          text: callbackCache.call(labelFormatter, { value: total, seriesId }) ?? String(total),
                           fontStyle: labelFontStyle,
                           fontWeight: labelFontWeight,
                           fontSize: labelFontSize,

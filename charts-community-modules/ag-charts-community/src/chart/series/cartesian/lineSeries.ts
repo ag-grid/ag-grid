@@ -220,9 +220,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
                 const y = yScale.convert(yDatum) + yOffset;
 
-                let labelText = '';
+                let labelText;
                 if (label.formatter) {
                     labelText = callbackCache.call(label.formatter, { value: yDatum, seriesId });
+                }
+
+                if (labelText !== undefined) {
+                    // Label retrieved from formatter successfully.
                 } else if (typeof yDatum === 'number' && isFinite(yDatum)) {
                     labelText = yDatum.toFixed(2);
                 } else if (yDatum) {

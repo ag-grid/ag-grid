@@ -153,7 +153,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         } = this;
 
         if (labelFormatter) {
-            return callbackCache.call(labelFormatter, val);
+            const result = callbackCache.call(labelFormatter, val);
+            if (result !== undefined) return result;
         }
 
         const isInteger = val % 1 === 0;

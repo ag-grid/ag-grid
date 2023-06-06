@@ -259,13 +259,15 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 } else {
                     node.visible = false;
                 }
+            } else if (labelFormatter) {
+                node.text =
+                    callbackCache.call(labelFormatter, {
+                        value: String(datum.label),
+                        index,
+                    }) ?? String(datum.label);
+                node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
             } else {
-                node.text = labelFormatter
-                    ? callbackCache.call(labelFormatter, {
-                          value: String(datum.label),
-                          index,
-                      })
-                    : String(datum.label);
+                node.text = String(datum.label);
                 node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
             }
             const bbox = node.computeBBox();

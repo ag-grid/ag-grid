@@ -71,13 +71,14 @@ export function createLabelData({
     ctx: ModuleContext;
     barAlongX: boolean;
 }): LabelDatum {
-    let labelText: string;
+    let labelText;
     if (formatter) {
         labelText = callbackCache.call(formatter, {
             value: isNumber(value) ? value : undefined,
             seriesId,
         });
-    } else {
+    }
+    if (labelText === undefined) {
         labelText = isNumber(value) ? value.toFixed(2) : '';
     }
 
