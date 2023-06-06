@@ -51,7 +51,11 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: ctrls => setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls)),
-            setWidth: width => eGui.current!.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
 

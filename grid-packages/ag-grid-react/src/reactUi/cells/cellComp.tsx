@@ -290,7 +290,7 @@ const CellComp = (props: {
         const addComp = (comp: Component | undefined) => {
             if (comp) {
                 const eGui = comp.getGui();
-                eCellWrapper.current!.insertAdjacentElement('afterbegin', eGui);
+                eCellWrapper.current?.insertAdjacentElement('afterbegin', eGui);
                 destroyFuncs.push(() => {
                     context.destroyBean(comp);
                     _.removeFromParent(eGui);

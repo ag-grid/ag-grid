@@ -25,7 +25,11 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     useLayoutEffectOnce(() => {
 
         const compProxy: IHeaderGroupCellComp = {
-            setWidth: width => eGui.current!.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -47,13 +51,15 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     // add drag handling, must be done after component is added to the dom
     useEffect(()=> {
         let userCompDomElement: HTMLElement | undefined = undefined;
-        eGui.current!.childNodes.forEach( node => {
-            if (node!=null && node!==eResize.current) {
-                userCompDomElement = node as HTMLElement;
-            }
-        });
+        if (eGui.current) {
+            eGui.current.childNodes.forEach(node => {
+                if (node != null && node !== eResize.current) {
+                    userCompDomElement = node as HTMLElement;
+                }
+            });
 
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+            userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        }
     }, [userCompDetails]);
 
     const className = useMemo( ()=> 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses] );

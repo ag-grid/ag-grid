@@ -29,7 +29,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
     useImperativeHandle(forwardRef, () => ({
         forceFocusOutOfContainer() {
-            tabGuardCtrlRef.current!.forceFocusOutOfContainer();
+            tabGuardCtrlRef.current?.forceFocusOutOfContainer();
         }
     }));
 

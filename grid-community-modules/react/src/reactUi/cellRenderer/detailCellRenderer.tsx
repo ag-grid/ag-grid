@@ -22,7 +22,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
     if (ref) {
         useImperativeHandle(ref, () => ({
-            refresh() { return ctrlRef.current!.refresh(); }
+            refresh() { return ctrlRef.current?.refresh() ?? false; }
         }));
     }
     
@@ -91,7 +91,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
     });
 
     const setGridApi = useCallback( (api: GridApi, columnApi: ColumnApi) => {
-        ctrlRef.current!.registerDetailWithMaster(api, columnApi)
+        ctrlRef.current?.registerDetailWithMaster(api, columnApi)
     }, []);
 
     return (

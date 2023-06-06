@@ -25,7 +25,11 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     useLayoutEffectOnce(() => {
         const compProxy: IHeaderCellComp = {
-            setWidth: width => eGui.current!.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -39,7 +43,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         ctrl.setComp(compProxy, eGui.current!, eResize.current!, eHeaderCompWrapper.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
-        eResize.current!.insertAdjacentElement('afterend', selectAllGui);
+        eResize.current?.insertAdjacentElement('afterend', selectAllGui);
     });
 
     // js comps
