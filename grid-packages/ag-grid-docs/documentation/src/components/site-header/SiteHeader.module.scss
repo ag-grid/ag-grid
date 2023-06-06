@@ -124,29 +124,7 @@
     }
 }
 
-.nav {
-    &.collapse:not(.show) {
-        display: none;
-    }
-
-    &.collapsing {
-        position: relative;
-        height: 0;
-        overflow: hidden;
-        transition: height 0.35s ease-in-out;
-
-        @media (prefers-reduced-motion: reduce) {
-            transition: none;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-site-header-small) {
-        display: block !important;
-        overflow: visible;
-    }
-}
-
-.nav {
+:global(#main-nav) {
     --text-color: var(--white);
     --link-color: var(--white);
     --link-hover-color: var(--white);
@@ -163,6 +141,11 @@
 
     @media screen and (min-width: $breakpoint-size-header-medium) {
         margin-right: calc(var(--horizontal-margin) - 27px);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: block !important;
+        overflow: visible;
     }
 }
 

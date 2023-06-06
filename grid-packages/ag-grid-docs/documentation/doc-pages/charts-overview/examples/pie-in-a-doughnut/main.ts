@@ -66,6 +66,7 @@ const options: AgPolarChartOptions = {
       ...sharedSeriesOptions,
       data: getData2020(),
       outerRadiusRatio: 0.5,
+      showInLegend: false,
       title: {
         text: "January 2020",
         fontWeight: "bold",
