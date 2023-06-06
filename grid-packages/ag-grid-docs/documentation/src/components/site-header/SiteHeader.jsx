@@ -1,17 +1,12 @@
 import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import supportedFrameworks from 'utils/supported-frameworks.js';
-import breakpoints from '../../design-system/breakpoint.module.scss';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
 import MenuIcon from '../../images/inline-svgs/menu-icon.svg';
-import { useWindowSize } from '../../utils/use-window-size';
-import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import styles from './SiteHeader.module.scss';
-
-const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
     {
@@ -53,7 +48,7 @@ const getCurrentPageName = (path) => {
     }
 };
 
-const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
+const HeaderLinks = ({ path, toggleButtonRef }) => {
     return (
         <ul className={classnames(styles.navItemList, 'list-style-none')}>
             {links.map((link) => {
@@ -68,8 +63,9 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
                             className={styles.navLink}
                             href={link.url}
                             onClick={() => {
+                                const isOpen = !toggleButtonRef.current?.classList.contains('collapsed');
                                 if (isOpen) {
-                                    toggleIsOpen();
+                                    toggleButtonRef.current?.click();
                                 }
                             }}
                             aria-label={`AG Grid ${link.name}`}
@@ -84,38 +80,29 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
     );
 };
 
-const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
+const HeaderExpandButton = ({ buttonRef }) => (
     <button
+        ref={buttonRef}
         className={styles.mobileMenuButton}
         type="button"
+        data-toggle="collapse"
+        data-target="#main-nav"
         aria-controls="main-nav"
-        aria-expanded={isOpen.toString()}
+        aria-expanded="false"
         aria-label="Toggle navigation"
-        onClick={() => toggleIsOpen()}
     >
         <MenuIcon className={styles.menuIcon} />
     </button>
 );
 
 const HeaderNav = ({ path }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const { width } = useWindowSize();
-    const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
-
-    const toggleIsOpen = () => {
-        setIsOpen((currentIsOpen) => {
-            return !currentIsOpen;
-        });
-    };
-
+    const buttonRef = useRef();
     return (
         <>
-            <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-            <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
-                <nav id={isDesktop ? 'main-nav' : undefined}>
-                    <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                </nav>
-            </Collapsible>
+            <HeaderExpandButton buttonRef={buttonRef} />
+            <nav className={classnames(styles.nav, 'collapse')} id="main-nav">
+                <HeaderLinks path={path} toggleButtonRef={buttonRef} />
+            </nav>
         </>
     );
 };
