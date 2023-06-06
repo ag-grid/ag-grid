@@ -107,10 +107,16 @@ input[type='submit'],
     border: none;
     color: var(--button-text-color);
     background-color: transparent;
+    box-shadow: none;
 
-    &:hover {
+    &:hover,
+    &:active {
         color: var(--button-text-color);
         background-color: transparent;
+    }
+
+    &:focus-visible {
+        box-shadow: none;
     }
 }
 
