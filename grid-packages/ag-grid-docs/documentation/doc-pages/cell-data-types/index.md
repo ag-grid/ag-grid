@@ -97,7 +97,7 @@ The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm
 
 The following properties are set:
 - The [Date Cell Editor](/provided-cell-editors/#date-cell-editor) is used for editing.
-- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, and `filterParams.valueFormatter` is set to [Format the Floating Filter Values](/filter-set-tree-list/#formatting-values) using the Value Formatter.
+- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, and the [Values are Formatted](/filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
 
 ### Date as String
 
@@ -108,7 +108,7 @@ This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a d
 The following properties are set:
 - The [Date as String Cell Editor](/provided-cell-editors/#date-as-string-cell-editor) is used for editing.
 - For AG Grid Community, the [Date Filter](/filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
-- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and `filterParams.valueFormatter` is set to [Format the Floating Filter Values](/filter-set-tree-list/#formatting-values) using the Value Formatter.
+- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and the [Values are Formatted](/filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
 
 ### Object
 

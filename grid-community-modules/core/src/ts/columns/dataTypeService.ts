@@ -35,6 +35,22 @@ interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
 }
 
+const MONTH_LOCALE_TEXT = {
+    january: 'January',
+    february: 'February',
+    march: 'March',
+    april: 'April',
+    may: 'May',
+    june: 'June',
+    july: 'July',
+    august: 'August',
+    september: 'September',
+    october: 'October',
+    november: 'November',
+    december: 'December'
+};
+const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -480,6 +496,13 @@ export class DataTypeService extends BeanStub {
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
+                        treeListFormatter: (pathKey: string | null, level: number) => {
+                            if (level === 1 && pathKey != null) {
+                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+                            }
+                            return pathKey ?? translate('blanks', '(Blanks)');
+                        }
                     };
                 }
                 break;
@@ -487,8 +510,8 @@ export class DataTypeService extends BeanStub {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
+                const convertToDate = this.getDateParserFunction();
                 if (usingSetFilter) {
-                    const convertToDate = this.getDateParserFunction();
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
@@ -498,10 +521,16 @@ export class DataTypeService extends BeanStub {
                         treeListPathGetter: (value: string | null) => {
                             const date = convertToDate(value ?? undefined);
                             return date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
+                        },
+                        treeListFormatter: (pathKey: string | null, level: number) => {
+                            if (level === 1 && pathKey != null) {
+                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+                            }
+                            return pathKey ?? translate('blanks', '(Blanks)');
                         }
                     };
                 } else {
-                    const convertToDate = this.getDateParserFunction();
                     colDef.filterParams = {
                         comparator: (filterDate: Date, cellValue: string | undefined) => {
                             const cellAsDate = convertToDate(cellValue)!;

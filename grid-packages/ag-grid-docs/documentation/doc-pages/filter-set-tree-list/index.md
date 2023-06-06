@@ -50,6 +50,10 @@ The following example demonstrates enabling different types of Tree List in the 
 
 <grid-example title='Filter Tree List' name='filter-tree-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
+<note>
+If using [Cell Data Types](../cell-data-types/), Tree List is automatically enabled for columns containing date values.
+</note>
+
 ## Sorting Tree Lists
 
 Sorting values for Tree Lists is similar to [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists), with the exception that if the column values are of type `Date`, they will instead be sorted based on the raw date values.
