@@ -173,7 +173,7 @@ const Changelog = ({ location }) => {
     const [versions, setVersions] = useState([]);
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
-    const [markDownContent, setMarkdownContent] = useState(undefined);
+    const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
     const searchBarEl = useRef(null);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
@@ -243,19 +243,19 @@ const Changelog = ({ location }) => {
         }
     }, [fixVersion, allReleaseNotes]);
 
-    const gridReady = (params) => {
+    const gridReady = useCallback((params) => {
         setGridApi(params.api);
         searchBarEl.current.value = URLFilterItemKey;
         params.api.setQuickFilter(URLFilterItemKey);
-    };
+    }, []);
 
-    const onQuickFilterChange = (event) => {
+    const onQuickFilterChange = useCallback((event) => {
         gridApi.setQuickFilter(event.target.value);
-    };
+    }, []);
 
-    const isRowMaster = (params) => {
+    const isRowMaster = useCallback((params) => {
         return params.moreInformation || params.deprecationNotes || params.breakingChangesNotes;
-    };
+    }, []);
 
     const filterOnDepsAndBreaking = (field, changed) => {
         gridApi.getFilterInstance('deprecated', (instance) => {
@@ -372,7 +372,7 @@ const Changelog = ({ location }) => {
                             </div>
                         </div>
 
-                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} markDownContent={markDownContent} />
+                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} markdownContent={markdownContent} />
                     </section>
 
                     <Grid
