@@ -65,7 +65,7 @@ Stacks can be displayed in separate groups. The IDs of such groups should be spe
 
 ### Grouped Stacks with a Shared Legend
 
-Providing a matching `legendItemName` allows us to merge matching legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
+Providing a matching `legendItemName` allows us to create multiple bar series that have synchronised legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
 
 <chart-example title='Grouped Stacks with a Shared Legend' name='grouped-stack-shared' type='generated'></chart-example>
 
