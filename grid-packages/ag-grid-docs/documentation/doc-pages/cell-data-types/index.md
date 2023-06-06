@@ -97,7 +97,7 @@ The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm
 
 The following properties are set:
 - The [Date Cell Editor](/provided-cell-editors/#date-cell-editor) is used for editing.
-- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, and `filterParams.valueFormatter` is set to [Format the Floating Filter Values](/filter-set-tree-list/#formatting-values) using the Value Formatter.
 
 ### Date as String
 
@@ -108,7 +108,7 @@ This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a d
 The following properties are set:
 - The [Date as String Cell Editor](/provided-cell-editors/#date-as-string-cell-editor) is used for editing.
 - For AG Grid Community, the [Date Filter](/filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
-- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+- For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and `filterParams.valueFormatter` is set to [Format the Floating Filter Values](/filter-set-tree-list/#formatting-values) using the Value Formatter.
 
 ### Object
 
@@ -146,11 +146,15 @@ Custom cell data types can be added by setting the grid option `dataTypeDefiniti
 <api-documentation source='grid-options/properties.json' section='editing' names='["dataTypeDefinitions"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
-|const dataTypeDefinitions = {
-|    percentage: {
-|        extendsDataType: 'number',
-|        baseDataType: 'number',
-|        valueFormatter: params => params.value == null ? '' : `${Math.round(params.value * 100)}%`,
+|const gridOptions = {
+|    dataTypeDefinitions: {
+|        percentage: {
+|            extendsDataType: 'number',
+|            baseDataType: 'number',
+|            valueFormatter: params => params.value == null
+|                ? ''
+|                : `${Math.round(params.value * 100)}%`,
+|        }
 |    }
 |}
 </snippet>
@@ -179,25 +183,31 @@ For example, this is required if a different date format is desired.
 This works in the same way as when [Providing Custom Cell Data Types](#providing-custom-cell-data-types).
 
 <snippet spaceBetweenProperties="true">
-|const dataTypeDefinitions = {
-|    // override `'date'` to handle custom date format `dd/mm/yyyy`
-|    date: {
-|        baseDataType: 'date',
-|        extendsDataType: 'date',
-|        valueParser: params => {
-|           if (params.newValue == null) {
-|               return null;
-|           }
-|           // convert from `dd/mm/yyyy`
-|           const dateParts = params.newValue.split('/');
-|           return dateParts.length === 3
-|               ? new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]))
-|               : null;
-|        },
-|        valueFormatter: params => {
-            // convert to `dd/mm/yyyy`
-|           return params.value == null ? '' : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
-|        },
+|const gridOptions = {
+|    dataTypeDefinitions: {
+|        // override `date` to handle custom date format `dd/mm/yyyy`
+|        date: {
+|            baseDataType: 'date',
+|            extendsDataType: 'date',
+|            valueParser: params => {
+|                if (params.newValue == null) {
+|                   return null;
+|                }
+|                // convert from `dd/mm/yyyy`
+|                const dateParts = params.newValue.split('/');
+|                return dateParts.length === 3 ? new Date(
+|                    parseInt(dateParts[2]),
+|                    parseInt(dateParts[1]) - 1,
+|                    parseInt(dateParts[0])
+|                ) : null;
+|            },
+|            valueFormatter: params => {
+|                // convert to `dd/mm/yyyy`
+|                return params.value == null
+|                    ? ''
+|                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
+|            },
+|        }
 |    }
 |}
 </snippet>

@@ -49,6 +49,10 @@ The example below shows grouping on the `country` column that contains complex o
 
 <grid-example title='Grouping Complex Objects with Keys' name='grouping-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+<note>
+If using [Cell Data Types](../cell-data-types/), the key creator is automatically set to use the value formatter so it does not need to be specified directly.
+</note>
+
 ## Next Up
 
 Continue to the next section to learn about [Unbalanced Groups](../grouping-unbalanced-groups/).

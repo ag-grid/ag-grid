@@ -104,6 +104,7 @@ const defaultColDef = {
         }
         return false;
     },
+    cellDataType: false,
 };
 
 const IS_SSR = typeof window === 'undefined';

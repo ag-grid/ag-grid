@@ -132,7 +132,7 @@ const gridOptions = {
 }
 </snippet>
 
-When the grid creates a column it starts with the default column definition, then adds properties defined via column types and then finally adds in properties from the specific column definition.
+When the grid creates a column it starts with the default column definition, then adds properties defined on the [Cell Data Type](/cell-data-types/) if enabled, then adds properties defined via column types, and then finally adds in properties from the specific column definition.
 
 At each stage if a column property already exists, the latter will override the existing value. For example, if the `defaultColDef` sets `editable: true` but a `columnType` sets `editable: false` then this column will not be editable. 
 

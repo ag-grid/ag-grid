@@ -96,6 +96,7 @@ const defaultColDef = {
         }
         return false;
     },
+    cellDataType: false,
 };
 
 const detailCellRendererParams = (params) => {

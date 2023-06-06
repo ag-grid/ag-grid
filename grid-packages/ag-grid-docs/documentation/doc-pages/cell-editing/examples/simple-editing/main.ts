@@ -14,7 +14,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total' },
   ],
   defaultColDef: {
-    editable: true
+    editable: true,
+    cellDataType: false,
   }
 }
 
