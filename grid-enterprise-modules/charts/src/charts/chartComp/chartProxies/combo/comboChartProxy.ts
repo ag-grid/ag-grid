@@ -29,12 +29,12 @@ export class ComboChartProxy extends CartesianChartProxy {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(key => {
-                        const field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
+                // title: {
+                //     text: primaryYKeys.map(key => {
+                //         const field = fieldsMap.get(key);
+                //         return field ? field.displayName : key;
+                //     }).join(' / '),
+                // },
             });
         }
 
@@ -50,9 +50,9 @@ export class ComboChartProxy extends CartesianChartProxy {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName! : secondaryYKey,
-                    },
+                    // title: {
+                    //     text: field ? field.displayName! : secondaryYKey,
+                    // },
                 }
 
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));

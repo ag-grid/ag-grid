@@ -44,6 +44,7 @@ export class ChartMenu extends Component {
 
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
+    private buttonListenersDestroyFuncs: any[] = []
 
     private static TEMPLATE = /* html */ `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
@@ -88,15 +89,7 @@ export class ChartMenu extends Component {
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
 
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshMenu.bind(this));
-    }
-
-    public refreshMenu() {
-        // primarily used to refresh link / unlink chart toolbar icon on chart api updates
-        if (this.eMenu) {
-            this.destroyBean(this.eMenu);
-        }
-        this.createButtons();
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     }
 
     public isVisible(): boolean {
@@ -244,9 +237,12 @@ export class ChartMenu extends Component {
     }
 
     private createButtons(): void {
+        this.buttonListenersDestroyFuncs.forEach(func => func());
+        this.buttonListenersDestroyFuncs = [];
+
         this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
-        menuEl.innerHTML = '';
+        _.clearElement(menuEl);
 
         this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
@@ -264,7 +260,7 @@ export class ChartMenu extends Component {
                 buttonEl.title = tooltipTitle;
             }
 
-            this.addManagedListener(buttonEl, 'click', callback);
+            this.buttonListenersDestroyFuncs.push(this.addManagedListener(buttonEl, 'click', callback));
 
             menuEl.appendChild(buttonEl);
         });
