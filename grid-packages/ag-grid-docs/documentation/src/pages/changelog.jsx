@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DepOrBreakFilterComponent from '../components/grid/DepOrBreakFilterComponent';
@@ -173,9 +173,20 @@ const Changelog = ({ location }) => {
     const [versions, setVersions] = useState([]);
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
+    const [markDownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
     const searchBarEl = useRef(null);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
+
+    const components = useMemo(() => {
+        return {
+            myDetailCellRenderer: DetailCellRenderer,
+            paddingCellRenderer: PaddingCellRenderer,
+            chevronButtonCellRenderer: ChevronButtonCellRenderer,
+            depOrBreakFilterComponent: DepOrBreakFilterComponent,
+            issueTypeCellRenderer: IssueTypeCellRenderer,
+        }
+    }, []);
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
@@ -214,6 +225,19 @@ const Changelog = ({ location }) => {
                 currentReleaseNotesHtml = Object.keys(releaseNotes)
                     .map((element) => releaseNotes[element])
                     .join(' ');
+                if (releaseNotes['markdown']) {
+                    fetch('/changelog/' + releaseNotes['markdown'])
+                        .then(response => response.text())
+                        .then(markdownContent => {
+                            setMarkdownContent(markdownContent);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching Markdown content:', error);
+                            setMarkdownContent(undefined);
+                        });
+                } else {
+                    setMarkdownContent(undefined);
+                }
             }
             setCurrentReleaseNotes(currentReleaseNotesHtml);
         }
@@ -348,21 +372,14 @@ const Changelog = ({ location }) => {
                             </div>
                         </div>
 
-                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes} useMarkdown={markDownContent} />
                     </section>
 
                     <Grid
                         gridHeight={'66vh'}
                         columnDefs={COLUMN_DEFS}
                         rowData={rowData}
-                        suppressReactUi
-                        components={{
-                            myDetailCellRenderer: DetailCellRenderer,
-                            paddingCellRenderer: PaddingCellRenderer,
-                            chevronButtonCellRenderer: ChevronButtonCellRenderer,
-                            depOrBreakFilterComponent: DepOrBreakFilterComponent,
-                            issueTypeCellRenderer: IssueTypeCellRenderer,
-                        }}
+                        components={components}
                         defaultColDef={defaultColDef}
                         detailRowAutoHeight={true}
                         enableCellTextSelection={true}
