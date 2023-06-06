@@ -32,7 +32,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
       baseDataType: 'object',
       extendsDataType: 'object',
       valueParser: params => ({ name: params.newValue }),
-      valueFormatter: params => params == null ? '' : params.value.name,
+      valueFormatter: params => params.value == null ? '' : params.value.name,
     }
   },
   enableFillHandle: true,

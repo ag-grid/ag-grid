@@ -20,7 +20,9 @@ const gridOptions = {
 }
 </snippet>
 
-By default the grid provides simple string editing and stores the result as a string. The example below shows string editing enabled on all columns by setting `editable=true` on the `defaultColDef`.
+If [Cell Data Types](/cell-data-types/) are enabled, the grid provides different types of editors, with the result stored in the correct format. If disabled, simple string editing is provided, and the result is stored as a `string`.
+
+The example below shows `string` editing enabled on all columns by setting `editable=true` on the `defaultColDef`.
 
 <grid-example title='Simple Cell Editing' name='simple-editing' type='generated'></grid-example>
 

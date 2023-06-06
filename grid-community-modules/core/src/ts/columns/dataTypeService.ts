@@ -205,11 +205,11 @@ export class DataTypeService extends BeanStub {
         };
     }
 
-    public updateColDefAndGetColumnType(
+    private updateColDefAndGetDataTypeDefinitionColumnType(
         colDef: ColDef,
         userColDef: ColDef,
         colId: string
-    ): string[] | undefined {
+    ): string | string[] | undefined {
         let { cellDataType } = userColDef;
         const { field } = userColDef;
         if (cellDataType === undefined) {
@@ -239,7 +239,16 @@ export class DataTypeService extends BeanStub {
         if (!dataTypeDefinition.suppressDefaultProperties) {
             this.setColDefPropertiesForBaseDataType(colDef, dataTypeDefinition, colId);
         }
-        const columnTypes = userColDef.type ?? dataTypeDefinition.columnTypes ?? colDef.type;
+        return dataTypeDefinition.columnTypes;
+    }
+
+    public updateColDefAndGetColumnType(
+        colDef: ColDef,
+        userColDef: ColDef,
+        colId: string
+    ): string[] | undefined {
+        const dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(colDef, userColDef, colId);
+        const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
     }
 
@@ -469,7 +478,8 @@ export class DataTypeService extends BeanStub {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        }
+                        },
+                        treeList: true,
                     };
                 }
                 break;
@@ -478,10 +488,16 @@ export class DataTypeService extends BeanStub {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
                 if (usingSetFilter) {
+                    const convertToDate = this.getDateParserFunction();
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                        },
+                        treeList: true,
+                        treeListPathGetter: (value: string | null) => {
+                            const date = convertToDate(value ?? undefined);
+                            return date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
                         }
                     };
                 } else {
