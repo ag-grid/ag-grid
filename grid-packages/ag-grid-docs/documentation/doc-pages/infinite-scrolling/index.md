@@ -24,7 +24,7 @@ The grid will ask your application, via a datasource, for the rows in blocks. Ea
 contains a subset of rows of the entire dataset. The following diagram is a high-level overview.
 
 
-<img src="resources/high-level.png" alt="high-level" style="max-width: 100%; margin-bottom: 1rem;" />
+<image-caption src="infinite-scrolling/resources/high-level.png" alt="high-level" constrained="true" centered="true"></image-caption>
 
 When the grid scrolls to a position where there is no corresponding block of rows loaded, the model
 uses the provided datasource to get the rows for the requested block. In the diagram, the datasource

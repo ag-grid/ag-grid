@@ -54,13 +54,13 @@ The animation above highlights a number of charting features. For more details o
         </ul>
     </div>
     <div style="flex: 1 1 0;">
-        <img src="resources/category-range-fill-handle.png" alt="Range Handle" />
+        <image-caption src="integrated-charts-user-created/resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" constrained="true" centered="true"></image-caption>
     </div>
 </div>
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
     <div style="flex: 1 1 0;">
-        <img src="resources/chart-tool-panels.png" alt="Open Chart Tool Panel" />
+        <image-caption src="integrated-charts-user-created/resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
     </div>
     <div style="flex: 1 1 0;">
         <ul class="content">
@@ -90,7 +90,7 @@ The animation above highlights a number of charting features. For more details o
         </ul>
     </div>
     <div style="flex: 1 1 0;">
-        <img src="resources/chart-toolbar.png" alt="Chart Toolbar" />
+        <image-caption src="integrated-charts-user-created/resources/chart-toolbar.png" alt="Chart Toolbar" maxWidth="90%" constrained="true" centered="true"></image-caption>
     </div>
 </div>
 

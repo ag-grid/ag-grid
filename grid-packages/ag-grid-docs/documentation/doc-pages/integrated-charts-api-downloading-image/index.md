@@ -12,7 +12,7 @@ chart in the browser.
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
     <div style="flex: 1 1 0">
-        <img src="resources/chart-toolbar-download.png" alt="Chart Toolbar Download button"/>
+        <image-caption src="integrated-charts-api-downloading-image/resources/chart-toolbar-download.png" alt="Chart Toolbar Download button" constrained="true" centered="true"></image-caption>
     </div>
 </div>
 

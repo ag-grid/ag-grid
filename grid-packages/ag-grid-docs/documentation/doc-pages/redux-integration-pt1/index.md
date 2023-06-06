@@ -35,7 +35,7 @@ responsible for transforming the application state and is typically created by c
 smaller reducers.
 
 
-<img src="resources/redux-store.png" alt="Redux Store" />
+<image-caption src="redux-integration-pt1/resources/redux-store.png" alt="Redux Store"  constrained="true" centered="true"></image-caption>
 
 Actions describe the operation the reducer should perform on the state. They may also contain
 an optional payload containing data used by the reducer to transform the state. For example
@@ -52,7 +52,7 @@ an action to create a new file might look like this:
 
 Actions are dispatched to the store from UI components as illustrated below:
 
-<img src="resources/redux-data-flow.png" alt="Redux Data Flow" />
+<image-caption src="redux-integration-pt1/resources/redux-data-flow.png" alt="Redux Data Flow"  constrained="true" centered="true"></image-caption>
 
 The reducer that is associated with the action type will then transform the state which is saved
 in the store. Reducers are pure functions which receive the current application state along with

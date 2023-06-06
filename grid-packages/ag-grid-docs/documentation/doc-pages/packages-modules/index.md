@@ -53,11 +53,11 @@ If you want to minimize your bundle size then you should definitely use `modules
 
 <div class="pm-outer">
     <a href="../packages/" class="tile">
-        <img src="resources/packages.svg" alt="Grid Packages Overview" />
+        <image-caption src="packages-modules/resources/packages.svg" alt="Grid Packages Overview" constrained="true" centered="true"></image-caption>
         <span class="button">Packages Overview</span>
     </a>
     <a href="../modules/" class="tile">
-        <img src="resources/modules.svg" alt="Grid Modules Overview"/>
+        <image-caption src="packages-modules/resources/modules.svg" alt="Grid Modules Overview" constrained="true" centered="true"></image-caption>
         <span class="button">Modules Overview</span>
     </a>
 </div>
