@@ -2,10 +2,11 @@ import classnames from 'classnames';
 import Announcements from 'components/Announcements';
 import { Icon } from 'components/Icon';
 import { Link } from 'gatsby';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import rawMenuData from '../../doc-pages/licensing/menu.json';
 import { isProductionEnvironment } from '../utils/consts';
+import { Collapsible } from './Collapsible';
 import { findParentItems } from './menu-find-parent-items';
 import styles from './Menu.module.scss';
 
@@ -42,14 +43,18 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, a
             <button
                 onClick={toggleActive}
                 tabIndex="0"
-                className={classnames(styles.sectionHeader, isActive && styles.active, 'button-style-none')}
-                // Temporarily removed to prevent immediate expand & collapse
-                // data-toggle="collapse"
-                data-target={`#${toElementId(title)}`}
+                className={classnames(styles.sectionHeader, 'button-style-none', {
+                    [styles.active]: isActive,
+                })}
                 aria-expanded={isActive}
                 aria-controls={`#${toElementId(title)}`}
             >
-                <Icon name="chevronRight" svgClasses={classnames(styles.sectionIcon, isActive && styles.active)} />
+                <Icon
+                    name="chevronRight"
+                    svgClasses={classnames(styles.sectionIcon, {
+                        [styles.active]: isActive,
+                    })}
+                />
 
                 {title}
             </button>
@@ -66,37 +71,23 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, a
 };
 
 const MenuGroup = ({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
-    const containerRef = useRef(null);
-    useEffect(() => {
-        // NOTE: Using plain JavaScript DOM to add/remove class, so it doesn't
-        // interfere with bootstrap animations and allows for menu group to be
-        // shown on first load.
-        // Show class is from bootstrap collapse: https://getbootstrap.com/docs/4.0/components/collapse/
-        if (isActive) {
-            containerRef.current?.classList.add('show');
-        } else {
-            containerRef.current?.classList.remove('show');
-        }
-    }, [isActive, containerRef.current]);
-
     return (
-        <ul
-            ref={containerRef}
-            id={isTopLevel && toElementId(group.group)}
-            className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
-            data-parent="#side-nav"
-        >
-            {group.items
-                .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
-                .map((item) => (
-                    <MenuItem
-                        key={item.title}
-                        item={item}
-                        currentFramework={currentFramework}
-                        activeParentItems={activeParentItems}
-                    />
-                ))}
-        </ul>
+        <Collapsible id={toElementId(group.group)} isEnabled={isTopLevel} isOpen={isTopLevel && isActive}>
+            <ul id={isTopLevel && toElementId(group.group)} className={classnames(styles.menuGroup, 'list-style-none')}>
+                {group.items
+                    .filter(
+                        (item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework))
+                    )
+                    .map((item) => (
+                        <MenuItem
+                            key={item.title}
+                            item={item}
+                            currentFramework={currentFramework}
+                            activeParentItems={activeParentItems}
+                        />
+                    ))}
+            </ul>
+        </Collapsible>
     );
 };
 
