@@ -1,6 +1,8 @@
+@use '../design-system' as *;
+
 .gif {
     max-width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: $size-2;
     outline: none !important;
 
     &.wrapped {
@@ -33,20 +35,14 @@
 
 :global(.play_button) {
     position: absolute;
-    width: 4rem;
-    height: 4rem;
+    width: $size-7;
+    height: $size-7;
     top: 50%;
     left: 50%;
     border-radius: 50%;
     background-color: var(--link-color);
+    background-image: url('../images/gif-play-icon.svg');
     color: #fff;
     transform: translate(-50%, -50%) scale(1);
     transition: transform 0.25s, background-color 0.25s;
-
-    &::after {
-        content: '\25B6';
-        position: absolute;
-        font-size: 3rem;
-        transform: translate(0.9rem, -0.3rem) scale(0.9, 1);
-    }
 }
