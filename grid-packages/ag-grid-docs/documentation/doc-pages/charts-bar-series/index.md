@@ -113,10 +113,6 @@ It's best to avoid using labels with grouped columns (or bars), because columns 
 
 To learn more about label configuration please refer to the [API reference](#reference-AgColumnSeriesOptions-label) below.
 
-### API Reference
-
-<interface-documentation interfaceName='AgColumnSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
 ## Bar Series
 
 `'bar'` series configuration is similar to the `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
@@ -136,6 +132,10 @@ With this simple change we go from [stacked columns](#stacked-columns) to stacke
 
 <chart-example title='Stacked Bar Series' name='stacked-bar' type='generated'></chart-example>
 
-### API Reference
+## API Reference
 
+### Column Series
+<interface-documentation interfaceName='AgColumnSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Bar Series
 <interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
