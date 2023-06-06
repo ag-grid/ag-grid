@@ -354,7 +354,9 @@ export class GridChartComp extends Component {
         this.updateChart(params?.chartThemeOverrides);
 
         if (params?.chartId) {
-            this.chartController.raiseChartApiUpdateEvent();
+            this.chartProxy.getChart().waitForUpdate().then(() => {
+                this.chartController.raiseChartApiUpdateEvent();
+            });
         }
     }
 
