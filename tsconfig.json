@@ -1,5 +1,5 @@
 {
-  "extends": "./module-build/tsconfig.esm.es5.json",
+  "extends": "./module-build/tsconfig.esm.es6.json",
   "references": [
     { "path" :  "charts-community-modules/ag-charts-community/tsconfig.esm.es6.docs.json" },
     { "path" :  "charts-enterprise-modules/ag-charts-enterprise/tsconfig.esm.es6.docs.json" },
