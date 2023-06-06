@@ -298,7 +298,7 @@ If you want to select only the filtered rows, you could do this using the follow
 
 ### Example: Using forEachNode
 
-The Grid API function `forEachNode` can be used to select grid rows based on a business key.. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
+The Grid API function `forEachNode` can be used to select grid rows based on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
 
 <grid-example title='Using forEachNode' name='using-foreachnode' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
