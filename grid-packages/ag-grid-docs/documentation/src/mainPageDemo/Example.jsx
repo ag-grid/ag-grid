@@ -728,6 +728,7 @@ const Example = () => {
                 filter: true,
                 floatingFilter: !isSmall,
                 resizable: true,
+                cellDataType: false,
             },
             enableCellChangeFlash: true,
             rowDragManaged: true,
