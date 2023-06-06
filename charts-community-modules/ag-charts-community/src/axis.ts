@@ -399,10 +399,10 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         })
     );
 
-    private tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
-    private tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
-    private gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
-    private gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
+    protected tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
+    protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
+    protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
+    protected gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
 
     private _crossLines?: CrossLine[] = [];
     set crossLines(value: CrossLine[] | undefined) {
@@ -700,7 +700,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         };
     }
 
-    private updateScale() {
+    protected updateScale() {
         this.updateRange();
         this.calculateDomain();
         this.setDomain();
@@ -1172,7 +1172,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         });
     }
 
-    private updateTickLines(sideFlag: Flag) {
+    protected updateTickLines(sideFlag: Flag) {
         const { tick } = this;
         this.tickLineGroupSelection.each((line) => {
             line.strokeWidth = tick.width;
@@ -1268,7 +1268,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines(sideFlag: Flag) {
+    protected updateGridLines(sideFlag: Flag) {
         const { gridStyle, scale, tick, gridPadding, gridLength } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
@@ -1306,7 +1306,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         }
     }
 
-    private updateLabels({
+    protected updateLabels({
         tickLabelGroupSelection,
         combinedRotation,
         textBaseline,
@@ -1325,7 +1325,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         } = this;
 
         if (!labelsEnabled) {
-            return { labelData: [], rotated: false };
+            return;
         }
 
         // Apply label option values

@@ -1952,6 +1952,8 @@ export interface AgPolarChartOptions<TAddonType = never, TAddonSeries = never> e
     series?: AgPolarSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart legend. */
     legend?: AgPolarChartLegendOptions;
+    /** Axis configurations. */
+    axes?: any[];
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {

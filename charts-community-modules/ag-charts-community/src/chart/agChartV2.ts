@@ -1,7 +1,5 @@
 import {
     AgChartOptions,
-    AgCartesianChartOptions,
-    AgCartesianAxisOptions,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
@@ -52,6 +50,8 @@ import { getJsonApplyOptions } from './chartOptions';
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
 import { setupModules } from './factory/setupModules';
+import { AngleCategoryAxis } from './axis/angleCategoryAxis';
+import { RadiusNumberAxis } from './axis/radiusNumberAxis';
 
 type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
@@ -413,7 +413,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         // Append axes to defaults.
         skip.push('axes');
     } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
-        // Use defaults.
+        skip.push('axes');
     } else {
         throw new Error(
             `AG Charts - couldn't apply configuration, check type of options and chart: ${processedOptions['type']}`
@@ -432,7 +432,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         applySeries(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if (isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
+    if ((processedOptions as any).axes) {
         const axesPresent = applyAxes(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
@@ -520,7 +520,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
     chart.series = createSeries(chart, optSeries);
 }
 
-function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
+function applyAxes(chart: Chart, options: any) {
     const optAxes = options.axes;
     if (!optAxes) {
         return false;
@@ -576,7 +576,7 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     return series;
 }
 
-function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[] {
+function createAxis(chart: Chart, options: any[]): ChartAxis[] {
     const axes: ChartAxis<any>[] = [];
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
@@ -599,6 +599,12 @@ function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[
                 break;
             case TimeAxis.type:
                 axis = new TimeAxis(moduleContext);
+                break;
+            case AngleCategoryAxis.type:
+                axis = new AngleCategoryAxis(moduleContext);
+                break;
+            case RadiusNumberAxis.type:
+                axis = new RadiusNumberAxis(moduleContext);
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);

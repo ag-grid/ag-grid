@@ -31,8 +31,6 @@ const {
     valueProperty,
 } = _ModuleSupport;
 
-const { BandScale, LinearScale } = _Scale;
-
 const { Group, Path, PointerEvents, Selection, Text, getMarker, toTooltipHtml } = _Scene;
 const { extent, interpolateString, isNumberEqual, sanitizeHtml, toFixed } = _Util;
 
@@ -101,19 +99,14 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
 
     readonly label = new RadarLineSeriesLabel();
 
-    private radiusScale: _Scale.LinearScale = new LinearScale();
-
     private pathSelection: _Scene.Selection<_Scene.Path, boolean>;
     private markerSelection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>;
     private labelSelection: _Scene.Selection<_Scene.Text, RadarLineNodeDatum>;
-    private angleAxisSelection: _Scene.Selection<_Scene.Path, RadarLineNodeDatum>;
-    private radiusAxisSelection: _Scene.Selection<_Scene.Path, boolean>;
     private highlightSelection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>;
 
     private animationState: RadarLineStateMachine;
 
     private nodeData: RadarLineNodeDatum[] = [];
-    private angleScale: _Scale.BandScale<string>;
 
     tooltip: RadarLineSeriesTooltip = new RadarLineSeriesTooltip();
 
@@ -170,20 +163,6 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             useLabelLayer: true,
             pickModes: [SeriesNodePickMode.NEAREST_NODE, SeriesNodePickMode.EXACT_SHAPE_MATCH],
         });
-
-        this.angleScale = new BandScale();
-        // Each sector is a ratio of the whole, where all ratios add up to 1.
-        this.angleScale.domain = [];
-        // Add 90 deg to start the chart at 12 o'clock.
-        this.angleScale.range = [-Math.PI / 2, (3 * Math.PI) / 2];
-
-        const angleAxisGroup = new Group();
-        this.contentGroup.append(angleAxisGroup);
-        this.angleAxisSelection = Selection.select(angleAxisGroup, Path);
-
-        const radiusAxisGroup = new Group();
-        this.contentGroup.append(radiusAxisGroup);
-        this.radiusAxisSelection = Selection.select(radiusAxisGroup, Path);
 
         const pathGroup = new Group();
         this.contentGroup.append(pathGroup);
@@ -254,10 +233,6 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             ],
         });
         this.processedData = this.dataModel.processData(data);
-
-        // TODO: Assign domain in radar axes.
-        this.angleScale.domain = this.getDomain(_ModuleSupport.ChartAxisDirection.X);
-        this.radiusScale.domain = this.getDomain(_ModuleSupport.ChartAxisDirection.Y);
     }
 
     maybeRefreshNodeData() {
@@ -278,10 +253,17 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             return [];
         }
 
+        const angleScale = this.xAxis?.scale;
+        const radiusScale = this.yAxis?.scale;
+
+        if (!angleScale || !radiusScale) {
+            return [];
+        }
+
         const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
         const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
 
-        const { angleScale, radiusScale, label, marker, id: seriesId } = this;
+        const { label, marker, id: seriesId } = this;
         const { size: markerSize } = this.marker;
 
         const nodeData = processedData.data.map((group): RadarLineNodeDatum => {
@@ -291,7 +273,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             const radiusDatum = values[radiusIdx];
 
             const angle = angleScale.convert(angleDatum);
-            const radius = radiusScale.convert(radiusDatum);
+            const radius = this.getRadius() - radiusScale.convert(radiusDatum);
 
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
@@ -334,46 +316,17 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         return [{ itemId: radiusKey, nodeData, labelData: nodeData }];
     }
 
-    updateRadiusScale(bbox: _Scene.BBox) {
-        const radius = Math.min(bbox.width, bbox.height) / 2;
-        this.radiusScale.range = [0, radius];
-    }
-
-    async update({ seriesRect }: { seriesRect: _Scene.BBox }) {
-        this.updateRadiusScale(seriesRect);
+    async update() {
         this.maybeRefreshNodeData();
 
-        this.drawTempAxis();
         this.updatePath();
         this.updateMarkers(this.markerSelection, false);
         this.updateMarkers(this.highlightSelection, true);
         this.updateLabels();
     }
 
-    private drawTempAxis() {
-        const { visible } = this;
-        const radius = this.radiusScale.range[1];
-        const cx = this.centerX;
-        const cy = this.centerY;
-        this.angleAxisSelection.update(visible ? this.nodeData : []).each((node, datum) => {
-            node.path.clear({ trackChanges: true });
-            const angle = this.angleScale.convert(datum.datum[this.angleKey]);
-            node.path.moveTo(cx, cy);
-            node.path.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-            node.stroke = 'gray';
-            node.strokeWidth = 1;
-            node.pointerEvents = PointerEvents.None;
-        });
-        this.radiusAxisSelection.update(visible ? [true] : []).each((node) => {
-            node.path.clear({ trackChanges: true });
-            node.path.moveTo(cx + radius, cy);
-            node.path.arc(this.centerX, this.centerY, radius, 0, 2 * Math.PI);
-            node.path.closePath();
-            node.stroke = 'gray';
-            node.strokeWidth = 1;
-            node.fill = undefined;
-            node.pointerEvents = PointerEvents.None;
-        });
+    private getRadius() {
+        return this.yAxis?.range[0] ?? 0;
     }
 
     private updatePath() {
@@ -604,9 +557,9 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
 
     protected pickNodeClosestDatum(point: _Scene.Point): _ModuleSupport.SeriesNodePickMatch | undefined {
         const { x, y } = point;
-        const { radiusScale, rootGroup, nodeData, centerX: cx, centerY: cy, marker } = this;
+        const { rootGroup, nodeData, centerX: cx, centerY: cy, marker } = this;
         const hitPoint = rootGroup.transformPoint(x, y);
-        const radius = radiusScale.range[1];
+        const radius = this.getRadius();
 
         const distanceFromCenter = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
         if (distanceFromCenter > radius + marker.size) {

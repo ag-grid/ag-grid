@@ -4,6 +4,7 @@ import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
 import { SeriesNodeDatum } from './series/series';
 import { PieSeries } from './series/polar/pieSeries';
+import { ChartAxisDirection } from './chartAxisDirection';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -20,7 +21,8 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        this.computeCircle();
+        const { radius, centerX, centerY } = this.computeCircle();
+        this.updateAxes(radius, centerX, centerY);
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -34,6 +36,22 @@ export class PolarChart extends Chart {
         });
 
         return shrinkRect;
+    }
+
+    protected updateAxes(radius: number, cx: number, cy: number) {
+        this.axes.forEach((axis) => {
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.range = [-Math.PI / 2, (3 * Math.PI) / 2];
+                axis.gridLength = radius;
+                axis.translation.x = cx;
+                axis.translation.y = cy;
+            } else if (axis.direction === ChartAxisDirection.Y) {
+                axis.range = [radius, 0];
+                axis.translation.x = cx;
+                axis.translation.y = cy - radius;
+            }
+            axis.update();
+        });
     }
 
     private computeSeriesRect(shrinkRect: BBox) {
@@ -111,6 +129,8 @@ export class PolarChart extends Chart {
         shake(); // Just in case
         shake({ hideWhenNecessary: true }); // Hide unnecessary labels
         shake({ hideWhenNecessary: true }); // Final result
+
+        return { radius, centerX, centerY };
     }
 
     private refineCircle(labelsBox: BBox, radius: number) {

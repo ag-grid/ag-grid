@@ -14,7 +14,6 @@ import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
 import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
-import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
@@ -747,7 +746,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     async processData() {
-        if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
+        if (this.axes.length > 0) {
             this.assignAxesToSeries(true);
             this.assignSeriesToAxes();
         }
