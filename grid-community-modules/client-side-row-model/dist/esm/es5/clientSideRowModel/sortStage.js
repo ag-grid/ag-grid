@@ -1,0 +1,57 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { _, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
+var SortStage = /** @class */ (function (_super) {
+    __extends(SortStage, _super);
+    function SortStage() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SortStage.prototype.execute = function (params) {
+        var _this = this;
+        var sortOptions = this.sortController.getSortOptions();
+        var sortActive = _.exists(sortOptions) && sortOptions.length > 0;
+        var deltaSort = sortActive
+            && _.exists(params.rowNodeTransactions)
+            // in time we can remove this check, so that delta sort is always
+            // on if transactions are present. it's off for now so that we can
+            // selectively turn it on and test it with some select users before
+            // rolling out to everyone.
+            && this.gridOptionsService.is('deltaSort');
+        var sortContainsGroupColumns = sortOptions.some(function (opt) { return !!_this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()); });
+        this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
+    };
+    __decorate([
+        Autowired('sortService')
+    ], SortStage.prototype, "sortService", void 0);
+    __decorate([
+        Autowired('sortController')
+    ], SortStage.prototype, "sortController", void 0);
+    __decorate([
+        Autowired('columnModel')
+    ], SortStage.prototype, "columnModel", void 0);
+    SortStage = __decorate([
+        Bean('sortStage')
+    ], SortStage);
+    return SortStage;
+}(BeanStub));
+export { SortStage };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic29ydFN0YWdlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vc3JjL2NsaWVudFNpZGVSb3dNb2RlbC9zb3J0U3RhZ2UudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsT0FBTyxFQUNILENBQUMsRUFDRCxTQUFTLEVBQ1QsSUFBSSxFQUlKLFFBQVEsRUFFWCxNQUFNLHlCQUF5QixDQUFDO0FBS2pDO0lBQStCLDZCQUFRO0lBQXZDOztJQXFCQSxDQUFDO0lBZlUsMkJBQU8sR0FBZCxVQUFlLE1BQTBCO1FBQXpDLGlCQWNDO1FBYkcsSUFBTSxXQUFXLEdBQWlCLElBQUksQ0FBQyxjQUFjLENBQUMsY0FBYyxFQUFFLENBQUM7UUFFdkUsSUFBTSxVQUFVLEdBQUcsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxXQUFXLENBQUMsSUFBSSxXQUFXLENBQUMsTUFBTSxHQUFHLENBQUMsQ0FBQztRQUNuRSxJQUFNLFNBQVMsR0FBRyxVQUFVO2VBQ3JCLENBQUMsQ0FBQyxNQUFNLENBQUMsTUFBTSxDQUFDLG1CQUFtQixDQUFDO1lBQ3ZDLGlFQUFpRTtZQUNqRSxrRUFBa0U7WUFDbEUsbUVBQW1FO1lBQ25FLDJCQUEyQjtlQUN4QixJQUFJLENBQUMsa0JBQWtCLENBQUMsRUFBRSxDQUFDLFdBQVcsQ0FBQyxDQUFDO1FBRS9DLElBQU0sd0JBQXdCLEdBQUcsV0FBVyxDQUFDLElBQUksQ0FBQyxVQUFBLEdBQUcsSUFBSSxPQUFBLENBQUMsQ0FBQyxLQUFJLENBQUMsV0FBVyxDQUFDLDZCQUE2QixDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsS0FBSyxFQUFFLENBQUMsRUFBcEUsQ0FBb0UsQ0FBQyxDQUFDO1FBQy9ILElBQUksQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLFdBQVcsRUFBRSxVQUFVLEVBQUUsU0FBUyxFQUFFLE1BQU0sQ0FBQyxtQkFBbUIsRUFBRSxNQUFNLENBQUMsV0FBVyxFQUFFLHdCQUF3QixDQUFDLENBQUM7SUFDeEksQ0FBQztJQWxCeUI7UUFBekIsU0FBUyxDQUFDLGFBQWEsQ0FBQztrREFBa0M7SUFDOUI7UUFBNUIsU0FBUyxDQUFDLGdCQUFnQixDQUFDO3FEQUF3QztJQUMxQztRQUF6QixTQUFTLENBQUMsYUFBYSxDQUFDO2tEQUFrQztJQUpsRCxTQUFTO1FBRHJCLElBQUksQ0FBQyxXQUFXLENBQUM7T0FDTCxTQUFTLENBcUJyQjtJQUFELGdCQUFDO0NBQUEsQUFyQkQsQ0FBK0IsUUFBUSxHQXFCdEM7U0FyQlksU0FBUyJ9

@@ -1,0 +1,16 @@
+import { CountableTimeInterval } from './interval';
+function encode(date) {
+    return date.getFullYear();
+}
+function decode(encoded) {
+    // Note: assigning years through the constructor
+    // will break for years 0 - 99 AD (will turn 1900's).
+    var d = new Date();
+    d.setFullYear(encoded);
+    d.setMonth(0, 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+export var year = new CountableTimeInterval(encode, decode);
+export default year;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoieWVhci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL3NyYy91dGlsL3RpbWUveWVhci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUscUJBQXFCLEVBQUUsTUFBTSxZQUFZLENBQUM7QUFFbkQsU0FBUyxNQUFNLENBQUMsSUFBVTtJQUN0QixPQUFPLElBQUksQ0FBQyxXQUFXLEVBQUUsQ0FBQztBQUM5QixDQUFDO0FBRUQsU0FBUyxNQUFNLENBQUMsT0FBZTtJQUMzQixnREFBZ0Q7SUFDaEQscURBQXFEO0lBQ3JELElBQU0sQ0FBQyxHQUFHLElBQUksSUFBSSxFQUFFLENBQUM7SUFDckIsQ0FBQyxDQUFDLFdBQVcsQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUN2QixDQUFDLENBQUMsUUFBUSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQztJQUNqQixDQUFDLENBQUMsUUFBUSxDQUFDLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDO0lBQ3ZCLE9BQU8sQ0FBQyxDQUFDO0FBQ2IsQ0FBQztBQUVELE1BQU0sQ0FBQyxJQUFNLElBQUksR0FBRyxJQUFJLHFCQUFxQixDQUFDLE1BQU0sRUFBRSxNQUFNLENBQUMsQ0FBQztBQUM5RCxlQUFlLElBQUksQ0FBQyJ9
