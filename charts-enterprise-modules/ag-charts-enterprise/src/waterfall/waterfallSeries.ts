@@ -132,6 +132,23 @@ class WaterfallSeriesItem {
     strokeWidth: number = 1;
 }
 
+class WaterfallSeriesConnectorLine {
+    @Validate(OPT_COLOR_STRING)
+    stroke: string = 'black';
+
+    @Validate(NUMBER(0, 1))
+    strokeOpacity = 1;
+
+    @Validate(OPT_LINE_DASH)
+    lineDash?: number[] = [0];
+
+    @Validate(NUMBER(0))
+    lineDashOffset: number = 0;
+
+    @Validate(NUMBER(0))
+    strokeWidth: number = 2;
+}
+
 type SeriesItemType = 'positive' | 'negative';
 
 export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
@@ -144,6 +161,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     readonly label = new WaterfallSeriesLabel();
     readonly positiveItem = new WaterfallSeriesItem();
     readonly negativeItem = new WaterfallSeriesItem();
+    readonly line = new WaterfallSeriesConnectorLine();
 
     tooltip: WaterfallSeriesTooltip = new WaterfallSeriesTooltip();
 
@@ -288,7 +306,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async createNodeData() {
-        const { data, dataModel, visible, ctx } = this;
+        const { data, dataModel, visible, ctx, line } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
@@ -299,7 +317,12 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
 
+        const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+
         const barWidth = xScale.bandwidth || 10;
+        const halfLineWidth = line.strokeWidth / 2;
+        const offsetDirection = barAlongX ? -1 : 1;
+        const offset = offsetDirection * halfLineWidth;
 
         const { yKey = '', xKey = '', processedData } = this;
         if (processedData?.type !== 'ungrouped') return [];
@@ -329,8 +352,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const trailY = yScale.convert(trailingValue, { strict: false });
 
-            const y = isPositive ? currY : trailY;
-            const bottomY = isPositive ? trailY : currY;
+            const y = (isPositive ? currY : trailY) - offset;
+            const bottomY = (isPositive ? trailY : currY) + offset;
             const barHeight = Math.max(strokeWidth, Math.abs(bottomY - y));
 
             const itemId = isPositive ? 'positive' : 'negative';
@@ -346,8 +369,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 pointData: [],
             };
 
-            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
-
             const rect = {
                 x: barAlongX ? bottomY : x,
                 y: barAlongX ? x : y,
@@ -362,11 +383,11 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
             const pathPoint = {
                 // lineTo
-                x: barAlongX ? trailY : rect.x,
-                y: barAlongX ? rect.y : trailY,
+                x: Math.round(barAlongX ? trailY : rect.x),
+                y: Math.round(barAlongX ? rect.y : trailY),
                 // moveTo
-                x2: barAlongX ? currY : rect.x + rect.width,
-                y2: barAlongX ? rect.y + rect.height : currY,
+                x2: Math.round(barAlongX ? currY : rect.x + rect.width),
+                y2: Math.round(barAlongX ? rect.y + rect.height : currY),
                 size: 0,
             };
 
