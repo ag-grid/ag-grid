@@ -14,7 +14,7 @@ const Collapsible: FunctionComponent<Props> = ({ title, children }) => {
     };
 
     return (
-        <div className={showNotes && styles.isOpen}>
+        <div className={showNotes ? styles.isOpen : undefined}>
             <button className={styles.showHideButton} onClick={collapsibleHandler}>
                 {title}
 
