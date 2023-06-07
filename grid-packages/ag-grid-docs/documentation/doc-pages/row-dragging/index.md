@@ -171,7 +171,7 @@ const gridOptions = {
 
 The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note the following:
 
-- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` enabled.
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
 - Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
 - Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
