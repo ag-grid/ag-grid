@@ -109,6 +109,11 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::before,
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::after {
+    visibility: hidden;
+}
+
 .ag-chart-wrapper {
     box-sizing: border-box;
     overflow: hidden;
@@ -271,7 +276,7 @@ export class Tooltip {
         toggleClass('no-animation', !wasVisible && !!visible); // No animation on first show.
         toggleClass('no-interaction', !enableInteraction); // Prevent interaction.
         toggleClass('hidden', !visible); // Hide if not visible.
-        toggleClass('arrow', !!showArrow); // Add arrow if tooltip is constrained.
+        toggleClass('arrow', Boolean(visible) && Boolean(showArrow)); // Add arrow if tooltip is constrained.
 
         if (newClass !== lastClass) {
             if (lastClass) {
@@ -296,6 +301,7 @@ export class Tooltip {
         if (html !== undefined) {
             element.innerHTML = html;
         } else if (!element.innerHTML) {
+            this.toggle(false);
             return;
         }
 
@@ -342,6 +348,7 @@ export class Tooltip {
     toggle(visible?: boolean) {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
+            this.element.innerHTML = '';
         }
         this.updateClass(visible, this._showArrow);
     }
