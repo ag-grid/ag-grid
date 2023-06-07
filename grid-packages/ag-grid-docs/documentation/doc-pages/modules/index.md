@@ -59,14 +59,14 @@ The grid requires at least one of the following [Row Model](/row-models/) module
 
 After that all other modules are optional depending on your requirements.
 
-### Dependent Modules
+### Dependant Modules
 
 As a developer you do not need to worry about module dependencies. For example, the `FilterToolPanelModule` depends on the
-`SideBarModule` but as we have set up the dependencies as part of the module definition npm will install the dependent packages
+`SideBarModule` but as we have set up the dependencies as part of the module definition npm will install the dependant packages
 for you. 
 
 Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
-and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([globally](/modules/#providing-modules-globally) / [individual](/modules/#providing-modules-to-individual-grids)) depending how you register the feature model. 
+and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([Globally](/modules/#providing-modules-globally) / [Individual](/modules/#providing-modules-to-individual-grids)) depending on how you register the feature model.
 
 ## Registering AG Grid Modules
 
@@ -162,7 +162,8 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 </framework-specific-section>
 
 <snippet transform={false}>
-|import { ModuleRegistry } from '@ag-grid-community/core';     // @ag-grid-community/core will always be implicitly available
+|// @ag-grid-community/core will always be implicitly available
+|import { ModuleRegistry } from '@ag-grid-community/core';
 |import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 |import { CsvExportModule } from "@ag-grid-community/csv-export";
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
@@ -206,7 +207,12 @@ Using the same real-world example from above the `package.json` dependencies wil
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 |import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-|new Grid(&lt;dom element>, gridOptions, { modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]});
+|new Grid(&lt;dom element>, gridOptions, { modules: [
+|    ClientSideRowModelModule,
+|    CsvExportModule,
+|    ExcelExportModule,
+|    MasterDetailModule
+|]});
 </snippet>  
 </framework-specific-section>
 
@@ -222,7 +228,12 @@ Using the same real-world example from above the `package.json` dependencies wil
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 |import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-|public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
+|public modules: Module[] = [
+|    ClientSideRowModelModule,
+|    CsvExportModule,
+|    ExcelExportModule,
+|    MasterDetailModule
+|];
 |
 |&lt;ag-grid-angular>
 |    [rowData]="rowData"
@@ -256,7 +267,12 @@ Using the same real-world example from above the `package.json` dependencies wil
 |                    // properties
 |                    columnDefs={this.state.columnDefs}
 |                    rowData={this.props.rowData}
-|                    modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]}
+|                    modules={[
+|                        ClientSideRowModelModule,
+|                        CsvExportModule,
+|                        ExcelExportModule,
+|                        MasterDetailModule
+|                    ]}
 |
 |                    // events
 |                    onGridReady={this.onGridReady}>
@@ -281,7 +297,12 @@ Using the same real-world example from above the `package.json` dependencies wil
 |    return {
 |        columnDefs: ...column defs...,
 |        rowData: ....row data...,
-|        modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]
+|        modules: [
+|            ClientSideRowModelModule,
+|            CsvExportModule,
+|            ExcelExportModule,
+|            MasterDetailModule
+|        ]
 |    }
 |}
 |&lt;ag-grid-vue
