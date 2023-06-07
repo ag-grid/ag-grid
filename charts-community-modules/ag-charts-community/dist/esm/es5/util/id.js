@@ -1,0 +1,20 @@
+var ID_MAP = {};
+export function resetIds() {
+    for (var key in ID_MAP) {
+        delete ID_MAP[key];
+    }
+}
+export function createId(instance) {
+    var _a;
+    var constructor = instance.constructor;
+    var className = Object.prototype.hasOwnProperty.call(constructor, 'className')
+        ? constructor.className
+        : constructor.name;
+    if (!className) {
+        throw new Error("The " + constructor + " is missing the 'className' property.");
+    }
+    var nextId = ((_a = ID_MAP[className]) !== null && _a !== void 0 ? _a : 0) + 1;
+    ID_MAP[className] = nextId;
+    return className + '-' + nextId;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaWQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9zcmMvdXRpbC9pZC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxJQUFNLE1BQU0sR0FBMkIsRUFBRSxDQUFDO0FBRTFDLE1BQU0sVUFBVSxRQUFRO0lBQ3BCLEtBQUssSUFBTSxHQUFHLElBQUksTUFBTSxFQUFFO1FBQ3RCLE9BQU8sTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0tBQ3RCO0FBQ0wsQ0FBQztBQUVELE1BQU0sVUFBVSxRQUFRLENBQUMsUUFBYTs7SUFDbEMsSUFBTSxXQUFXLEdBQUcsUUFBUSxDQUFDLFdBQVcsQ0FBQztJQUN6QyxJQUFNLFNBQVMsR0FBRyxNQUFNLENBQUMsU0FBUyxDQUFDLGNBQWMsQ0FBQyxJQUFJLENBQUMsV0FBVyxFQUFFLFdBQVcsQ0FBQztRQUM1RSxDQUFDLENBQUMsV0FBVyxDQUFDLFNBQVM7UUFDdkIsQ0FBQyxDQUFDLFdBQVcsQ0FBQyxJQUFJLENBQUM7SUFFdkIsSUFBSSxDQUFDLFNBQVMsRUFBRTtRQUNaLE1BQU0sSUFBSSxLQUFLLENBQUMsU0FBTyxXQUFXLDBDQUF1QyxDQUFDLENBQUM7S0FDOUU7SUFDRCxJQUFNLE1BQU0sR0FBRyxDQUFDLE1BQUEsTUFBTSxDQUFDLFNBQVMsQ0FBQyxtQ0FBSSxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUM7SUFDNUMsTUFBTSxDQUFDLFNBQVMsQ0FBQyxHQUFHLE1BQU0sQ0FBQztJQUUzQixPQUFPLFNBQVMsR0FBRyxHQUFHLEdBQUcsTUFBTSxDQUFDO0FBQ3BDLENBQUMifQ==

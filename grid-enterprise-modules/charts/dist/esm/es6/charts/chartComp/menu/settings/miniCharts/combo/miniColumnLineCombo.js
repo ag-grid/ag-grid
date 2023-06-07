@@ -1,0 +1,36 @@
+import { MiniChartWithAxes } from "../miniChartWithAxes";
+import { createColumnRects, createLinePaths } from "../miniChartHelpers";
+export class MiniColumnLineCombo extends MiniChartWithAxes {
+    constructor(container, fills, strokes) {
+        super(container, "columnLineComboTooltip");
+        this.columnData = [3, 4];
+        this.lineData = [
+            [5, 4, 6, 5, 4]
+        ];
+        const { root, columnData, lineData, size, padding } = this;
+        this.columns = createColumnRects({
+            stacked: false,
+            root,
+            data: columnData,
+            size,
+            padding,
+            xScaleDomain: [0, 1],
+            yScaleDomain: [0, 4],
+            xScalePadding: 0.5
+        });
+        root.append(this.columns);
+        this.lines = createLinePaths(root, lineData, size, padding);
+        this.updateColors(fills, strokes);
+    }
+    updateColors(fills, strokes) {
+        this.columns.forEach((bar, i) => {
+            bar.fill = fills[i];
+            bar.stroke = strokes[i];
+        });
+        this.lines.forEach((line, i) => {
+            line.stroke = fills[i + 2];
+        });
+    }
+}
+MiniColumnLineCombo.chartType = 'columnLineCombo';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWluaUNvbHVtbkxpbmVDb21iby5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uLy4uLy4uLy4uL3NyYy9jaGFydHMvY2hhcnRDb21wL21lbnUvc2V0dGluZ3MvbWluaUNoYXJ0cy9jb21iby9taW5pQ29sdW1uTGluZUNvbWJvLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sRUFBRSxpQkFBaUIsRUFBRSxNQUFNLHNCQUFzQixDQUFDO0FBR3pELE9BQU8sRUFBRSxpQkFBaUIsRUFBMkIsZUFBZSxFQUFFLE1BQU0scUJBQXFCLENBQUM7QUFFbEcsTUFBTSxPQUFPLG1CQUFvQixTQUFRLGlCQUFpQjtJQWF0RCxZQUFZLFNBQXNCLEVBQUUsS0FBZSxFQUFFLE9BQWlCO1FBQ2xFLEtBQUssQ0FBQyxTQUFTLEVBQUUsd0JBQXdCLENBQUMsQ0FBQztRQVB2QyxlQUFVLEdBQUcsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUM7UUFFcEIsYUFBUSxHQUFHO1lBQ2YsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDO1NBQ2xCLENBQUM7UUFLRSxNQUFNLEVBQUUsSUFBSSxFQUFFLFVBQVUsRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLE9BQU8sRUFBRSxHQUFHLElBQUksQ0FBQztRQUUzRCxJQUFJLENBQUMsT0FBTyxHQUFHLGlCQUFpQixDQUFDO1lBQzdCLE9BQU8sRUFBRSxLQUFLO1lBQ2QsSUFBSTtZQUNKLElBQUksRUFBRSxVQUFVO1lBQ2hCLElBQUk7WUFDSixPQUFPO1lBQ1AsWUFBWSxFQUFFLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQztZQUNwQixZQUFZLEVBQUUsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDO1lBQ3BCLGFBQWEsRUFBRSxHQUFHO1NBQ00sQ0FBQyxDQUFDO1FBRTlCLElBQUksQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxDQUFDO1FBRTFCLElBQUksQ0FBQyxLQUFLLEdBQUcsZUFBZSxDQUFDLElBQUksRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLE9BQU8sQ0FBQyxDQUFDO1FBRTVELElBQUksQ0FBQyxZQUFZLENBQUMsS0FBSyxFQUFFLE9BQU8sQ0FBQyxDQUFDO0lBQ3RDLENBQUM7SUFFRCxZQUFZLENBQUMsS0FBZSxFQUFFLE9BQWlCO1FBQzNDLElBQUksQ0FBQyxPQUFPLENBQUMsT0FBTyxDQUFDLENBQUMsR0FBZ0IsRUFBRSxDQUFTLEVBQUUsRUFBRTtZQUNqRCxHQUFHLENBQUMsSUFBSSxHQUFHLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztZQUNwQixHQUFHLENBQUMsTUFBTSxHQUFHLE9BQU8sQ0FBQyxDQUFDLENBQUMsQ0FBQztRQUM1QixDQUFDLENBQUMsQ0FBQztRQUVILElBQUksQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLENBQUMsSUFBaUIsRUFBRSxDQUFTLEVBQUUsRUFBRTtZQUNoRCxJQUFJLENBQUMsTUFBTSxHQUFHLEtBQUssQ0FBQyxDQUFDLEdBQUMsQ0FBQyxDQUFDLENBQUM7UUFDN0IsQ0FBQyxDQUFDLENBQUM7SUFDUCxDQUFDOztBQTNDTSw2QkFBUyxHQUFjLGlCQUFpQixDQUFDIn0=
