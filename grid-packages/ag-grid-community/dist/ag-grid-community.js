@@ -13977,11 +13977,13 @@ class PositionableFeature extends _context_beanStub__WEBPACK_IMPORTED_MODULE_0__
             height = Object(_utils_dom__WEBPACK_IMPORTED_MODULE_2__["getAbsoluteHeight"])(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            const availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                const availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {
@@ -32965,7 +32967,8 @@ class MoveColumnFeature {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach((newCol) => {
+                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }
@@ -41364,7 +41367,7 @@ class TabGuardCtrl extends _context_beanStub__WEBPACK_IMPORTED_MODULE_0__["BeanS
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
     }
     getNextFocusableElement(backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
@@ -41823,6 +41826,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _focusService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(208);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(39);
 /* harmony import */ var _utils_aria__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(41);
+/* harmony import */ var _utils_generic__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7);
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
  * @version v30.0.0
@@ -41836,6 +41840,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PopupService_1;
+
 
 
 
@@ -42118,11 +42123,12 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         const ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        const ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!Object(_utils_generic__WEBPACK_IMPORTED_MODULE_10__["exists"])(eChild.style.top)) {
+            eChild.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!Object(_utils_generic__WEBPACK_IMPORTED_MODULE_10__["exists"])(eChild.style.left)) {
+            eChild.style.left = `${ePopupParentRect.left * -1}px`;
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

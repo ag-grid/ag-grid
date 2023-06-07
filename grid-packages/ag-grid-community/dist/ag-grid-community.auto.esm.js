@@ -10721,11 +10721,13 @@ class PositionableFeature extends BeanStub {
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            const availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                const availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {
@@ -29407,7 +29409,8 @@ class MoveColumnFeature {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach((newCol) => {
+                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }
@@ -36516,7 +36519,7 @@ class TabGuardCtrl extends BeanStub {
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
     }
     getNextFocusableElement(backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
@@ -38218,11 +38221,12 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         const ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        const ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!exists(eChild.style.top)) {
+            eChild.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!exists(eChild.style.left)) {
+            eChild.style.left = `${ePopupParentRect.left * -1}px`;
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

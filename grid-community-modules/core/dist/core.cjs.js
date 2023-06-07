@@ -11384,11 +11384,13 @@ var PositionableFeature = /** @class */ (function (_super) {
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            var availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                var availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {
@@ -32056,7 +32058,8 @@ var MoveColumnFeature = /** @class */ (function () {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach(function (newCol) {
+                    var providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach(function (newCol) {
                         if (!newCols_1.includes(newCol)) {
                             newCols_1.push(newCol);
                         }
@@ -40135,7 +40138,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
     };
     TabGuardCtrl.prototype.getNextFocusableElement = function (backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
@@ -42108,11 +42111,12 @@ var PopupService = /** @class */ (function (_super) {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         var ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        var ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!exists(eChild.style.top)) {
+            eChild.style.top = ePopupParentRect.top * -1 + "px";
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!exists(eChild.style.left)) {
+            eChild.style.left = ePopupParentRect.left * -1 + "px";
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

@@ -28729,12 +28729,13 @@
         }, { skip: ['data', 'theme'] });
     }
     function prepareLegendEnabledOption(options, mergedOptions) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         // Disable legend by default for single series cartesian charts
         if (((_a = options.legend) === null || _a === void 0 ? void 0 : _a.enabled) !== undefined || ((_b = mergedOptions.legend) === null || _b === void 0 ? void 0 : _b.enabled) !== undefined) {
             return;
         }
-        if (((_c = options.series) !== null && _c !== void 0 ? _c : []).length > 1) {
+        (_c = mergedOptions.legend) !== null && _c !== void 0 ? _c : (mergedOptions.legend = {});
+        if (((_d = options.series) !== null && _d !== void 0 ? _d : []).length > 1) {
             mergedOptions.legend.enabled = true;
             return;
         }

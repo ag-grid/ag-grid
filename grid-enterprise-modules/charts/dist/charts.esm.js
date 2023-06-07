@@ -23325,12 +23325,13 @@ function removeDisabledOptions(options) {
     }, { skip: ['data', 'theme'] });
 }
 function prepareLegendEnabledOption(options, mergedOptions) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     // Disable legend by default for single series cartesian charts
     if (((_a = options.legend) === null || _a === void 0 ? void 0 : _a.enabled) !== undefined || ((_b = mergedOptions.legend) === null || _b === void 0 ? void 0 : _b.enabled) !== undefined) {
         return;
     }
-    if (((_c = options.series) !== null && _c !== void 0 ? _c : []).length > 1) {
+    (_c = mergedOptions.legend) !== null && _c !== void 0 ? _c : (mergedOptions.legend = {});
+    if (((_d = options.series) !== null && _d !== void 0 ? _d : []).length > 1) {
         mergedOptions.legend.enabled = true;
         return;
     }
@@ -28071,7 +28072,8 @@ class SeriesPanel extends Component {
                 this.initSeriesSelect();
             }
             this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
-        });
+        })
+            .catch(e => console.error(`AG Grid - chart rendering failed`, e));
     }
     initSeriesSelect() {
         const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
@@ -28333,15 +28335,15 @@ class FormatPanel extends Component {
     }
     init() {
         this.createPanels();
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.createPanels(true));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () => this.createPanels(true));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.createPanels(false));
     }
-    createPanels(recreate) {
+    createPanels(reuse) {
         var _a;
         const chartType = this.chartController.getChartType();
         const isGrouping = this.chartController.isGrouping();
         const seriesType = getSeriesType(chartType);
-        if (!recreate && (chartType === this.chartType && isGrouping === this.isGrouping)) {
+        if (reuse && chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
             return;
         }
@@ -28429,7 +28431,8 @@ class MiniChart extends Component {
     init() {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
         // necessary to force scene graph render as we are not using the standalone factory!
-        this.scene.render();
+        this.scene.render()
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
 }
 __decorate$f([
@@ -29580,6 +29583,7 @@ class ChartMenu extends Component {
             chartDownload: ['save', () => this.saveChart()]
         };
         this.panels = [];
+        this.buttonListenersDestroyFuncs = [];
         this.menuVisible = false;
     }
     postConstruct() {
@@ -29598,6 +29602,7 @@ class ChartMenu extends Component {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     }
     isVisible() {
         return this.menuVisible;
@@ -29717,8 +29722,11 @@ class ChartMenu extends Component {
         this.chartController.detachChartRange();
     }
     createButtons() {
+        this.buttonListenersDestroyFuncs.forEach(func => func());
+        this.buttonListenersDestroyFuncs = [];
         this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
+        _.clearElement(menuEl);
         this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [iconName, callback] = buttonConfig;
@@ -29728,7 +29736,7 @@ class ChartMenu extends Component {
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
-            this.addManagedListener(buttonEl, 'click', callback);
+            this.buttonListenersDestroyFuncs.push(this.addManagedListener(buttonEl, 'click', callback));
             menuEl.appendChild(buttonEl);
         });
     }
@@ -30595,8 +30603,12 @@ class ChartDataModel extends BeanStub {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
-        this.comboChartModel.update(seriesChartTypes);
+        const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
         if (!this.unlinked) {
             this.updateData();
         }
@@ -30839,6 +30851,12 @@ class ChartDataModel extends BeanStub {
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
+    }
+    updateSelectedDimension(columns) {
+        const colIdSet = new Set(columns.map((column) => column.getColId()));
+        // if no dimension found in supplied columns use the default category (always index = 0)
+        const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+        this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === foundColState.colId })));
     }
     syncDimensionCellRange() {
         const selectedDimension = this.getSelectedDimension();
@@ -31588,7 +31606,8 @@ class ChartOptionsService extends BeanStub {
     }
     awaitChartOptionUpdate(func) {
         const chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(() => func());
+        chart.waitForUpdate().then(() => func())
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
     getAxisProperty(expression) {
         var _a;
@@ -31717,12 +31736,6 @@ class ComboChartProxy extends CartesianChartProxy {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(key => {
-                        const field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -31736,9 +31749,6 @@ class ComboChartProxy extends CartesianChartProxy {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));
                 const lastSecondaryAxis = i === secondaryYKeys.length - 1;
@@ -32000,7 +32010,9 @@ class GridChartComp extends Component {
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
         if (params === null || params === void 0 ? void 0 : params.chartId) {
-            this.chartController.raiseChartApiUpdateEvent();
+            this.chartProxy.getChart().waitForUpdate().then(() => {
+                this.chartController.raiseChartApiUpdateEvent();
+            });
         }
     }
     updateChart(updatedOverrides) {

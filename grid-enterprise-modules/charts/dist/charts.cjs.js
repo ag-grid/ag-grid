@@ -23329,12 +23329,13 @@ function removeDisabledOptions(options) {
     }, { skip: ['data', 'theme'] });
 }
 function prepareLegendEnabledOption(options, mergedOptions) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     // Disable legend by default for single series cartesian charts
     if (((_a = options.legend) === null || _a === void 0 ? void 0 : _a.enabled) !== undefined || ((_b = mergedOptions.legend) === null || _b === void 0 ? void 0 : _b.enabled) !== undefined) {
         return;
     }
-    if (((_c = options.series) !== null && _c !== void 0 ? _c : []).length > 1) {
+    (_c = mergedOptions.legend) !== null && _c !== void 0 ? _c : (mergedOptions.legend = {});
+    if (((_d = options.series) !== null && _d !== void 0 ? _d : []).length > 1) {
         mergedOptions.legend.enabled = true;
         return;
     }
@@ -25394,8 +25395,8 @@ function getLegacyAxisType(chartType) {
     }
 }
 
-var __assign$c = (undefined && undefined.__assign) || function () {
-    __assign$c = Object.assign || function(t) {
+var __assign$d = (undefined && undefined.__assign) || function () {
+    __assign$d = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25403,7 +25404,7 @@ var __assign$c = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$c.apply(this, arguments);
+    return __assign$d.apply(this, arguments);
 };
 function createAgChartTheme(chartProxyParams, proxy) {
     var _a;
@@ -25420,7 +25421,7 @@ function createAgChartTheme(chartProxyParams, proxy) {
     var crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
-    var formattingPanelOverrides = __assign$c({}, (chartOptionsToRestore !== null && chartOptionsToRestore !== void 0 ? chartOptionsToRestore : {}));
+    var formattingPanelOverrides = __assign$d({}, (chartOptionsToRestore !== null && chartOptionsToRestore !== void 0 ? chartOptionsToRestore : {}));
     var isTitleEnabled = function () {
         var isTitleEnabled = function (obj) {
             if (!obj) {
@@ -25513,7 +25514,7 @@ function createCrossFilterThemeOverrides(proxy, chartProxyParams, overrideType) 
 }
 var STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(function (r, n) {
     var _a;
-    return (__assign$c(__assign$c({}, r), (_a = {}, _a[n] = { title: { _enabledFromTheme: true } }, _a)));
+    return (__assign$d(__assign$d({}, r), (_a = {}, _a[n] = { title: { _enabledFromTheme: true } }, _a)));
 }, {});
 function inbuiltStockThemeOverrides(params, titleEnabled) {
     var extraPadding = params.getExtraPaddingDirections();
@@ -25760,8 +25761,8 @@ var __extends$Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$b = (undefined && undefined.__assign) || function () {
-    __assign$b = Object.assign || function(t) {
+var __assign$c = (undefined && undefined.__assign) || function () {
+    __assign$c = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25769,7 +25770,7 @@ var __assign$b = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$b.apply(this, arguments);
+    return __assign$c.apply(this, arguments);
 };
 var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25824,7 +25825,7 @@ var ChartController = /** @class */ (function (_super) {
             suppressChartRanges: false,
             crossFiltering: false
         };
-        var chartModelParams = __assign$b({}, common);
+        var chartModelParams = __assign$c({}, common);
         // modify the chart model properties based on the type of update
         switch (params.type) {
             case 'rangeChartUpdate':
@@ -28454,7 +28455,8 @@ var SeriesPanel = /** @class */ (function (_super) {
                 _this.initSeriesSelect();
             }
             _this.seriesWidgetMappings[_this.seriesType].forEach(function (w) { return _this.widgetFuncs[w](); });
-        });
+        })
+            .catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
     SeriesPanel.prototype.initSeriesSelect = function () {
         var _this = this;
@@ -28746,16 +28748,16 @@ var FormatPanel = /** @class */ (function (_super) {
     FormatPanel.prototype.init = function () {
         var _this = this;
         this.createPanels();
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, function () { return _this.createPanels(true); });
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, function () { return _this.createPanels(true); });
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, function () { return _this.createPanels(false); });
     };
-    FormatPanel.prototype.createPanels = function (recreate) {
+    FormatPanel.prototype.createPanels = function (reuse) {
         var _this = this;
         var _a;
         var chartType = this.chartController.getChartType();
         var isGrouping = this.chartController.isGrouping();
         var seriesType = getSeriesType(chartType);
-        if (!recreate && (chartType === this.chartType && isGrouping === this.isGrouping)) {
+        if (reuse && chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
             return;
         }
@@ -28862,7 +28864,8 @@ var MiniChart = /** @class */ (function (_super) {
     MiniChart.prototype.init = function () {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
         // necessary to force scene graph render as we are not using the standalone factory!
-        this.scene.render();
+        this.scene.render()
+            .catch(function (e) { return console.error("AG Grid - chart update failed", e); });
     };
     __decorate$f([
         core.Autowired('chartTranslationService')
@@ -30065,8 +30068,8 @@ var __extends$n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$a = (undefined && undefined.__assign) || function () {
-    __assign$a = Object.assign || function(t) {
+var __assign$b = (undefined && undefined.__assign) || function () {
+    __assign$b = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30074,7 +30077,7 @@ var __assign$a = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$a.apply(this, arguments);
+    return __assign$b.apply(this, arguments);
 };
 var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30127,7 +30130,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         _this.chartController = chartController;
         _this.fills = fills;
         _this.strokes = strokes;
-        _this.chartGroups = __assign$a({}, chartGroups);
+        _this.chartGroups = __assign$b({}, chartGroups);
         return _this;
     }
     MiniChartsContainer.prototype.init = function () {
@@ -30538,6 +30541,7 @@ var ChartMenu = /** @class */ (function (_super) {
             chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.panels = [];
+        _this.buttonListenersDestroyFuncs = [];
         _this.menuVisible = false;
         return _this;
     }
@@ -30558,6 +30562,7 @@ var ChartMenu = /** @class */ (function (_super) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     };
     ChartMenu.prototype.isVisible = function () {
         return this.menuVisible;
@@ -30681,8 +30686,11 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
+        this.buttonListenersDestroyFuncs.forEach(function (func) { return func(); });
+        this.buttonListenersDestroyFuncs = [];
         this.chartToolbarOptions = this.getToolbarOptions();
         var menuEl = this.eMenu;
+        core._.clearElement(menuEl);
         this.chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var _a = __read$7(buttonConfig, 2), iconName = _a[0], callback = _a[1];
@@ -30692,7 +30700,7 @@ var ChartMenu = /** @class */ (function (_super) {
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
-            _this.addManagedListener(buttonEl, 'click', callback);
+            _this.buttonListenersDestroyFuncs.push(_this.addManagedListener(buttonEl, 'click', callback));
             menuEl.appendChild(buttonEl);
         });
     };
@@ -30855,8 +30863,8 @@ var __extends$j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$9 = (undefined && undefined.__assign) || function () {
-    __assign$9 = Object.assign || function(t) {
+var __assign$a = (undefined && undefined.__assign) || function () {
+    __assign$a = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30864,7 +30872,7 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$9.apply(this, arguments);
+    return __assign$a.apply(this, arguments);
 };
 var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30935,7 +30943,7 @@ var TitleEdit = /** @class */ (function (_super) {
             if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
                 var bbox = title.node.computeBBox();
                 var xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
-                _this.startEditing(__assign$9(__assign$9({}, bbox), xy), canvas.width);
+                _this.startEditing(__assign$a(__assign$a({}, bbox), xy), canvas.width);
             }
         });
         var wasInTitle = false;
@@ -31643,6 +31651,17 @@ var __extends$f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign$9 = (undefined && undefined.__assign) || function () {
+    __assign$9 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$9.apply(this, arguments);
+};
 var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -31716,8 +31735,12 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
-        this.comboChartModel.update(seriesChartTypes);
+        var shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
         if (!this.unlinked) {
             this.updateData();
         }
@@ -31966,6 +31989,12 @@ var ChartDataModel = /** @class */ (function (_super) {
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
             this.valueCellRange = this.createCellRange.apply(this, __spreadArray$2([core.CellRangeType.VALUE], __read$6(selectedValueCols)));
         }
+    };
+    ChartDataModel.prototype.updateSelectedDimension = function (columns) {
+        var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
+        // if no dimension found in supplied columns use the default category (always index = 0)
+        var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
+        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$9(__assign$9({}, colState), { selected: colState.colId === foundColState.colId })); });
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
         var selectedDimension = this.getSelectedDimension();
@@ -32974,7 +33003,8 @@ var ChartOptionsService = /** @class */ (function (_super) {
     };
     ChartOptionsService.prototype.awaitChartOptionUpdate = function (func) {
         var chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(function () { return func(); });
+        chart.waitForUpdate().then(function () { return func(); })
+            .catch(function (e) { return console.error("AG Grid - chart update failed", e); });
     };
     ChartOptionsService.prototype.getAxisProperty = function (expression) {
         var _a;
@@ -33133,12 +33163,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(function (key) {
-                        var field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -33152,9 +33176,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });
                 var lastSecondaryAxis = i === secondaryYKeys.length - 1;
@@ -33439,6 +33460,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
     };
     GridChartComp.prototype.update = function (params) {
+        var _this = this;
         // update chart model for api.updateChart()
         if (params === null || params === void 0 ? void 0 : params.chartId) {
             var validUpdate = this.chartController.update(params);
@@ -33453,7 +33475,9 @@ var GridChartComp = /** @class */ (function (_super) {
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
         if (params === null || params === void 0 ? void 0 : params.chartId) {
-            this.chartController.raiseChartApiUpdateEvent();
+            this.chartProxy.getChart().waitForUpdate().then(function () {
+                _this.chartController.raiseChartApiUpdateEvent();
+            });
         }
     };
     GridChartComp.prototype.updateChart = function (updatedOverrides) {
