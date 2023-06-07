@@ -54,7 +54,7 @@ By default the grid will use the browser-provided date picker for all [Supported
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
+<framework-specific-section frameworks="vue">
 <snippet transform={false}>
 |const MyApp = {
 |    components: {
