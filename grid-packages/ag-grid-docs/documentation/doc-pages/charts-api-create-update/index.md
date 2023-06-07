@@ -80,5 +80,5 @@ e `AgChartInstance`:
 </framework-specific-section>
 
 <framework-specific-section frameworks="frameworks">
-Charts are automatically destroyed when the AG Charts component is removed from the DOM.
+| Charts are automatically destroyed when the AG Charts component is removed from the DOM.
 </framework-specific-section>
