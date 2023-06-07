@@ -140,7 +140,7 @@ export class EventService implements IEventEmitter {
             processEventListeners(listeners);
         }
 
-        const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
 
         globalListeners.forEach(listener => {
             if (async) {
