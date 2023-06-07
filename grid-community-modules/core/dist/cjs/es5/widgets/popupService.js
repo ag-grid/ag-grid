@@ -59,6 +59,7 @@ var keyCode_1 = require("../constants/keyCode");
 var focusService_1 = require("../focusService");
 var utils_1 = require("../utils");
 var aria_1 = require("../utils/aria");
+var generic_1 = require("../utils/generic");
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["vertical"] = 0] = "vertical";
@@ -342,11 +343,12 @@ var PopupService = /** @class */ (function (_super) {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         var ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        var ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!generic_1.exists(eChild.style.top)) {
+            eChild.style.top = ePopupParentRect.top * -1 + "px";
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!generic_1.exists(eChild.style.left)) {
+            eChild.style.left = ePopupParentRect.left * -1 + "px";
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

@@ -59,9 +59,11 @@ const HeaderRowContainerComp = (props) => {
             },
             // pinned only
             setPinnedContainerWidth: width => {
-                eGui.current.style.width = width;
-                eGui.current.style.minWidth = width;
-                eGui.current.style.maxWidth = width;
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                    eGui.current.style.minWidth = width;
+                    eGui.current.style.maxWidth = width;
+                }
             }
         };
         const ctrl = context.createBean(new core_1.HeaderRowContainerCtrl(props.pinned));

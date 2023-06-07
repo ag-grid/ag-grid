@@ -51,8 +51,13 @@ var HeaderCellComp = function (props) {
     var ctrl = props.ctrl;
     var cssClassManager = react_1.useMemo(function () { return new ag_grid_community_1.CssClassManager(function () { return eGui.current; }); }, []);
     useEffectOnce_1.useLayoutEffectOnce(function () {
+        var _a;
         var compProxy = {
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: function (name, on) { return cssClassManager.addOrRemoveCssClass(name, on); },
             setColId: function (id) { return setColId(id); },
             setTitle: function (title) { return setTitle(title); },
@@ -63,7 +68,7 @@ var HeaderCellComp = function (props) {
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current, eHeaderCompWrapper.current);
         var selectAllGui = ctrl.getSelectAllGui();
-        eResize.current.insertAdjacentElement('afterend', selectAllGui);
+        (_a = eResize.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterend', selectAllGui);
     });
     // js comps
     react_1.useLayoutEffect(function () { return jsComp_1.showJsComp(userCompDetails, context, eHeaderCompWrapper.current, userCompRef); }, [userCompDetails]);

@@ -64,16 +64,16 @@ var FormatPanel = /** @class */ (function (_super) {
     FormatPanel.prototype.init = function () {
         var _this = this;
         this.createPanels();
-        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
-        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_API_UPDATE, function () { return _this.createPanels(true); });
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, function () { return _this.createPanels(true); });
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_API_UPDATE, function () { return _this.createPanels(false); });
     };
-    FormatPanel.prototype.createPanels = function (recreate) {
+    FormatPanel.prototype.createPanels = function (reuse) {
         var _this = this;
         var _a;
         var chartType = this.chartController.getChartType();
         var isGrouping = this.chartController.isGrouping();
         var seriesType = seriesTypeMapper_1.getSeriesType(chartType);
-        if (!recreate && (chartType === this.chartType && isGrouping === this.isGrouping)) {
+        if (reuse && chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
             return;
         }

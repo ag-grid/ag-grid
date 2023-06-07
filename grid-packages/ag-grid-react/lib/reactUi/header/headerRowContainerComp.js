@@ -59,9 +59,11 @@ var HeaderRowContainerComp = function (props) {
             },
             // pinned only
             setPinnedContainerWidth: function (width) {
-                eGui.current.style.width = width;
-                eGui.current.style.minWidth = width;
-                eGui.current.style.maxWidth = width;
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                    eGui.current.style.minWidth = width;
+                    eGui.current.style.maxWidth = width;
+                }
             }
         };
         var ctrl = context.createBean(new ag_grid_community_1.HeaderRowContainerCtrl(props.pinned));

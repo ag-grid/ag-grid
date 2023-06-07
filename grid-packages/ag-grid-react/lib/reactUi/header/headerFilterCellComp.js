@@ -80,10 +80,14 @@ var HeaderFilterCellComp = function (props) {
                 setButtonWrapperCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); });
                 setButtonWrapperAriaHidden(!displayed ? "true" : "false");
             },
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setCompDetails: function (compDetails) { return setUserCompDetails(compDetails); },
             getFloatingFilterComp: function () { return userCompPromise.current ? userCompPromise.current : null; },
-            setMenuIcon: function (eIcon) { return eButtonShowMainFilter.current.appendChild(eIcon); }
+            setMenuIcon: function (eIcon) { var _a; return (_a = eButtonShowMainFilter.current) === null || _a === void 0 ? void 0 : _a.appendChild(eIcon); }
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
     });

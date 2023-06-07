@@ -40,8 +40,13 @@ const HeaderCellComp = (props) => {
     const { ctrl } = props;
     const cssClassManager = react_1.useMemo(() => new core_1.CssClassManager(() => eGui.current), []);
     useEffectOnce_1.useLayoutEffectOnce(() => {
+        var _a;
         const compProxy = {
-            setWidth: width => eGui.current.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -52,7 +57,7 @@ const HeaderCellComp = (props) => {
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current, eHeaderCompWrapper.current);
         const selectAllGui = ctrl.getSelectAllGui();
-        eResize.current.insertAdjacentElement('afterend', selectAllGui);
+        (_a = eResize.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterend', selectAllGui);
     });
     // js comps
     react_1.useLayoutEffect(() => jsComp_1.showJsComp(userCompDetails, context, eHeaderCompWrapper.current, userCompRef), [userCompDetails]);

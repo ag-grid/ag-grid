@@ -69,10 +69,14 @@ const HeaderFilterCellComp = (props) => {
                 setButtonWrapperCssClasses(prev => prev.setClass('ag-hidden', !displayed));
                 setButtonWrapperAriaHidden(!displayed ? "true" : "false");
             },
-            setWidth: width => eGui.current.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setCompDetails: compDetails => setUserCompDetails(compDetails),
             getFloatingFilterComp: () => userCompPromise.current ? userCompPromise.current : null,
-            setMenuIcon: eIcon => eButtonShowMainFilter.current.appendChild(eIcon)
+            setMenuIcon: eIcon => { var _a; return (_a = eButtonShowMainFilter.current) === null || _a === void 0 ? void 0 : _a.appendChild(eIcon); }
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
     });

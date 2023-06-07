@@ -84,7 +84,8 @@ var AgGridReactUi = function (props) {
         if (!portalManager.current) {
             portalManager.current = new portalManager_1.PortalManager(function () { return setPortalRefresher(function (prev) { return prev + 1; }); }, props.componentWrappingElement, props.maxComponentCreationTimeMs);
             destroyFuncs.current.push(function () {
-                portalManager.current.destroy();
+                var _a;
+                (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.destroy();
                 portalManager.current = null;
             });
         }
@@ -110,14 +111,18 @@ var AgGridReactUi = function (props) {
                 if (context.isDestroyed()) {
                     return;
                 }
-                var api = gridOptionsRef.current.api;
-                if (props.setGridApi) {
-                    props.setGridApi(api, gridOptionsRef.current.columnApi);
+                if (gridOptionsRef.current) {
+                    var api_1 = gridOptionsRef.current.api;
+                    if (api_1) {
+                        if (props.setGridApi) {
+                            props.setGridApi(api_1, gridOptionsRef.current.columnApi);
+                        }
+                        destroyFuncs.current.push(function () {
+                            // Take local reference to api above so correct api gets destroyed on unmount.
+                            api_1.destroy();
+                        });
+                    }
                 }
-                destroyFuncs.current.push(function () {
-                    // Take local reference to api above so correct api gets destroyed on unmount.
-                    api.destroy();
-                });
             });
         };
         // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
@@ -157,7 +162,12 @@ var AgGridReactUi = function (props) {
         var changes = {};
         extractGridPropertyChanges(prevProps.current, props, changes);
         prevProps.current = props;
-        processWhenReady(function () { return ag_grid_community_1.ComponentUtil.processOnChange(changes, gridOptionsRef.current.api); });
+        processWhenReady(function () {
+            var _a;
+            if ((_a = gridOptionsRef.current) === null || _a === void 0 ? void 0 : _a.api) {
+                ag_grid_community_1.ComponentUtil.processOnChange(changes, gridOptionsRef.current.api);
+            }
+        });
     }, [props]);
     return (react_1.default.createElement("div", { style: style, className: props.className, ref: eGui },
         context && !context.isDestroyed() ? react_1.default.createElement(gridComp_1.default, { context: context }) : null, (_b = (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.getPortals()) !== null && _b !== void 0 ? _b : null));

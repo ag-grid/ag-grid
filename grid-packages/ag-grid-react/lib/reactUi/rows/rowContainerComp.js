@@ -77,7 +77,11 @@ var RowContainerComp = function (params) {
     useEffectOnce_1.useLayoutEffectOnce(function () {
         var beansToDestroy = [];
         var compProxy = {
-            setViewportHeight: function (height) { return eViewport.current.style.height = height; },
+            setViewportHeight: function (height) {
+                if (eViewport.current) {
+                    eViewport.current.style.height = height;
+                }
+            },
             setRowCtrls: function (rowCtrls, useFlushSync) {
                 if (rowCtrlsRef.current !== rowCtrls) {
                     var useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
@@ -91,7 +95,11 @@ var RowContainerComp = function (params) {
                     updateRowCtrlsOrdered(false);
                 }
             },
-            setContainerWidth: function (width) { return eContainer.current.style.width = width; }
+            setContainerWidth: function (width) {
+                if (eContainer.current) {
+                    eContainer.current.style.width = width;
+                }
+            }
         };
         var ctrl = context.createBean(new ag_grid_community_1.RowContainerCtrl(name));
         beansToDestroy.push(ctrl);

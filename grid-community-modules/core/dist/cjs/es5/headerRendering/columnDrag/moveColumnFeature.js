@@ -196,7 +196,8 @@ var MoveColumnFeature = /** @class */ (function () {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach(function (newCol) {
+                    var providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach(function (newCol) {
                         if (!newCols_1.includes(newCol)) {
                             newCols_1.push(newCol);
                         }

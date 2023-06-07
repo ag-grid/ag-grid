@@ -257,7 +257,7 @@ class Sparkline {
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
-            this.scene.render();
+            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
         }
         const tooltipEnabled = (_c = (_b = (_a = this.processedOptions) === null || _a === void 0 ? void 0 : _a.tooltip) === null || _b === void 0 ? void 0 : _b.enabled) !== null && _c !== void 0 ? _c : true;
         if (tooltipEnabled) {
@@ -271,7 +271,7 @@ class Sparkline {
     onMouseOut(event) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
-        this.scene.render();
+        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
     // Fetch required values from the data object and process them.
     processData() {
@@ -357,7 +357,7 @@ class Sparkline {
         this.updateAxes();
         // produce data joins and update selection's nodes
         this.update();
-        this.scene.render();
+        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
     /**
      * Return the type of data provided to the sparkline based on the first truthy value in the data array.
@@ -425,7 +425,7 @@ class Sparkline {
             this.updateAxisLine();
             // produce data joins and update selection's nodes
             this.update();
-            this.scene.render();
+            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
             this.layoutId = 0;
         });
     }

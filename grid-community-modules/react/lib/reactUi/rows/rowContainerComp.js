@@ -72,7 +72,11 @@ const RowContainerComp = (params) => {
     useEffectOnce_1.useLayoutEffectOnce(() => {
         const beansToDestroy = [];
         const compProxy = {
-            setViewportHeight: (height) => eViewport.current.style.height = height,
+            setViewportHeight: (height) => {
+                if (eViewport.current) {
+                    eViewport.current.style.height = height;
+                }
+            },
             setRowCtrls: (rowCtrls, useFlushSync) => {
                 if (rowCtrlsRef.current !== rowCtrls) {
                     const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
@@ -86,7 +90,11 @@ const RowContainerComp = (params) => {
                     updateRowCtrlsOrdered(false);
                 }
             },
-            setContainerWidth: width => eContainer.current.style.width = width
+            setContainerWidth: width => {
+                if (eContainer.current) {
+                    eContainer.current.style.width = width;
+                }
+            }
         };
         const ctrl = context.createBean(new core_1.RowContainerCtrl(name));
         beansToDestroy.push(ctrl);

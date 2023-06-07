@@ -37,7 +37,7 @@ const DetailCellRenderer = (props, ref) => {
     const gridClassName = react_1.useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
     if (ref) {
         react_1.useImperativeHandle(ref, () => ({
-            refresh() { return ctrlRef.current.refresh(); }
+            refresh() { var _a, _b; return (_b = (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.refresh()) !== null && _b !== void 0 ? _b : false; }
         }));
     }
     useEffectOnce_1.useLayoutEffectOnce(() => {
@@ -99,7 +99,8 @@ const DetailCellRenderer = (props, ref) => {
         };
     });
     const setGridApi = react_1.useCallback((api, columnApi) => {
-        ctrlRef.current.registerDetailWithMaster(api, columnApi);
+        var _a;
+        (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.registerDetailWithMaster(api, columnApi);
     }, []);
     return (react_1.default.createElement("div", { className: topClassName, ref: eGuiRef }, detailGridOptions &&
         react_1.default.createElement(agGridReactUi_1.AgGridReactUi, Object.assign({ className: gridClassName }, detailGridOptions, { rowData: detailRowData, setGridApi: setGridApi }))));

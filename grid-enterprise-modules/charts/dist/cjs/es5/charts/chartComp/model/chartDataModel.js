@@ -14,6 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -93,8 +104,12 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
-        this.comboChartModel.update(seriesChartTypes);
+        var shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
         if (!this.unlinked) {
             this.updateData();
         }
@@ -343,6 +358,12 @@ var ChartDataModel = /** @class */ (function (_super) {
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
             this.valueCellRange = this.createCellRange.apply(this, __spreadArray([core_1.CellRangeType.VALUE], __read(selectedValueCols)));
         }
+    };
+    ChartDataModel.prototype.updateSelectedDimension = function (columns) {
+        var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
+        // if no dimension found in supplied columns use the default category (always index = 0)
+        var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
+        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: colState.colId === foundColState.colId })); });
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
         var selectedDimension = this.getSelectedDimension();

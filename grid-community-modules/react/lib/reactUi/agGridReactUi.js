@@ -56,7 +56,8 @@ const AgGridReactUi = (props) => {
         if (!portalManager.current) {
             portalManager.current = new portalManager_1.PortalManager(() => setPortalRefresher((prev) => prev + 1), props.componentWrappingElement, props.maxComponentCreationTimeMs);
             destroyFuncs.current.push(() => {
-                portalManager.current.destroy();
+                var _a;
+                (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.destroy();
                 portalManager.current = null;
             });
         }
@@ -82,14 +83,18 @@ const AgGridReactUi = (props) => {
                 if (context.isDestroyed()) {
                     return;
                 }
-                const api = gridOptionsRef.current.api;
-                if (props.setGridApi) {
-                    props.setGridApi(api, gridOptionsRef.current.columnApi);
+                if (gridOptionsRef.current) {
+                    const api = gridOptionsRef.current.api;
+                    if (api) {
+                        if (props.setGridApi) {
+                            props.setGridApi(api, gridOptionsRef.current.columnApi);
+                        }
+                        destroyFuncs.current.push(() => {
+                            // Take local reference to api above so correct api gets destroyed on unmount.
+                            api.destroy();
+                        });
+                    }
                 }
-                destroyFuncs.current.push(() => {
-                    // Take local reference to api above so correct api gets destroyed on unmount.
-                    api.destroy();
-                });
             });
         };
         // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
@@ -129,7 +134,12 @@ const AgGridReactUi = (props) => {
         const changes = {};
         extractGridPropertyChanges(prevProps.current, props, changes);
         prevProps.current = props;
-        processWhenReady(() => core_1.ComponentUtil.processOnChange(changes, gridOptionsRef.current.api));
+        processWhenReady(() => {
+            var _a;
+            if ((_a = gridOptionsRef.current) === null || _a === void 0 ? void 0 : _a.api) {
+                core_1.ComponentUtil.processOnChange(changes, gridOptionsRef.current.api);
+            }
+        });
     }, [props]);
     return (react_1.default.createElement("div", { style: style, className: props.className, ref: eGui },
         context && !context.isDestroyed() ? react_1.default.createElement(gridComp_1.default, { context: context }) : null, (_b = (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.getPortals()) !== null && _b !== void 0 ? _b : null));

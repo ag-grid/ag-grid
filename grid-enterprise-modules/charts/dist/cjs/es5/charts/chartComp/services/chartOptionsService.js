@@ -54,7 +54,8 @@ var ChartOptionsService = /** @class */ (function (_super) {
     };
     ChartOptionsService.prototype.awaitChartOptionUpdate = function (func) {
         var chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(function () { return func(); });
+        chart.waitForUpdate().then(function () { return func(); })
+            .catch(function (e) { return console.error("AG Grid - chart update failed", e); });
     };
     ChartOptionsService.prototype.getAxisProperty = function (expression) {
         var _a;

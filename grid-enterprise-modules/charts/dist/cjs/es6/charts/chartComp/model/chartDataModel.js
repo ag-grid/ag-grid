@@ -55,8 +55,12 @@ class ChartDataModel extends core_1.BeanStub {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
-        this.comboChartModel.update(seriesChartTypes);
+        const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
         if (!this.unlinked) {
             this.updateData();
         }
@@ -299,6 +303,12 @@ class ChartDataModel extends core_1.BeanStub {
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
             this.valueCellRange = this.createCellRange(core_1.CellRangeType.VALUE, ...selectedValueCols);
         }
+    }
+    updateSelectedDimension(columns) {
+        const colIdSet = new Set(columns.map((column) => column.getColId()));
+        // if no dimension found in supplied columns use the default category (always index = 0)
+        const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+        this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === foundColState.colId })));
     }
     syncDimensionCellRange() {
         const selectedDimension = this.getSelectedDimension();

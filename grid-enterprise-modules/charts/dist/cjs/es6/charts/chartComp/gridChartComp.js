@@ -237,7 +237,9 @@ class GridChartComp extends core_1.Component {
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
         if (params === null || params === void 0 ? void 0 : params.chartId) {
-            this.chartController.raiseChartApiUpdateEvent();
+            this.chartProxy.getChart().waitForUpdate().then(() => {
+                this.chartController.raiseChartApiUpdateEvent();
+            });
         }
     }
     updateChart(updatedOverrides) {

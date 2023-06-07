@@ -39,7 +39,11 @@ const HeaderGroupCellComp = (props) => {
     const { ctrl } = props;
     useEffectOnce_1.useLayoutEffectOnce(() => {
         const compProxy = {
-            setWidth: width => eGui.current.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -57,12 +61,14 @@ const HeaderGroupCellComp = (props) => {
     // add drag handling, must be done after component is added to the dom
     react_1.useEffect(() => {
         let userCompDomElement = undefined;
-        eGui.current.childNodes.forEach(node => {
-            if (node != null && node !== eResize.current) {
-                userCompDomElement = node;
-            }
-        });
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        if (eGui.current) {
+            eGui.current.childNodes.forEach(node => {
+                if (node != null && node !== eResize.current) {
+                    userCompDomElement = node;
+                }
+            });
+            userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        }
     }, [userCompDetails]);
     const className = react_1.useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
     const resizableClassName = react_1.useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);

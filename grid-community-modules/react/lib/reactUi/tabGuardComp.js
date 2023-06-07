@@ -33,7 +33,8 @@ const TabGuardCompRef = (props, forwardRef) => {
     const [tabIndex, setTabIndex] = react_1.useState();
     react_1.useImperativeHandle(forwardRef, () => ({
         forceFocusOutOfContainer() {
-            tabGuardCtrlRef.current.forceFocusOutOfContainer();
+            var _a;
+            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
         }
     }));
     useEffectOnce_1.useLayoutEffectOnce(() => {

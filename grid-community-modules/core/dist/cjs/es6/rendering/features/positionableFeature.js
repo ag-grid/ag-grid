@@ -209,11 +209,13 @@ class PositionableFeature extends beanStub_1.BeanStub {
             height = dom_1.getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            const availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                const availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {

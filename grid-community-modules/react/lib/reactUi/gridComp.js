@@ -64,13 +64,15 @@ const GridComp = ({ context }) => {
             setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass: (addOrRemove) => setKeyboardFocusClass(addOrRemove ? core_1.FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
-                tabGuardRef.current.forceFocusOutOfContainer();
+                var _a;
+                (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
+                var _a, _b;
                 const els = [];
-                const gridBodyCompEl = eRootWrapperRef.current.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current.querySelector('.ag-side-bar:not(.ag-hidden)');
+                const gridBodyCompEl = (_a = eRootWrapperRef.current) === null || _a === void 0 ? void 0 : _a.querySelector('.ag-root');
+                const sideBarEl = (_b = eRootWrapperRef.current) === null || _b === void 0 ? void 0 : _b.querySelector('.ag-side-bar:not(.ag-hidden)');
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl);
                 }

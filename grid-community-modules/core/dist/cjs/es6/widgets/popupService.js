@@ -24,6 +24,7 @@ const keyCode_1 = require("../constants/keyCode");
 const focusService_1 = require("../focusService");
 const utils_1 = require("../utils");
 const aria_1 = require("../utils/aria");
+const generic_1 = require("../utils/generic");
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["vertical"] = 0] = "vertical";
@@ -296,11 +297,12 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         const ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        const ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!generic_1.exists(eChild.style.top)) {
+            eChild.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!generic_1.exists(eChild.style.left)) {
+            eChild.style.left = `${ePopupParentRect.left * -1}px`;
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

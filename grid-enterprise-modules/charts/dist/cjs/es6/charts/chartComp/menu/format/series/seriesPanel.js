@@ -68,7 +68,8 @@ class SeriesPanel extends core_1.Component {
                 this.initSeriesSelect();
             }
             this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
-        });
+        })
+            .catch(e => console.error(`AG Grid - chart rendering failed`, e));
     }
     initSeriesSelect() {
         const seriesSelect = this.seriesGroup.createManagedBean(new core_1.AgSelect());

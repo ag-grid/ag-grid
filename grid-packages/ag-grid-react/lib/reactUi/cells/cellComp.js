@@ -219,9 +219,10 @@ var CellComp = function (props) {
         }
         var destroyFuncs = [];
         var addComp = function (comp) {
+            var _a;
             if (comp) {
                 var eGui_1 = comp.getGui();
-                eCellWrapper.current.insertAdjacentElement('afterbegin', eGui_1);
+                (_a = eCellWrapper.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterbegin', eGui_1);
                 destroyFuncs.push(function () {
                     context.destroyBean(comp);
                     ag_grid_community_1._.removeFromParent(eGui_1);

@@ -50,12 +50,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(function (key) {
-                        var field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -69,9 +63,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });
                 var lastSecondaryAxis = i === secondaryYKeys.length - 1;

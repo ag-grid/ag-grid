@@ -23,12 +23,6 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(key => {
-                        const field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -42,9 +36,6 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));
                 const lastSecondaryAxis = i === secondaryYKeys.length - 1;

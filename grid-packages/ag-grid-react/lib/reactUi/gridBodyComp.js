@@ -74,12 +74,16 @@ var GridBodyComp = function () {
             beansToDestroy.push(comp);
             return comp;
         };
-        eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-        eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
-        eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-        eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-        eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
-        eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+        if (eRoot.current) {
+            eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
+            eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+            eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
+            eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
+        }
+        if (eBody.current) {
+            eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
+            eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+        }
         var compProxy = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: function (count) { return ag_grid_community_1._.setAriaColCount(eRoot.current, count); },
@@ -96,7 +100,11 @@ var GridBodyComp = function () {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: function (cssClass, flag) { return setCellSelectableCss(flag ? cssClass : null); },
-            setBodyViewportWidth: function (width) { return eBodyViewport.current.style.width = width; },
+            setBodyViewportWidth: function (width) {
+                if (eBodyViewport.current) {
+                    eBodyViewport.current.style.width = width;
+                }
+            },
             registerBodyViewportResizeListener: function (listener) {
                 var unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                 destroyFuncs.push(function () { return unsubscribeFromResize(); });

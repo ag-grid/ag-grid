@@ -259,6 +259,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
     };
     GridChartComp.prototype.update = function (params) {
+        var _this = this;
         // update chart model for api.updateChart()
         if (params === null || params === void 0 ? void 0 : params.chartId) {
             var validUpdate = this.chartController.update(params);
@@ -273,7 +274,9 @@ var GridChartComp = /** @class */ (function (_super) {
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
         if (params === null || params === void 0 ? void 0 : params.chartId) {
-            this.chartController.raiseChartApiUpdateEvent();
+            this.chartProxy.getChart().waitForUpdate().then(function () {
+                _this.chartController.raiseChartApiUpdateEvent();
+            });
         }
     };
     GridChartComp.prototype.updateChart = function (updatedOverrides) {

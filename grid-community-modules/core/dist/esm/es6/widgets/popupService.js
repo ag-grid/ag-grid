@@ -21,6 +21,7 @@ import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { AgPromise } from "../utils";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
+import { exists } from "../utils/generic";
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["vertical"] = 0] = "vertical";
@@ -293,11 +294,12 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
         const ePopupParent = this.getPopupParent();
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        const ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!exists(eChild.style.top)) {
+            eChild.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!exists(eChild.style.left)) {
+            eChild.style.left = `${ePopupParentRect.left * -1}px`;
         }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing

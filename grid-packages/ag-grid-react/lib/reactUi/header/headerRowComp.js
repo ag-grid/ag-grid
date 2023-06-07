@@ -68,7 +68,11 @@ var HeaderRowComp = function (props) {
             setHeight: function (height) { return setHeight(height); },
             setTop: function (top) { return setTop(top); },
             setHeaderCtrls: function (ctrls) { return setCellCtrls(function (prev) { return setCellCtrlsMaintainOrder(prev, ctrls); }); },
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setAriaRowIndex: function (rowIndex) { return setAriaRowIndex(rowIndex); }
         };
         ctrl.setComp(compProxy);

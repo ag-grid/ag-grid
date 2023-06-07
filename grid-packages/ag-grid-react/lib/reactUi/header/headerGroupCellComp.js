@@ -50,7 +50,11 @@ var HeaderGroupCellComp = function (props) {
     var ctrl = props.ctrl;
     useEffectOnce_1.useLayoutEffectOnce(function () {
         var compProxy = {
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             setColId: function (id) { return setColId(id); },
             setTitle: function (title) { return setTitle(title); },
@@ -68,12 +72,14 @@ var HeaderGroupCellComp = function (props) {
     // add drag handling, must be done after component is added to the dom
     react_1.useEffect(function () {
         var userCompDomElement = undefined;
-        eGui.current.childNodes.forEach(function (node) {
-            if (node != null && node !== eResize.current) {
-                userCompDomElement = node;
-            }
-        });
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        if (eGui.current) {
+            eGui.current.childNodes.forEach(function (node) {
+                if (node != null && node !== eResize.current) {
+                    userCompDomElement = node;
+                }
+            });
+            userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        }
     }, [userCompDetails]);
     var className = react_1.useMemo(function () { return 'ag-header-group-cell ' + cssClasses.toString(); }, [cssClasses]);
     var resizableClassName = react_1.useMemo(function () { return 'ag-header-cell-resize ' + cssResizableClasses.toString(); }, [cssResizableClasses]);

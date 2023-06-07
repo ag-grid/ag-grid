@@ -87,7 +87,8 @@ var SeriesPanel = /** @class */ (function (_super) {
                 _this.initSeriesSelect();
             }
             _this.seriesWidgetMappings[_this.seriesType].forEach(function (w) { return _this.widgetFuncs[w](); });
-        });
+        })
+            .catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
     SeriesPanel.prototype.initSeriesSelect = function () {
         var _this = this;

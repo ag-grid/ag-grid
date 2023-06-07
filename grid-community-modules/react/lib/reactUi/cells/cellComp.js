@@ -208,9 +208,10 @@ const CellComp = (props) => {
         }
         const destroyFuncs = [];
         const addComp = (comp) => {
+            var _a;
             if (comp) {
                 const eGui = comp.getGui();
-                eCellWrapper.current.insertAdjacentElement('afterbegin', eGui);
+                (_a = eCellWrapper.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterbegin', eGui);
                 destroyFuncs.push(() => {
                     context.destroyBean(comp);
                     core_1._.removeFromParent(eGui);

@@ -65,13 +65,15 @@ var GridComp = function (_a) {
             setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass: function (addOrRemove) { return setKeyboardFocusClass(addOrRemove ? ag_grid_community_1.FocusService.AG_KEYBOARD_FOCUS : ''); },
             forceFocusOutOfContainer: function () {
-                tabGuardRef.current.forceFocusOutOfContainer();
+                var _a;
+                (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: function () {
+                var _a, _b;
                 var els = [];
-                var gridBodyCompEl = eRootWrapperRef.current.querySelector('.ag-root');
-                var sideBarEl = eRootWrapperRef.current.querySelector('.ag-side-bar:not(.ag-hidden)');
+                var gridBodyCompEl = (_a = eRootWrapperRef.current) === null || _a === void 0 ? void 0 : _a.querySelector('.ag-root');
+                var sideBarEl = (_b = eRootWrapperRef.current) === null || _b === void 0 ? void 0 : _b.querySelector('.ag-side-bar:not(.ag-hidden)');
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl);
                 }

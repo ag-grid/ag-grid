@@ -12,6 +12,7 @@ export declare class ChartMenu extends Component {
     private buttons;
     private panels;
     private defaultPanel;
+    private buttonListenersDestroyFuncs;
     private static TEMPLATE;
     private eMenu;
     private eHideButton;

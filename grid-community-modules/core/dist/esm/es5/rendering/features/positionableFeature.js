@@ -215,11 +215,13 @@ var PositionableFeature = /** @class */ (function (_super) {
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            var availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                var availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {

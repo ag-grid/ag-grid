@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartMenu = void 0;
 var core_1 = require("@ag-grid-community/core");
 var tabbedChartMenu_1 = require("./tabbedChartMenu");
+var chartController_1 = require("../chartController");
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
     function ChartMenu(eChartContainer, eMenuPanelContainer, chartController, chartOptionsService) {
@@ -62,6 +63,7 @@ var ChartMenu = /** @class */ (function (_super) {
             chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.panels = [];
+        _this.buttonListenersDestroyFuncs = [];
         _this.menuVisible = false;
         return _this;
     }
@@ -82,6 +84,7 @@ var ChartMenu = /** @class */ (function (_super) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     };
     ChartMenu.prototype.isVisible = function () {
         return this.menuVisible;
@@ -205,8 +208,11 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
+        this.buttonListenersDestroyFuncs.forEach(function (func) { return func(); });
+        this.buttonListenersDestroyFuncs = [];
         this.chartToolbarOptions = this.getToolbarOptions();
         var menuEl = this.eMenu;
+        core_1._.clearElement(menuEl);
         this.chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var _a = __read(buttonConfig, 2), iconName = _a[0], callback = _a[1];
@@ -216,7 +222,7 @@ var ChartMenu = /** @class */ (function (_super) {
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
-            _this.addManagedListener(buttonEl, 'click', callback);
+            _this.buttonListenersDestroyFuncs.push(_this.addManagedListener(buttonEl, 'click', callback));
             menuEl.appendChild(buttonEl);
         });
     };
