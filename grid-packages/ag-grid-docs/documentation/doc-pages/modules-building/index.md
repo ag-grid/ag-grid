@@ -16,13 +16,13 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 ||
 | ### Choosing Our Modules
 |
-| You can refer to the complete list of modules [here](/modules/#modules) but for our purposes we're going to assume that the application we're building requires the following features:
+| You can refer to the [Complete List of Modules here](/modules/#modules) but for our purposes we're going to assume that the application we're building requires the following features:
 |
 | - Client Side Row Model
 | - Excel Export
 | - Context Menu
 |
-| Recall from earlier [documentation](/modules/#providing-modules-to-individual-grids) that at a minimum you need to provide a [Row Model](/row-models/) to the Grid and in our case we've opted for the Client Side Row Model. Additionally we're going to provide [Excel Export](/excel-export/) functionality, so we're going to need the corresponding Excel Module. Finally, we'd like our users to be able to export the data using the [Context Menu](/context-menu/), so we'll include that module too.
+| At a minimum you need to provide a [Row Model](/row-models/) to the Grid (as described in [Installing AG Grid Modules](/modules/#providing-modules-to-individual-grids)), and in our case we've opted for the Client Side Row Model. Additionally we're going to provide [Excel Export](/excel-export/) functionality, so we're going to need the corresponding Excel Module. Finally, we'd like our users to be able to export the data using the [Context Menu](/context-menu/), so we'll include that module too.
 |
 | This is what our `package.json` file will look like based on the requirements above:
 |
