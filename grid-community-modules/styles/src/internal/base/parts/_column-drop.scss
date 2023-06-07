@@ -105,7 +105,7 @@
 
     .ag-select-agg-func-virtual-list-item {
         cursor: default;
-        padding-left: calc(var(--ag-grid-size) * 2);
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-grid-size) * 2) ));
 
         &:hover {
             background-color: var(--ag-selected-row-background-color);
