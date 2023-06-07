@@ -164,8 +164,15 @@ body ul.metaList {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    gap: $size-2;
 
-    input {
+    :global(.input-field.inline) {
+        width: 66%;
+        flex-wrap: no-wrap;
+    }
+
+    :global(.input-field.inline) input {
+        width: 100%;
         min-width: auto;
     }
 }

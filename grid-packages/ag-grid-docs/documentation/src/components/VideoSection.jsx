@@ -16,7 +16,7 @@ const VideoSection = ({ id, title, header, children }) => {
     return (
         <>
             {hasWindow && (
-                <div className={styles.videoSection}>
+                <div className={classnames(styles.videoSection, 'font-size-responsive')}>
                     <div className={classnames({ [styles.header]: header })}>{children}</div>
                     <iframe
                         className={styles.ytIframe}

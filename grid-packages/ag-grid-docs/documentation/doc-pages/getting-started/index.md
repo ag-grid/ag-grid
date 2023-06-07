@@ -22,7 +22,7 @@ title: "Get Started with AG Grid"
 <tabs>
 
 <div tabs-links="true">
-<open-in-cta type="plunkr" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" />
+<open-in-cta type="plunker" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" />
 </div>
 
 <div tab-label="main.js">
@@ -1484,29 +1484,27 @@ title: "Get Started with AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<div class="ag-styles font-size-responsive">
-    <table>
-        <thead>
-        <tr>
-            <th>Version</th>
-            <th>Package Import</th>
-            <th>Module Import</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Vue 2</td>
-            <td>ag-grid-vue</td>
-            <td>@ag-grid-community/vue</td>
-        </tr>
-        <tr>
-            <td>Vue 3</td>
-            <td>ag-grid-vue3</td>
-            <td>@ag-grid-community/vue3</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<table>
+    <thead>
+    <tr>
+        <th>Version</th>
+        <th>Package Import</th>
+        <th>Module Import</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Vue 2</td>
+        <td>ag-grid-vue</td>
+        <td>@ag-grid-community/vue</td>
+    </tr>
+    <tr>
+        <td>Vue 3</td>
+        <td>ag-grid-vue3</td>
+        <td>@ag-grid-community/vue3</td>
+    </tr>
+    </tbody>
+</table>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

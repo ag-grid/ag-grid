@@ -3,6 +3,7 @@
 .imageCaption {
     display: flex;
     flex-direction: column;
+    margin: $size-2 $size-3 $size-1;
 }
 
 .imageCaption.centered {

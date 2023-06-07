@@ -171,6 +171,11 @@
     }
 }
 
+// Align two column markdown tables
+.pageSections > div > table {
+    table-layout: fixed;
+}
+
 // Hack to target "intro" section of docs page
 .pageSections > div > p:first-child {
     --font-size-extra-large: #{$font-size-extra-large};

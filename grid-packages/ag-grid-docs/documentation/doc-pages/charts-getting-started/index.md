@@ -21,7 +21,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <tabs>
 
 <div tabs-links="true">
-<open-in-cta type="plunkr" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" />
+<open-in-cta type="plunker" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" />
 </div>
 
 <div tab-label="main.js">

@@ -10,6 +10,8 @@ These properties can be used to change the different heights used in the headers
 
 <api-documentation source="grid-options/properties.json" section="headers"></api-documentation>
 
+<br>
+
 All these properties also have setter methods that can be called from the API and will change the header heights dynamically.
 
 <api-documentation source="grid-api/api.json" section="headers"></api-documentation>

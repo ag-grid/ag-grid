@@ -26,10 +26,10 @@ export const ExampleRunner = (props) => {
                 const innerProps = {
                     ...props,
                     // Allow overriding of the global context values per example
-                    exampleImportType: props.exampleImportType ?? exampleImportType,                    
+                    exampleImportType: props.exampleImportType ?? exampleImportType,
                     useFunctionalReact,
                     useVue3: enableVue3 ? useVue3 : false,
-                    useTypescript: props.useTypescript ?? useTypescript
+                    useTypescript: props.useTypescript ?? useTypescript,
                 };
 
                 return <ExampleRunnerInner {...innerProps} />;
@@ -547,9 +547,9 @@ const ExampleRunnerInner = ({
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <div style={{ minHeight: `calc(${exampleHeight} + 48px)` }}>
+        <div id={exampleInfo.linkId} style={{ minHeight: `calc(${exampleHeight} + 48px)` }}>
             {hasWindow && (
-                <div id={exampleInfo.linkId} className={classnames('tabs-outer', styles.tabsContainer)}>
+                <div className={classnames('tabs-outer', styles.tabsContainer)}>
                     <header className={classnames('tabs-header', styles.header)}>
                         <ul className="tabs-nav-list" role="tablist">
                             {/* eslint-disable-line */}
@@ -594,7 +594,7 @@ const ExampleRunnerInner = ({
                             </li>
                             {!exampleInfo.options.noPlunker && (
                                 <li>
-                                    <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
+                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
                                 </li>
                             )}
                         </ul>

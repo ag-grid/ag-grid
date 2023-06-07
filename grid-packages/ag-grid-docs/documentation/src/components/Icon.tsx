@@ -13,7 +13,7 @@ import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import IntegratedChartsIcon from '../images/inline-svgs/integrated-chart.svg';
 import maximizeIcon from '../images/inline-svgs/maximize.svg';
 import minimizeIcon from '../images/inline-svgs/minimize.svg';
-import PlunkrIcon from '../images/inline-svgs/plunkr.svg';
+import PlunkerIcon from '../images/inline-svgs/plunker.svg';
 import ReplayDemoIcon from '../images/inline-svgs/replay-demo-icon.svg';
 import RowsIcon from '../images/inline-svgs/rows.svg';
 import StackBlitzIcon from '../images/inline-svgs/stack-blitz.svg';
@@ -98,7 +98,7 @@ export const ICON_MAP = {
     code: CarbonIcon.Code,
     tick: TickIcon,
     cross: CrossIcon,
-    plunkr: PlunkrIcon,
+    plunker: PlunkerIcon,
     stackblitz: StackBlitzIcon,
     codesandbox: CodeSandboxIcon,
     maximize: maximizeIcon,

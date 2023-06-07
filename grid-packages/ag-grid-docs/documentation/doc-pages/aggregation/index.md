@@ -51,6 +51,8 @@ Aggregations can be configured using the following column property:
 
 <api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc"]'></api-documentation>
 
+<br>
+
 Aggregation functions can be registered with the grid using the following grid option:
 
 <api-documentation source='grid-options/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>

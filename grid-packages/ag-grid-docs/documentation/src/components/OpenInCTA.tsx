@@ -3,7 +3,7 @@ import React, { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
 import { Icon } from './Icon';
 import styles from './OpenInCTA.module.scss';
 
-type CtaType = 'newTab' | 'plunkr' | 'stackblitz' | 'codesandbox';
+type CtaType = 'newTab' | 'plunker' | 'stackblitz' | 'codesandbox';
 
 type BaseProps = {
     type: CtaType;
@@ -24,9 +24,9 @@ const COPY_TEXT: Record<CtaType, ReactNode> = {
             Open in New Tab <Icon name="docs-import-export" />
         </>
     ),
-    plunkr: (
+    plunker: (
         <>
-            Edit on Plunkr <Icon name="plunkr" />
+            Edit on Plunker <Icon name="plunker" />
         </>
     ),
     stackblitz: (
