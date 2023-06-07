@@ -66,7 +66,7 @@ As a developer you do not need to worry about module dependencies. For example, 
 for you. 
 
 Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
-and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([Globally](/modules/#providing-modules-globally) / [Individual](/modules/#providing-modules-to-individual-grids)) depending on how you register the feature model.
+and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([Globally](/modules/#providing-modules-globally) / [Individual](/modules/#providing-modules-to-individual-grids)) depending on how you register the feature module.
 
 ## Registering AG Grid Modules
 
@@ -323,7 +323,7 @@ The following example shows how you can configure individual grids using a combi
 
  - The Left grid has options for charting, clipboard and CSV export.
  - The Right grid has options for charting and CSV and Excel export.
- - The Left grid uses the `SetFilter` while the Right grid only has the `TextFilter`
+ - The Left grid uses the Set Filter  while the Right grid uses the Text Filter or Number Filter depending on the cell data type.
  
  <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard", "charts","csv", "excel", "setfilter"] }' ></grid-example>
 

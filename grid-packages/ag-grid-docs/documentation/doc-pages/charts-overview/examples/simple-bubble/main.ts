@@ -53,6 +53,9 @@ const options: AgChartOptions = {
   seriesAreaPadding: {
     left: 40,
   },
+  tooltip: {
+    range: "exact",
+  },
 }
 
 var chart = AgChart.create(options)

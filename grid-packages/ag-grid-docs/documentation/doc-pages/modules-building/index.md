@@ -22,7 +22,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | - Excel Export
 | - Context Menu
 |
-| At a minimum you need to provide a [Row Model](/row-models/) to the Grid (as described in [Installing AG Grid Modules](/modules/#providing-modules-to-individual-grids)), and in our case we've opted for the Client Side Row Model. Additionally we're going to provide [Excel Export](/excel-export/) functionality, so we're going to need the corresponding Excel Module. Finally, we'd like our users to be able to export the data using the [Context Menu](/context-menu/), so we'll include that module too.
+| At a minimum you need to provide a [Row Model](/row-models/) to the Grid (as described in [Installing AG Grid Modules](/modules/#installing-ag-grid-modules)), and in our case we've opted for the Client Side Row Model. Additionally we're going to provide [Excel Export](/excel-export/) functionality, so we're going to need the corresponding Excel Module. Finally, we'd like our users to be able to export the data using the [Context Menu](/context-menu/), so we'll include that module too.
 |
 | This is what our `package.json` file will look like based on the requirements above:
 |

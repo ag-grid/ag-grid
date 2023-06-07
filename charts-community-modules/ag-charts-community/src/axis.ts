@@ -940,6 +940,10 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             index++;
         }
 
+        const shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+
+        terminate ||= shouldTerminate;
+
         return { tickData, index, autoRotation: 0, terminate };
     }
 

@@ -81,7 +81,7 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
     - **[Zimbabwe, Swimming]**
     - **[United States, Swimming]**
 - Note **[Zimbabwe]** and **[Zimbabwe, Swimming]** are visibly open by default.
-- Note **[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However open 'United States' is open, it's 'Swimming' group is open.
+- Note **[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
 - Selecting a row and clicking 'Route of Selected' will print the route to the selected node.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
@@ -131,9 +131,9 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 The example below demonstrates these techniques. Note the following:
 
-- Clicking 'Expand All Row Groups' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heaver operation with 100's of rows to expand.
+- Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
 
-- Clicking 'Collapse All Row Groups' will collapse all rows.
+- Clicking 'Collapse All' will collapse all rows.
 - Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
 
 <grid-example title='Expand All' name='expand-all' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>

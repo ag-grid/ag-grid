@@ -109,6 +109,11 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::before,
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::after {
+    visibility: hidden;
+}
+
 .ag-chart-wrapper {
     box-sizing: border-box;
     overflow: hidden;
@@ -296,6 +301,7 @@ export class Tooltip {
         if (html !== undefined) {
             element.innerHTML = html;
         } else if (!element.innerHTML) {
+            this.toggle(false);
             return;
         }
 

@@ -70,7 +70,8 @@ function GridExample() {
         resizable: true,
         editable: true,
         sortable: true,
-        flex: 1
+        flex: 1,
+        cellDataType: false,
     }), []);
 
     // changes, needs to be state

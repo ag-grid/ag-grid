@@ -79,7 +79,7 @@ The example below demonstrates server-side Pivoting. Note the following:
 - Pivot mode is enabled through the grid option `pivotMode=true`.
 - A pivot is placed on the **Year** column via `pivot=true` defined on the column definition.
 - Rows are grouped by **Country** with `rowGroup=true` defined on the column definition.
-- Values in the **Total** column are aggregated as `aggFunc='sum'` is defined on the column definition.
+- Values in the **Total** column are aggregated as `aggFunc='sum'` as defined on the column definition.
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
 - New column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
