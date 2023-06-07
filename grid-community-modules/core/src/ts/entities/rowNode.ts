@@ -11,7 +11,6 @@ import { debounce } from "../utils/function";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
-import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 import { CellEditRequestEvent } from "../events";
 
