@@ -58,9 +58,9 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) =>
     }, [allHeadings]);
 
     return (
-        allHeadings.length > 0 && (
-            <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
-                <div>
+        <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
+            <div>
+                {allHeadings.length > 0 && (
                     <ul className="list-style-none">
                         <li className={styles.level1}>
                             <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
@@ -82,9 +82,9 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) =>
                             </li>
                         ))}
                     </ul>
-                </div>
-            </nav>
-        )
+                )}
+            </div>
+        </nav>
     );
 };
 
