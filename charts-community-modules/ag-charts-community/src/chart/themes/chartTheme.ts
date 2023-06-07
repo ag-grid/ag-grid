@@ -559,7 +559,7 @@ export class ChartTheme {
                     fontWeight: 'bold',
                     fontSize: 12,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 15,
+                    padding: 2,
                 },
                 subtitle: {
                     enabled: true,
@@ -568,7 +568,7 @@ export class ChartTheme {
                     fontWeight: undefined,
                     fontSize: 9,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 13,
+                    padding: 2,
                 },
                 labels: {
                     large: {

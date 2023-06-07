@@ -289,7 +289,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return nodePadding;
         }
 
-        return textSize.height + nodePadding * 2;
+        return textSize.height + nodePadding + (font.padding ?? 0);
     }
 
     private getNodePadding(nodeDatum: TreemapNodeDatum, bbox: BBox) {
