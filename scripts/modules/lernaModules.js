@@ -39,7 +39,7 @@ const executeLernaCommand = (arguments) => {
 };
 
 
-const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../common', '../../grid-community']));
+const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community']));
 const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-enterprise']));
 const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community', '../../grid-enterprise']));
 const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules').concat(getScopeForModules('../../charts-enterprise-modules')))
