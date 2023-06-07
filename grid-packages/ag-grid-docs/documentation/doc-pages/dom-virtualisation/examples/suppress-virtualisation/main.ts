@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from "@ag-grid-community/core";
+import { Grid, GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
 
 let times = 1;
 
@@ -15,11 +15,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'total' }
     ],
     defaultColDef: {
-        valueFormatter: p => {
+        valueFormatter: (params: ValueFormatterParams) => {
             console.log('formatter called ' + times + ' times');
             times++;
-            return p.value;
-        }
+            return params.value;
+        },
+        cellDataType: false,
     },
     suppressColumnVirtualisation: true,
     suppressRowVirtualisation: true

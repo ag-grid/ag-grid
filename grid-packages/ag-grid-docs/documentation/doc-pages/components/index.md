@@ -150,6 +150,14 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Date filter.</td>
         </tr>
         <tr>
+            <td>agMultiColumnFilter<enterprise-icon></enterprise-icon></td>
+            <td>Multi filter.</td>
+        </tr>
+        <tr>
+            <td>agGroupColumnFilter<enterprise-icon></enterprise-icon></td>
+            <td>Group column filter.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Floating Filters</h3></td>
         </tr>
         <tr>
@@ -169,6 +177,14 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Floating date filter.</td>
         </tr>
         <tr>
+            <td>agMultiColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
+            <td>Floating multi filter.</td>
+        </tr>
+        <tr>
+            <td>agGroupColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
+            <td>Floating group column filter.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Cell Renderers</h3></td>
         </tr>
         <tr>
@@ -186,6 +202,10 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agLoadingCellRenderer<enterprise-icon></enterprise-icon></td>
             <td>Cell renderer for loading row when using Enterprise row model.</td>
+        </tr>
+        <tr>
+            <td>agCheckboxCellRenderer</td>
+            <td>Cell renderer that displays a checkbox for boolean values.</td>
         </tr>
         <tr>
             <td colspan="2"><h3>Overlays</h3></td>
@@ -216,6 +236,22 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agLargeTextCellEditor</td>
             <td>Large text cell editor.</td>
+        </tr>
+        <tr>
+            <td>agNumberCellEditor</td>
+            <td>Number cell editor.</td>
+        </tr>
+        <tr>
+            <td>agDateCellEditor</td>
+            <td>Date cell editor.</td>
+        </tr>
+        <tr>
+            <td>agDateStringCellEditor</td>
+            <td>Date represented as string cell editor.</td>
+        </tr>
+        <tr>
+            <td>agCheckboxCellEditor</td>
+            <td>Checkbox cell editor.</td>
         </tr>
         <tr>
             <td colspan="2"><h3>Master Detail</h3></td>

@@ -52,8 +52,10 @@ The following example demonstrates both create and update cases:
 <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 </framework-specific-section>
 <framework-specific-section frameworks="javascript">
-| To assist with state management, the complete applied options state can be retrieved by calling `getOptions()` on
-e `AgChartInstance`:
+<br>
+
+To assist with state management, the complete applied options state can be retrieved by calling `getOptions()` on `AgChartInstance`:
+
 </framework-specific-section>
 <framework-specific-section frameworks="javascript">
 <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChartInstance" names='["getOptions"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>

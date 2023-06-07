@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     gap: $size-2;
+    margin-bottom: $size-2;
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
         flex-direction: row;
@@ -12,7 +13,7 @@
 }
 
 .header {
-    font-size: var(--font-size-extra-large);
+    font-size: var(--font-size-large);
 }
 
 .ytIframe {

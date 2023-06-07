@@ -82,18 +82,21 @@ Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `
 |                     {
 |                         displayKey: 'lessThanWithNulls',
 |                         displayName: 'Less Than with Nulls',
-|                         predicate: ([filterValue], cellValue) => cellValue == null || cellValue < filterValue,
+|                         predicate: ([filterValue], cellValue) => cellValue == null
+|                             || cellValue < filterValue,
 |                     },
 |                     'greaterThan',
 |                     {
 |                         displayKey: 'greaterThanWithNulls',
 |                         displayName: 'Greater Than with Nulls',
-|                         predicate: ([filterValue], cellValue) => cellValue == null || cellValue > filterValue,
+|                         predicate: ([filterValue], cellValue) => cellValue == null
+|                            || cellValue > filterValue,
 |                     },
 |                     {
 |                         displayKey: 'betweenExclusive',
 |                         displayName: 'Between (Exclusive)',
-|                         predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
+|                         predicate: ([fv1, fv2], cellValue) => cellValue == null
+|                             || fv1 < cellValue && fv2 > cellValue,
 |                         numberOfInputs: 2,
 |                     }
 |                 ]

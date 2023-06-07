@@ -30,8 +30,8 @@ The NPM dependency for AG Grid Solid is `ag-grid-solid`. When adding this to you
 
 ```jsx
 "dependencies": {
-   "ag-grid-community": "28.2.0",
-   "ag-grid-solid": "28.2.0",
+   "ag-grid-community": "~@AG_GRID_VERSION@",
+   "ag-grid-solid": "~@AG_GRID_VERSION@",
    ...
 ```
 

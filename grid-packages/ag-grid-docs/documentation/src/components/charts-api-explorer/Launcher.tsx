@@ -129,7 +129,7 @@ const LauncherInner = ({
                 tabIndex={0}
                 title="Edit on Plunker"
             >
-                <Icon name="plunkr" />
+                <Icon name="plunker" />
             </button>
         </div>
     );

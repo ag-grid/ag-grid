@@ -203,12 +203,9 @@ The interface for this parameter object is `SetFilterValuesFuncParams`:
 <interface-documentation interfaceName='SetFilterValuesFuncParams' config='{"description":""}'></interface-documentation>
 
 <note>
-| If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:
+| If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.
 |
-| ```js
-| filter.setModel({ values: ['a', 'b'] })
-|   .then(() => gridApi.onFilterChanged(); );
-| ```
+| `filter.setModel({ values: ['a', 'b'] }).then(() => gridApi.onFilterChanged(); );`
 </note>
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
