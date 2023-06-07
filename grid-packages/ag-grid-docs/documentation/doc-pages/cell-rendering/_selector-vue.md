@@ -30,5 +30,5 @@ However a selector only makes sense when a selection is made. The following demo
 |
 |    return undefined;
 |}
-</snippet>>
+</snippet>
 </framework-specific-section>

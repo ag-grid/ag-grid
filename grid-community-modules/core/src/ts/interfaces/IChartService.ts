@@ -126,7 +126,7 @@ export interface UpdateRangeChartParams {
     type: 'rangeChartUpdate',
     /** The id of the chart to update. */
     chartId: string;
-    /** The type of chart to create. */
+    /** The type of chart to update. */
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
@@ -148,7 +148,7 @@ export interface UpdatePivotChartParams {
     type: 'pivotChartUpdate',
     /** The id of the chart to update. */
     chartId: string;
-    /** The type of chart to create. */
+    /** The type of chart to update. */
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
@@ -162,7 +162,7 @@ export interface UpdateCrossFilterChartParams {
     type: 'crossFilterChartUpdate',
     /** The id of the chart to update. */
     chartId: string;
-    /** The type of chart to create. */
+    /** The type of chart to update. */
     chartType?: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;

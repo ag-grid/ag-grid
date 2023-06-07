@@ -461,13 +461,8 @@ export abstract class Sparkline {
             }
         }
 
-        // update axes
         this.updateAxes();
-
-        // produce data joins and update selection's nodes
-        this.update();
-
-        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
+        this.immediateLayout();
     }
 
     /**
@@ -526,26 +521,30 @@ export abstract class Sparkline {
             cancelAnimationFrame(this.layoutId);
         }
         this.layoutId = requestAnimationFrame(() => {
-            this.setSparklineDimensions();
-
-            if (this.invalidData(this.data)) {
-                return;
-            }
-
-            // update axes ranges
-            this.updateXScaleRange();
-            this.updateYScaleRange();
-
-            // update axis line
-            this.updateAxisLine();
-
-            // produce data joins and update selection's nodes
-            this.update();
-
-            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
+            this.immediateLayout();
 
             this.layoutId = 0;
         });
+    }
+
+    private immediateLayout() {
+        this.setSparklineDimensions();
+
+        if (this.invalidData(this.data)) {
+            return;
+        }
+
+        // update axes ranges
+        this.updateXScaleRange();
+        this.updateYScaleRange();
+
+        // update axis line
+        this.updateAxisLine();
+
+        // produce data joins and update selection's nodes
+        this.update();
+
+        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
 
     private setSparklineDimensions() {

@@ -20,6 +20,7 @@ const options: AgChartOptions = {
             groupFill: 'transparent',
             title: {
                 color: 'black',
+                padding: 4,
             },
             subtitle: {
                 color: 'black',

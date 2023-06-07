@@ -14,6 +14,10 @@ const options: AgChartOptions = {
             item: {
               strokeWidth: 1,
             },
+            series: {
+              strokeWidth: 1,
+              dimOpacity: 0.2,
+            },
           },
         },
       },

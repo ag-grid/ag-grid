@@ -54,7 +54,8 @@ const gridOptions = {
             field: 'age',
             filter: 'agNumberColumnFilter',
             filterParams: {
-                allowedCharPattern: '\\d\\-\\,', // note: ensure you escape as if you were creating a RegExp from a string
+                // note: ensure you escape as if you were creating a RegExp from a string
+                allowedCharPattern: '\\d\\-\\,',
                 numberParser: text => {
                     return text == null ? null : parseFloat(text.replace(',', '.'));
                 }

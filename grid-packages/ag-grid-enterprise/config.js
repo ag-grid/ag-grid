@@ -58,7 +58,7 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            node(),
+            node({browser: true}),      // for utils package - defaulting to use index.js
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),

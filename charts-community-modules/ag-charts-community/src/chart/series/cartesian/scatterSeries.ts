@@ -572,7 +572,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             markerSelection.each((marker, datum) => {
                 const format = this.animateFormatter(marker, datum);
                 const size = datum.point?.size ?? 0;
-
                 const to = format?.size ?? size;
 
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
@@ -608,12 +607,19 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     animateReadyUpdate({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
         markerSelections.forEach((markerSelection) => {
-            markerSelection.each((marker, datum) => {
-                const format = this.animateFormatter(marker, datum);
-                const size = datum.point?.size ?? 0;
+            this.resetMarkers(markerSelection);
+        });
+    }
 
-                marker.size = format?.size ?? size;
-            });
+    animateReadyHighlightMarkers(markerSelection: Selection<Marker, ScatterNodeDatum>) {
+        this.resetMarkers(markerSelection);
+    }
+
+    resetMarkers(markerSelection: Selection<Marker, ScatterNodeDatum>) {
+        markerSelection.each((marker, datum) => {
+            const format = this.animateFormatter(marker, datum);
+            const size = datum.point?.size ?? 0;
+            marker.size = format?.size ?? size;
         });
     }
 

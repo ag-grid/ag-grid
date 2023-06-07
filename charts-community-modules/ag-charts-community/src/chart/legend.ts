@@ -721,8 +721,13 @@ export class Legend {
             ctx: { dataService, highlightManager },
             item: { toggleSeriesVisible },
         } = this;
-        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        const { offsetX, offsetY } = event;
+
+        const legendBBox = this.computeBBox();
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        const datum = this.getDatumForPoint(offsetX, offsetY);
+
+        if (!pointerInsideLegend || !datum) {
             return;
         }
 
@@ -761,6 +766,7 @@ export class Legend {
             ctx: { dataService },
             item: { toggleSeriesVisible },
         } = this;
+        const { offsetX, offsetY } = event;
 
         // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
         // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
@@ -768,8 +774,11 @@ export class Legend {
             return;
         }
 
-        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        const legendBBox = this.computeBBox();
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        const datum = this.getDatumForPoint(offsetX, offsetY);
+
+        if (!pointerInsideLegend || !datum) {
             return;
         }
 
@@ -855,7 +864,7 @@ export class Legend {
             this.ctx.tooltipManager.removeTooltip(this.id);
         }
 
-        if (toggleSeriesVisible || listeners.legendItemClick != null) {
+        if (toggleSeriesVisible || listeners.legendItemClick != null || listeners.legendItemDoubleClick != null) {
             this.ctx.cursorManager.updateCursor(this.id, 'pointer');
         }
 

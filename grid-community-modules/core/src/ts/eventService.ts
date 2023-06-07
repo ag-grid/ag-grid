@@ -134,7 +134,8 @@ export class EventService implements IEventEmitter {
             }
         });
 
-        const listeners = this.getListeners(eventType, async, false);
+        // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
+        const listeners = new Set(this.getListeners(eventType, async, false));
         if (listeners) {
             processEventListeners(listeners);
         }

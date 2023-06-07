@@ -94,7 +94,7 @@ export class CartesianSeriesNodeDoubleClickEvent<
 }
 
 type CartesianAnimationState = 'empty' | 'ready';
-type CartesianAnimationEvent = 'update' | 'highlight' | 'resize';
+type CartesianAnimationEvent = 'update' | 'highlight' | 'highlightMarkers' | 'resize';
 class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {}
 
 export abstract class CartesianSeries<
@@ -165,6 +165,10 @@ export abstract class CartesianSeries<
                     highlight: {
                         target: 'ready',
                         action: (data) => this.animateReadyHighlight(data),
+                    },
+                    highlightMarkers: {
+                        target: 'ready',
+                        action: (data) => this.animateReadyHighlightMarkers(data),
                     },
                     resize: {
                         target: 'ready',
@@ -406,6 +410,7 @@ export abstract class CartesianSeries<
                 isHighlight: true,
                 seriesIdx: -1,
             });
+            this.animationState.transition('highlightMarkers', highlightSelection);
         } else {
             await this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
             this.animationState.transition('highlight', highlightSelection);
@@ -760,6 +765,10 @@ export abstract class CartesianSeries<
     }
 
     protected animateReadyHighlight(_data: NodeDataSelection<N, C>) {
+        // Override point for sub-classes.
+    }
+
+    protected animateReadyHighlightMarkers(_data: NodeDataSelection<Marker, C>) {
         // Override point for sub-classes.
     }
 
