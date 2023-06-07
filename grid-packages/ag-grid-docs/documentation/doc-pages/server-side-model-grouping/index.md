@@ -131,7 +131,7 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 The example below demonstrates these techniques. Note the following:
 
-- Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heaver operation with 100's of rows to expand.
+- Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
 
 - Clicking 'Collapse All' will collapse all rows.
 - Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
