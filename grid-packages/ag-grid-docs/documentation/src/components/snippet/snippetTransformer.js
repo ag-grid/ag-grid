@@ -229,7 +229,7 @@ class ReactTransformer extends SnippetTransformer {
             return `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')}>${colDefs}\n</AgGridReact>`;
         }
 
-        if (this.inlineProperties.length > 2) {
+        if (this.inlineProperties.length > 1) {
             return externalSnippet +
                    `<AgGridReact\n${tab(1)}${this.inlineProperties.join(`\n${tab(1)}`).trim()}\n>` +
                         `${colDefs}\n` +
