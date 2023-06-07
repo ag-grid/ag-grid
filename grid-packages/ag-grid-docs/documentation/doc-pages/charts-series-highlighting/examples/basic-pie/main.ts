@@ -48,6 +48,9 @@ const options: AgChartOptions = {
   footnote: {
     text: 'Based on a sample size of 200 respondents',
   },
+  legend: {
+    position: 'right'
+  },
   series: [
     {
       type: 'pie',
