@@ -202,19 +202,41 @@ export class DataTypeService extends BeanStub {
             return undefined;
         }
         return (params: ValueFormatterParams) => {
-            if (params.node?.group || params.column.isRowGroupActive()) {
-                const { aggFunc } = params.colDef;
-                if (aggFunc && (
-                    aggFunc === 'first' ||
-                    aggFunc === 'last' ||
-                    (
-                        dataTypeDefinition.baseDataType === 'number' && (
-                            aggFunc === 'sum' || aggFunc === 'min' || aggFunc === 'max' || aggFunc === 'avg'
-                        )
-                    )
-                 )) {
-                    return dataTypeDefinition.valueFormatter!(params);
+            if (params.node?.group) {
+                const aggFunc = params.column.getAggFunc();
+                if (aggFunc) {
+                    // the resulting type of these will be the same, so we call valueFormatter anyway
+                    if (aggFunc === 'first' || aggFunc === 'last') {
+                        return dataTypeDefinition.valueFormatter!(params);
+                    }
+
+                    if (dataTypeDefinition.baseDataType === 'number') {
+                        if (typeof params.value === 'number') {
+                            return dataTypeDefinition.valueFormatter!(params);
+                        }
+
+                        if (typeof params.value === 'object') {
+                            if (!params.value) {
+                                return undefined;
+                            }
+                
+                            if ('toNumber' in params.value) {
+                                return dataTypeDefinition.valueFormatter!({
+                                    ...params,
+                                    value: params.value.toNumber(),
+                                });
+                            }
+
+                            if ('value' in params.value) {
+                                return dataTypeDefinition.valueFormatter!({
+                                    ...params,
+                                    value: params.value.value,
+                                });
+                            }
+                        }
+                    }
                 }
+
                 return undefined as any;
             }
             return dataTypeDefinition.valueFormatter!(params);
