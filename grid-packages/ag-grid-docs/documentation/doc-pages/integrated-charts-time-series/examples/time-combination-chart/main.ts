@@ -1,10 +1,5 @@
-import {
-  FirstDataRenderedEvent,
-  Grid,
-  GridOptions,
-  ValueParserParams,
-} from '@ag-grid-community/core';
-import { AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
+import { FirstDataRenderedEvent, Grid, GridOptions, ValueParserParams, } from '@ag-grid-community/core';
+import { AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
 import { getData } from "./data";
 
 function formatDate(date: Date | number) {
@@ -44,7 +39,10 @@ const gridOptions: GridOptions = {
       axes: {
         number: {
           title: {
-            enabled: true
+            enabled: true,
+            formatter: (params: AgAxisCaptionFormatterParams)  => {
+              return params.boundSeries.map(s => s.name).join(' / ');
+            }
           }
         },
       },

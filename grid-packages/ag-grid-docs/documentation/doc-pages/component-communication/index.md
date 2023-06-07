@@ -74,7 +74,7 @@ frameworks: ["angular", "vue"]
 |then access.
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
+<framework-specific-section frameworks="vue">
 <snippet transform={false}>
 |// Parent Grid Component
 |&lt;template>

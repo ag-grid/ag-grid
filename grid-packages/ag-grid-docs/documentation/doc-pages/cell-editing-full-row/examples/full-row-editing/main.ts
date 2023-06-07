@@ -24,6 +24,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
+    cellDataType: false,
   },
   editType: 'fullRow',
   rowData: getRowData(),

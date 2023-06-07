@@ -16,6 +16,7 @@ import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { IRowNode } from "../interfaces/iRowNode";
+import { exists } from "../utils/generic";
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
@@ -448,12 +449,12 @@ export class PopupService extends BeanStub {
         }
 
         const ePopupParent = this.getPopupParent();
-
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
+        const ePopupParentRect = ePopupParent.getBoundingClientRect();
+        if (!exists(eChild.style.top)) {
+            eChild.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
+        if (!exists(eChild.style.left)) {
+            eChild.style.left = `${ePopupParentRect.left * -1}px`;
         }
 
         // add env CSS class to child, in case user provided a popup parent, which means

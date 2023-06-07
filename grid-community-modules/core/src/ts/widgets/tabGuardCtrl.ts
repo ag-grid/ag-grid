@@ -190,7 +190,7 @@ export class TabGuardCtrl extends BeanStub {
 
         if (!focusable.length) { return; }
 
-        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
     }
 
     public getNextFocusableElement(backwards?: boolean): HTMLElement | null {

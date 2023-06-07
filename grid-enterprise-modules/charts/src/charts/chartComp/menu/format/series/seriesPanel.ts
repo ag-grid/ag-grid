@@ -110,7 +110,9 @@ export class SeriesPanel extends Component {
             }
 
             this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
-        });
+        })
+        .catch(e => console.error(`AG Grid - chart rendering failed`, e));
+
     }
 
     private initSeriesSelect() {

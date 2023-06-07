@@ -15,6 +15,7 @@ const gridOptions: GridOptions<IRow> = {
   ],
   defaultColDef: {
     flex: 1,
+    cellDataType: false,
   },
   rowData: getData(),
 

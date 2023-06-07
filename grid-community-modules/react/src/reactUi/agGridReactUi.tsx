@@ -62,7 +62,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                 props.maxComponentCreationTimeMs
             );
             destroyFuncs.current.push(() => {
-                portalManager.current!.destroy();
+                portalManager.current?.destroy();
                 portalManager.current = null;
             });
         }
@@ -96,14 +96,18 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                     return;
                 }
 
-                const api = gridOptionsRef.current!.api!;
-                if (props.setGridApi) {
-                    props.setGridApi(api, gridOptionsRef.current!.columnApi!);
+                if (gridOptionsRef.current) {
+                    const api = gridOptionsRef.current.api;
+                    if (api) {
+                        if (props.setGridApi) {
+                            props.setGridApi(api, gridOptionsRef.current.columnApi!);
+                        }
+                        destroyFuncs.current.push(() => {
+                            // Take local reference to api above so correct api gets destroyed on unmount.
+                            api.destroy()
+                        });
+                    }
                 }
-                destroyFuncs.current.push(() => {
-                    // Take local reference to api above so correct api gets destroyed on unmount.
-                    api!.destroy()
-                });
             });
         };
 
@@ -157,7 +161,11 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         const changes = {};
         extractGridPropertyChanges(prevProps.current, props, changes);
         prevProps.current = props;
-        processWhenReady(() => ComponentUtil.processOnChange(changes, gridOptionsRef.current!.api!));
+        processWhenReady(() => {
+            if (gridOptionsRef.current?.api) {
+                ComponentUtil.processOnChange(changes, gridOptionsRef.current.api)
+            }
+        });
     }, [props]);
 
     return (

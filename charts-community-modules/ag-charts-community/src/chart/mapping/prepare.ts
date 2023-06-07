@@ -394,6 +394,7 @@ function prepareLegendEnabledOption<T extends AgChartOptions>(options: T, merged
     if (options.legend?.enabled !== undefined || mergedOptions.legend?.enabled !== undefined) {
         return;
     }
+    mergedOptions.legend ??= {};
     if ((options.series ?? []).length > 1) {
         mergedOptions.legend.enabled = true;
         return;

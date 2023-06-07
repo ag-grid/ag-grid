@@ -44,9 +44,11 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
             // pinned only
             setPinnedContainerWidth: width => {
-                eGui.current!.style.width = width;
-                eGui.current!.style.minWidth = width;
-                eGui.current!.style.maxWidth = width;
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                    eGui.current.style.minWidth = width;
+                    eGui.current.style.maxWidth = width;
+                }
             }
         };
 

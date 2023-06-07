@@ -176,7 +176,7 @@ The example below uses one pie series to plot the market share of each operating
 
 ### Multiple Doughnuts with a Shared Legend
 
-Providing a matching `legendItemKey` allows us to create multiple doughnut series that share a single legend. When a legend item is clicked, the items in all the series that have a matching `legendItemKey` will be toggled together.
+Providing a matching `legendItemKey` allows us to create multiple doughnut series that have synchronised legend items. When a legend item is clicked, the items in all the series that have a matching `legendItemKey` will be toggled together.
 
 ```js
 series: [
@@ -188,6 +188,7 @@ series: [
     {
         type: 'pie',
         legendItemKey: 'os',
+        showInLegend: false,
     }
 ]
 ```

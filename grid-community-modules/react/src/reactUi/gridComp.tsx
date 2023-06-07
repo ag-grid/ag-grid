@@ -56,14 +56,14 @@ const GridComp = ({ context }: GridCompProps) => {
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
-                tabGuardRef.current!.forceFocusOutOfContainer();
+                tabGuardRef.current?.forceFocusOutOfContainer();
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
                 const els: HTMLElement[] = [];
 
-                const gridBodyCompEl = eRootWrapperRef.current!.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current!.querySelector('.ag-side-bar:not(.ag-hidden)');
+                const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
+                const sideBarEl = eRootWrapperRef.current?.querySelector('.ag-side-bar:not(.ag-hidden)');
 
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl as HTMLElement);

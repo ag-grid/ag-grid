@@ -53,10 +53,14 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 setButtonWrapperCssClasses(prev => prev.setClass('ag-hidden', !displayed))
                 setButtonWrapperAriaHidden(!displayed ? "true" : "false");
             },
-            setWidth: width => eGui.current!.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setCompDetails: compDetails => setUserCompDetails(compDetails),
             getFloatingFilterComp: ()=> userCompPromise.current ? userCompPromise.current :  null,
-            setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
+            setMenuIcon: eIcon => eButtonShowMainFilter.current?.appendChild(eIcon)
         };
 
         ctrl.setComp(compProxy, eGui.current!, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);

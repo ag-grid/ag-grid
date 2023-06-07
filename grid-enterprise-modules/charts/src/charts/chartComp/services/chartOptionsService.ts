@@ -45,7 +45,8 @@ export class ChartOptionsService extends BeanStub {
 
     public awaitChartOptionUpdate(func: () => void) {
         const chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(() => func());
+        chart.waitForUpdate().then(() => func())
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
 
     public getAxisProperty<T = string>(expression: string): T {

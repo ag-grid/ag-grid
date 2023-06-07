@@ -44,6 +44,7 @@ export class ChartMenu extends Component {
 
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
+    private buttonListenersDestroyFuncs: any[] = []
 
     private static TEMPLATE = /* html */ `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
@@ -87,6 +88,8 @@ export class ChartMenu extends Component {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     }
 
     public isVisible(): boolean {
@@ -234,8 +237,12 @@ export class ChartMenu extends Component {
     }
 
     private createButtons(): void {
+        this.buttonListenersDestroyFuncs.forEach(func => func());
+        this.buttonListenersDestroyFuncs = [];
+
         this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
+        _.clearElement(menuEl);
 
         this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
@@ -253,7 +260,7 @@ export class ChartMenu extends Component {
                 buttonEl.title = tooltipTitle;
             }
 
-            this.addManagedListener(buttonEl, 'click', callback);
+            this.buttonListenersDestroyFuncs.push(this.addManagedListener(buttonEl, 'click', callback));
 
             menuEl.appendChild(buttonEl);
         });

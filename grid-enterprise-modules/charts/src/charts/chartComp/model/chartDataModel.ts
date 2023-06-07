@@ -129,9 +129,13 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
 
+        this.updateSelectedDimension(cellRange?.columns);
         this.updateCellRanges();
 
-        this.comboChartModel.update(seriesChartTypes);
+        const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
+        if (shouldUpdateComboModel) {
+            this.comboChartModel.update(seriesChartTypes);
+        }
 
         if (!this.unlinked) {
             this.updateData();
@@ -430,6 +434,18 @@ export class ChartDataModel extends BeanStub {
 
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
+    }
+
+    private updateSelectedDimension(columns: Column[]): void {
+        const colIdSet = new Set(columns.map((column) => column.getColId()));
+
+        // if no dimension found in supplied columns use the default category (always index = 0)
+        const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+
+        this.dimensionColState = this.dimensionColState.map((colState) => ({
+            ...colState,
+            selected: colState.colId === foundColState.colId
+        }));
     }
 
     private syncDimensionCellRange() {
