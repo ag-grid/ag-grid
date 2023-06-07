@@ -66,7 +66,7 @@ As a developer you do not need to worry about module dependencies. For example, 
 for you. 
 
 Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
-and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([Globally](/modules/#providing-modules-globally) / [Individual](/modules/#providing-modules-to-individual-grids)) depending on how you register the feature model.
+and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([Globally](/modules/#providing-modules-globally) / [Individual](/modules/#providing-modules-to-individual-grids)) depending on how you register the feature module.
 
 ## Registering AG Grid Modules
 
