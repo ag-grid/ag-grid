@@ -5205,7 +5205,8 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
           "strokeWidth": 1,
         },
         "series": {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
         },
         "text": {
           "color": "black",
@@ -5302,6 +5303,10 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "series": {
           "highlightStyle": {
             "item": {
+              "strokeWidth": 1,
+            },
+            "series": {
+              "dimOpacity": 0.2,
               "strokeWidth": 1,
             },
           },
