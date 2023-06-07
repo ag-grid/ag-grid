@@ -43,9 +43,9 @@ The following example demonstrates both create and update cases:
 
 <chart-example title='Create and Update with AgChartOptions' name='create-update' type='generated'></chart-example>
 
-## Delta Options Update
-
 <framework-specific-section frameworks="javascript">
+| ## Delta Options Update
+|
 | `AgChart` exposes an `updateDelta()` static method to allow partial updates to a charts options.
 </framework-specific-section>
 <framework-specific-section frameworks="javascript">
@@ -66,20 +66,8 @@ e `AgChartInstance`:
 </framework-specific-section>
 <framework-specific-section frameworks="javascript">
 <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='typescript'></chart-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-| `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration:
-</framework-specific-section>
-<framework-specific-section frameworks="frameworks">
-<note>
-| `updateDelta()` should not be normally used with the AG Charts component; framework change detection and updates
-| to the chart apply automatically after an options change.
-|
-| However when using [Integrated Charts](../integrated-charts-events/#accessing-chart-instance) it may be
-| necessary to use this API to perform chart updates in Grid callbacks.
-</note>
 <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
+</framework-specific-section>
 </framework-specific-section>
 
 ## Destroying Charts
