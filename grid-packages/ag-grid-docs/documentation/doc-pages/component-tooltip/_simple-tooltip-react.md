@@ -7,7 +7,7 @@
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 |export default props => {
-|    const data = useMemo(props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
+|    const data = useMemo(() => props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
 |    return (
 |        &lt;div className="custom-tooltip" style={{backgroundColor: props.color || 'white'}}>
 |            &lt;p>&lt;span>{data.athlete}&lt;/span>&lt;/p>
