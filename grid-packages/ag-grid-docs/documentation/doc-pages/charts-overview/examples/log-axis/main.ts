@@ -19,10 +19,10 @@ const options: AgCartesianChartOptions = {
       yKey: "population",
       tooltip: {
         renderer: params => {
+          let yValue = params.yValue
+          if (yValue == null) yValue = 0
           return {
-            content: `${params.xValue} CE: ${formatter.format(
-              params.yValue ?? 0
-            )}`,
+            content: `${params.xValue} CE: ${formatter.format(yValue)}`,
           }
         },
       },
