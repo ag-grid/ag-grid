@@ -48,7 +48,7 @@ the following:
 
 - Column A uses `field` for both getting and setting the value. This is the simple case for comparison.
 
-- Column B uses `valueGetter` and `valueSetter` instead of field for getting and setting the value. This allows the value to be parsed into the correct type before being saved.
+- Column B uses `valueGetter` and `valueSetter` instead of field for getting and setting the value.
 
 - Column C.X and C.Y use `valueGetter` to get the value from an embedded object. They then use `valueSetter` to set the value into the embedded object while also making sure the correct structure exists (this structure creation would not happen if using field).
 
