@@ -13,6 +13,10 @@
     border-bottom: 1px solid #ffab00;
 }
 
+.ag-header-span-height:not(.ag-header-span-total) {
+    border-bottom: unset;
+}
+  
 .gold-header {
     background-color: gold;
 }
