@@ -171,7 +171,7 @@ const gridOptions = {
 
 The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note the following:
 
-- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` enabled.
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
 - Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
 - Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
@@ -284,7 +284,7 @@ const gridOptions = {
 
 The example below shows dragging with custom text. The following can be noted:
 
-- When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+- When you drag a row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
 <grid-example title='Row Drag With Custom Text' name='custom-drag-text' type='generated'></grid-example>
 
@@ -319,7 +319,7 @@ const gridOptions = {
 
 The example below shows dragging with custom text and multiple column draggers. The following can be noted:
 
-- When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+- When you drag a row with a year of 2012 by the country row dragger,, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
 - When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
 

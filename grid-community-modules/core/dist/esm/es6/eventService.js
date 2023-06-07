@@ -121,7 +121,7 @@ let EventService = class EventService {
         if (listeners) {
             processEventListeners(listeners);
         }
-        const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
         globalListeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(() => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true));

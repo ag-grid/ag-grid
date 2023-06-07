@@ -104,7 +104,7 @@ The following artifacts are "`packages`" and are designed to work together:
 </table>
 </framework-specific-section>
 
-When using `packages` you get all of the code within that package and cannot pick and choose which features you require. Unlike [modules](/modules/) there is no need to register feature modules with the grid as the packages take care of this for you.
+When using `packages` you get all of the code within that package and cannot pick and choose which features you require. Unlike [Modules](/modules/) there is no need to register feature modules with the grid as the packages take care of this for you.
 
 As a result it is easier to use `packages` but the trade-off will be that you end up with a larger bundle size if you don't require all the features within a given package.
 
@@ -204,7 +204,7 @@ It is vitally important that you do not mix packages and modules in the same app
 }
 </snippet>
 
-Please refer to the [modules](/modules/) documentation if you are concerned with bundle size.
+Please refer to the [Modules](/modules/) documentation if you are concerned with bundle size.
 
 Please refer to the [Getting Started](/getting-started/) guides for a walk through on how to install and use these packages from the ground up.
 

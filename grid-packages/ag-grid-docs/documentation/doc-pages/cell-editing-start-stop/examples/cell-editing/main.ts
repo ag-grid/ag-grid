@@ -64,7 +64,7 @@ function onBtStopEditing() {
   gridOptions.api!.stopEditing()
 }
 
-function onBtStartEditing(key?: string, char?: string, pinned?: RowPinnedType) {
+function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
   gridOptions.api!.setFocusedCell(0, 'lastName', pinned)
 
   gridOptions.api!.startEditingCell({

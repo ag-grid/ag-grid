@@ -34863,7 +34863,7 @@ var EventService = /** @class */ (function () {
         if (listeners) {
             processEventListeners(listeners);
         }
-        var globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        var globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
         globalListeners.forEach(function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); }, true); });

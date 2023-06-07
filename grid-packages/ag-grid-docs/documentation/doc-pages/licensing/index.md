@@ -73,42 +73,42 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 </snippet>
 
-Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](/modules/#installing-ag-grid-modules) for full details.). Please refer to the [modules](/modules/) documentation for all the enterprise modules.
+Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](/modules/#installing-ag-grid-modules) for full details.). Please refer to the [Modules](/modules/) documentation for all the enterprise modules.
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| new Grid(&lt;dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
+|new Grid(&lt;dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
-| public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
-| &lt;ag-grid-angular
-|     [rowData]="rowData"
-|     [columnDefs]="columnDefs"
-|     [modules]="modules">
-| &lt;/ag-grid-angular>
+|public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
+|&lt;ag-grid-angular
+|    [rowData]="rowData"
+|    [columnDefs]="columnDefs"
+|    [modules]="modules">
+|&lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-| &lt;ag-grid-react
-|     rowData={rowData}
-|     columnDefs={columnDefs}
-|     modules={[ServerSideRowModelModule, RowGroupingModule]}>
-| &lt;/ag-grid-react>
+|&lt;ag-grid-react
+|    rowData={rowData}
+|    columnDefs={columnDefs}
+|    modules={[ServerSideRowModelModule, RowGroupingModule]}>
+|&lt;/ag-grid-react>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false}>
-| &lt;ag-grid-vue
-|     :rowData="rowData"
-|     :columnDefs="columnDefs"
-|     :modules="[ServerSideRowModelModule, RowGroupingModule]"
-| &lt;/ag-grid-vue>
+|&lt;ag-grid-vue
+|    :rowData="rowData"
+|    :columnDefs="columnDefs"
+|    :modules="[ServerSideRowModelModule, RowGroupingModule]"
+|&lt;/ag-grid-vue>
 </snippet>
 </framework-specific-section>
 
@@ -146,30 +146,30 @@ Use this if you are using CommonJS to load AG Grid.
 </snippet>
 
 <framework-specific-section frameworks="javascript">
-| ### Via Grid Packages
+|### Via Grid Packages
 |
-| If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js`) set the license like this.
+|If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js`) set the license like this.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| agGrid.LicenseManager.setLicenseKey("your license key");
+|agGrid.LicenseManager.setLicenseKey("your license key");
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="frameworks">
-| ### Via Grid Packages
+|### Via Grid Packages
 |
-| If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
+|If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="frameworks">
 <snippet transform={false}>
-| import { LicenseManager } from  'ag-grid-enterprise'
+|import { LicenseManager } from  'ag-grid-enterprise'
 |
-| LicenseManager.setLicenseKey("your license key")
+|LicenseManager.setLicenseKey("your license key")
 </snippet>
 </framework-specific-section>
 
@@ -192,50 +192,50 @@ If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be
 If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach above to set license key) then it will not work. This is because the AG Grid library will be loaded twice, one will have the license key and the other will be used in your application without the license key.
 
 <framework-specific-section frameworks="angular">
-| We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
-| bootstrap your application.
+|We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
+|bootstrap your application.
 |
-| For example:
+|For example:
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
-| // other imports...
+|// other imports...
 |
-| import {LicenseManager} from "@ag-grid-enterprise/core";
-| LicenseManager.setLicenseKey("your license key");
+|import {LicenseManager} from "@ag-grid-enterprise/core";
+|LicenseManager.setLicenseKey("your license key");
 |
-| // bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
+|// bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
+|We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
 |
-| For example:
+|For example:
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-| import React from "react";
-| import {render} from "react-dom";
+|import React from "react";
+|import {render} from "react-dom";
 |
-| import "@ag-grid-enterprise/core/styles/ag-grid.css";
-| import "@ag-grid-enterprise/core/styles/ag-theme-alpine.css";
+|import "@ag-grid-enterprise/core/styles/ag-grid.css";
+|import "@ag-grid-enterprise/core/styles/ag-theme-alpine.css";
 |
-| import {LicenseManager} from "@ag-grid-enterprise/core";
-| LicenseManager.setLicenseKey("your license key");
+|import {LicenseManager} from "@ag-grid-enterprise/core";
+|LicenseManager.setLicenseKey("your license key");
 |
-| import App from "./App";
+|import App from "./App";
 |
-| document.addEventListener('DOMContentLoaded', () => {
-|     render(
-|         &lt;App/>,
-|         document.querySelector('#app')
-|     );
-| });
+|document.addEventListener('DOMContentLoaded', () => {
+|    render(
+|        &lt;App/>,
+|        document.querySelector('#app')
+|    );
+|});
 </snippet>
 </framework-specific-section>
 
@@ -248,19 +248,19 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false}>
-| import Vue from "vue";
+|import Vue from "vue";
 |
-| import "@ag-grid-enterprise/styles/ag-grid.css";
-| import "@ag-grid-enterprise/styles/ag-theme-alpine.css";
+|import "@ag-grid-enterprise/styles/ag-grid.css";
+|import "@ag-grid-enterprise/styles/ag-theme-alpine.css";
 |
-| import { LicenseManager } from "@ag-grid-enterprise/core";
+|import { LicenseManager } from "@ag-grid-enterprise/core";
 |
-| LicenseManager.setLicenseKey("your license key");
+|LicenseManager.setLicenseKey("your license key");
 |
-| new Vue({
-|     el: "#el",
-|     ...
-| });
+|new Vue({
+|    el: "#el",
+|    ...
+|});
 </snippet>
 </framework-specific-section>
 
