@@ -190,12 +190,12 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
+     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
      * @param eventSource The source of the event
-     * @returns `True` if the value was changed, otherwise `False`.
+     * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
     /**
