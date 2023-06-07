@@ -7276,7 +7276,7 @@ exports[`prepare #prepareOptions for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it shoul
         "fontSize": 9,
         "fontStyle": undefined,
         "fontWeight": undefined,
-        "padding": 13,
+        "padding": 2,
       },
       "tileShadow": {
         "blur": 5,
@@ -7294,7 +7294,7 @@ exports[`prepare #prepareOptions for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it shoul
         "fontSize": 12,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "padding": 15,
+        "padding": 2,
       },
       "tooltip": {
         "enabled": true,

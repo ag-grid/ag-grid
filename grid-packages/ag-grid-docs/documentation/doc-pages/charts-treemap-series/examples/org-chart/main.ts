@@ -22,6 +22,12 @@ const options: AgChartOptions = {
         }
         return {};
       },
+      title: {
+        padding: 10,
+      },
+      subtitle: {
+        padding: 10,
+      },
     },
   ],
   title: {

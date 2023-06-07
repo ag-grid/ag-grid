@@ -580,6 +580,12 @@ export const TREEMAP_SERIES_LABELS: AgHierarchyChartOptions = {
             colorKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
             colorDomain: [0, 2, 4, 5],
             colorRange: ['#d73027', '#fee08b', '#1a9850', 'rgb(0, 116, 52)'],
+            title: {
+                padding: 5,
+            },
+            subtitle: {
+                padding: 5,
+            },
         },
     ],
     title: {
