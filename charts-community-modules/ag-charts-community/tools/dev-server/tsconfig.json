@@ -5,9 +5,10 @@
         "checkJs": true,
         "lib": ["DOM", "ESNext"],
         "noEmit": true,
-        "baseUrl": "./",
+        "baseUrl": "../..",
         "paths": {
-            "ag-charts-community": ["../../src/main.ts"]
+            "ag-charts-community": ["./charts-community-modules/ag-charts-community/src/main.ts"],
+            "ag-charts-enterprise": ["./charts-enterprise-modules/ag-charts-enterprise/src/main.ts"]
         },
         "types": ["node"]
     }

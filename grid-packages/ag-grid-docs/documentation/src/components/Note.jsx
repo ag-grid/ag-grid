@@ -2,10 +2,13 @@ import React from 'react';
 import { markdownToHtml } from '../utils/markdown-processor';
 import { Alert } from './alert/Alert';
 
-const Note = ({ children }) => {
+// Use disableMarkdown if you need to use nested html within your note. E.g. <kbd>.
+const Note = ({ children, disableMarkdown = false }) => {
     return (
         <Alert type="info" className="font-size-responsive">
-            <div dangerouslySetInnerHTML={{ __html: markdownToHtml(children.toString()) }}></div>
+            {!disableMarkdown && <div dangerouslySetInnerHTML={{ __html: markdownToHtml(children.toString()) }}></div>}
+
+            {disableMarkdown && <p>{children}</p>}
         </Alert>
     );
 };

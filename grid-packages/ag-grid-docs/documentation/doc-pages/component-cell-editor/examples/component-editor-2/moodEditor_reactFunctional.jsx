@@ -6,6 +6,7 @@ export default forwardRef((props, ref) => {
 
     const [ready, setReady] = useState(false);
     const [happy, setHappy] = useState(isHappy(props.value));
+    const [done, setDone] = useState(false);
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event) => {
@@ -17,6 +18,10 @@ export default forwardRef((props, ref) => {
             }
         }
     };
+
+    useEffect(() => {
+        if (done) props.stopEditing();
+    }, [done]);
 
     useEffect(() => {
         ReactDOM.findDOMNode(refContainer.current).focus();
@@ -72,9 +77,11 @@ export default forwardRef((props, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
+                setDone(true);
             }} style={happyStyle} />
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
+                setDone(true);
             }} style={sadStyle} />
         </div>
     );

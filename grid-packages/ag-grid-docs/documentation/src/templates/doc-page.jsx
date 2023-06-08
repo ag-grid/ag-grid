@@ -98,10 +98,15 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'icons-panel': (props) => <IconsPanel {...props} />,
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
             'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
-            tabs: (props) => <Tabs {...props} />,
+            tabs: (props) => Tabs({ ...props }),
             'learning-videos': (props) => LearningVideos({ framework }),
             'video-section': VideoSection,
-            note: Note,
+            note: (props) =>
+                Note({
+                    ...props,
+                    // NOTE: lowercased upstream
+                    disableMarkdown: props['disablemarkdown'],
+                }),
             warning: Warning,
             'framework-specific-section': (props) =>
                 FrameworkSpecificSection({ ...props, currentFramework: framework }),

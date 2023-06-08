@@ -20,7 +20,7 @@ const Gif = ({ pageName, src, alt, autoPlay, className, wrapped, children, ...pr
     const classes = classnames(styles.gif, { [styles.wrapped]: wrapped }, className);
 
     if (isServerSideRendering() || !image.publicURL.endsWith('.gif')) {
-        return <img src={image.publicURL} alt={alt} className={classes} {...props} />;
+        return <img src={image.publicURL.replace('.gif', '-still.png')} alt={alt} className={classes} {...props} />;
     }
 
     const GifPlayer = require('react-gif-player');
