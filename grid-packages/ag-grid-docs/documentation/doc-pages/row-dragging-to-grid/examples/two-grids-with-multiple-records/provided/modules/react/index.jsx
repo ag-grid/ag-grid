@@ -189,11 +189,11 @@ class GridExample extends Component {
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
                 <div onChange={this.onRadioChange} >
-                    <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />
+                    <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />{' '}
                     <label htmlFor="move">Remove Source Rows</label>
-                    <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />
+                    <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />{' '}
                     <label htmlFor="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />
+                    <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />{' '}
                     <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />

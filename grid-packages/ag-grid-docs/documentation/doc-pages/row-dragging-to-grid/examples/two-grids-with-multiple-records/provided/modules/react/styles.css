@@ -8,12 +8,13 @@
     display: flex;
     align-items: center;
 }
-.panel-body input {
-    margin-right: 2px !important;
-}
 
 .panel-body label {
-    margin-right: 10px;
+    margin: 0 15px 0 0;
+}
+
+.panel-body input[type=checkbox] {
+    margin: 0 0.5rem 0 0;
 }
 
 .grid-wrapper {
