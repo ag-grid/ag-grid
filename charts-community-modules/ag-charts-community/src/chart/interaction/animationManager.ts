@@ -100,7 +100,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
         if (this.controllers[id]) {
             this.controllers[id].stop();
-            delete this.controllers[id];
         }
 
         this.controllers[id] = controller;
@@ -204,6 +203,8 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
                     }
                 },
                 stop: () => {
+                    delete this.controllers[id];
+
                     this.updaters = this.updaters.filter(([uid]) => uid !== id);
                     if (this.updaters.length <= 0) {
                         this.cancelAnimationFrame();
@@ -222,9 +223,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         const frame = (time: number) => {
             this.requestId = requestAnimationFrame(frame);
 
-            if (!this.readyToPlay) {
-                return;
-            }
+            if (!this.readyToPlay) return;
 
             if (this.lastTime === undefined) this.lastTime = time;
             const deltaMs = time - this.lastTime;
@@ -245,5 +244,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
         cancelAnimationFrame(this.requestId);
         this.requestId = undefined;
+        this.lastTime = undefined;
     }
 }
