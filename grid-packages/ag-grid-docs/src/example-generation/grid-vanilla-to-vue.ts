@@ -94,7 +94,7 @@ export function vanillaToVue(bindings: any, componentFileNames: string[], allSty
         return `
 ${imports.join('\n')}
 
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\n// LicenseManager.setLicenseKey('');\n" : ''}
 
 ${bindings.classes.join('\n')}
 
