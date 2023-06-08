@@ -34,13 +34,7 @@ const HeaderGroupCellComp = (props) => {
         if (userCompDetails == null) {
             return;
         }
-        let userCompDomElement = undefined;
-        eGui.childNodes.forEach(node => {
-            if (node != null && node !== eResize) {
-                userCompDomElement = node;
-            }
-        });
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        ctrl.setDragSource(eGui);
     });
     const style = createMemo(() => ({
         width: getWidth()

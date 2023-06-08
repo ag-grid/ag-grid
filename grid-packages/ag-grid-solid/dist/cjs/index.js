@@ -486,7 +486,7 @@ const HeaderCellComp = props => {
   })();
 };
 
-const _tmpl$$c = /*#__PURE__*/web.template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" aria-label="Open Filter Menu" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
+const _tmpl$$c = /*#__PURE__*/web.template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
 const HeaderFilterCellComp = props => {
   const [getCssClasses, setCssClasses] = solidJs.createSignal(new CssClasses());
   const [getCssBodyClasses, setBodyCssClasses] = solidJs.createSignal(new CssClasses());
@@ -627,13 +627,7 @@ const HeaderGroupCellComp = props => {
     if (userCompDetails == null) {
       return;
     }
-    let userCompDomElement = undefined;
-    eGui.childNodes.forEach(node => {
-      if (node != null && node !== eResize) {
-        userCompDomElement = node;
-      }
-    });
-    userCompDomElement && ctrl.setDragSource(userCompDomElement);
+    ctrl.setDragSource(eGui);
   });
   const style = solidJs.createMemo(() => ({
     width: getWidth()

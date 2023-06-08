@@ -688,7 +688,7 @@ class BaseExcelSerializingSession extends BaseGridSerializingSession {
                 skipCols -= 1;
                 return;
             }
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
@@ -701,7 +701,7 @@ class BaseExcelSerializingSession extends BaseGridSerializingSession {
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }
@@ -774,8 +774,11 @@ class ExcelXmlSerializingSession extends BaseExcelSerializingSession {
     addImage() {
         return;
     }
-    createCell(styleId, type, value) {
+    createCell(styleId, type, value, valueFormatted) {
         const actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,
@@ -3201,8 +3204,11 @@ class ExcelXlsxSerializingSession extends BaseExcelSerializingSession {
         ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     }
-    createCell(styleId, type, value) {
+    createCell(styleId, type, value, valueFormatted) {
         const actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

@@ -20,6 +20,7 @@ import { isElementChildOfClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
+import { setAriaLabel } from "../../../utils/aria";
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     constructor(column, parentRowCtrl) {
         super(column, parentRowCtrl);
@@ -36,6 +37,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -70,6 +72,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    }
+    setupAria() {
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
     onTabKeyDown(e) {
         const eDocument = this.gridOptionsService.getDocument();

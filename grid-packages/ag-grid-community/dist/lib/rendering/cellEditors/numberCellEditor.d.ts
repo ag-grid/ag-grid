@@ -8,7 +8,12 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
     max?: number;
     /** Number of digits allowed after the decimal point. */
     precision?: number;
-    /** Granularity of the value when stepping up/down. Defaults to any value allowed. */
+    /**
+     * Size of the value change when stepping up/down, starting from `min` or the initial value if provided.
+     * Step is also the difference between valid values.
+     * If the user-provided value isn't a multiple of the step value from the starting value, it will be considered invalid.
+     * Defaults to any value allowed.
+     */
     step?: number;
     /** Display stepper buttons in editor. Default: `false` */
     showStepperButtons?: boolean;

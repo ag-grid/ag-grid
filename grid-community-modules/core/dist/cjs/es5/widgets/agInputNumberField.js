@@ -141,8 +141,11 @@ var AgInputNumberField = /** @class */ (function (_super) {
         return setValueFunc(value);
     };
     AgInputNumberField.prototype.getValue = function () {
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         var inputValue = this.eInput.value;
-        if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
+        if (this.isScientificNotation(inputValue)) {
             return this.adjustPrecision(inputValue, true);
         }
         return _super.prototype.getValue.call(this);

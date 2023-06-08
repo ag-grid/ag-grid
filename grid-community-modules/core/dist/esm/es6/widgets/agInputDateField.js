@@ -62,6 +62,9 @@ export class AgInputDateField extends AgInputTextField {
     }
     getDate() {
         var _a;
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         return (_a = parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
     }
     setDate(date, silent) {

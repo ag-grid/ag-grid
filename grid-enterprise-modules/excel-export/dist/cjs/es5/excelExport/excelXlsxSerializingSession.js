@@ -68,8 +68,11 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         excelXlsxFactory_1.ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     };
-    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

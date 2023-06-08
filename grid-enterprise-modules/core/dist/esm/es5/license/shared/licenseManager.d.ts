@@ -19,6 +19,7 @@ export declare class LicenseManager {
     isDisplayWatermark(): boolean;
     getWatermarkMessage(): string;
     private getHostname;
+    private isForceWatermark;
     private isWebsiteUrl;
     private isLocalhost;
     private static formatDate;

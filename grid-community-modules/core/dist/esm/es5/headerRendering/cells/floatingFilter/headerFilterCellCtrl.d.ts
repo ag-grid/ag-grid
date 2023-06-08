@@ -35,6 +35,7 @@ export declare class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     private setupActive;
     private setupUi;
     private setupFocus;
+    private setupAria;
     private onTabKeyDown;
     private findNextColumnWithFloatingFilter;
     protected handleKeyDown(e: KeyboardEvent): void;

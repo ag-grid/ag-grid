@@ -211,7 +211,7 @@ var LicenseManager = /** @class */ (function () {
     }
     LicenseManager.prototype.validateLicense = function () {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         }
@@ -277,7 +277,7 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
         return this.watermarkMessage || '';
@@ -287,6 +287,12 @@ var LicenseManager = /** @class */ (function () {
         var loc = win.location;
         var _a = loc.hostname, hostname = _a === void 0 ? '' : _a;
         return hostname;
+    };
+    LicenseManager.prototype.isForceWatermark = function () {
+        var win = (this.document.defaultView || window);
+        var loc = win.location;
+        var pathname = loc.pathname;
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     };
     LicenseManager.prototype.isWebsiteUrl = function () {
         var hostname = this.getHostname();
@@ -548,7 +554,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
+        return _super.call(this, /* html*/ "<div class=\"ag-watermark\">\n                <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n            </div>") || this;
     }
     WatermarkComp.prototype.postConstruct = function () {
         var _this = this;
@@ -561,12 +567,7 @@ var WatermarkComp = /** @class */ (function (_super) {
         }
     };
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
-        var win = this.gridOptionsService.getWindow();
-        var loc = win.location;
-        var pathname = loc.pathname;
-        var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        var isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     };
     __decorate([
         core.Autowired('licenseManager')

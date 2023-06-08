@@ -1299,16 +1299,6 @@ export class RowCtrl extends BeanStub {
         }
     }
     updateRowIndexes(gui) {
-        /**
-         * When using the SSRM, applying a filter and then synchronously changing
-         * pinned columns, with row animations, the rows are waiting to be removed
-         * after the animation. Because a column is synchronously being made pinned,
-         * init is being called again causing updateRowIndexes to be called for a destroyed
-         * row, with null row index.
-         */
-        if (!this.rowNode.displayed) {
-            return;
-        }
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;

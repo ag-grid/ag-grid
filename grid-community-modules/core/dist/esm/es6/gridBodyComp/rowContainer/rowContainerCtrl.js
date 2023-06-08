@@ -377,10 +377,10 @@ export class RowContainerCtrl extends BeanStub {
     onDisplayedRowsChanged(useFlushSync = false) {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             const doesRowMatch = (rowCtrl) => {
-                if (!rowCtrl.isAlive()) {
-                    return false;
-                }
                 const fullWidthRow = rowCtrl.isFullWidth();
                 const embedFW = this.embedFullWidthRows || printLayout;
                 const match = this.isFullWithContainer ?

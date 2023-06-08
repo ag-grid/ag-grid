@@ -50,7 +50,7 @@ export declare abstract class BaseExcelSerializingSession<T> extends BaseGridSer
     protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell?: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
-    protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
+    protected abstract createCell(styleId: string | null, type: T, value: string, valueFormatted?: string | null): ExcelCell;
     protected abstract addImage(rowIndex: number, column: Column, value: string): {
         image: ExcelImage;
         value?: string;

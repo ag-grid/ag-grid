@@ -35,7 +35,7 @@ var LicenseManager = /** @class */ (function () {
     }
     LicenseManager.prototype.validateLicense = function () {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         }
@@ -101,7 +101,7 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
         return this.watermarkMessage || '';
@@ -111,6 +111,12 @@ var LicenseManager = /** @class */ (function () {
         var loc = win.location;
         var _a = loc.hostname, hostname = _a === void 0 ? '' : _a;
         return hostname;
+    };
+    LicenseManager.prototype.isForceWatermark = function () {
+        var win = (this.document.defaultView || window);
+        var loc = win.location;
+        var pathname = loc.pathname;
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     };
     LicenseManager.prototype.isWebsiteUrl = function () {
         var hostname = this.getHostname();

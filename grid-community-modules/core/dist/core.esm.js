@@ -13854,8 +13854,11 @@ class AgInputNumberField extends AgInputTextField {
         return setValueFunc(value);
     }
     getValue() {
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         const inputValue = this.eInput.value;
-        if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
+        if (this.isScientificNotation(inputValue)) {
             return this.adjustPrecision(inputValue, true);
         }
         return super.getValue();
@@ -21607,7 +21610,7 @@ class HeaderFilterCellComp extends AbstractHeaderCellComp {
 HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
-                <button type="button" aria-label="Open Filter Menu" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+                <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 __decorate$1H([
@@ -26261,16 +26264,6 @@ class RowCtrl extends BeanStub {
         }
     }
     updateRowIndexes(gui) {
-        /**
-         * When using the SSRM, applying a filter and then synchronously changing
-         * pinned columns, with row animations, the rows are waiting to be removed
-         * after the animation. Because a column is synchronously being made pinned,
-         * init is being called again causing updateRowIndexes to be called for a destroyed
-         * row, with null row index.
-         */
-        if (!this.rowNode.displayed) {
-            return;
-        }
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
@@ -27334,10 +27327,10 @@ class RowContainerCtrl extends BeanStub {
     onDisplayedRowsChanged(useFlushSync = false) {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             const doesRowMatch = (rowCtrl) => {
-                if (!rowCtrl.isAlive()) {
-                    return false;
-                }
                 const fullWidthRow = rowCtrl.isFullWidth();
                 const embedFW = this.embedFullWidthRows || printLayout;
                 const match = this.isFullWithContainer ?
@@ -29995,9 +29988,11 @@ class HeaderGroupCellComp extends AbstractHeaderCellComp {
             destroyFunc();
             return;
         }
-        this.getGui().appendChild(headerGroupComp.getGui());
+        const eGui = this.getGui();
+        const eHeaderGroupGui = headerGroupComp.getGui();
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     }
 }
 HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
@@ -30396,6 +30391,7 @@ class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -30430,6 +30426,10 @@ class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    }
+    setupAria() {
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
     onTabKeyDown(e) {
         const eDocument = this.gridOptionsService.getDocument();
@@ -36030,6 +36030,9 @@ class AgInputDateField extends AgInputTextField {
     }
     getDate() {
         var _a;
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         return (_a = parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
     }
     setDate(date, silent) {
@@ -36529,7 +36532,7 @@ class TabGuardCtrl extends BeanStub {
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus();
+        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
     }
     getNextFocusableElement(backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
@@ -38299,7 +38302,6 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });

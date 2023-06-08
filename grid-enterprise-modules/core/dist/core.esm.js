@@ -189,7 +189,7 @@ class LicenseManager {
     }
     validateLicense() {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         }
@@ -255,7 +255,7 @@ class LicenseManager {
         };
     }
     isDisplayWatermark() {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     }
     getWatermarkMessage() {
         return this.watermarkMessage || '';
@@ -265,6 +265,12 @@ class LicenseManager {
         const loc = win.location;
         const { hostname = '' } = loc;
         return hostname;
+    }
+    isForceWatermark() {
+        const win = (this.document.defaultView || window);
+        const loc = win.location;
+        const { pathname } = loc;
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     }
     isWebsiteUrl() {
         const hostname = this.getHostname();
@@ -489,9 +495,9 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 };
 class WatermarkComp extends Component {
     constructor() {
-        super(`<div class="ag-watermark">
-                    <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
-               </div>`);
+        super(/* html*/ `<div class="ag-watermark">
+                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+            </div>`);
     }
     postConstruct() {
         const show = this.shouldDisplayWatermark();
@@ -503,12 +509,7 @@ class WatermarkComp extends Component {
         }
     }
     shouldDisplayWatermark() {
-        const win = this.gridOptionsService.getWindow();
-        const loc = win.location;
-        const { pathname } = loc;
-        const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        const isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     }
 }
 __decorate([

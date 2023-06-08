@@ -49,8 +49,11 @@ class ExcelXlsxSerializingSession extends baseExcelSerializingSession_1.BaseExce
         excelXlsxFactory_1.ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     }
-    createCell(styleId, type, value) {
+    createCell(styleId, type, value, valueFormatted) {
         const actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

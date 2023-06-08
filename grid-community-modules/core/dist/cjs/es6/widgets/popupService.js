@@ -365,7 +365,6 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });

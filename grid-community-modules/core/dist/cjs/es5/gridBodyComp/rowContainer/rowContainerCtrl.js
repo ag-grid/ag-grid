@@ -430,10 +430,10 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.visible) {
             var printLayout_1 = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             var doesRowMatch = function (rowCtrl) {
-                if (!rowCtrl.isAlive()) {
-                    return false;
-                }
                 var fullWidthRow = rowCtrl.isFullWidth();
                 var embedFW = _this.embedFullWidthRows || printLayout_1;
                 var match = _this.isFullWithContainer ?

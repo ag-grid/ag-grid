@@ -119,8 +119,11 @@ export class AgInputNumberField extends AgInputTextField {
         return setValueFunc(value);
     }
     getValue() {
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         const inputValue = this.eInput.value;
-        if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
+        if (this.isScientificNotation(inputValue)) {
             return this.adjustPrecision(inputValue, true);
         }
         return super.getValue();

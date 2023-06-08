@@ -19,7 +19,10 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     abstract parse(): string;
     prepare(columnsToExport: Column[]): void;
     extractHeaderValue(column: Column): string;
-    extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode): any;
+    extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode): {
+        value: any;
+        valueFormatted?: string | null;
+    };
     private shouldRenderGroupSummaryCell;
     private getHeaderName;
     private createValueForGroupNode;

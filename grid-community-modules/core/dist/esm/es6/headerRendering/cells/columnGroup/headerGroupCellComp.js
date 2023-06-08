@@ -41,9 +41,11 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
             destroyFunc();
             return;
         }
-        this.getGui().appendChild(headerGroupComp.getGui());
+        const eGui = this.getGui();
+        const eHeaderGroupGui = headerGroupComp.getGui();
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     }
 }
 HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">

@@ -82,6 +82,9 @@ var AgInputDateField = /** @class */ (function (_super) {
     };
     AgInputDateField.prototype.getDate = function () {
         var _a;
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         return (_a = date_1.parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
     };
     AgInputDateField.prototype.setDate = function (date, silent) {

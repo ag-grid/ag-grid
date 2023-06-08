@@ -10,9 +10,9 @@ exports.WatermarkComp = void 0;
 const core_1 = require("@ag-grid-community/core");
 class WatermarkComp extends core_1.Component {
     constructor() {
-        super(`<div class="ag-watermark">
-                    <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
-               </div>`);
+        super(/* html*/ `<div class="ag-watermark">
+                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+            </div>`);
     }
     postConstruct() {
         const show = this.shouldDisplayWatermark();
@@ -24,12 +24,7 @@ class WatermarkComp extends core_1.Component {
         }
     }
     shouldDisplayWatermark() {
-        const win = this.gridOptionsService.getWindow();
-        const loc = win.location;
-        const { pathname } = loc;
-        const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        const isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     }
 }
 __decorate([

@@ -35,6 +35,7 @@ import { isElementChildOfClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
+import { setAriaLabel } from "../../../utils/aria";
 var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderFilterCellCtrl, _super);
     function HeaderFilterCellCtrl(column, parentRowCtrl) {
@@ -53,6 +54,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -87,6 +89,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    };
+    HeaderFilterCellCtrl.prototype.setupAria = function () {
+        var localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     };
     HeaderFilterCellCtrl.prototype.onTabKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();

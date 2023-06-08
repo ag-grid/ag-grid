@@ -62,9 +62,11 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
             destroyFunc();
             return;
         }
-        this.getGui().appendChild(headerGroupComp.getGui());
+        var eGui = this.getGui();
+        var eHeaderGroupGui = headerGroupComp.getGui();
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     };
     HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate([

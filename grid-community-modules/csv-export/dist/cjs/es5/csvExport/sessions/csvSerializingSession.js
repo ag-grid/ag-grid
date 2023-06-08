@@ -94,10 +94,12 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         };
     };
     CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
+        var _a;
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
+        var rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        this.result += this.putInQuotes((_a = rowCellValue.valueFormatted) !== null && _a !== void 0 ? _a : rowCellValue.value);
     };
     CsvSerializingSession.prototype.putInQuotes = function (value) {
         if (this.suppressQuotes) {

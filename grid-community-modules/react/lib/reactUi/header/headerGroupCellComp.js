@@ -60,14 +60,8 @@ const HeaderGroupCellComp = (props) => {
     react_1.useLayoutEffect(() => jsComp_1.showJsComp(userCompDetails, context, eGui.current), [userCompDetails]);
     // add drag handling, must be done after component is added to the dom
     react_1.useEffect(() => {
-        let userCompDomElement = undefined;
         if (eGui.current) {
-            eGui.current.childNodes.forEach(node => {
-                if (node != null && node !== eResize.current) {
-                    userCompDomElement = node;
-                }
-            });
-            userCompDomElement && ctrl.setDragSource(userCompDomElement);
+            ctrl.setDragSource(eGui.current);
         }
     }, [userCompDetails]);
     const className = react_1.useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);

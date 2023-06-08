@@ -55,8 +55,11 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     ExcelXmlSerializingSession.prototype.addImage = function () {
         return;
     };
-    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,

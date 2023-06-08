@@ -241,7 +241,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 skipCols -= 1;
                 return;
             }
-            var valueForCell = _this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
             var styleIds = _this.config.styleLinker({ rowType: csv_export_1.RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
             var excelStyleId = _this.getStyleId(styleIds);
             var colSpan = column.getColSpan(node);
@@ -254,7 +254,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     };

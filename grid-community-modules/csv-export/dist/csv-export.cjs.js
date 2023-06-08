@@ -65,7 +65,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
             processCellCallback: this.processCellCallback,
             type: type
         });
-        return processedValue != null ? processedValue : '';
+        return processedValue;
     };
     BaseGridSerializingSession.prototype.shouldRenderGroupSummaryCell = function (node, column, currentColumnIndex) {
         var _a;
@@ -122,26 +122,31 @@ var BaseGridSerializingSession = /** @class */ (function () {
     };
     BaseGridSerializingSession.prototype.processCell = function (params) {
         var _this = this;
-        var _a, _b;
+        var _a;
         var accumulatedRowIndex = params.accumulatedRowIndex, rowNode = params.rowNode, column = params.column, value = params.value, processCellCallback = params.processCellCallback, type = params.type;
         if (processCellCallback) {
-            return processCellCallback({
-                accumulatedRowIndex: accumulatedRowIndex,
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-                type: type,
-                parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode, valueToParse, _this.valueService.getValue(column, rowNode)); },
-                formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
-            });
+            return {
+                value: (_a = processCellCallback({
+                    accumulatedRowIndex: accumulatedRowIndex,
+                    column: column,
+                    node: rowNode,
+                    value: value,
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    type: type,
+                    parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode, valueToParse, _this.valueService.getValue(column, rowNode)); },
+                    formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
+                })) !== null && _a !== void 0 ? _a : ''
+            };
         }
         if (column.getColDef().useValueFormatterForExport) {
-            return (_b = (_a = this.valueFormatterService.formatValue(column, rowNode, value)) !== null && _a !== void 0 ? _a : value) !== null && _b !== void 0 ? _b : '';
+            return {
+                value: value !== null && value !== void 0 ? value : '',
+                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+            };
         }
-        return value != null ? value : '';
+        return { value: value !== null && value !== void 0 ? value : '' };
     };
     return BaseGridSerializingSession;
 }());
@@ -268,10 +273,12 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         };
     };
     CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
+        var _a;
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
+        var rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        this.result += this.putInQuotes((_a = rowCellValue.valueFormatted) !== null && _a !== void 0 ? _a : rowCellValue.value);
     };
     CsvSerializingSession.prototype.putInQuotes = function (value) {
         if (this.suppressQuotes) {

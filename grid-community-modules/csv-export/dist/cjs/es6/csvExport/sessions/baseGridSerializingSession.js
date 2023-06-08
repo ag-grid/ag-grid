@@ -36,7 +36,7 @@ class BaseGridSerializingSession {
             processCellCallback: this.processCellCallback,
             type
         });
-        return processedValue != null ? processedValue : '';
+        return processedValue;
     }
     shouldRenderGroupSummaryCell(node, column, currentColumnIndex) {
         var _a;
@@ -92,26 +92,31 @@ class BaseGridSerializingSession {
         return isFooter ? `Total ${groupValue}` : groupValue;
     }
     processCell(params) {
-        var _a, _b;
+        var _a;
         const { accumulatedRowIndex, rowNode, column, value, processCellCallback, type } = params;
         if (processCellCallback) {
-            return processCellCallback({
-                accumulatedRowIndex,
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-                type: type,
-                parseValue: (valueToParse) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
-                formatValue: (valueToFormat) => { var _a; return (_a = this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
-            });
+            return {
+                value: (_a = processCellCallback({
+                    accumulatedRowIndex,
+                    column: column,
+                    node: rowNode,
+                    value: value,
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    type: type,
+                    parseValue: (valueToParse) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
+                    formatValue: (valueToFormat) => { var _a; return (_a = this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
+                })) !== null && _a !== void 0 ? _a : ''
+            };
         }
         if (column.getColDef().useValueFormatterForExport) {
-            return (_b = (_a = this.valueFormatterService.formatValue(column, rowNode, value)) !== null && _a !== void 0 ? _a : value) !== null && _b !== void 0 ? _b : '';
+            return {
+                value: value !== null && value !== void 0 ? value : '',
+                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+            };
         }
-        return value != null ? value : '';
+        return { value: value !== null && value !== void 0 ? value : '' };
     }
 }
 exports.BaseGridSerializingSession = BaseGridSerializingSession;

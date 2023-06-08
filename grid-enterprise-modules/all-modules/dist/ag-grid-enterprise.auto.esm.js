@@ -208,7 +208,7 @@ var LicenseManager = /** @class */ (function () {
     }
     LicenseManager.prototype.validateLicense = function () {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         }
@@ -274,7 +274,7 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
         return this.watermarkMessage || '';
@@ -284,6 +284,12 @@ var LicenseManager = /** @class */ (function () {
         var loc = win.location;
         var _a = loc.hostname, hostname = _a === void 0 ? '' : _a;
         return hostname;
+    };
+    LicenseManager.prototype.isForceWatermark = function () {
+        var win = (this.document.defaultView || window);
+        var loc = win.location;
+        var pathname = loc.pathname;
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     };
     LicenseManager.prototype.isWebsiteUrl = function () {
         var hostname = this.getHostname();
@@ -545,7 +551,7 @@ var __decorate$2x = (undefined && undefined.__decorate) || function (decorators,
 var WatermarkComp = /** @class */ (function (_super) {
     __extends$3o(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
+        return _super.call(this, /* html*/ "<div class=\"ag-watermark\">\n                <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n            </div>") || this;
     }
     WatermarkComp.prototype.postConstruct = function () {
         var _this = this;
@@ -558,12 +564,7 @@ var WatermarkComp = /** @class */ (function (_super) {
         }
     };
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
-        var win = this.gridOptionsService.getWindow();
-        var loc = win.location;
-        var pathname = loc.pathname;
-        var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        var isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     };
     __decorate$2x([
         Autowired('licenseManager')
@@ -8979,7 +8980,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 skipCols -= 1;
                 return;
             }
-            var valueForCell = _this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
             var styleIds = _this.config.styleLinker({ rowType: RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
             var excelStyleId = _this.getStyleId(styleIds);
             var colSpan = column.getColSpan(node);
@@ -8992,7 +8993,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     };
@@ -9086,8 +9087,11 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     ExcelXmlSerializingSession.prototype.addImage = function () {
         return;
     };
-    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,
@@ -11660,8 +11664,11 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     };
-    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

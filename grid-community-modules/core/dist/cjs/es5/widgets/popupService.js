@@ -422,7 +422,6 @@ var PopupService = /** @class */ (function (_super) {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });

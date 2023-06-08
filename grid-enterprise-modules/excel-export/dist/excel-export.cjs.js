@@ -748,7 +748,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 skipCols -= 1;
                 return;
             }
-            var valueForCell = _this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
             var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
             var excelStyleId = _this.getStyleId(styleIds);
             var colSpan = column.getColSpan(node);
@@ -761,7 +761,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     };
@@ -855,8 +855,11 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     ExcelXmlSerializingSession.prototype.addImage = function () {
         return;
     };
-    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,
@@ -3429,8 +3432,11 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     };
-    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

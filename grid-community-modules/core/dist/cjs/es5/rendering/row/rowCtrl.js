@@ -1391,16 +1391,6 @@ var RowCtrl = /** @class */ (function (_super) {
         }
     };
     RowCtrl.prototype.updateRowIndexes = function (gui) {
-        /**
-         * When using the SSRM, applying a filter and then synchronously changing
-         * pinned columns, with row animations, the rows are waiting to be removed
-         * after the animation. Because a column is synchronously being made pinned,
-         * init is being called again causing updateRowIndexes to be called for a destroyed
-         * row, with null row index.
-         */
-        if (!this.rowNode.displayed) {
-            return;
-        }
         var rowIndexStr = this.rowNode.getRowIndexString();
         var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         var rowIsEven = this.rowNode.rowIndex % 2 === 0;

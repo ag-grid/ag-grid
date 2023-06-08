@@ -151,7 +151,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus();
+        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
     };
     TabGuardCtrl.prototype.getNextFocusableElement = function (backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);

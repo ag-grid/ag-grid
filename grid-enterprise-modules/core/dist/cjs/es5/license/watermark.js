@@ -26,7 +26,7 @@ var core_1 = require("@ag-grid-community/core");
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
+        return _super.call(this, /* html*/ "<div class=\"ag-watermark\">\n                <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n            </div>") || this;
     }
     WatermarkComp.prototype.postConstruct = function () {
         var _this = this;
@@ -39,12 +39,7 @@ var WatermarkComp = /** @class */ (function (_super) {
         }
     };
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
-        var win = this.gridOptionsService.getWindow();
-        var loc = win.location;
-        var pathname = loc.pathname;
-        var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        var isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     };
     __decorate([
         core_1.Autowired('licenseManager')

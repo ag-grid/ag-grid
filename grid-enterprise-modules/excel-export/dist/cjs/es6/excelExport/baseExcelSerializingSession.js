@@ -187,7 +187,7 @@ class BaseExcelSerializingSession extends csv_export_1.BaseGridSerializingSessio
                 skipCols -= 1;
                 return;
             }
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds = this.config.styleLinker({ rowType: csv_export_1.RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
@@ -200,7 +200,7 @@ class BaseExcelSerializingSession extends csv_export_1.BaseGridSerializingSessio
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }

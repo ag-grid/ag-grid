@@ -38,6 +38,7 @@ var dom_1 = require("../../../utils/dom");
 var icon_1 = require("../../../utils/icon");
 var managedFocusFeature_1 = require("../../../widgets/managedFocusFeature");
 var hoverFeature_1 = require("../hoverFeature");
+var aria_1 = require("../../../utils/aria");
 var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderFilterCellCtrl, _super);
     function HeaderFilterCellCtrl(column, parentRowCtrl) {
@@ -56,6 +57,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -90,6 +92,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    };
+    HeaderFilterCellCtrl.prototype.setupAria = function () {
+        var localeTextFunc = this.localeService.getLocaleTextFunc();
+        aria_1.setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     };
     HeaderFilterCellCtrl.prototype.onTabKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();

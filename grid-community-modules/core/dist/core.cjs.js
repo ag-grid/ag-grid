@@ -14879,8 +14879,11 @@ var AgInputNumberField = /** @class */ (function (_super) {
         return setValueFunc(value);
     };
     AgInputNumberField.prototype.getValue = function () {
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         var inputValue = this.eInput.value;
-        if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
+        if (this.isScientificNotation(inputValue)) {
             return this.adjustPrecision(inputValue, true);
         }
         return _super.prototype.getValue.call(this);
@@ -23485,7 +23488,7 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
             comp.afterGuiAttached();
         }
     };
-    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" aria-label=\"Open Filter Menu\" class=\"ag-button ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
+    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-button ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
     __decorate$1H([
         RefSelector('eFloatingFilterBody')
     ], HeaderFilterCellComp.prototype, "eFloatingFilterBody", void 0);
@@ -28530,16 +28533,6 @@ var RowCtrl = /** @class */ (function (_super) {
         }
     };
     RowCtrl.prototype.updateRowIndexes = function (gui) {
-        /**
-         * When using the SSRM, applying a filter and then synchronously changing
-         * pinned columns, with row animations, the rows are waiting to be removed
-         * after the animation. Because a column is synchronously being made pinned,
-         * init is being called again causing updateRowIndexes to be called for a destroyed
-         * row, with null row index.
-         */
-        if (!this.rowNode.displayed) {
-            return;
-        }
         var rowIndexStr = this.rowNode.getRowIndexString();
         var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         var rowIsEven = this.rowNode.rowIndex % 2 === 0;
@@ -29801,10 +29794,10 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.visible) {
             var printLayout_1 = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             var doesRowMatch = function (rowCtrl) {
-                if (!rowCtrl.isAlive()) {
-                    return false;
-                }
                 var fullWidthRow = rowCtrl.isFullWidth();
                 var embedFW = _this.embedFullWidthRows || printLayout_1;
                 var match = _this.isFullWithContainer ?
@@ -32730,9 +32723,11 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
             destroyFunc();
             return;
         }
-        this.getGui().appendChild(headerGroupComp.getGui());
+        var eGui = this.getGui();
+        var eHeaderGroupGui = headerGroupComp.getGui();
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     };
     HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate$1i([
@@ -33223,6 +33218,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -33257,6 +33253,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    };
+    HeaderFilterCellCtrl.prototype.setupAria = function () {
+        var localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     };
     HeaderFilterCellCtrl.prototype.onTabKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();
@@ -39586,6 +39586,9 @@ var AgInputDateField = /** @class */ (function (_super) {
     };
     AgInputDateField.prototype.getDate = function () {
         var _a;
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
         return (_a = parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
     };
     AgInputDateField.prototype.setDate = function (date, silent) {
@@ -40149,7 +40152,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         if (!focusable.length) {
             return;
         }
-        focusable[fromBottom ? focusable.length - 1 : 0].focus();
+        focusable[fromBottom ? focusable.length - 1 : 0].focus({ preventScroll: true });
     };
     TabGuardCtrl.prototype.getNextFocusableElement = function (backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
@@ -42201,7 +42204,6 @@ var PopupService = /** @class */ (function (_super) {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });
