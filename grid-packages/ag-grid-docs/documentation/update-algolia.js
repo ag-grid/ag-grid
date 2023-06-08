@@ -204,6 +204,10 @@ const processIndexForFramework = async framework => {
     const indexName = `${indexNamePrefix}_${framework}`;
 
     const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
+    const filter = (item) => {
+        // Exclude enterprise charts until launch.
+        return item.enterprise === 'charts';
+    };
 
     const browser = await puppeteer.launch({
         executablePath: indexNamePrefix === 'ag-grid-dev' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : '/usr/bin/google-chrome',
@@ -220,6 +224,8 @@ const processIndexForFramework = async framework => {
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 
         for (const item of items) {
+            if (filter(item)) continue;
+
             const breadcrumb = breadcrumbPrefix + item.title;
 
             if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
@@ -233,6 +239,8 @@ const processIndexForFramework = async framework => {
     };
 
     for (const item of menu) {
+        if (filter(item)) continue;
+
         await iterateItems(item.items);
     }
 
