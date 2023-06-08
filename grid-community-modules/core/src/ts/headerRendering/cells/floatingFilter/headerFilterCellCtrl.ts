@@ -15,6 +15,7 @@ import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { setAriaLabel } from "../../../utils/aria";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -64,6 +65,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
@@ -107,6 +109,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+    }
+
+    private setupAria(): void {
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 
     private onTabKeyDown(e: KeyboardEvent) {

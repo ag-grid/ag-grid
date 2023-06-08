@@ -294,6 +294,7 @@ const AG_GRID_LOCALE_EN = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
     ariaIndeterminate:'indeterminate',

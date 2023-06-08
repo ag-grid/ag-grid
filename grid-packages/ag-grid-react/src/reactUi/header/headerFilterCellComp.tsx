@@ -86,7 +86,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
             </div>
             <div ref={eButtonWrapper} aria-hidden={buttonWrapperAriaHidden} className={buttonWrapperClassName} role="presentation">
-                <button ref={eButtonShowMainFilter} type="button" aria-label="Open Filter Menu" className="ag-button ag-floating-filter-button-button" tabIndex={-1}></button>
+                <button ref={eButtonShowMainFilter} type="button" className="ag-button ag-floating-filter-button-button" tabIndex={-1}></button>
             </div>
         </div>
     );
