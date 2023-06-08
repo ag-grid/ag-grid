@@ -19,7 +19,7 @@ export default class CustomTooltip extends Component {
                     {isGroupedHeader ?
                         props.colDef.children.map(function(header, idx) {
                             return (
-                                <p>Child {idx + 1} - { header.headerName}</p>
+                                <p key={idx}>Child {idx + 1} - { header.headerName}</p>
                             );
                         })
                         : null
