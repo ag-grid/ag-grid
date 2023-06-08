@@ -143,7 +143,7 @@ const GridExample = () => {
                 remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
-            params.api.setNodesSelected({ nodes, newValue: false });
+            leftApi!.setNodesSelected({ nodes, newValue: false });
         }
     }, [leftApi, radioChecked]);
 
