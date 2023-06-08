@@ -58,4 +58,4 @@ This example combines all of the above techniques to style the column menus. Cli
 }
 ```
 
-<grid-example title='Styling Menus' name='styling-menus' type='generated' options='{ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
+<grid-example title='Styling Menus' name='styling-menus' type='generated' options='{ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "clipboard", "setfilter", "columnpanel"]  }'></grid-example>
