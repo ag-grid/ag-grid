@@ -319,7 +319,7 @@ const gridOptions = {
 
 The example below shows dragging with custom text and multiple column draggers. The following can be noted:
 
-- When you drag a row with a year of 2012 by the country row dragger,, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+- When you drag a row with a year of 2012 by the country row dragger, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
 - When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
 
