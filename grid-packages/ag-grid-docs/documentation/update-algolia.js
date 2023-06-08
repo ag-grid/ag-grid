@@ -30,7 +30,11 @@ console.log("Updating Algolia Indices");
 console.log(`debug: ${debug}, indexNamePrefix: ${indexNamePrefix}`);
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
 
-const algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+let algoliaClient;
+if (!debug) {
+    console.log('Creating Algolia client');
+    algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+}
 
 const disallowedTags = ['style', 'pre'];
 const disallowedClasses = ['gatsby-highlight', 'code-tab'];
@@ -204,6 +208,10 @@ const processIndexForFramework = async framework => {
     const indexName = `${indexNamePrefix}_${framework}`;
 
     const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
+    const filter = (item) => {
+        // Exclude enterprise charts until launch.
+        return item.enterprise === 'charts';
+    };
 
     const browser = await puppeteer.launch({
         executablePath: indexNamePrefix === 'ag-grid-dev' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : '/usr/bin/google-chrome',
@@ -220,10 +228,15 @@ const processIndexForFramework = async framework => {
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 
         for (const item of items) {
+            if (filter(item)) continue;
+
             const breadcrumb = breadcrumbPrefix + item.title;
+            console.log(`=== Walking ${breadcrumb}...`);
 
             if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
-                records.push(...await createRecords(browser, item.url, framework, breadcrumb, rank, readFromAgGrid(item.url)));
+                const newRecords = await createRecords(browser, item.url, framework, breadcrumb, rank, readFromAgGrid(item.url));
+                console.log(`Created ${newRecords.length} new records`)
+                records.push(...newRecords);
 
                 rank -= 10;
             }
@@ -233,6 +246,8 @@ const processIndexForFramework = async framework => {
     };
 
     for (const item of menu) {
+        if (filter(item)) continue;
+
         await iterateItems(item.items);
     }
 
