@@ -9,8 +9,8 @@ export default (props: ImageCellRendererParams) => (
     <span>
         {
             new Array(props.value).fill('')
-                .map(ignore =>
-                    (<img src={`https://www.ag-grid.com/example-assets/weather/${props.rendererImage}`} />)
+                .map((_, idx) =>
+                    (<img key={idx} src={`https://www.ag-grid.com/example-assets/weather/${props.rendererImage}`} />)
                 )
         }
     </span>
