@@ -566,7 +566,7 @@ export class PopupService extends BeanStub {
     private removePopupFromPopupList(element: HTMLElement): void {
         this.setPopupPositionRelatedToElement(element, null);
 
-        this.popupList = this.popupList.filter(p => p.element === element);
+        this.popupList = this.popupList.filter(p => p.element !== element);
     }
 
     private keepPopupPositionedRelativeTo(params: {
