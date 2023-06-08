@@ -524,13 +524,13 @@ title: "Get Started with AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| If everything goes well, `npm run start` has started the web server and conveniently opened a browser
-| pointing to [localhost:4200](http://localhost:4200).
+If everything goes well, `npm run start` has started the web server and conveniently opened a browser
+pointing to <a href="http://localhost:4200">localhost:4200</a>
+</framework-specific-section>
+<framework-specific-section frameworks="angular">
+|### Grid Dependencies
 |
-| ### Grid Dependencies
-|
-| Note the `package.json` has the following dependencies:
-|
+|Note the `package.json` has the following dependencies:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -1052,9 +1052,10 @@ title: "Get Started with AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| If everything goes well, `npm start` has started the web server and conveniently opened a browser
-| pointing to [localhost:3000](http://localhost:3000).
-|
+If everything goes well, `npm start` has started the web server and conveniently opened a browser
+pointing to <a href="http://localhost:3000">localhost:3000</a>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
 | ### Grid Dependencies
 |
 | Note the `package.json` has the following dependencies:
@@ -1532,10 +1533,12 @@ title: "Get Started with AG Grid"
 </framework-specific-section> 
 
 <framework-specific-section frameworks="vue">
-| If everything went well `npm run serve` started the web server and conveniently opened a browser
-| pointing to [localhost:8080](http://localhost:8080) (if the browser wasn't automatically launched simply navigate to [localhost:8080](http://localhost:8080)
-| in your browser of choice.
-|
+If everything went well `npm run serve` started the web server and conveniently opened a browser
+pointing to <a href="http://localhost:8080">localhost:8080</a> (if the browser wasn't automatically launched simply navigate to <a href="http://localhost:8080">localhost:8080</a>
+in your browser of choice.
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ### Grid Dependencies
 |
 | Note the `package.json` has the following dependencies:

@@ -44,8 +44,8 @@ export interface AgPopup {
     wrapper: HTMLElement;
     hideFunc: () => void;
     isAnchored: boolean;
-    stopAnchoringPromise: AgPromise<Function>;
     instanceId: number;
+    stopAnchoringPromise?: AgPromise<() => void>;
 }
 
 interface Rect {
@@ -90,7 +90,6 @@ export interface AddPopupParams {
 
 export interface AddPopupResult {
     hideFunc: () => void;
-    stopAnchoringPromise: AgPromise<Function>;
 }
 
 @Bean('popupService')
@@ -361,101 +360,52 @@ export class PopupService extends BeanStub {
         return Math.min(Math.max(position, 0), Math.abs(max));
     }
 
-    private keepPopupPositionedRelativeTo(params: {
-        ePopup: HTMLElement,
-        element: HTMLElement,
-        hidePopup: () => void;
-    }): AgPromise<() => void> {
-        const eParent = this.getPopupParent();
-        const parentRect = eParent.getBoundingClientRect();
-
-        const sourceRect = params.element.getBoundingClientRect();
-        const initialDiffTop = parentRect.top - sourceRect.top;
-        const initialDiffLeft = parentRect.left - sourceRect.left;
-
-        let lastDiffTop = initialDiffTop;
-        let lastDiffLeft = initialDiffLeft;
-
-        const topPx = params.ePopup.style.top;
-        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
-
-        const leftPx = params.ePopup.style.left;
-        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
-
-        return new AgPromise<() => void>(resolve => {
-            this.getFrameworkOverrides().setInterval(() => {
-                const pRect = eParent.getBoundingClientRect();
-                const sRect = params.element.getBoundingClientRect();
-
-                const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-                if (elementNotInDom) {
-                    params.hidePopup();
-                    return;
-                }
-
-                const currentDiffTop = pRect.top - sRect.top;
-                if (currentDiffTop != lastDiffTop) {
-                    const newTop = this.keepXYWithinBounds(params.ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
-                    params.ePopup.style.top = `${newTop}px`;
-                }
-                lastDiffTop = currentDiffTop;
-
-                const currentDiffLeft = pRect.left - sRect.left;
-                if (currentDiffLeft != lastDiffLeft) {
-                    const newLeft = this.keepXYWithinBounds(params.ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
-                    params.ePopup.style.left = `${newLeft}px`;
-                }
-                lastDiffLeft = currentDiffLeft;
-
-            }, 200).then(intervalId => {
-                const result = () => {
-                    if (intervalId != null) {
-                        window.clearInterval(intervalId);
-                    }
-                };
-                resolve(result);
-            });
-        });
-    }
-
-    public addPopup(params: AddPopupParams): AddPopupResult {
-        const {
-            modal,
-            eChild,
-            closeOnEsc,
-            closedCallback,
-            click,
-            alwaysOnTop,
-            afterGuiAttached,
-            positionCallback,
-            anchorToElement,
-            ariaLabel
-        } = params;
-
+    public addPopup(params: AddPopupParams): AddPopupResult { 
         const eDocument = this.gridOptionsService.getDocument();
-
-        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => { }));
+        const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
             console.warn('AG Grid: could not find the document, document is empty');
-            return { hideFunc: () => { }, stopAnchoringPromise: destroyPositionTracker };
+            return { hideFunc: () => { } };
         }
 
         const pos = this.popupList.findIndex(popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
+            return { hideFunc: popup.hideFunc };
         }
 
+        this.initialisePopupPosition(eChild);
+
+        const wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
+
+        if (positionCallback) {
+            positionCallback();
+        }
+
+        this.addPopupToPopupList(eChild, wrapperEl, removeListeners, anchorToElement);
+
+        return {
+            hideFunc: removeListeners
+        };
+    }
+
+    private initialisePopupPosition(element: HTMLElement): void {
         const ePopupParent = this.getPopupParent();
         const ePopupParentRect = ePopupParent.getBoundingClientRect();
-        if (!exists(eChild.style.top)) {
-            eChild.style.top = `${ePopupParentRect.top * -1}px`;
+
+        if (!exists(element.style.top)) {
+            element.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (!exists(eChild.style.left)) {
-            eChild.style.left = `${ePopupParentRect.left * -1}px`;
+        if (!exists(element.style.left)) {
+            element.style.left = `${ePopupParentRect.left * -1}px`;
         }
+    }
+
+    private createPopupWrapper(element: HTMLElement, ariaLabel: string, alwaysOnTop: boolean): HTMLElement {
+        const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
@@ -467,55 +417,64 @@ export class PopupService extends BeanStub {
         }
 
         eWrapper.classList.add('ag-popup');
-        eChild.classList.add(
+        element.classList.add(
             this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
 
-        if (!eChild.hasAttribute('role')) {
-            setAriaRole(eChild, 'dialog');
+        if (!element.hasAttribute('role')) {
+            setAriaRole(element, 'dialog');
         }
 
-        setAriaLabel(eChild, ariaLabel);
+        setAriaLabel(element, ariaLabel);
 
         if (this.focusService.isKeyboardMode()) {
-            eChild.classList.add(FocusService.AG_KEYBOARD_FOCUS);
+            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
         }
 
-        eWrapper.appendChild(eChild);
+        eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
 
         if (alwaysOnTop) {
-            this.setAlwaysOnTop(eWrapper, true);
+            this.setAlwaysOnTop(element, true);
         } else {
-            this.bringPopupToFront(eWrapper);
+            this.bringPopupToFront(element);
         }
+
+        return eWrapper;
+    }
+
+    private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): () => void {
+        const eDocument = this.gridOptionsService.getDocument();
+        const ePopupParent = this.getPopupParent();
+
+        const { wrapperEl, eChild: popupEl, click: pointerEvent, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
 
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!eWrapper.contains(eDocument.activeElement)) {
+            if (!wrapperEl.contains(eDocument.activeElement)) {
                 return;
             }
 
             const key = event.key;
 
             if (key === KeyCode.ESCAPE) {
-                hidePopup({ keyboardEvent: event });
+                removeListeners({ keyboardEvent: event });
             }
         };
 
-        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
-        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
+        const hidePopupOnMouseEvent = (event: MouseEvent) => removeListeners({ mouseEvent: event });
+        const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
-        const hidePopup = (popupParams: PopupEventParams = {}) => {
+        const removeListeners = (popupParams: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = popupParams;
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
-                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, eChild) ||
+                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
                 // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent, touchEvent }) ||
+                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -525,7 +484,7 @@ export class PopupService extends BeanStub {
 
             popupHidden = true;
 
-            ePopupParent.removeChild(eWrapper);
+            ePopupParent.removeChild(wrapperEl);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -538,15 +497,11 @@ export class PopupService extends BeanStub {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
 
-            this.popupList = this.popupList.filter(popup => popup.element !== eChild);
-
-            if (destroyPositionTracker) {
-                destroyPositionTracker.then(destroyFunc => destroyFunc && destroyFunc());
-            }
+            this.removePopupFromPopupList(popupEl);
         };
 
         if (afterGuiAttached) {
-            afterGuiAttached({ hidePopup });
+            afterGuiAttached({ hidePopup: removeListeners });
         }
 
         // if we add these listeners now, then the current mouse
@@ -564,32 +519,113 @@ export class PopupService extends BeanStub {
             }
         }, 0);
 
-        if (positionCallback) {
-            positionCallback();
-        }
-        if (anchorToElement) {
-            // keeps popup positioned under created, eg if context menu, if user scrolls
-            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
-            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: anchorToElement,
-                ePopup: eChild,
-                hidePopup
-            });
-        }
+        return removeListeners;
+    }
 
+    private addPopupToPopupList(element: HTMLElement, wrapperEl: HTMLElement, removeListeners: () => void, anchorToElement?: HTMLElement): void {
         this.popupList.push({
-            element: eChild,
-            wrapper: eWrapper,
-            hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker,
+            element: element,
+            wrapper: wrapperEl,
+            hideFunc: removeListeners,
+            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });
 
-        return {
-            hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker
-        };
+        if (anchorToElement) {
+            this.setPopupPositionRelatedToElement(element, anchorToElement);
+        }
+    }
+
+    public setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined {
+        const popup = this.popupList.find(p => p.element === popupEl);
+
+        if (!popup) { return; }
+
+        if (popup.stopAnchoringPromise) {
+            popup.stopAnchoringPromise.then(destroyFunc => destroyFunc && destroyFunc());
+        }
+
+        popup.stopAnchoringPromise = undefined;
+
+        if (!relativeElement) { return; }
+
+        // keeps popup positioned under created, eg if context menu, if user scrolls
+        // using touchpad and the cell moves, it moves the popup to keep it with the cell.
+        const destroyPositionTracker = this.keepPopupPositionedRelativeTo({
+            element: relativeElement,
+            ePopup: popupEl,
+            hidePopup: popup.hideFunc
+        });
+
+        popup.stopAnchoringPromise = destroyPositionTracker;
+
+        return destroyPositionTracker;
+    }
+
+    private removePopupFromPopupList(element: HTMLElement): void {
+        this.setPopupPositionRelatedToElement(element, null);
+
+        this.popupList = this.popupList.filter(p => p.element === element);
+    }
+
+    private keepPopupPositionedRelativeTo(params: {
+        ePopup: HTMLElement,
+        element: HTMLElement,
+        hidePopup: () => void;
+    }): AgPromise<() => void> {
+        const eParent = this.getPopupParent();
+        const parentRect = eParent.getBoundingClientRect();
+
+        const { element, ePopup } = params;
+
+        const sourceRect = element.getBoundingClientRect();
+        const initialDiffTop = parentRect.top - sourceRect.top;
+        const initialDiffLeft = parentRect.left - sourceRect.left;
+
+        let lastDiffTop = initialDiffTop;
+        let lastDiffLeft = initialDiffLeft;
+
+        const topPx = ePopup.style.top;
+        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
+
+        const leftPx = ePopup.style.left;
+        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
+
+        return new AgPromise<() => void>(resolve => {
+            this.getFrameworkOverrides().setInterval(() => {
+                const pRect = eParent.getBoundingClientRect();
+                const sRect = element.getBoundingClientRect();
+
+                const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                if (elementNotInDom) {
+                    params.hidePopup();
+                    return;
+                }
+
+                const currentDiffTop = pRect.top - sRect.top;
+                if (currentDiffTop != lastDiffTop) {
+                    const newTop = this.keepXYWithinBounds(ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
+                    ePopup.style.top = `${newTop}px`;
+                }
+                lastDiffTop = currentDiffTop;
+
+                const currentDiffLeft = pRect.left - sRect.left;
+                if (currentDiffLeft != lastDiffLeft) {
+                    const newLeft = this.keepXYWithinBounds(ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
+                    ePopup.style.left = `${newLeft}px`;
+                }
+                lastDiffLeft = currentDiffLeft;
+
+            }, 200).then(intervalId => {
+                const result = () => {
+                    if (intervalId != null) {
+                        window.clearInterval(intervalId);
+                    }
+                };
+                resolve(result);
+            });
+        });
     }
 
     public hasAnchoredPopup(): boolean {
