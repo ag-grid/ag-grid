@@ -99,14 +99,12 @@ new Vue({
 
 <note>
 | We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
-| in use is how you import the dependency:
+| in use is how you import the dependency (see the table below).
 |
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
 |
 | For more information on import types please refer to the documentation [here.](/modules/)
-|
-| This tutorial, as well as ll of our examples, use Vue 2 by default.
 |
 | For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
 |
