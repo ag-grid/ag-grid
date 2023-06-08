@@ -443,8 +443,6 @@ export class RowContainerCtrl extends BeanStub {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
             const doesRowMatch = (rowCtrl: RowCtrl) => {
-                if (!rowCtrl.isAlive()) { return false; }
-
                 const fullWidthRow = rowCtrl.isFullWidth();
                 const embedFW = this.embedFullWidthRows || printLayout;
 
