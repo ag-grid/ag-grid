@@ -237,15 +237,24 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     GroupCellRendererCtrl.prototype.adjustParamsWithDetailsFromRelatedColumn = function () {
         var relatedColumn = this.displayedGroupNode.rowGroupColumn;
         var column = this.params.column;
-        // if doing full width, we use the related column instead
-        if (column == null && relatedColumn) {
-            var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, this.params.node, this.params.value);
-            // we don't update the original params, as they could of come through React,
-            // as react has RowGroupCellRenderer, which means the params could be props which
-            // would be read only
-            return __assign(__assign({}, this.params), { valueFormatted: valueFormatted });
+        if (!relatedColumn) {
+            return this.params;
         }
-        return this.params;
+        var notFullWidth = column != null;
+        if (notFullWidth) {
+            var showingThisRowGroup = column.isRowGroupDisplayed(relatedColumn.getId());
+            if (!showingThisRowGroup) {
+                return this.params;
+            }
+        }
+        var params = this.params;
+        var _a = this.params, value = _a.value, node = _a.node;
+        var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
+        // we don't update the original params, as they could of come through React,
+        // as react has RowGroupCellRenderer, which means the params could be props which
+        // would be read only
+        var paramsAdjusted = __assign(__assign({}, params), { valueFormatted: valueFormatted });
+        return paramsAdjusted;
     };
     GroupCellRendererCtrl.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;

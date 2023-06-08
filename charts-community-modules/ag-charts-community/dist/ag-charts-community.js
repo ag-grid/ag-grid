@@ -5737,7 +5737,6 @@
                 element.innerHTML = html;
             }
             else if (!element.innerHTML) {
-                this.toggle(false);
                 return;
             }
             var limit = function (low, actual, high) {
@@ -14346,7 +14345,12 @@
             if (content == null) {
                 content = (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.content;
             }
-            this.states[callerId] = { content: content, meta: meta };
+            if (!content) {
+                delete this.states[callerId];
+            }
+            else {
+                this.states[callerId] = { content: content, meta: meta };
+            }
             this.applyStates();
         };
         TooltipManager.prototype.updateExclusiveRect = function (callerId, area) {

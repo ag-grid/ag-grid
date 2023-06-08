@@ -19786,15 +19786,24 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     GroupCellRendererCtrl.prototype.adjustParamsWithDetailsFromRelatedColumn = function () {
         var relatedColumn = this.displayedGroupNode.rowGroupColumn;
         var column = this.params.column;
-        // if doing full width, we use the related column instead
-        if (column == null && relatedColumn) {
-            var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, this.params.node, this.params.value);
-            // we don't update the original params, as they could of come through React,
-            // as react has RowGroupCellRenderer, which means the params could be props which
-            // would be read only
-            return __assign(__assign({}, this.params), { valueFormatted: valueFormatted });
+        if (!relatedColumn) {
+            return this.params;
         }
-        return this.params;
+        var notFullWidth = column != null;
+        if (notFullWidth) {
+            var showingThisRowGroup = column.isRowGroupDisplayed(relatedColumn.getId());
+            if (!showingThisRowGroup) {
+                return this.params;
+            }
+        }
+        var params = this.params;
+        var _a = this.params, value = _a.value, node = _a.node;
+        var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
+        // we don't update the original params, as they could of come through React,
+        // as react has RowGroupCellRenderer, which means the params could be props which
+        // would be read only
+        var paramsAdjusted = __assign(__assign({}, params), { valueFormatted: valueFormatted });
+        return paramsAdjusted;
     };
     GroupCellRendererCtrl.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;
@@ -41491,9 +41500,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(function (fullWidthRowCtrl) {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     };
     RowRenderer.prototype.getCellRendererInstances = function (params) {
         var _this = this;
@@ -41806,21 +41813,33 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.refreshFullWidthRow = function (rowNode) {
-        var fullWidthCtrl = this.getFullWidthRowCtrls().find(function (rowCtrl) { return rowCtrl.getRowNode() === rowNode; });
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    };
+    RowRenderer.prototype.refreshFullWidthRows = function (rowNodes) {
+        var _this = this;
+        var fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        var redraw = false;
+        var indicesToForce = [];
+        fullWidthCtrls.forEach(function (fullWidthCtrl) {
+            var refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            var node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                _this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        var refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     };
     RowRenderer.prototype.createOrUpdateRowCtrl = function (rowIndex, rowsToRecycle, animate, afterScroll) {
         var rowNode;
@@ -55004,6 +55023,10 @@ var DataTypeService = /** @class */ (function (_super) {
     }
     DataTypeService.prototype.init = function () {
         var _this = this;
+        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.addManagedPropertyListener('groupHideOpenParents', function () {
+            _this.groupHideOpenParents = _this.gridOptionsService.is('groupHideOpenParents');
+        });
         this.processDataTypeDefinitions();
         this.addManagedPropertyListener('dataTypeDefinitions', function () {
             _this.processDataTypeDefinitions();
@@ -55089,11 +55112,12 @@ var DataTypeService = /** @class */ (function (_super) {
         return true;
     };
     DataTypeService.prototype.createGroupSafeValueFormatter = function (dataTypeDefinition) {
+        var _this = this;
         if (!dataTypeDefinition.valueFormatter) {
             return undefined;
         }
         return function (params) {
-            var _a;
+            var _a, _b;
             if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
                 var aggFunc = params.column.getAggFunc();
                 if (aggFunc) {
@@ -55101,7 +55125,7 @@ var DataTypeService = /** @class */ (function (_super) {
                     if (aggFunc === 'first' || aggFunc === 'last') {
                         return dataTypeDefinition.valueFormatter(params);
                     }
-                    if (dataTypeDefinition.baseDataType === 'number') {
+                    if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
                         if (typeof params.value === 'number') {
                             return dataTypeDefinition.valueFormatter(params);
                         }
@@ -55117,6 +55141,14 @@ var DataTypeService = /** @class */ (function (_super) {
                             }
                         }
                     }
+                }
+                return undefined;
+            }
+            else if (_this.groupHideOpenParents && params.column.isRowGroupActive()) {
+                // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
+                // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
+                if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
+                    return dataTypeDefinition.valueFormatter(params);
                 }
                 return undefined;
             }

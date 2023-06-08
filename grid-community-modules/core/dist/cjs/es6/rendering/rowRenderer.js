@@ -480,9 +480,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     }
     getCellRendererInstances(params) {
         var _a;
@@ -786,21 +784,32 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         });
     }
     refreshFullWidthRow(rowNode) {
-        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    }
+    refreshFullWidthRows(rowNodes) {
+        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        let redraw = false;
+        const indicesToForce = [];
+        fullWidthCtrls.forEach(fullWidthCtrl => {
+            const refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            const node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        const refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {
         let rowNode;

@@ -122,6 +122,7 @@ export declare class RowRenderer extends BeanStub {
     private redrawFullWidthEmbeddedRows;
     getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[];
     refreshFullWidthRow(rowNode: RowNode): void;
+    private refreshFullWidthRows;
     private createOrUpdateRowCtrl;
     private destroyRowCtrls;
     private getRowBuffer;

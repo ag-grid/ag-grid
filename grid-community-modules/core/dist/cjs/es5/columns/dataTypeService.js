@@ -95,6 +95,10 @@ var DataTypeService = /** @class */ (function (_super) {
     }
     DataTypeService.prototype.init = function () {
         var _this = this;
+        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.addManagedPropertyListener('groupHideOpenParents', function () {
+            _this.groupHideOpenParents = _this.gridOptionsService.is('groupHideOpenParents');
+        });
         this.processDataTypeDefinitions();
         this.addManagedPropertyListener('dataTypeDefinitions', function () {
             _this.processDataTypeDefinitions();
@@ -180,11 +184,12 @@ var DataTypeService = /** @class */ (function (_super) {
         return true;
     };
     DataTypeService.prototype.createGroupSafeValueFormatter = function (dataTypeDefinition) {
+        var _this = this;
         if (!dataTypeDefinition.valueFormatter) {
             return undefined;
         }
         return function (params) {
-            var _a;
+            var _a, _b;
             if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
                 var aggFunc = params.column.getAggFunc();
                 if (aggFunc) {
@@ -192,7 +197,7 @@ var DataTypeService = /** @class */ (function (_super) {
                     if (aggFunc === 'first' || aggFunc === 'last') {
                         return dataTypeDefinition.valueFormatter(params);
                     }
-                    if (dataTypeDefinition.baseDataType === 'number') {
+                    if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
                         if (typeof params.value === 'number') {
                             return dataTypeDefinition.valueFormatter(params);
                         }
@@ -208,6 +213,14 @@ var DataTypeService = /** @class */ (function (_super) {
                             }
                         }
                     }
+                }
+                return undefined;
+            }
+            else if (_this.groupHideOpenParents && params.column.isRowGroupActive()) {
+                // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
+                // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
+                if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
+                    return dataTypeDefinition.valueFormatter(params);
                 }
                 return undefined;
             }

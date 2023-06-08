@@ -4751,7 +4751,6 @@ class Tooltip {
             element.innerHTML = html;
         }
         else if (!element.innerHTML) {
-            this.toggle(false);
             return;
         }
         const limit = (low, actual, high) => {
@@ -11365,7 +11364,12 @@ class TooltipManager {
         if (content == null) {
             content = (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.content;
         }
-        this.states[callerId] = { content, meta };
+        if (!content) {
+            delete this.states[callerId];
+        }
+        else {
+            this.states[callerId] = { content, meta };
+        }
         this.applyStates();
     }
     updateExclusiveRect(callerId, area) {

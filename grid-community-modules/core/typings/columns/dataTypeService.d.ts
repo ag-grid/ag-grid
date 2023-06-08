@@ -11,6 +11,7 @@ export declare class DataTypeService extends BeanStub {
     private isWaitingForRowData;
     private hasObjectValueParser;
     private hasObjectValueFormatter;
+    private groupHideOpenParents;
     init(): void;
     private processDataTypeDefinitions;
     private mergeDataTypeDefinitions;

@@ -207,15 +207,24 @@ export class GroupCellRendererCtrl extends BeanStub {
     adjustParamsWithDetailsFromRelatedColumn() {
         const relatedColumn = this.displayedGroupNode.rowGroupColumn;
         const column = this.params.column;
-        // if doing full width, we use the related column instead
-        if (column == null && relatedColumn) {
-            const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, this.params.node, this.params.value);
-            // we don't update the original params, as they could of come through React,
-            // as react has RowGroupCellRenderer, which means the params could be props which
-            // would be read only
-            return Object.assign(Object.assign({}, this.params), { valueFormatted });
+        if (!relatedColumn) {
+            return this.params;
         }
-        return this.params;
+        const notFullWidth = column != null;
+        if (notFullWidth) {
+            const showingThisRowGroup = column.isRowGroupDisplayed(relatedColumn.getId());
+            if (!showingThisRowGroup) {
+                return this.params;
+            }
+        }
+        const params = this.params;
+        const { value, node } = this.params;
+        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
+        // we don't update the original params, as they could of come through React,
+        // as react has RowGroupCellRenderer, which means the params could be props which
+        // would be read only
+        const paramsAdjusted = Object.assign(Object.assign({}, params), { valueFormatted: valueFormatted });
+        return paramsAdjusted;
     }
     addFooterValue() {
         const footerValueGetter = this.params.footerValueGetter;

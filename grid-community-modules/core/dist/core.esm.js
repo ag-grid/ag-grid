@@ -17359,15 +17359,24 @@ class GroupCellRendererCtrl extends BeanStub {
     adjustParamsWithDetailsFromRelatedColumn() {
         const relatedColumn = this.displayedGroupNode.rowGroupColumn;
         const column = this.params.column;
-        // if doing full width, we use the related column instead
-        if (column == null && relatedColumn) {
-            const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, this.params.node, this.params.value);
-            // we don't update the original params, as they could of come through React,
-            // as react has RowGroupCellRenderer, which means the params could be props which
-            // would be read only
-            return Object.assign(Object.assign({}, this.params), { valueFormatted });
+        if (!relatedColumn) {
+            return this.params;
         }
-        return this.params;
+        const notFullWidth = column != null;
+        if (notFullWidth) {
+            const showingThisRowGroup = column.isRowGroupDisplayed(relatedColumn.getId());
+            if (!showingThisRowGroup) {
+                return this.params;
+            }
+        }
+        const params = this.params;
+        const { value, node } = this.params;
+        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
+        // we don't update the original params, as they could of come through React,
+        // as react has RowGroupCellRenderer, which means the params could be props which
+        // would be read only
+        const paramsAdjusted = Object.assign(Object.assign({}, params), { valueFormatted: valueFormatted });
+        return paramsAdjusted;
     }
     addFooterValue() {
         const footerValueGetter = this.params.footerValueGetter;
@@ -34234,9 +34243,7 @@ let RowRenderer = class RowRenderer extends BeanStub {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     }
     getCellRendererInstances(params) {
         var _a;
@@ -34535,21 +34542,32 @@ let RowRenderer = class RowRenderer extends BeanStub {
         });
     }
     refreshFullWidthRow(rowNode) {
-        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    }
+    refreshFullWidthRows(rowNodes) {
+        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        let redraw = false;
+        const indicesToForce = [];
+        fullWidthCtrls.forEach(fullWidthCtrl => {
+            const refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            const node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        const refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {
         let rowNode;
@@ -44433,6 +44451,10 @@ let DataTypeService = class DataTypeService extends BeanStub {
         this.isWaitingForRowData = false;
     }
     init() {
+        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.addManagedPropertyListener('groupHideOpenParents', () => {
+            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        });
         this.processDataTypeDefinitions();
         this.addManagedPropertyListener('dataTypeDefinitions', () => {
             this.processDataTypeDefinitions();
@@ -44522,7 +44544,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
             return undefined;
         }
         return (params) => {
-            var _a;
+            var _a, _b;
             if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
                 const aggFunc = params.column.getAggFunc();
                 if (aggFunc) {
@@ -44530,7 +44552,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                     if (aggFunc === 'first' || aggFunc === 'last') {
                         return dataTypeDefinition.valueFormatter(params);
                     }
-                    if (dataTypeDefinition.baseDataType === 'number') {
+                    if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
                         if (typeof params.value === 'number') {
                             return dataTypeDefinition.valueFormatter(params);
                         }
@@ -44546,6 +44568,14 @@ let DataTypeService = class DataTypeService extends BeanStub {
                             }
                         }
                     }
+                }
+                return undefined;
+            }
+            else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
+                // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
+                // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
+                if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
+                    return dataTypeDefinition.valueFormatter(params);
                 }
                 return undefined;
             }

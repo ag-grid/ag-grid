@@ -548,9 +548,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(function (fullWidthRowCtrl) {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     };
     RowRenderer.prototype.getCellRendererInstances = function (params) {
         var _this = this;
@@ -863,21 +861,33 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.refreshFullWidthRow = function (rowNode) {
-        var fullWidthCtrl = this.getFullWidthRowCtrls().find(function (rowCtrl) { return rowCtrl.getRowNode() === rowNode; });
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    };
+    RowRenderer.prototype.refreshFullWidthRows = function (rowNodes) {
+        var _this = this;
+        var fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        var redraw = false;
+        var indicesToForce = [];
+        fullWidthCtrls.forEach(function (fullWidthCtrl) {
+            var refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            var node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                _this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        var refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     };
     RowRenderer.prototype.createOrUpdateRowCtrl = function (rowIndex, rowsToRecycle, animate, afterScroll) {
         var rowNode;

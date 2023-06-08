@@ -45,6 +45,10 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
         this.isWaitingForRowData = false;
     }
     init() {
+        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.addManagedPropertyListener('groupHideOpenParents', () => {
+            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        });
         this.processDataTypeDefinitions();
         this.addManagedPropertyListener('dataTypeDefinitions', () => {
             this.processDataTypeDefinitions();
@@ -134,7 +138,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
             return undefined;
         }
         return (params) => {
-            var _a;
+            var _a, _b;
             if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
                 const aggFunc = params.column.getAggFunc();
                 if (aggFunc) {
@@ -142,7 +146,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                     if (aggFunc === 'first' || aggFunc === 'last') {
                         return dataTypeDefinition.valueFormatter(params);
                     }
-                    if (dataTypeDefinition.baseDataType === 'number') {
+                    if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
                         if (typeof params.value === 'number') {
                             return dataTypeDefinition.valueFormatter(params);
                         }
@@ -158,6 +162,14 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                             }
                         }
                     }
+                }
+                return undefined;
+            }
+            else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
+                // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
+                // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
+                if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
+                    return dataTypeDefinition.valueFormatter(params);
                 }
                 return undefined;
             }

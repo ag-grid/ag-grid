@@ -239,7 +239,6 @@ class Tooltip {
             element.innerHTML = html;
         }
         else if (!element.innerHTML) {
-            this.toggle(false);
             return;
         }
         const limit = (low, actual, high) => {
