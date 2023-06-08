@@ -8,6 +8,7 @@ import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
 import { createMoveMouse } from './createMoveMouse';
 import { moveTarget } from './move';
+import { removeDragAndDropHandles } from './removeDragAndDropHandles';
 
 interface DragColumnToRowGroupPanelParams {
     mouse: Mouse;
@@ -98,8 +99,5 @@ export async function dragColumnToRowGroupPanel({
         scriptDebugger?.errorLog('No dragged header item:', headerCellName);
     }
 
-    // Clean up any dangling drag items
-    document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
-        el.remove();
-    });
+    removeDragAndDropHandles();
 }
