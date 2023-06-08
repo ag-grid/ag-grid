@@ -39,6 +39,8 @@ import {
     AgRadarLineSeriesOptions,
     AgRadarLineSeriesTooltip,
     AgRadarLineSeriesTooltipRendererParams,
+    AgAngleCategoryAxisOptions,
+    AgRadiusNumberAxisOptions,
 } from './radar-line/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 import {
@@ -110,7 +112,7 @@ declare module 'ag-charts-community' {
         crosshair?: AgCrosshairOptions;
     }
 
-    export type AgPolarAxisOptions = any;
+    export type AgPolarAxisOptions = AgAngleCategoryAxisOptions | AgRadiusNumberAxisOptions;
 
     export interface AgPolarChartOptions {
         contextMenu?: AgContextMenuOptions;
