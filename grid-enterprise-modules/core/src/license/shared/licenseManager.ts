@@ -26,7 +26,7 @@ export class LicenseManager {
 
     public validateLicense(): void {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         } else if (LicenseManager.licenseKey.length > 32) {
@@ -75,7 +75,7 @@ export class LicenseManager {
     }
 
     public getLicenseDetails(licenseKey: string) {
-        const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(licenseKey);
+        const { md5, license, version, isTrial } = LicenseManager.extractLicenseComponents(licenseKey);
         let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
         let trialExpired: null | boolean = null;
 
@@ -84,7 +84,7 @@ export class LicenseManager {
             expiry = LicenseManager.extractExpiry(license);
             valid = !isNaN(expiry.getTime());
 
-            if(isTrial) {
+            if (isTrial) {
                 const now = new Date();
                 trialExpired = (expiry < now);
             }
@@ -101,7 +101,7 @@ export class LicenseManager {
     }
 
     public isDisplayWatermark(): boolean {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     }
 
     public getWatermarkMessage(): string {
@@ -114,6 +114,14 @@ export class LicenseManager {
         const {hostname = ''} = loc;
 
         return hostname;
+    }
+
+    private isForceWatermark(): boolean {
+        const win = (this.document.defaultView || window);
+        const loc = win.location;
+        const { pathname } = loc;
+
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     }
 
     private isWebsiteUrl(): boolean {

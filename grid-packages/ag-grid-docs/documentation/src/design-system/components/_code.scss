@@ -27,6 +27,7 @@ pre.code code {
 
 pre.code {
     --comment-color: hsl(120, 30%, 40%);
+    --tag-color: #a31515;
     --string-color: #a31515;
     --punctuation-color: #393a34;
     --symbol-color: #36acaa;
@@ -197,7 +198,10 @@ code[class*='language-css'] {
     color: var(--class-name-color);
 }
 
-.token.tag,
+.token.tag {
+    color: var(--tag-color);
+}
+
 .token.selector {
     color: var(--selector-color);
 }
@@ -207,6 +211,10 @@ code[class*='language-css'] {
 .token.regex,
 .token.entity {
     color: var(--property-color);
+}
+
+.language-css .token.property {
+    color: var(--tag-color)
 }
 
 .line-numbers .line-numbers-rows {

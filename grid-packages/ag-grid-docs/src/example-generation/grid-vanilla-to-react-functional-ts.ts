@@ -312,7 +312,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 'use strict';
 
 ${imports.join('\n')}
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\n// LicenseManager.setLicenseKey('');\n" : ''}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 

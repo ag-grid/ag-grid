@@ -171,7 +171,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[], allS
 
 ${imports.join('\n')}${bindings.classes.length > 0 ? `\n\n${bindings.classes.join('\n')}` : ''}
 
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\n// LicenseManager.setLicenseKey('');\n" : ''}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
         class GridExample extends Component {
     constructor(props) {
