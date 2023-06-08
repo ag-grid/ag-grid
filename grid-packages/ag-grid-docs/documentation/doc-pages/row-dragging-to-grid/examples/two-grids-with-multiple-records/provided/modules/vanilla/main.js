@@ -118,7 +118,7 @@ function addGridDropZone(params) {
                     })
                 });
             } else if (deselectCheck) {
-                params.api.setNodesSelected({ nodes, newValue: false });
+                leftGridOptions.api.setNodesSelected({ nodes, newValue: false });
             }
         }
     });

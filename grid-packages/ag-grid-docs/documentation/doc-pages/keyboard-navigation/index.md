@@ -12,7 +12,7 @@ If a cell on the first grid row is focused and you press <kbd>↑</kbd>, the foc
 
 Use <kbd>Page Up</kbd> and <kbd>Page Down</kbd> to move the scroll up and down by one page. Use <kbd>Home</kbd> and <kbd>End</kbd> to go to the first and last rows.
 
-<note>
+<note disableMarkdown='true'>
 When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
 </note>
 

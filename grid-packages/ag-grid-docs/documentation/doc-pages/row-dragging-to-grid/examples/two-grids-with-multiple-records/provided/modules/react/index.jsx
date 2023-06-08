@@ -156,29 +156,32 @@ class GridExample extends Component {
                         remove: nodes.map(function (node) { return node.data; })
                     });
                 } else if (this.state.radioChecked === 1) {
-                    params.api.setNodesSelected({ nodes, newValue: false });
+                    this.state.leftApi.setNodesSelected({ nodes, newValue: false });
                 }
             }
         });
 
+        this.state.leftApi.removeRowDropZone(dropZoneParams);
         this.state.leftApi.addRowDropZone(dropZoneParams);
     }
 
     onGridReady(params, side) {
+        const addGridDropZone = () => {
+            if (this.state.leftApi && this.state.rightApi) {
+                this.addGridDropZone();
+            }
+        }
         if (side === 0) {
             this.setState({
                 leftApi: params.api,
                 leftColumnApi: params.columnApi
-            });
+            }, () => addGridDropZone());
         }
 
         if (side === 1) {
             this.setState({
                 rightApi: params.api,
-            });
-        }
-        if (this.state.leftApi && this.state.rightApi) {
-            this.addGridDropZone();
+            }, () => addGridDropZone());
         }
     }
 

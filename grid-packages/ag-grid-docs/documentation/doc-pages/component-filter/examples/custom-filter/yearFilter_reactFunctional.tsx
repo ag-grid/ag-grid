@@ -35,7 +35,7 @@ export default forwardRef((props: IFilterParams, ref) => {
 
     return (
         <div style={{ display: "inline-block", width: "400px" }} onChange={onYearChange}>
-            <div style={{ padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center" }}>This is a very wide filter</div>
+            <div style={{ padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center" }}>Select Year Range</div>
             <label style={{ margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999" }}>
                 <input type="radio" name="year" value="All" checked={year === 'All'} /> All
             </label>

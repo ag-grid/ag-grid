@@ -29,6 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     resizable: true,
+    cellDataType: false,
   },
 
   enableRangeSelection: true,

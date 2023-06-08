@@ -122,7 +122,7 @@ The behaviour of paste changes depending whether you have a single cell or a ran
 - When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
 - When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
-<note>
+<note disableMarkdown='true'>
 The 'paste' operation in the context menu is not possible and hence always disabled.
 It is not possible because of a browser security restriction that JavaScript cannot
 take data from the clipboard without the user explicitly doing a paste command from the browser

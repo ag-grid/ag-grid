@@ -19,5 +19,5 @@ The example below shows both types of animation cell renders in action. To test,
 <grid-example title='Animation Renderers' name='animation-renderers' type='generated' options='{ "exampleHeight": 530 }'></grid-example>
 
 <note>
-We hope you like the animation cell renderers. However you can also take inspiration from them, and create your own animations in your own cell renderers. Check out our source code on GitHub to see how we implemented these cell renderers for inspiration.
+We hope you like the animation cell renderers. However you can also take inspiration from them, and create your own animations in your own cell renderers. Check out our source code on [GitHub](https://github.com/ag-grid/ag-grid/tree/latest/grid-community-modules/core/src/ts/rendering/cellRenderers) to see how we implemented these cell renderers for inspiration.
 </note>

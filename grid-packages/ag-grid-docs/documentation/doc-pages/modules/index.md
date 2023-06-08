@@ -249,37 +249,35 @@ Using the same real-world example from above the `package.json` dependencies wil
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-|import React, { Component } from 'react';
+|import React, { useState } from 'react';
 |import { createRoot } from 'react-dom/client';
 |import { AgGridReact } from '@ag-grid-community/react';
+|
 |import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 |import { CsvExportModule } from "@ag-grid-community/csv-export";
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 |import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 |
-|export default class GridExample extends Component {
-|    // ...rest of class..
+|const GridExample = () => {
+|    // ... rest of function ...
 |
-|    render() {
-|        return (
-|            &lt;div style=&lt;span>{&lt;/span>{height: 400, width: 900}} className="ag-theme-alpine">
-|                &lt;AgGridReact
-|                    // properties
-|                    columnDefs={this.state.columnDefs}
-|                    rowData={this.props.rowData}
-|                    modules={[
-|                        ClientSideRowModelModule,
-|                        CsvExportModule,
-|                        ExcelExportModule,
-|                        MasterDetailModule
-|                    ]}
+|    return (
+|        &lt;div style={{height: 400, width: 900}} className="ag-theme-alpine">
+|            &lt;AgGridReact
+|                // properties
+|                columnDefs={columnDefs}
+|                rowData={rowData}
 |
-|                    // events
-|                    onGridReady={this.onGridReady}>
-|                &lt;/AgGridReact>
-|            &lt;/div>
-|        )
-|    }
+|                // Pass Modules to this individual grid
+|                modules={[
+|                    ClientSideRowModelModule,
+|                    CsvExportModule,
+|                    ExcelExportModule,
+|                    MasterDetailModule
+|                ]}>
+|            &lt;/AgGridReact>
+|        &lt;/div>
+|    );
 |};
 </snippet>
 </framework-specific-section>
