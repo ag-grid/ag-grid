@@ -231,9 +231,9 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             if (!compPromise) {
                 return;
             }
-            var parentModel = _this.filterManager.getCurrentFloatingFilterParentModel(_this.column);
             compPromise.then(function (comp) {
                 if (comp) {
+                    var parentModel = _this.filterManager.getCurrentFloatingFilterParentModel(_this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });

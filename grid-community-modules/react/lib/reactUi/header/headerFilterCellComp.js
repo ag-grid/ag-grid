@@ -37,31 +37,20 @@ const HeaderFilterCellComp = (props) => {
     const eFloatingFilterBody = react_1.useRef(null);
     const eButtonWrapper = react_1.useRef(null);
     const eButtonShowMainFilter = react_1.useRef(null);
-    const alreadyResolved = react_1.useRef(false);
     const userCompResolve = react_1.useRef();
     const userCompPromise = react_1.useRef();
-    useEffectOnce_1.useLayoutEffectOnce(() => {
-        userCompPromise.current = new core_1.AgPromise(resolve => {
-            userCompResolve.current = resolve;
-        });
-    });
     const userCompRef = (value) => {
-        // i don't know why, but react was calling this method multiple
-        // times, thus un-setting, them immediately setting the reference again.
-        // because we are resolving a promise, it's not good to be resolving
-        // the promise multiple times, so we only resolve the first time.
-        if (alreadyResolved.current) {
-            return;
-        }
-        // we also skip when it's un-setting
+        // We skip when it's un-setting
         if (value == null) {
             return;
         }
         userCompResolve.current && userCompResolve.current(value);
-        alreadyResolved.current = true;
     };
     const { ctrl } = props;
     useEffectOnce_1.useLayoutEffectOnce(() => {
+        userCompPromise.current = new core_1.AgPromise(resolve => {
+            userCompResolve.current = resolve;
+        });
         const compProxy = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses(prev => prev.setClass(name, on)),

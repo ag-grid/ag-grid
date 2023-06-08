@@ -397,7 +397,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
     }
     removePopupFromPopupList(element) {
         this.setPopupPositionRelatedToElement(element, null);
-        this.popupList = this.popupList.filter(p => p.element === element);
+        this.popupList = this.popupList.filter(p => p.element !== element);
     }
     keepPopupPositionedRelativeTo(params) {
         const eParent = this.getPopupParent();

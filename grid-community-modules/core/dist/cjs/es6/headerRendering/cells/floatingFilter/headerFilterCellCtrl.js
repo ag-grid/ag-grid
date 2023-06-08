@@ -211,9 +211,9 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
             if (!compPromise) {
                 return;
             }
-            const parentModel = this.filterManager.getCurrentFloatingFilterParentModel(this.column);
             compPromise.then(comp => {
                 if (comp) {
+                    const parentModel = this.filterManager.getCurrentFloatingFilterParentModel(this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });

@@ -451,7 +451,7 @@ var PopupService = /** @class */ (function (_super) {
     };
     PopupService.prototype.removePopupFromPopupList = function (element) {
         this.setPopupPositionRelatedToElement(element, null);
-        this.popupList = this.popupList.filter(function (p) { return p.element === element; });
+        this.popupList = this.popupList.filter(function (p) { return p.element !== element; });
     };
     PopupService.prototype.keepPopupPositionedRelativeTo = function (params) {
         var _this = this;
