@@ -55,10 +55,13 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             return;
         }
 
-        this.getGui().appendChild(headerGroupComp.getGui());
+        const eGui = this.getGui();
+        const eHeaderGroupGui = headerGroupComp.getGui();
+
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
 
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     }
 
 }

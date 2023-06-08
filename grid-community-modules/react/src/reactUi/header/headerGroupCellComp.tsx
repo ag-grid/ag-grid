@@ -50,15 +50,8 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     // add drag handling, must be done after component is added to the dom
     useEffect(()=> {
-        let userCompDomElement: HTMLElement | undefined = undefined;
         if (eGui.current) {
-            eGui.current.childNodes.forEach(node => {
-                if (node != null && node !== eResize.current) {
-                    userCompDomElement = node as HTMLElement;
-                }
-            });
-
-            userCompDomElement && ctrl.setDragSource(userCompDomElement);
+            ctrl.setDragSource(eGui.current);
         }
     }, [userCompDetails]);
 

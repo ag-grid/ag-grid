@@ -66,7 +66,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return value != null ? value : '';
     }
 
-    public extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode) {
+    public extractRowCellValue(
+        column: Column,
+        index: number,
+        accumulatedRowIndex: number,
+        type: string,
+        node: RowNode
+    ): { value: any, valueFormatted?: string | null } {
         // we render the group summary text e.g. "-> Parent -> Child"...
         const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
         const value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
@@ -82,7 +88,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             type
         });
 
-        return processedValue != null ? processedValue : '';
+        return processedValue;
     }
 
     private shouldRenderGroupSummaryCell(node: RowNode, column: Column, currentColumnIndex: number): boolean {
@@ -146,28 +152,35 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return isFooter ? `Total ${groupValue}` : groupValue;
     }
 
-    private processCell(params: { accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string }): any {
+    private processCell(params: {
+        accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string
+    }): { value: any, valueFormatted?: string | null } {
         const { accumulatedRowIndex, rowNode, column, value, processCellCallback, type } = params;
 
         if (processCellCallback) {
-            return processCellCallback({
-                accumulatedRowIndex,
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-                type: type,
-                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
-                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
-            });
+            return {
+                value: processCellCallback({
+                    accumulatedRowIndex,
+                    column: column,
+                    node: rowNode,
+                    value: value,
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    type: type,
+                    parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
+                    formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
+                }) ?? ''
+            };
         }
 
         if (column.getColDef().useValueFormatterForExport) {
-            return this.valueFormatterService.formatValue(column, rowNode, value) ?? value ?? '';
+            return {
+                value: value ?? '', 
+                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+            };
         }
 
-        return value != null ? value : '';
+        return { value: value ?? '' };
     }
 }

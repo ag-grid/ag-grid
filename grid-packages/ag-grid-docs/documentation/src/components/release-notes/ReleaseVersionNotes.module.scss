@@ -1,0 +1,14 @@
+@use '../../design-system' as *;
+
+.markdown {
+    li > ul {
+        margin-bottom: $size-2;
+    }
+
+    // Style <h5> as <u> to match previous releases
+    h5 {
+        font-size: var(--font-size-medium);
+        font-weight: var(--font-weight-normal);
+        text-decoration: underline;
+    }
+}

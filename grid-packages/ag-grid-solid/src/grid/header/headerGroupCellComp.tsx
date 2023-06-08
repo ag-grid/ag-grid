@@ -40,16 +40,9 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     // add drag handling, must be done after component is added to the dom
     createEffect(()=> {
         const userCompDetails = getUserCompDetails();
-        if (userCompDetails==null) { return; }
+        if (userCompDetails == null) { return; }
 
-        let userCompDomElement: HTMLElement | undefined = undefined;
-        eGui.childNodes.forEach( node => {
-            if (node!=null && node!==eResize) {
-                userCompDomElement = node as HTMLElement;
-            }
-        });
-
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        ctrl.setDragSource(eGui);
     });
 
     const style = createMemo( ()=> ({

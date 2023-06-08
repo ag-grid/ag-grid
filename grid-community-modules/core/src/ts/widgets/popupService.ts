@@ -527,7 +527,6 @@ export class PopupService extends BeanStub {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });

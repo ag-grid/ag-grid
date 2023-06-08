@@ -1,6 +1,7 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
+import { removeDragAndDropHandles } from '../../lib/scriptActions/removeDragAndDropHandles';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { createScriptRunner as createScriptRunnerCore, RunScriptState } from '../../lib/scriptRunner';
 import { EasingFunction } from '../../lib/tween';
@@ -55,6 +56,7 @@ export function createScriptRunner({
 
             if (state === 'stopping' || state === 'inactive' || state === 'errored') {
                 mouse.hide();
+                removeDragAndDropHandles();
             }
 
             onStateChange && onStateChange(state);
