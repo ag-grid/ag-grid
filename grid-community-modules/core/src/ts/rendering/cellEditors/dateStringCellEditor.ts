@@ -11,7 +11,10 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any> extend
     min?: string | Date;
     /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     max?: string | Date;
-    /** Granularity of the value when updating. Default: 'any'. */
+    /**
+     * Size of the value change when stepping up/down, starting from `min` or the initial value if provided.
+     * Defaults to any value allowed.
+     */
     step?: number;
 }
 
