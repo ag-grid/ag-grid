@@ -280,7 +280,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
 ${imports.join('\n')}
 
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\n// LicenseManager.setLicenseKey('');\n" : ''}
 
 ${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 

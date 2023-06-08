@@ -226,7 +226,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
 
         let generatedOutput = `
 ${imports.join('\n')}
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\n// LicenseManager.setLicenseKey('');\n" : ''}
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({
