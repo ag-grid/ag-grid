@@ -38,4 +38,3 @@ export declare class InteractionManager extends BaseManager<InteractionTypes, In
     private buildEvent;
 }
 export {};
-//# sourceMappingURL=interactionManager.d.ts.map

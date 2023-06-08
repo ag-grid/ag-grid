@@ -47,4 +47,3 @@ export declare class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Sca
     };
 }
 export {};
-//# sourceMappingURL=chartAxis.d.ts.map

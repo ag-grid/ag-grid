@@ -72,4 +72,3 @@ export declare function getFont(fontProps: TextSizeProperties): string;
 export declare function measureText(lines: string[], x: number, y: number, textProps: TextSizeProperties): BBox;
 export declare function splitText(text?: string): string[];
 export {};
-//# sourceMappingURL=text.d.ts.map

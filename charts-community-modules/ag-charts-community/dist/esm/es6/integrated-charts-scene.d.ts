@@ -28,4 +28,3 @@ export { HdpiCanvas } from './canvas/hdpiCanvas';
 export { BBox } from './scene/bbox';
 export { Image } from './scene/image';
 export { Path2D } from './scene/path2D';
-//# sourceMappingURL=integrated-charts-scene.d.ts.map

@@ -17,4 +17,3 @@ export declare function tickFormat(ticks: any[], formatter?: string): (n: number
     valueOf(): number;
 }) => string;
 export {};
-//# sourceMappingURL=numberFormat.d.ts.map

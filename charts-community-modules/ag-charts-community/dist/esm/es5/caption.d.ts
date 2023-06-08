@@ -18,4 +18,3 @@ export declare class Caption {
     constructor();
     computeTextWrap(containerWidth: number, containerHeight: number): void;
 }
-//# sourceMappingURL=caption.d.ts.map

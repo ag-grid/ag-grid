@@ -52,4 +52,3 @@ export declare class BandScale<D> implements Scale<D, number, number> {
     round: boolean;
     update(): void;
 }
-//# sourceMappingURL=bandScale.d.ts.map

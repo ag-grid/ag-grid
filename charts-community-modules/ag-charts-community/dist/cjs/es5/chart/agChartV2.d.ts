@@ -55,4 +55,3 @@ export declare abstract class AgChart {
     static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string>;
 }
 export {};
-//# sourceMappingURL=agChartV2.d.ts.map

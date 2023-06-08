@@ -13,4 +13,3 @@ export class ChartHighlight {
 __decorate([
     Validate(STRING_UNION('tooltip', 'node'))
 ], ChartHighlight.prototype, "range", void 0);
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2hhcnRIaWdobGlnaHQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9zcmMvY2hhcnQvY2hhcnRIaWdobGlnaHQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQUEsT0FBTyxFQUFFLFlBQVksRUFBRSxRQUFRLEVBQUUsTUFBTSxvQkFBb0IsQ0FBQztBQUU1RCxNQUFNLE9BQU8sY0FBYztJQUEzQjtRQUVXLFVBQUssR0FBdUIsU0FBUyxDQUFDO0lBQ2pELENBQUM7Q0FBQTtBQURHO0lBREMsUUFBUSxDQUFDLFlBQVksQ0FBQyxTQUFTLEVBQUUsTUFBTSxDQUFDLENBQUM7NkNBQ0cifQ==

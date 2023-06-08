@@ -6,4 +6,3 @@ export declare class NumericTicks extends Array<number> {
     constructor(fractionDigits: number, elements?: Array<number>);
 }
 export declare function range(start: number, stop: number, step: number): NumericTicks;
-//# sourceMappingURL=ticks.d.ts.map

@@ -55,4 +55,3 @@ export declare class Tooltip {
     private updateShowArrow;
 }
 export {};
-//# sourceMappingURL=tooltip.d.ts.map

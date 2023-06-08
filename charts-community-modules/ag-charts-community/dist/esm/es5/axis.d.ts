@@ -314,4 +314,3 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
     protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
 }
 export {};
-//# sourceMappingURL=axis.d.ts.map

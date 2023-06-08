@@ -30,4 +30,3 @@ export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Ser
         hideWhenNecessary: boolean;
     }, _seriesRect: BBox): BBox | null;
 }
-//# sourceMappingURL=polarSeries.d.ts.map

@@ -4,4 +4,3 @@ export declare class Diamond extends Marker {
     static moves: MarkerPathMove[];
     updatePath(): void;
 }
-//# sourceMappingURL=diamond.d.ts.map

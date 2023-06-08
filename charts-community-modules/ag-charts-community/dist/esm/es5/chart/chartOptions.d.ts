@@ -8,4 +8,3 @@ export declare function getJsonApplyOptions(): {
         [x: string]: ("object" | "function" | "array" | "primitive" | "class-instance" | null)[];
     };
 };
-//# sourceMappingURL=chartOptions.d.ts.map

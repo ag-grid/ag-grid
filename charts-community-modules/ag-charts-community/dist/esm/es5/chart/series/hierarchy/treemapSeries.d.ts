@@ -133,4 +133,3 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     getLegendData(): ChartLegendDatum[];
 }
 export {};
-//# sourceMappingURL=treemapSeries.d.ts.map

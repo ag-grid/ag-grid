@@ -11,4 +11,3 @@ export { utcHour } from './utcHour';
 export { utcDay } from './utcDay';
 export { utcMonth } from './utcMonth';
 export { utcYear } from './utcYear';
-//# sourceMappingURL=index.d.ts.map

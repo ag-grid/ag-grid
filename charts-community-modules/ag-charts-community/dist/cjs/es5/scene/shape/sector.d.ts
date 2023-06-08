@@ -13,4 +13,3 @@ export declare class Sector extends Path {
     updatePath(): void;
     isPointInPath(x: number, y: number): boolean;
 }
-//# sourceMappingURL=sector.d.ts.map
