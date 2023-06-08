@@ -301,7 +301,6 @@ export class Tooltip {
         if (html !== undefined) {
             element.innerHTML = html;
         } else if (!element.innerHTML) {
-            this.toggle(false);
             return;
         }
 
