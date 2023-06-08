@@ -26,7 +26,7 @@ export class LicenseManager {
 
     public validateLicense(): void {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         } else if (LicenseManager.licenseKey.length > 32) {
@@ -101,7 +101,7 @@ export class LicenseManager {
     }
 
     public isDisplayWatermark(): boolean {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     }
 
     public getWatermarkMessage(): string {
@@ -114,6 +114,14 @@ export class LicenseManager {
         const {hostname = ''} = loc;
 
         return hostname;
+    }
+
+    private isForceWatermark(): boolean {
+        const win = (this.document.defaultView || window);
+        const loc = win.location;
+        const { pathname } = loc;
+
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     }
 
     private isWebsiteUrl(): boolean {
