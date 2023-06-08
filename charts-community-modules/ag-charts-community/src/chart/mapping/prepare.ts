@@ -18,8 +18,8 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
+import { AXIS_TYPES } from '../factory/axisTypes';
 import { CHART_TYPES } from '../factory/chartTypes';
-import { CHART_AXES_TYPES } from '../chartAxesTypes';
 import { getSeriesDefaults } from '../factory/seriesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
@@ -84,7 +84,7 @@ function isAxisOptionType(input?: string): input is NonNullable<AxesOptionsTypes
     if (input == null) {
         return false;
     }
-    return CHART_AXES_TYPES.has(input);
+    return AXIS_TYPES.has(input);
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -193,7 +193,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
         const isAxisType = isAxisOptionType(type);
         if (!isAxisType) {
             Logger.warnOnce(
-                `AG Charts - unknown axis type: ${type}; expected one of: ${CHART_AXES_TYPES.axesTypes}, ignoring.`
+                `AG Charts - unknown axis type: ${type}; expected one of: ${AXIS_TYPES.axesTypes}, ignoring.`
             );
         }
 

@@ -6,7 +6,7 @@ import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgAxisCaptionFormatterParams, AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisModule, ModuleInstance } from '../util/module';
+import { AxisOptionModule, ModuleInstance } from '../util/module';
 import { AxisContext, ModuleContext } from '../util/moduleContext';
 
 interface BoundSeries {
@@ -126,7 +126,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     }
 
     private axisContext?: AxisContext;
-    addModule(module: AxisModule) {
+    addModule(module: AxisOptionModule) {
         if (this.modules[module.optionsKey] != null) {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
@@ -163,13 +163,13 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         (this as any)[module.optionsKey] = moduleInstance;
     }
 
-    removeModule(module: AxisModule) {
+    removeModule(module: AxisOptionModule) {
         this.modules[module.optionsKey]?.instance?.destroy();
         delete this.modules[module.optionsKey];
         delete (this as any)[module.optionsKey];
     }
 
-    isModuleEnabled(module: AxisModule) {
+    isModuleEnabled(module: AxisOptionModule) {
         return this.modules[module.optionsKey] != null;
     }
 

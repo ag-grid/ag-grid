@@ -15,6 +15,7 @@ import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
 import { Series } from './series/series';
+import { getAxis } from './factory/axisTypes';
 import { getSeries } from './factory/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
@@ -24,11 +25,6 @@ import { ScatterSeries } from './series/cartesian/scatterSeries';
 import { PieSeries, PieTitle } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
-import { LogAxis } from './axis/logAxis';
-import { NumberAxis } from './axis/numberAxis';
-import { CategoryAxis } from './axis/categoryAxis';
-import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
 import { TypedEventListener } from '../util/observable';
@@ -43,15 +39,13 @@ import {
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, RootModule } from '../util/module';
+import { AxisOptionModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { getJsonApplyOptions } from './chartOptions';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
 import { setupModules } from './factory/setupModules';
-import { AngleCategoryAxis } from './axis/angleCategoryAxis';
-import { RadiusNumberAxis } from './axis/radiusNumberAxis';
 
 type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
@@ -583,33 +577,7 @@ function createAxis(chart: Chart, options: any[]): ChartAxis[] {
 
     let index = 0;
     for (const axisOptions of options ?? []) {
-        let axis;
-        switch (axisOptions.type) {
-            case 'number':
-                axis = new NumberAxis(moduleContext);
-                break;
-            case LogAxis.type:
-                axis = new LogAxis(moduleContext);
-                break;
-            case CategoryAxis.type:
-                axis = new CategoryAxis(moduleContext);
-                break;
-            case GroupedCategoryAxis.type:
-                axis = new GroupedCategoryAxis(moduleContext);
-                break;
-            case TimeAxis.type:
-                axis = new TimeAxis(moduleContext);
-                break;
-            case AngleCategoryAxis.type:
-                axis = new AngleCategoryAxis(moduleContext);
-                break;
-            case RadiusNumberAxis.type:
-                axis = new RadiusNumberAxis(moduleContext);
-                break;
-            default:
-                throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
-        }
-
+        const axis = getAxis(axisOptions.type, moduleContext);
         const path = `axes[${index++}]`;
         applyAxisModules(axis, axisOptions);
         applyOptionValues(axis, axisOptions, { path, skip });
@@ -622,7 +590,7 @@ function createAxis(chart: Chart, options: any[]): ChartAxis[] {
 
 function applyAxisModules(axis: ChartAxis<any>, options: AgBaseAxisOptions) {
     let modulesChanged = false;
-    const rootModules = REGISTERED_MODULES.filter((m): m is AxisModule => m.type === 'axis');
+    const rootModules = REGISTERED_MODULES.filter((m): m is AxisOptionModule => m.type === 'axis-option');
 
     for (const next of rootModules) {
         const shouldBeEnabled = (options as any)[next.optionsKey] != null;

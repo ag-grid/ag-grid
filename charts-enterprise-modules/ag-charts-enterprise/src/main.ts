@@ -28,6 +28,8 @@ import {
 import { AgNavigatorOptions } from './navigator/main';
 import {
     RadarLineModule,
+    AngleCategoryAxisModule,
+    RadiusNumberAxisModule,
     AgRadarLineSeriesLabelFormatterParams,
     AgRadarLineSeriesLabelOptions,
     AgRadarLineSeriesMarker,
@@ -51,6 +53,7 @@ import {
 
 export * from 'ag-charts-community';
 
+_ModuleSupport.registerModule(AngleCategoryAxisModule);
 _ModuleSupport.registerModule(AnimationModule);
 _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
@@ -58,6 +61,7 @@ _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
 _ModuleSupport.registerModule(RadarLineModule);
+_ModuleSupport.registerModule(RadiusNumberAxisModule);
 _ModuleSupport.registerModule(WaterfallBarModule);
 _ModuleSupport.registerModule(WaterfallColumnModule);
 _ModuleSupport.registerModule(ZoomModule);
@@ -106,8 +110,12 @@ declare module 'ag-charts-community' {
         crosshair?: AgCrosshairOptions;
     }
 
+    export type AgPolarAxisOptions = any;
+
     export interface AgPolarChartOptions {
         contextMenu?: AgContextMenuOptions;
+        /** Axis configurations. */
+        axes?: AgPolarAxisOptions[];
     }
 
     export interface AgHierarchyChartOptions {
