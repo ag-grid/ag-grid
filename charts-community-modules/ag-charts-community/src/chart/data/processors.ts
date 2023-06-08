@@ -4,6 +4,7 @@ import {
     PropertyId,
     PropertyValueProcessorDefinition,
     ReducerOutputPropertyDefinition,
+    ProcessedData,
 } from './dataModel';
 
 export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
@@ -138,4 +139,53 @@ export function normalisePropertyTo(
             }
         },
     };
+}
+
+export function diff(previousData: ProcessedData<any>): ProcessorOutputPropertyDefinition<any> {
+    return {
+        type: 'processor',
+        property: 'diff',
+        calculate: (processedData) => {
+            const diff = {
+                changed: false,
+                added: [] as any[],
+                updated: [] as any[],
+                removed: [] as any[],
+            };
+
+            processedData?.data.forEach((datum) => {
+                const previous = previousData?.data.find((previous) => arraysEqual(datum.keys, previous.keys));
+
+                if (previous && !arraysEqual(datum.values, previous.values)) {
+                    diff.updated.push(datum.keys);
+                } else if (!previous) {
+                    diff.added.push(datum.keys);
+                }
+            });
+
+            previousData?.data.forEach((previous) => {
+                const datum = processedData?.data.find((datum) => arraysEqual(previous.keys, datum.keys));
+
+                if (!datum) {
+                    diff.removed.push(previous.keys);
+                }
+            });
+
+            diff.changed = diff.added.length > 0 || diff.updated.length > 0 || diff.removed.length > 0;
+
+            return diff;
+        },
+    };
+}
+
+function arraysEqual(a: any[], b: any[]): boolean {
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+        if (Array.isArray(a[i]) && Array.isArray(b[i])) return arraysEqual(a[i], b[i]);
+        if (a[i] !== b[i]) return false;
+    }
+
+    return true;
 }

@@ -53,7 +53,7 @@ import { LogAxis } from '../../axis/logAxis';
 import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
-import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
+import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
 import { ModuleContext } from '../../../util/module';
@@ -327,6 +327,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
         }
 
+        if (this.processedData) {
+            extraProps.push(diff(this.processedData));
+        }
+
         this.dataModel = new DataModel<any, any, true>({
             props: [
                 keyProperty(xKey, isContinuousX),
@@ -346,6 +350,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             x: this.processedData?.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
             y: Infinity,
         };
+
+        this.animationState.transition('updateData');
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -607,12 +613,18 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return new Rect();
     }
 
+    datumSelectionGarbageCollection = false;
+
     protected async updateDatumSelection(opts: {
         nodeData: BarNodeDatum[];
         datumSelection: Selection<Rect, BarNodeDatum>;
     }) {
         const { nodeData, datumSelection } = opts;
-        return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar));
+
+        const key = this.processedData?.defs.keys[0];
+        const getDatumId = key ? (datum: BarNodeDatum) => datum.datum[key.property] : undefined;
+
+        return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar), getDatumId);
     }
 
     protected async updateDatumNodes(opts: { datumSelection: Selection<Rect, BarNodeDatum>; isHighlight: boolean }) {
@@ -936,6 +948,30 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
+    animateRect(
+        id: string,
+        rect: Rect,
+        props: Array<{ from: number; to: number }>,
+        duration: number,
+        delay: number = 0,
+        onComplete?: () => void
+    ) {
+        this.animationManager?.animateMany(id, props, {
+            disableInteractions: true,
+            delay,
+            duration,
+            ease: easing.easeOut,
+            repeat: 0,
+            onUpdate([x, width, y, height]) {
+                rect.x = x;
+                rect.width = width;
+                rect.y = y;
+                rect.height = height;
+            },
+            onComplete,
+        });
+    }
+
     animateEmptyUpdateReady({
         datumSelections,
         labelSelections,
@@ -957,25 +993,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                this.animationManager?.animateMany(
+                this.animateRect(
                     `${this.id}_empty-update-ready_${rect.id}`,
+                    rect,
                     [
                         { from: startingX, to: datum.x },
                         { from: 0, to: datum.width },
+                        { from: datum.y, to: datum.y },
+                        { from: datum.height, to: datum.height },
                     ],
-                    {
-                        disableInteractions: true,
-                        duration,
-                        ease: easing.easeOut,
-                        repeat: 0,
-                        onUpdate([x, width]) {
-                            rect.x = x;
-                            rect.width = width;
-
-                            rect.y = datum.y;
-                            rect.height = datum.height;
-                        },
-                    }
+                    duration
                 );
             });
         });
@@ -997,12 +1024,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
     }
 
-    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
-        datumSelections.forEach((datumSelection) => {
-            this.resetSelectionRects(datumSelection);
-        });
-    }
-
     animateReadyHighlight(highlightSelection: Selection<Rect, BarNodeDatum>) {
         this.resetSelectionRects(highlightSelection);
     }
@@ -1011,6 +1032,79 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.animationManager?.stop();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        const { processedData } = this;
+
+        const diff = processedData?.reduced?.diff;
+
+        if (!diff?.changed) {
+            datumSelections.forEach((datumSelection) => {
+                this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+
+        const totalDuration = 1000;
+        let sectionDuration = totalDuration;
+        if (diff.added.length > 0 && diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        } else if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+
+        let startingX = Infinity;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingX = Math.min(startingX, datum.x);
+                }
+            })
+        );
+
+        const keys = this.processedData?.defs.keys;
+        const keyMatches = (find: string[], datum: BarNodeDatum) =>
+            find.every((k, i) => k === datum.datum[keys![i].property]);
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                let props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                let delay = diff.removed.length > 0 ? sectionDuration : 0;
+                let duration = sectionDuration;
+                let cleanup = false;
+
+                if (keys && diff.added.find((a: string[]) => keyMatches(a, datum))) {
+                    props = [
+                        { from: startingX, to: datum.x },
+                        { from: 0, to: datum.width },
+                        { from: datum.y, to: datum.y },
+                        { from: datum.height, to: datum.height },
+                    ];
+                    delay += sectionDuration;
+                    duration = sectionDuration;
+                } else if (keys && diff.removed.find((r: string[]) => keyMatches(r, datum))) {
+                    props = [
+                        { from: datum.x, to: startingX },
+                        { from: datum.width, to: 0 },
+                        { from: datum.y, to: datum.y },
+                        { from: datum.height, to: datum.height },
+                    ];
+                    delay = 0;
+                    duration = sectionDuration;
+                    cleanup = true;
+                }
+
+                this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
+                    if (cleanup) datumSelection.cleanup();
+                });
+            });
         });
     }
 
@@ -1073,25 +1167,16 @@ export class ColumnSeries extends BarSeries {
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                this.animationManager?.animateMany(
+                this.animateRect(
                     `${this.id}_empty-update-ready_${rect.id}`,
+                    rect,
                     [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
                         { from: startingY, to: datum.y },
                         { from: 0, to: datum.height },
                     ],
-                    {
-                        disableInteractions: true,
-                        duration,
-                        ease: easing.easeOut,
-                        repeat: 0,
-                        onUpdate([y, height]) {
-                            rect.y = y;
-                            rect.height = height;
-
-                            rect.x = datum.x;
-                            rect.width = datum.width;
-                        },
-                    }
+                    duration
                 );
             });
         });
@@ -1108,6 +1193,85 @@ export class ColumnSeries extends BarSeries {
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
+                });
+            });
+        });
+    }
+
+    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        const { processedData } = this;
+
+        const diff = processedData?.reduced?.diff;
+
+        if (!diff?.changed) {
+            datumSelections.forEach((datumSelection) => {
+                this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+
+        const totalDuration = 1000;
+        let sectionDuration = totalDuration;
+        if (diff.added.length > 0 && diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        } else if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        const keys = this.processedData?.defs.keys;
+        const keyMatches = (find: string[], datum: BarNodeDatum) =>
+            find.every((k, i) => k === datum.datum[keys![i].property]);
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                let props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                let delay = diff.removed.length > 0 ? sectionDuration : 0;
+                let duration = sectionDuration;
+                let cleanup = false;
+
+                if (keys && diff.added.find((a: string[]) => keyMatches(a, datum))) {
+                    props = [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ];
+                    delay += sectionDuration;
+                    duration = sectionDuration;
+                } else if (keys && diff.removed.find((r: string[]) => keyMatches(r, datum))) {
+                    props = [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
+                        { from: datum.y, to: startingY },
+                        { from: datum.height, to: 0 },
+                    ];
+                    delay = 0;
+                    duration = sectionDuration;
+                    cleanup = true;
+                }
+
+                this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
+                    if (cleanup) datumSelection.cleanup();
                 });
             });
         });
