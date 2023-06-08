@@ -7,7 +7,7 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
   selector: 'year-component',
   template: `
       <div style="display: inline-block; width: 400px;">
-      <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter</div>
+      <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">Select Year Range</div>
       <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
         <input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'All'"/> All
       </label>

@@ -37,12 +37,12 @@
 |    }, [year]);
 |
 |    return (
-|        &lt;div style={{display: "inline-block", width: "400px"}} onChange={onYearChange}>
-|            &lt;div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>This is a very wide filter&lt;/div>
-|            &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|        &lt;div onChange={onYearChange}>
+|            &lt;div>Select Year Range&lt;/div>
+|            &lt;label>
 |                &lt;input type="radio" name="year" value="All" checked={year === 'All'}/> All
 |            &lt;/label>
-|            &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|            &lt;label>
 |                &lt;input type="radio" name="year" value="2010"/> Since 2010
 |            &lt;/label>
 |        &lt;/div>

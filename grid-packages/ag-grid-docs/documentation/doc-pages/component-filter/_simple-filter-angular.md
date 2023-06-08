@@ -10,12 +10,12 @@
 |@Component({
 |    selector: 'year-filter',
 |    template: `
-|      &lt;div style="display: inline-block; width: 400px;">
-|           &lt;div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter&lt;/div>
-|           &lt;label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+|      &lt;div>
+|           &lt;div>Select Year Range&lt;/div>
+|           &lt;label>
 |               &lt;input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'All'"/> All
 |           &lt;/label>
-|           &lt;label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+|           &lt;label >
 |               &lt;input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'2010'"/> Since 2010
 |           &lt;/label>
 |      &lt;/div>
