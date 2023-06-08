@@ -72,9 +72,6 @@ In other words, when the rows do not fit, the grid applies an amplifier to the v
 The grid does this by moving rows up as you scroll down, making the impression of the scrolling moving
 faster, and allowing the grid to display more rows than would otherwise fit inside a div.
 
-In the example, because the grid property `debug=true`, the grid prints a) what percentage the vertical
-scrollbar has scrolled and b) the resultant Row Offset that is getting applied.
-
 The example also displays in Column Expected Position what the row position would be if the grid
 was not stretching rows.
 
