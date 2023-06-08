@@ -77,6 +77,7 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
 
     const [ready, setReady] = useState(false);
     const [happy, setHappy] = useState<boolean>(isHappy(props.value));
+    const [done, setDone] = useState(false);
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event: any) => {
@@ -88,6 +89,10 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
             }
         }
     };
+
+    useEffect(() => {
+        if(done) props.stopEditing();
+    }, [done]);
 
     useEffect(() => {
         (ReactDOM.findDOMNode(refContainer.current) as any).focus();
@@ -144,9 +149,11 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
+                setDone(true);
             }} style={happyStyle} />
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
+                setDone(true);
             }} style={sadStyle} />
         </div>
     );
