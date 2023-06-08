@@ -84,7 +84,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell?: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
-    protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
+    protected abstract createCell(styleId: string | null, type: T, value: string, valueFormatted?: string | null): ExcelCell;
     protected abstract addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
@@ -284,7 +284,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 return;
             }
 
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
@@ -296,7 +296,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             } else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }
