@@ -21,7 +21,7 @@ const VideoSection = ({ id, title, header, children }) => {
                     <iframe
                         className={styles.ytIframe}
                         title={title}
-                        src={`https://www.youtube.com/embed/${id}`}
+                        src={`https://www.youtube-nocookie.com/embed/${id}`}
                         frameBorder="0"
                         modestbranding="1"
                         allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
