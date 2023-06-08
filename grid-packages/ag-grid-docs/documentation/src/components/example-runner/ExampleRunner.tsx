@@ -542,12 +542,12 @@ const ExampleRunnerInner = ({
         }
     }
 
-    const exampleHeight = exampleInfo.options.exampleHeight || '500px';
+    const exampleHeight = exampleInfo.options.exampleHeight || 500;
 
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <div id={exampleInfo.linkId} style={{ minHeight: `calc(${exampleHeight} + 48px)` }}>
+        <div id={exampleInfo.linkId} style={{ minHeight: `${exampleHeight + 48}px` }}>
             {hasWindow && (
                 <div className={classnames('tabs-outer', styles.tabsContainer)}>
                     <header className={classnames('tabs-header', styles.header)}>

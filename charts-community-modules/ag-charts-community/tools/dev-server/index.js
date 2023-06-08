@@ -20,8 +20,9 @@ const ES_VERSION_MAP = {
 };
 const ES_VERSION = ES_VERSION_MAP[arg('es')] ?? null;
 
-const ROOT_DIR = '../..';
-const SRC_ENTRY = '../ag-charts-community/src/main.ts';
+const ROOT_DIR = '../../..';
+const SRC_ENTRY_COMMUNITY = '../../charts-community-modules/ag-charts-community/src/main.ts';
+const SRC_ENTRY_ENTERPRISE = '../../charts-enterprise-modules/ag-charts-enterprise/src/main.ts';
 const DOC_PAGES_DIR = '../../grid-packages/ag-grid-docs/documentation/doc-pages';
 const LOCAL_EXAMPLES_DIR = 'tools/dev-server/my-examples';
 const TEMPLATES_DIR = `tools/dev-server/templates`;
@@ -122,7 +123,7 @@ async function run() {
 
     // Transpile TS files for charts and examples
     const transpiler = transpileTSAndWatch({
-        entries: [SRC_ENTRY, ...examples.map((example) => example.ts)],
+        entries: [SRC_ENTRY_COMMUNITY, SRC_ENTRY_ENTERPRISE, ...examples.map((example) => example.ts)],
         compilerOptions: {
             downlevelIteration: true,
             experimentalDecorators: true,
@@ -134,14 +135,16 @@ async function run() {
             lib: ['lib.es2017.d.ts', 'lib.dom.d.ts'],
             baseUrl: ROOT_DIR,
             paths: {
-                'ag-charts-community': [path.relative(ROOT_DIR, SRC_ENTRY)],
+                'ag-charts-community': [path.relative(ROOT_DIR, SRC_ENTRY_COMMUNITY)],
+                'ag-charts-enterprise': [path.relative(ROOT_DIR, SRC_ENTRY_ENTERPRISE)],
             },
             target: ts.ScriptTarget[ES_VERSION],
         },
         debounce: DEBOUNCE,
         emit: ($file, $content) => {
             const file = path.relative(ROOT_DIR, $file);
-            const agChartsFile = path.relative(ROOT_DIR, SRC_ENTRY).replace(/\.ts$/, '.js');
+            const agChartsCommunityFile = path.relative(ROOT_DIR, SRC_ENTRY_COMMUNITY).replace(/\.ts$/, '.js');
+            const agChartsEnterpriseFile = path.relative(ROOT_DIR, SRC_ENTRY_ENTERPRISE).replace(/\.ts$/, '.js');
 
             let content = $content;
             if (file.endsWith('.js')) {
@@ -151,7 +154,8 @@ async function run() {
                 content = $content
                     .replace(/^(import ['"]\..*?)(['"];?)$/gm, '$1.js$2')
                     .replace(/( from ['"]\..*?)(['"];?)$/gm, '$1.js$2')
-                    .replace(/( from ['"])ag-charts-community(['"])/g, `$1/${agChartsFile}$2`);
+                    .replace(/( from ['"])ag-charts-community(['"])/g, `$1/${agChartsCommunityFile}$2`)
+                    .replace(/( from ['"])ag-charts-enterprise(['"])/g, `$1/${agChartsEnterpriseFile}$2`);
             }
 
             devServer.addStaticFile(file, content);

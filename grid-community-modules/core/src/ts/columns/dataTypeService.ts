@@ -63,9 +63,14 @@ export class DataTypeService extends BeanStub {
     private isWaitingForRowData: boolean = false;
     private hasObjectValueParser: boolean;
     private hasObjectValueFormatter: boolean;
+    private groupHideOpenParents: boolean;
 
     @PostConstruct
     public init(): void {
+        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.addManagedPropertyListener('groupHideOpenParents', () => {
+            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        });
         this.processDataTypeDefinitions();
 
         this.addManagedPropertyListener('dataTypeDefinitions', () => {
@@ -210,7 +215,7 @@ export class DataTypeService extends BeanStub {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (dataTypeDefinition.baseDataType === 'number') {
+                    if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
                         if (typeof params.value === 'number') {
                             return dataTypeDefinition.valueFormatter!(params);
                         }
@@ -237,6 +242,13 @@ export class DataTypeService extends BeanStub {
                     }
                 }
 
+                return undefined as any;
+            } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
+                // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
+                // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
+                if (typeof params.value !== 'string' || dataTypeDefinition.dataTypeMatcher?.(params.value)) {
+                    return dataTypeDefinition.valueFormatter!(params);
+                }
                 return undefined as any;
             }
             return dataTypeDefinition.valueFormatter!(params);
