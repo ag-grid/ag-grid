@@ -11,56 +11,25 @@ const Announcements = ({ framework }) => (
     <>
         <div className={styles.versions}>
             <Version
-                version="29.3.0"
-                date="Apr 20"
+                version="30.0.0"
+                date="Jun 9"
                 highlights={[
                     {
-                        text: 'Sticky Column Group Labels',
-                        url: 'https://ag-grid.com/javascript-data-grid/column-groups/#sticky-label',
+                        text: 'Cell Data Types',
+                        url: 'https://ag-grid.com/javascript-data-grid/cell-data-types/',
                     },
                     {
-                        text: 'SSRM Sticky Group Rows',
-                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#sticky-groups',
+                        text: 'New Built-In Cell Editors',
+                        url: 'https://ag-grid.com/javascript-data-grid/provided-cell-editors/',
                     },
                     {
-                        text: 'Chart Tooltip Positioning',
-                        url: 'https://ag-grid.com/javascript-charts/tooltips/#tooltip-position',
-                    },
-                ]}
-            ></Version>
-            <Version
-                version="29.2.0"
-                date="Mar 21"
-                highlights={[
-                    {
-                        text: 'Multiple Filter Conditions',
-                        url: 'https://ag-grid.com/javascript-data-grid/filter-conditions/#number-of-conditions',
+                        text: 'Grid-Specific Modules',
+                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers',
                     },
                     {
-                        text: 'SSRM Header Checkbox Selection',
-                        url:
-                            'https://ag-grid.com/javascript-data-grid/server-side-model-selection/#header-checkbox-selection',
+                        text: 'SSRM Row Group Footers',
+                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers',
                     },
-                    {
-                        text: 'Span Header Height',
-                        url: 'https://ag-grid.com/javascript-data-grid/column-groups/#span-header-height',
-                    },
-                    {
-                        text: 'Chart Interaction Ranges',
-                        url: 'https://ag-grid.com/javascript-charts/events/#interaction-ranges',
-                    },
-                    { text: 'Chart Overlays', url: 'https://ag-grid.com/javascript-charts/overlays/' },
-                ]}
-            ></Version>
-            <Version
-                version="29.1.0"
-                date="Feb 17"
-                highlights={[
-                    {
-                        text: 'Row Group Column Filter',
-                        url: 'https://ag-grid.com/javascript-data-grid/grouping-column-filter/',
-                    },
-                    { text: 'Axis Ticks Enhancements', url: 'https://ag-grid.com/javascript-charts/axes/#axis-ticks' },
                 ]}
             ></Version>
         </div>
