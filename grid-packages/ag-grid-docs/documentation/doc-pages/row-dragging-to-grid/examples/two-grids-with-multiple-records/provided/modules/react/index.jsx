@@ -217,7 +217,7 @@ class GridExample extends Component {
                     getRowId={this.getRowId}
                     rowDragManaged={true}
                     animateRows={true}
-                    rowSelection={id === 0 ? "multiple" : undefined}
+                    rowSelection="multiple"
                     rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
