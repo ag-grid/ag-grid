@@ -143,6 +143,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         return _this;
     }
     RichSelectCellEditor.prototype.init = function (params) {
+        var _a;
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
@@ -172,7 +173,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         var debounceDelay = core._.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
         this.clearSearchString = core._.debounce(this.clearSearchString, debounceDelay);
-        if (core._.exists(params.eventKey)) {
+        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
             this.searchText(params.eventKey);
         }
     };

@@ -18621,7 +18621,7 @@ var __values$C = (undefined && undefined.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
-var defaultTooltipCss$1 = "\n." + DEFAULT_TOOLTIP_CLASS + " {\n    transition: transform 0.1s ease;\n    display: table;\n    position: fixed;\n    left: 0px;\n    top: 0px;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-no-interaction {\n    pointer-events: none;\n    user-select: none;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-no-animation {\n    transition: none !important;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-hidden {\n    visibility: hidden;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss$1 = "\n." + DEFAULT_TOOLTIP_CLASS + " {\n    transition: transform 0.1s ease;\n    display: table;\n    position: fixed;\n    left: 0px;\n    top: 0px;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-no-interaction {\n    pointer-events: none;\n    user-select: none;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-no-animation {\n    transition: none !important;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-hidden {\n    visibility: hidden;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n." + DEFAULT_TOOLTIP_CLASS + "-arrow:empty::before,\n." + DEFAULT_TOOLTIP_CLASS + "-arrow:empty::after {\n    visibility: hidden;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml$1(input, defaults) {
     var _a, _b, _c, _d;
     if (typeof input === 'string') {
@@ -18757,6 +18757,7 @@ var Tooltip = /** @class */ (function () {
             element.innerHTML = html;
         }
         else if (!element.innerHTML) {
+            this.toggle(false);
             return;
         }
         var limit = function (low, actual, high) {
@@ -23589,6 +23590,8 @@ var Axis = /** @class */ (function () {
             unchanged = regenerateTicks ? areArrayNumbersEqual(rawTicks, prevTicks) : false;
             index++;
         }
+        var shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+        terminate || (terminate = shouldTerminate);
         return { tickData: tickData, index: index, autoRotation: 0, terminate: terminate };
     };
     Axis.prototype.checkLabelOverlap = function (rotation, rotated, labelMatrix, tickData, labelX, textProps) {
@@ -56276,7 +56279,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var addPopupRes = this.popupService.addPopup({
+        this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
@@ -56287,18 +56290,20 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
             positionCallback: !!defaultTab ? function () { return positionCallback(menu); } : undefined,
-            anchorToElement: anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
-        // if user starts showing / hiding columns, or otherwise move the underlying column
-        // for this menu, we want to stop tracking the menu with the column position. otherwise
-        // the menu would move as the user is using the columns tab inside the menu.
-        this.addStopAnchoring(addPopupRes === null || addPopupRes === void 0 ? void 0 : addPopupRes.stopAnchoringPromise, column, closedFuncs);
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
             // reposition the menu because the method above could load
             // an element that is bigger than enterpriseMenu header.
             positionCallback(menu);
+        }
+        // if user starts showing / hiding columns, or otherwise move the underlying column
+        // for this menu, we want to stop tracking the menu with the column position. otherwise
+        // the menu would move as the user is using the columns tab inside the menu.
+        var stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+        if (stopAnchoringPromise) {
+            this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
@@ -56309,6 +56314,16 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }
+        });
+    };
+    EnterpriseMenuFactory.prototype.addStopAnchoring = function (stopAnchoringPromise, column, closedFuncsArr) {
+        stopAnchoringPromise.then(function (stopAnchoringFunc) {
+            column.addEventListener('leftChanged', stopAnchoringFunc);
+            column.addEventListener('visibleChanged', stopAnchoringFunc);
+            closedFuncsArr.push(function () {
+                column.removeEventListener('leftChanged', stopAnchoringFunc);
+                column.removeEventListener('visibleChanged', stopAnchoringFunc);
+            });
         });
     };
     EnterpriseMenuFactory.prototype.getClosedCallback = function (column, menu, headerPosition, columnIndex, eventSource) {
@@ -56344,19 +56359,6 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                 }
             }
         };
-    };
-    EnterpriseMenuFactory.prototype.addStopAnchoring = function (stopAnchoringPromise, column, closedFuncsArr) {
-        if (!stopAnchoringPromise) {
-            return;
-        }
-        stopAnchoringPromise.then(function (stopAnchoringFunc) {
-            column.addEventListener('leftChanged', stopAnchoringFunc);
-            column.addEventListener('visibleChanged', stopAnchoringFunc);
-            closedFuncsArr.push(function () {
-                column.removeEventListener('leftChanged', stopAnchoringFunc);
-                column.removeEventListener('visibleChanged', stopAnchoringFunc);
-            });
-        });
     };
     EnterpriseMenuFactory.prototype.getMenuParams = function (column, restrictToTabs, eventSource) {
         var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
@@ -58346,6 +58348,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         return _this;
     }
     RichSelectCellEditor.prototype.init = function (params) {
+        var _a;
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
@@ -58375,7 +58378,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         var debounceDelay = _.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
         this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
-        if (_.exists(params.eventKey)) {
+        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
             this.searchText(params.eventKey);
         }
     };

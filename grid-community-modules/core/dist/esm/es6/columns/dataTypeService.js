@@ -132,12 +132,29 @@ let DataTypeService = class DataTypeService extends BeanStub {
         }
         return (params) => {
             var _a;
-            if (((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) || params.column.isRowGroupActive()) {
-                const { aggFunc } = params.colDef;
-                if (aggFunc && (aggFunc === 'first' ||
-                    aggFunc === 'last' ||
-                    (dataTypeDefinition.baseDataType === 'number' && (aggFunc === 'sum' || aggFunc === 'min' || aggFunc === 'max' || aggFunc === 'avg')))) {
-                    return dataTypeDefinition.valueFormatter(params);
+            if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
+                const aggFunc = params.column.getAggFunc();
+                if (aggFunc) {
+                    // the resulting type of these will be the same, so we call valueFormatter anyway
+                    if (aggFunc === 'first' || aggFunc === 'last') {
+                        return dataTypeDefinition.valueFormatter(params);
+                    }
+                    if (dataTypeDefinition.baseDataType === 'number') {
+                        if (typeof params.value === 'number') {
+                            return dataTypeDefinition.valueFormatter(params);
+                        }
+                        if (typeof params.value === 'object') {
+                            if (!params.value) {
+                                return undefined;
+                            }
+                            if ('toNumber' in params.value) {
+                                return dataTypeDefinition.valueFormatter(Object.assign(Object.assign({}, params), { value: params.value.toNumber() }));
+                            }
+                            if ('value' in params.value) {
+                                return dataTypeDefinition.valueFormatter(Object.assign(Object.assign({}, params), { value: params.value.value }));
+                            }
+                        }
+                    }
                 }
                 return undefined;
             }

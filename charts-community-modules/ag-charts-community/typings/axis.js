@@ -882,6 +882,8 @@ var Axis = /** @class */ (function () {
             unchanged = regenerateTicks ? equal_1.areArrayNumbersEqual(rawTicks, prevTicks) : false;
             index++;
         }
+        var shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+        terminate || (terminate = shouldTerminate);
         return { tickData: tickData, index: index, autoRotation: 0, terminate: terminate };
     };
     Axis.prototype.checkLabelOverlap = function (rotation, rotated, labelMatrix, tickData, labelX, textProps) {

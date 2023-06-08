@@ -18847,24 +18847,15 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     GroupCellRendererCtrl.prototype.adjustParamsWithDetailsFromRelatedColumn = function () {
         var relatedColumn = this.displayedGroupNode.rowGroupColumn;
         var column = this.params.column;
-        if (!relatedColumn) {
-            return this.params;
+        // if doing full width, we use the related column instead
+        if (column == null && relatedColumn) {
+            var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, this.params.node, this.params.value);
+            // we don't update the original params, as they could of come through React,
+            // as react has RowGroupCellRenderer, which means the params could be props which
+            // would be read only
+            return __assign$8(__assign$8({}, this.params), { valueFormatted: valueFormatted });
         }
-        var notFullWidth = column != null;
-        if (notFullWidth) {
-            var showingThisRowGroup = column.isRowGroupDisplayed(relatedColumn.getId());
-            if (!showingThisRowGroup) {
-                return this.params;
-            }
-        }
-        var params = this.params;
-        var _a = this.params, value = _a.value, node = _a.node;
-        var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
-        // we don't update the original params, as they could of come through React,
-        // as react has RowGroupCellRenderer, which means the params could be props which
-        // would be read only
-        var paramsAdjusted = __assign$8(__assign$8({}, params), { valueFormatted: valueFormatted });
-        return paramsAdjusted;
+        return this.params;
     };
     GroupCellRendererCtrl.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;
@@ -41767,6 +41758,17 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign$i = (undefined && undefined.__assign) || function () {
+    __assign$i = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$i.apply(this, arguments);
+};
 var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -42017,73 +42019,42 @@ var PopupService = /** @class */ (function (_super) {
         var max = sizeOfParent - offsetSize;
         return Math.min(Math.max(position, 0), Math.abs(max));
     };
-    PopupService.prototype.keepPopupPositionedRelativeTo = function (params) {
-        var _this = this;
-        var eParent = this.getPopupParent();
-        var parentRect = eParent.getBoundingClientRect();
-        var sourceRect = params.element.getBoundingClientRect();
-        var initialDiffTop = parentRect.top - sourceRect.top;
-        var initialDiffLeft = parentRect.left - sourceRect.left;
-        var lastDiffTop = initialDiffTop;
-        var lastDiffLeft = initialDiffLeft;
-        var topPx = params.ePopup.style.top;
-        var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
-        var leftPx = params.ePopup.style.left;
-        var left = parseInt(leftPx.substring(0, leftPx.length - 1), 10);
-        return new AgPromise(function (resolve) {
-            _this.getFrameworkOverrides().setInterval(function () {
-                var pRect = eParent.getBoundingClientRect();
-                var sRect = params.element.getBoundingClientRect();
-                var elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-                if (elementNotInDom) {
-                    params.hidePopup();
-                    return;
-                }
-                var currentDiffTop = pRect.top - sRect.top;
-                if (currentDiffTop != lastDiffTop) {
-                    var newTop = _this.keepXYWithinBounds(params.ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
-                    params.ePopup.style.top = newTop + "px";
-                }
-                lastDiffTop = currentDiffTop;
-                var currentDiffLeft = pRect.left - sRect.left;
-                if (currentDiffLeft != lastDiffLeft) {
-                    var newLeft = _this.keepXYWithinBounds(params.ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
-                    params.ePopup.style.left = newLeft + "px";
-                }
-                lastDiffLeft = currentDiffLeft;
-            }, 200).then(function (intervalId) {
-                var result = function () {
-                    if (intervalId != null) {
-                        window.clearInterval(intervalId);
-                    }
-                };
-                resolve(result);
-            });
-        });
-    };
     PopupService.prototype.addPopup = function (params) {
-        var _a;
-        var _this = this;
-        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, afterGuiAttached = params.afterGuiAttached, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement, ariaLabel = params.ariaLabel;
         var eDocument = this.gridOptionsService.getDocument();
-        var destroyPositionTracker = new AgPromise(function (resolve) { return resolve(function () { }); });
+        var eChild = params.eChild, ariaLabel = params.ariaLabel, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
         if (!eDocument) {
             console.warn('AG Grid: could not find the document, document is empty');
-            return { hideFunc: function () { }, stopAnchoringPromise: destroyPositionTracker };
+            return { hideFunc: function () { } };
         }
         var pos = this.popupList.findIndex(function (popup) { return popup.element === eChild; });
         if (pos !== -1) {
             var popup = this.popupList[pos];
-            return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
+            return { hideFunc: popup.hideFunc };
         }
+        this.initialisePopupPosition(eChild);
+        var wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        var removeListeners = this.addEventListenersToPopup(__assign$i(__assign$i({}, params), { wrapperEl: wrapperEl }));
+        if (positionCallback) {
+            positionCallback();
+        }
+        this.addPopupToPopupList(eChild, wrapperEl, removeListeners, anchorToElement);
+        return {
+            hideFunc: removeListeners
+        };
+    };
+    PopupService.prototype.initialisePopupPosition = function (element) {
         var ePopupParent = this.getPopupParent();
         var ePopupParentRect = ePopupParent.getBoundingClientRect();
-        if (!exists(eChild.style.top)) {
-            eChild.style.top = ePopupParentRect.top * -1 + "px";
+        if (!exists(element.style.top)) {
+            element.style.top = ePopupParentRect.top * -1 + "px";
         }
-        if (!exists(eChild.style.left)) {
-            eChild.style.left = ePopupParentRect.left * -1 + "px";
+        if (!exists(element.style.left)) {
+            element.style.left = ePopupParentRect.left * -1 + "px";
         }
+    };
+    PopupService.prototype.createPopupWrapper = function (element, ariaLabel, alwaysOnTop) {
+        var _a;
+        var ePopupParent = this.getPopupParent();
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         var eWrapper = document.createElement('div');
@@ -42092,50 +42063,57 @@ var PopupService = /** @class */ (function (_super) {
             (_a = eWrapper.classList).add.apply(_a, __spreadArray$i([], __read$m(allThemes)));
         }
         eWrapper.classList.add('ag-popup');
-        eChild.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
-        if (!eChild.hasAttribute('role')) {
-            setAriaRole(eChild, 'dialog');
+        element.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
+        if (!element.hasAttribute('role')) {
+            setAriaRole(element, 'dialog');
         }
-        setAriaLabel(eChild, ariaLabel);
+        setAriaLabel(element, ariaLabel);
         if (this.focusService.isKeyboardMode()) {
-            eChild.classList.add(FocusService.AG_KEYBOARD_FOCUS);
+            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
         }
-        eWrapper.appendChild(eChild);
+        eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
-            this.setAlwaysOnTop(eWrapper, true);
+            this.setAlwaysOnTop(element, true);
         }
         else {
-            this.bringPopupToFront(eWrapper);
+            this.bringPopupToFront(element);
         }
+        return eWrapper;
+    };
+    PopupService.prototype.addEventListenersToPopup = function (params) {
+        var _this = this;
+        var eDocument = this.gridOptionsService.getDocument();
+        var ePopupParent = this.getPopupParent();
+        var wrapperEl = params.wrapperEl, popupEl = params.eChild, pointerEvent = params.click, closedCallback = params.closedCallback, afterGuiAttached = params.afterGuiAttached, closeOnEsc = params.closeOnEsc, modal = params.modal;
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
-            if (!eWrapper.contains(eDocument.activeElement)) {
+            if (!wrapperEl.contains(eDocument.activeElement)) {
                 return;
             }
             var key = event.key;
             if (key === KeyCode.ESCAPE) {
-                hidePopup({ keyboardEvent: event });
+                removeListeners({ keyboardEvent: event });
             }
         };
-        var hidePopupOnMouseEvent = function (event) { return hidePopup({ mouseEvent: event }); };
-        var hidePopupOnTouchEvent = function (event) { return hidePopup({ touchEvent: event }); };
-        var hidePopup = function (popupParams) {
+        var hidePopupOnMouseEvent = function (event) { return removeListeners({ mouseEvent: event }); };
+        var hidePopupOnTouchEvent = function (event) { return removeListeners({ touchEvent: event }); };
+        var removeListeners = function (popupParams) {
             if (popupParams === void 0) { popupParams = {}; }
             var mouseEvent = popupParams.mouseEvent, touchEvent = popupParams.touchEvent, keyboardEvent = popupParams.keyboardEvent;
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
-            _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, eChild) ||
+            _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, popupEl) ||
                 // if the event to close is actually the open event, then ignore it
-                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
+                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
                 return;
             }
             popupHidden = true;
-            ePopupParent.removeChild(eWrapper);
+            ePopupParent.removeChild(wrapperEl);
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
@@ -42144,13 +42122,10 @@ var PopupService = /** @class */ (function (_super) {
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
-            _this.popupList = _this.popupList.filter(function (popup) { return popup.element !== eChild; });
-            if (destroyPositionTracker) {
-                destroyPositionTracker.then(function (destroyFunc) { return destroyFunc && destroyFunc(); });
-            }
+            _this.removePopupFromPopupList(popupEl);
         };
         if (afterGuiAttached) {
-            afterGuiAttached({ hidePopup: hidePopup });
+            afterGuiAttached({ hidePopup: removeListeners });
         }
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
@@ -42165,30 +42140,91 @@ var PopupService = /** @class */ (function (_super) {
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
         }, 0);
-        if (positionCallback) {
-            positionCallback();
-        }
-        if (anchorToElement) {
-            // keeps popup positioned under created, eg if context menu, if user scrolls
-            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
-            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: anchorToElement,
-                ePopup: eChild,
-                hidePopup: hidePopup
-            });
-        }
+        return removeListeners;
+    };
+    PopupService.prototype.addPopupToPopupList = function (element, wrapperEl, removeListeners, anchorToElement) {
         this.popupList.push({
-            element: eChild,
-            wrapper: eWrapper,
-            hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker,
+            element: element,
+            wrapper: wrapperEl,
+            hideFunc: removeListeners,
+            // stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++,
             isAnchored: !!anchorToElement
         });
-        return {
-            hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker
-        };
+        if (anchorToElement) {
+            this.setPopupPositionRelatedToElement(element, anchorToElement);
+        }
+    };
+    PopupService.prototype.setPopupPositionRelatedToElement = function (popupEl, relativeElement) {
+        var popup = this.popupList.find(function (p) { return p.element === popupEl; });
+        if (!popup) {
+            return;
+        }
+        if (popup.stopAnchoringPromise) {
+            popup.stopAnchoringPromise.then(function (destroyFunc) { return destroyFunc && destroyFunc(); });
+        }
+        popup.stopAnchoringPromise = undefined;
+        if (!relativeElement) {
+            return;
+        }
+        // keeps popup positioned under created, eg if context menu, if user scrolls
+        // using touchpad and the cell moves, it moves the popup to keep it with the cell.
+        var destroyPositionTracker = this.keepPopupPositionedRelativeTo({
+            element: relativeElement,
+            ePopup: popupEl,
+            hidePopup: popup.hideFunc
+        });
+        popup.stopAnchoringPromise = destroyPositionTracker;
+        return destroyPositionTracker;
+    };
+    PopupService.prototype.removePopupFromPopupList = function (element) {
+        this.setPopupPositionRelatedToElement(element, null);
+        this.popupList = this.popupList.filter(function (p) { return p.element === element; });
+    };
+    PopupService.prototype.keepPopupPositionedRelativeTo = function (params) {
+        var _this = this;
+        var eParent = this.getPopupParent();
+        var parentRect = eParent.getBoundingClientRect();
+        var element = params.element, ePopup = params.ePopup;
+        var sourceRect = element.getBoundingClientRect();
+        var initialDiffTop = parentRect.top - sourceRect.top;
+        var initialDiffLeft = parentRect.left - sourceRect.left;
+        var lastDiffTop = initialDiffTop;
+        var lastDiffLeft = initialDiffLeft;
+        var topPx = ePopup.style.top;
+        var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        var leftPx = ePopup.style.left;
+        var left = parseInt(leftPx.substring(0, leftPx.length - 1), 10);
+        return new AgPromise(function (resolve) {
+            _this.getFrameworkOverrides().setInterval(function () {
+                var pRect = eParent.getBoundingClientRect();
+                var sRect = element.getBoundingClientRect();
+                var elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                if (elementNotInDom) {
+                    params.hidePopup();
+                    return;
+                }
+                var currentDiffTop = pRect.top - sRect.top;
+                if (currentDiffTop != lastDiffTop) {
+                    var newTop = _this.keepXYWithinBounds(ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
+                    ePopup.style.top = newTop + "px";
+                }
+                lastDiffTop = currentDiffTop;
+                var currentDiffLeft = pRect.left - sRect.left;
+                if (currentDiffLeft != lastDiffLeft) {
+                    var newLeft = _this.keepXYWithinBounds(ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
+                    ePopup.style.left = newLeft + "px";
+                }
+                lastDiffLeft = currentDiffLeft;
+            }, 200).then(function (intervalId) {
+                var result = function () {
+                    if (intervalId != null) {
+                        window.clearInterval(intervalId);
+                    }
+                };
+                resolve(result);
+            });
+        });
     };
     PopupService.prototype.hasAnchoredPopup = function () {
         return this.popupList.some(function (popup) { return popup.isAnchored; });
@@ -47053,8 +47089,8 @@ var __extends$2C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$i = (undefined && undefined.__assign) || function () {
-    __assign$i = Object.assign || function(t) {
+var __assign$j = (undefined && undefined.__assign) || function () {
+    __assign$j = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -47062,7 +47098,7 @@ var __assign$i = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$i.apply(this, arguments);
+    return __assign$j.apply(this, arguments);
 };
 var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47279,7 +47315,7 @@ var UndoRedoService = /** @class */ (function (_super) {
         scrollFeature.ensureIndexVisible(rowIndex);
         scrollFeature.ensureColumnVisible(column);
         var cellPosition = { rowIndex: rowIndex, column: column, rowPinned: rowPinned };
-        this.focusService.setFocusedCell(__assign$i(__assign$i({}, cellPosition), { forceBrowserFocus: true }));
+        this.focusService.setFocusedCell(__assign$j(__assign$j({}, cellPosition), { forceBrowserFocus: true }));
         if (setRangeToCell) {
             this.rangeService.setRangeToCell(cellPosition);
         }
@@ -48588,8 +48624,8 @@ var RowNodeEventThrottle = /** @class */ (function (_super) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$j = (undefined && undefined.__assign) || function () {
-    __assign$j = Object.assign || function(t) {
+var __assign$k = (undefined && undefined.__assign) || function () {
+    __assign$k = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -48597,7 +48633,7 @@ var __assign$j = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$j.apply(this, arguments);
+    return __assign$k.apply(this, arguments);
 };
 var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -48743,7 +48779,7 @@ var GridOptionsService = /** @class */ (function () {
             var previousValue = this.gridOptions[key];
             if (force || previousValue !== newValue) {
                 this.gridOptions[key] = newValue;
-                var event_1 = __assign$j({ type: key, currentValue: newValue, previousValue: previousValue }, eventParams);
+                var event_1 = __assign$k({ type: key, currentValue: newValue, previousValue: previousValue }, eventParams);
                 this.propertyEventService.dispatchEvent(event_1);
             }
         }
@@ -49139,8 +49175,8 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$k = (undefined && undefined.__assign) || function () {
-    __assign$k = Object.assign || function(t) {
+var __assign$l = (undefined && undefined.__assign) || function () {
+    __assign$l = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -49148,7 +49184,7 @@ var __assign$k = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$k.apply(this, arguments);
+    return __assign$l.apply(this, arguments);
 };
 var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49215,7 +49251,7 @@ var DataTypeService = /** @class */ (function (_super) {
         this.dataTypeDefinitions = {};
         Object.entries(defaultDataTypes).forEach(function (_a) {
             var _b = __read$t(_a, 2), cellDataType = _b[0], dataTypeDefinition = _b[1];
-            _this.dataTypeDefinitions[cellDataType] = __assign$k(__assign$k({}, dataTypeDefinition), { groupSafeValueFormatter: _this.createGroupSafeValueFormatter(dataTypeDefinition) });
+            _this.dataTypeDefinitions[cellDataType] = __assign$l(__assign$l({}, dataTypeDefinition), { groupSafeValueFormatter: _this.createGroupSafeValueFormatter(dataTypeDefinition) });
         });
         var dataTypeDefinitions = (_a = this.gridOptionsService.get('dataTypeDefinitions')) !== null && _a !== void 0 ? _a : {};
         this.dataTypeMatchers = {};
@@ -49240,7 +49276,7 @@ var DataTypeService = /** @class */ (function (_super) {
         });
     };
     DataTypeService.prototype.mergeDataTypeDefinitions = function (parentDataTypeDefinition, childDataTypeDefinition) {
-        var mergedDataTypeDefinition = __assign$k(__assign$k({}, parentDataTypeDefinition), childDataTypeDefinition);
+        var mergedDataTypeDefinition = __assign$l(__assign$l({}, parentDataTypeDefinition), childDataTypeDefinition);
         if (parentDataTypeDefinition.columnTypes &&
             childDataTypeDefinition.columnTypes &&
             childDataTypeDefinition.appendColumnTypes) {
@@ -49273,7 +49309,7 @@ var DataTypeService = /** @class */ (function (_super) {
             }
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(mergedExtendedDataTypeDefinition, dataTypeDefinition);
         }
-        return __assign$k(__assign$k({}, mergedDataTypeDefinition), { groupSafeValueFormatter: this.createGroupSafeValueFormatter(mergedDataTypeDefinition) });
+        return __assign$l(__assign$l({}, mergedDataTypeDefinition), { groupSafeValueFormatter: this.createGroupSafeValueFormatter(mergedDataTypeDefinition) });
     };
     DataTypeService.prototype.validateDataTypeDefinition = function (dataTypeDefinition, parentDataTypeDefinition, parentCellDataType) {
         if (!parentDataTypeDefinition) {
@@ -49292,12 +49328,29 @@ var DataTypeService = /** @class */ (function (_super) {
         }
         return function (params) {
             var _a;
-            if (((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) || params.column.isRowGroupActive()) {
-                var aggFunc = params.colDef.aggFunc;
-                if (aggFunc && (aggFunc === 'first' ||
-                    aggFunc === 'last' ||
-                    (dataTypeDefinition.baseDataType === 'number' && (aggFunc === 'sum' || aggFunc === 'min' || aggFunc === 'max' || aggFunc === 'avg')))) {
-                    return dataTypeDefinition.valueFormatter(params);
+            if ((_a = params.node) === null || _a === void 0 ? void 0 : _a.group) {
+                var aggFunc = params.column.getAggFunc();
+                if (aggFunc) {
+                    // the resulting type of these will be the same, so we call valueFormatter anyway
+                    if (aggFunc === 'first' || aggFunc === 'last') {
+                        return dataTypeDefinition.valueFormatter(params);
+                    }
+                    if (dataTypeDefinition.baseDataType === 'number') {
+                        if (typeof params.value === 'number') {
+                            return dataTypeDefinition.valueFormatter(params);
+                        }
+                        if (typeof params.value === 'object') {
+                            if (!params.value) {
+                                return undefined;
+                            }
+                            if ('toNumber' in params.value) {
+                                return dataTypeDefinition.valueFormatter(__assign$l(__assign$l({}, params), { value: params.value.toNumber() }));
+                            }
+                            if ('value' in params.value) {
+                                return dataTypeDefinition.valueFormatter(__assign$l(__assign$l({}, params), { value: params.value.value }));
+                            }
+                        }
+                    }
                 }
                 return undefined;
             }
@@ -53611,7 +53664,7 @@ var GridSerializer = /** @class */ (function (_super) {
             var columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     };

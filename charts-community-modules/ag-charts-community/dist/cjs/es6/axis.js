@@ -786,6 +786,8 @@ class Axis {
             unchanged = regenerateTicks ? equal_1.areArrayNumbersEqual(rawTicks, prevTicks) : false;
             index++;
         }
+        const shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+        terminate || (terminate = shouldTerminate);
         return { tickData, index, autoRotation: 0, terminate };
     }
     checkLabelOverlap(rotation, rotated, labelMatrix, tickData, labelX, textProps) {

@@ -4624,6 +4624,11 @@ const defaultTooltipCss$1 = `
     margin: 0 auto;
 }
 
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::before,
+.${DEFAULT_TOOLTIP_CLASS}-arrow:empty::after {
+    visibility: hidden;
+}
+
 .ag-chart-wrapper {
     box-sizing: border-box;
     overflow: hidden;
@@ -4750,6 +4755,7 @@ class Tooltip {
             element.innerHTML = html;
         }
         else if (!element.innerHTML) {
+            this.toggle(false);
             return;
         }
         const limit = (low, actual, high) => {
@@ -8845,6 +8851,8 @@ class Axis {
             unchanged = regenerateTicks ? areArrayNumbersEqual(rawTicks, prevTicks) : false;
             index++;
         }
+        const shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+        terminate || (terminate = shouldTerminate);
         return { tickData, index, autoRotation: 0, terminate };
     }
     checkLabelOverlap(rotation, rotated, labelMatrix, tickData, labelX, textProps) {

@@ -17,6 +17,7 @@ class RichSelectCellEditor extends core_1.PopupComponent {
         this.searchString = '';
     }
     init(params) {
+        var _a;
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
@@ -46,7 +47,7 @@ class RichSelectCellEditor extends core_1.PopupComponent {
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         const debounceDelay = core_1._.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
         this.clearSearchString = core_1._.debounce(this.clearSearchString, debounceDelay);
-        if (core_1._.exists(params.eventKey)) {
+        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
             this.searchText(params.eventKey);
         }
     }

@@ -770,6 +770,7 @@
         .ag-header-group-cell-label.ag-sticky-label {
           position: sticky;
           flex: none;
+          max-width: 100%;
         }
         
         .ag-header-cell-text {
@@ -6374,7 +6375,12 @@
         
         .ag-select-agg-func-virtual-list-item {
           cursor: default;
+        }
+        .ag-ltr .ag-select-agg-func-virtual-list-item {
           padding-left: calc(var(--ag-grid-size) * 2);
+        }
+        .ag-rtl .ag-select-agg-func-virtual-list-item {
+          padding-right: calc(var(--ag-grid-size) * 2);
         }
         .ag-select-agg-func-virtual-list-item:hover {
           background-color: var(--ag-selected-row-background-color);
@@ -7647,6 +7653,7 @@
         .ag-header-group-cell-label.ag-sticky-label {
           position: sticky;
           flex: none;
+          max-width: 100%;
         }
         
         .ag-header-cell-text {
@@ -13251,7 +13258,12 @@
         
         .ag-select-agg-func-virtual-list-item {
           cursor: default;
+        }
+        .ag-ltr .ag-select-agg-func-virtual-list-item {
           padding-left: calc(var(--ag-grid-size) * 2);
+        }
+        .ag-rtl .ag-select-agg-func-virtual-list-item {
+          padding-right: calc(var(--ag-grid-size) * 2);
         }
         .ag-select-agg-func-virtual-list-item:hover {
           background-color: var(--ag-selected-row-background-color);

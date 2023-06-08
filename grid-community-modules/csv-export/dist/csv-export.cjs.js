@@ -703,7 +703,7 @@ var GridSerializer = /** @class */ (function (_super) {
             var columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([core.GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     };

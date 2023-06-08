@@ -625,7 +625,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
             const columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     }
