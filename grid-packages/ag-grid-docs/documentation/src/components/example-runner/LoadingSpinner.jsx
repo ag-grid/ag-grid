@@ -8,16 +8,18 @@ const loadingStyles = {
     transform: 'translate(-50%, -50%) scale(2)',
 };
 
-const loadingScript = `const cleanupLoading = () => {
-    if (document.querySelector('.ag-root-wrapper, .ag-chart-wrapper')) {
-        document.querySelector('#loading-spinner').remove();
-        document.querySelector('#loading-script').remove();
-    } else {
-        requestAnimationFrame(() => cleanupLoading());
-    }
-};
+const loadingScript = `(function() {
+    const cleanupLoading = () => {
+        if (document.querySelector('.ag-root-wrapper, .ag-chart-wrapper')) {
+            document.querySelector('#loading-spinner').remove();
+            document.querySelector('#loading-script').remove();
+        } else {
+            requestAnimationFrame(() => cleanupLoading());
+        }
+    };
 
-cleanupLoading();`;
+    cleanupLoading();
+})()`;
 
 export const LoadingSpinner = () => {
     return (
