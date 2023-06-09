@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-community",
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.js",
   "module": "./dist/esm/es6/main.js",
@@ -17,7 +17,7 @@
     "build-cjs": "rimraf dist/tsconfig.esm.es6.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --inlineSourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --inlineSourceMap false",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
     "build": "npm run build-cjs && npm run build-esm && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && tsc -p tsconfig.typings.json && npm run hash",

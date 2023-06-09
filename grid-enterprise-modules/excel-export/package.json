@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/excel-export",
-  "version": "29.3.0",
+  "version": "30.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.js",
   "module": "./dist/esm/es6/main.js",
@@ -11,7 +11,7 @@
     "build-cjs": "rimraf dist/tsconfig.esm.es6.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --inlineSourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --inlineSourceMap false",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npx tsc -p tsconfig.typings.json --sourceMap false && npm run hash",
@@ -48,9 +48,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~29.3.0",
-    "@ag-grid-community/csv-export": "~29.3.0",
-    "@ag-grid-enterprise/core": "~29.3.0"
+    "@ag-grid-community/core": "~30.0.0",
+    "@ag-grid-community/csv-export": "~30.0.0",
+    "@ag-grid-enterprise/core": "~30.0.0"
   },
   "devDependencies": {
     "typescript": "~4.3.5",

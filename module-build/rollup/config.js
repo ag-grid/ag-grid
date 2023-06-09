@@ -137,7 +137,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
     return entries;
 }
 
-function genConfig(build, sourceDirectory, moduleName) {
+function genConfig(build, sourceDirectory, moduleName, esmAutoRegister) {
     const packageJson = require(path.resolve(sourceDirectory, './package.json'));
 
     const banner =
@@ -151,7 +151,7 @@ function genConfig(build, sourceDirectory, moduleName) {
         ...(build.config ? build.config : {}),
         input: path.resolve(sourceDirectory, build.inputMainFile),
         plugins: [
-            nodeResolve()      // for utils package - defaulting to use index.js
+            nodeResolve(esmAutoRegister ? {browser: true} : {})      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
@@ -177,5 +177,5 @@ function genConfig(build, sourceDirectory, moduleName) {
 
 exports.getAllBuilds = (sourceDirectory, bundlePrefix, esmType, umdModuleName) => {
     const buildsToUse = getBuilds(umdModuleName, bundlePrefix, esmType === 'autoRegister');
-    return buildsToUse.map(build => genConfig(build, sourceDirectory, bundlePrefix));
+    return buildsToUse.map(build => genConfig(build, sourceDirectory, bundlePrefix, esmType === 'autoRegister'));
 }
