@@ -24,7 +24,7 @@ const Announcements = ({ framework }) => (
                     },
                     {
                         text: 'Grid-Specific Modules',
-                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers',
+                        url: 'https://www.ag-grid.com/javascript-data-grid/modules/#providing-modules-to-individual-grids',
                     },
                     {
                         text: 'SSRM Row Group Footers',
