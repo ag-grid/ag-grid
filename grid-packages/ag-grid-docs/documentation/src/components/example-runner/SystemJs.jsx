@@ -326,14 +326,8 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
         configuration.chartMap = {
             ...configuration.chartMap,
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
+            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
         };
-
-        if (isEnterprise) {
-            configuration.chartMap = {
-                ...configuration.chartMap,
-                "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
-            };
-        }
     }
     configuration = getRelevantConfig(configuration, framework);
 
@@ -342,6 +336,11 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     if (library === 'charts') {
         systemJsMap = configuration.chartMap;
         systemJsPaths = { ...isEnterprise ? configuration.chartEnterprisePaths : configuration.chartCommunityPaths };
+        if (!isEnterprise) {
+            // Remove these once Enterprise charts releases.
+            delete systemJsMap['ag-charts-enterprise'];
+            delete systemJsPaths['ag-charts-enterprise'];
+        }
     }
 
     if (library === 'grid') {
