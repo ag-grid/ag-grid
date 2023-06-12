@@ -669,6 +669,8 @@ export interface AgBaseChartOptions {
 }
 
 export interface AgBaseAxisOptions {
+    /** Axis type identifier. */
+    type: string;
     keys?: string[];
     /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
     thickness?: PixelSize;

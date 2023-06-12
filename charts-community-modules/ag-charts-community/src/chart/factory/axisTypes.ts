@@ -19,9 +19,9 @@ export function registerAxis(axisType: string, ctor: AxisConstructor) {
 }
 
 export function getAxis(axisType: string, moduleCtx: ModuleContext) {
-    const seriesConstructor = AXIS_CONSTRUCTORS[axisType];
-    if (seriesConstructor) {
-        return new seriesConstructor(moduleCtx);
+    const axisConstructor = AXIS_CONSTRUCTORS[axisType];
+    if (axisConstructor) {
+        return new axisConstructor(moduleCtx);
     }
 
     throw new Error(`AG Charts - unknown axis type: ${axisType}`);

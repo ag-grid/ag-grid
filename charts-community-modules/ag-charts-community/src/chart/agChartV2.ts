@@ -1,5 +1,6 @@
 import {
     AgChartOptions,
+    AgCartesianChartOptions,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
@@ -426,7 +427,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         applySeries(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if ((processedOptions as any).axes) {
+    if ('axes' in processedOptions && Array.isArray(processedOptions.axes)) {
         const axesPresent = applyAxes(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
@@ -514,7 +515,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
     chart.series = createSeries(chart, optSeries);
 }
 
-function applyAxes(chart: Chart, options: any) {
+function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
     const optAxes = options.axes;
     if (!optAxes) {
         return false;
@@ -570,7 +571,7 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     return series;
 }
 
-function createAxis(chart: Chart, options: any[]): ChartAxis[] {
+function createAxis(chart: Chart, options: AgBaseAxisOptions[]): ChartAxis[] {
     const axes: ChartAxis<any>[] = [];
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
