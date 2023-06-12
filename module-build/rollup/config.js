@@ -43,7 +43,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
     if (umdModuleName) {
         entries.push({
             name: 'umd-dev',
-            inputMainFile: './dist/esm/es5/main.js',
+            inputMainFile: './dist/esm/es6/main.js',
             format: 'umd',
             env: 'development',
             moduleName: umdModuleName,
@@ -52,7 +52,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
         });
         entries.push({
             name: 'umd-prod',
-            inputMainFile: './dist/esm/es5/main.js',
+            inputMainFile: './dist/esm/es6/main.js',
             format: 'umd',
             env: 'production',
             moduleName: umdModuleName,
