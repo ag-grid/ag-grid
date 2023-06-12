@@ -9,7 +9,7 @@
     "generate-doc-files": "cd ../../../grid-community-modules/all-modules && npm run generate-doc-files",
     "generate-cypress-config": "node generate-cypress-config.js",
     "customise": "node customise.js",
-    "build": "npm run clean && npm run generate-doc-files && npm run customise && npm run generate-examples && npm run generate-cypress-config",
+    "build": "npm run clean && npm run generate-doc-files && npm run customise",
     "build-prod": "npm run build",
     "package": "npm run build && npm run publish",
     "publish": "npx gatsby build --prefix-paths",
