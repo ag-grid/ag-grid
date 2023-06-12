@@ -3,53 +3,22 @@ import { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { getFont, measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
+import { measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
-import { TimeInterval } from './util/time/interval';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
-import {
-    Validate,
-    BOOLEAN,
-    OPT_BOOLEAN,
-    NUMBER,
-    OPT_NUMBER,
-    OPT_FONT_STYLE,
-    OPT_FONT_WEIGHT,
-    STRING,
-    OPT_COLOR_STRING,
-    OPTIONAL,
-    ARRAY,
-    predicateWithMessage,
-    OPT_STRING,
-    OPT_ARRAY,
-    LESS_THAN,
-    NUMBER_OR_NAN,
-    AND,
-    TEXT_WRAP,
-    OPT_FUNCTION,
-} from './util/validation';
+import { Validate, BOOLEAN, NUMBER, ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import {
-    AgAxisCaptionFormatterParams,
-    AgAxisCaptionOptions,
-    AgAxisGridStyle,
-    AgAxisLabelFormatterParams,
-    FontStyle,
-    FontWeight,
-    TextWrap,
-} from './chart/agChartOptions';
+import { AgAxisCaptionFormatterParams, AgAxisGridStyle, TextWrap } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
-import { Default } from './util/default';
-import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
 import {
@@ -63,20 +32,10 @@ import {
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
 import { ModuleContext } from './util/moduleContext';
-
-const TICK_COUNT = predicateWithMessage(
-    (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
-    `expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
-const OPT_TICK_COUNT = predicateWithMessage(
-    (v: any, ctx) => OPTIONAL(v, ctx, TICK_COUNT),
-    `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
-
-const OPT_TICK_INTERVAL = predicateWithMessage(
-    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => (v !== 0 && NUMBER(0)(v, ctx)) || v instanceof TimeInterval),
-    `expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
+import { AxisLabel } from './chart/axis/axisLabel';
+import { AxisLine } from './chart/axis/axisLine';
+import { AxisTitle } from './chart/axis/axisTitle';
+import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
@@ -124,8 +83,6 @@ enum TickGenerationType {
     VALUES,
 }
 
-type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
-
 type TickDatum = {
     tickLabel: string;
     tick: any;
@@ -133,221 +90,6 @@ type TickDatum = {
 };
 
 type TickData = { rawTicks: any[]; ticks: TickDatum[]; labelCount: number };
-
-export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
-
-export class AxisLine {
-    @Validate(NUMBER(0))
-    width: number = 1;
-
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(195, 195, 195, 1)';
-}
-
-export class BaseAxisTick<S extends Scale<D, number, I>, D = any, I = any> {
-    @Validate(BOOLEAN)
-    enabled = true;
-
-    /**
-     * The line width to be used by axis ticks.
-     */
-    @Validate(NUMBER(0))
-    width: number = 1;
-
-    /**
-     * The line length to be used by axis ticks.
-     */
-    @Validate(NUMBER(0))
-    size: number = 6;
-
-    /**
-     * The color of the axis ticks.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(195, 195, 195, 1)';
-
-    /**
-     * A hint of how many ticks to use (the exact number of ticks might differ),
-     * a `TimeInterval` or a `CountableTimeInterval`.
-     * For example:
-     *
-     *     axis.tick.count = 5;
-     *     axis.tick.count = year;
-     *     axis.tick.count = month.every(6);
-     */
-    @Validate(OPT_TICK_COUNT)
-    @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-    count?: TickCount<S> = undefined;
-
-    @Validate(OPT_TICK_INTERVAL)
-    interval?: TickInterval<S> = undefined;
-
-    @Validate(OPT_ARRAY())
-    values?: any[] = undefined;
-
-    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
-    @Default(NaN)
-    minSpacing: number = NaN;
-
-    // Maybe initialised and validated in sub-classes - DO NOT ASSIGN A VALUE HERE.
-    maxSpacing?: number;
-}
-
-export class AxisLabel {
-    @Validate(BOOLEAN)
-    enabled = true;
-
-    /** If set to `false`, axis labels will not be wrapped on multiple lines. */
-    @Validate(OPT_BOOLEAN)
-    autoWrap: boolean = false;
-
-    /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-    @Validate(OPT_NUMBER(0))
-    maxWidth?: number = undefined;
-
-    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-    @Validate(OPT_NUMBER(0))
-    maxHeight?: number = undefined;
-
-    @Validate(OPT_FONT_STYLE)
-    fontStyle?: FontStyle = undefined;
-
-    @Validate(OPT_FONT_WEIGHT)
-    fontWeight?: FontWeight = undefined;
-
-    @Validate(NUMBER(1))
-    fontSize: number = 12;
-
-    @Validate(STRING)
-    fontFamily: string = 'Verdana, sans-serif';
-
-    /**
-     * The padding between the labels and the ticks.
-     */
-    @Validate(NUMBER(0))
-    padding: number = 5;
-
-    /**
-     * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
-     */
-    @Validate(NUMBER_OR_NAN())
-    @Default(NaN)
-    minSpacing: number = NaN;
-
-    /**
-     * The color of the labels.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-     */
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(87, 87, 87, 1)';
-
-    /**
-     * Custom label rotation in degrees.
-     * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallel} is set to `true`.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    @Validate(OPT_NUMBER(-360, 360))
-    rotation?: number = undefined;
-
-    /**
-     * If specified and axis labels may collide, they are rotated to reduce collisions. If the
-     * `rotation` property is specified, it takes precedence.
-     */
-    @Validate(OPT_BOOLEAN)
-    autoRotate: boolean | undefined = undefined;
-
-    /**
-     * Rotation angle to use when autoRotate is applied.
-     */
-    @Validate(NUMBER(-360, 360))
-    autoRotateAngle: number = 335;
-
-    /**
-     * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
-     */
-    @Validate(BOOLEAN)
-    avoidCollisions: boolean = true;
-
-    /**
-     * By default labels and ticks are positioned to the left of the axis line.
-     * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, it's easier to think in terms
-     * of this side or the opposite side, rather than left and right.
-     * We use the term `mirror` for conciseness, although it's not
-     * true mirroring - for example, when a label is rotated, so that
-     * it is inclined at the 45 degree angle, text flowing from north-west
-     * to south-east, ending at the tick to the left of the axis line,
-     * and then we set this config to `true`, the text will still be flowing
-     * from north-west to south-east, _starting_ at the tick to the right
-     * of the axis line.
-     */
-    @Validate(BOOLEAN)
-    mirrored: boolean = false;
-
-    /**
-     * The side of the axis line to position the labels on.
-     * -1 = left (default)
-     * 1 = right
-     */
-    getSideFlag(): Flag {
-        return this.mirrored ? 1 : -1;
-    }
-
-    /**
-     * Labels are rendered perpendicular to the axis line by default.
-     * Setting this config to `true` makes labels render parallel to the axis line
-     * and center aligns labels' text at the ticks.
-     */
-    @Validate(BOOLEAN)
-    parallel: boolean = false;
-
-    /**
-     * In case {@param value} is a number, the {@param fractionDigits} parameter will
-     * be provided as well. The `fractionDigits` corresponds to the number of fraction
-     * digits used by the tick step. For example, if the tick step is `0.0005`,
-     * the `fractionDigits` is 4.
-     */
-    formatter?: (params: AgAxisLabelFormatterParams) => string = undefined;
-
-    @Validate(OPT_STRING)
-    format: string | undefined = undefined;
-
-    getFont(): string {
-        return getFont(this);
-    }
-}
-
-export class AxisTitle implements AgAxisCaptionOptions {
-    @Validate(BOOLEAN)
-    enabled = false;
-
-    @Validate(OPT_STRING)
-    text?: string = undefined;
-
-    @Validate(OPT_FONT_STYLE)
-    fontStyle: FontStyle | undefined = undefined;
-
-    @Validate(OPT_FONT_WEIGHT)
-    fontWeight: FontWeight | undefined = undefined;
-
-    @Validate(NUMBER(0))
-    fontSize: number = 10;
-
-    @Validate(STRING)
-    fontFamily: string = 'sans-serif';
-
-    @Validate(OPT_COLOR_STRING)
-    color: string | undefined = undefined;
-
-    @Validate(TEXT_WRAP)
-    wrapping: TextWrap = 'always';
-
-    @Validate(OPT_FUNCTION)
-    formatter?: (params: AgAxisCaptionFormatterParams) => string = undefined;
-}
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -420,7 +162,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     readonly line = new AxisLine();
-    readonly tick: BaseAxisTick<S> = this.createTick();
+    readonly tick: AxisTick<S> = this.createTick();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -648,8 +390,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
      */
     seriesAreaPadding = 0;
 
-    protected createTick(): BaseAxisTick<S> {
-        return new BaseAxisTick();
+    protected createTick(): AxisTick<S> {
+        return new AxisTick();
     }
 
     /**

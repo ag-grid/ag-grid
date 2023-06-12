@@ -5,7 +5,6 @@ import { Text } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { BandScale } from '../../scale/bandScale';
 import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
-import { AxisLabel, AxisLine } from '../../axis';
 import { ChartAxis } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
@@ -14,6 +13,8 @@ import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
 import { ModuleContext } from '../../util/moduleContext';
 import { AgAxisCaptionFormatterParams } from '../agChartOptions';
+import { AxisLabel } from './axisLabel';
+import { AxisLine } from './axisLine';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)

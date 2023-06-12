@@ -1,5 +1,6 @@
 import { Scale } from '../scale/scale';
-import { Axis, TickInterval } from '../axis';
+import { Axis } from '../axis';
+import { TickInterval } from './axis/axisTick';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { ContinuousScale } from '../scale/continuousScale';
@@ -54,7 +55,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     @Validate(POSITION)
     position: AgCartesianAxisPosition = 'left';
 
-    public update(primaryTickCount?: number) {
+    update(primaryTickCount?: number) {
         this.updateDirection();
 
         return super.update(primaryTickCount);
@@ -173,7 +174,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         return this.modules[module.optionsKey] != null;
     }
 
-    public destroy(): void {
+    destroy(): void {
         super.destroy();
 
         for (const [key, module] of Object.entries(this.modules)) {

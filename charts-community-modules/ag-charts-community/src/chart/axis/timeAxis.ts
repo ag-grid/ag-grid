@@ -4,9 +4,9 @@ import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
 import { ModuleContext } from '../../util/moduleContext';
 import { Default } from '../../util/default';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
 
-class TimeAxisTick extends BaseAxisTick<TimeScale, number | Date> {
+class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
     @Default(NaN)
     maxSpacing: number = NaN;

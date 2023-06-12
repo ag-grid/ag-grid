@@ -7,9 +7,9 @@ import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
 import { ModuleContext } from '../../module-support';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
 
-class NumberAxisTick extends BaseAxisTick<LinearScale | LogScale, number> {
+class NumberAxisTick extends AxisTick<LinearScale | LogScale, number> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
     @Default(NaN)
     maxSpacing: number = NaN;
