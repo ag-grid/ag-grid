@@ -336,11 +336,6 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     if (library === 'charts') {
         systemJsMap = configuration.chartMap;
         systemJsPaths = { ...isEnterprise ? configuration.chartEnterprisePaths : configuration.chartCommunityPaths };
-        if (!isEnterprise) {
-            // Remove these once Enterprise charts releases.
-            delete systemJsMap['ag-charts-enterprise'];
-            delete systemJsPaths['ag-charts-enterprise'];
-        }
     }
 
     if (library === 'grid') {
