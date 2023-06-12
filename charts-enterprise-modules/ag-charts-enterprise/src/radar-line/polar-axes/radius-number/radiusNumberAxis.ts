@@ -1,15 +1,23 @@
 import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 
-const { ChartAxisDirection } = _ModuleSupport;
+const { ChartAxisDirection, Layers } = _ModuleSupport;
 const { LinearScale } = _Scale;
+const { Group, Arc, Selection } = _Scene;
 
 export class RadiusNumberAxis extends _ModuleSupport.ChartAxis {
     static className = 'RadiusNumberAxis';
     static type = 'polar-radius-number' as const;
 
+    protected readonly gridArcGroup = this.gridGroup.appendChild(
+        new Group({
+            name: `${this.id}-gridArcs`,
+            zIndex: Layers.AXIS_GRID_ZINDEX,
+        })
+    );
+    protected gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
+
     constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super(moduleCtx, new LinearScale());
-        this.radialGrid = true;
     }
 
     get direction() {

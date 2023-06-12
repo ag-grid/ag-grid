@@ -8,7 +8,7 @@ import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
-import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
+import { normalizeAngle360, toRadians } from './util/angle';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
 import { Validate, BOOLEAN, NUMBER, ARRAY, predicateWithMessage } from './util/validation';
@@ -134,17 +134,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         })
     );
 
-    protected readonly gridArcGroup = this.gridGroup.appendChild(
-        new Group({
-            name: `${this.id}-gridArcs`,
-            zIndex: Layers.AXIS_GRID_ZINDEX,
-        })
-    );
-
     protected tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
     protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
     protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
-    protected gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
 
     private _crossLines?: CrossLine[] = [];
     set crossLines(value: CrossLine[] | undefined) {
@@ -334,7 +326,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         // Was visible and now invisible, or was invisible and now visible.
         if ((this._gridLength && !value) || (!this._gridLength && value)) {
             this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
         }
 
         this._gridLength = value;
@@ -360,23 +351,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             lineDash: [4, 2],
         },
     ];
-
-    /**
-     * `false` - render grid as lines of {@link gridLength} that extend the ticks
-     *           on the opposite side of the axis
-     * `true` - render grid as concentric circles that go through the ticks
-     */
-    private _radialGrid: boolean = false;
-    set radialGrid(value: boolean) {
-        if (this._radialGrid !== value) {
-            this._radialGrid = value;
-            this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
-        }
-    }
-    get radialGrid(): boolean {
-        return this._radialGrid;
-    }
 
     private fractionDigits = 0;
 
@@ -882,9 +856,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             node.visible = visible;
         };
 
-        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
         gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
@@ -971,20 +944,11 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     private updateSelections(data: TickDatum[]) {
         const gridData = this.gridLength ? data : [];
-        const gridLineGroupSelection = this.radialGrid
-            ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridData, (group) => {
-                  const node = new Line();
-                  node.tag = Tags.GridLine;
-                  group.append(node);
-              });
-        const gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridData, (group) => {
-                  const node = new Arc();
-                  node.tag = Tags.GridArc;
-                  group.append(node);
-              })
-            : this.gridArcGroupSelection;
+        const gridLineGroupSelection = this.gridLineGroupSelection.update(gridData, (group) => {
+            const node = new Line();
+            node.tag = Tags.GridLine;
+            group.append(node);
+        });
         const tickLineGroupSelection = this.tickLineGroupSelection.update(data, (group) => {
             const line = new Line();
             line.tag = Tags.TickLine;
@@ -1000,52 +964,33 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         // But node `translationY` values must be rounded to get pixel grid alignment
         const translationFn = (node: Line | Arc | Text) => (node.translationY = Math.round(node.datum.translationY));
         gridLineGroupSelection.each(translationFn);
-        gridArcGroupSelection.each(translationFn);
         tickLineGroupSelection.each(translationFn);
         tickLabelGroupSelection.each(translationFn);
 
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
-        this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
     protected updateGridLines(sideFlag: Flag) {
-        const { gridStyle, scale, tick, gridPadding, gridLength } = this;
-        if (gridLength && gridStyle.length) {
-            const styleCount = gridStyle.length;
-            let grid: Selection<Line | Arc, Group>;
-
-            if (this.radialGrid) {
-                const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
-                const halfBandwidth = (this.scale.bandwidth ?? 0) / 2;
-
-                grid = this.gridArcGroupSelection.each((arc, datum) => {
-                    const radius = Math.round(scale.convert(datum) + halfBandwidth);
-
-                    arc.centerX = 0;
-                    arc.centerY = scale.range[0] - radius;
-                    arc.endAngle = angularGridLength;
-                    arc.radius = radius;
-                });
-            } else {
-                grid = this.gridLineGroupSelection.each((line) => {
-                    line.x1 = gridPadding;
-                    line.x2 = -sideFlag * gridLength + gridPadding;
-                    line.y1 = 0;
-                    line.y2 = 0;
-                });
-            }
-
-            grid.each((node, _, index) => {
-                const style = gridStyle[index % styleCount];
-
-                node.stroke = style.stroke;
-                node.strokeWidth = tick.width;
-                node.lineDash = style.lineDash;
-                node.fill = undefined;
-            });
+        const { gridStyle, tick, gridPadding, gridLength } = this;
+        if (gridLength === 0 || gridStyle.length === 0) {
+            return;
         }
+        const styleCount = gridStyle.length;
+        this.gridLineGroupSelection.each((line, _, index) => {
+            const style = gridStyle[index % styleCount];
+
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+
+            line.stroke = style.stroke;
+            line.strokeWidth = tick.width;
+            line.lineDash = style.lineDash;
+            line.fill = undefined;
+        });
     }
 
     protected updateLabels({

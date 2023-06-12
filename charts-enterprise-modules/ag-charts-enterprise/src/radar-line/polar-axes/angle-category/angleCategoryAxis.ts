@@ -10,7 +10,6 @@ export class AngleCategoryAxis extends _ModuleSupport.ChartAxis {
 
     constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super(moduleCtx, new BandScale());
-        this.radialGrid = true;
     }
 
     get direction() {
