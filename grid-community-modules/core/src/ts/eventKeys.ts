@@ -234,5 +234,7 @@ export class Events {
 
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
 
+    public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

@@ -30,6 +30,7 @@ import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
+import { RowDataUpdateStartedEvent } from '../events';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -64,6 +65,7 @@ export class DataTypeService extends BeanStub {
     private hasObjectValueParser: boolean;
     private hasObjectValueFormatter: boolean;
     private groupHideOpenParents: boolean;
+    private initialData: any | null | undefined;
 
     @PostConstruct
     public init(): void {
@@ -353,20 +355,13 @@ export class DataTypeService extends BeanStub {
         if (!field) {
             return undefined;
         }
-        const rowData = this.gridOptionsService.get('rowData');
         let value: any;
-        const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
-        if (rowData?.length) {
-            value = getValueUsingField(rowData[0], field, fieldContainsDots);
+        const initialData = this.getInitialData();
+        if (initialData) {
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
-            const rowNodes = (this.rowModel as IClientSideRowModel)
-                .getRootNode()
-                .allLeafChildren;
-            if (rowNodes?.length) {
-                value = getValueUsingField(rowNodes[0].data, field, fieldContainsDots);
-            } else {
-                this.initWaitForRowData();
-            }
+            this.initWaitForRowData();
         }
         if (value == null) {
             return undefined;
@@ -375,18 +370,38 @@ export class DataTypeService extends BeanStub {
         return cellDataType;
     }
 
+    private getInitialData(): any {
+        const rowData = this.gridOptionsService.get('rowData');
+        if (rowData?.length) {
+            return rowData[0];
+        } else if (this.initialData) {
+            return this.initialData;
+        } else {
+            const rowNodes = (this.rowModel as IClientSideRowModel)
+                .getRootNode()
+                .allLeafChildren;
+            if (rowNodes?.length) {
+                return rowNodes[0].data;
+            }
+        }
+        return null;
+    }
+
     private initWaitForRowData(): void {
         if (this.isWaitingForRowData) {
             return;
         }
         this.isWaitingForRowData = true;
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
+        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
+            const { firstRowData } = event;
+            if (!firstRowData) {
+                return;
+            }
             destroyFunc?.();
             this.isWaitingForRowData = false;
-            setTimeout(() => {
-                // ensure event handled async
-                this.columnModel.recreateColumnDefs('rowDataUpdated');
-            });
+            this.initialData = firstRowData;
+            this.columnModel.recreateColumnDefs('rowDataUpdated');
+            this.initialData = null;
         });
     }
 

@@ -43,7 +43,8 @@ export class ComponentUtil {
         Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
         Events.EVENT_CELL_FOCUS_CLEARED,
         Events.EVENT_GRID_STYLES_CHANGED,
-        Events.EVENT_FILTER_DESTROYED
+        Events.EVENT_FILTER_DESTROYED,
+        Events.EVENT_ROW_DATA_UPDATE_STARTED
     ];
 
     // events that are available for use by users of AG Grid and so should be documented
