@@ -327,7 +327,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
         }
 
-        if (this.processedData) {
+        if (!this.animationManager?.skipAnimations && this.processedData) {
             extraProps.push(diff(this.processedData));
         }
 
@@ -1207,7 +1207,12 @@ export class ColumnSeries extends BarSeries {
     animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         const { processedData } = this;
 
-        const diff = processedData?.reduced?.diff;
+        const diff = processedData?.reduced?.diff as {
+            changed: boolean;
+            added: string[][];
+            removed: string[][];
+            updated: string[][];
+        };
 
         if (!diff?.changed) {
             datumSelections.forEach((datumSelection) => {
@@ -1233,9 +1238,16 @@ export class ColumnSeries extends BarSeries {
             })
         );
 
-        const keys = this.processedData?.defs.keys;
-        const keyMatches = (find: string[], datum: BarNodeDatum) =>
-            find.every((k, i) => k === datum.datum[keys![i].property]);
+        const datumIdKey = this.processedData?.defs.keys?.[0];
+
+        const addedIds: any = {};
+        diff.added.forEach((d) => {
+            addedIds[d[0]] = true;
+        });
+        const removedIds: any = {};
+        diff.removed.forEach((d) => {
+            removedIds[d[0]] = true;
+        });
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -1249,7 +1261,9 @@ export class ColumnSeries extends BarSeries {
                 let duration = sectionDuration;
                 let cleanup = false;
 
-                if (keys && diff.added.find((a: string[]) => keyMatches(a, datum))) {
+                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
+
+                if (datumId !== undefined && addedIds[datumId] !== undefined) {
                     props = [
                         { from: datum.x, to: datum.x },
                         { from: datum.width, to: datum.width },
@@ -1258,7 +1272,7 @@ export class ColumnSeries extends BarSeries {
                     ];
                     delay += sectionDuration;
                     duration = sectionDuration;
-                } else if (keys && diff.removed.find((r: string[]) => keyMatches(r, datum))) {
+                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
                     props = [
                         { from: datum.x, to: datum.x },
                         { from: datum.width, to: datum.width },
