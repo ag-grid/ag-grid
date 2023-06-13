@@ -72,6 +72,10 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.COLUMN_SINGLE_DATE_CATEGORY_AXIS,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
     },
+    COLUMN_SINGLE_DATE_TIME_AXIS: {
+        options: examples.COLUMN_SINGLE_DATE_TIME_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['column'] }),
+    },
 };
 
 const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {

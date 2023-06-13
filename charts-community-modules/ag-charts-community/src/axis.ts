@@ -1511,8 +1511,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         this.gridGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
     }
 
-    calculatePadding(min: number, _max: number): number {
-        return Math.abs(min * 0.01);
+    calculatePadding(min: number, _max: number): [number, number] {
+        return [Math.abs(min * 0.01), Math.abs(min * 0.01)];
     }
 
     protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;

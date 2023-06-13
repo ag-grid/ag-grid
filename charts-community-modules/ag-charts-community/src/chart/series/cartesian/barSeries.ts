@@ -363,20 +363,24 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
+        const categoryAxis = this.getCategoryAxis();
+        const valueAxis = this.getValueAxis();
+
         if (direction === this.getCategoryDirection()) {
             if (keyDef.valueType === 'category') {
                 return keys;
             }
 
+            const scalePadding = isFinite(smallestX) ? smallestX : 0;
             const keysExtent = extent(keys) ?? [NaN, NaN];
             if (direction === ChartAxisDirection.Y) {
-                return [keysExtent[0] + -smallestX, keysExtent[1]];
+                return this.fixNumericExtent([keysExtent[0] + -scalePadding, keysExtent[1]], categoryAxis);
             }
-            return [keysExtent[0], keysExtent[1] + smallestX];
+            return this.fixNumericExtent([keysExtent[0], keysExtent[1] + scalePadding], categoryAxis);
         } else if (this.getValueAxis() instanceof LogAxis) {
-            return this.fixNumericExtent(yExtent as any);
+            return this.fixNumericExtent(yExtent as any, valueAxis);
         } else {
-            return this.fixNumericExtent(ySumExtent);
+            return this.fixNumericExtent(ySumExtent, valueAxis);
         }
     }
 
@@ -483,8 +487,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                   groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
                   groupScale.rawBandwidth;
-        const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
+        const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
         processedData?.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
             const x = xScale.convert(keys[0]);
 

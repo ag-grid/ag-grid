@@ -1098,6 +1098,42 @@ export const COLUMN_SINGLE_DATE_CATEGORY_AXIS: AgCartesianChartOptions = {
     ],
 };
 
+export const COLUMN_SINGLE_DATE_TIME_AXIS: AgCartesianChartOptions = {
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'column',
+            grouped: false,
+            xKey: 'Created',
+            yKey: 'IncidentID',
+            yName: 'Incident ID',
+        },
+    ],
+    data: [
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 3,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 4,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 5,
+        },
+    ],
+};
+
 export const STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
     title: {
         text: "Apple's revenue by product category",

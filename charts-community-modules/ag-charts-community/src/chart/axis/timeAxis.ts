@@ -80,9 +80,9 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         return this.moduleCtx.callbackCache.call(this.datumFormatter, datum) ?? String(datum);
     }
 
-    calculatePadding(_min: number, _max: number) {
+    calculatePadding(_min: number, _max: number): [number, number] {
         // numbers in domain correspond to Unix timestamps
-        // automatically expand domain by 1 in each direction
-        return 1;
+        // automatically expand domain by 1 in forward direction
+        return [0, 1];
     }
 }

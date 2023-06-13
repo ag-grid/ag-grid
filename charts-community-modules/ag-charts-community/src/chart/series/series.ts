@@ -615,9 +615,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            const padding = axis?.calculatePadding(min, max) ?? 1;
-            min -= padding;
-            max += padding;
+            const [paddingMin, paddingMax] = axis?.calculatePadding(min, max) ?? [1, 1];
+            min -= paddingMin;
+            max += paddingMax;
         }
 
         return [min, max];
