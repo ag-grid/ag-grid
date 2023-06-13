@@ -1864,14 +1864,7 @@ export class GridApi<TData = any> {
             return;
         }
 
-        const res: RowNodeTransaction<TData> | null = this.clientSideRowModel.updateRowData(rowDataTransaction);
-
-        // do change detection for all present cells
-        if (!this.gridOptionsService.is('suppressChangeDetection')) {
-            this.rowRenderer.refreshCells();
-        }
-
-        return res;
+        return this.clientSideRowModel.updateRowData(rowDataTransaction);
     }
 
 
