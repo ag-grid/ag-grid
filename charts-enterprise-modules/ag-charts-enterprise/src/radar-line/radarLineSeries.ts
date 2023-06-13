@@ -401,8 +401,9 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     }
 
     private updateMarkers(selection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>, highlight: boolean) {
-        const { marker, visible } = this;
-        const { shape, enabled } = marker;
+        const { marker, visible, ctx, angleKey, radiusKey, id: seriesId } = this;
+        const { shape, enabled, formatter, size } = marker;
+        const { callbackCache } = ctx;
         let selectionData: RadarLineNodeDatum[] = [];
         if (visible && shape && enabled) {
             if (highlight) {
@@ -416,12 +417,28 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         }
         const highlightedStyle = highlight ? this.highlightStyle.item : undefined;
         selection.update(selectionData).each((node, datum) => {
-            node.fill = highlightedStyle?.fill ?? marker.fill;
-            node.stroke = highlightedStyle?.stroke ?? marker.stroke;
-            node.strokeWidth = highlightedStyle?.strokeWidth ?? marker.strokeWidth ?? 1;
+            const fill = highlightedStyle?.fill ?? marker.fill;
+            const stroke = highlightedStyle?.stroke ?? marker.stroke;
+            const strokeWidth = highlightedStyle?.strokeWidth ?? marker.strokeWidth ?? this.strokeWidth ?? 1;
+            const format = formatter
+                ? callbackCache.call(formatter, {
+                      datum: datum.datum,
+                      angleKey,
+                      radiusKey,
+                      fill,
+                      stroke,
+                      strokeWidth,
+                      size,
+                      highlighted: highlight,
+                      seriesId,
+                  })
+                : undefined;
+            node.fill = format?.fill ?? fill;
+            node.stroke = format?.stroke ?? stroke;
+            node.strokeWidth = format?.strokeWidth ?? strokeWidth;
             node.fillOpacity = highlightedStyle?.fillOpacity ?? marker.fillOpacity ?? 1;
-            node.strokeOpacity = marker.strokeOpacity ?? 1;
-            node.size = marker.size;
+            node.strokeOpacity = marker.strokeOpacity ?? this.strokeOpacity ?? 1;
+            node.size = format?.size ?? marker.size;
 
             const { x, y } = datum.point!;
             node.translationX = x;
