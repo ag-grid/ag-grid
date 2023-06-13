@@ -68,6 +68,10 @@ const EXAMPLES: Record<string, TestCase> = {
     COLUMN_CATEGORY_X_AXIS_NEGATIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_NEGATIVE_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_FRACTIONAL_LOG_Y_AXIS: buildLogAxisTestCase(DATA_FRACTIONAL_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
+    COLUMN_SINGLE_DATE_CATEGORY_AXIS: {
+        options: examples.COLUMN_SINGLE_DATE_CATEGORY_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+    },
 };
 
 const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {
