@@ -51,15 +51,16 @@ pre.code > code {
     min-width: 100%;
     padding: $vertical-padding $size-2;
     font-size: 0.9375em;
-    background-color: white;
+    background-color: var(--default-background-color);
     background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
     border: none;
     border-radius: 0;
-    box-shadow: inset 0 $vertical-padding 0 0 white, inset 0 $vertical-padding * -1 0 0 white;
-    z-index: 1;
+    box-shadow: inset 0 $vertical-padding 0 0 var(--default-background-color),
+        inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
+    overflow-x: auto !important;
 }
 
 pre.code.line-numbers.line-numbers code {
