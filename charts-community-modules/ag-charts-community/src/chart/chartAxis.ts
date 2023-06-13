@@ -6,7 +6,8 @@ import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgAxisCaptionFormatterParams, AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
+import { AxisModule, ModuleInstance } from '../util/module';
+import { AxisContext, ModuleContext } from '../util/moduleContext';
 
 interface BoundSeries {
     type: string;

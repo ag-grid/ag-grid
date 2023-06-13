@@ -56,7 +56,7 @@ import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../.
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>

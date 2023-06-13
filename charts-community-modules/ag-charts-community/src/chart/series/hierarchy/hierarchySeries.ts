@@ -1,5 +1,5 @@
 import { PointLabelDatum } from '../../../util/labelPlacement';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 import { HierarchyChart } from '../../hierarchyChart';
 import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 

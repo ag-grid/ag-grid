@@ -12,7 +12,7 @@ import { extent } from '../../util/array';
 import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
-import { ModuleContext } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 import { AgAxisCaptionFormatterParams } from '../agChartOptions';
 
 class GroupedCategoryAxisLabel extends AxisLabel {

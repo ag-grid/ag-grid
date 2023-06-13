@@ -1,7 +1,7 @@
 import { NUMBER, Validate } from '../../util/validation';
 import { BandScale } from '../../scale/bandScale';
 import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 
 export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';

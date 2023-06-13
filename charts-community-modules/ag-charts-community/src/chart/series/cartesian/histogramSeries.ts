@@ -53,7 +53,7 @@ import {
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS } from '../../data/processors';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(

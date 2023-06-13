@@ -52,7 +52,7 @@ import { StateMachine } from '../../../motion/states';
 import * as easing from '../../../motion/easing';
 import { DataModel } from '../../data/dataModel';
 import { normalisePropertyTo } from '../../data/processors';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;

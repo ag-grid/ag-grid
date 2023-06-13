@@ -62,7 +62,7 @@ import {
 } from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
-import { ModuleContext } from './util/module';
+import { ModuleContext } from './util/moduleContext';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,

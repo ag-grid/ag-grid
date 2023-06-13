@@ -29,7 +29,7 @@ import { getMarker } from '../../marker/util';
 import { DataModel, ProcessedData } from '../../data/dataModel';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,

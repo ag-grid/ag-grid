@@ -7,7 +7,8 @@ import { ScatterSeries } from '../series/cartesian/scatterSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { TreemapSeries } from '../series/hierarchy/treemapSeries';
 import { ChartType, registerChartSeriesType } from './chartTypes';
-import { ModuleContext, SeriesConstructor } from '../../util/module';
+import { SeriesConstructor } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 
 const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
     area: AreaSeries,

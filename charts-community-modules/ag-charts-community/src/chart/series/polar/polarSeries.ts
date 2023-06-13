@@ -3,7 +3,7 @@ import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { DataModel, ProcessedData } from '../../data/dataModel';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**

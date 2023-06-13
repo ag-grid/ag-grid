@@ -41,7 +41,7 @@ import { Pagination } from './pagination/pagination';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { CategoryLegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
-import { ModuleContext } from '../util/module';
+import { ModuleContext } from '../util/moduleContext';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 const OPT_ORIENTATION = predicateWithMessage(

@@ -29,7 +29,7 @@ import { HighlightChangeEvent, HighlightManager } from './interaction/highlightM
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
 import { ZoomManager } from './interaction/zoomManager';
-import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
+import { Module, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
@@ -40,6 +40,7 @@ import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
 import { CallbackCache } from '../util/callbackCache';
+import { ModuleContext } from '../util/moduleContext';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 

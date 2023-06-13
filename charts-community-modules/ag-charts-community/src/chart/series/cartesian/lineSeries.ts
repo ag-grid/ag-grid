@@ -32,7 +32,7 @@ import {
 } from '../../agChartOptions';
 import { DataModel, UngroupedDataItem } from '../../data/dataModel';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {

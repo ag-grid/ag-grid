@@ -25,7 +25,7 @@ import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
-import { ModuleContext } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 
 /**
  * Processed series datum used in node selections,

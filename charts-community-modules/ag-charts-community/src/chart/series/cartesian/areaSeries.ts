@@ -51,7 +51,7 @@ import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
 import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 interface FillSelectionDatum {
     readonly itemId: string;

@@ -13,7 +13,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { CartesianSeriesNodeDatum } from './cartesianSeries';
 import { SeriesItemHighlightStyle } from '../series';
 import { Text } from '../../../scene/shape/text';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 type Bounds = {
     x: number;

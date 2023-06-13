@@ -29,7 +29,7 @@ import {
 } from '../../agChartOptions';
 import { DataModel } from '../../data/dataModel';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import { ModuleContext } from '../../../util/moduleContext';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;

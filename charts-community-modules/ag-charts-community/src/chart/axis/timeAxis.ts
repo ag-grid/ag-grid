@@ -2,7 +2,7 @@ import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 import { Default } from '../../util/default';
 import { BaseAxisTick } from '../../axis';
 
