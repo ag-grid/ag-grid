@@ -395,6 +395,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             node.stroke = this.stroke;
             node.strokeOpacity = this.strokeOpacity;
             node.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            node.lineDash = this.lineDash;
+            node.lineDashOffset = this.lineDashOffset;
         });
     }
 
