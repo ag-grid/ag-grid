@@ -28,11 +28,11 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
     private _parent: Node;
     private _nodes: TChild[] = [];
     private _data: TDatum[] = [];
-    private _ids: string[] = [];
+    private _datumNodeIndices = new Map<string, number>();
     private _factory: NodeFactory<TChild, TDatum>;
 
     // If garbage collection is set to false, you must call `selection.cleanup()` to remove deleted nodes
-    private _garbage: number[] = [];
+    private _garbage: string[] = [];
     private _garbageCollection: boolean = true;
 
     each(iterate: (node: TChild, datum: TDatum, index: number) => void) {
@@ -49,18 +49,20 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
         const parent = this._parent;
         const factory = this._factory;
 
-        if (getDatumId) {
-            // Append any new datum ids and nodes to the end of the arrays
-            data.forEach((datum) => {
-                const datumId = getDatumId(datum);
-                if (this._ids.indexOf(datumId) === -1) {
-                    this._ids.push(datumId);
+        const datumIds = new Map<string, number>();
 
+        if (getDatumId) {
+            // Check if new datum and append node and save map of datum id to node index
+            data.forEach((datum, index) => {
+                const datumId = getDatumId(datum);
+                datumIds.set(datumId, index);
+                if (!this._datumNodeIndices.has(datumId)) {
                     const node = factory(datum);
                     node.datum = datum;
                     init?.(node);
                     parent.appendChild(node);
                     this._nodes.push(node);
+                    this._datumNodeIndices.set(datumId, this._nodes.length - 1);
                 }
             });
         } else if (data.length > old.length) {
@@ -83,13 +85,13 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
         this._data = data.slice(0);
 
         if (getDatumId) {
-            // Find and update the datum for each node by the index of the id within the set
-            for (let i = 0; i < this._ids.length; i++) {
-                const datum = this._data.find((d) => getDatumId(d) === this._ids[i]);
-                if (datum) {
-                    this._nodes[i].datum = datum;
+            // Find and update the datum for each node or throw into garbage if datum no longer exists
+            for (const [datumId, nodeIndex] of this._datumNodeIndices) {
+                const datumIndex = datumIds.get(datumId);
+                if (datumIndex !== undefined) {
+                    this._nodes[nodeIndex].datum = data[datumIndex];
                 } else {
-                    this._garbage.push(i);
+                    this._garbage.push(datumId);
                 }
             }
 
@@ -114,15 +116,17 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
     cleanup() {
         if (this._garbage.length === 0) return;
 
-        this._nodes = this._nodes.filter((node, index) => {
-            if (this._garbage.indexOf(index) === -1) return true;
+        this._garbage.forEach((datumId) => {
+            const nodeIndex = this._datumNodeIndices.get(datumId);
 
-            delete this._ids[index];
+            if (nodeIndex === undefined) return;
+
+            const node = this._nodes[nodeIndex];
+            delete this._nodes[nodeIndex];
             this._parent.removeChild(node);
-            return false;
+            this._datumNodeIndices.delete(datumId);
         });
 
-        this._ids = this._ids.filter((id) => id !== undefined);
         this._garbage = [];
     }
 
