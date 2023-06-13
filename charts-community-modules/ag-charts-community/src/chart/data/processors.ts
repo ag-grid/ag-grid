@@ -153,23 +153,42 @@ export function diff(previousData: ProcessedData<any>): ProcessorOutputPropertyD
                 removed: [] as any[],
             };
 
-            processedData?.data.forEach((datum) => {
-                const previous = previousData?.data.find((previous) => arraysEqual(datum.keys, previous.keys));
+            const added = new Map<string, any>();
+            const updated = new Map<string, any>();
+            const removed = new Map<string, any>();
+            const sep = '___';
 
-                if (previous && !arraysEqual(datum.values, previous.values)) {
-                    diff.updated.push(datum.keys);
-                } else if (!previous) {
-                    diff.added.push(datum.keys);
+            for (let i = 0; i < Math.max(previousData.data.length, processedData.data.length); i++) {
+                const prev = previousData.data[i];
+                const datum = processedData.data[i];
+
+                const prevId = prev?.keys.join(sep);
+                const datumId = datum?.keys.join(sep);
+
+                if (prevId === datumId) {
+                    if (!arraysEqual(prev.values, datum.values)) {
+                        updated.set(datumId, datum);
+                    }
+                    continue;
                 }
-            });
 
-            previousData?.data.forEach((previous) => {
-                const datum = processedData?.data.find((datum) => arraysEqual(previous.keys, datum.keys));
-
-                if (!datum) {
-                    diff.removed.push(previous.keys);
+                if (removed.has(datumId)) {
+                    updated.set(datumId, datum);
+                    removed.delete(datumId);
+                } else if (datum) {
+                    added.set(datumId, datum);
                 }
-            });
+                if (added.has(prevId)) {
+                    updated.set(prevId, prev);
+                    added.delete(prevId);
+                } else if (prev) {
+                    removed.set(prevId, prev);
+                }
+            }
+
+            diff.added = Array.from(added.values()).map((datum) => datum.keys);
+            diff.updated = Array.from(updated.values()).map((datum) => datum.keys);
+            diff.removed = Array.from(removed.values()).map((datum) => datum.keys);
 
             diff.changed = diff.added.length > 0 || diff.updated.length > 0 || diff.removed.length > 0;
 
