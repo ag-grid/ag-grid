@@ -983,27 +983,38 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const labelDuration = 200;
 
         let startingX = Infinity;
+        let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
                 if (datum.yValue >= 0) {
                     startingX = Math.min(startingX, datum.x);
+                    startingY = Math.max(startingY, datum.height + datum.y);
                 }
             })
         );
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                this.animateRect(
-                    `${this.id}_empty-update-ready_${rect.id}`,
-                    rect,
-                    [
-                        { from: startingX, to: datum.x },
-                        { from: 0, to: datum.width },
-                        { from: datum.y, to: datum.y },
-                        { from: datum.height, to: datum.height },
-                    ],
-                    duration
-                );
+                let contextX = startingX;
+                let contextWidth = 0;
+                let contextY = datum.y;
+                let contextHeight = datum.height;
+
+                if (this.getBarDirection() === ChartAxisDirection.Y) {
+                    contextX = datum.x;
+                    contextWidth = datum.width;
+                    contextY = startingY;
+                    contextHeight = 0;
+                }
+
+                const props = [
+                    { from: contextX, to: datum.x },
+                    { from: contextWidth, to: datum.width },
+                    { from: contextY, to: datum.y },
+                    { from: contextHeight, to: datum.height },
+                ];
+
+                this.animateRect(`${this.id}_empty-update-ready_${rect.id}`, rect, props, duration);
             });
         });
 
@@ -1038,7 +1049,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         const { processedData } = this;
 
-        const diff = processedData?.reduced?.diff;
+        const diff = processedData?.reduced?.diff as {
+            changed: boolean;
+            added: string[][];
+            removed: string[][];
+            updated: string[][];
+        };
 
         if (!diff?.changed) {
             datumSelections.forEach((datumSelection) => {
@@ -1056,17 +1072,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         let startingX = Infinity;
+        let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
                 if (datum.yValue >= 0) {
                     startingX = Math.min(startingX, datum.x);
+                    startingY = Math.max(startingY, datum.height + datum.y);
                 }
             })
         );
 
-        const keys = this.processedData?.defs.keys;
-        const keyMatches = (find: string[], datum: BarNodeDatum) =>
-            find.every((k, i) => k === datum.datum[keys![i].property]);
+        const datumIdKey = this.processedData?.defs.keys?.[0];
+
+        const addedIds: { [key: string]: boolean } = {};
+        diff.added.forEach((d) => {
+            addedIds[d[0]] = true;
+        });
+        const removedIds: { [key: string]: boolean } = {};
+        diff.removed.forEach((d) => {
+            removedIds[d[0]] = true;
+        });
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -1080,21 +1105,35 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 let duration = sectionDuration;
                 let cleanup = false;
 
-                if (keys && diff.added.find((a: string[]) => keyMatches(a, datum))) {
+                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
+
+                let contextX = startingX;
+                let contextWidth = 0;
+                let contextY = datum.y;
+                let contextHeight = datum.height;
+
+                if (this.getBarDirection() === ChartAxisDirection.Y) {
+                    contextX = datum.x;
+                    contextWidth = datum.width;
+                    contextY = startingY;
+                    contextHeight = 0;
+                }
+
+                if (datumId !== undefined && addedIds[datumId] !== undefined) {
                     props = [
-                        { from: startingX, to: datum.x },
-                        { from: 0, to: datum.width },
-                        { from: datum.y, to: datum.y },
-                        { from: datum.height, to: datum.height },
+                        { from: contextX, to: datum.x },
+                        { from: contextWidth, to: datum.width },
+                        { from: contextY, to: datum.y },
+                        { from: contextHeight, to: datum.height },
                     ];
                     delay += sectionDuration;
                     duration = sectionDuration;
-                } else if (keys && diff.removed.find((r: string[]) => keyMatches(r, datum))) {
+                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
                     props = [
-                        { from: datum.x, to: startingX },
-                        { from: datum.width, to: 0 },
-                        { from: datum.y, to: datum.y },
-                        { from: datum.height, to: datum.height },
+                        { from: datum.x, to: contextX },
+                        { from: datum.width, to: contextWidth },
+                        { from: datum.y, to: contextY },
+                        { from: datum.height, to: contextHeight },
                     ];
                     delay = 0;
                     duration = sectionDuration;
@@ -1144,150 +1183,5 @@ export class ColumnSeries extends BarSeries {
 
     protected getCategoryDirection() {
         return ChartAxisDirection.X;
-    }
-
-    animateEmptyUpdateReady({
-        datumSelections,
-        labelSelections,
-    }: {
-        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
-        labelSelections: Array<Selection<Text, BarNodeDatum>>;
-    }) {
-        const duration = 1000;
-        const labelDuration = 200;
-
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
-
-        datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                this.animateRect(
-                    `${this.id}_empty-update-ready_${rect.id}`,
-                    rect,
-                    [
-                        { from: datum.x, to: datum.x },
-                        { from: datum.width, to: datum.width },
-                        { from: startingY, to: datum.y },
-                        { from: 0, to: datum.height },
-                    ],
-                    duration
-                );
-            });
-        });
-
-        labelSelections.forEach((labelSelection) => {
-            labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
-                    from: 0,
-                    to: 1,
-                    delay: duration,
-                    duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
-                    onUpdate: (opacity) => {
-                        label.opacity = opacity;
-                    },
-                });
-            });
-        });
-    }
-
-    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
-        datumSelections.forEach((datumSelection) => {
-            this.resetSelectionRects(datumSelection);
-        });
-    }
-
-    animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
-        const { processedData } = this;
-
-        const diff = processedData?.reduced?.diff as {
-            changed: boolean;
-            added: string[][];
-            removed: string[][];
-            updated: string[][];
-        };
-
-        if (!diff?.changed) {
-            datumSelections.forEach((datumSelection) => {
-                this.resetSelectionRects(datumSelection);
-            });
-            return;
-        }
-
-        const totalDuration = 1000;
-        let sectionDuration = totalDuration;
-        if (diff.added.length > 0 && diff.removed.length > 0) {
-            sectionDuration = Math.floor(totalDuration / 3);
-        } else if (diff.added.length > 0 || diff.removed.length > 0) {
-            sectionDuration = Math.floor(totalDuration / 2);
-        }
-
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
-
-        const datumIdKey = this.processedData?.defs.keys?.[0];
-
-        const addedIds: any = {};
-        diff.added.forEach((d) => {
-            addedIds[d[0]] = true;
-        });
-        const removedIds: any = {};
-        diff.removed.forEach((d) => {
-            removedIds[d[0]] = true;
-        });
-
-        datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                let props = [
-                    { from: rect.x, to: datum.x },
-                    { from: rect.width, to: datum.width },
-                    { from: rect.y, to: datum.y },
-                    { from: rect.height, to: datum.height },
-                ];
-                let delay = diff.removed.length > 0 ? sectionDuration : 0;
-                let duration = sectionDuration;
-                let cleanup = false;
-
-                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
-
-                if (datumId !== undefined && addedIds[datumId] !== undefined) {
-                    props = [
-                        { from: datum.x, to: datum.x },
-                        { from: datum.width, to: datum.width },
-                        { from: startingY, to: datum.y },
-                        { from: 0, to: datum.height },
-                    ];
-                    delay += sectionDuration;
-                    duration = sectionDuration;
-                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
-                    props = [
-                        { from: datum.x, to: datum.x },
-                        { from: datum.width, to: datum.width },
-                        { from: datum.y, to: startingY },
-                        { from: datum.height, to: 0 },
-                    ];
-                    delay = 0;
-                    duration = sectionDuration;
-                    cleanup = true;
-                }
-
-                this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
-                    if (cleanup) datumSelection.cleanup();
-                });
-            });
-        });
     }
 }
