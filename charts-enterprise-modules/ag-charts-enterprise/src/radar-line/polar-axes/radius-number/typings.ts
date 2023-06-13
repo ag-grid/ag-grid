@@ -1,6 +1,6 @@
-import { AgBaseCartesianAxisOptions, AgAxisNumberTickOptions } from 'ag-charts-community';
+import { AgBaseAxisOptions, AgAxisNumberTickOptions } from 'ag-charts-community';
 
-export interface AgRadiusNumberAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     type: 'polar-radius-number';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
