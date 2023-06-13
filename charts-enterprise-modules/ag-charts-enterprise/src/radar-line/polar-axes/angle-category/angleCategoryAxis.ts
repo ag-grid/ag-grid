@@ -4,7 +4,7 @@ const { ChartAxisDirection } = _ModuleSupport;
 const { BandScale } = _Scale;
 const { isNumberEqual } = _Util;
 
-export class AngleCategoryAxis extends _ModuleSupport.ChartAxis {
+export class AngleCategoryAxis extends _ModuleSupport.Axis {
     static className = 'AngleCategoryAxis';
     static type = 'polar-angle-category' as const;
 

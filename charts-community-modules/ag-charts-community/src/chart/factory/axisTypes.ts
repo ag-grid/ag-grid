@@ -8,7 +8,6 @@ import { TimeAxis } from '../axis/timeAxis';
 const AXIS_CONSTRUCTORS: Record<string, AxisConstructor> = {
     [NumberAxis.type]: NumberAxis,
     [CategoryAxis.type]: CategoryAxis,
-    // @ts-ignore: Deprecated `createTick().count` type mismatch.
     [TimeAxis.type]: TimeAxis,
     [GroupedCategoryAxis.type]: GroupedCategoryAxis,
     [LogAxis.type]: LogAxis,

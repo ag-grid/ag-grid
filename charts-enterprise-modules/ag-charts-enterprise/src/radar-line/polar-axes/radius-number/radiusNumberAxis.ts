@@ -4,7 +4,7 @@ const { ChartAxisDirection, Layers } = _ModuleSupport;
 const { LinearScale } = _Scale;
 const { Group, Arc, Selection } = _Scene;
 
-export class RadiusNumberAxis extends _ModuleSupport.ChartAxis {
+export class RadiusNumberAxis extends _ModuleSupport.Axis {
     static className = 'RadiusNumberAxis';
     static type = 'polar-radius-number' as const;
 

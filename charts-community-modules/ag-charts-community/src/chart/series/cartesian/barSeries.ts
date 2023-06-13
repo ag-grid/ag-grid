@@ -19,7 +19,6 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Logger } from '../../../util/logger';
-import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
@@ -395,11 +394,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
-    private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
+    private getCategoryAxis(): ChartAxis | undefined {
         return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
-    private getValueAxis(): ChartAxis<Scale<any, number>> | undefined {
+    private getValueAxis(): ChartAxis | undefined {
         return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 

@@ -572,7 +572,7 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
 }
 
 function createAxis(chart: Chart, options: AgBaseAxisOptions[]): ChartAxis[] {
-    const axes: ChartAxis<any>[] = [];
+    const axes: ChartAxis[] = [];
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
 
@@ -589,7 +589,7 @@ function createAxis(chart: Chart, options: AgBaseAxisOptions[]): ChartAxis[] {
     return axes;
 }
 
-function applyAxisModules(axis: ChartAxis<any>, options: AgBaseAxisOptions) {
+function applyAxisModules(axis: ChartAxis, options: AgBaseAxisOptions) {
     let modulesChanged = false;
     const rootModules = REGISTERED_MODULES.filter((m): m is AxisOptionModule => m.type === 'axis-option');
 

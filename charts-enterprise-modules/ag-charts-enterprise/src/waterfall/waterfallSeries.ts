@@ -272,11 +272,11 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
-    private getCategoryAxis(): _ModuleSupport.ChartAxis<_Scene.Scale<any, number>> | undefined {
+    private getCategoryAxis(): _ModuleSupport.ChartAxis | undefined {
         return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
-    private getValueAxis(): _ModuleSupport.ChartAxis<_Scene.Scale<any, number>> | undefined {
+    private getValueAxis(): _ModuleSupport.ChartAxis | undefined {
         return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 

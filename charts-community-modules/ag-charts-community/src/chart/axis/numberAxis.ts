@@ -1,7 +1,7 @@
 import { LinearScale } from '../../scale/linearScale';
 import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
-import { ChartAxis } from '../chartAxis';
+import { Axis } from '../../axis';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
@@ -15,7 +15,7 @@ class NumberAxisTick extends AxisTick<LinearScale | LogScale, number> {
     maxSpacing: number = NaN;
 }
 
-export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
+export class NumberAxis extends Axis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 

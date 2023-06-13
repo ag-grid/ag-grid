@@ -340,7 +340,7 @@ export class CartesianChart extends Chart {
         let { clipSeries } = opts;
         const { position, direction } = axis;
 
-        const axisLeftRightRange = (axis: ChartAxis<any>) => {
+        const axisLeftRightRange = (axis: ChartAxis) => {
             if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                 return [0, seriesRect.height];
             }

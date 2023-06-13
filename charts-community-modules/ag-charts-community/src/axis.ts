@@ -11,13 +11,18 @@ import { createId } from './util/id';
 import { normalizeAngle360, toRadians } from './util/angle';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
-import { Validate, BOOLEAN, NUMBER, ARRAY, predicateWithMessage } from './util/validation';
+import { Validate, BOOLEAN, NUMBER, ARRAY, POSITION, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import { AgAxisCaptionFormatterParams, AgAxisGridStyle, TextWrap } from './chart/agChartOptions';
+import {
+    AgAxisCaptionFormatterParams,
+    AgAxisGridStyle,
+    AgCartesianAxisPosition,
+    TextWrap,
+} from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
@@ -31,11 +36,13 @@ import {
 } from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
-import { ModuleContext } from './util/moduleContext';
+import { AxisOptionModule, ModuleInstance } from './util/module';
+import { AxisContext, ModuleContext } from './util/moduleContext';
 import { AxisLabel } from './chart/axis/axisLabel';
 import { AxisLine } from './chart/axis/axisLine';
 import { AxisTitle } from './chart/axis/axisTitle';
 import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
+import { ChartAxis, BoundSeries } from './chart/chartAxis';
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
@@ -100,7 +107,9 @@ type TickData = { rawTicks: any[]; ticks: TickDatum[]; labelCount: number };
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any>
+    implements ChartAxis
+{
     static readonly defaultTickMinSpacing = 50;
 
     readonly id = createId(this);
@@ -114,6 +123,24 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     get scale(): S {
         return this._scale;
     }
+
+    @Validate(STRING_ARRAY)
+    keys: string[] = [];
+
+    get type(): string {
+        return (this.constructor as any).type ?? '';
+    }
+
+    @Validate(POSITION)
+    position: AgCartesianAxisPosition = 'left';
+
+    get direction() {
+        return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
+    }
+
+    boundSeries: BoundSeries[] = [];
+    linkedTo?: Axis<any, any>;
+    includeInvisibleDomains: boolean = false;
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
 
@@ -168,13 +195,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         },
     };
 
-    private attachCrossLine(crossLine: CrossLine) {
-        this.crossLineGroup.appendChild(crossLine.group);
-    }
+    private axisContext?: AxisContext;
 
-    private detachCrossLine(crossLine: CrossLine) {
-        this.crossLineGroup.removeChild(crossLine.group);
-    }
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
         this._scale = scale;
@@ -184,8 +207,20 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         this.axisGroup.appendChild(this._titleCaption.node);
     }
 
-    public destroy() {
-        // For override by sub-classes.
+    private attachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.appendChild(crossLine.group);
+    }
+
+    private detachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.removeChild(crossLine.group);
+    }
+
+    destroy() {
+        for (const [key, module] of Object.entries(this.modules)) {
+            module.instance.destroy();
+            delete this.modules[key];
+            delete (this as any)[key];
+        }
     }
 
     protected refreshScale() {
@@ -368,10 +403,41 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         return new AxisTick();
     }
 
+    protected updateDirection() {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
+    }
+
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateDirection();
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -909,7 +975,20 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     protected calculateDomain() {
-        // Placeholder for subclasses to override.
+        const { direction, boundSeries, includeInvisibleDomains } = this;
+
+        if (this.linkedTo) {
+            this.dataDomain = this.linkedTo.dataDomain;
+        } else {
+            const domains: any[][] = [];
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
+                domains.push(series.getDomain(direction));
+            }
+
+            const domain = new Array<any>().concat(...domains);
+            this.dataDomain = this.normaliseDataDomain(domain);
+        }
     }
 
     updatePosition({ rotation, sideFlag }: { rotation: number; sideFlag: Flag }) {
@@ -1187,7 +1266,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     isAnySeriesActive() {
-        return false;
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
     }
 
     clipTickLines(x: number, y: number, width: number, height: number) {
@@ -1202,5 +1281,82 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         return [Math.abs(min * 0.01), Math.abs(min * 0.01)];
     }
 
-    protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
+    protected getTitleFormatterParams() {
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, [] as AgAxisCaptionFormatterParams['boundSeries']);
+        return {
+            direction: this.direction,
+            boundSeries,
+            defaultValue: this.title?.text,
+        };
+    }
+
+    normaliseDataDomain(d: D[]): D[] {
+        return d;
+    }
+
+    getLayoutState(): AxisLayout {
+        return {
+            rect: this.computeBBox(),
+            gridPadding: this.gridPadding,
+            seriesAreaPadding: this.seriesAreaPadding,
+            tickSize: this.tick.size,
+            ...this.layout,
+        };
+    }
+    addModule(module: AxisOptionModule) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+
+        if (this.axisContext == null) {
+            const keys = () => {
+                return this.boundSeries
+                    .map((s) => s.getKeys(this.direction))
+                    .reduce((keys, seriesKeys) => {
+                        keys.push(...seriesKeys);
+                        return keys;
+                    }, []);
+            };
+
+            this.axisContext = {
+                axisId: this.id,
+                position: this.position,
+                direction: this.direction,
+                continuous: this.scale instanceof ContinuousScale,
+                keys,
+                scaleValueFormatter: (specifier: string) => this.scale.tickFormat?.({ specifier }) ?? undefined,
+                scaleBandwidth: () => this.scale.bandwidth ?? 0,
+                scaleConvert: (val) => this.scale.convert(val),
+                scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
+            };
+        }
+
+        const moduleInstance = new module.instanceConstructor({
+            ...this.moduleCtx,
+            parent: this.axisContext,
+        });
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+
+        (this as any)[module.optionsKey] = moduleInstance;
+    }
+
+    removeModule(module: AxisOptionModule) {
+        this.modules[module.optionsKey]?.instance?.destroy();
+        delete this.modules[module.optionsKey];
+        delete (this as any)[module.optionsKey];
+    }
+
+    isModuleEnabled(module: AxisOptionModule) {
+        return this.modules[module.optionsKey] != null;
+    }
 }
