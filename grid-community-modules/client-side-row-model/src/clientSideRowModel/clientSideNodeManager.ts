@@ -11,6 +11,7 @@ import {
     GridOptionsService,
     SelectionEventSourceType,
     ISelectionService,
+    RowDataUpdateStartedEvent
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -83,6 +84,8 @@ export class ClientSideNodeManager {
             return;
         }
 
+        this.dispatchRowDataUpdateStartedEvent(rowData);
+
         const rootNode = this.rootNode;
         const sibling = this.rootNode.sibling;
 
@@ -117,6 +120,8 @@ export class ClientSideNodeManager {
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
@@ -136,6 +141,14 @@ export class ClientSideNodeManager {
         }
 
         return rowNodeTransaction;
+    }
+
+    private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {
+        const event: WithoutGridCommon<RowDataUpdateStartedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            firstRowData: rowData?.length ? rowData[0] : null
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {

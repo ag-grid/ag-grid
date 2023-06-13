@@ -85,6 +85,10 @@ export interface RowDataChangedEvent<TData = any, TContext = any> extends AgGrid
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
+export interface RowDataUpdateStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    firstRowData: TData | null;
+}
+
 export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 /**
