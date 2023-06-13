@@ -66,7 +66,6 @@ interface MarkerSelectionDatum extends Required<CartesianSeriesNodeDatum> {
     readonly index: number;
     readonly fill?: string;
     readonly stroke?: string;
-    readonly yValue: number;
     readonly cumulativeValue: number;
 }
 
@@ -426,6 +425,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                             nodeMidPoint: { x: point.x, y: point.y },
                             cumulativeValue: cumulativeMarkerValues[datumIdx],
                             yValue: yDatum,
+                            xValue: xDatum,
                             yKey,
                             xKey,
                             point,
@@ -672,16 +672,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey, id: seriesId } = this;
-        const { yKey } = nodeDatum;
+        const { yKey, xValue, yValue, datum } = nodeDatum;
         const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
 
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';
         }
 
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
         const { axes, yKeys } = this;
 
         const xAxis = axes[ChartAxisDirection.X];

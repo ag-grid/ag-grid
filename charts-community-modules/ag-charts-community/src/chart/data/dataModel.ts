@@ -601,8 +601,20 @@ export class DataModel<
         };
         initDataDomain();
 
+        const accessors = this.buildAccessors(...keyDefs, ...valueDefs);
+
         const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, previousDatum?: any) => {
-            const valueInDatum = def.property in datum;
+            const hasAccessor = def.property in accessors;
+            let valueInDatum = false;
+            let value;
+            if (hasAccessor) {
+                value = accessors[def.property](datum);
+                valueInDatum = value !== undefined;
+            } else {
+                valueInDatum = def.property in datum;
+                value = valueInDatum ? datum[def.property] : def.missingValue;
+            }
+
             const missingValueDef = 'missingValue' in def;
             if (!def.missing && !valueInDatum && !missingValueDef) {
                 def.missing = true;
@@ -611,8 +623,6 @@ export class DataModel<
             if (!dataDomain.has(def.id ?? def.property)) {
                 initDataDomain(dataDomain);
             }
-
-            let value = valueInDatum ? datum[def.property] : def.missingValue;
 
             if (valueInDatum) {
                 const valid = def.validation?.(value) ?? true;
@@ -647,6 +657,17 @@ export class DataModel<
         };
 
         return { dataDomain, processValue, initDataDomain };
+    }
+
+    buildAccessors(...defs: { property: string }[]) {
+        const result: Record<string, (d: any) => any> = {};
+        for (const def of defs) {
+            const isPath = def.property.indexOf('.') >= 0;
+            if (!isPath) continue;
+
+            result[def.property] = new Function('datum', `return datum.${def.property};`) as (d: any) => any;
+        }
+        return result;
     }
 }
 

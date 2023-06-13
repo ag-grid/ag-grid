@@ -74,6 +74,7 @@ interface BarNodeLabelDatum extends Readonly<Point> {
 
 interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
+    readonly xValue: number;
     readonly yValue: number;
     readonly cumulativeValue: number;
     readonly width: number;
@@ -489,9 +490,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 : // Handle high-volume bar charts gracefully.
                   groupScale.rawBandwidth;
 
+        const xIndex = processedData?.indices.keys[xKey] ?? -1;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
         processedData?.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
-            const x = xScale.convert(keys[0]);
+            const xValue = keys[xIndex];
+            const x = xScale.convert(xValue);
 
             for (let stackIndex = 0; stackIndex < (yKeys?.length ?? 0); stackIndex++) {
                 const stackYKeys = yKeys?.[stackIndex] ?? []; // y-data for a stack within a group
@@ -565,6 +568,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         itemId: yKey,
                         datum: seriesDatum[0],
                         cumulativeValue: prevY + currY,
+                        xValue,
                         yValue,
                         yKey,
                         xKey,
@@ -703,7 +707,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
-        const { yKey } = nodeDatum;
+        const { yKey, xValue, yValue } = nodeDatum;
 
         if (!processedData || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
@@ -724,14 +728,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const { xName, yNames, fills, strokes, tooltip, formatter, id: seriesId } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const datum = nodeDatum.datum;
+        const { datum } = nodeDatum.datum;
         const yName = yNames[yKey];
         const stackGroup = this.getStackGroup(yKey);
         const fill = fills[fillIndex % fills.length];
         const stroke = strokes[fillIndex % fills.length];
         const strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
         const title = sanitizeHtml(yName);

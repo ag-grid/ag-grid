@@ -49,7 +49,6 @@ type WaterfallNodeLabelDatum = Readonly<_Scene.Point> & {
 
 interface WaterfallNodeDatum extends _ModuleSupport.CartesianSeriesNodeDatum, Readonly<_Scene.Point> {
     readonly index: number;
-    readonly yValue: number;
     readonly cumulativeValue: number;
     readonly width: number;
     readonly height: number;
@@ -307,7 +306,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const contextIndexMap = new Map<SeriesItemType, number>();
 
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
-            const x = xScale.convert(keys[xIndex]);
+            const xDatum = keys[xIndex];
+            const x = xScale.convert(xDatum);
 
             const rawValue = values[yIndex];
             const isPositive = rawValue >= 0;
@@ -357,6 +357,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 itemId,
                 datum,
                 cumulativeValue,
+                xValue: xDatum,
                 yValue: rawValue,
                 yKey,
                 xKey,
@@ -498,10 +499,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         }
 
         const { formatter, tooltip, xName, yName, id: seriesId } = this;
-
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue } = nodeDatum;
 
         let format: any | undefined = undefined;
 

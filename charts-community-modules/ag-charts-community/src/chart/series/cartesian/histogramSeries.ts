@@ -396,6 +396,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 xKey,
                 x: xMinPx,
                 y: yMaxPx,
+                xValue: xMinPx,
+                yValue: yMaxPx,
                 width: w,
                 height: h,
                 nodeMidPoint,
