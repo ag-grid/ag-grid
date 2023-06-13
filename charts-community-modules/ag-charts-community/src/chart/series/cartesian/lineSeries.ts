@@ -123,7 +123,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
     yName?: string = undefined;
 
     async processData() {
-        const { xAxis, yAxis, xKey = '', yKey = '' } = this;
+        const {
+            axes: [xAxis, yAxis],
+            xKey = '',
+            yKey = '',
+        } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
@@ -140,7 +144,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { xAxis, yAxis, dataModel, processedData } = this;
+        const {
+            axes: [xAxis, yAxis],
+            dataModel,
+            processedData,
+        } = this;
         if (!processedData || !dataModel) return [];
 
         const xDef = dataModel.resolveProcessedDataDefById(`xValue`);
@@ -161,8 +169,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const {
             processedData,
             dataModel,
-            xAxis,
-            yAxis,
+            axes: [xAxis, yAxis],
             marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
             ctx: { callbackCache },
         } = this;
@@ -414,7 +421,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const {
+            xKey,
+            yKey,
+            axes: [xAxis, yAxis],
+        } = this;
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';

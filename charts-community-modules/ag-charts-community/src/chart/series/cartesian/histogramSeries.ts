@@ -317,8 +317,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     async createNodeData() {
         const {
-            xAxis,
-            yAxis,
+            axes: [xAxis, yAxis],
             processedData,
             ctx: { callbackCache },
         } = this;
@@ -502,7 +501,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const { xKey, yKey = '', xAxis, yAxis } = this;
+        const {
+            xKey,
+            yKey = '',
+            axes: [xAxis, yAxis],
+        } = this;
 
         if (!xKey || !xAxis || !yAxis) {
             return '';

@@ -226,7 +226,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     async processData() {
-        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
+        const {
+            xKey,
+            yKeys,
+            seriesItemEnabled,
+            axes: [xAxis, yAxis],
+            normalizedTo,
+        } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
@@ -261,7 +267,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData, xAxis, yAxis } = this;
+        const {
+            processedData,
+            axes: [xAxis, yAxis],
+        } = this;
         if (!processedData) return [];
 
         const {
@@ -290,8 +299,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     async createNodeData() {
         const {
-            xAxis,
-            yAxis,
+            axes: [xAxis, yAxis],
             data,
             processedData: { data: groupedData } = {},
             ctx: { callbackCache },
@@ -673,7 +681,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const { xAxis, yAxis, yKeys } = this;
+        const {
+            axes: [xAxis, yAxis],
+            yKeys,
+        } = this;
 
         if (!(xAxis && yAxis && isNumber(yValue)) || !yKeyDataIndex) {
             return '';

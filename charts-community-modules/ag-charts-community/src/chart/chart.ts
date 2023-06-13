@@ -667,13 +667,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected assignSeriesToAxes() {
         this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.axes?.[0] : s.axes?.[1];
                 return seriesAxis === axis;
             });
         });
     }
 
-    protected assignAxesToSeries(force: boolean = false) {
+    protected assignAxesToSeries() {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
 
@@ -685,11 +685,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((series) => {
             series.directions.forEach((direction) => {
-                const currentAxis = direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
-                if (currentAxis && !force) {
-                    return;
-                }
-
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
                     Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
@@ -705,11 +700,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
                     return;
                 }
 
-                if (direction === ChartAxisDirection.X) {
-                    series.xAxis = newAxis;
-                } else {
-                    series.yAxis = newAxis;
-                }
+                const axisIndex = direction === ChartAxisDirection.X ? 0 : 1;
+                series.axes[axisIndex] = newAxis;
             });
         });
     }
@@ -747,7 +739,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     async processData() {
         if (this.axes.length > 0) {
-            this.assignAxesToSeries(true);
+            this.assignAxesToSeries();
             this.assignSeriesToAxes();
         }
 

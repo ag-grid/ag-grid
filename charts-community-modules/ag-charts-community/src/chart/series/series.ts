@@ -240,8 +240,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     animationManager?: AnimationManager;
     chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
-    xAxis?: ChartAxis;
-    yAxis?: ChartAxis;
+    axes: ChartAxis[] = [];
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     private directionKeys: { [key in ChartAxisDirection]?: string[] };

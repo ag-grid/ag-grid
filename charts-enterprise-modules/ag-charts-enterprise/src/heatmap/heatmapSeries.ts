@@ -124,7 +124,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async processData() {
-        const { xKey = '', yKey = '', xAxis, yAxis } = this;
+        const {
+            xKey = '',
+            yKey = '',
+            axes: [xAxis, yAxis],
+        } = this;
 
         if (!xAxis || !yAxis) {
             return;
@@ -186,7 +190,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async createNodeData() {
-        const { data, visible, xAxis, yAxis } = this;
+        const {
+            data,
+            visible,
+            axes: [xAxis, yAxis],
+        } = this;
 
         if (!(data && visible && xAxis && yAxis)) {
             return [];
@@ -289,7 +297,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             ctx: { callbackCache },
         } = this;
 
-        const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
+        const [visibleMin, visibleMax] = this.axes[0]?.visibleRange ?? [];
         const isZoomed = visibleMin !== 0 || visibleMax !== 1;
         const crisp = !isZoomed;
         datumSelection.each((rect, datum) => {
@@ -367,7 +375,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     getTooltipHtml(nodeDatum: HeatmapNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const {
+            xKey,
+            yKey,
+            axes: [xAxis, yAxis],
+        } = this;
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
