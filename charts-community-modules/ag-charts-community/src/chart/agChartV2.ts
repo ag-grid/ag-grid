@@ -404,11 +404,11 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const modulesChanged = applyModules(chart, completeOptions);
 
     const skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
-    if (isAgCartesianChartOptions(processedOptions)) {
+    if (isAgCartesianChartOptions(processedOptions) || isAgPolarChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
-    } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
-        skip.push('axes');
+    } else if (isAgHierarchyChartOptions(processedOptions)) {
+        // Use defaults.
     } else {
         throw new Error(
             `AG Charts - couldn't apply configuration, check type of options and chart: ${processedOptions['type']}`
