@@ -1,8 +1,46 @@
 @use "sass:math";
+@use "sass:map";
+@use '../vendor/better-color-tools' as bct;
 
 // Transform pixel values to rems
 @function px-to-rem($px) {
     $browser-base-font-size: 16;
 
     @return math.div($px, $browser-base-font-size) * 1rem;
+}
+
+// Interpolate between to values
+@function lerp($a, $b, $n) {
+    @return (1 - $n) * $a + $n * $b;
+}
+
+// Expects a scale $name as string
+// And $color-a & $color-b as maps in the format ("color": [CSS Color], "position": [100~900])
+// $color-a must have a lower position than $color-b
+// E.g `color-scale('my-scale', ("color": red, "position": 200), ("color": blue, "position": 700))`
+@mixin color-scale($name, $color-a, $color-b) {
+    // Get oklch colors from maps
+    $oklch-a: bct.rgbToOklch(map.get($color-a, 'color'));
+    $oklch-b: bct.rgbToOklch(map.get($color-b, 'color'));
+
+    $pos-a: math.div(map.get($color-a, 'position'), 100);
+    $pos-b: math.div(map.get($color-b, 'position'), 100);
+    $pos-delta: $pos-b - $pos-a;
+
+    @for $i from 1 through 9 {
+        $normal: math.div(($i - $pos-a), $pos-delta);
+
+        $l: lerp(map.get($oklch-a, 'l'), map.get($oklch-b, 'l'), $normal);
+        $c: lerp(map.get($oklch-a, 'c'), map.get($oklch-b, 'c'), $normal);
+        $h: lerp(map.get($oklch-a, 'h'), map.get($oklch-b, 'h'), $normal);
+
+        --#{$name}-#{$i * 100}: oklch(#{$l} #{$c} #{$h});
+        --#{$name}-#{$i * 100}: #{bct.oklchToRGB(
+                (
+                    'l': $l,
+                    'c': $c,
+                    'h': $h,
+                )
+            )};
+    }
 }

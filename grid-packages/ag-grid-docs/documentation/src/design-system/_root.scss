@@ -49,4 +49,16 @@
     --line-height: var(--line-height-normal);
 
     --icon-size: #{$icon-size};
+
+    @include color-scale(
+        'my-scale',
+        (
+            'color': red,
+            'position': 200,
+        ),
+        (
+            'color': blue,
+            'position': 700,
+        )
+    );
 }
