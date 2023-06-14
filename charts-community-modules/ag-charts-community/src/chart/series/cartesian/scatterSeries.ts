@@ -141,8 +141,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async processData() {
-        const { xKey = '', yKey = '', sizeKey, xAxis, yAxis, marker, data } = this;
+        const { xKey = '', yKey = '', sizeKey, axes, marker, data } = this;
 
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
@@ -183,7 +185,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         if (dataDef?.valueType === 'category') {
             return domain;
         }
-        const axis = direction === ChartAxisDirection.X ? this.xAxis : this.yAxis;
+        const axis = this.axes[direction];
         return this.fixNumericExtent(extent(domain), axis);
     }
 
@@ -205,14 +207,16 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     async createNodeData() {
         const {
             visible,
-            xAxis,
-            yAxis,
+            axes,
             yKey = '',
             xKey = '',
             label,
             labelKey,
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`);
         const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`);
@@ -435,7 +439,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey, axes } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';

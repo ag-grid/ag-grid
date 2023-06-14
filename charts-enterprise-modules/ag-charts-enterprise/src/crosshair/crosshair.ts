@@ -4,7 +4,7 @@ import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 type AgCrosshairLabelRendererResult = any;
 
 const { Group, Line, BBox } = _Scene;
-const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
+const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers, ChartAxisDirection } = _ModuleSupport;
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
@@ -215,8 +215,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         const hasCrosshair =
             currentHighlight &&
             currentHighlight.datum &&
-            (currentHighlight.series.xAxis.id === axisCtx.axisId ||
-                currentHighlight.series.yAxis.id === axisCtx.axisId);
+            (currentHighlight.series.axes[ChartAxisDirection.X]?.id === axisCtx.axisId ||
+                currentHighlight.series.axes[ChartAxisDirection.Y]?.id === axisCtx.axisId);
 
         if (!hasCrosshair) {
             this.activeHighlight = undefined;

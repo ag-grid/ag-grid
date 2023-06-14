@@ -522,7 +522,11 @@ export abstract class CartesianSeries<
 
     protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const { axes, rootGroup, _contextNodeData: contextNodeData } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
+
         const hitPoint = rootGroup.transformPoint(x, y);
 
         let minDistance = Infinity;
@@ -561,7 +565,10 @@ export abstract class CartesianSeries<
         requireCategoryAxis: boolean
     ): { datum: CartesianSeriesNodeDatum; distance: number } | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const { axes, rootGroup, _contextNodeData: contextNodeData } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         // Prefer to start search with any available category axis.
         const directions = [xAxis, yAxis]

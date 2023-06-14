@@ -32,17 +32,17 @@ describe('Radar Line sChart', () => {
 
     const EXAMPLE_OPTIONS: AgChartOptions = {
         data: [
-            { subject: 'Maths', grade: 7.0 },
-            { subject: 'Physics', grade: 4.3 },
-            { subject: 'Biology', grade: 3.0 },
-            { subject: 'History', grade: 6.5 },
-            { subject: 'P.E.', grade: 9.8 },
+            { subject: 'Maths', gradeA: 7.0, gradeB: 4.2 },
+            { subject: 'Physics', gradeA: 4.3, gradeB: 8.5 },
+            { subject: 'Biology', gradeA: 3.0, gradeB: 3.0 },
+            { subject: 'History', gradeA: 6.5, gradeB: 4.3 },
+            { subject: 'P.E.', gradeA: 9.8, gradeB: 6.4 },
         ],
         series: [
             {
                 type: 'radar-line',
                 angleKey: 'subject',
-                radiusKey: 'grade',
+                radiusKey: 'gradeA',
                 stroke: 'red',
                 strokeWidth: 2,
                 marker: {
@@ -50,10 +50,29 @@ describe('Radar Line sChart', () => {
                     size: 10,
                 },
             },
+            {
+                type: 'radar-line',
+                angleKey: 'subject',
+                radiusKey: 'gradeB',
+                stroke: 'blue',
+                strokeWidth: 2,
+                marker: {
+                    fill: 'blue',
+                    size: 10,
+                },
+            },
         ],
         legend: {
             enabled: true,
         },
+        axes: [
+            {
+                type: 'polar-angle-category',
+            },
+            {
+                type: 'polar-radius-number',
+            },
+        ],
     };
 
     const compare = async () => {

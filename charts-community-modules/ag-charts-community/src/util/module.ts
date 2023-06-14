@@ -1,8 +1,10 @@
+import { ChartAxis } from '../chart/chartAxis';
 import { Series } from '../chart/series/series';
 import { ChartLegend } from '../chart/legendDatum';
 import { JsonApplyParams } from './json';
 import { AxisContext, ModuleContext, ModuleContextWithParent } from './moduleContext';
 
+export type AxisConstructor = new (moduleContext: ModuleContext) => ChartAxis;
 export type SeriesConstructor = new (moduleContext: ModuleContext) => Series<any>;
 export type LegendConstructor = new (moduleContext: ModuleContext) => ChartLegend;
 
@@ -27,12 +29,21 @@ export interface RootModule<M extends ModuleInstance = ModuleInstance> extends B
     themeTemplate?: {};
 }
 
-export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
-    type: 'axis';
+export interface AxisOptionModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
+    type: 'axis-option';
 
     axisTypes: ('category' | 'number' | 'log' | 'time')[];
 
     instanceConstructor: new (ctx: ModuleContextWithParent<AxisContext>) => M;
+
+    themeTemplate: {};
+}
+
+export interface AxisModule extends BaseModule {
+    type: 'axis';
+
+    identifier: string;
+    instanceConstructor: AxisConstructor;
 
     themeTemplate: {};
 }
@@ -56,7 +67,8 @@ export interface SeriesModule extends BaseModule {
 
 export type Module<M extends ModuleInstance = ModuleInstance> =
     | RootModule<M>
-    | AxisModule<M>
+    | AxisModule
+    | AxisOptionModule
     | LegendModule
     | SeriesModule;
 

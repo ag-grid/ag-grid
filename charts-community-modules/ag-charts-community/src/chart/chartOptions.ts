@@ -1,4 +1,4 @@
-import { AxisTitle } from '../axis';
+import { AxisTitle } from './axis/axisTitle';
 import { Caption } from '../caption';
 import { DropShadow } from '../scene/dropShadow';
 import { JsonApplyParams } from '../util/json';

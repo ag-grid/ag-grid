@@ -19,7 +19,6 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Logger } from '../../../util/logger';
-import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
@@ -395,12 +394,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
-    private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+    private getCategoryAxis(): ChartAxis | undefined {
+        const direction = this.getCategoryDirection();
+        return this.axes[direction];
     }
 
-    private getValueAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+    private getValueAxis(): ChartAxis | undefined {
+        const direction = this.getBarDirection();
+        return this.axes[direction];
     }
 
     private calculateStep(range: number): number | undefined {
@@ -635,7 +636,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             ctx,
         } = this;
 
-        const crisp = checkCrisp(this.xAxis?.visibleRange);
+        const xAxis = this.axes[ChartAxisDirection.X];
+        const crisp = checkCrisp(xAxis?.visibleRange);
         const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
 
         datumSelection.each((rect, datum) => {

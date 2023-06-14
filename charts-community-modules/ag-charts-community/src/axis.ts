@@ -3,36 +3,15 @@ import { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { getFont, measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
+import { measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
-import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
-import { TimeInterval } from './util/time/interval';
+import { normalizeAngle360, toRadians } from './util/angle';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
-import {
-    Validate,
-    BOOLEAN,
-    OPT_BOOLEAN,
-    NUMBER,
-    OPT_NUMBER,
-    OPT_FONT_STYLE,
-    OPT_FONT_WEIGHT,
-    STRING,
-    OPT_COLOR_STRING,
-    OPTIONAL,
-    ARRAY,
-    predicateWithMessage,
-    OPT_STRING,
-    OPT_ARRAY,
-    LESS_THAN,
-    NUMBER_OR_NAN,
-    AND,
-    TEXT_WRAP,
-    OPT_FUNCTION,
-} from './util/validation';
+import { Validate, BOOLEAN, NUMBER, ARRAY, POSITION, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
@@ -40,16 +19,11 @@ import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
 import {
     AgAxisCaptionFormatterParams,
-    AgAxisCaptionOptions,
     AgAxisGridStyle,
-    AgAxisLabelFormatterParams,
-    FontStyle,
-    FontWeight,
+    AgCartesianAxisPosition,
     TextWrap,
 } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
-import { Default } from './util/default';
-import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
 import {
@@ -62,21 +36,13 @@ import {
 } from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
-import { ModuleContext } from './util/moduleContext';
-
-const TICK_COUNT = predicateWithMessage(
-    (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
-    `expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
-const OPT_TICK_COUNT = predicateWithMessage(
-    (v: any, ctx) => OPTIONAL(v, ctx, TICK_COUNT),
-    `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
-
-const OPT_TICK_INTERVAL = predicateWithMessage(
-    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => (v !== 0 && NUMBER(0)(v, ctx)) || v instanceof TimeInterval),
-    `expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
-);
+import { AxisOptionModule, ModuleInstance } from './util/module';
+import { AxisContext, ModuleContext } from './util/moduleContext';
+import { AxisLabel } from './chart/axis/axisLabel';
+import { AxisLine } from './chart/axis/axisLine';
+import { AxisTitle } from './chart/axis/axisTitle';
+import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
+import { ChartAxis, BoundSeries } from './chart/chartAxis';
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
@@ -124,8 +90,6 @@ enum TickGenerationType {
     VALUES,
 }
 
-type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
-
 type TickDatum = {
     tickLabel: string;
     tick: any;
@@ -133,221 +97,6 @@ type TickDatum = {
 };
 
 type TickData = { rawTicks: any[]; ticks: TickDatum[]; labelCount: number };
-
-export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
-
-export class AxisLine {
-    @Validate(NUMBER(0))
-    width: number = 1;
-
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(195, 195, 195, 1)';
-}
-
-export class BaseAxisTick<S extends Scale<D, number, I>, D = any, I = any> {
-    @Validate(BOOLEAN)
-    enabled = true;
-
-    /**
-     * The line width to be used by axis ticks.
-     */
-    @Validate(NUMBER(0))
-    width: number = 1;
-
-    /**
-     * The line length to be used by axis ticks.
-     */
-    @Validate(NUMBER(0))
-    size: number = 6;
-
-    /**
-     * The color of the axis ticks.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(195, 195, 195, 1)';
-
-    /**
-     * A hint of how many ticks to use (the exact number of ticks might differ),
-     * a `TimeInterval` or a `CountableTimeInterval`.
-     * For example:
-     *
-     *     axis.tick.count = 5;
-     *     axis.tick.count = year;
-     *     axis.tick.count = month.every(6);
-     */
-    @Validate(OPT_TICK_COUNT)
-    @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-    count?: TickCount<S> = undefined;
-
-    @Validate(OPT_TICK_INTERVAL)
-    interval?: TickInterval<S> = undefined;
-
-    @Validate(OPT_ARRAY())
-    values?: any[] = undefined;
-
-    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
-    @Default(NaN)
-    minSpacing: number = NaN;
-
-    // Maybe initialised and validated in sub-classes - DO NOT ASSIGN A VALUE HERE.
-    maxSpacing?: number;
-}
-
-export class AxisLabel {
-    @Validate(BOOLEAN)
-    enabled = true;
-
-    /** If set to `false`, axis labels will not be wrapped on multiple lines. */
-    @Validate(OPT_BOOLEAN)
-    autoWrap: boolean = false;
-
-    /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-    @Validate(OPT_NUMBER(0))
-    maxWidth?: number = undefined;
-
-    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-    @Validate(OPT_NUMBER(0))
-    maxHeight?: number = undefined;
-
-    @Validate(OPT_FONT_STYLE)
-    fontStyle?: FontStyle = undefined;
-
-    @Validate(OPT_FONT_WEIGHT)
-    fontWeight?: FontWeight = undefined;
-
-    @Validate(NUMBER(1))
-    fontSize: number = 12;
-
-    @Validate(STRING)
-    fontFamily: string = 'Verdana, sans-serif';
-
-    /**
-     * The padding between the labels and the ticks.
-     */
-    @Validate(NUMBER(0))
-    padding: number = 5;
-
-    /**
-     * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
-     */
-    @Validate(NUMBER_OR_NAN())
-    @Default(NaN)
-    minSpacing: number = NaN;
-
-    /**
-     * The color of the labels.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-     */
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(87, 87, 87, 1)';
-
-    /**
-     * Custom label rotation in degrees.
-     * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallel} is set to `true`.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    @Validate(OPT_NUMBER(-360, 360))
-    rotation?: number = undefined;
-
-    /**
-     * If specified and axis labels may collide, they are rotated to reduce collisions. If the
-     * `rotation` property is specified, it takes precedence.
-     */
-    @Validate(OPT_BOOLEAN)
-    autoRotate: boolean | undefined = undefined;
-
-    /**
-     * Rotation angle to use when autoRotate is applied.
-     */
-    @Validate(NUMBER(-360, 360))
-    autoRotateAngle: number = 335;
-
-    /**
-     * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
-     */
-    @Validate(BOOLEAN)
-    avoidCollisions: boolean = true;
-
-    /**
-     * By default labels and ticks are positioned to the left of the axis line.
-     * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, it's easier to think in terms
-     * of this side or the opposite side, rather than left and right.
-     * We use the term `mirror` for conciseness, although it's not
-     * true mirroring - for example, when a label is rotated, so that
-     * it is inclined at the 45 degree angle, text flowing from north-west
-     * to south-east, ending at the tick to the left of the axis line,
-     * and then we set this config to `true`, the text will still be flowing
-     * from north-west to south-east, _starting_ at the tick to the right
-     * of the axis line.
-     */
-    @Validate(BOOLEAN)
-    mirrored: boolean = false;
-
-    /**
-     * The side of the axis line to position the labels on.
-     * -1 = left (default)
-     * 1 = right
-     */
-    getSideFlag(): Flag {
-        return this.mirrored ? 1 : -1;
-    }
-
-    /**
-     * Labels are rendered perpendicular to the axis line by default.
-     * Setting this config to `true` makes labels render parallel to the axis line
-     * and center aligns labels' text at the ticks.
-     */
-    @Validate(BOOLEAN)
-    parallel: boolean = false;
-
-    /**
-     * In case {@param value} is a number, the {@param fractionDigits} parameter will
-     * be provided as well. The `fractionDigits` corresponds to the number of fraction
-     * digits used by the tick step. For example, if the tick step is `0.0005`,
-     * the `fractionDigits` is 4.
-     */
-    formatter?: (params: AgAxisLabelFormatterParams) => string = undefined;
-
-    @Validate(OPT_STRING)
-    format: string | undefined = undefined;
-
-    getFont(): string {
-        return getFont(this);
-    }
-}
-
-export class AxisTitle implements AgAxisCaptionOptions {
-    @Validate(BOOLEAN)
-    enabled = false;
-
-    @Validate(OPT_STRING)
-    text?: string = undefined;
-
-    @Validate(OPT_FONT_STYLE)
-    fontStyle: FontStyle | undefined = undefined;
-
-    @Validate(OPT_FONT_WEIGHT)
-    fontWeight: FontWeight | undefined = undefined;
-
-    @Validate(NUMBER(0))
-    fontSize: number = 10;
-
-    @Validate(STRING)
-    fontFamily: string = 'sans-serif';
-
-    @Validate(OPT_COLOR_STRING)
-    color: string | undefined = undefined;
-
-    @Validate(TEXT_WRAP)
-    wrapping: TextWrap = 'always';
-
-    @Validate(OPT_FUNCTION)
-    formatter?: (params: AgAxisCaptionFormatterParams) => string = undefined;
-}
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -358,7 +107,9 @@ export class AxisTitle implements AgAxisCaptionOptions {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any>
+    implements ChartAxis
+{
     static readonly defaultTickMinSpacing = 50;
 
     readonly id = createId(this);
@@ -372,6 +123,24 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     get scale(): S {
         return this._scale;
     }
+
+    @Validate(STRING_ARRAY)
+    keys: string[] = [];
+
+    get type(): string {
+        return (this.constructor as any).type ?? '';
+    }
+
+    @Validate(POSITION)
+    position: AgCartesianAxisPosition = 'left';
+
+    get direction() {
+        return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
+    }
+
+    boundSeries: BoundSeries[] = [];
+    linkedTo?: Axis<any, any>;
+    includeInvisibleDomains: boolean = false;
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
 
@@ -392,17 +161,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         })
     );
 
-    protected readonly gridArcGroup = this.gridGroup.appendChild(
-        new Group({
-            name: `${this.id}-gridArcs`,
-            zIndex: Layers.AXIS_GRID_ZINDEX,
-        })
-    );
-
-    private tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
-    private tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
-    private gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
-    private gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
+    protected tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
+    protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
+    protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
 
     private _crossLines?: CrossLine[] = [];
     set crossLines(value: CrossLine[] | undefined) {
@@ -420,7 +181,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     readonly line = new AxisLine();
-    readonly tick: BaseAxisTick<S> = this.createTick();
+    readonly tick: AxisTick<S> = this.createTick();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -434,13 +195,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         },
     };
 
-    private attachCrossLine(crossLine: CrossLine) {
-        this.crossLineGroup.appendChild(crossLine.group);
-    }
+    private axisContext?: AxisContext;
 
-    private detachCrossLine(crossLine: CrossLine) {
-        this.crossLineGroup.removeChild(crossLine.group);
-    }
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
         this._scale = scale;
@@ -450,8 +207,20 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         this.axisGroup.appendChild(this._titleCaption.node);
     }
 
-    public destroy() {
-        // For override by sub-classes.
+    private attachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.appendChild(crossLine.group);
+    }
+
+    private detachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.removeChild(crossLine.group);
+    }
+
+    destroy() {
+        for (const [key, module] of Object.entries(this.modules)) {
+            module.instance.destroy();
+            delete this.modules[key];
+            delete (this as any)[key];
+        }
     }
 
     protected refreshScale() {
@@ -592,7 +361,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         // Was visible and now invisible, or was invisible and now visible.
         if ((this._gridLength && !value) || (!this._gridLength && value)) {
             this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
         }
 
         this._gridLength = value;
@@ -619,23 +387,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         },
     ];
 
-    /**
-     * `false` - render grid as lines of {@link gridLength} that extend the ticks
-     *           on the opposite side of the axis
-     * `true` - render grid as concentric circles that go through the ticks
-     */
-    private _radialGrid: boolean = false;
-    set radialGrid(value: boolean) {
-        if (this._radialGrid !== value) {
-            this._radialGrid = value;
-            this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
-        }
-    }
-    get radialGrid(): boolean {
-        return this._radialGrid;
-    }
-
     private fractionDigits = 0;
 
     /**
@@ -648,14 +399,45 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
      */
     seriesAreaPadding = 0;
 
-    protected createTick(): BaseAxisTick<S> {
-        return new BaseAxisTick();
+    protected createTick(): AxisTick<S> {
+        return new AxisTick();
+    }
+
+    protected updateDirection() {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
     }
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateDirection();
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -700,7 +482,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         };
     }
 
-    private updateScale() {
+    protected updateScale() {
         this.updateRange();
         this.calculateDomain();
         this.setDomain();
@@ -1140,9 +922,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
             node.visible = visible;
         };
 
-        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
         gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
@@ -1172,7 +953,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         });
     }
 
-    private updateTickLines(sideFlag: Flag) {
+    protected updateTickLines(sideFlag: Flag) {
         const { tick } = this;
         this.tickLineGroupSelection.each((line) => {
             line.strokeWidth = tick.width;
@@ -1194,7 +975,20 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     protected calculateDomain() {
-        // Placeholder for subclasses to override.
+        const { direction, boundSeries, includeInvisibleDomains } = this;
+
+        if (this.linkedTo) {
+            this.dataDomain = this.linkedTo.dataDomain;
+        } else {
+            const domains: any[][] = [];
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
+                domains.push(series.getDomain(direction));
+            }
+
+            const domain = new Array<any>().concat(...domains);
+            this.dataDomain = this.normaliseDataDomain(domain);
+        }
     }
 
     updatePosition({ rotation, sideFlag }: { rotation: number; sideFlag: Flag }) {
@@ -1229,20 +1023,11 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
 
     private updateSelections(data: TickDatum[]) {
         const gridData = this.gridLength ? data : [];
-        const gridLineGroupSelection = this.radialGrid
-            ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridData, (group) => {
-                  const node = new Line();
-                  node.tag = Tags.GridLine;
-                  group.append(node);
-              });
-        const gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridData, (group) => {
-                  const node = new Arc();
-                  node.tag = Tags.GridArc;
-                  group.append(node);
-              })
-            : this.gridArcGroupSelection;
+        const gridLineGroupSelection = this.gridLineGroupSelection.update(gridData, (group) => {
+            const node = new Line();
+            node.tag = Tags.GridLine;
+            group.append(node);
+        });
         const tickLineGroupSelection = this.tickLineGroupSelection.update(data, (group) => {
             const line = new Line();
             line.tag = Tags.TickLine;
@@ -1258,55 +1043,36 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         // But node `translationY` values must be rounded to get pixel grid alignment
         const translationFn = (node: Line | Arc | Text) => (node.translationY = Math.round(node.datum.translationY));
         gridLineGroupSelection.each(translationFn);
-        gridArcGroupSelection.each(translationFn);
         tickLineGroupSelection.each(translationFn);
         tickLabelGroupSelection.each(translationFn);
 
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
-        this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines(sideFlag: Flag) {
-        const { gridStyle, scale, tick, gridPadding, gridLength } = this;
-        if (gridLength && gridStyle.length) {
-            const styleCount = gridStyle.length;
-            let grid: Selection<Line | Arc, Group>;
-
-            if (this.radialGrid) {
-                const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
-                const halfBandwidth = (this.scale.bandwidth ?? 0) / 2;
-
-                grid = this.gridArcGroupSelection.each((arc, datum) => {
-                    const radius = Math.round(scale.convert(datum) + halfBandwidth);
-
-                    arc.centerX = 0;
-                    arc.centerY = scale.range[0] - radius;
-                    arc.endAngle = angularGridLength;
-                    arc.radius = radius;
-                });
-            } else {
-                grid = this.gridLineGroupSelection.each((line) => {
-                    line.x1 = gridPadding;
-                    line.x2 = -sideFlag * gridLength + gridPadding;
-                    line.y1 = 0;
-                    line.y2 = 0;
-                });
-            }
-
-            grid.each((node, _, index) => {
-                const style = gridStyle[index % styleCount];
-
-                node.stroke = style.stroke;
-                node.strokeWidth = tick.width;
-                node.lineDash = style.lineDash;
-                node.fill = undefined;
-            });
+    protected updateGridLines(sideFlag: Flag) {
+        const { gridStyle, tick, gridPadding, gridLength } = this;
+        if (gridLength === 0 || gridStyle.length === 0) {
+            return;
         }
+        const styleCount = gridStyle.length;
+        this.gridLineGroupSelection.each((line, _, index) => {
+            const style = gridStyle[index % styleCount];
+
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+
+            line.stroke = style.stroke;
+            line.strokeWidth = tick.width;
+            line.lineDash = style.lineDash;
+            line.fill = undefined;
+        });
     }
 
-    private updateLabels({
+    protected updateLabels({
         tickLabelGroupSelection,
         combinedRotation,
         textBaseline,
@@ -1325,7 +1091,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         } = this;
 
         if (!labelsEnabled) {
-            return { labelData: [], rotated: false };
+            return;
         }
 
         // Apply label option values
@@ -1500,7 +1266,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
     }
 
     isAnySeriesActive() {
-        return false;
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
     }
 
     clipTickLines(x: number, y: number, width: number, height: number) {
@@ -1515,5 +1281,82 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         return [Math.abs(min * 0.01), Math.abs(min * 0.01)];
     }
 
-    protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
+    protected getTitleFormatterParams() {
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, [] as AgAxisCaptionFormatterParams['boundSeries']);
+        return {
+            direction: this.direction,
+            boundSeries,
+            defaultValue: this.title?.text,
+        };
+    }
+
+    normaliseDataDomain(d: D[]): D[] {
+        return d;
+    }
+
+    getLayoutState(): AxisLayout {
+        return {
+            rect: this.computeBBox(),
+            gridPadding: this.gridPadding,
+            seriesAreaPadding: this.seriesAreaPadding,
+            tickSize: this.tick.size,
+            ...this.layout,
+        };
+    }
+    addModule(module: AxisOptionModule) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+
+        if (this.axisContext == null) {
+            const keys = () => {
+                return this.boundSeries
+                    .map((s) => s.getKeys(this.direction))
+                    .reduce((keys, seriesKeys) => {
+                        keys.push(...seriesKeys);
+                        return keys;
+                    }, []);
+            };
+
+            this.axisContext = {
+                axisId: this.id,
+                position: this.position,
+                direction: this.direction,
+                continuous: this.scale instanceof ContinuousScale,
+                keys,
+                scaleValueFormatter: (specifier: string) => this.scale.tickFormat?.({ specifier }) ?? undefined,
+                scaleBandwidth: () => this.scale.bandwidth ?? 0,
+                scaleConvert: (val) => this.scale.convert(val),
+                scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
+            };
+        }
+
+        const moduleInstance = new module.instanceConstructor({
+            ...this.moduleCtx,
+            parent: this.axisContext,
+        });
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+
+        (this as any)[module.optionsKey] = moduleInstance;
+    }
+
+    removeModule(module: AxisOptionModule) {
+        this.modules[module.optionsKey]?.instance?.destroy();
+        delete this.modules[module.optionsKey];
+        delete (this as any)[module.optionsKey];
+    }
+
+    isModuleEnabled(module: AxisOptionModule) {
+        return this.modules[module.optionsKey] != null;
+    }
 }

@@ -1,5 +1,5 @@
 import { REGISTERED_MODULES } from '../../util/module';
-import { registerAxisThemeTemplate } from '../chartAxesTypes';
+import { registerAxis, registerAxisThemeTemplate } from './axisTypes';
 import { JSON_APPLY_PLUGINS } from '../chartOptions';
 import { registerChartDefaults } from './chartTypes';
 import { registerLegend } from './legendTypes';
@@ -25,11 +25,18 @@ export function setupModules() {
             registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate);
         }
 
-        if (m.type === 'axis') {
+        if (m.type === 'axis-option') {
             if (m.themeTemplate) {
                 for (const axisType of m.axisTypes) {
                     registerAxisThemeTemplate(axisType, m.themeTemplate);
                 }
+            }
+        }
+
+        if (m.type === 'axis') {
+            registerAxis(m.identifier, m.instanceConstructor);
+            if (m.themeTemplate) {
+                registerAxisThemeTemplate(m.identifier, m.themeTemplate);
             }
         }
 

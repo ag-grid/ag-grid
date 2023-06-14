@@ -1,7 +1,6 @@
 import {
     AgChartOptions,
     AgCartesianChartOptions,
-    AgCartesianAxisOptions,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
@@ -17,6 +16,7 @@ import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
 import { Series } from './series/series';
+import { getAxis } from './factory/axisTypes';
 import { getSeries } from './factory/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
@@ -26,11 +26,6 @@ import { ScatterSeries } from './series/cartesian/scatterSeries';
 import { PieSeries, PieTitle } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
-import { LogAxis } from './axis/logAxis';
-import { NumberAxis } from './axis/numberAxis';
-import { CategoryAxis } from './axis/categoryAxis';
-import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
 import { TypedEventListener } from '../util/observable';
@@ -45,7 +40,7 @@ import {
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, RootModule } from '../util/module';
+import { AxisOptionModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { getJsonApplyOptions } from './chartOptions';
 
@@ -409,10 +404,10 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const modulesChanged = applyModules(chart, completeOptions);
 
     const skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
-    if (isAgCartesianChartOptions(processedOptions)) {
+    if (isAgCartesianChartOptions(processedOptions) || isAgPolarChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
-    } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
+    } else if (isAgHierarchyChartOptions(processedOptions)) {
         // Use defaults.
     } else {
         throw new Error(
@@ -432,7 +427,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         applySeries(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if (isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
+    if ('axes' in processedOptions && Array.isArray(processedOptions.axes)) {
         const axesPresent = applyAxes(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
@@ -576,34 +571,14 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     return series;
 }
 
-function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[] {
-    const axes: ChartAxis<any>[] = [];
+function createAxis(chart: Chart, options: AgBaseAxisOptions[]): ChartAxis[] {
+    const axes: ChartAxis[] = [];
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
 
     let index = 0;
     for (const axisOptions of options ?? []) {
-        let axis;
-        switch (axisOptions.type) {
-            case 'number':
-                axis = new NumberAxis(moduleContext);
-                break;
-            case LogAxis.type:
-                axis = new LogAxis(moduleContext);
-                break;
-            case CategoryAxis.type:
-                axis = new CategoryAxis(moduleContext);
-                break;
-            case GroupedCategoryAxis.type:
-                axis = new GroupedCategoryAxis(moduleContext);
-                break;
-            case TimeAxis.type:
-                axis = new TimeAxis(moduleContext);
-                break;
-            default:
-                throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
-        }
-
+        const axis = getAxis(axisOptions.type, moduleContext);
         const path = `axes[${index++}]`;
         applyAxisModules(axis, axisOptions);
         applyOptionValues(axis, axisOptions, { path, skip });
@@ -614,9 +589,9 @@ function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[
     return axes;
 }
 
-function applyAxisModules(axis: ChartAxis<any>, options: AgBaseAxisOptions) {
+function applyAxisModules(axis: ChartAxis, options: AgBaseAxisOptions) {
     let modulesChanged = false;
-    const rootModules = REGISTERED_MODULES.filter((m): m is AxisModule => m.type === 'axis');
+    const rootModules = REGISTERED_MODULES.filter((m): m is AxisOptionModule => m.type === 'axis-option');
 
     for (const next of rootModules) {
         const shouldBeEnabled = (options as any)[next.optionsKey] != null;

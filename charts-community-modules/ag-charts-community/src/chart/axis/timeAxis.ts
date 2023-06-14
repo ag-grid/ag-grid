@@ -1,18 +1,18 @@
 import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
-import { ChartAxis } from '../chartAxis';
 import { ModuleContext } from '../../util/moduleContext';
+import { Axis } from '../../axis';
 import { Default } from '../../util/default';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
 
-class TimeAxisTick extends BaseAxisTick<TimeScale, number | Date> {
+class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
     @Default(NaN)
     maxSpacing: number = NaN;
 }
 
-export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
+export class TimeAxis extends Axis<TimeScale, number | Date> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 

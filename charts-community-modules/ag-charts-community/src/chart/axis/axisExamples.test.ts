@@ -292,7 +292,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
     return result;
 }
 
-function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width: number; height: number } {
+function calculateAxisBBox(axis: ChartAxis): { x: number; y: number; width: number; height: number } {
     const bbox = axis.computeBBox();
 
     const { x, y, width, height } = bbox;

@@ -669,9 +669,19 @@ export interface AgBaseChartOptions {
 }
 
 export interface AgBaseAxisOptions {
+    /** Axis type identifier. */
+    type: string;
     keys?: string[];
     /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
     thickness?: PixelSize;
+    /** Configuration for the title shown next to the axis. */
+    title?: AgAxisCaptionOptions;
+    /** Configuration for the axis line. */
+    line?: AgAxisLineOptions;
+    /** Configuration for the axis labels, shown next to the ticks. */
+    label?: AgAxisLabelOptions;
+    /** Configuration of the lines used to form the grid in the chart area. */
+    gridStyle?: AgAxisGridStyle[];
 }
 
 export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
@@ -781,14 +791,6 @@ export type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'l
 export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     /** The position on the chart where the axis should be rendered. */
     position?: AgCartesianAxisPosition;
-    /** Configuration for the title shown next to the axis. */
-    title?: AgAxisCaptionOptions;
-    /** Configuration for the axis line. */
-    line?: AgAxisLineOptions;
-    /** Configuration for the axis labels, shown next to the ticks. */
-    label?: AgAxisLabelOptions;
-    /** Configuration of the lines used to form the grid in the chart area. */
-    gridStyle?: AgAxisGridStyle[];
     /** Add cross lines or regions corresponding to data values. */
     crossLines?: AgCrossLineOptions[];
 }

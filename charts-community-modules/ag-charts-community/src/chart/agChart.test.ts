@@ -403,7 +403,7 @@ describe('update', () => {
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
-        let leftAxis = axes.find((axis) => axis.position === 'left');
+        let leftAxis = axes.find((axis) => axis.position === 'left') as any;
         expect(axes.find((axis) => axis.position === 'bottom')).toBeDefined();
         expect(leftAxis).toBeDefined();
         expect(leftAxis!.title!.text).toBe('Hello');

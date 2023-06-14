@@ -272,12 +272,12 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
-    private getCategoryAxis(): _ModuleSupport.ChartAxis<_Scene.Scale<any, number>> | undefined {
-        return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+    private getCategoryAxis(): _ModuleSupport.ChartAxis | undefined {
+        return this.axes[this.getCategoryDirection()];
     }
 
-    private getValueAxis(): _ModuleSupport.ChartAxis<_Scene.Scale<any, number>> | undefined {
-        return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+    private getValueAxis(): _ModuleSupport.ChartAxis | undefined {
+        return this.axes[this.getBarDirection()];
     }
 
     async createNodeData() {
@@ -417,7 +417,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             ctx,
         } = this;
 
-        const crisp = checkCrisp(this.xAxis?.visibleRange);
+        const xAxis = this.axes[ChartAxisDirection.X];
+        const crisp = checkCrisp(xAxis?.visibleRange);
 
         const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
 
@@ -485,10 +486,12 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const {
             xKey,
             yKey,
-            xAxis,
-            yAxis,
+            axes,
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';

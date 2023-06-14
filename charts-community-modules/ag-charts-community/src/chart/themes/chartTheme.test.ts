@@ -555,15 +555,17 @@ describe('ChartTheme', () => {
             );
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('left');
-            expect(chart.axes[0].line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
-            expect(chart.axes[0].label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('left');
+            expect(axis0.line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
+            expect(axis0.label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].label.fontSize).toBe(18);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.label.fontSize).toBe(18);
         });
 
         test('Specialized chart type themed bottom category, unthemed left number', async () => {
@@ -598,15 +600,17 @@ describe('ChartTheme', () => {
             );
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('left');
-            expect(chart.axes[0].line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
-            expect(chart.axes[0].label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('left');
+            expect(axis0.line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
+            expect(axis0.label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].label.fontSize).toBe(18);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.label.fontSize).toBe(18);
         });
 
         test('Themed right number, unthemed top category', async () => {
@@ -655,15 +659,17 @@ describe('ChartTheme', () => {
             );
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('right');
-            expect(chart.axes[0].line.color).toBe('blue');
-            expect(chart.axes[0].label.fontSize).toBe(18);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('right');
+            expect(axis0.line.color).toBe('blue');
+            expect(axis0.label.fontSize).toBe(18);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('top');
-            expect(chart.axes[1].line.color).toBe('red');
-            expect(chart.axes[1].label.fontSize).toBe(12);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('top');
+            expect(axis1.line.color).toBe('red');
+            expect(axis1.label.fontSize).toBe(12);
         });
 
         test('Partially themed axes', async () => {
@@ -729,29 +735,31 @@ describe('ChartTheme', () => {
             );
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('right');
-            expect(chart.axes[0].line.color).toBe('red');
-            expect(chart.axes[0].label.fontSize).toBe(18);
-            expect(chart.axes[0].label.fontStyle).toBe('italic');
-            expect(chart.axes[0].label.fontFamily).toBe('Tahoma');
-            expect(chart.axes[0].label.fontWeight).toBe(defaultTheme.config.cartesian.axes.number.label.fontWeight);
-            expect(chart.axes[0].label.padding).toBe(defaultTheme.config.cartesian.axes.number.label.padding);
-            expect(chart.axes[0].label.rotation).toBe(defaultTheme.config.cartesian.axes.number.label.rotation);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('right');
+            expect(axis0.line.color).toBe('red');
+            expect(axis0.label.fontSize).toBe(18);
+            expect(axis0.label.fontStyle).toBe('italic');
+            expect(axis0.label.fontFamily).toBe('Tahoma');
+            expect(axis0.label.fontWeight).toBe(defaultTheme.config.cartesian.axes.number.label.fontWeight);
+            expect(axis0.label.padding).toBe(defaultTheme.config.cartesian.axes.number.label.padding);
+            expect(axis0.label.rotation).toBe(defaultTheme.config.cartesian.axes.number.label.rotation);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].line.width).toBe(5);
-            expect(chart.axes[1].label.fontSize).toBe(18);
-            expect(chart.axes[1].label.fontStyle).toBe(defaultTheme.config.cartesian.axes.category.label.fontStyle);
-            expect(chart.axes[1].label.fontFamily).toBe(defaultTheme.config.cartesian.axes.category.label.fontFamily);
-            expect(chart.axes[1].label.fontWeight).toBe('bold');
-            expect(chart.axes[1].label.rotation).toBe(45);
-            expect(chart.axes[1].title && chart.axes[1].title.text).toBe('Test');
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.line.width).toBe(5);
+            expect(axis1.label.fontSize).toBe(18);
+            expect(axis1.label.fontStyle).toBe(defaultTheme.config.cartesian.axes.category.label.fontStyle);
+            expect(axis1.label.fontFamily).toBe(defaultTheme.config.cartesian.axes.category.label.fontFamily);
+            expect(axis1.label.fontWeight).toBe('bold');
+            expect(axis1.label.rotation).toBe(45);
+            expect(axis1.title && axis1.title.text).toBe('Test');
             // Since config is provided, the `enabled` should be auto-set to `true`,
             // even though theme's default is `false`.
-            expect(chart.axes[1].title && chart.axes[1].title.enabled).toBe(true);
+            expect(axis1.title && axis1.title.enabled).toBe(true);
         });
     });
 

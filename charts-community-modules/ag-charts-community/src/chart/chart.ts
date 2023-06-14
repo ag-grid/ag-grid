@@ -14,7 +14,6 @@ import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
 import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
-import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
@@ -668,13 +667,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected assignSeriesToAxes() {
         this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                const seriesAxis = s.axes[axis.direction];
                 return seriesAxis === axis;
             });
         });
     }
 
-    protected assignAxesToSeries(force: boolean = false) {
+    protected assignAxesToSeries() {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
 
@@ -686,11 +685,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((series) => {
             series.directions.forEach((direction) => {
-                const currentAxis = direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
-                if (currentAxis && !force) {
-                    return;
-                }
-
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
                     Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
@@ -706,11 +700,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                     return;
                 }
 
-                if (direction === ChartAxisDirection.X) {
-                    series.xAxis = newAxis;
-                } else {
-                    series.yAxis = newAxis;
-                }
+                series.axes[direction] = newAxis;
             });
         });
     }
@@ -747,8 +737,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     async processData() {
-        if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
-            this.assignAxesToSeries(true);
+        if (this.axes.length > 0) {
+            this.assignAxesToSeries();
             this.assignSeriesToAxes();
         }
 
