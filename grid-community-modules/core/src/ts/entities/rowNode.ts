@@ -13,6 +13,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 import { CellEditRequestEvent } from "../events";
+import { IProvidedColumn } from "../main";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
@@ -203,6 +204,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any; };
     public __cacheVersion: number;
+
+    /** Used for transposing, this is the column being represented by this node */
+    public __underlyingCol: IProvidedColumn;
 
     /** Used by sorting service - to give deterministic sort to groups. Previously we
      * just id for this, however id is a string and had slower sorting compared to numbers. */

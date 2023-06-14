@@ -30,6 +30,10 @@ import {
     RowModelType,
     SelectionChangedEvent,
     ISelectionService,
+    ColGroupDef,
+    ColDef,
+    ProvidedColumnGroup,
+    IProvidedColumn,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -89,6 +93,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_TRANSPOSE_MODE_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.TRANSPOSE }));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
@@ -448,8 +453,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return modelParams;
     }
 
-    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+    private transposeRootNode: RowNode;
 
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
         if (!params) {
@@ -486,8 +492,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.doFilterAggregates(changedPath);
             case ClientSideRowModelSteps.SORT:
                 this.doSort(params.rowNodeTransactions, changedPath);
+            case ClientSideRowModelSteps.TRANSPOSE:
+                this.doTranspose();
             case ClientSideRowModelSteps.MAP:
-                this.doRowsToDisplay();
+                this.doRowsToDisplay(this.columnModel.isTransposeMode() ? this.transposeRootNode : this.rootNode);
         }
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
@@ -827,7 +835,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         afterColumnsChanged: boolean
     ) {
         if (this.groupStage) {
-
             if (rowNodeTransactions) {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
@@ -1075,8 +1082,139 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.eventService.dispatchEvent(event);
     }
 
-    private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode }) as RowNode[];
+    private doTranspose() {
+        if (!this.columnModel.isTransposeMode()) {
+            if (this.columnModel.isTransposedColumnsPresent()) {
+                this.columnModel.setTransposedColumns(null, 'rowModelUpdated');
+            }
+            return;
+        }
+
+        const recursivelyBuildDef = (rowNode: RowNode, childIndex: number): ColGroupDef | ColDef => {
+            const isGroupLevel = this.columnModel.isPivotActive() ? rowNode.group && !rowNode.leafGroup : rowNode.group;
+            if (isGroupLevel) {
+                // create group def
+                const childCols: (ColDef | ColGroupDef)[] = [];
+                if (this.columnModel.getValueColumns().length) {
+                    childCols.push({
+                        columnGroupShow: 'closed',
+                        colId: rowNode.id,
+                        valueGetter: (params) => {
+                            const underlyingCol = (params.node as any).__underlyingCol;
+                            if (underlyingCol)
+                                return this.beans.valueService.getValue(underlyingCol, rowNode);
+                            return null;
+                        }
+                    });
+                }
+                rowNode.childrenAfterSort?.forEach((row, idx) => {
+                    childCols.push(recursivelyBuildDef(row, idx));
+                });
+                const groupColDef: ColGroupDef = {
+                    groupId: rowNode.id,
+                    headerName: rowNode.key ?? undefined,
+                    openByDefault: rowNode.expanded,
+                    columnGroupShow: 'open',
+                    children: childCols,
+                };
+                return groupColDef;
+            }
+            const colDef: ColDef = {
+                colId: rowNode.id,
+                headerName: rowNode.key ?? String(childIndex),
+                columnGroupShow: 'open',
+                valueGetter: (params) => {
+                    const underlyingCol = (params.node as any).__underlyingCol;
+                    if (underlyingCol)
+                        return this.beans.valueService.getValue(underlyingCol, rowNode);
+                    return null;
+                }
+            };
+            return colDef;
+        };
+        
+        const columnsColumn: ColDef = {
+            colId: 'agGrid-Columns-column',
+            pinned: 'left',
+            lockPinned: true,
+            suppressMenu: true,
+            editable: false,
+            sortable: false,
+            valueGetter: (params) => {
+                const underlyingCol = (params.node as any).__underlyingCol;
+                if (underlyingCol)
+                    return this.columnModel.getDisplayNameForColumn(underlyingCol, 'header', true);
+                return null;
+            }
+        };
+        const transposedCols: (ColGroupDef | ColDef)[] = [columnsColumn];
+        this.rootNode.childrenAfterSort?.forEach((rowNode, index) => {
+            transposedCols.push(recursivelyBuildDef(rowNode, index));
+        });
+
+        const recursivelyBuildRows = (col: IProvidedColumn, parentNode: RowNode): RowNode[] => {
+            // if (!col.isVisible()) {
+            //     return [];
+            // }
+
+            // group cols become group rows
+            if (col instanceof ProvidedColumnGroup) {
+                
+                // we want to deal with unbalanced groups as opposed to padded
+                if (col.isPadding()) {
+                    const children: RowNode[] = [];
+                    col.getChildren().forEach(col => {
+                        recursivelyBuildRows(col, parentNode).forEach(node => {
+                            children.push(node);
+                        });
+                    });
+                    return children;
+                }
+
+                const groupNode = new RowNode(this.beans);
+                groupNode.group = true;
+                groupNode.expanded = col.isExpanded();
+                groupNode.parent = parentNode;
+                groupNode.key = this.columnModel.getDisplayNameForProvidedColumnGroup(null, col as any, 'header');
+                groupNode.level = col.getLevel();
+
+                const children: RowNode[] = [];
+                col.getChildren().forEach(col => {
+                    recursivelyBuildRows(col, groupNode).forEach(node => {
+                        children.push(node);
+                    });
+                });
+                groupNode.childrenAfterSort = children;
+                return [groupNode];
+            }
+
+            //leaf cols become leaf rows
+            const rowNode = new RowNode(this.beans);
+            rowNode.id = col.getId();
+            rowNode.parent = parentNode;
+            rowNode.__underlyingCol = col;
+            return [rowNode];
+        };
+
+        const transposedNodes: RowNode[] = [];
+        const rootNode = new RowNode(this.beans);
+        rootNode.group = true;
+        rootNode.parent = null;
+        rootNode.level = -1;
+        const pct = this.columnModel.isPivotActive() ? this.columnModel.getSecondaryColumnTree() : this.columnModel.getPrimaryColumnTree();
+        pct.forEach(col => {
+            transposedNodes.push(...recursivelyBuildRows(col, rootNode));
+        });
+
+        rootNode.childrenAfterSort = transposedNodes;
+
+        this.transposeRootNode = rootNode;
+        this.columnModel.setTransposedColumns(transposedCols);
+
+    }
+
+    private doRowsToDisplay(rootNode: RowNode) {
+        this.rowsToDisplay = this.flattenStage.execute({ rowNode: rootNode }) as RowNode[];
     }
 
     public onRowHeightChanged(): void {

@@ -14,6 +14,7 @@ export enum ClientSideRowModelSteps {
     AGGREGATE = 'aggregate',
     FILTER_AGGREGATES = 'filter_aggregates',
     PIVOT = 'pivot',
+    TRANSPOSE = 'transpose',
     NOTHING = 'nothing'
 }
 

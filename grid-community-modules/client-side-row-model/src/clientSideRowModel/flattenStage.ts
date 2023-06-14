@@ -24,7 +24,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const result: RowNode[] = [];
         // putting value into a wrapper so it's passed by reference
         const nextRowTop: NumberWrapper = {value: 0};
-        const skipLeafNodes = this.columnModel.isPivotMode();
+        const skipLeafNodes = this.columnModel.isPivotMode() && !this.columnModel.isTransposeMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;

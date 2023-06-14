@@ -1,13 +1,13 @@
 @use "ag";
 
 @mixin output {
-    .ag-pivot-mode-panel {
+    .ag-pivot-mode-panel, .ag-transpose-mode-panel {
         min-height: var(--ag-header-height);
         height: var(--ag-header-height);
         display: flex;
     }
 
-    .ag-pivot-mode-select {
+    .ag-pivot-mode-select, .ag-transpose-mode-select {
         display: flex;
         align-items: center;
 

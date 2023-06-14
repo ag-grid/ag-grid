@@ -25,6 +25,7 @@ import {
     ColumnPivotChangedEvent,
     ColumnPivotChangeRequestEvent,
     ColumnPivotModeChangedEvent,
+    ColumnTransposeModeChangedEvent,
     ColumnResizedEvent,
     ColumnRowGroupChangedEvent,
     ColumnRowGroupChangeRequestEvent,
@@ -969,6 +970,8 @@ export interface GridOptions<TData = any> {
     onColumnValueChanged?(event: ColumnValueChangedEvent<TData>): void;
     /** The pivot mode flag was changed. */
     onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent<TData>): void;
+    /** The transpose mode flag was changed. */
+    onColumnTransposeModeChanged?(event: ColumnTransposeModeChangedEvent<TData>): void;
     /** A pivot column was added, removed or order changed. */
     onColumnPivotChanged?(event: ColumnPivotChangedEvent<TData>): void;
     /** A column group was opened / closed. */

@@ -68,6 +68,8 @@ export interface ToolPanelSizeChangedEvent<TData = any, TContext = any> extends 
 
 export interface ColumnPivotModeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
+export interface ColumnTransposeModeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+
 export interface VirtualColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {

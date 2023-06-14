@@ -54,6 +54,7 @@ import {
     ColumnResizedEvent,
     ColumnRowGroupChangeRequestEvent,
     ColumnRowGroupChangedEvent,
+    ColumnTransposeModeChangedEvent,
     ColumnValueChangeRequestEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
@@ -998,6 +999,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<ColumnValueChangedEvent<TData>>();
     /** The pivot mode flag was changed.     */
     @Output() public columnPivotModeChanged: EventEmitter<ColumnPivotModeChangedEvent<TData>> = new EventEmitter<ColumnPivotModeChangedEvent<TData>>();
+    /** The transpose mode flag was changed.     */
+    @Output() public columnTransposeModeChanged: EventEmitter<ColumnTransposeModeChangedEvent<TData>> = new EventEmitter<ColumnTransposeModeChangedEvent<TData>>();
     /** A pivot column was added, removed or order changed.     */
     @Output() public columnPivotChanged: EventEmitter<ColumnPivotChangedEvent<TData>> = new EventEmitter<ColumnPivotChangedEvent<TData>>();
     /** A column group was opened / closed.     */

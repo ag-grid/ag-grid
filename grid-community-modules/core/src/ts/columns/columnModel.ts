@@ -156,6 +156,14 @@ export class ColumnModel extends BeanStub {
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousSecondaryColumns: IProvidedColumn[] | null;
 
+    // if transposing, these are the generated columns as a result of the transpose
+    private transposedBalancedTree: IProvidedColumn[] | null;
+    private transposedColumns: Column[] | null;
+    private transposedColumnsMap: { [id: string]: Column };
+    private transposedHeaderRowCount = 0;
+    // Saved when transpose is disabled, available to re-use when transpose is restored
+    private previousTransposedColumns: IProvidedColumn[] | null;
+
     // the columns the quick filter should use. this will be all primary columns
     // plus the autoGroupColumns if any exist
     private columnsForQuickFilter: Column[];
@@ -172,7 +180,8 @@ export class ColumnModel extends BeanStub {
 
     private lastPrimaryOrder: Column[];
     private lastSecondaryOrder: Column[];
-    private gridColsArePrimary: boolean;
+    private lastTransposeOrder: Column[];
+    private gridColsLastState: 'primary' | 'pivot' | 'transposed' | undefined;
 
     // primary columns -> what the user provides
     // secondary columns -> columns generated as a result of a pivot
@@ -240,6 +249,7 @@ export class ColumnModel extends BeanStub {
     private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
+    private transposeMode = false;
     private usingTreeData: boolean;
 
     // for horizontal visualisation of columns
@@ -370,8 +380,8 @@ export class ColumnModel extends BeanStub {
         // at this point, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
-        const gridColsNotProcessed = this.gridColsArePrimary === undefined;
-        const processGridCols = this.gridColsArePrimary || gridColsNotProcessed;
+        const gridColsNotProcessed = this.gridColsLastState === undefined;
+        const processGridCols = this.gridColsLastState === 'primary' || gridColsNotProcessed;
 
         if (processGridCols) {
             this.updateGridColumns();
@@ -487,9 +497,22 @@ export class ColumnModel extends BeanStub {
         return this.pivotMode;
     }
 
+    public isTransposeMode(): boolean {
+        return this.transposeMode;
+    }
+
     private isPivotSettingAllowed(pivot: boolean): boolean {
         if (pivot && this.gridOptionsService.isTreeData()) {
             console.warn("AG Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+            return false;
+        }
+
+        return true;
+    }
+
+    private isTransposeSettingAllowed(transpose: boolean): boolean {
+        if (transpose && this.gridOptionsService.isTreeData()) {
+            console.warn("AG Grid: Transpose mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
             return false;
         }
 
@@ -510,6 +533,23 @@ export class ColumnModel extends BeanStub {
 
         const event: WithoutGridCommon<ColumnPivotModeChangedEvent> = {
             type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    public setTransposeMode(transposeMode: boolean, source: ColumnEventType = 'api'): void {
+        if (transposeMode === this.transposeMode || !this.isTransposeSettingAllowed(this.transposeMode)) { return; }
+        
+        this.transposeMode = transposeMode;
+
+        this.updateGridColumns();
+
+        // when transposing we hide the auto group column and display full width rows, so need to update grid columns
+        this.updateDisplayedColumns(source);
+
+        const event: WithoutGridCommon<ColumnPivotModeChangedEvent> = {
+            type: Events.EVENT_COLUMN_TRANSPOSE_MODE_CHANGED
         };
 
         this.eventService.dispatchEvent(event);
@@ -785,6 +825,11 @@ export class ColumnModel extends BeanStub {
     // + columnSelectPanel
     public getPrimaryColumnTree(): IProvidedColumn[] {
         return this.primaryColumnTree;
+    }
+
+    // + columnSelectPanel
+    public getSecondaryColumnTree(): IProvidedColumn[] {
+        return this.secondaryBalancedTree ?? [];
     }
 
     // + gridPanel -> for resizing the body and setting top margin
@@ -1578,7 +1623,7 @@ export class ColumnModel extends BeanStub {
 
         const cols = this.primaryColumns.slice();
 
-        if (this.gridColsArePrimary) {
+        if (this.gridColsLastState === 'primary') {
             cols.sort((a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b));
         } else if (this.lastPrimaryOrder) {
             cols.sort((a: Column, b: Column) => this.lastPrimaryOrder.indexOf(a) - this.lastPrimaryOrder.indexOf(b));
@@ -3052,7 +3097,9 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        if (this.pivotMode && missing(this.secondaryColumns)) {
+        if (this.transposeMode && missing(this.transposedColumns)) {
+            columnsForDisplay = [];
+        } else if (this.pivotMode && missing(this.secondaryColumns)) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.gridColumns.filter(column => {
@@ -3133,6 +3180,10 @@ export class ColumnModel extends BeanStub {
         return exists(this.secondaryColumns);
     }
 
+    public isTransposedColumnsPresent(): boolean {
+        return exists(this.transposedColumns);
+    }
+
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType = "api"): void {
         const newColsPresent = colDefs && colDefs.length > 0;
 
@@ -3160,6 +3211,38 @@ export class ColumnModel extends BeanStub {
             this.secondaryHeaderRowCount = -1;
             this.secondaryColumns = null;
             this.secondaryColumnsMap = {};
+        }
+
+        this.updateGridColumns();
+        this.updateDisplayedColumns(source);
+    }
+
+    public setTransposedColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType = "api"): void {
+        const newColsPresent = colDefs && colDefs.length > 0;
+
+        // if not cols passed, and we had no cols anyway, then do nothing
+        if (!newColsPresent && missing(this.transposedColumns)) { return; }
+
+        if (newColsPresent) {
+            const balancedTreeResult = this.columnFactory.createColumnTree(
+                colDefs,
+                false,
+                this.transposedBalancedTree || this.previousTransposedColumns || undefined,
+            );
+            this.destroyOldColumns(this.transposedBalancedTree, balancedTreeResult.columnTree);
+            this.transposedBalancedTree = balancedTreeResult.columnTree;
+            this.transposedHeaderRowCount = balancedTreeResult.treeDept + 1;
+            this.transposedColumns = this.getColumnsFromTree(this.transposedBalancedTree);
+
+            this.transposedColumnsMap = {};
+            this.transposedColumns?.forEach(col => this.transposedColumnsMap[col.getId()] = col);
+            this.previousTransposedColumns = null;
+        } else {
+            this.previousTransposedColumns = this.transposedBalancedTree;
+            this.transposedBalancedTree = null;
+            this.transposedHeaderRowCount = -1;
+            this.transposedColumns = null;
+            this.transposedColumnsMap = {};
         }
 
         this.updateGridColumns();
@@ -3198,22 +3281,42 @@ export class ColumnModel extends BeanStub {
     // called from: applyColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
         const prevGridCols = this.gridBalancedTree;
-        if (this.gridColsArePrimary) {
-            this.lastPrimaryOrder = this.gridColumns;
-        } else {
-            this.lastSecondaryOrder = this.gridColumns;
-        }
+        switch (this.gridColsLastState) {
+            case 'primary':
+                this.lastPrimaryOrder = this.gridColumns;
+                break;
+            case 'pivot':
+                this.lastSecondaryOrder = this.gridColumns;
+                break;
+            default:
+                this.lastTransposeOrder = this.gridColumns;
+        };
 
         let sortOrderToRecover: Column[] | undefined;
 
-        if (this.secondaryColumns && this.secondaryBalancedTree) {
+        if (this.transposedColumns && this.transposedBalancedTree) {
+            const hasSameColumns = this.transposedColumns.every((col) => {
+                return this.gridColumnsMap[col.getColId()] !== undefined;
+            });
+            this.gridBalancedTree = this.transposedBalancedTree.slice();
+            this.gridHeaderRowCount = this.transposedHeaderRowCount;
+            this.gridColumns = this.transposedColumns.slice();
+            this.gridColsLastState = 'transposed';
+
+            // If the current columns are the same or a subset of the previous
+            // we keep the previous order, otherwise we go back to the order the pivot
+            // cols are generated in
+            if (hasSameColumns) {
+                sortOrderToRecover = this.lastTransposeOrder;
+            }
+        } else if (this.secondaryColumns && this.secondaryBalancedTree) {
             const hasSameColumns = this.secondaryColumns.every((col) => {
                 return this.gridColumnsMap[col.getColId()] !== undefined;
             });
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
-            this.gridColsArePrimary = false;
+            this.gridColsLastState = 'pivot';
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
@@ -3225,7 +3328,7 @@ export class ColumnModel extends BeanStub {
             this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
-            this.gridColsArePrimary = true;
+            this.gridColsLastState = 'primary';
 
             // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
@@ -3233,17 +3336,21 @@ export class ColumnModel extends BeanStub {
             sortOrderToRecover = this.lastPrimaryOrder;
         }
 
-        // create the new auto columns
-        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
-        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
-        if (areAutoColsChanged && sortOrderToRecover) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
-            // if group columns has changed, we don't preserve the group column order, so remove them from the old order
-            sortOrderToRecover = sortOrderToRecover.filter(col => !groupAutoColsMap.has(col));
-            // and add them to the start of the order
-            sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
+        // ignore the group cols when transposing, as it forces full width rows.
+        if (this.gridColsLastState !== 'transposed') {
+            // create the new auto columns
+            const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
+            // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
+            if (areAutoColsChanged && sortOrderToRecover) {
+                const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+                // if group columns has changed, we don't preserve the group column order, so remove them from the old order
+                sortOrderToRecover = sortOrderToRecover.filter(col => !groupAutoColsMap.has(col));
+                // and add them to the start of the order
+                sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
+            }
+            this.addAutoGroupToGridColumns();
         }
-        this.addAutoGroupToGridColumns();
+
         this.orderGridColsLike(sortOrderToRecover);
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
@@ -3981,6 +4088,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public isGroupSuppressAutoColumn() {
+        if (this.transposeMode) return true;
+
         const groupDisplayType = this.gridOptionsService.get('groupDisplayType');
         const isCustomRowGroups = groupDisplayType ? matchesGroupDisplayType('custom', groupDisplayType) : false;
 

@@ -14,6 +14,7 @@ import {
     ModuleRegistry
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
+import { TransposePanel } from "./transposePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 import { PrimaryColsPanel } from "./primaryColsPanel";
 
@@ -30,6 +31,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel: PivotModePanel;
+    private transposePanel: TransposePanel;
     private primaryColsPanel: PrimaryColsPanel;
     private rowGroupDropZonePanel: RowGroupDropZonePanel;
     private valuesDropZonePanel: ValuesDropZonePanel;
@@ -74,6 +76,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.childDestroyFuncs.push(() => this.destroyBean(this.pivotModePanel));
             this.appendChild(this.pivotModePanel);
         }
+
+        this.transposePanel = this.createBean(new TransposePanel());
+        this.childDestroyFuncs.push(() => this.destroyBean(this.transposePanel));
+        this.appendChild(this.transposePanel);
 
         // DO NOT CHANGE TO createManagedBean
         this.primaryColsPanel = this.createBean(new PrimaryColsPanel());

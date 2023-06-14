@@ -10,6 +10,9 @@ export class Events {
     /** The pivot mode flag was changed */
     public static EVENT_COLUMN_PIVOT_MODE_CHANGED: 'columnPivotModeChanged' = 'columnPivotModeChanged';
 
+    /** The transpose mode flag was changed */
+    public static EVENT_COLUMN_TRANSPOSE_MODE_CHANGED: 'columnTransposeModeChanged' = 'columnTransposeModeChanged';
+
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED: 'columnRowGroupChanged' = 'columnRowGroupChanged';
 

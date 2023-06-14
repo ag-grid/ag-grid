@@ -423,12 +423,13 @@ export class RowCtrl extends BeanStub {
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
+        const transposeMode = this.beans.columnModel.isTransposeMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
         // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
         const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && this.gridOptionsService.isGroupUseEntireRow(pivotMode);
+        const isFullWidthGroup = isGroupRow && this.gridOptionsService.isGroupUseEntireRow(pivotMode, transposeMode);
 
         if (isStub) {
             this.rowType = RowType.FullWidthLoading;
