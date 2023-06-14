@@ -135,20 +135,20 @@ export function getElementSize(el: HTMLElement): {
     } = window.getComputedStyle(el);
 
     return {
-        height: parseFloat(height!),
-        width: parseFloat(width!),
-        borderTopWidth: parseFloat(borderTopWidth!),
-        borderRightWidth: parseFloat(borderRightWidth!),
-        borderBottomWidth: parseFloat(borderBottomWidth!),
-        borderLeftWidth: parseFloat(borderLeftWidth!),
-        paddingTop: parseFloat(paddingTop!),
-        paddingRight: parseFloat(paddingRight!),
-        paddingBottom: parseFloat(paddingBottom!),
-        paddingLeft: parseFloat(paddingLeft!),
-        marginTop: parseFloat(marginTop!),
-        marginRight: parseFloat(marginRight!),
-        marginBottom: parseFloat(marginBottom!),
-        marginLeft: parseFloat(marginLeft!),
+        height: parseFloat(height),
+        width: parseFloat(width),
+        borderTopWidth: parseFloat(borderTopWidth),
+        borderRightWidth: parseFloat(borderRightWidth),
+        borderBottomWidth: parseFloat(borderBottomWidth),
+        borderLeftWidth: parseFloat(borderLeftWidth),
+        paddingTop: parseFloat(paddingTop),
+        paddingRight: parseFloat(paddingRight),
+        paddingBottom: parseFloat(paddingBottom),
+        paddingLeft: parseFloat(paddingLeft),
+        marginTop: parseFloat(marginTop),
+        marginRight: parseFloat(marginRight),
+        marginBottom: parseFloat(marginBottom),
+        marginLeft: parseFloat(marginLeft),
         boxSizing
     };
 }
@@ -185,6 +185,23 @@ export function getAbsoluteWidth(el: HTMLElement): number {
     const marginWidth = size.marginLeft + size.marginRight;
 
     return Math.ceil(el.offsetWidth + marginWidth);
+}
+
+export function getElementRectWithOffset(el: HTMLElement): {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+} {
+    const offsetElementRect = el.getBoundingClientRect();
+    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = getElementSize(el);
+
+    return {
+        top: offsetElementRect.top + (borderTopWidth || 0),
+        left: offsetElementRect.left + (borderLeftWidth || 0),
+        right: offsetElementRect.right + (borderRightWidth || 0),
+        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
+    }
 }
 
 export function isRtlNegativeScroll(): boolean {

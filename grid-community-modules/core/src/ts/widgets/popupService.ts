@@ -2,7 +2,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { getAbsoluteHeight, getAbsoluteWidth } from '../utils/dom';
+import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
@@ -46,13 +46,6 @@ export interface AgPopup {
     isAnchored: boolean;
     instanceId: number;
     stopAnchoringPromise?: AgPromise<() => void>;
-}
-
-interface Rect {
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
 }
 
 enum DIRECTION { vertical, horizontal }
@@ -303,7 +296,7 @@ export class PopupService extends BeanStub {
         return this.popupList;
     }
 
-    private getParentRect(): Rect {
+    private getParentRect() {
         // subtract the popup parent borders, because popupParent.getBoundingClientRect
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
@@ -317,15 +310,7 @@ export class PopupService extends BeanStub {
             popupParent = popupParent.offsetParent as HTMLElement;
         }
 
-        const style = getComputedStyle(popupParent);
-        const bounds = popupParent.getBoundingClientRect();
-
-        return {
-            top: bounds.top + parseFloat(style.borderTopWidth!) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth!) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth!) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth!) || 0,
-        };
+        return getElementRectWithOffset(popupParent);
     }
 
     private keepXYWithinBounds(
