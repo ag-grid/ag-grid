@@ -542,6 +542,17 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             const { path: linePath } = lineNode;
 
+            const nodeLengths: Array<number> = [0];
+            const lineLength = nodeData.reduce((sum, datum, index) => {
+                if (index === 0) return sum;
+                const prev = nodeData[index - 1];
+                const length = Math.sqrt(
+                    Math.pow(datum.point.x - prev.point.x, 2) + Math.pow(datum.point.y - prev.point.y, 2)
+                );
+                nodeLengths.push(sum + length);
+                return sum + length;
+            }, 0);
+
             lineNode.fill = undefined;
             lineNode.lineJoin = 'round';
             lineNode.pointerEvents = PointerEvents.None;
@@ -558,7 +569,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             const animationOptions = {
                 from: 0,
-                to: seriesRect?.width ?? 0,
+                to: lineLength,
                 disableInteractions: true,
                 ease: easing.linear,
                 repeat: 0,
@@ -567,24 +578,28 @@ export class LineSeries extends CartesianSeries<LineContext> {
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
                 duration,
-                onUpdate(xValue) {
+                onUpdate(length) {
                     linePath.clear({ trackChanges: true });
 
                     nodeData.forEach((datum, index) => {
-                        if (datum.point.x <= xValue) {
+                        if (nodeLengths[index] <= length) {
                             // Draw/move the full segment if past the end of this segment
                             if (datum.point.moveTo) {
                                 linePath.moveTo(datum.point.x, datum.point.y);
                             } else {
                                 linePath.lineTo(datum.point.x, datum.point.y);
                             }
-                        } else if (index > 0 && nodeData[index - 1].point.x < xValue) {
+                        } else if (index > 0 && nodeLengths[index - 1] < length) {
                             // Draw/move partial line if in between the start and end of this segment
                             const start = nodeData[index - 1].point;
                             const end = datum.point;
 
-                            const x = xValue;
-                            const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                            const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
+                            const remainingLength = nodeLengths[index] - length;
+                            const ratio = (segmentLength - remainingLength) / segmentLength;
+
+                            const x = (1 - ratio) * start.x + ratio * end.x;
+                            const y = (1 - ratio) * start.y + ratio * end.y;
 
                             if (datum.point.moveTo) {
                                 linePath.moveTo(x, y);
