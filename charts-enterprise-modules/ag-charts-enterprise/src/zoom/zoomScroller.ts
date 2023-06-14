@@ -18,7 +18,11 @@ export class ZoomScroller {
         const sourceEvent = event.sourceEvent as WheelEvent;
 
         // Convert the cursor position to coordinates as a ratio of 0 to 1
-        const origin = pointToRatio(bbox, sourceEvent.clientX, sourceEvent.clientY);
+        const origin = pointToRatio(
+            bbox,
+            sourceEvent.offsetX ?? sourceEvent.clientX,
+            sourceEvent.offsetY ?? sourceEvent.clientY
+        );
 
         // Scale the zoom bounding box
         const dir = sourceEvent.deltaY < 0 ? -1 : 1;
