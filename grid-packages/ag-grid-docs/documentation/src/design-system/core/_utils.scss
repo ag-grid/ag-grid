@@ -14,12 +14,12 @@
     @return (1 - $n) * $a + $n * $b;
 }
 
-// Expects a scale $name as string
-// And $color-a & $color-b as maps in the format ("color": [CSS Color], "position": [100~900])
+// Expects $color-a & $color-b as maps in the format ("color": [CSS Color], "position": [100~900])
 // $color-a must have a lower position than $color-b
 // E.g `color-scale('my-scale', ("color": red, "position": 200), ("color": blue, "position": 700))`
-@mixin color-scale($name, $color-a, $color-b) {
-    // Get oklch colors from maps
+@function color-scale($color-a, $color-b) {
+    $scale-map: ();
+
     $oklch-a: bct.rgbToOklch(map.get($color-a, 'color'));
     $oklch-b: bct.rgbToOklch(map.get($color-b, 'color'));
 
@@ -34,13 +34,8 @@
         $c: lerp(map.get($oklch-a, 'c'), map.get($oklch-b, 'c'), $normal);
         $h: lerp(map.get($oklch-a, 'h'), map.get($oklch-b, 'h'), $normal);
 
-        --#{$name}-#{$i * 100}: oklch(#{$l} #{$c} #{$h});
-        --#{$name}-#{$i * 100}: #{bct.oklchToRGB(
-                (
-                    'l': $l,
-                    'c': $c,
-                    'h': $h,
-                )
-            )};
+        $scale-map: map.set($scale-map, #{$i * 100}, oklch(#{$l} #{$c} #{$h}));
     }
+
+    @return $scale-map;
 }
