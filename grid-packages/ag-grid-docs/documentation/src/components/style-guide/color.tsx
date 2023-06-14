@@ -158,13 +158,12 @@ const SemanticColors = () => {
 };
 
 const ColorScale = ({ name }) => {
-    console.log(name);
-
     return (
         <div>
             {Object.keys(designSystemColors).map((color) => {
                 return (
-                    color.includes(`${name}-`) && (
+                    color.includes(`${name}-`) &&
+                    color.includes('00') && (
                         <div key={color} style={{ display: 'flex', alignItems: 'center' }}>
                             <span style={{ width: '14em' }}>{color}</span>
                             <span
@@ -188,11 +187,13 @@ export const Color = () => {
         <div className={styles.colorSubsections}>
             <AbstractColors />
             <ColorScale name="neutral" />
-            <ColorScale name="primary-blue" />
-            <ColorScale name="brand-blue" />
-            <ColorScale name="background-blue" />
+            <ColorScale name="primary" />
+            <ColorScale name="background" />
+            <ColorScale name="brand-scale" />
             <ColorScale name="red" />
+            <ColorScale name="pink" />
             <ColorScale name="orange" />
+            <ColorScale name="green" />
             <SemanticColors />
         </div>
     );
