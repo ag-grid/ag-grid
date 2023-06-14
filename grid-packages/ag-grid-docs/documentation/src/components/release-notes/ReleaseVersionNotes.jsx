@@ -5,7 +5,7 @@ import styles from './ReleaseVersionNotes.module.scss';
 
 const ReleaseVersionNotes = ({ title, releaseNotes, markdownContent }) => {
     return (
-        <Collapsible title={'Release Notes ' + title}>
+        <Collapsible title={`AG Grid version ${title} - View release notes`}>
             {!!markdownContent ? (
                 <div className={styles.markdown}>
                     <ReactMarkdown>{markdownContent}</ReactMarkdown>

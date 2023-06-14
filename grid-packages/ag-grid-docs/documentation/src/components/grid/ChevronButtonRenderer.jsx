@@ -1,17 +1,17 @@
+import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import styles from './ChevronButtonRenderer.module.scss';
 
-const TreeOpen = '/theme-icons/alpine/tree-open.svg';
 const TreeClosed = '/theme-icons/alpine/tree-closed.svg';
 
 const IS_SSR = typeof window === 'undefined';
 
 const ChevronButtonCellRenderer = forwardRef((props, ref) => {
-    let [icon, setIcon] = useState(props && props.node && props.node.expanded ? TreeOpen : TreeClosed);
+    let [isExpanded, setIsExpanded] = useState(props && props.node && props.node.expanded);
 
     function clickHandler() {
         props.api.setRowNodeExpanded(props.node, !props.node.expanded);
-        setIcon(props.node.expanded ? TreeOpen : TreeClosed);
+        setIsExpanded(props.node.expanded);
     }
 
     useImperativeHandle(ref, () => {
@@ -25,13 +25,13 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
     } else {
         return (
             <div className={styles.container}>
-                <div className={styles.chevronContainer}>
+                <div className={classNames(styles.chevronContainer, isExpanded ? styles.isExpanded : undefined)}>
                     <input
                         type="image"
                         className={styles.chevronImage}
                         alt={'chevron to toggle showing more information'}
                         ref={ref}
-                        src={icon}
+                        src={TreeClosed}
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                             clickHandler();

@@ -37,7 +37,6 @@ const COLUMN_DEFS = [
         width: 95,
         resizable: false,
         filter: true,
-
     },
     {
         field: 'summary',
@@ -52,7 +51,7 @@ const COLUMN_DEFS = [
         },
         cellRenderer: 'issueTypeCellRenderer',
         width: 180,
-        filter: true
+        filter: true,
     },
     {
         field: 'status',
@@ -76,17 +75,18 @@ const COLUMN_DEFS = [
         headerName: 'Deprecation',
         headerTooltip: 'Deprecation',
         cellDataType: 'boolean',
-        valueGetter: (params) => (!!params.node.data.deprecationNotes),
-        width: 120,
-        minWidth: 120,
+        valueGetter: (params) => !!params.node.data.deprecationNotes,
+        width: 140,
+        minWidth: 140,
     },
     {
         field: 'breakingChange',
         headerTooltip: 'Breaking Change',
         cellDataType: 'boolean',
         valueGetter: (params) => !!params.node.data.breakingChangesNotes,
-        width: 100,
-        minWidth: 100,
+        width: 110,
+        minWidth: 110,
+        resizable: false,
     },
 ];
 
@@ -169,8 +169,12 @@ const detailCellRendererParams = (params) => {
 
 const ALL_FIX_VERSIONS = 'All Versions';
 
-const extractFixVersionParameter = (location) =>
-    location && location.search ? new URLSearchParams(location.search).get('fixVersion') : ALL_FIX_VERSIONS;
+const extractFixVersionParameter = (location) => {
+    const fixVersionParam = new URLSearchParams(location.search).get('fixVersion');
+
+    return location && location.search && fixVersionParam ? fixVersionParam : ALL_FIX_VERSIONS;
+};
+
 const extractFilterTerm = (location) =>
     location && location.search ? new URLSearchParams(location.search).get('searchQuery') : '';
 
@@ -194,16 +198,19 @@ const Changelog = ({ location }) => {
             paddingCellRenderer: PaddingCellRenderer,
             chevronButtonCellRenderer: ChevronButtonCellRenderer,
             issueTypeCellRenderer: IssueTypeCellRenderer,
-        }
+        };
     }, []);
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
             if (versionsFilterComponent) {
-            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: 'set' };
+                const newModel = {
+                    values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion],
+                    filterType: 'set',
+                };
                 versionsFilterComponent?.setModel(newModel);
-            gridApi.onFilterChanged();
+                gridApi.onFilterChanged();
             }
         }
     }, [gridApi, fixVersion, versions]);
@@ -235,18 +242,19 @@ const Changelog = ({ location }) => {
         }
 
         if (releaseNotesVersion && allReleaseNotes) {
-            const releaseNotes = allReleaseNotes.find((element) => element['release version'].includes(releaseNotesVersion));
+            const releaseNotes = allReleaseNotes.find((element) =>
+                element['release version'].includes(releaseNotesVersion)
+            );
 
             let currentReleaseNotesHtml = null;
             if (releaseNotes) {
-
                 if (releaseNotes['markdown']) {
                     fetch('/changelog/' + releaseNotes['markdown'])
-                        .then(response => response.text())
-                        .then(markdownContent => {
+                        .then((response) => response.text())
+                        .then((markdownContent) => {
                             setMarkdownContent(markdownContent);
                         })
-                        .catch(error => {
+                        .catch((error) => {
                             console.error('Error fetching Markdown content:', error);
                         });
                 } else {
@@ -267,9 +275,12 @@ const Changelog = ({ location }) => {
         params.api.sizeColumnsToFit();
     }, []);
 
-    const onQuickFilterChange = useCallback((event) => {
-        gridApi.setQuickFilter(event.target.value);
-    }, [gridApi]);
+    const onQuickFilterChange = useCallback(
+        (event) => {
+            gridApi.setQuickFilter(event.target.value);
+        },
+        [gridApi]
+    );
 
     const isRowMaster = useCallback((params) => {
         return params.moreInformation || params.deprecationNotes || params.breakingChangesNotes;
@@ -312,7 +323,6 @@ const Changelog = ({ location }) => {
                     gridApi.onFilterChanged();
                 });
             });
-
         }
 
         switch (filterTerm) {
@@ -340,20 +350,23 @@ const Changelog = ({ location }) => {
         { id: 'breakingChange', label: 'Breaking Changes', checked: false },
     ];
 
-    const doesExternalFilterPass = useCallback((node) => {
-        const isDeprecation = !!node.data.deprecationNotes;
-        const isBreakingChange = !!node.data.breakingChangesNotes;
+    const doesExternalFilterPass = useCallback(
+        (node) => {
+            const isDeprecation = !!node.data.deprecationNotes;
+            const isBreakingChange = !!node.data.breakingChangesNotes;
 
-        if (filterState.deprecated && filterState.breakingChange) {
-            return isDeprecation || isBreakingChange;
-        } else if (filterState.deprecated) {
-            return isDeprecation;
-        } else if (filterState.breakingChange) {
-            return isBreakingChange;
-        } else {
-            return true;
-        }
-    }, [filterState]);
+            if (filterState.deprecated && filterState.breakingChange) {
+                return isDeprecation || isBreakingChange;
+            } else if (filterState.deprecated) {
+                return isDeprecation;
+            } else if (filterState.breakingChange) {
+                return isBreakingChange;
+            } else {
+                return true;
+            }
+        },
+        [filterState]
+    );
 
     const createLabeledCheckbox = (checkboxConfig) => {
         const { id, label, checked } = checkboxConfig;
@@ -416,7 +429,11 @@ const Changelog = ({ location }) => {
                             </div>
                         </div>
 
-                        <ReleaseVersionNotes title={releaseNotesTitle} releaseNotes={currentReleaseNotes} markdownContent={markdownContent} />
+                        <ReleaseVersionNotes
+                            title={releaseNotesTitle}
+                            releaseNotes={currentReleaseNotes}
+                            markdownContent={markdownContent}
+                        />
                     </section>
 
                     <Grid
