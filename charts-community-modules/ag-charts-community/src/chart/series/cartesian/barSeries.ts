@@ -1046,7 +1046,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
     }
 
-    animateWaitingUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+    animateWaitingUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+        labelSelections: Array<Selection<Text, BarNodeDatum>>;
+    }) {
         const { processedData } = this;
 
         const diff = processedData?.reduced?.diff as {
@@ -1064,6 +1070,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         const totalDuration = 1000;
+        const labelDuration = 200;
+
         let sectionDuration = totalDuration;
         if (diff.added.length > 0 && diff.removed.length > 0) {
             sectionDuration = Math.floor(totalDuration / 3);
@@ -1142,6 +1150,24 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
                     if (cleanup) datumSelection.cleanup();
+                });
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                label.opacity = 0;
+
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: totalDuration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
                 });
             });
         });
