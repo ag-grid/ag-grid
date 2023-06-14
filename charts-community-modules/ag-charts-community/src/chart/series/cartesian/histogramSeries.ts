@@ -317,10 +317,13 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     async createNodeData() {
         const {
-            axes: [xAxis, yAxis],
+            axes,
             processedData,
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
@@ -501,11 +504,10 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const {
-            xKey,
-            yKey = '',
-            axes: [xAxis, yAxis],
-        } = this;
+        const { xKey, yKey = '', axes } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !xAxis || !yAxis) {
             return '';

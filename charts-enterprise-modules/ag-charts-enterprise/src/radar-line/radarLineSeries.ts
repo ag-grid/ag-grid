@@ -253,8 +253,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             return [];
         }
 
-        const angleScale = this.axes[0]?.scale;
-        const radiusScale = this.axes[1]?.scale;
+        const angleScale = this.axes[ChartAxisDirection.X]?.scale;
+        const radiusScale = this.axes[ChartAxisDirection.Y]?.scale;
 
         if (!angleScale || !radiusScale) {
             return [];
@@ -326,7 +326,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     }
 
     private getRadius() {
-        return this.axes[1]?.range[0] ?? 0;
+        const radiusAxis = this.axes[ChartAxisDirection.Y];
+        return radiusAxis?.range[0] ?? 0;
     }
 
     private updatePath() {

@@ -226,13 +226,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     async processData() {
-        const {
-            xKey,
-            yKeys,
-            seriesItemEnabled,
-            axes: [xAxis, yAxis],
-            normalizedTo,
-        } = this;
+        const { xKey, yKeys, seriesItemEnabled, axes, normalizedTo } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
+
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
@@ -267,11 +265,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const {
-            processedData,
-            axes: [xAxis, yAxis],
-        } = this;
+        const { processedData, axes } = this;
         if (!processedData) return [];
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         const {
             defs: {
@@ -299,11 +297,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     async createNodeData() {
         const {
-            axes: [xAxis, yAxis],
+            axes,
             data,
             processedData: { data: groupedData } = {},
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xAxis || !yAxis || !data) {
             return [];
@@ -681,10 +682,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const {
-            axes: [xAxis, yAxis],
-            yKeys,
-        } = this;
+        const { axes, yKeys } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!(xAxis && yAxis && isNumber(yValue)) || !yKeyDataIndex) {
             return '';

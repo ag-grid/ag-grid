@@ -395,11 +395,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     private getCategoryAxis(): ChartAxis | undefined {
-        return this.getCategoryDirection() === ChartAxisDirection.Y ? this.axes[1] : this.axes[0];
+        const direction = this.getCategoryDirection();
+        return this.axes[direction];
     }
 
     private getValueAxis(): ChartAxis | undefined {
-        return this.getBarDirection() === ChartAxisDirection.Y ? this.axes[1] : this.axes[0];
+        const direction = this.getBarDirection();
+        return this.axes[direction];
     }
 
     private calculateStep(range: number): number | undefined {
@@ -634,7 +636,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             ctx,
         } = this;
 
-        const xAxis = this.axes[0];
+        const xAxis = this.axes[ChartAxisDirection.X];
         const crisp = checkCrisp(xAxis?.visibleRange);
         const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
 

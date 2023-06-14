@@ -123,13 +123,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
     yName?: string = undefined;
 
     async processData() {
-        const {
-            axes: [xAxis, yAxis],
-            xKey = '',
-            yKey = '',
-        } = this;
+        const { axes, xKey = '', yKey = '' } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
@@ -144,12 +142,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const {
-            axes: [xAxis, yAxis],
-            dataModel,
-            processedData,
-        } = this;
+        const { axes, dataModel, processedData } = this;
         if (!processedData || !dataModel) return [];
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         const xDef = dataModel.resolveProcessedDataDefById(`xValue`);
         if (direction === ChartAxisDirection.X) {
@@ -169,10 +166,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const {
             processedData,
             dataModel,
-            axes: [xAxis, yAxis],
+            axes,
             marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!processedData || !dataModel || !xAxis || !yAxis) {
             return [];
@@ -421,11 +421,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
-        const {
-            xKey,
-            yKey,
-            axes: [xAxis, yAxis],
-        } = this;
+        const { xKey, yKey, axes } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';

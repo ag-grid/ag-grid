@@ -667,7 +667,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected assignSeriesToAxes() {
         this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.axes?.[0] : s.axes?.[1];
+                const seriesAxis = s.axes[axis.direction];
                 return seriesAxis === axis;
             });
         });
@@ -700,8 +700,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                     return;
                 }
 
-                const axisIndex = direction === ChartAxisDirection.X ? 0 : 1;
-                series.axes[axisIndex] = newAxis;
+                series.axes[direction] = newAxis;
             });
         });
     }

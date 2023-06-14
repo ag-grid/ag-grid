@@ -240,7 +240,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     animationManager?: AnimationManager;
     chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
-    axes: ChartAxis[] = [];
+
+    axes: Record<ChartAxisDirection, ChartAxis | undefined> = {
+        [ChartAxisDirection.X]: undefined,
+        [ChartAxisDirection.Y]: undefined,
+    };
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     private directionKeys: { [key in ChartAxisDirection]?: string[] };
