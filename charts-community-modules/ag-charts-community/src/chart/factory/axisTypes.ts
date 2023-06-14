@@ -1,4 +1,5 @@
-import { ModuleContext, AxisConstructor } from '../../util/module';
+import { AxisConstructor } from '../../util/module';
+import { ModuleContext } from '../../util/moduleContext';
 import { LogAxis } from '../axis/logAxis';
 import { NumberAxis } from '../axis/numberAxis';
 import { CategoryAxis } from '../axis/categoryAxis';
