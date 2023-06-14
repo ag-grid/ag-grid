@@ -707,7 +707,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
-        const { yKey, xValue, yValue } = nodeDatum;
+        const { yKey, xValue, yValue, datum } = nodeDatum;
 
         if (!processedData || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
@@ -728,7 +728,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const { xName, yNames, fills, strokes, tooltip, formatter, id: seriesId } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const { datum } = nodeDatum.datum;
         const yName = yNames[yKey];
         const stackGroup = this.getStackGroup(yKey);
         const fill = fills[fillIndex % fills.length];
