@@ -35,6 +35,8 @@ const ABSTRACT_COLOR_GROUPS = {
     Other: ['cerise-pink', 'danger-red'],
 };
 
+const COLOR_SCALES = ['primary', 'brand-scale', 'neutral', 'background', 'red', 'pink', 'orange', 'green'];
+
 /**
  * Semantic colors as CSS Variable names
  *
@@ -158,42 +160,55 @@ const SemanticColors = () => {
 };
 
 const ColorScale = ({ name }) => {
+    const isInScale = (color, name) => {
+        return color.includes(`${name}-`) && color.includes('00');
+    };
+
     return (
-        <div>
-            {Object.keys(designSystemColors).map((color) => {
-                return (
-                    color.includes(`${name}-`) &&
-                    color.includes('00') && (
-                        <div key={color} style={{ display: 'flex', alignItems: 'center' }}>
-                            <span style={{ width: '14em' }}>{color}</span>
+        <div className={styles.colorScale}>
+            <h4>{name}</h4>
+            <div>
+                {Object.keys(designSystemColors).map((color) => {
+                    return (
+                        isInScale(color, name) && (
                             <span
+                                key={color}
                                 style={{
-                                    display: 'inline-block',
-                                    width: '4em',
-                                    height: '2em',
                                     backgroundColor: designSystemColors[color],
                                 }}
                             ></span>
-                        </div>
-                    )
-                );
-            })}
+                        )
+                    );
+                })}
+            </div>
+            <div>
+                {Object.keys(designSystemColors).map((color) => {
+                    return isInScale(color, name) && <span key={color}>{color.substr(-3)}</span>;
+                })}
+            </div>
         </div>
     );
+};
+
+const ColorScales = () => {
+    return COLOR_SCALES.map((scaleName) => {
+        return <ColorScale name={scaleName} key={scaleName} />;
+    });
 };
 
 export const Color = () => {
     return (
         <div className={styles.colorSubsections}>
             <AbstractColors />
-            <ColorScale name="neutral" />
-            <ColorScale name="primary" />
-            <ColorScale name="background" />
+            <ColorScales />
+            {/* <ColorScale name="primary" />
             <ColorScale name="brand-scale" />
+            <ColorScale name="neutral" />
+            <ColorScale name="background" />
             <ColorScale name="red" />
             <ColorScale name="pink" />
             <ColorScale name="orange" />
-            <ColorScale name="green" />
+            <ColorScale name="green" /> */}
             <SemanticColors />
         </div>
     );

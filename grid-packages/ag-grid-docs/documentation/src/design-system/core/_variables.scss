@@ -106,17 +106,6 @@ $abstract-colors: (
 );
 
 $color-scales: (
-    'neutral':
-        color-scale(
-            (
-                'color': #f8f9fa,
-                'position': 100,
-            ),
-            (
-                'color': #212529,
-                'position': 900,
-            )
-        ),
     'primary':
         color-scale(
             (
@@ -125,6 +114,28 @@ $color-scales: (
             ),
             (
                 'color': #00407f,
+                'position': 900,
+            )
+        ),
+    'brand-scale':
+        color-scale(
+            (
+                'color': hsl(210, 94.7%, 29.6%),
+                'position': 400,
+            ),
+            (
+                'color': hsl(210, 100%, 19.6%),
+                'position': 800,
+            )
+        ),
+    'neutral':
+        color-scale(
+            (
+                'color': #f8f9fa,
+                'position': 100,
+            ),
+            (
+                'color': #212529,
                 'position': 900,
             )
         ),
@@ -137,17 +148,6 @@ $color-scales: (
             (
                 'color': hsl(210, 50%, 85%),
                 'position': 600,
-            )
-        ),
-    'brand-scale':
-        color-scale(
-            (
-                'color': hsl(210, 94.7%, 29.6%),
-                'position': 400,
-            ),
-            (
-                'color': hsl(210, 100%, 19.6%),
-                'position': 800,
             )
         ),
     'red':
