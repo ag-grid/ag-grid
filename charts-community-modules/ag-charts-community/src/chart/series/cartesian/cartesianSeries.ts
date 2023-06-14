@@ -43,6 +43,8 @@ type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContex
 export interface CartesianSeriesNodeDatum extends SeriesNodeDatum {
     readonly xKey: string;
     readonly yKey: string;
+    readonly xValue: any;
+    readonly yValue: any;
 }
 
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {

@@ -246,6 +246,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     xKey,
                     point: { x, y, moveTo, size },
                     nodeMidPoint: { x, y },
+                    yValue: yDatum,
+                    xValue: xDatum,
                     label: labelText
                         ? {
                               text: labelText,
@@ -432,9 +434,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         const { xName, yName, tooltip, marker, id: seriesId } = this;
         const { renderer: tooltipRenderer, format: tooltipFormat } = tooltip;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue } = nodeDatum;
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const title = sanitizeHtml(this.title ?? yName);

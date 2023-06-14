@@ -218,8 +218,10 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const font = label.getFont();
         let actualLength = 0;
         for (const { values, datum } of this.processedData?.data ?? []) {
-            const x = xScale.convert(values[0]) + xOffset;
-            const y = yScale.convert(values[1]) + yOffset;
+            const xDatum = values[0];
+            const yDatum = values[1];
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(yDatum) + yOffset;
 
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
@@ -236,6 +238,8 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
                 itemId: yKey,
                 yKey,
                 xKey,
+                xValue: xDatum,
+                yValue: yDatum,
                 datum,
                 point: { x, y, size: 0 },
                 width,
@@ -421,9 +425,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         const color = format?.fill ?? fill ?? 'gray';
         const title = this.title ?? yName;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue } = nodeDatum;
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 

@@ -267,6 +267,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 yKey,
                 xKey,
                 datum,
+                xValue: xDatum,
+                yValue: yDatum,
                 point: { x, y, size: markerSize },
                 nodeMidPoint: { x, y },
                 fill,
@@ -484,9 +486,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const color = format?.fill ?? fill ?? 'gray';
         const title = this.title ?? yName;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue } = nodeDatum;
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
