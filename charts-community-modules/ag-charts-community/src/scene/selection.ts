@@ -28,11 +28,11 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
     private _parent: Node;
     private _nodes: TChild[] = [];
     private _data: TDatum[] = [];
-    private _datumNodeIndices = new Map<string, number>();
+    private _datumNodeIndices = new Map<string | number, number>();
     private _factory: NodeFactory<TChild, TDatum>;
 
     // If garbage collection is set to false, you must call `selection.cleanup()` to remove deleted nodes
-    private _garbage: string[] = [];
+    private _garbage: (string | number)[] = [];
     private _garbageCollection: boolean = true;
 
     each(iterate: (node: TChild, datum: TDatum, index: number) => void) {
@@ -44,12 +44,12 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
      * Update the data in a selection. If an `id()` function is provided, maintain a list of ids related to the nodes.
      * Otherwise, take the more efficient route of simply creating and destroying nodes at the end of the array.
      */
-    update(data: TDatum[], init?: (node: TChild) => void, getDatumId?: (datum: TDatum) => string) {
+    update(data: TDatum[], init?: (node: TChild) => void, getDatumId?: (datum: TDatum) => string | number) {
         const old = this._data;
         const parent = this._parent;
         const factory = this._factory;
 
-        const datumIds = new Map<string, number>();
+        const datumIds = new Map<string | number, number>();
 
         if (getDatumId) {
             // Check if new datum and append node and save map of datum id to node index

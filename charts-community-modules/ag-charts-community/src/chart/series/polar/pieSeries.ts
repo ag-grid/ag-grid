@@ -112,6 +112,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
 
     readonly sectorFormat: Required<AgPieSeriesFormat>;
     readonly legendItemKey?: string;
+    readonly legendItemValue?: string;
 }
 
 enum PieNodeTag {
@@ -394,7 +395,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     async processData() {
         let { data = [] } = this;
-        const { angleKey, radiusKey, seriesItemEnabled } = this;
+        const { angleKey, radiusKey, calloutLabelKey, sectorLabelKey, legendItemKey, seriesItemEnabled } = this;
 
         if (!angleKey) return;
 
@@ -406,6 +407,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 normalisePropertyTo({ id: 'radiusValue' }, [0, 1], this.radiusMin ?? 0, this.radiusMax)
             );
             extraProps.push();
+        }
+        if (calloutLabelKey) {
+            extraProps.push(valueProperty(calloutLabelKey, false, { id: `calloutLabelValue` }));
+        }
+        if (sectorLabelKey) {
+            extraProps.push(valueProperty(sectorLabelKey, false, { id: `sectorLabelValue` }));
+        }
+        if (legendItemKey) {
+            extraProps.push(valueProperty(legendItemKey, false, { id: `legendItemValue` }));
         }
 
         data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : { ...d, [angleKey]: 0 }));
@@ -439,6 +449,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
         const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
+        const calloutLabelIdx = dataModel.resolveProcessedDataIndexById(`calloutLabelValue`)?.index ?? -1;
+        const sectorLabelIdx = dataModel.resolveProcessedDataIndexById(`sectorLabelValue`)?.index ?? -1;
+        const legendItemIdx = dataModel.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
 
         if (angleIdx < 0) return [];
 
@@ -456,8 +469,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const angleValue = values[angleIdx + 1];
             const radius = radiusIdx >= 0 ? values[radiusIdx] ?? 1 : 1;
             const radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
+            const legendItemValue = legendItemIdx >= 0 ? values[legendItemIdx] : undefined;
 
-            const labels = this.getLabels(datum, midAngle, span, true);
+            const labels = this.getLabels(
+                datum,
+                midAngle,
+                span,
+                true,
+                currentValue,
+                radiusValue,
+                values[calloutLabelIdx],
+                values[sectorLabelIdx],
+                legendItemValue
+            );
             const sectorFormat = this.getSectorFormat(datum, index, index, false);
 
             return {
@@ -474,6 +498,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 sectorFormat,
                 radius,
                 radiusValue,
+                legendItemValue,
                 ...labels,
             };
         });
@@ -491,7 +516,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         datum: any,
         midAngle: number,
         span: number,
-        skipDisabled: boolean
+        skipDisabled: boolean,
+        angleValue: any,
+        radiusValue: any,
+        calloutLabelValue: string,
+        sectorLabelValue: string,
+        legendItemValue?: string
     ): {
         calloutLabel?: any;
         legendItem?: {
@@ -512,7 +542,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (!calloutLabelKey && !sectorLabelKey && !legendItemKey) return {};
 
-        const labelFormatterParams = this.getLabelFormatterParams(datum);
+        const labelFormatterParams = this.getLabelFormatterParams(
+            datum,
+            angleValue,
+            radiusValue,
+            calloutLabelValue,
+            sectorLabelValue
+        );
 
         let calloutLabelText;
         if (calloutLabelKey) {
@@ -524,7 +560,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             } else if (calloutLabel.formatter) {
                 calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
             } else {
-                calloutLabelText = String(datum[calloutLabelKey]);
+                calloutLabelText = String(calloutLabelValue);
             }
         }
 
@@ -533,13 +569,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (sectorLabel.formatter) {
                 sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
             } else {
-                sectorLabelText = String(datum[sectorLabelKey]);
+                sectorLabelText = String(sectorLabelValue);
             }
-        }
-
-        let legendItemText;
-        if (legendItemKey) {
-            legendItemText = String(datum[legendItemKey]);
         }
 
         return {
@@ -556,13 +587,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                   }
                 : {}),
             ...(sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {}),
-            ...(legendItemKey != null && legendItemText != null
-                ? { legendItem: { key: legendItemKey, text: legendItemText } }
+            ...(legendItemKey != null && legendItemValue != null
+                ? { legendItem: { key: legendItemKey, text: legendItemValue } }
                 : {}),
         };
     }
 
-    private getLabelFormatterParams(datum: any): AgPieSeriesLabelFormatterParams<any> {
+    private getLabelFormatterParams(
+        datum: any,
+        angleValue: any,
+        radiusValue: any,
+        calloutLabelValue: any,
+        sectorLabelValue: any
+    ): AgPieSeriesLabelFormatterParams<any> {
         const {
             id: seriesId,
             radiusKey,
@@ -577,16 +614,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return {
             datum,
             angleKey,
-            angleValue: datum[angleKey],
+            angleValue,
             angleName,
             radiusKey,
-            radiusValue: radiusKey ? datum[radiusKey] : undefined,
+            radiusValue,
             radiusName,
             calloutLabelKey,
-            calloutLabelValue: calloutLabelKey ? datum[calloutLabelKey] : undefined,
+            calloutLabelValue,
             calloutLabelName,
             sectorLabelKey,
-            sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+            sectorLabelValue,
             sectorLabelName,
             seriesId,
         };
@@ -1443,23 +1480,39 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     getLegendData(): ChartLegendDatum[] {
-        const { calloutLabelKey, legendItemKey, id, data } = this;
+        const { processedData, calloutLabelKey, legendItemKey, id, dataModel } = this;
 
-        if (!data || data.length === 0) return [];
+        if (!dataModel || !processedData || processedData.data.length === 0) return [];
 
         if (!legendItemKey && !calloutLabelKey) return [];
+
+        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
+        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
+        const calloutLabelIdx = dataModel.resolveProcessedDataIndexById(`calloutLabelValue`)?.index ?? -1;
+        const sectorLabelIdx = dataModel.resolveProcessedDataIndexById(`sectorLabelValue`)?.index ?? -1;
+        const legendItemIdx = dataModel.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
 
         const titleText = this.title?.showInLegend && this.title.text;
         const legendData: CategoryLegendDatum[] = [];
 
-        for (let index = 0; index < data.length; index++) {
-            const datum = data[index];
+        for (let index = 0; index < processedData.data.length; index++) {
+            const { datum, values } = processedData.data[index];
 
             const labelParts = [];
             if (titleText) {
                 labelParts.push(titleText);
             }
-            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
+            const labels = this.getLabels(
+                datum,
+                2 * Math.PI,
+                2 * Math.PI,
+                false,
+                values[angleIdx],
+                values[radiusIdx],
+                values[calloutLabelIdx],
+                values[sectorLabelIdx],
+                values[legendItemIdx]
+            );
             if (legendItemKey && labels.legendItem !== undefined) {
                 labelParts.push(labels.legendItem.text);
             } else if (calloutLabelKey && labels.calloutLabel?.text !== undefined) {
@@ -1507,7 +1560,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     toggleOtherSeriesItems(series: PieSeries, itemId: number, enabled: boolean): void {
-        const { legendItemKey } = this;
+        const { legendItemKey, dataModel } = this;
 
         if (!legendItemKey) return;
 
@@ -1516,8 +1569,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (!datumToggledLegendItemValue) return;
 
-        this.data?.forEach((datum, datumItemId) => {
-            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+        const legendItemIdx = dataModel?.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
+        this.processedData?.data.forEach(({ values }, datumItemId) => {
+            if (values[legendItemIdx] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);
             }
         });

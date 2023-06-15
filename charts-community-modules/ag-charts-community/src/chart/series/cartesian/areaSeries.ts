@@ -413,7 +413,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                     // marker data
-                    const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
+                    const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, yDatum);
 
                     if (marker) {
                         markerSelectionData.push({

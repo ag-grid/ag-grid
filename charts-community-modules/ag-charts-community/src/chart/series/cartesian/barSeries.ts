@@ -630,8 +630,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }) {
         const { nodeData, datumSelection } = opts;
 
-        const key = this.processedData?.defs.keys[0];
-        const getDatumId = key ? (datum: BarNodeDatum) => datum.datum[key.property] : undefined;
+        const getDatumId = (datum: BarNodeDatum) => datum.xValue;
 
         return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar), getDatumId);
     }
