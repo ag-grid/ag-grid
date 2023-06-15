@@ -88,6 +88,7 @@
     transition: color $default-transition-timing;
 
     svg {
+        --text-color: var(--link-color);
         --icon-size: 1em;
 
         fill: var(--link-color);
@@ -100,7 +101,7 @@
         svg {
             fill: var(--link-hover-color);
         }
-    --text-color: var(--link-color);
+    }
 }
 
 .versionLabel {

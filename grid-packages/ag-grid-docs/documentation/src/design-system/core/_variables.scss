@@ -207,6 +207,108 @@ $color-scales: (
         ),
 );
 
+$dark-scales: (
+    'primary':
+        color-scale(
+            (
+                'color': #cce5ff,
+                'position': 100,
+            ),
+            (
+                'color': #007bff,
+                'position': 600,
+            )
+        ),
+    'dark-blue':
+        color-scale(
+            (
+                'color': hsl(210, 67%, 18%),
+                'position': 400,
+            ),
+            (
+                'color': hsl(210, 100%, 12%),
+                'position': 800,
+            )
+        ),
+    'background':
+        color-scale(
+            (
+                'color': hsl(205, 50%, 8%),
+                'position': 100,
+            ),
+            (
+                'color': hsl(210, 100%, 15%),
+                'position': 600,
+            )
+        ),
+    'neutral':
+        color-scale(
+            (
+                'color': #212529,
+                'position': 100,
+            ),
+            (
+                'color': hsl(210, 9%, 74%),
+                'position': 900,
+            )
+        ),
+    'red':
+        color-scale(
+            (
+                'color': #ffe8e7,
+                'position': 100,
+            ),
+            (
+                'color': #dc3545,
+                'position': 700,
+            )
+        ),
+    'pink':
+        color-scale(
+            (
+                'color': hsl(332, 78.7%, 95%),
+                'position': 100,
+            ),
+            (
+                'color': hsl(332, 78.7%, 57.6%),
+                'position': 700,
+            )
+        ),
+    'orange':
+        color-scale(
+            (
+                'color': hsl(33, 100%, 95%),
+                'position': 100,
+            ),
+            (
+                'color': hsl(33, 100%, 50%),
+                'position': 700,
+            )
+        ),
+    'green':
+        color-scale(
+            (
+                'color': hsl(135, 80%, 92%),
+                'position': 100,
+            ),
+            (
+                'color': hsl(135, 75%, 45%),
+                'position': 700,
+            )
+        ),
+    'brown':
+        color-scale(
+            (
+                'color': #ffeed9,
+                'position': 100,
+            ),
+            (
+                'color': #5c3508,
+                'position': 700,
+            )
+        ),
+);
+
 // Semantic colors based on abstract colors
 $semantic-colors: (
     // Background
@@ -247,4 +349,48 @@ $semantic-colors: (
     // Warnings
     'warning-background': brown-100,
     'warning-text': brown-700
+);
+
+// Semantic colors based on abstract colors
+$dark-semantic-colors: (
+    // Background
+    'default-background-color': neutral-100,
+    // Text
+    'default-text-color': neutral-900,
+    'text-color': default-text-color,
+    'secondary-text-color': neutral-600,
+    // Border
+    'border-color': neutral-200,
+    // Link
+    'link-color': primary-500,
+    'link-hover-color': orange-700,
+    // Button
+    'button-text-color': white,
+    'button-color': primary-600,
+    'button-hover-color': primary-800,
+    'button-active-color': primary-900,
+    'button-focus-box-shadow-color': primary-100,
+    // Code
+    'code-text-color': pink-600,
+    'code-background-color': neutral-100,
+    // Input
+    'input-background-color': default-background-color,
+    'input-secondary-background-color': neutral-300,
+    'input-secondary-border-color': neutral-500,
+    'input-primary-color': primary-600,
+    'input-focus-border-color': primary-200,
+    'input-focus-box-shadow-color': primary-100,
+    'input-error-color': red-600,
+    // Table
+    'table-odd-row-background-color': background-100,
+    // Site header
+    'site-header-background': dark-blue-400,
+    'site-nav-background': dark-blue-800,
+    // Toolbar
+    'toolbar-background': background-200,
+    // Warnings
+    'warning-background': brown-100,
+    'warning-text': brown-700,
+    // Not semantic
+    'bright-blue-gray': neutral-200
 );

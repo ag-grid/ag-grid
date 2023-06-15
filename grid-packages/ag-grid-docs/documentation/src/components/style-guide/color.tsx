@@ -176,7 +176,7 @@ const ColorScale = ({ name }) => {
                         <span
                             key={color}
                             style={{
-                                backgroundColor: designSystemColors[color],
+                                backgroundColor: `var(--${color})`,
                             }}
                         ></span>
                     );
