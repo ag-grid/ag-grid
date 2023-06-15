@@ -66,6 +66,10 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     negativeItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the positive series items. */
     positiveItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the total series items. */
+    totalItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the subtotal series items. */
+    subtotalItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the connector lines. */
     line?: AgWaterfallSeriesLineOptions;
     /** Configuration for the shadow used behind the chart series. */
