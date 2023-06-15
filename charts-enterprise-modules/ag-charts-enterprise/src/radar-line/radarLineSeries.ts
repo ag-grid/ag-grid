@@ -67,6 +67,8 @@ interface RadarLineNodeDatum extends _ModuleSupport.SeriesNodeDatum {
         hAlign: CanvasTextAlign;
         vAlign: CanvasTextBaseline;
     };
+    readonly angleValue: any;
+    readonly radiusValue: any;
 }
 
 class RadarLineSeriesLabel extends _Scene.Label {
@@ -310,6 +312,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 point: { x, y, size: markerSize },
                 nodeMidPoint: { x, y },
                 label: labelNodeDatum,
+                angleValue: angleDatum,
+                radiusValue: radiusDatum,
             };
         });
 
@@ -445,9 +449,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
 
         const { angleName, radiusName, tooltip, marker, id: seriesId } = this;
         const { renderer: tooltipRenderer, format: tooltipFormat } = tooltip;
-        const datum = nodeDatum.datum;
-        const angleValue = datum[angleKey];
-        const radiusValue = datum[radiusKey];
+        const { datum, angleValue, radiusValue } = nodeDatum;
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : String(angleValue);
         const formattedRadiusValue = typeof radiusValue === 'number' ? toFixed(radiusValue) : String(radiusValue);
         const title = sanitizeHtml(radiusName);
