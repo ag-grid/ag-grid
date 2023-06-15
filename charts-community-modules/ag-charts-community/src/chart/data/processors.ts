@@ -4,6 +4,7 @@ import {
     PropertyId,
     PropertyValueProcessorDefinition,
     ReducerOutputPropertyDefinition,
+    ProcessedData,
 } from './dataModel';
 
 export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
@@ -138,4 +139,72 @@ export function normalisePropertyTo(
             }
         },
     };
+}
+
+export function diff(previousData: ProcessedData<any>): ProcessorOutputPropertyDefinition<any> {
+    return {
+        type: 'processor',
+        property: 'diff',
+        calculate: (processedData) => {
+            const diff = {
+                changed: false,
+                added: [] as any[],
+                updated: [] as any[],
+                removed: [] as any[],
+            };
+
+            const added = new Map<string, any>();
+            const updated = new Map<string, any>();
+            const removed = new Map<string, any>();
+            const sep = '___';
+
+            for (let i = 0; i < Math.max(previousData.data.length, processedData.data.length); i++) {
+                const prev = previousData.data[i];
+                const datum = processedData.data[i];
+
+                const prevId = prev?.keys.join(sep);
+                const datumId = datum?.keys.join(sep);
+
+                if (prevId === datumId) {
+                    if (!arraysEqual(prev.values, datum.values)) {
+                        updated.set(datumId, datum);
+                    }
+                    continue;
+                }
+
+                if (removed.has(datumId)) {
+                    updated.set(datumId, datum);
+                    removed.delete(datumId);
+                } else if (datum) {
+                    added.set(datumId, datum);
+                }
+                if (added.has(prevId)) {
+                    updated.set(prevId, prev);
+                    added.delete(prevId);
+                } else if (prev) {
+                    removed.set(prevId, prev);
+                }
+            }
+
+            diff.added = Array.from(added.values()).map((datum) => datum.keys);
+            diff.updated = Array.from(updated.values()).map((datum) => datum.keys);
+            diff.removed = Array.from(removed.values()).map((datum) => datum.keys);
+
+            diff.changed = diff.added.length > 0 || diff.updated.length > 0 || diff.removed.length > 0;
+
+            return diff;
+        },
+    };
+}
+
+function arraysEqual(a: any[], b: any[]): boolean {
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+        if (Array.isArray(a[i]) && Array.isArray(b[i])) return arraysEqual(a[i], b[i]);
+        if (a[i] !== b[i]) return false;
+    }
+
+    return true;
 }

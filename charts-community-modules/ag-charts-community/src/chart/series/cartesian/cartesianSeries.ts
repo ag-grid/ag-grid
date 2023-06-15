@@ -95,8 +95,8 @@ export class CartesianSeriesNodeDoubleClickEvent<
     readonly type = 'nodeDoubleClick';
 }
 
-type CartesianAnimationState = 'empty' | 'ready';
-type CartesianAnimationEvent = 'update' | 'highlight' | 'highlightMarkers' | 'resize';
+type CartesianAnimationState = 'empty' | 'ready' | 'waiting';
+type CartesianAnimationEvent = 'update' | 'updateData' | 'highlight' | 'highlightMarkers' | 'resize';
 class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {}
 
 export abstract class CartesianSeries<
@@ -120,7 +120,8 @@ export abstract class CartesianSeries<
 
     private readonly opts: SeriesOpts;
 
-    private animationState: CartesianStateMachine;
+    protected animationState: CartesianStateMachine;
+    protected datumSelectionGarbageCollection = true;
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -160,6 +161,10 @@ export abstract class CartesianSeries<
             },
             ready: {
                 on: {
+                    updateData: {
+                        target: 'waiting',
+                        action: () => {},
+                    },
                     update: {
                         target: 'ready',
                         action: (data) => this.animateReadyUpdate(data),
@@ -175,6 +180,14 @@ export abstract class CartesianSeries<
                     resize: {
                         target: 'ready',
                         action: (data) => this.animateReadyResize(data),
+                    },
+                },
+            },
+            waiting: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data) => this.animateWaitingUpdateReady(data),
                     },
                 },
             },
@@ -378,7 +391,11 @@ export abstract class CartesianSeries<
                 markerGroup,
                 labelGroup,
                 labelSelection: Selection.select(labelGroup, Text),
-                datumSelection: Selection.select(dataNodeGroup, () => this.nodeFactory()),
+                datumSelection: Selection.select(
+                    dataNodeGroup,
+                    () => this.nodeFactory(),
+                    this.datumSelectionGarbageCollection
+                ),
                 markerSelection: markerGroup ? Selection.select(markerGroup, () => this.markerFactory()) : undefined,
             });
         }
@@ -770,6 +787,10 @@ export abstract class CartesianSeries<
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
     }) {
+        // Override point for sub-classes.
+    }
+
+    protected animateWaitingUpdateReady(_data: { datumSelections: Array<NodeDataSelection<N, C>> }) {
         // Override point for sub-classes.
     }
 
