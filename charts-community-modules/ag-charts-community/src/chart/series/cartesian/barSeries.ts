@@ -1145,7 +1145,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     cleanup = true;
                 }
 
-                this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
+                this.animateRect(`${this.id}_waiting-update-ready_${rect.id}`, rect, props, duration, delay, () => {
                     if (cleanup) datumSelection.cleanup();
                 });
             });
@@ -1155,7 +1155,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,

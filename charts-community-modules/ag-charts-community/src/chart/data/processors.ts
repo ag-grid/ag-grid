@@ -141,7 +141,10 @@ export function normalisePropertyTo(
     };
 }
 
-export function diff(previousData: ProcessedData<any>): ProcessorOutputPropertyDefinition<any> {
+export function diff(
+    previousData: ProcessedData<any>,
+    updateMovedDatums: boolean = true
+): ProcessorOutputPropertyDefinition<any> {
     return {
         type: 'processor',
         property: 'diff',
@@ -173,13 +176,18 @@ export function diff(previousData: ProcessedData<any>): ProcessorOutputPropertyD
                 }
 
                 if (removed.has(datumId)) {
-                    updated.set(datumId, datum);
+                    if (updateMovedDatums || !arraysEqual(removed.get(datumId).values, datum.values)) {
+                        updated.set(datumId, datum);
+                    }
                     removed.delete(datumId);
                 } else if (datum) {
                     added.set(datumId, datum);
                 }
+
                 if (added.has(prevId)) {
-                    updated.set(prevId, prev);
+                    if (updateMovedDatums || !arraysEqual(added.get(prevId).values, prev.values)) {
+                        updated.set(prevId, prev);
+                    }
                     added.delete(prevId);
                 } else if (prev) {
                     removed.set(prevId, prev);
