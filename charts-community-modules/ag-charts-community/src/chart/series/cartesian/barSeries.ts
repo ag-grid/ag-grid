@@ -1109,7 +1109,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 let duration = sectionDuration;
                 let cleanup = false;
 
-                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
+                const datumId = datumIdKey ? datum.xValue : '';
 
                 let contextX = startingX;
                 let contextWidth = 0;
