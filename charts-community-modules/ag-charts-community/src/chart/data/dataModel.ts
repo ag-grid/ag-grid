@@ -133,7 +133,7 @@ export type DatumPropertyDefinition<K> = {
     property: K;
     invalidValue?: any;
     missingValue?: any;
-    validation?: (datum: any) => boolean;
+    validation?: (value: any, datum: any) => boolean;
     processor?: () => ProcessorFn;
 };
 
@@ -625,7 +625,7 @@ export class DataModel<
             }
 
             if (valueInDatum) {
-                const valid = def.validation?.(value) ?? true;
+                const valid = def.validation?.(value, datum) ?? true;
                 if (!valid) {
                     if ('invalidValue' in def) {
                         value = def.invalidValue;

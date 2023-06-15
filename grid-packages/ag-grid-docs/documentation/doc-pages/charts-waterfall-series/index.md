@@ -71,6 +71,8 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     xKey?: string;
     /** The key to use to retrieve y-values from the data. */
     yKey?: string;
+    /** The key to use to retrieve type-values from the data. */
+    typeKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
@@ -83,6 +85,10 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     negativeItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the positive series items. */
     positiveItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the total series items. */
+    totalItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the subtotal series items. */
+    subtotalItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the connector lines. */
     line?: AgWaterfallSeriesLineOptions;
     /** Configuration for the shadow used behind the chart series. */
