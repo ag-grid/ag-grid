@@ -109,15 +109,15 @@ $color-scales: (
     'primary':
         color-scale(
             (
-                'color': #007bff,
-                'position': 500,
+                'color': #cce5ff,
+                'position': 100,
             ),
             (
-                'color': #00407f,
-                'position': 900,
+                'color': #007bff,
+                'position': 600,
             )
         ),
-    'brand-scale':
+    'dark-blue':
         color-scale(
             (
                 'color': hsl(210, 94.7%, 29.6%),
@@ -126,17 +126,6 @@ $color-scales: (
             (
                 'color': hsl(210, 100%, 19.6%),
                 'position': 800,
-            )
-        ),
-    'neutral':
-        color-scale(
-            (
-                'color': #f8f9fa,
-                'position': 100,
-            ),
-            (
-                'color': #212529,
-                'position': 900,
             )
         ),
     'background':
@@ -148,6 +137,17 @@ $color-scales: (
             (
                 'color': hsl(210, 50%, 85%),
                 'position': 600,
+            )
+        ),
+    'neutral':
+        color-scale(
+            (
+                'color': #f8f9fa,
+                'position': 100,
+            ),
+            (
+                'color': #212529,
+                'position': 900,
             )
         ),
     'red':
@@ -194,6 +194,17 @@ $color-scales: (
                 'position': 700,
             )
         ),
+    'brown':
+        color-scale(
+            (
+                'color': #ffeed9,
+                'position': 100,
+            ),
+            (
+                'color': #5c3508,
+                'position': 700,
+            )
+        ),
 );
 
 // Semantic colors based on abstract colors
@@ -201,39 +212,39 @@ $semantic-colors: (
     // Background
     'default-background-color': white,
     // Text
-    'text-color': dark-gunmetal-gray,
-    'secondary-text-color': auro-metal,
+    'default-text-color': neutral-900,
+    'text-color': default-text-color,
+    'secondary-text-color': neutral-500,
     // Border
-    'border-color': light-gray,
+    'border-color': neutral-200,
     // Link
-    'link-color': azure-blue,
-    'link-hover-color': ag-grid-orange,
+    'link-color': primary-600,
+    'link-hover-color': orange-700,
     // Button
     'button-text-color': white,
-    'button-color': azure-blue,
-    'button-hover-color': medium-electric-blue,
-    'button-active-color': dark-cerulean-blue,
-    'button-focus-box-shadow-color': water-blue,
-    // Inline
-    'inline-element-background-color': ghost-white,
+    'button-color': primary-600,
+    'button-hover-color': primary-800,
+    'button-active-color': primary-900,
+    'button-focus-box-shadow-color': primary-100,
     // Code
-    'code-text-color': cerise-pink,
+    'code-text-color': pink-700,
+    'code-background-color': neutral-100,
     // Input
-    'input-background-color': white,
-    'input-secondary-background-color': ag-grid-grey,
-    'input-secondary-border-color': auro-metal,
-    'input-primary-color': azure-blue,
-    'input-focus-border-color': sky-blue,
-    'input-focus-box-shadow-color': water-blue,
-    'input-error-color': danger-red,
+    'input-background-color': default-background-color,
+    'input-secondary-background-color': neutral-300,
+    'input-secondary-border-color': neutral-500,
+    'input-primary-color': primary-600,
+    'input-focus-border-color': primary-200,
+    'input-focus-box-shadow-color': primary-100,
+    'input-error-color': red-700,
     // Table
-    'table-odd-row-background-color': ghost-blue,
+    'table-odd-row-background-color': background-100,
     // Site header
-    'site-header-background': medium-electric-blue,
-    'site-nav-background': ag-grid-dark-blue,
+    'site-header-background': dark-blue-400,
+    'site-nav-background': dark-blue-800,
     // Toolbar
-    'toolbar-background': bright-blue-gray,
+    'toolbar-background': background-200,
     // Warnings
-    'warning-background': papaya-whip,
-    'warning-text': pineapple
+    'warning-background': brown-100,
+    'warning-text': brown-700
 );
