@@ -76,6 +76,14 @@ The example below shows setting the grid size and then changing it as the user s
 
 <grid-example title='Width & Height' name='width-and-height' type='mixed'></grid-example>
 
+## DOM Layout
+
+There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:
+
+- **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
+- **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal. Note that if using this with the SSRM the grid will attempt to load every row and may cause undesired side-effects (such as excessive datasource requests or too many loaded rows).
+- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](/printing/).
+
 ## Grid Auto Height
 
 Depending on your scenario, you may wish for the grid to auto-size it's height to the number of rows displayed inside the grid. This is useful if you have relatively few rows and don't want empty space between the last row and the bottom of the grid.
@@ -119,14 +127,6 @@ When using Auto Height, there is a minimum of 150px set to the grid rows section
     min-height: unset !important;
 }
 </snippet>
-
-## DOM Layout
-
-There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:
-
-- **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
-- **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal.
-- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](/printing/).
 
 ## Min Height with Auto Height
 

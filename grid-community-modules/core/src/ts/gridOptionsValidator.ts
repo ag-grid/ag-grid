@@ -56,13 +56,6 @@ export class GridOptionsValidator {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
 
-        if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            if (!this.gridOptionsService.is('pagination')) {
-                console.warn(`AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.`);
-                this.gridOptions.domLayout = 'normal';
-            }
-        }
-
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
