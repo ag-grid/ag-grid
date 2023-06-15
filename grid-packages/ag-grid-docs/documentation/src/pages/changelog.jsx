@@ -224,11 +224,14 @@ const Changelog = ({ location }) => {
                 headerName: 'Version',
                 width: 120,
                 resizable: true,
+                filter: 'agSetColumnFilter',
             },
             {
                 field: 'summary',
                 tooltipField: 'summary',
                 resizable: true,
+                width: 300,
+                minWidth: 200,
                 flex: 1,
             },
             {
@@ -257,7 +260,7 @@ const Changelog = ({ location }) => {
                 valueGetter: (params) => !!params.node.data.deprecationNotes,
                 width: 130,
                 minWidth: 130,
-                filter: false,
+                filter: true,
             },
             {
                 field: 'breakingChange',
@@ -266,7 +269,7 @@ const Changelog = ({ location }) => {
                 valueGetter: (params) => !!params.node.data.breakingChangesNotes,
                 width: 105,
                 minWidth: 105,
-                filter: false,
+                filter: true,
             },
         ],
         []
@@ -282,7 +285,7 @@ const Changelog = ({ location }) => {
                     <Alert type="idea">
                         This changelog enables you to identify the specific version in which a feature request or
                         bug fix was included. Check out the {' '}
-                        <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> to see what's in our
+                        <a href="../pipeline/">Pipeline</a> to see what's in our
                         product backlog.
                     </Alert>
 

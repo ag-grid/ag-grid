@@ -254,7 +254,7 @@ const Pipeline = ({ location }) => {
                                 The AG Grid pipeline lists the feature requests and active bugs in our product backlog.
                                 Use it to see the items scheduled for our next release or to look up the status of a
                                 specific item. If you can’t find the item you’re looking for, check the{' '}
-                                <a href="https://www.ag-grid.com/ag-grid-changelog/">Changelog</a> containing the list
+                                <a href="../changelog/">Changelog</a> containing the list
                                 of completed items.
                             </p>
                         </Alert>

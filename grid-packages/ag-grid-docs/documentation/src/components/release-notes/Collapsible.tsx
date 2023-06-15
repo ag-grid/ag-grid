@@ -31,6 +31,10 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
         window.history.pushState({}, '', url);
     };
 
+    const handleVersionLabelClick = (event: React.MouseEvent<HTMLLabelElement>) => {
+        event.stopPropagation();
+    };
+
     return (
         <div className={showNotes ? styles.isOpen : undefined}>
             <button className={styles.showHideButton} onClick={collapsibleHandler}>
@@ -42,21 +46,20 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                 </div>
 
                 <div className={styles.selectContainer}>
-                    <label>
-                        <select
-                            value={fixVersion || versions[0]}
-                            aria-label={'Select Release Version'}
-                            onChange={(event) => onChange(event.target.value)}
-                            onClick={(event) => event.stopPropagation()} // Prevent event propagation
-                        >
-                            {versions &&
-                                versions.map((version) => (
-                                    <option key={version} value={version}>
-                                        {version}
-                                    </option>
-                                ))}
-                        </select>
-                    </label>
+                    <label className={styles.versionLabel} onClick={handleVersionLabelClick}>Version:</label>
+                    <select
+                        value={fixVersion || versions[0]}
+                        aria-label={'Select Release Version'}
+                        onChange={(event) => onChange(event.target.value)}
+                        onClick={(event) => event.stopPropagation()} // Prevent event propagation
+                    >
+                        {versions &&
+                            versions.map((version) => (
+                                <option key={version} value={version}>
+                                    {version}
+                                </option>
+                            ))}
+                    </select>
                 </div>
             </button>
             {showNotes &&
