@@ -1181,6 +1181,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.width = datum.width;
             rect.height = datum.height;
         });
+        selection.cleanup();
     }
 
     protected isLabelEnabled() {
