@@ -53,11 +53,11 @@
 .icon {
     width: $size-5;
     height: $size-5;
-    fill: var(--medium-electric-blue);
+    fill: var(--dark-blue-300);
     transition: fill $default-transition-timing;
 
     .featureItem:hover & {
-        fill: var(--ag-grid-orange);
+        fill: var(--link-hover-color);
     }
 
     svg {

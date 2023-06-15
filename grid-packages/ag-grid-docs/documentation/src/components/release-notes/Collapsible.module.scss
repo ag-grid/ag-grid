@@ -1,7 +1,7 @@
 @use "../../design-system/" as *;
 
 .showHideButton {
-    --button-text-color: var(--azure-blue);
+    --button-text-color: var(--link-color);
     --button-color: var(--bright-blue-gray);
     --button-active-color: var(--bright-blue-gray);
     --button-hover-color: var(--bright-blue-gray);
@@ -18,7 +18,7 @@
     transition: color $default-transition-timing !important;
 
     &:hover {
-        --button-text-color: var(--medium-electric-blue);
+        --button-text-color: var(--dark-blue-300);
     }
 
     &:disabled {
@@ -100,7 +100,7 @@
         svg {
             fill: var(--link-hover-color);
         }
-    }
+    --text-color: var(--link-color);
 }
 
 .versionLabel {

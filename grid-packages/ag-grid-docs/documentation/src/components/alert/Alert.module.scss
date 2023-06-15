@@ -28,14 +28,14 @@
 }
 
 .alert.info {
-    --text-color: var(--medium-electric-blue);
+    --text-color: var(--dark-blue-300);
 
     color: var(--text-color);
 }
 
 .alert.idea {
     :global(.icon) {
-        --text-color: hsl(33, 100%, 65%);
+        --text-color: var(--orange-500);
 
         bottom: 0.125em;
     }
@@ -48,6 +48,6 @@
     color: var(--text-color);
 
     :global(.icon) {
-        --text-color: var(--ag-grid-orange);
+        --text-color: var(--orange-700);
     }
 }

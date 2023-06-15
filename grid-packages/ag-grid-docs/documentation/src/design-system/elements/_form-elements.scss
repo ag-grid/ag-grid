@@ -49,7 +49,7 @@ input[type='number'],
 select {
     &:disabled,
     &[readonly] {
-        background-color: var(--ghost-white);
+        background-color: var(--neutral-100);
     }
 
     &:focus:not(:disabled):not([readonly]),
