@@ -35,7 +35,7 @@ const ABSTRACT_COLOR_GROUPS = {
     Other: ['cerise-pink', 'danger-red'],
 };
 
-const COLOR_SCALES = ['primary', 'brand-scale', 'neutral', 'background', 'red', 'pink', 'orange', 'green'];
+const COLOR_SCALES = ['primary', 'dark-blue', 'background', 'neutral', 'red', 'pink', 'orange', 'green', 'brown'];
 
 /**
  * Semantic colors as CSS Variable names
@@ -43,7 +43,8 @@ const COLOR_SCALES = ['primary', 'brand-scale', 'neutral', 'background', 'red', 
  * NOTE: **Without** the `--` prefix
  */
 const SEMANTIC_COLOR_GROUPS = {
-    Text: ['text-color', 'secondary-text-color'],
+    Background: ['default-background-color'],
+    Text: ['default-text-color', 'secondary-text-color'],
     Border: ['border-color'],
     Link: ['link-color', 'link-hover-color'],
     Button: [
@@ -53,8 +54,7 @@ const SEMANTIC_COLOR_GROUPS = {
         'button-active-color',
         'button-focus-box-shadow-color',
     ],
-    Inline: ['inline-element-background-color'],
-    Code: ['code-text-color'],
+    Code: ['code-text-color', 'code-background-color'],
     Input: [
         'input-background-color',
         'input-secondary-background-color',
@@ -67,6 +67,7 @@ const SEMANTIC_COLOR_GROUPS = {
     Table: ['table-odd-row-background-color'],
     'Site Header': ['site-header-background', 'site-nav-background'],
     Toolbar: ['toolbar-background'],
+    Warnings: ['warning-background', 'warning-text'],
 };
 
 const AbstractColorSwatch = ({ id, hexColor }) => {
@@ -164,26 +165,26 @@ const ColorScale = ({ name }) => {
         return color.includes(`${name}-`) && color.includes('00');
     };
 
+    const scale = Object.keys(designSystemColors).filter((color) => isInScale(color, name));
+
     return (
         <div className={styles.colorScale}>
             <h4>{name}</h4>
             <div>
-                {Object.keys(designSystemColors).map((color) => {
+                {scale.map((color) => {
                     return (
-                        isInScale(color, name) && (
-                            <span
-                                key={color}
-                                style={{
-                                    backgroundColor: designSystemColors[color],
-                                }}
-                            ></span>
-                        )
+                        <span
+                            key={color}
+                            style={{
+                                backgroundColor: designSystemColors[color],
+                            }}
+                        ></span>
                     );
                 })}
             </div>
             <div>
-                {Object.keys(designSystemColors).map((color) => {
-                    return isInScale(color, name) && <span key={color}>{color.substr(-3)}</span>;
+                {scale.map((color) => {
+                    return <span key={color}>{color.substr(-3)}</span>;
                 })}
             </div>
         </div>
@@ -201,14 +202,6 @@ export const Color = () => {
         <div className={styles.colorSubsections}>
             <AbstractColors />
             <ColorScales />
-            {/* <ColorScale name="primary" />
-            <ColorScale name="brand-scale" />
-            <ColorScale name="neutral" />
-            <ColorScale name="background" />
-            <ColorScale name="red" />
-            <ColorScale name="pink" />
-            <ColorScale name="orange" />
-            <ColorScale name="green" /> */}
             <SemanticColors />
         </div>
     );
