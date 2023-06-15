@@ -3,7 +3,6 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
-import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -529,13 +528,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
         labelSelections,
         contextData,
         paths,
-        seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
         labelSelections: Array<Selection<Text, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
-        seriesRect?: BBox;
     }) {
         contextData.forEach(({ nodeData }, contextDataIndex) => {
             const [lineNode] = paths[contextDataIndex];
@@ -613,8 +610,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 },
             });
 
-            markerSelections[contextDataIndex].each((marker, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
+            markerSelections[contextDataIndex].each((marker, datum, index) => {
+                const delay = (nodeLengths[index] / lineLength) * duration;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
@@ -629,8 +626,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 });
             });
 
-            labelSelections[contextDataIndex].each((label, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
+            labelSelections[contextDataIndex].each((label, _, index) => {
+                const delay = (nodeLengths[index] / lineLength) * duration;
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
