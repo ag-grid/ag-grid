@@ -1054,13 +1054,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         labelSelections: Array<Selection<Text, BarNodeDatum>>;
     }) {
         const { processedData } = this;
-
-        const diff = processedData?.reduced?.diff as {
-            changed: boolean;
-            added: string[][];
-            removed: string[][];
-            updated: string[][];
-        };
+        const diff = processedData?.reduced?.diff;
 
         if (!diff?.changed) {
             datumSelections.forEach((datumSelection) => {
@@ -1093,11 +1087,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const datumIdKey = this.processedData?.defs.keys?.[0];
 
         const addedIds: { [key: string]: boolean } = {};
-        diff.added.forEach((d) => {
+        diff.added.forEach((d: string[]) => {
             addedIds[d[0]] = true;
         });
         const removedIds: { [key: string]: boolean } = {};
-        diff.removed.forEach((d) => {
+        diff.removed.forEach((d: string[]) => {
             removedIds[d[0]] = true;
         });
 
