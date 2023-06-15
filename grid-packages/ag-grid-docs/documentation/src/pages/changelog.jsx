@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classnames from 'classnames';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
@@ -9,10 +9,9 @@ import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
 import styles from './pipelineChangelog.module.scss';
 
-const IS_SSR = typeof window === "undefined"
+const IS_SSR = typeof window === 'undefined';
 
 const Changelog = ({ location }) => {
-
     const extractFixVersionParameter = (location) => {
         const fixVersionParam = new URLSearchParams(location.search).get('fixVersion');
         return location && location.search && fixVersionParam ? fixVersionParam : undefined;
@@ -90,11 +89,14 @@ const Changelog = ({ location }) => {
         }
     }, [fixVersion, allReleaseNotes]);
 
-    const gridReady = useCallback((params) => {
-        setGridApi(params.api);
-        params.api.setQuickFilter(URLFilterItemKey);
-        params.api.sizeColumnsToFit();
-    }, [URLFilterItemKey]);
+    const gridReady = useCallback(
+        (params) => {
+            setGridApi(params.api);
+            params.api.setQuickFilter(URLFilterItemKey);
+            params.api.sizeColumnsToFit();
+        },
+        [URLFilterItemKey]
+    );
 
     const isRowMaster = useCallback((params) => {
         return params.moreInformation || params.deprecationNotes || params.breakingChangesNotes;
@@ -120,9 +122,7 @@ const Changelog = ({ location }) => {
         suppressMenu: true,
         suppressKeyboardEvent: (params) => {
             if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
-                params.api
-                    .getCellRendererInstances({ rowNodes: [params.node] })
-                    [0].clickHandlerFunc();
+                params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
                 return true;
             }
             return false;
@@ -132,69 +132,66 @@ const Changelog = ({ location }) => {
         floatingFilter: true,
     };
 
-    const detailCellRendererParams = useCallback(
-        (params) => {
-            function produceHTML(fieldName, fieldInfo) {
-                return fieldName !== 'Link to Documentation'
-                    ? `<strong>${fieldName}:</strong><br> ${fieldInfo}<br><br>`
-                    : `<strong>${fieldName}:</strong><br> ${fieldInfo}`;
-            }
+    const detailCellRendererParams = useCallback((params) => {
+        function produceHTML(fieldName, fieldInfo) {
+            return fieldName !== 'Link to Documentation'
+                ? `<strong>${fieldName}:</strong><br> ${fieldInfo}<br><br>`
+                : `<strong>${fieldName}:</strong><br> ${fieldInfo}`;
+        }
 
-            const moreInfo = params.data.moreInformation
-                ? produceHTML('More Information', params.data.moreInformation)
-                : '';
-            const deprecationNotes = params.data.deprecationNotes
-                ? produceHTML('Deprecation Notes', params.data.deprecationNotes)
-                : '';
-            const breakingChangesNotes = params.data.breakingChangesNotes
-                ? produceHTML('Breaking Changes', params.data.breakingChangesNotes)
-                : '';
-            const linkToDocumentation = params.data.documentationUrl
-                ? produceHTML('Link to Documentation', params.data.documentationUrl)
-                : '';
+        const moreInfo = params.data.moreInformation
+            ? produceHTML('More Information', params.data.moreInformation)
+            : '';
+        const deprecationNotes = params.data.deprecationNotes
+            ? produceHTML('Deprecation Notes', params.data.deprecationNotes)
+            : '';
+        const breakingChangesNotes = params.data.breakingChangesNotes
+            ? produceHTML('Breaking Changes', params.data.breakingChangesNotes)
+            : '';
+        const linkToDocumentation = params.data.documentationUrl
+            ? produceHTML('Link to Documentation', params.data.documentationUrl)
+            : '';
 
-            function makeLinksFunctional(message) {
-                let msgArr = message.split(' ');
-                const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
-                if (linkStrIdx > 0) {
-                    msgArr = msgArr.map((element) => {
-                        if (element.includes('https://')) {
-                            const beginningIndex = element.indexOf('http');
-                            const endIndex = element.indexOf('<', beginningIndex);
-                            const isEndIndex = endIndex >= 0;
-                            let length = 0;
-                            if (isEndIndex) {
-                                length = endIndex - beginningIndex;
-                            }
-
-                            const link = length
-                                ? element.substr(element.indexOf('http'), length)
-                                : element.substr(element.indexOf('http'));
-                            const htmlLink = isEndIndex
-                                ? `<a class=${styles.link} href="${link}"
-         target="_blank">${link}</a>${element.substr(endIndex)}`
-                                : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                            return element.substr(0, beginningIndex) + htmlLink;
+        function makeLinksFunctional(message) {
+            let msgArr = message.split(' ');
+            const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
+            if (linkStrIdx > 0) {
+                msgArr = msgArr.map((element) => {
+                    if (element.includes('https://')) {
+                        const beginningIndex = element.indexOf('http');
+                        const endIndex = element.indexOf('<', beginningIndex);
+                        const isEndIndex = endIndex >= 0;
+                        let length = 0;
+                        if (isEndIndex) {
+                            length = endIndex - beginningIndex;
                         }
-                        return element;
-                    });
-                    message = msgArr.join(' ');
-                }
-                return message;
-            }
 
-            const message = makeLinksFunctional(
-                (moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation)
-                    .replaceAll('\n\r', '<br>')
-                    .replaceAll('\n', '<br>')
-                    .replaceAll('\r', '<br>')
-            );
-            return {
-                message: message,
-            };
-        },
-        []
-    );
+                        const link = length
+                            ? element.substr(element.indexOf('http'), length)
+                            : element.substr(element.indexOf('http'));
+                        const htmlLink = isEndIndex
+                            ? `<a class=${styles.link} href="${link}"
+         target="_blank">${link}</a>${element.substr(endIndex)}`
+                            : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
+                        return element.substr(0, beginningIndex) + htmlLink;
+                    }
+                    return element;
+                });
+                message = msgArr.join(' ');
+            }
+            return message;
+        }
+
+        const message = makeLinksFunctional(
+            (moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation)
+                .replaceAll('\n\r', '<br>')
+                .replaceAll('\n', '<br>')
+                .replaceAll('\r', '<br>')
+        );
+        return {
+            message: message,
+        };
+    }, []);
 
     const COLUMN_DEFS = useMemo(
         () => [
@@ -220,7 +217,7 @@ const Changelog = ({ location }) => {
                 },
                 floatingFilterComponentParams: {
                     suppressFilterButton: true,
-                }
+                },
             },
             {
                 field: 'summary',
@@ -231,7 +228,7 @@ const Changelog = ({ location }) => {
                 flex: 1,
                 floatingFilterComponentParams: {
                     suppressFilterButton: true,
-                }
+                },
             },
             {
                 field: 'versions',
@@ -262,45 +259,43 @@ const Changelog = ({ location }) => {
         []
     );
 
-    return  (
+    return (
         <>
             {!IS_SSR && (
-            <div className={classnames('page-margin', styles.container)}>
-                <h1>AG Grid Changelog</h1>
+                <div className={classnames('page-margin', styles.container)}>
+                    <h1>AG Grid Changelog</h1>
 
-                <section className={styles.header}>
-                    <Alert type="idea">
-                        This changelog enables you to identify the specific version in which a feature request or
-                        bug fix was included. Check out the {' '}
-                        <a href="../pipeline/">Pipeline</a> to see what's in our
-                        product backlog.
-                    </Alert>
+                    <section className={styles.header}>
+                        <Alert type="idea">
+                            This changelog enables you to identify the specific version in which a feature request or
+                            bug fix was included. Check out the <a href="../pipeline/">Pipeline</a> to see what's in our
+                            product backlog.
+                        </Alert>
 
-                    <ReleaseVersionNotes
-                        releaseNotes={currentReleaseNotes}
-                        markdownContent={markdownContent}
-                        versions={versions}
-                        fixVersion={fixVersion}
-                        onChange={switchDisplayedFixVersion}
-                    />
+                        <ReleaseVersionNotes
+                            releaseNotes={currentReleaseNotes}
+                            markdownContent={markdownContent}
+                            versions={versions}
+                            fixVersion={fixVersion}
+                            onChange={switchDisplayedFixVersion}
+                        />
+                    </section>
 
-                </section>
-
-                <Grid
-                    gridHeight={'70.5vh'}
-                    columnDefs={COLUMN_DEFS}
-                    rowData={rowData}
-                    components={components}
-                    defaultColDef={defaultColDef}
-                    detailRowAutoHeight={true}
-                    enableCellTextSelection={true}
-                    detailCellRendererParams={detailCellRendererParams}
-                    detailCellRenderer={'myDetailCellRenderer'}
-                    isRowMaster={isRowMaster}
-                    masterDetail
-                    onGridReady={gridReady}
-                ></Grid>
-            </div>
+                    <Grid
+                        gridHeight={'70.5vh'}
+                        columnDefs={COLUMN_DEFS}
+                        rowData={rowData}
+                        components={components}
+                        defaultColDef={defaultColDef}
+                        detailRowAutoHeight={true}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={'myDetailCellRenderer'}
+                        isRowMaster={isRowMaster}
+                        masterDetail
+                        onGridReady={gridReady}
+                    ></Grid>
+                </div>
             )}
         </>
     );

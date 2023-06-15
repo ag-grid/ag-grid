@@ -7,11 +7,13 @@
 
     display: flex;
     gap: $size-2;
+    align-items: center;
     padding: $size-2;
     background-color: var(--alert-background-color);
     border-radius: var(--border-radius);
 
     :global(.icon) {
+        align-self: flex-start;
         position: relative;
         flex-shrink: 0;
     }

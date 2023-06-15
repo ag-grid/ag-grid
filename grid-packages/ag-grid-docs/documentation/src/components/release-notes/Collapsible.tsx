@@ -15,7 +15,7 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
     const [showNotes, setShowNotes] = useState(true);
     const [showMore, setShowMore] = useState(false);
 
-    console.log(fixVersion, versions)
+    console.log(fixVersion, versions);
 
     const collapsibleHandler = () => {
         setShowNotes((prevShowNotes) => !prevShowNotes);
@@ -41,12 +41,14 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                 <div>
                     {title}
                     <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
-                    <Icon name="chevronRight"/>
-                </span>
+                        <Icon name="chevronRight" />
+                    </span>
                 </div>
 
                 <div className={styles.selectContainer}>
-                    <label className={styles.versionLabel} onClick={handleVersionLabelClick}>Version:</label>
+                    <label className={styles.versionLabel} onClick={handleVersionLabelClick}>
+                        Version:
+                    </label>
                     <select
                         value={fixVersion || versions[0]}
                         aria-label={'Select Release Version'}
@@ -62,11 +64,9 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                     </select>
                 </div>
             </button>
-            {showNotes &&
+            {showNotes && (
                 <div className={`${styles.content} ${showMore ? styles.contentExpanded : styles.contentCollapsed}`}>
-                    <div>
-                        {children}
-                    </div>
+                    <div>{children}</div>
                     <a
                         className={styles.showMoreLink}
                         href="#"
@@ -75,15 +75,13 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                             setShowMore(!showMore);
                         }}
                     >
-                    <span className={styles.showMoreContent}>
                         {showMore ? 'Show less' : 'Show more'}
                         <span>
-                            <Icon name={showMore ? "chevronUp" : "chevronDown"}/>
+                            <Icon name={showMore ? 'chevronUp' : 'chevronDown'} />
                         </span>
-                    </span>
                     </a>
                 </div>
-            }
+            )}
         </div>
     );
 };
