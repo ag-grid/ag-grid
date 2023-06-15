@@ -1,4 +1,8 @@
-import { AgChartOptions, AgEnterpriseCharts } from "ag-charts-enterprise"
+import {
+  AgChart,
+  AgChartOptions,
+  AgEnterpriseCharts,
+} from "ag-charts-enterprise"
 import { getData } from "./data"
 
 const options: AgChartOptions = {
@@ -36,4 +40,37 @@ const options: AgChartOptions = {
   ],
 }
 
-AgEnterpriseCharts.create(options)
+const chart = AgEnterpriseCharts.create(options)
+
+function reset() {
+  AgChart.update(chart, {
+    ...options,
+    data: getData(),
+  } as any)
+}
+
+function randomise() {
+  AgChart.update(chart, {
+    ...options,
+    data: [
+      ...getData().map((d: any) => ({
+        ...d,
+        age: Math.max(
+          17,
+          Math.min(33, d.age + Math.floor(Math.random() * 4) - 2)
+        ),
+      })),
+    ],
+  } as any)
+}
+
+function remove() {
+  AgChart.update(chart, {
+    ...options,
+    data: [
+      ...getData().filter(
+        (d: any) => (d.age < 20 || d.age >= 22) && d.age < 32
+      ),
+    ],
+  } as any)
+}
