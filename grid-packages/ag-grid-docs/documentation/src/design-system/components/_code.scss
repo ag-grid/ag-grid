@@ -41,8 +41,9 @@ pre.code {
     position: relative;
     margin: 0 0 $size-2;
     padding: 0;
-    border: 2px solid var(--bright-blue-gray);
-    overflow: auto !important;
+    border: 2px solid var(--background-300);
+    overflow: visible;
+    overflow-y: auto !important;
 }
 
 pre.code > code {
@@ -52,7 +53,7 @@ pre.code > code {
     padding: $vertical-padding $size-2;
     font-size: 0.9375em;
     background-color: var(--default-background-color);
-    background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
+    background-image: linear-gradient(transparent 50%, var(--background-100) 50%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
@@ -215,9 +216,9 @@ code[class*='language-css'] {
 }
 
 .line-numbers .line-numbers-rows {
-    border-right: 1px solid rgba(map.get($abstract-colors, medium-electric-blue), 0.1);
+    border-right: 1px solid var(--background-300);
 }
 
 .line-numbers-rows > span:before {
-    color: rgba(map.get($abstract-colors, medium-electric-blue), 0.33);
+    color: var(--neutral-300);
 }

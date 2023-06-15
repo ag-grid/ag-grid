@@ -32,7 +32,7 @@
 .mobileMenuButton {
     --button-color: transparent;
     --border-radius: 0;
-    --button-hover-color: #{rgba(map.get($abstract-colors, ag-grid-dark-blue), 0.6666)};
+    --button-hover-color: var(--dark-blue-700);
 
     appearance: none;
     display: flex;

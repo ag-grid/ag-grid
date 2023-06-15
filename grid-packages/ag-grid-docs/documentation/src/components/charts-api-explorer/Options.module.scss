@@ -24,7 +24,7 @@
     margin-top: $size-2;
 
     > .option:nth-child(even) {
-        background-color: var(--ghost-blue);
+        background-color: var(--background-100);
     }
 }
 
@@ -178,12 +178,12 @@ body ul.metaList {
 }
 
 .isSearching .expandable {
-    --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+    --text-color: var(--default-text-color);
 
     cursor: unset;
 
     &:hover {
-        --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+        --text-color: var(--default-text-color);
     }
 
     :global(.icon) {

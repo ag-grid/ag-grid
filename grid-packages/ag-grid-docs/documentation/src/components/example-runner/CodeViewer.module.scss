@@ -118,21 +118,21 @@
         top: -4px;
         border-bottom-right-radius: var(--border-radius);
         border-bottom: 2px solid var(--bright-blue-gray);
-        box-shadow: 2px 2px 0 0 var(--ghost-blue);
+        box-shadow: 2px 2px 0 0 var(--background-100);
     }
 
     &::after {
         bottom: -4px;
         border-top-right-radius: var(--border-radius);
         border-top: 2px solid var(--bright-blue-gray);
-        box-shadow: 2px -2px 0 0 var(--ghost-blue);
+        box-shadow: 2px -2px 0 0 var(--background-100);
     }
 
     &.isActive {
         --file-border-color: var(--bright-blue-gray);
 
         color: var(--text-color);
-        background-color: var(--ghost-blue);
+        background-color: var(--background-100);
 
         &::before,
         &::after {
