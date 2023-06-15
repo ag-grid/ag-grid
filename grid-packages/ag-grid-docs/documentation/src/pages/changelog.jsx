@@ -58,7 +58,7 @@ const Changelog = ({ location }) => {
 
     useEffect(() => {
         let releaseNotesVersion = fixVersion;
-        if (releaseNotesVersion === '') {
+        if (!releaseNotesVersion) {
             // Find the latest release notes version
             releaseNotesVersion = allReleaseNotes?.find((element) => !!element['release version'])?.['release version'];
         }

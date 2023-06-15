@@ -7,10 +7,6 @@
     :global(.ag-filter-icon) {
         display: none;
     }
-
-    //:global(.ag-floating-filter-button) {
-    //    display: none;
-    //}
 }
 
 .header {
@@ -48,8 +44,4 @@
 .link::after {
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
     margin: 0 $size-half 0 $size-half;
-}
-
-.ag-floating-filter-button {
-    display: none !important;
 }
