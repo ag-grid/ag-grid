@@ -134,6 +134,13 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.CROSS_LINES_EXAMPLE,
         assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
+    ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
+        options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['time', 'number'],
+            seriesTypes: ['line', 'line', 'line', 'line'],
+        }),
+    },
 };
 
 describe('Gallery Examples', () => {
