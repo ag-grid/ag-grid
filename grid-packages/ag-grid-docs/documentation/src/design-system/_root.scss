@@ -50,3 +50,31 @@
 
     --icon-size: #{$icon-size};
 }
+
+html[data-theme='dark'] {
+    @each $name, $scale in $dark-scales {
+        @each $key, $value in map.get($dark-scales, $name) {
+            --#{$name}-#{unquote($key)}: #{$value};
+        }
+    }
+
+    // create a CSS variable for every semantic color
+    @each $name, $var-name in $dark-semantic-colors {
+        --#{$name}: var(--#{$var-name});
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #{$css-variables-root} {
+        @each $name, $scale in $dark-scales {
+            @each $key, $value in map.get($dark-scales, $name) {
+                --#{$name}-#{unquote($key)}: #{$value};
+            }
+        }
+
+        // create a CSS variable for every semantic color
+        @each $name, $var-name in $dark-semantic-colors {
+            --#{$name}: var(--#{$var-name});
+        }
+    }
+}
