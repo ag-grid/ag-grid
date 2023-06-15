@@ -616,10 +616,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                         { from: 0, to: datum.height },
                     ],
                     {
-                        disableInteractions: true,
                         duration,
                         ease: easing.easeOut,
-                        repeat: 0,
                         onUpdate([y, height]) {
                             rect.y = y;
                             rect.height = height;
@@ -639,8 +637,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

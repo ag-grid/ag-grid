@@ -12,7 +12,6 @@ import { AgWaterfallSeriesFormat, AgWaterfallSeriesLabelPlacement, AgWaterfallSe
 const {
     Validate,
     DataModel,
-    Motion,
     SeriesNodePickMode,
     valueProperty,
     keyProperty,
@@ -643,11 +642,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                         { from: 0, to: datum.width },
                     ],
                     {
-                        disableInteractions: true,
                         duration,
                         delay: 200 * index,
-                        ease: Motion.linear,
-                        repeat: 0,
                         onUpdate([x, width]) {
                             rect.x = x;
                             rect.width = width;
@@ -667,8 +663,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                     to: 1,
                     delay: duration - duration / 10 + 200 * index,
                     duration: duration / 10,
-                    ease: Motion.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -758,11 +752,8 @@ export class WaterfallColumnSeries extends WaterfallBarSeries {
                         { from: 0, to: datum.height },
                     ],
                     {
-                        disableInteractions: true,
                         duration,
                         delay: 200 * index,
-                        ease: Motion.linear,
-                        repeat: 0,
                         onUpdate([y, height]) {
                             rect.y = y;
                             rect.height = height;
@@ -782,8 +773,6 @@ export class WaterfallColumnSeries extends WaterfallBarSeries {
                     to: 1,
                     delay: duration - duration / 10 + 200 * index,
                     duration: duration / 10,
-                    ease: Motion.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

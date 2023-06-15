@@ -90,11 +90,14 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         }
     }
 
-    public animate<T>(id: AnimationId, opts: AnimationOptions<T>): AnimationControls {
+    public animate<T>(
+        id: AnimationId,
+        { disableInteractions = true, ...opts }: AnimationOptions<T>
+    ): AnimationControls {
         const optsExtra = {
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
-            driver: this.createDriver(id, opts.disableInteractions),
+            driver: this.createDriver(id, disableInteractions),
         };
         const controller = baseAnimate(optsExtra);
 

@@ -964,11 +964,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         onComplete?: () => void
     ) {
         this.animationManager?.animateMany(id, props, {
-            disableInteractions: true,
             delay,
             duration,
             ease: easing.easeOut,
-            repeat: 0,
             onUpdate([x, width, y, height]) {
                 rect.x = x;
                 rect.width = width;
@@ -1032,8 +1030,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -1164,8 +1160,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     to: 1,
                     delay: totalDuration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

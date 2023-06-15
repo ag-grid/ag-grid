@@ -28,7 +28,6 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { DataModel } from '../../data/dataModel';
-import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/moduleContext';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
@@ -584,10 +583,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
                     from: 0,
                     to: to,
-                    disableInteractions: true,
                     duration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate(size) {
                         marker.size = size;
                     },
@@ -602,8 +598,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

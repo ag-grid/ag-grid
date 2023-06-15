@@ -50,7 +50,6 @@ import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
 import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
-import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/moduleContext';
 
 interface FillSelectionDatum {
@@ -855,10 +854,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const animationOptions = {
                 from: 0,
                 to: seriesRect?.width ?? 0,
-                disableInteractions: true,
                 duration,
-                ease: easing.linear,
-                repeat: 0,
             };
 
             // Stroke
@@ -1012,8 +1008,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     to: 1,
                     delay,
                     duration: markerDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

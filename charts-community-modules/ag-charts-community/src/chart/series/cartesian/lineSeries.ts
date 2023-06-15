@@ -30,7 +30,6 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { DataModel, UngroupedDataItem } from '../../data/dataModel';
-import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/moduleContext';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
@@ -567,9 +566,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
             const animationOptions = {
                 from: 0,
                 to: lineLength,
-                disableInteractions: true,
-                ease: easing.linear,
-                repeat: 0,
             };
 
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
@@ -633,8 +629,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     to: 1,
                     delay,
                     duration: markerDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
