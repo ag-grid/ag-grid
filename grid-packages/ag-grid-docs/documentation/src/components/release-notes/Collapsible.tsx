@@ -5,13 +5,15 @@ import styles from './Collapsible.module.scss';
 
 interface Props {
     title: string;
+    versions: any[];
+    fixVersion: string;
+    onChange: (value: string) => any;
+    children: any;
 }
 
-const extractNotesOpen = (location) =>
-    location && location.search ? new URLSearchParams(location.search).get('showNotes') : false;
-
-const Collapsible: FunctionComponent<Props> = ({ title, children }) => {
-    const [showNotes, setShowNotes] = useState(extractNotesOpen(location));
+const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, onChange, children }) => {
+    const [showNotes, setShowNotes] = useState(true);
+    const [showMore, setShowMore] = useState(false);
 
     const collapsibleHandler = () => {
         setShowNotes((prevShowNotes) => !prevShowNotes);
@@ -30,15 +32,55 @@ const Collapsible: FunctionComponent<Props> = ({ title, children }) => {
     return (
         <div className={showNotes ? styles.isOpen : undefined}>
             <button className={styles.showHideButton} onClick={collapsibleHandler}>
-                {title}
-
-                <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
-                    <Icon name="chevronRight" />
+                <div>
+                    {title}
+                    <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
+                    <Icon name="chevronRight"/>
                 </span>
-            </button>
+                </div>
 
-            {showNotes && <div className={styles.content}>{children}</div>}
+                <div className={styles.selectContainer}>
+                    <label>
+                        <select
+                            value={fixVersion || versions[0]}
+                            aria-label={'Select Release Version'}
+                            onChange={(event) => onChange(event.target.value)}
+                            onClick={(event) => event.stopPropagation()} // Prevent event propagation
+                        >
+                            {versions &&
+                                versions.map((version) => (
+                                    <option key={version} value={version}>
+                                        {version}
+                                    </option>
+                                ))}
+                        </select>
+                    </label>
+                </div>
+            </button>
+            {showNotes &&
+                <div className={`${styles.content} ${showMore ? styles.contentExpanded : styles.contentCollapsed}`}>
+                    <div>
+                        {children}
+                    </div>
+                    <a
+                        className={styles.showMoreLink}
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowMore(!showMore);
+                        }}
+                    >
+                    <span className={styles.showMoreContent}>
+                        {showMore ? 'Show less' : 'Show more'}
+                        <span>
+                            <Icon name={showMore ? "chevronUp" : "chevronDown"}/>
+                        </span>
+                    </span>
+                    </a>
+                </div>
+            }
         </div>
     );
 };
+
 export default Collapsible;
