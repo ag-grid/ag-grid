@@ -1051,7 +1051,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign({
+                textAlign: label.collisionTextAlign ?? label.textAlign,
+                textBaseline: label.textBaseline,
+            });
             return tempTextNode.computeBBox();
         };
 
@@ -1164,7 +1171,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             // Detect text overflow
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            const align = { textAlign: label.collisionTextAlign ?? label.textAlign, textBaseline: label.textBaseline };
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign(align);
             const box = tempTextNode.computeBBox();
             const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(
                 label.text,
@@ -1173,7 +1185,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             );
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, { ...label, text: displayText });
+            text.text = displayText;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign(align);
             text.fill = color;
             text.visible = !hasVerticalOverflow;
         });
@@ -1196,13 +1212,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (this.title?.text && this.title.enabled) {
             const dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
-                this.setTextDimensionalProps(text, 0, dy, this.title, {
-                    text: this.title.text,
+                text.text = this.title.text;
+                text.x = 0;
+                text.y = dy;
+                text.setFont(this.title);
+                text.setAlign({
                     textBaseline: 'bottom',
                     textAlign: 'center',
-                    hidden: false,
-                    collisionTextAlign: undefined,
-                    collisionOffsetY: 0,
                 });
                 titleBox = text.computeBBox();
                 textBoxes.push(titleBox);
@@ -1220,7 +1236,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const labelRadius = outerRadius + calloutLength + offset;
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
+            text.text = label.text;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign({ textAlign: label.collisionTextAlign ?? label.textAlign, textBaseline: label.textBaseline });
             const box = text.computeBBox();
             label.box = box;
 
@@ -1266,25 +1286,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return null;
         }
         return BBox.merge(textBoxes);
-    }
-
-    private setTextDimensionalProps(
-        textNode: Text,
-        x: number,
-        y: number,
-        style: Caption | Label,
-        label: PieNodeDatum['calloutLabel']
-    ) {
-        const { fontStyle, fontWeight, fontSize, fontFamily } = style;
-        textNode.fontStyle = fontStyle;
-        textNode.fontWeight = fontWeight;
-        textNode.fontSize = fontSize!;
-        textNode.fontFamily = fontFamily!;
-        textNode.text = label!.text;
-        textNode.x = x;
-        textNode.y = y;
-        textNode.textAlign = label?.collisionTextAlign ?? label?.textAlign ?? 'center';
-        textNode.textBaseline = label!.textBaseline;
     }
 
     private updateSectorLabelNodes() {

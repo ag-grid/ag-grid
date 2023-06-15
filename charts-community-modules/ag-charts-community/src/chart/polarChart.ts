@@ -21,8 +21,7 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        const { radius, centerX, centerY } = this.computeCircle();
-        this.updateAxes(radius, centerX, centerY);
+        this.computeCircle();
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -38,7 +37,7 @@ export class PolarChart extends Chart {
         return shrinkRect;
     }
 
-    protected updateAxes(radius: number, cx: number, cy: number) {
+    protected updateAxes(cx: number, cy: number, radius: number) {
         this.axes.forEach((axis) => {
             if (axis.direction === ChartAxisDirection.X) {
                 axis.range = [-Math.PI / 2, (3 * Math.PI) / 2];
@@ -72,6 +71,7 @@ export class PolarChart extends Chart {
         }) as PolarSeries<SeriesNodeDatum>[];
 
         const setSeriesCircle = (cx: number, cy: number, r: number) => {
+            this.updateAxes(cx, cy, r);
             polarSeries.forEach((series) => {
                 series.centerX = cx;
                 series.centerY = cy;
