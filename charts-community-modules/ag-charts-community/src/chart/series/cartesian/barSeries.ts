@@ -630,11 +630,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }) {
         const { nodeData, datumSelection } = opts;
 
-        return datumSelection.update(
-            nodeData,
-            (rect) => (rect.tag = BarSeriesNodeTag.Bar),
-            (datum: BarNodeDatum) => datum.datum[datum.xKey]
-        );
+        const key = this.processedData?.defs.keys[0];
+        const getDatumId = key ? (datum: BarNodeDatum) => datum.datum[key.property] : undefined;
+
+        return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar), getDatumId);
     }
 
     protected async updateDatumNodes(opts: { datumSelection: Selection<Rect, BarNodeDatum>; isHighlight: boolean }) {
@@ -1092,6 +1091,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
+        const datumIdKey = this.processedData?.defs.keys?.[0];
+
         const addedIds: { [key: string]: boolean } = {};
         diff.added.forEach((d: string[]) => {
             addedIds[d[0]] = true;
@@ -1113,7 +1114,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 let duration = sectionDuration;
                 let cleanup = false;
 
-                const datumId = datum.datum[datum.xKey];
+                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
 
                 let contextX = startingX;
                 let contextWidth = 0;
