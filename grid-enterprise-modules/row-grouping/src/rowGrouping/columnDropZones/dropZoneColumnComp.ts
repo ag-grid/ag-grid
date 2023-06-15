@@ -281,13 +281,25 @@ export class DropZoneColumnComp extends Component {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        // ePopup.style.height = this.gridOptionsService.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const popupHiddenFunc = () => {
+        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e: FocusEvent) => {
+            if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
+                addPopupRes.hideFunc();
+            }
+        });
+
+        const popupHiddenFunc = (callbackEvent?: KeyboardEvent) => {
             this.destroyBean(virtualList);
             this.popupShowing = false;
-            eGui.focus();
+
+            if (callbackEvent?.key === 'Escape') {
+                eGui.focus();
+            }
+
+            if (focusoutListener) {
+                focusoutListener();
+            }
         };
 
         const translate = this.localeService.getLocaleTextFunc();
