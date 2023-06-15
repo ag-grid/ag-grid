@@ -220,6 +220,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     @Validate(OPT_STRING)
     yName?: string = undefined;
 
+    @Validate(OPT_STRING)
+    typeKey?: string = undefined;
+
     shadow?: _Scene.DropShadow = undefined;
 
     private seriesItemTypes: SeriesItemType[] = ['positive', 'negative', 'total', 'subtotal'];
@@ -242,7 +245,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async processData() {
-        const { xKey, yKey, seriesItemEnabled, data = [] } = this;
+        const { xKey, yKey, seriesItemEnabled, data = [], typeKey = '' } = this;
 
         if (!yKey) return;
 
@@ -254,9 +257,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const negativesActive = !!seriesItemEnabled.get('negative');
 
         const isActive = (v: any, datum: any) => {
-            if (datum.type === 'total') {
+            const type = datum[typeKey];
+            if (type === 'total') {
                 return totalActive;
-            } else if (datum.type === 'subtotal') {
+            } else if (type === 'subtotal') {
                 return subtotalActive;
             } else if (v >= 0) {
                 return positivesActive;
@@ -272,6 +276,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 accumulativeValueProperty(yKey, true, { id: `yCurrent`, validation }),
                 trailingAccumulatedValueProperty(yKey, true, { id: `yPrevious`, validation }),
                 valueProperty(yKey, true, { id: `yRaw` }), // Raw value pass-through.
+                ...(typeKey ? [valueProperty(typeKey, false, { id: `typeValue`, missingValue: undefined })] : []),
             ],
             dataVisible: this.visible,
         });
@@ -343,13 +348,14 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const offsetDirection = barAlongX ? -1 : 1;
         const offset = offsetDirection * halfLineWidth;
 
-        const { yKey = '', xKey = '', processedData } = this;
+        const { yKey = '', xKey = '', typeKey = '', processedData } = this;
         if (processedData?.type !== 'ungrouped') return [];
 
         const contexts: WaterfallContext[] = [];
 
         const yIndex = processedData?.indices.values[yKey] ?? -1;
         const xIndex = processedData?.indices.keys[xKey] ?? -1;
+        const typeKeyIndex = processedData?.indices.values[typeKey] ?? -1;
         const yCurrIndex = dataModel.resolveProcessedDataIndexById('yCurrent')?.index ?? -1;
         const yPrevIndex = dataModel.resolveProcessedDataIndexById('yPrevious')?.index ?? -1;
 
@@ -358,7 +364,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const pointData: WaterfallNodePointDatum[] = [];
 
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
-            const datumType = datum.type;
+            const datumType = values[typeKeyIndex];
 
             const isSubtotal = this.isSubtotal(datumType);
             const isTotal = this.isTotal(datumType);
@@ -409,8 +415,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             };
 
             const skipTotal = (isTotal && !totalActive) || (isSubtotal && !subtotalActive);
-            const skip = isTotalOrSubtotal ? skipTotal : false;
-
+            const skip = isTotalOrSubtotal && skipTotal;
             const pointY = isTotalOrSubtotal ? currY : trailY;
 
             const pathPoint = {
@@ -528,8 +533,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const categoryAlongX = this.getCategoryDirection() === ChartAxisDirection.X;
 
         datumSelection.each((rect, datum) => {
-            const isPositive = datum.itemId === 'positive';
-            const seriesItemType = this.getSeriesItemType(isPositive, datum.datum.type);
+            const seriesItemType = datum.itemId;
             const { fillOpacity, strokeOpacity, strokeWidth, lineDash, lineDashOffset } =
                 this.getItemConfig(seriesItemType);
             const style: _ModuleSupport.RectConfig = {
@@ -595,17 +599,14 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         }
 
         const { formatter, tooltip, xName, yName, id: seriesId } = this;
-        const { datum, xValue, cumulativeValue } = nodeDatum;
+        const { datum, itemId, xValue, cumulativeValue } = nodeDatum;
 
-        const datumType = datum.type;
-        const isTotalOrSubtotal = this.isTotal(datumType) || this.isSubtotal(datumType);
+        const isTotalOrSubtotal = this.isTotal(itemId) || this.isSubtotal(itemId);
         const yValue = isTotalOrSubtotal ? cumulativeValue : nodeDatum.yValue;
 
         let format: any | undefined = undefined;
 
-        const isPositive = nodeDatum.itemId === 'positive';
-        const seriesItemType = this.getSeriesItemType(isPositive, datum.type);
-        const { fill, strokeWidth, name } = this.getItemConfig(seriesItemType);
+        const { fill, strokeWidth, name } = this.getItemConfig(itemId);
 
         const color = format?.fill ?? fill ?? 'gray';
 
