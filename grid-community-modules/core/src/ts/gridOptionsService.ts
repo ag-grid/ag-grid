@@ -446,11 +446,7 @@ export class GridOptionsService {
         return this.is('groupHideOpenParents');
     }
 
-    public isGroupUseEntireRow(pivotMode: boolean, transposeMode: boolean = false): boolean {
-        // always use full width rows with transpose mode, as no other info to show
-        if (transposeMode) {
-            return true;
-        }
+    public isGroupUseEntireRow(pivotMode: boolean): boolean {
         // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
         if (pivotMode) { return false; }
 

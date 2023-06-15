@@ -1107,9 +1107,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                         }
                     });
                 }
-                rowNode.childrenAfterSort?.forEach((row, idx) => {
-                    childCols.push(recursivelyBuildDef(row, idx));
-                });
+                for (let i = 0; i < rowNode.childrenAfterSort!.length; i++) {
+                    const row = rowNode.childrenAfterSort![i];
+                    childCols.push(recursivelyBuildDef(row, i));
+                }
                 const groupColDef: ColGroupDef = {
                     groupId: rowNode.id,
                     headerName: rowNode.key ?? undefined,
@@ -1140,7 +1141,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             suppressMenu: true,
             editable: false,
             sortable: false,
+            cellRenderer: 'agGroupCellRenderer',
             valueGetter: (params) => {
+                if (!params.node) return null;
+
+                if (params.node.group) {
+                    return params.node.key;
+                }
+
                 const underlyingCol = (params.node as any).__underlyingCol;
                 if (underlyingCol)
                     return this.columnModel.getDisplayNameForColumn(underlyingCol, 'header', true);
@@ -1152,6 +1160,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             transposedCols.push(recursivelyBuildDef(rowNode, index));
         });
 
+        const onlyAggregates = this.columnModel.isPivotMode() && !this.columnModel.isPivotActive();
         const recursivelyBuildRows = (col: IProvidedColumn, parentNode: RowNode): RowNode[] => {
             // if (!col.isVisible()) {
             //     return [];
@@ -1171,27 +1180,35 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     return children;
                 }
 
+                const children: RowNode[] = [];
                 const groupNode = new RowNode(this.beans);
+                col.getChildren().forEach(col => {
+                    recursivelyBuildRows(col, groupNode).forEach(node => {
+                        children.push(node);
+                    });
+                });
+
+                if (children.length === 0) return [];
+
                 groupNode.group = true;
                 groupNode.expanded = col.isExpanded();
                 groupNode.parent = parentNode;
                 groupNode.key = this.columnModel.getDisplayNameForProvidedColumnGroup(null, col as any, 'header');
                 groupNode.level = col.getLevel();
 
-                const children: RowNode[] = [];
-                col.getChildren().forEach(col => {
-                    recursivelyBuildRows(col, groupNode).forEach(node => {
-                        children.push(node);
-                    });
-                });
                 groupNode.childrenAfterSort = children;
                 return [groupNode];
+            }
+
+            if (onlyAggregates && !(col as any).isValueActive()) {
+                return [];
             }
 
             //leaf cols become leaf rows
             const rowNode = new RowNode(this.beans);
             rowNode.id = col.getId();
             rowNode.parent = parentNode;
+            rowNode.level = parentNode.level + 1;
             rowNode.__underlyingCol = col;
             return [rowNode];
         };
@@ -1200,8 +1217,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const rootNode = new RowNode(this.beans);
         rootNode.group = true;
         rootNode.parent = null;
-        rootNode.level = -1;
-        const pct = this.columnModel.isPivotActive() ? this.columnModel.getSecondaryColumnTree() : this.columnModel.getPrimaryColumnTree();
+        rootNode.level = -1; 
+        let pct: IProvidedColumn[] = this.columnModel.getPrimaryColumnTree();
+        if (this.columnModel.isPivotMode()) {
+            if (this.columnModel.isPivotActive()) {
+                pct = this.columnModel.getSecondaryColumnTree();
+            } else {
+                // mimics behaviour of `columnModel.calculateColumnsForDisplay` - we however
+                // cannot use that here as the secondary columns are not visible, we also don't
+                // care about the group col when transposing
+                // pct = this.columnModel.getSecondaryColumnTree().filter(column => {
+                //     return (column as any).isValueActive();
+                // });
+                pct = this.columnModel.getPrimaryColumnTree();
+            }
+        }
         pct.forEach(col => {
             transposedNodes.push(...recursivelyBuildRows(col, rootNode));
         });

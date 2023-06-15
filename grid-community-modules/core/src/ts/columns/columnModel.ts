@@ -3097,9 +3097,7 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        if (this.transposeMode && missing(this.transposedColumns)) {
-            columnsForDisplay = [];
-        } else if (this.pivotMode && missing(this.secondaryColumns)) {
+        if (this.pivotMode && missing(this.secondaryColumns) && !this.transposeMode) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.gridColumns.filter(column => {
