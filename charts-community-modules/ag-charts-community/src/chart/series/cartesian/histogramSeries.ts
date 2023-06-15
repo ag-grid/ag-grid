@@ -51,7 +51,7 @@ import {
     PropertyDefinition,
 } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
-import { SORT_DOMAIN_GROUPS } from '../../data/processors';
+import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/moduleContext';
 
@@ -279,12 +279,18 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             };
         };
 
+        if (!this.animationManager?.skipAnimations && this.processedData) {
+            props.push(diff(this.processedData, false));
+        }
+
         this.dataModel = new DataModel<any>({
             props,
             dataVisible: this.visible,
             groupByFn,
         });
         this.processedData = this.dataModel.processData(data ?? []);
+
+        this.animationState.transition('updateData');
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -415,16 +421,22 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return new Rect();
     }
 
+    datumSelectionGarbageCollection = false;
+
     protected async updateDatumSelection(opts: {
         nodeData: HistogramNodeDatum[];
         datumSelection: Selection<Rect, HistogramNodeDatum>;
     }) {
         const { nodeData, datumSelection } = opts;
 
-        return datumSelection.update(nodeData, (rect) => {
-            rect.tag = HistogramSeriesNodeTag.Bin;
-            rect.crisp = true;
-        });
+        return datumSelection.update(
+            nodeData,
+            (rect) => {
+                rect.tag = HistogramSeriesNodeTag.Bin;
+                rect.crisp = true;
+            },
+            (datum: HistogramNodeDatum) => datum.domain.join('_')
+        );
     }
 
     protected async updateDatumNodes(opts: {
@@ -453,8 +465,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     : datum.strokeWidth;
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
-            rect.x = datum.x;
-            rect.width = datum.width;
             rect.fill = (isDatumHighlighted ? highlightedFill : undefined) ?? datum.fill;
             rect.stroke = (isDatumHighlighted ? highlightedStroke : undefined) ?? datum.stroke;
             rect.fillOpacity = fillOpacity;
@@ -663,6 +673,121 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.animationManager?.stop();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    animateWaitingUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
+        labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
+    }) {
+        const { processedData } = this;
+        const diff = processedData?.reduced?.diff;
+
+        if (!diff?.changed) {
+            datumSelections.forEach((datumSelection) => {
+                this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+
+        const totalDuration = 1000;
+        const labelDuration = 200;
+
+        let sectionDuration = totalDuration;
+        if (diff.added.length > 0 && diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        } else if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                startingY = Math.max(startingY, datum.height + datum.y);
+            })
+        );
+
+        const addedIds: { [key: string]: boolean } = {};
+        diff.added.forEach((d: string[]) => {
+            addedIds[d.join('_')] = true;
+        });
+        const removedIds: { [key: string]: boolean } = {};
+        diff.removed.forEach((d: string[]) => {
+            removedIds[d.join('_')] = true;
+        });
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                let props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                let delay = diff.removed.length > 0 ? sectionDuration : 0;
+                let cleanup = false;
+
+                const datumId = datum.domain.join('_');
+                const contextY = startingY;
+                const contextHeight = 0;
+
+                if (datumId !== undefined && addedIds[datumId] !== undefined) {
+                    props = [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
+                        { from: contextY, to: datum.y },
+                        { from: contextHeight, to: datum.height },
+                    ];
+                    delay += sectionDuration;
+                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
+                    props = [
+                        { from: rect.x, to: datum.x },
+                        { from: rect.width, to: datum.width },
+                        { from: datum.y, to: contextY },
+                        { from: datum.height, to: contextHeight },
+                    ];
+                    delay = 0;
+                    cleanup = true;
+                }
+
+                this.animationManager?.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
+                    disableInteractions: true,
+                    delay,
+                    duration: sectionDuration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate([x, width, y, height]) {
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                    onComplete() {
+                        if (cleanup) datumSelection.cleanup();
+                    },
+                });
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                label.opacity = 0;
+
+                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: totalDuration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
+            });
         });
     }
 

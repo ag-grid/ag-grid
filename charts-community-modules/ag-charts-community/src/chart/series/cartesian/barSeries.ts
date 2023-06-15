@@ -630,10 +630,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }) {
         const { nodeData, datumSelection } = opts;
 
-        const key = this.processedData?.defs.keys[0];
-        const getDatumId = key ? (datum: BarNodeDatum) => datum.datum[key.property] : undefined;
-
-        return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar), getDatumId);
+        return datumSelection.update(
+            nodeData,
+            (rect) => (rect.tag = BarSeriesNodeTag.Bar),
+            (datum: BarNodeDatum) => datum.datum[datum.xKey]
+        );
     }
 
     protected async updateDatumNodes(opts: { datumSelection: Selection<Rect, BarNodeDatum>; isHighlight: boolean }) {
@@ -1091,8 +1092,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
-        const datumIdKey = this.processedData?.defs.keys?.[0];
-
         const addedIds: { [key: string]: boolean } = {};
         diff.added.forEach((d: string[]) => {
             addedIds[d[0]] = true;
@@ -1114,7 +1113,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 let duration = sectionDuration;
                 let cleanup = false;
 
-                const datumId = datumIdKey ? datum.datum[datumIdKey.property] : '';
+                const datumId = datum.datum[datum.xKey];
 
                 let contextX = startingX;
                 let contextWidth = 0;
@@ -1149,7 +1148,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     cleanup = true;
                 }
 
-                this.animateRect(`${this.id}_ready-update_${rect.id}`, rect, props, duration, delay, () => {
+                this.animateRect(`${this.id}_waiting-update-ready_${rect.id}`, rect, props, duration, delay, () => {
                     if (cleanup) datumSelection.cleanup();
                 });
             });
@@ -1159,7 +1158,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,
