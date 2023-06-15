@@ -218,13 +218,9 @@ const Changelog = ({ location }) => {
                         component: 'paddingCellRenderer',
                     };
                 },
-            },
-            {
-                field: 'versions',
-                headerName: 'Version',
-                width: 120,
-                resizable: true,
-                filter: 'agSetColumnFilter',
+                floatingFilterComponentParams: {
+                    suppressFilterButton: true,
+                }
             },
             {
                 field: 'summary',
@@ -233,6 +229,16 @@ const Changelog = ({ location }) => {
                 width: 300,
                 minWidth: 200,
                 flex: 1,
+                floatingFilterComponentParams: {
+                    suppressFilterButton: true,
+                }
+            },
+            {
+                field: 'versions',
+                headerName: 'Version',
+                width: 120,
+                resizable: true,
+                filter: 'agSetColumnFilter',
             },
             {
                 field: 'issueType',
@@ -250,25 +256,6 @@ const Changelog = ({ location }) => {
                     return params.data.resolution;
                 },
                 width: 110,
-                filter: true,
-            },
-            {
-                field: 'deprecated',
-                headerName: 'Deprecation',
-                headerTooltip: 'Deprecation',
-                cellDataType: 'boolean',
-                valueGetter: (params) => !!params.node.data.deprecationNotes,
-                width: 130,
-                minWidth: 130,
-                filter: true,
-            },
-            {
-                field: 'breakingChange',
-                headerTooltip: 'Breaking Change',
-                cellDataType: 'boolean',
-                valueGetter: (params) => !!params.node.data.breakingChangesNotes,
-                width: 105,
-                minWidth: 105,
                 filter: true,
             },
         ],

@@ -13,7 +13,10 @@ const COLUMN_DEFS = [
         field: 'key',
         headerName: 'Issue',
         width: 140,
-        filter: false,
+        filter: 'agTextColumnFilter',
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
         cellRendererSelector: (params) => {
             if (
                 params.node.data.moreInformation ||
@@ -33,7 +36,10 @@ const COLUMN_DEFS = [
         field: 'summary',
         tooltipField: 'summary',
         flex: 1,
-        filter: false,
+        filter: 'agTextColumnFilter',
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
     },
     {
         field: 'issueType',
@@ -70,28 +76,12 @@ const COLUMN_DEFS = [
             }
         },
     },
-    {
-        field: 'features',
-        headerName: 'Feature',
-        width: 195,
-        valueFormatter: (params) => {
-            let isValue = !!params.value;
-            return isValue ? params.value.toString().replaceAll('_', ' ') : undefined;
-        },
-        tooltipValueGetter: (params) => {
-            return params.colDef.valueFormatter(params);
-        },
-        filterParams: {
-            valueFormatter: (params) => {
-                return params.colDef.valueFormatter(params);
-            },
-        },
-    },
 ];
 
 const defaultColDef = {
     resizable: true,
     filter: true,
+    floatingFilter: true,
     sortable: true,
     suppressMenu: true,
     autoHeight: true,
@@ -160,7 +150,6 @@ const extractFilterTerm = (location) =>
 const Pipeline = ({ location }) => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
-    const searchBarEl = useRef(null);
     const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
 
     useEffect(() => {
@@ -173,74 +162,7 @@ const Pipeline = ({ location }) => {
 
     const gridReady = (params) => {
         setGridApi(params.api);
-        searchBarEl.current.value = URLFilterSearchQuery;
         params.api.setQuickFilter(URLFilterSearchQuery);
-    };
-
-    const onQuickFilterChange = (event) => {
-        gridApi.setQuickFilter(event.target.value);
-    };
-
-    const onCheckboxChange = (event, filterTerm) => {
-        function setTheFilter(column, filterValue, shouldFilter) {
-            const filterInstance = gridApi.getFilterInstance(column);
-            const currentFilterModel = filterInstance.getModel();
-            const isCurrentFilterModel = !!currentFilterModel;
-            let newValues = undefined;
-
-            if (!shouldFilter && !isCurrentFilterModel) {
-                newValues = [...filterInstance.getValues()];
-                newValues.splice(newValues.indexOf(filterValue), 1);
-            } else if (!shouldFilter && isCurrentFilterModel) {
-                newValues = [...currentFilterModel.values];
-                const filterIdx = newValues.indexOf(filterValue);
-                if (filterIdx > -1) newValues.splice(filterIdx, 1);
-            } else if (shouldFilter && isCurrentFilterModel) {
-                newValues = [...currentFilterModel.values];
-                newValues.push(filterValue);
-            } else {
-                return;
-            }
-            const newModel = { values: newValues, filterType: 'set' };
-            filterInstance.setModel(newModel);
-            gridApi.onFilterChanged();
-        }
-
-        switch (filterTerm) {
-            case 'defect':
-                setTheFilter('issueType', 'Bug', event.target.checked);
-                break;
-            case 'featureRequest':
-                setTheFilter('issueType', 'Task', event.target.checked);
-                break;
-            case 'nextRelease':
-                setTheFilter('status', 'Backlog', !event.target.checked);
-                break;
-            default:
-                break;
-        }
-    };
-
-    const checkboxes = [
-        { id: 'featureRequest', label: 'Feature Requests', checked: true },
-        { id: 'defect', label: 'Defects', checked: true },
-        { id: 'nextRelease', label: 'Next Release', checked: false },
-    ];
-
-    const createLabeledCheckbox = (checkboxConfig) => {
-        const { id, label, checked } = checkboxConfig;
-        const key = `${id}-checkbox`;
-        return (
-            <label key={key}>
-                <input
-                    id={key}
-                    type="checkbox"
-                    defaultChecked={checked}
-                    onChange={(event) => onCheckboxChange(event, id)}
-                ></input>{' '}
-                {label}
-            </label>
-        );
     };
 
     return (
@@ -259,21 +181,10 @@ const Pipeline = ({ location }) => {
                             </p>
                         </Alert>
 
-                        <div className={styles.controls}>
-                            <input
-                                type="text"
-                                placeholder={'Search pipeline…'}
-                                className={styles.searchBar}
-                                ref={searchBarEl}
-                                onChange={onQuickFilterChange}
-                            ></input>
-
-                            <div>{checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}</div>
-                        </div>
                     </section>
 
                     <Grid
-                        gridHeight={'63vh'}
+                        gridHeight={'78vh'}
                         columnDefs={COLUMN_DEFS}
                         isRowMaster={isRowMaster}
                         detailRowAutoHeight={true}
