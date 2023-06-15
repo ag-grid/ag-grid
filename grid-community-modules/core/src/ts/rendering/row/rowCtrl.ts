@@ -1476,7 +1476,7 @@ export class RowCtrl extends BeanStub {
     // 500px from the top position, so a row with rowTop 600px is displayed at location 100px.
     // reverse will take the offset away rather than add.
     private applyPaginationOffset(topPx: number, reverse = false): number {
-        if (this.rowNode.isRowPinned()) {
+        if (this.rowNode.isRowPinned() || this.rowNode.sticky) {
             return topPx;
         }
 
@@ -1494,7 +1494,8 @@ export class RowCtrl extends BeanStub {
         // visible (ie parent group was expanded) but is now not visible
         if (exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+            const skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
+            const afterScalingPixels = skipScaling ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
             this.setRowTopStyle(topPx);
         }
