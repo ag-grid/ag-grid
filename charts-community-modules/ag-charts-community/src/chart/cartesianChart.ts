@@ -35,7 +35,13 @@ export class CartesianChart extends Chart {
 
         const { seriesRoot, seriesAreaPadding } = this;
 
-        const seriesPaddedRect = seriesRect.clone().grow(seriesAreaPadding);
+        // Recreate padding object to prevent issues with getters in `BBox.shrink()`
+        const seriesPaddedRect = seriesRect.clone().grow({
+            top: seriesAreaPadding.top,
+            right: seriesAreaPadding.right,
+            bottom: seriesAreaPadding.bottom,
+            left: seriesAreaPadding.left,
+        });
 
         const hoverRectPadding = 20;
         const hoverRect = seriesPaddedRect.clone().grow(hoverRectPadding);
