@@ -5,6 +5,7 @@ import { BBox } from '../scene/bbox';
 import { SeriesNodeDatum } from './series/series';
 import { PieSeries } from './series/polar/pieSeries';
 import { ChartAxisDirection } from './chartAxisDirection';
+import { PolarAxis } from './axis/polarAxis';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -66,9 +67,12 @@ export class PolarChart extends Chart {
 
     private computeCircle() {
         const seriesBox = this.seriesRect!;
-        const polarSeries = this.series.filter((series) => {
+        const polarSeries = this.series.filter((series): series is PolarSeries<SeriesNodeDatum> => {
             return series instanceof PolarSeries;
-        }) as PolarSeries<SeriesNodeDatum>[];
+        });
+        const polarAxes = this.axes.filter((axis): axis is PolarAxis => {
+            return axis instanceof PolarAxis;
+        });
 
         const setSeriesCircle = (cx: number, cy: number, r: number) => {
             this.updateAxes(cx, cy, r);
@@ -103,9 +107,11 @@ export class PolarChart extends Chart {
             const labelBoxes = [];
             for (const series of polarSeries) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
-                if (box == null) continue;
-
-                labelBoxes.push(box);
+                box && labelBoxes.push(box);
+            }
+            for (const axis of polarAxes) {
+                const box = axis.computeLabelsBBox();
+                box && labelBoxes.push(box);
             }
 
             if (labelBoxes.length === 0) {

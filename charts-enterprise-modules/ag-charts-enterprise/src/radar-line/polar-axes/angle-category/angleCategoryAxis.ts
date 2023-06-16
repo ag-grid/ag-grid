@@ -4,7 +4,7 @@ const { ChartAxisDirection } = _ModuleSupport;
 const { BandScale } = _Scale;
 const { isNumberEqual } = _Util;
 
-export class AngleCategoryAxis extends _ModuleSupport.Axis {
+export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     static className = 'AngleCategoryAxis';
     static type = 'polar-angle-category' as const;
 
@@ -64,10 +64,7 @@ export class AngleCategoryAxis extends _ModuleSupport.Axis {
 
         const ticks = scale.ticks?.() || [];
         tickLabelGroupSelection.update(ticks).each((node, value) => {
-            node.fontStyle = label.fontStyle;
-            node.fontWeight = label.fontWeight;
-            node.fontSize = label.fontSize;
-            node.fontFamily = label.fontFamily;
+            node.setFont(label);
             node.fill = label.color;
             node.text = String(value);
 
@@ -97,5 +94,36 @@ export class AngleCategoryAxis extends _ModuleSupport.Axis {
             line.stroke = tick.color;
             line.strokeWidth = tick.width;
         });
+    }
+
+    computeLabelsBBox() {
+        const { label, gridLength: radius, scale, tick } = this;
+        if (!label.enabled) {
+            return null;
+        }
+
+        const ticks = scale.ticks?.() || [];
+        if (ticks.length === 0) {
+            return null;
+        }
+
+        const tempText = new _Scene.Text();
+        const textBoxes = ticks.map((value) => {
+            const distance = radius + label.padding + tick.size;
+            const angle = scale.convert(value);
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            tempText.text = String(value);
+            tempText.x = distance * cos;
+            tempText.y = distance * sin;
+            tempText.setFont(label);
+            tempText.textAlign = isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right';
+            tempText.textBaseline = isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom';
+
+            return tempText.computeBBox();
+        });
+
+        return _Scene.BBox.merge(textBoxes);
     }
 }
