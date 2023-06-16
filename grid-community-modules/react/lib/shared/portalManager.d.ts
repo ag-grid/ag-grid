@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.1
+// @ag-grid-community/react v30.0.2
 import { Component, ReactPortal } from "react";
 import { ReactComponent } from "./reactComponent";
 export declare class LegacyPortalManager {

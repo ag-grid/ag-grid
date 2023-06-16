@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.1
+// ag-grid-react v30.0.2
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { GridHeaderCtrl, } from 'ag-grid-community';

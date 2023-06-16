@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.1
+// @ag-grid-community/react v30.0.2
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { AgPromise } from '@ag-grid-community/core';

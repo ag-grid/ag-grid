@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.1
+// @ag-grid-community/react v30.0.2
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { HeaderRowContainerCtrl } from '@ag-grid-community/core';

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.1
+// @ag-grid-community/react v30.0.2
 import { BaseComponentWrapper, ComponentUtil, Grid, _ } from '@ag-grid-community/core';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
