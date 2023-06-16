@@ -16,69 +16,88 @@ export class DisplayedGroupCreator extends BeanStub {
     public createDisplayedGroups(
         // all displayed columns sorted - this is the columns the grid should show
         sortedVisibleColumns: Column[],
-        // the tree of columns, as provided by the users, used to know what groups columns roll up into
-        balancedColumnTree: IProvidedColumn[],
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
         pinned: ColumnPinnedType,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: IHeaderColumn[]): IHeaderColumn[] {
-
-        const result: IHeaderColumn[] = [];
-
-        let previousRealPath: ColumnGroup[];
-        let previousOriginalPath: ProvidedColumnGroup[];
-
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
-        // go through each column, then do a bottom up comparison to the previous column, and start
-        // to share groups if they converge at any point.
-        sortedVisibleColumns.forEach((currentColumn: Column) => {
+        /**
+         * The following logic starts at the leaf level of columns, iterating through them to build their parent
+         * groups when the parents match.
+         * 
+         * The created groups are then added to an array, and similarly iterated on until we reach the top level.
+         * 
+         * When row groups have no original parent, it's added to the result.
+         */
+        const topLevelResultCols: (Column | ColumnGroup)[] = [];
+        
+        // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
+        let groupsOrColsAtCurrentLevel: (Column | ColumnGroup)[] = sortedVisibleColumns;
+        while (groupsOrColsAtCurrentLevel.length) {
+            // store what's currently iterating so the function can build the next level of col groups
+            const currentlyIterating = groupsOrColsAtCurrentLevel;
+            groupsOrColsAtCurrentLevel = [];
 
-            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn)!;
-            const currentRealPath: ColumnGroup[] = [];
-            const firstColumn = !previousOriginalPath;
+            // store the index of the last row which was different from the previous row, this is used as a slice
+            // index for finding the children to group together
+            let lastGroupedColIdx = 0;
 
-            for (let i = 0; i < currentOriginalPath.length; i++) {
-                if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
-                    // new group needed
-                    const newGroup = this.createColumnGroup(
-                        currentOriginalPath[i],
-                        groupInstanceIdCreator,
-                        oldColumnsMapped,
-                        pinned);
+            // create a group of children from lastGroupedColIdx to the provided `to` parameter
+            const createGroupToIndex = (to: number) => {
+                const from = lastGroupedColIdx;
+                lastGroupedColIdx = to;
 
-                    currentRealPath[i] = newGroup;
-                    // if top level, add to result, otherwise add to parent
-                    if (i == 0) {
-                        result.push(newGroup);
-                    } else {
-                        currentRealPath[i - 1].addChild(newGroup);
+                const previousNode = currentlyIterating[from];
+                const previousNodeProvided = previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+
+                if (previousNodeParent == null) {
+                    // if the last node was different, and had a null parent, then we add all the nodes to the final
+                    // results)
+                    for (let i = from; i < to; i++) {
+                        topLevelResultCols.push(currentlyIterating[i]);
                     }
-                } else {
-                    // reuse old group
-                    currentRealPath[i] = previousRealPath[i];
+                    return;
+                }
+
+                // the parent differs from the previous node, so we create a group from the previous node
+                // and add all to the result array, except the current node.
+                const newGroup = this.createColumnGroup(
+                    previousNodeParent,
+                    groupInstanceIdCreator,
+                    oldColumnsMapped,
+                    pinned
+                );
+
+                for (let i = from; i < to; i++) {
+                    newGroup.addChild(currentlyIterating[i]);
+                }
+                groupsOrColsAtCurrentLevel.push(newGroup);
+            };
+
+            for (let i = 1; i < currentlyIterating.length; i++) {
+                const thisNode = currentlyIterating[i];
+                const thisNodeProvided = thisNode instanceof ColumnGroup ? thisNode.getProvidedColumnGroup() : thisNode;
+                const thisNodeParent = thisNodeProvided.getOriginalParent();
+
+                const previousNode = currentlyIterating[lastGroupedColIdx];
+                const previousNodeProvided = previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+
+                if (thisNodeParent !== previousNodeParent) {
+                    createGroupToIndex(i);
                 }
             }
 
-            const noColumnGroups = currentRealPath.length === 0;
-            if (noColumnGroups) {
-                // if we are not grouping, then the result of the above is an empty
-                // path (no groups), and we just add the column to the root list.
-                result.push(currentColumn);
-            } else {
-                const leafGroup = last(currentRealPath);
-                leafGroup.addChild(currentColumn);
+            if (lastGroupedColIdx < currentlyIterating.length) {
+                createGroupToIndex(currentlyIterating.length);
             }
-
-            previousRealPath = currentRealPath;
-            previousOriginalPath = currentOriginalPath;
-        });
-
-        this.setupParentsIntoColumns(result, null);
-
-        return result;
+        }
+        this.setupParentsIntoColumns(topLevelResultCols, null);
+        return topLevelResultCols;
     }
 
     private createColumnGroup(
