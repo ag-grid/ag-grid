@@ -35,3 +35,4 @@ export declare abstract class ContinuousScale<D extends number | Date, I = numbe
         count?: number;
     }): boolean;
 }
+//# sourceMappingURL=continuousScale.d.ts.map

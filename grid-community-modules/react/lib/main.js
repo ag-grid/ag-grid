@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.0
+// @ag-grid-community/react v30.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgGridReactFire = exports.AgGridReactLegacy = exports.AgGridReact = void 0;

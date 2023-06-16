@@ -13,3 +13,4 @@ export declare class Listeners<Types extends string, Handler extends (...any: an
     removeListener(listenerSymbol: Symbol): void;
 }
 export {};
+//# sourceMappingURL=listeners.d.ts.map

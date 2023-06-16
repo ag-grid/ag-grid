@@ -35,3 +35,4 @@ export declare class HdpiOffscreenCanvas {
     resize(width: number, height: number): void;
 }
 export {};
+//# sourceMappingURL=hdpiOffscreenCanvas.d.ts.map

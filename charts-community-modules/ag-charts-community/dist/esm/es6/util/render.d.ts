@@ -15,3 +15,4 @@ export declare function debouncedCallback(cb: Callback): {
     await(): Promise<void>;
 };
 export {};
+//# sourceMappingURL=render.d.ts.map

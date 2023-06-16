@@ -104,3 +104,4 @@ export declare class LineSeries extends CartesianSeries<LineContext> {
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=lineSeries.d.ts.map

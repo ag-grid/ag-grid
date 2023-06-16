@@ -197,3 +197,4 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     animateReadyUpdateReady(): void;
 }
 export {};
+//# sourceMappingURL=pieSeries.d.ts.map

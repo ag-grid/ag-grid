@@ -18,3 +18,4 @@ export declare class NumberAxis extends ChartAxis<LinearScale | LogScale, number
     updateSecondaryAxisTicks(primaryTickCount: number | undefined): any[];
 }
 export {};
+//# sourceMappingURL=numberAxis.d.ts.map

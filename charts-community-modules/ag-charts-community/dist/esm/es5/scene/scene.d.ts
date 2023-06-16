@@ -78,3 +78,4 @@ export declare class Scene {
     };
 }
 export {};
+//# sourceMappingURL=scene.d.ts.map

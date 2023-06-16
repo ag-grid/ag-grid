@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.0
+          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -865,7 +865,7 @@ ClipboardService = ClipboardService_1 = __decorate([
 ], ClipboardService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.0';
+const VERSION = '30.0.1';
 
 const ClipboardModule = {
     version: VERSION,

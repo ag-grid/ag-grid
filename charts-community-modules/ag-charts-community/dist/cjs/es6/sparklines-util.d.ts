@@ -13,3 +13,4 @@ export { ticks };
 export { Color } from './util/color';
 export { MeasuredLabel, PointLabelDatum } from './util/labelPlacement';
 export * from './util/logger';
+//# sourceMappingURL=sparklines-util.d.ts.map

@@ -22,3 +22,4 @@ export declare abstract class ChangeDetectable {
     isDirty(): boolean;
 }
 export {};
+//# sourceMappingURL=changeDetectable.d.ts.map

@@ -23,3 +23,4 @@ export declare class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEv
     private applyStates;
 }
 export {};
+//# sourceMappingURL=zoomManager.d.ts.map

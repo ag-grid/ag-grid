@@ -182,3 +182,4 @@ export declare class CartesianSeriesMarker extends SeriesMarker {
     formatter?: (params: AgCartesianSeriesMarkerFormatterParams<any>) => AgCartesianSeriesMarkerFormat;
 }
 export {};
+//# sourceMappingURL=cartesianSeries.d.ts.map

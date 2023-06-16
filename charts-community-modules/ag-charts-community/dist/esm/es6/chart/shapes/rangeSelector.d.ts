@@ -34,3 +34,4 @@ export declare class RangeSelector extends Group {
     computeVisibleRangeBBox(): BBox;
     render(renderCtx: RenderContext): void;
 }
+//# sourceMappingURL=rangeSelector.d.ts.map

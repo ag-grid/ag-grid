@@ -9,3 +9,4 @@ export declare function groupAverage<K>(props: K[]): AggregatePropertyDefinition
 export declare function area<K>(props: K[], aggFn: AggregatePropertyDefinition<any, any>): AggregatePropertyDefinition<any, any, [number, number], [number, number]>;
 export declare function accumulatedValue(): DatumPropertyDefinition<any>['processor'];
 export declare function trailingAccumulatedValue(): DatumPropertyDefinition<any>['processor'];
+//# sourceMappingURL=aggregateFunctions.d.ts.map

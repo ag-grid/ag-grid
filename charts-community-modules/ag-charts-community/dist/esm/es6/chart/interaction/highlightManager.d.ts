@@ -30,3 +30,4 @@ export declare class HighlightManager extends BaseManager<'highlight-change', Hi
     private applyStates;
 }
 export {};
+//# sourceMappingURL=highlightManager.d.ts.map

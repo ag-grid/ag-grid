@@ -76,3 +76,4 @@ export declare class HdpiCanvas {
     static overrideScale(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, scale: number): void;
 }
 export {};
+//# sourceMappingURL=hdpiCanvas.d.ts.map

@@ -9,3 +9,4 @@ export declare class CursorManager {
     updateCursor(callerId: string, style?: string): void;
     private applyStates;
 }
+//# sourceMappingURL=cursorManager.d.ts.map

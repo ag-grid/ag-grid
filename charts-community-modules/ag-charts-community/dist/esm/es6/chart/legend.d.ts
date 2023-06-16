@@ -131,3 +131,4 @@ export declare class Legend {
     private calculateLegendDimensions;
 }
 export {};
+//# sourceMappingURL=legend.d.ts.map

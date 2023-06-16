@@ -9,3 +9,4 @@ export declare class DataService {
     constructor(getSeries: SeriesGetter);
 }
 export {};
+//# sourceMappingURL=dataService.d.ts.map

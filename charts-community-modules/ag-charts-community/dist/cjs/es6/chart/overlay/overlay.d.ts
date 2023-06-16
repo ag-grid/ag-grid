@@ -9,3 +9,4 @@ export declare class Overlay {
     show(rect: BBox): void;
     hide(): void;
 }
+//# sourceMappingURL=overlay.d.ts.map

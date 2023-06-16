@@ -9,3 +9,4 @@ export declare const easeOut: Easing<any>;
 export declare const easeInOut: Easing<any>;
 export declare const easeOutElastic: Easing<any>;
 export {};
+//# sourceMappingURL=easing.d.ts.map

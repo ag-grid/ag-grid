@@ -280,4 +280,4 @@ export class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTY4NjA2MTA3MDMxNA==';
+LicenseManager.RELEASE_INFORMATION = 'MTY4NjkxNjU0OTQyOQ==';

@@ -23,3 +23,4 @@ export declare class LogScale extends ContinuousScale<number> {
         specifier?: string | ((x: number) => string);
     }): (x: number) => string;
 }
+//# sourceMappingURL=logScale.d.ts.map

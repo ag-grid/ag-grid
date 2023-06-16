@@ -10,3 +10,4 @@ export declare function interpolate(input: string, values: {
     [key in string]: ValueFormat;
 }): string;
 export {};
+//# sourceMappingURL=string.d.ts.map

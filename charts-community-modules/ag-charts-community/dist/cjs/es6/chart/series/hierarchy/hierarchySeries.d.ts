@@ -7,3 +7,4 @@ export declare abstract class HierarchySeries<S extends SeriesNodeDatum> extends
     constructor(moduleCtx: ModuleContext);
     getLabelData(): PointLabelDatum[];
 }
+//# sourceMappingURL=hierarchySeries.d.ts.map

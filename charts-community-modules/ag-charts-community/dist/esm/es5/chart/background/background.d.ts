@@ -7,3 +7,4 @@ export declare class Background extends BaseModuleInstance implements ModuleInst
     fill: string | undefined;
     private onLayoutComplete;
 }
+//# sourceMappingURL=background.d.ts.map

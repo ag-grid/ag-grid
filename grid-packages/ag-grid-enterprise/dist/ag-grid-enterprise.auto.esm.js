@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.0
+          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -472,7 +472,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTY4NjA2MTA3MDMxNA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY4NjkxNjU0OTQyOQ==';
     return LicenseManager;
 }());
 
@@ -579,7 +579,7 @@ var WatermarkComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$i = '30.0.0';
+var VERSION$i = '30.0.1';
 
 var EnterpriseCoreModule = {
     version: VERSION$i,
@@ -1540,7 +1540,7 @@ var ClipboardService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$h = '30.0.0';
+var VERSION$h = '30.0.1';
 
 var ClipboardModule = {
     version: VERSION$h,
@@ -6217,7 +6217,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$g = '30.0.0';
+var VERSION$g = '30.0.1';
 
 var __extends$34 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -8007,7 +8007,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$f = '30.0.0';
+var VERSION$f = '30.0.1';
 
 var SideBarModule = {
     version: VERSION$f,
@@ -8222,7 +8222,7 @@ var ModelItemUtils = /** @class */ (function () {
 }());
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$e = '30.0.0';
+var VERSION$e = '30.0.1';
 
 var ColumnsToolPanelModule = {
     version: VERSION$e,
@@ -11988,7 +11988,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$d = '30.0.0';
+var VERSION$d = '30.0.1';
 
 var ExcelExportModule = {
     version: VERSION$d,
@@ -13030,7 +13030,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$c = '30.0.0';
+var VERSION$c = '30.0.1';
 
 var FiltersToolPanelModule = {
     version: VERSION$c,
@@ -52632,7 +52632,7 @@ var GridChartComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$a = '30.0.0';
+var VERSION$a = '30.0.1';
 
 var __assign$c = (undefined && undefined.__assign) || function () {
     __assign$c = Object.assign || function(t) {
@@ -55374,7 +55374,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$9 = '30.0.0';
+var VERSION$9 = '30.0.1';
 
 var RangeSelectionModule = {
     version: VERSION$9,
@@ -56195,7 +56195,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$8 = '30.0.0';
+var VERSION$8 = '30.0.1';
 
 var MasterDetailModule = {
     version: VERSION$8,
@@ -57294,7 +57294,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$7 = '30.0.0';
+var VERSION$7 = '30.0.1';
 
 var __extends$B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -58211,7 +58211,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$6 = '30.0.0';
+var VERSION$6 = '30.0.1';
 
 var MultiFilterModule = {
     version: VERSION$6,
@@ -58587,7 +58587,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
 }(PopupComponent));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$5 = '30.0.0';
+var VERSION$5 = '30.0.1';
 
 var RichSelectModule = {
     version: VERSION$5,
@@ -63560,7 +63560,7 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$4 = '30.0.0';
+var VERSION$4 = '30.0.1';
 
 var ServerSideRowModelModule = {
     version: VERSION$4,
@@ -66019,7 +66019,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$3 = '30.0.0';
+var VERSION$3 = '30.0.1';
 
 var SetFilterModule = {
     version: VERSION$3,
@@ -66735,7 +66735,7 @@ var AggregationComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$2 = '30.0.0';
+var VERSION$2 = '30.0.1';
 
 var StatusBarModule = {
     version: VERSION$2,
@@ -66758,7 +66758,7 @@ var StatusBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '30.0.0';
+var VERSION$1 = '30.0.1';
 
 var __extends$7 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -69348,7 +69348,7 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.0';
+var VERSION = '30.0.1';
 
 var SparklinesModule = {
     version: VERSION,

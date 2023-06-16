@@ -10,3 +10,4 @@ export declare class Observable {
     clearEventListeners(): void;
     protected fireEvent<E extends TypedEvent>(event: E): void;
 }
+//# sourceMappingURL=observable.d.ts.map

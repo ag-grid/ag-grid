@@ -13,3 +13,4 @@ export declare function reduceSeries(series: any[]): any;
  * Transforms provided series options array into an array containing series options which are compatible with standalone charts series options.
  */
 export declare function processSeriesOptions(seriesOptions: SeriesOptions[]): SeriesOptions[];
+//# sourceMappingURL=prepareSeries.d.ts.map
