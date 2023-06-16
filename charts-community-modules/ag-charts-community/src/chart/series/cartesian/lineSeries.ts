@@ -607,7 +607,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             markerSelections[contextDataIndex].each((marker, datum, index) => {
-                const delay = (nodeLengths[index] / lineLength) * duration;
+                const delay = lineLength > 0 ? (nodeLengths[index] / lineLength) * duration : 0;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
