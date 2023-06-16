@@ -5,6 +5,7 @@ import {
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
 import { useLayoutEffectOnce } from './useEffectOnce';
+import { agFlushSync } from './utils';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;
@@ -38,7 +39,9 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         const eBottomGuard = bottomTabGuardRef.current!;
 
         const compProxy: ITabGuard = {
-            setTabIndex: value => value == null ? setTabIndex(undefined) : setTabIndex(parseInt(value, 10))
+            setTabIndex: value => {
+                agFlushSync(true, () => value == null ? setTabIndex(undefined) : setTabIndex(parseInt(value, 10)))
+            }
         }
 
         const ctrl = tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
