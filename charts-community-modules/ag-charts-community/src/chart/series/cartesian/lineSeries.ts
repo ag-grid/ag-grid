@@ -542,6 +542,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
             const lineLength = nodeData.reduce((sum, datum, index) => {
                 if (index === 0) return sum;
                 const prev = nodeData[index - 1];
+                if (isNaN(datum.point.x) || isNaN(datum.point.y) || isNaN(prev.point.x) || isNaN(prev.point.y)) {
+                    nodeLengths.push(sum);
+                    return sum;
+                }
                 const length = Math.sqrt(
                     Math.pow(datum.point.x - prev.point.x, 2) + Math.pow(datum.point.y - prev.point.y, 2)
                 );
