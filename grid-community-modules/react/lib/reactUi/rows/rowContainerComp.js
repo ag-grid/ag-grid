@@ -1,61 +1,37 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@ag-grid-community/core");
-const react_1 = __importStar(require("react"));
-const utils_1 = require("../utils");
-const reactComment_1 = __importDefault(require("../reactComment"));
-const rowComp_1 = __importDefault(require("./rowComp"));
-const beansContext_1 = require("../beansContext");
-const useEffectOnce_1 = require("../useEffectOnce");
+import { getRowContainerTypeForName, RowContainerCtrl, RowContainerName } from '@ag-grid-community/core';
+import React, { useMemo, useRef, useState, memo, useContext } from 'react';
+import { classesList, agFlushSync } from '../utils';
+import useReactCommentEffect from '../reactComment';
+import RowComp from './rowComp';
+import { BeansContext } from '../beansContext';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 const RowContainerComp = (params) => {
-    const { context } = react_1.useContext(beansContext_1.BeansContext);
-    const [rowCtrlsOrdered, setRowCtrlsOrdered] = react_1.useState([]);
+    const { context } = useContext(BeansContext);
+    const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState([]);
     const { name } = params;
-    const containerType = react_1.useMemo(() => core_1.getRowContainerTypeForName(name), [name]);
-    const eWrapper = react_1.useRef(null);
-    const eViewport = react_1.useRef(null);
-    const eContainer = react_1.useRef(null);
-    const rowCtrlsRef = react_1.useRef([]);
-    const domOrderRef = react_1.useRef(false);
-    const cssClasses = react_1.useMemo(() => core_1.RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const wrapperClasses = react_1.useMemo(() => utils_1.classesList(cssClasses.wrapper), []);
-    const viewportClasses = react_1.useMemo(() => utils_1.classesList(cssClasses.viewport), []);
-    const containerClasses = react_1.useMemo(() => utils_1.classesList(cssClasses.container), []);
+    const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
+    const eWrapper = useRef(null);
+    const eViewport = useRef(null);
+    const eContainer = useRef(null);
+    const rowCtrlsRef = useRef([]);
+    const domOrderRef = useRef(false);
+    const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
+    const wrapperClasses = useMemo(() => classesList(cssClasses.wrapper), []);
+    const viewportClasses = useMemo(() => classesList(cssClasses.viewport), []);
+    const containerClasses = useMemo(() => classesList(cssClasses.container), []);
     // no need to useMemo for boolean types
-    const template1 = name === core_1.RowContainerName.CENTER;
-    const template2 = name === core_1.RowContainerName.TOP_CENTER
-        || name === core_1.RowContainerName.BOTTOM_CENTER
-        || name === core_1.RowContainerName.STICKY_TOP_CENTER;
+    const template1 = name === RowContainerName.CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER
+        || name === RowContainerName.BOTTOM_CENTER
+        || name === RowContainerName.STICKY_TOP_CENTER;
     const template3 = !template1 && !template2;
     const topLevelRef = template1 ? eWrapper : template2 ? eViewport : eContainer;
-    reactComment_1.default(' AG Row Container ' + name + ' ', topLevelRef);
+    useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
     function updateRowCtrlsOrdered(useFlushSync) {
-        utils_1.agFlushSync(useFlushSync, () => {
+        agFlushSync(useFlushSync, () => {
             setRowCtrlsOrdered(prev => {
                 const rowCtrls = rowCtrlsRef.current;
                 if (domOrderRef.current) {
@@ -69,7 +45,7 @@ const RowContainerComp = (params) => {
             });
         });
     }
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const beansToDestroy = [];
         const compProxy = {
             setViewportHeight: (height) => {
@@ -96,22 +72,22 @@ const RowContainerComp = (params) => {
                 }
             }
         };
-        const ctrl = context.createBean(new core_1.RowContainerCtrl(name));
+        const ctrl = context.createBean(new RowContainerCtrl(name));
         beansToDestroy.push(ctrl);
         ctrl.setComp(compProxy, eContainer.current, eViewport.current, eWrapper.current);
         return () => {
             context.destroyBeans(beansToDestroy);
         };
     });
-    const buildContainer = () => (react_1.default.createElement("div", { className: containerClasses, ref: eContainer, role: rowCtrlsOrdered.length ? "rowgroup" : "presentation" }, rowCtrlsOrdered.map(rowCtrl => react_1.default.createElement(rowComp_1.default, { rowCtrl: rowCtrl, containerType: containerType, key: rowCtrl.getInstanceId() }))));
-    return (react_1.default.createElement(react_1.default.Fragment, null,
+    const buildContainer = () => (React.createElement("div", { className: containerClasses, ref: eContainer, role: rowCtrlsOrdered.length ? "rowgroup" : "presentation" }, rowCtrlsOrdered.map(rowCtrl => React.createElement(RowComp, { rowCtrl: rowCtrl, containerType: containerType, key: rowCtrl.getInstanceId() }))));
+    return (React.createElement(React.Fragment, null,
         template1 &&
-            react_1.default.createElement("div", { className: wrapperClasses, ref: eWrapper, role: "presentation" },
-                react_1.default.createElement("div", { className: viewportClasses, ref: eViewport, role: "presentation" }, buildContainer())),
+            React.createElement("div", { className: wrapperClasses, ref: eWrapper, role: "presentation" },
+                React.createElement("div", { className: viewportClasses, ref: eViewport, role: "presentation" }, buildContainer())),
         template2 &&
-            react_1.default.createElement("div", { className: viewportClasses, ref: eViewport, role: "presentation" }, buildContainer()),
+            React.createElement("div", { className: viewportClasses, ref: eViewport, role: "presentation" }, buildContainer()),
         template3 && buildContainer()));
 };
-exports.default = react_1.memo(RowContainerComp);
+export default memo(RowContainerComp);
 
 //# sourceMappingURL=rowContainerComp.js.map

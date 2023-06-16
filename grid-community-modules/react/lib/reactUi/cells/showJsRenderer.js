@@ -1,12 +1,10 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = require("react");
-const beansContext_1 = require("../beansContext");
-const useEffectOnce_1 = require("../useEffectOnce");
+import { useCallback, useContext, useEffect } from 'react';
+import { BeansContext } from '../beansContext';
+import { useEffectOnce } from '../useEffectOnce';
 const useJsCellRenderer = (showDetails, showTools, eCellValue, cellValueVersion, jsCellRendererRef, eGui) => {
-    const { context, userComponentFactory } = react_1.useContext(beansContext_1.BeansContext);
-    const destroyCellRenderer = react_1.useCallback(() => {
+    const { context, userComponentFactory } = useContext(BeansContext);
+    const destroyCellRenderer = useCallback(() => {
         const comp = jsCellRendererRef.current;
         if (!comp) {
             return;
@@ -19,7 +17,7 @@ const useJsCellRenderer = (showDetails, showTools, eCellValue, cellValueVersion,
         jsCellRendererRef.current = undefined;
     }, []);
     // create or refresh JS cell renderer
-    react_1.useEffect(() => {
+    useEffect(() => {
         const showValue = showDetails != null;
         const jsCompDetails = showDetails && showDetails.compDetails && !showDetails.compDetails.componentFromFramework;
         const waitingForToolsSetup = showTools && eCellValue == null;
@@ -63,10 +61,10 @@ const useJsCellRenderer = (showDetails, showTools, eCellValue, cellValueVersion,
     // this effect makes sure destroyCellRenderer gets called when the
     // component is destroyed. as the other effect only updates when there
     // is a change in state
-    useEffectOnce_1.useEffectOnce(() => {
+    useEffectOnce(() => {
         return destroyCellRenderer;
     });
 };
-exports.default = useJsCellRenderer;
+export default useJsCellRenderer;
 
 //# sourceMappingURL=showJsRenderer.js.map

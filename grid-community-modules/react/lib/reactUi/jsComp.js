@@ -1,12 +1,9 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSyncJsComp = exports.showJsComp = void 0;
 /**
  * Show a JS Component
  * @returns Effect Cleanup function
  */
-const showJsComp = (compDetails, context, eParent, ref) => {
+export const showJsComp = (compDetails, context, eParent, ref) => {
     const doNothing = !compDetails || compDetails.componentFromFramework || context.isDestroyed();
     if (doNothing) {
         return;
@@ -44,7 +41,6 @@ const showJsComp = (compDetails, context, eParent, ref) => {
         }
     };
 };
-exports.showJsComp = showJsComp;
 const setRef = (ref, value) => {
     if (!ref) {
         return;
@@ -58,13 +54,12 @@ const setRef = (ref, value) => {
         refObj.current = value;
     }
 };
-const createSyncJsComp = (compDetails) => {
+export const createSyncJsComp = (compDetails) => {
     const promise = compDetails.newAgStackInstance();
     if (!promise) {
         return;
     }
     return promise.resolveNow(null, x => x); // js comps are never async
 };
-exports.createSyncJsComp = createSyncJsComp;
 
 //# sourceMappingURL=jsComp.js.map

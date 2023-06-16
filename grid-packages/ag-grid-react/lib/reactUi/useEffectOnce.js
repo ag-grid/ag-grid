@@ -1,26 +1,23 @@
 // ag-grid-react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useLayoutEffectOnce = exports.useEffectOnce = void 0;
-var react_1 = require("react");
-var useEffectOnce = function (effect) {
-    var effectFn = react_1.useRef(effect);
-    var destroyFn = react_1.useRef();
-    var effectCalled = react_1.useRef(false);
-    var rendered = react_1.useRef(false);
-    var _a = react_1.useState(0), setVal = _a[1];
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+export const useEffectOnce = (effect) => {
+    const effectFn = useRef(effect);
+    const destroyFn = useRef();
+    const effectCalled = useRef(false);
+    const rendered = useRef(false);
+    const [, setVal] = useState(0);
     if (effectCalled.current) {
         rendered.current = true;
     }
-    react_1.useEffect(function () {
+    useEffect(() => {
         // only execute the effect first time around
         if (!effectCalled.current) {
             destroyFn.current = effectFn.current();
             effectCalled.current = true;
         }
         // this forces one render after the effect is run
-        setVal(function (val) { return val + 1; });
-        return function () {
+        setVal((val) => val + 1);
+        return () => {
             // if the comp didn't render since the useEffect was called,
             // we know it's the dummy React cycle
             if (!rendered.current) {
@@ -33,25 +30,24 @@ var useEffectOnce = function (effect) {
         };
     }, []);
 };
-exports.useEffectOnce = useEffectOnce;
-var useLayoutEffectOnce = function (effect) {
-    var effectFn = react_1.useRef(effect);
-    var destroyFn = react_1.useRef();
-    var effectCalled = react_1.useRef(false);
-    var rendered = react_1.useRef(false);
-    var _a = react_1.useState(0), setVal = _a[1];
+export const useLayoutEffectOnce = (effect) => {
+    const effectFn = useRef(effect);
+    const destroyFn = useRef();
+    const effectCalled = useRef(false);
+    const rendered = useRef(false);
+    const [, setVal] = useState(0);
     if (effectCalled.current) {
         rendered.current = true;
     }
-    react_1.useLayoutEffect(function () {
+    useLayoutEffect(() => {
         // only execute the effect first time around
         if (!effectCalled.current) {
             destroyFn.current = effectFn.current();
             effectCalled.current = true;
         }
         // this forces one render after the effect is run
-        setVal(function (val) { return val + 1; });
-        return function () {
+        setVal((val) => val + 1);
+        return () => {
             // if the comp didn't render since the useEffect was called,
             // we know it's the dummy React cycle
             if (!rendered.current) {
@@ -64,4 +60,3 @@ var useLayoutEffectOnce = function (effect) {
         };
     }, []);
 };
-exports.useLayoutEffectOnce = useLayoutEffectOnce;

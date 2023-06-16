@@ -1,20 +1,14 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReactFrameworkOverrides = void 0;
-const core_1 = require("@ag-grid-community/core");
-const groupCellRenderer_1 = __importDefault(require("../reactUi/cellRenderer/groupCellRenderer"));
-const detailCellRenderer_1 = __importDefault(require("../reactUi/cellRenderer/detailCellRenderer"));
-class ReactFrameworkOverrides extends core_1.VanillaFrameworkOverrides {
+import { VanillaFrameworkOverrides } from "@ag-grid-community/core";
+import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
+import DetailCellRenderer from "../reactUi/cellRenderer/detailCellRenderer";
+export class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     constructor(reactUi) {
         super();
         this.frameworkComponents = {
-            agGroupCellRenderer: groupCellRenderer_1.default,
-            agGroupRowRenderer: groupCellRenderer_1.default,
-            agDetailCellRenderer: detailCellRenderer_1.default
+            agGroupCellRenderer: GroupCellRenderer,
+            agGroupRowRenderer: GroupCellRenderer,
+            agDetailCellRenderer: DetailCellRenderer
         };
         this.reactUi = reactUi;
     }
@@ -33,6 +27,5 @@ class ReactFrameworkOverrides extends core_1.VanillaFrameworkOverrides {
         return !isJsComp;
     }
 }
-exports.ReactFrameworkOverrides = ReactFrameworkOverrides;
 
 //# sourceMappingURL=reactFrameworkOverrides.js.map

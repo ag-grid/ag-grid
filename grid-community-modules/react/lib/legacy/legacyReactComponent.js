@@ -1,17 +1,11 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LegacyReactComponent = void 0;
-const react_1 = require("react");
-const react_dom_1 = require("react-dom");
-const core_1 = require("@ag-grid-community/core");
-const reactComponent_1 = require("../shared/reactComponent");
-const server_1 = require("react-dom/server");
-const keyGenerator_1 = __importDefault(require("../shared/keyGenerator"));
-class LegacyReactComponent extends reactComponent_1.ReactComponent {
+import { createElement } from 'react';
+import { createPortal } from 'react-dom';
+import { AgPromise } from '@ag-grid-community/core';
+import { ReactComponent } from '../shared/reactComponent';
+import { renderToStaticMarkup } from 'react-dom/server';
+import generateNewKey from '../shared/keyGenerator';
+export class LegacyReactComponent extends ReactComponent {
     constructor(reactComponent, parentComponent, portalManager, componentType) {
         super(reactComponent, portalManager, componentType);
         this.staticMarkup = null;
@@ -21,7 +15,7 @@ class LegacyReactComponent extends reactComponent_1.ReactComponent {
     init(params) {
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
-        return new core_1.AgPromise(resolve => this.createReactComponent(params, resolve));
+        return new AgPromise(resolve => this.createReactComponent(params, resolve));
     }
     createReactComponent(params, resolve) {
         // regular components (ie not functional)
@@ -33,8 +27,8 @@ class LegacyReactComponent extends reactComponent_1.ReactComponent {
                 this.removeStaticMarkup();
             };
         }
-        const reactComponent = react_1.createElement(this.reactComponent, params);
-        const portal = react_dom_1.createPortal(reactComponent, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
+        const reactComponent = createElement(this.reactComponent, params);
+        const portal = createPortal(reactComponent, this.eParentElement, generateNewKey() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
         this.portalManager.mountReactPortal(portal, this, (value) => {
@@ -72,7 +66,7 @@ class LegacyReactComponent extends reactComponent_1.ReactComponent {
             return;
         }
         const originalConsoleError = console.error;
-        const reactComponent = react_1.createElement(this.reactComponent, params);
+        const reactComponent = createElement(this.reactComponent, params);
         try {
             // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
             // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
@@ -80,7 +74,7 @@ class LegacyReactComponent extends reactComponent_1.ReactComponent {
             console.error = () => {
             };
             const start = Date.now();
-            const staticMarkup = server_1.renderToStaticMarkup(reactComponent);
+            const staticMarkup = renderToStaticMarkup(reactComponent);
             this.staticRenderTime = Date.now() - start;
             console.error = originalConsoleError;
             // if the render method returns null the result will be an empty string
@@ -127,7 +121,6 @@ class LegacyReactComponent extends reactComponent_1.ReactComponent {
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 }
-exports.LegacyReactComponent = LegacyReactComponent;
 LegacyReactComponent.SLOW_RENDERING_THRESHOLD = 3;
 
 //# sourceMappingURL=legacyReactComponent.js.map

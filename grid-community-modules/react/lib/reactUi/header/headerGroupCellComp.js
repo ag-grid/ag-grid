@@ -1,43 +1,22 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importStar(require("react"));
-const beansContext_1 = require("../beansContext");
-const jsComp_1 = require("../jsComp");
-const useEffectOnce_1 = require("../useEffectOnce");
-const utils_1 = require("../utils");
+import React, { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { BeansContext } from '../beansContext';
+import { showJsComp } from '../jsComp';
+import { useLayoutEffectOnce } from '../useEffectOnce';
+import { CssClasses } from '../utils';
 const HeaderGroupCellComp = (props) => {
-    const { context } = react_1.useContext(beansContext_1.BeansContext);
-    const [cssClasses, setCssClasses] = react_1.useState(new utils_1.CssClasses());
-    const [cssResizableClasses, setResizableCssClasses] = react_1.useState(new utils_1.CssClasses());
-    const [resizableAriaHidden, setResizableAriaHidden] = react_1.useState("false");
-    const [title, setTitle] = react_1.useState();
-    const [colId, setColId] = react_1.useState();
-    const [ariaExpanded, setAriaExpanded] = react_1.useState();
-    const [userCompDetails, setUserCompDetails] = react_1.useState();
-    const eGui = react_1.useRef(null);
-    const eResize = react_1.useRef(null);
+    const { context } = useContext(BeansContext);
+    const [cssClasses, setCssClasses] = useState(new CssClasses());
+    const [cssResizableClasses, setResizableCssClasses] = useState(new CssClasses());
+    const [resizableAriaHidden, setResizableAriaHidden] = useState("false");
+    const [title, setTitle] = useState();
+    const [colId, setColId] = useState();
+    const [ariaExpanded, setAriaExpanded] = useState();
+    const [userCompDetails, setUserCompDetails] = useState();
+    const eGui = useRef(null);
+    const eResize = useRef(null);
     const { ctrl } = props;
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const compProxy = {
             setWidth: width => {
                 if (eGui.current) {
@@ -57,21 +36,21 @@ const HeaderGroupCellComp = (props) => {
         ctrl.setComp(compProxy, eGui.current, eResize.current);
     });
     // js comps
-    react_1.useLayoutEffect(() => jsComp_1.showJsComp(userCompDetails, context, eGui.current), [userCompDetails]);
+    useLayoutEffect(() => showJsComp(userCompDetails, context, eGui.current), [userCompDetails]);
     // add drag handling, must be done after component is added to the dom
-    react_1.useEffect(() => {
+    useEffect(() => {
         if (eGui.current) {
             ctrl.setDragSource(eGui.current);
         }
     }, [userCompDetails]);
-    const className = react_1.useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
-    const resizableClassName = react_1.useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);
+    const className = useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
+    const resizableClassName = useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: eGui, className: className, title: title, "col-id": colId, role: "columnheader", tabIndex: -1, "aria-expanded": ariaExpanded },
-        reactUserComp && react_1.default.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
-        react_1.default.createElement("div", { ref: eResize, "aria-hidden": resizableAriaHidden, className: resizableClassName })));
+    return (React.createElement("div", { ref: eGui, className: className, title: title, "col-id": colId, role: "columnheader", tabIndex: -1, "aria-expanded": ariaExpanded },
+        reactUserComp && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
+        React.createElement("div", { ref: eResize, "aria-hidden": resizableAriaHidden, className: resizableClassName })));
 };
-exports.default = react_1.memo(HeaderGroupCellComp);
+export default memo(HeaderGroupCellComp);
 
 //# sourceMappingURL=headerGroupCellComp.js.map

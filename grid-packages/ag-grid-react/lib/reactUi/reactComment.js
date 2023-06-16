@@ -1,19 +1,17 @@
 // ag-grid-react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var useEffectOnce_1 = require("./useEffectOnce");
-var useReactCommentEffect = function (comment, eForCommentRef) {
-    useEffectOnce_1.useEffectOnce(function () {
-        var eForComment = eForCommentRef.current;
-        var eParent = eForComment.parentElement;
+import { useEffectOnce } from './useEffectOnce';
+const useReactCommentEffect = (comment, eForCommentRef) => {
+    useEffectOnce(() => {
+        const eForComment = eForCommentRef.current;
+        const eParent = eForComment.parentElement;
         if (!eParent) {
             return;
         }
-        var eComment = document.createComment(comment);
+        const eComment = document.createComment(comment);
         eParent.insertBefore(eComment, eForComment);
-        return function () {
+        return () => {
             eParent.removeChild(eComment);
         };
     });
 };
-exports.default = useReactCommentEffect;
+export default useReactCommentEffect;

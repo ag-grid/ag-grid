@@ -1,38 +1,17 @@
 // @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@ag-grid-community/core");
-const react_1 = __importStar(require("react"));
-const react_dom_1 = require("react-dom");
-const beansContext_1 = require("../beansContext");
-const useEffectOnce_1 = require("../useEffectOnce");
+import { PopupEditorWrapper } from '@ag-grid-community/core';
+import React, { useState, memo, useContext } from 'react';
+import { createPortal } from 'react-dom';
+import { BeansContext } from '../beansContext';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 const PopupEditorComp = (props) => {
-    const [popupEditorWrapper, setPopupEditorWrapper] = react_1.useState();
-    const { context, popupService, localeService, gridOptionsService } = react_1.useContext(beansContext_1.BeansContext);
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    const [popupEditorWrapper, setPopupEditorWrapper] = useState();
+    const { context, popupService, localeService, gridOptionsService } = useContext(BeansContext);
+    useLayoutEffectOnce(() => {
         const { editDetails, cellCtrl, eParentCell } = props;
         const { compDetails } = editDetails;
         const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
-        const wrapper = context.createBean(new core_1.PopupEditorWrapper(compDetails.params));
+        const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();
         if (props.jsChildComp) {
             const eChildGui = props.jsChildComp.getGui();
@@ -70,9 +49,9 @@ const PopupEditorComp = (props) => {
             context.destroyBean(wrapper);
         };
     });
-    return (react_1.default.createElement(react_1.default.Fragment, null, popupEditorWrapper && props.wrappedContent
-        && react_dom_1.createPortal(props.wrappedContent, popupEditorWrapper.getGui())));
+    return (React.createElement(React.Fragment, null, popupEditorWrapper && props.wrappedContent
+        && createPortal(props.wrappedContent, popupEditorWrapper.getGui())));
 };
-exports.default = react_1.memo(PopupEditorComp);
+export default memo(PopupEditorComp);
 
 //# sourceMappingURL=popupEditorComp.js.map
