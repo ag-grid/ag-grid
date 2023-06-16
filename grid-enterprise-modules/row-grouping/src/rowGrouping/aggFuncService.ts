@@ -178,7 +178,7 @@ function aggCount(params: IAggFuncParams) {
 
 
     // the previous aggregation data
-    const existingAggData = params.rowNode.aggData?.[params.column.getColId()];
+    const existingAggData = params.rowNode?.aggData?.[params.column.getColId()];
     if (existingAggData && existingAggData.value === result) {
         // the underlying values haven't changed, return the old object to avoid triggering change detection
         return existingAggData;
