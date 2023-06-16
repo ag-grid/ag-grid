@@ -15,8 +15,6 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
     const [showNotes, setShowNotes] = useState(true);
     const [showMore, setShowMore] = useState(false);
 
-    console.log(fixVersion, versions);
-
     const collapsibleHandler = () => {
         setShowNotes((prevShowNotes) => !prevShowNotes);
 
