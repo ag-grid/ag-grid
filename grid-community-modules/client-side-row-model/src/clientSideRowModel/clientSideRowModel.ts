@@ -485,7 +485,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);
             case ClientSideRowModelSteps.PIVOT:
+                console.time('pivot');
                 this.doPivot(changedPath);
+                console.timeEnd('pivot');
             case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
                 this.doAggregate(changedPath);
             case ClientSideRowModelSteps.FILTER_AGGREGATES:
@@ -493,7 +495,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             case ClientSideRowModelSteps.SORT:
                 this.doSort(params.rowNodeTransactions, changedPath);
             case ClientSideRowModelSteps.TRANSPOSE:
+                console.time('transpose');
                 this.doTranspose();
+                console.timeEnd('transpose');
             case ClientSideRowModelSteps.MAP:
                 this.doRowsToDisplay(this.columnModel.isTransposeMode() ? this.transposeRootNode : this.rootNode);
         }
@@ -1094,19 +1098,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             const isGroupLevel = this.columnModel.isPivotActive() ? rowNode.group && !rowNode.leafGroup : rowNode.group;
             if (isGroupLevel) {
                 // create group def
-                const childCols: (ColDef | ColGroupDef)[] = [];
-                if (this.columnModel.getValueColumns().length) {
-                    childCols.push({
-                        columnGroupShow: 'closed',
-                        colId: rowNode.id,
-                        valueGetter: (params) => {
-                            const underlyingCol = (params.node as any).__underlyingCol;
-                            if (underlyingCol)
-                                return this.beans.valueService.getValue(underlyingCol, rowNode);
-                            return null;
-                        }
-                    });
-                }
+                const childCols: (ColDef | ColGroupDef)[] = [{
+                    colId: rowNode.id,
+                    valueGetter: (params) => {
+                        const underlyingCol = (params.node as any).__underlyingCol;
+                        if (underlyingCol)
+                            return this.beans.valueService.getValue(underlyingCol, rowNode);
+                        return null;
+                    }
+                }];
                 for (let i = 0; i < rowNode.childrenAfterSort!.length; i++) {
                     const row = rowNode.childrenAfterSort![i];
                     childCols.push(recursivelyBuildDef(row, i));
