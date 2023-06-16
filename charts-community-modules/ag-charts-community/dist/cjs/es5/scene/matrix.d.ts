@@ -14,21 +14,10 @@ import { BBox } from './bbox';
  */
 export declare class Matrix {
     private readonly elements;
+    get e(): number[];
     constructor(elements?: number[]);
-    setElements(elements: number[]): Matrix;
+    setElements(elements: number[]): this;
     private get identity();
-    set a(value: number);
-    get a(): number;
-    set b(value: number);
-    get b(): number;
-    set c(value: number);
-    get c(): number;
-    set d(value: number);
-    get d(): number;
-    set e(value: number);
-    get e(): number;
-    set f(value: number);
-    get f(): number;
     /**
      * Performs the AxB matrix multiplication and saves the result
      * to `C`, if given, or to `A` otherwise.
@@ -39,14 +28,14 @@ export declare class Matrix {
      * Returns the current matrix.
      * @param other
      */
-    multiplySelf(other: Matrix): Matrix;
+    multiplySelf(other: Matrix): this;
     /**
      * The `other` matrix gets post-multiplied to the current matrix.
      * Returns a new matrix.
      * @param other
      */
     multiply(other: Matrix): Matrix;
-    preMultiplySelf(other: Matrix): Matrix;
+    preMultiplySelf(other: Matrix): this;
     /**
      * Returns the inverse of this matrix as a new matrix.
      */
@@ -54,8 +43,8 @@ export declare class Matrix {
     /**
      * Save the inverse of this matrix to the given matrix.
      */
-    inverseTo(other: Matrix): Matrix;
-    invertSelf(): Matrix;
+    inverseTo(other: Matrix): this;
+    invertSelf(): this;
     transformPoint(x: number, y: number): {
         x: number;
         y: number;
@@ -72,3 +61,4 @@ export declare class Matrix {
     }): Matrix;
     static fromContext(ctx: CanvasTransform): Matrix;
 }
+//# sourceMappingURL=matrix.d.ts.map

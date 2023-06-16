@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -19,6 +19,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -120,6 +122,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -327,6 +331,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -527,6 +533,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -563,7 +571,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
         }
         this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
-        this.addManagedListener(this.eventService, core.Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
+        this.addManagedListener(this.eventService, core.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.key === 'filters') {
@@ -909,6 +917,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1026,7 +1036,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var FiltersToolPanelModule = {
     version: VERSION,

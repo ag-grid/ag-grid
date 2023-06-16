@@ -100,7 +100,7 @@ export class GridSerializer extends BeanStub {
 
         if (shouldRowBeSkipped) { return; }
 
-        const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow();
+        const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
         columnsToExport.forEach((column: Column, index: number) => {
             rowAccumulator.onColumn(column, index, node);
         });
@@ -320,7 +320,7 @@ export class GridSerializer extends BeanStub {
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
 
         return this.columnModel.getAllDisplayedColumns();

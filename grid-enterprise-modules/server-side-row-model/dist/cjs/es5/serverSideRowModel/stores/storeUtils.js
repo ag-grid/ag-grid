@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -124,8 +126,8 @@ var StoreUtils = /** @class */ (function (_super) {
     StoreUtils.prototype.isServerSideSortAllLevels = function () {
         return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     };
-    StoreUtils.prototype.isServerSideFilterAllLevels = function () {
-        return this.gridOptionsService.is('serverSideFilterAllLevels') && this.assertRowModelIsServerSide('serverSideFilterAllLevels');
+    StoreUtils.prototype.isServerSideOnlyRefreshFilteredGroups = function () {
+        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     };
     StoreUtils.prototype.isServerSideSortOnServer = function () {
         return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');

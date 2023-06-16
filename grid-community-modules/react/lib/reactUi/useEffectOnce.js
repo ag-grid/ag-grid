@@ -1,9 +1,9 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useLayoutEffectOnce = exports.useEffectOnce = void 0;
 const react_1 = require("react");
-exports.useEffectOnce = (effect) => {
+const useEffectOnce = (effect) => {
     const effectFn = react_1.useRef(effect);
     const destroyFn = react_1.useRef();
     const effectCalled = react_1.useRef(false);
@@ -33,7 +33,8 @@ exports.useEffectOnce = (effect) => {
         };
     }, []);
 };
-exports.useLayoutEffectOnce = (effect) => {
+exports.useEffectOnce = useEffectOnce;
+const useLayoutEffectOnce = (effect) => {
     const effectFn = react_1.useRef(effect);
     const destroyFn = react_1.useRef();
     const effectCalled = react_1.useRef(false);
@@ -63,5 +64,6 @@ exports.useLayoutEffectOnce = (effect) => {
         };
     }, []);
 };
+exports.useLayoutEffectOnce = useLayoutEffectOnce;
 
 //# sourceMappingURL=useEffectOnce.js.map

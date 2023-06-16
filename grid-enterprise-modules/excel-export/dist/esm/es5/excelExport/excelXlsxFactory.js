@@ -14,9 +14,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { ExcelFactoryMode, _ } from '@ag-grid-community/core';
 import coreFactory from './files/ooxml/core';
@@ -35,10 +36,10 @@ import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from
 var ExcelXlsxFactory = /** @class */ (function () {
     function ExcelXlsxFactory() {
     }
-    ExcelXlsxFactory.createExcel = function (styles, worksheet, margins, pageSetup, headerFooterConfig) {
+    ExcelXlsxFactory.createExcel = function (styles, worksheet, config) {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
-        return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
+        return this.createWorksheet(worksheet, config);
     };
     ExcelXlsxFactory.buildImageMap = function (image, rowIndex, col, columnsToExport, rowHeight) {
         var currentSheetIndex = this.sheetNames.length;
@@ -158,7 +159,7 @@ var ExcelXlsxFactory = /** @class */ (function () {
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
             Target: "worksheets/sheet" + (i + 1) + ".xml"
         }); });
-        var rs = relationshipsFactory.getTemplate(__spread(worksheets, [
+        var rs = relationshipsFactory.getTemplate(__spreadArray(__spreadArray([], __read(worksheets)), [
             {
                 Id: "rId" + (sheetLen + 1),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
@@ -199,13 +200,11 @@ var ExcelXlsxFactory = /** @class */ (function () {
             }]);
         return createXmlPart(rs);
     };
-    ExcelXlsxFactory.createWorksheet = function (worksheet, margins, pageSetup, headerFooterConfig) {
+    ExcelXlsxFactory.createWorksheet = function (worksheet, config) {
         return createXmlPart(worksheetFactory.getTemplate({
             worksheet: worksheet,
             currentSheet: this.sheetNames.length - 1,
-            margins: margins,
-            pageSetup: pageSetup,
-            headerFooterConfig: headerFooterConfig
+            config: config
         }));
     };
     ExcelXlsxFactory.sharedStrings = new Map();

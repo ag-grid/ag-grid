@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -20,13 +20,15 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { exists, values } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { getFunctionName } from "../utils/function";
+import { ModuleRegistry } from "../modules/moduleRegistry";
 var Context = /** @class */ (function () {
     function Context(params, logger) {
         this.beanWrappers = {};
@@ -75,7 +77,7 @@ var Context = /** @class */ (function () {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spread([null], constructorParams)));
+            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spreadArray([null], __read(constructorParams))));
             beanEntry.beanInstance = newInstance;
         });
         var createdBeanNames = Object.keys(this.beanWrappers).join(', ');
@@ -165,6 +167,10 @@ var Context = /** @class */ (function () {
     };
     Context.prototype.lookupBeanInstance = function (wiringBean, beanName, optional) {
         if (optional === void 0) { optional = false; }
+        if (this.destroyed) {
+            this.logger.log("AG Grid: bean reference " + beanName + " is used after the grid is destroyed!");
+            return null;
+        }
         if (beanName === "context") {
             return this;
         }
@@ -212,6 +218,7 @@ var Context = /** @class */ (function () {
         var beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
         this.contextParams.providedBeanInstances = null;
+        ModuleRegistry.unRegisterGridModules(this.contextParams.gridId);
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
     };
@@ -235,6 +242,12 @@ var Context = /** @class */ (function () {
             }
         });
         return [];
+    };
+    Context.prototype.isDestroyed = function () {
+        return this.destroyed;
+    };
+    Context.prototype.getGridId = function () {
+        return this.contextParams.gridId;
     };
     return Context;
 }());

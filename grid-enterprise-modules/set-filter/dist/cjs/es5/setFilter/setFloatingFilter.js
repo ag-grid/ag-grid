@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,7 +29,7 @@ var setValueModel_1 = require("./setValueModel");
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
-        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input ag-set-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
         _this.availableValuesListenerAdded = false;
         _this.filterModelFormatter = new setFilterModelFormatter_1.SetFilterModelFormatter();
         return _this;

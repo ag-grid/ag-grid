@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/
 
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { ICellEditorParams } from "@ag-grid-community/core";
+import { event } from "jquery";
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -15,7 +16,7 @@ const KEY_TAB = 'Tab';
 })
 export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
-    public value!: number;
+    public value!: string;
     public highlightAllOnFocus = true;
     private cancelBeforeStart = false;
 
@@ -27,19 +28,21 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         this.setInitialState(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = !!(params.charPress && ('1234567890'.indexOf(params.charPress) < 0));
+        const eventKey = params.eventKey;
+        this.cancelBeforeStart = !!(eventKey && eventKey.length === 1 && ('1234567890'.indexOf(eventKey) < 0));
     }
 
     setInitialState(params: ICellEditorParams) {
         let startValue;
         let highlightAllOnFocus = true;
+        const eventKey = params.eventKey;
 
-        if (params.eventKey === KEY_BACKSPACE) {
+        if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
-        } else if (params.charPress) {
+        } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = params.charPress;
+            startValue = eventKey;
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
@@ -53,8 +56,9 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         this.highlightAllOnFocus = highlightAllOnFocus;
     }
 
-    getValue(): any {
-        return this.value;
+    getValue(): number | null {
+        const value = this.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     isCancelBeforeStart(): boolean {
@@ -64,7 +68,8 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     // will reject the number if it greater than 1,000,000
     // not very practical, but demonstrates the method.
     isCancelAfterEnd(): boolean {
-        return this.value > 1000000;
+        const value = this.getValue();
+        return value != null && value > 1000000;
     }
 
     onKeyDown(event: any): void {
@@ -73,7 +78,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
             return;
         }
 
-        if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
+        if (!this.finishedEditingPressed(event) && !this.isNumericKey(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     }
@@ -105,7 +110,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         return !!/\d/.test(charStr);
     }
 
-    private isKeyPressedNumeric(event: any): boolean {
+    private isNumericKey(event: any): boolean {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

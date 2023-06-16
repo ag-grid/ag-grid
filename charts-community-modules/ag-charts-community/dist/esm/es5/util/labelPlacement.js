@@ -1,7 +1,19 @@
 function circleRectOverlap(c, x, y, w, h) {
     // Find closest horizontal and vertical edges.
-    var edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
-    var edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
+    var edgeX = c.x;
+    if (c.x < x) {
+        edgeX = x;
+    }
+    else if (c.x > x + w) {
+        edgeX = x + w;
+    }
+    var edgeY = c.y;
+    if (c.y < y) {
+        edgeY = y;
+    }
+    else if (c.y > y + h) {
+        edgeY = y + h;
+    }
     // Find distance to closest edges.
     var dx = c.x - edgeX;
     var dy = c.y - edgeY;
@@ -31,7 +43,7 @@ export function placeLabels(data, bounds, padding) {
     for (var j = 0; j < data.length; j++) {
         var labels = (result[j] = []);
         var datum = data[j];
-        if (!(datum && datum.length && datum[0].label)) {
+        if (!((datum === null || datum === void 0 ? void 0 : datum.length) && datum[0].label)) {
             continue;
         }
         var _loop_1 = function (i, ln) {

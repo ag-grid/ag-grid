@@ -384,7 +384,7 @@ export class AreaSparkline extends Sparkline {
         xCrosshairLine.y2 = yScale.range[1];
         xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
         xCrosshairLine.stroke = xLine.stroke;
-        xCrosshairLine.strokeWidth = xLine.strokeWidth || 1;
+        xCrosshairLine.strokeWidth = xLine.strokeWidth ?? 1;
 
         xCrosshairLine.lineCap = xLine.lineCap === 'round' || xLine.lineCap === 'square' ? xLine.lineCap : undefined;
 
@@ -413,7 +413,7 @@ export class AreaSparkline extends Sparkline {
         yCrosshairLine.x2 = xScale.range[1];
         yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
         yCrosshairLine.stroke = yLine.stroke;
-        yCrosshairLine.strokeWidth = yLine.strokeWidth || 1;
+        yCrosshairLine.strokeWidth = yLine.strokeWidth ?? 1;
 
         yCrosshairLine.lineCap = yLine.lineCap === 'round' || yLine.lineCap === 'square' ? yLine.lineCap : undefined;
 

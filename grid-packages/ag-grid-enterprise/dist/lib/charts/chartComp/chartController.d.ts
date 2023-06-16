@@ -1,12 +1,13 @@
-import { BeanStub, ChartModel, ChartType, SeriesChartType } from "ag-grid-community";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
+import { BeanStub, ChartModel, ChartType, SeriesChartType, AgChartThemeOverrides, UpdateChartParams } from "ag-grid-community";
+import { ChartDataModel, ColState } from "./model/chartDataModel";
+import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { AgChartThemePalette } from "ag-charts-community";
 import { ChartSeriesType } from "./utils/seriesTypeMapper";
 export declare const DEFAULT_THEMES: string[];
 export declare class ChartController extends BeanStub {
     private readonly model;
     static EVENT_CHART_UPDATED: string;
+    static EVENT_CHART_API_UPDATE: string;
     static EVENT_CHART_MODEL_UPDATE: string;
     static EVENT_CHART_TYPE_CHANGED: string;
     static EVENT_CHART_SERIES_CHART_TYPE_CHANGED: string;
@@ -14,11 +15,12 @@ export declare class ChartController extends BeanStub {
     private chartProxy;
     constructor(model: ChartDataModel);
     private init;
+    update(params: UpdateChartParams): boolean;
     updateForGridChange(): void;
     updateForDataChange(): void;
     updateForRangeChange(): void;
     updateForPanelChange(updatedCol: ColState): void;
-    getChartUpdateParams(): UpdateChartParams;
+    getChartUpdateParams(updatedOverrides?: AgChartThemeOverrides): UpdateParams;
     getChartModel(): ChartModel;
     getChartId(): string;
     getChartData(): any[];
@@ -29,6 +31,7 @@ export declare class ChartController extends BeanStub {
     isPivotChart(): boolean;
     isPivotMode(): boolean;
     isGrouping(): boolean;
+    private isCrossFilterChart;
     getThemes(): string[];
     getPalettes(): AgChartThemePalette[];
     getValueColState(): ColState[];
@@ -36,14 +39,12 @@ export declare class ChartController extends BeanStub {
         colId: string;
         displayName: string | null;
     }[];
-    getDimensionColState(): ColState[];
     getSelectedDimension(): ColState;
     private displayNameMapper;
     getColStateForMenu(): {
         dimensionCols: ColState[];
         valueCols: ColState[];
     };
-    isDefaultCategorySelected(): boolean;
     setChartRange(silent?: boolean): void;
     detachChartRange(): void;
     setChartProxy(chartProxy: ChartProxy): void;
@@ -57,9 +58,12 @@ export declare class ChartController extends BeanStub {
     getActiveSeriesChartTypes(): SeriesChartType[];
     getChartSeriesTypes(): ChartSeriesType[];
     private getCellRanges;
+    private createCellRange;
+    private validUpdateType;
     private getCellRangeParams;
     private raiseChartModelUpdateEvent;
     raiseChartUpdatedEvent(): void;
+    raiseChartApiUpdateEvent(): void;
     private raiseChartOptionsChangedEvent;
     private raiseChartRangeSelectionChangedEvent;
     protected destroy(): void;

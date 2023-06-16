@@ -1,5 +1,5 @@
-[[only-vue]]
-|```ts
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
 |loadingCellRendererSelector: (params) => {
 |    const useCustomRenderer = ...some condition/check...
 |    if (useCustomRenderer) {
@@ -17,4 +17,5 @@
 |        }
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

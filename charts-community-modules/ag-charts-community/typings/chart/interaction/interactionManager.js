@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -72,6 +74,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InteractionManager = void 0;
+var logger_1 = require("../../util/logger");
 var value_1 = require("../../util/value");
 var baseManager_1 = require("./baseManager");
 var WINDOW_EVENT_HANDLERS = ['pagehide', 'mousemove', 'mouseup', 'wheel'];
@@ -101,6 +104,8 @@ var InteractionManager = /** @class */ (function (_super) {
         _this.eventHandler = function (event) { return _this.processEvent(event); };
         _this.mouseDown = false;
         _this.touchDown = false;
+        _this.enabled = true;
+        _this.pausers = [];
         _this.rootElement = doc.body;
         _this.element = element;
         try {
@@ -124,7 +129,12 @@ var InteractionManager = /** @class */ (function (_super) {
         try {
             for (var WINDOW_EVENT_HANDLERS_1 = __values(WINDOW_EVENT_HANDLERS), WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next(); !WINDOW_EVENT_HANDLERS_1_1.done; WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next()) {
                 var type = WINDOW_EVENT_HANDLERS_1_1.value;
-                window.addEventListener(type, _this.eventHandler);
+                if (type === 'wheel') {
+                    window.addEventListener(type, _this.eventHandler, { passive: false });
+                }
+                else {
+                    window.addEventListener(type, _this.eventHandler);
+                }
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -171,11 +181,20 @@ var InteractionManager = /** @class */ (function (_super) {
             finally { if (e_4) throw e_4.error; }
         }
     };
+    InteractionManager.prototype.resume = function (callerId) {
+        this.pausers = this.pausers.filter(function (id) { return id !== callerId; });
+        this.enabled = this.pausers.length <= 0;
+        return this.enabled;
+    };
+    InteractionManager.prototype.pause = function (callerId) {
+        this.enabled = false;
+        this.pausers.push(callerId);
+    };
     InteractionManager.prototype.processEvent = function (event) {
         var types = this.decideInteractionEventTypes(event);
-        if (types.length > 0) {
+        if (types.length > 0 && this.enabled) {
             // Async dispatch to avoid blocking the event-processing thread.
-            this.dispatchEvent(event, types);
+            this.dispatchEvent(event, types).catch(function (e) { return logger_1.Logger.errorOnce(e); });
         }
     };
     InteractionManager.prototype.dispatchEvent = function (event, types) {

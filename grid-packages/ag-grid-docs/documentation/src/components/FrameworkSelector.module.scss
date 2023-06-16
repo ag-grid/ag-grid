@@ -2,7 +2,7 @@
 
 .frameworkSelector {
     --height: 38px; // Match button height
-    --icon-size: #{$size-3} !important; // !important for .ag-styles specificity
+    --icon-size: #{$size-3};
     --x-padding: 10px;
 
     display: flex;
@@ -24,10 +24,9 @@
         content: '';
         position: absolute;
         height: 2px;
-        bottom: -1px;
+        bottom: -2px;
         left: 5px;
         right: 5px;
-        border-radius: 1px;
         background-color: var(--input-primary-color);
         opacity: 0;
         transition: opacity $default-transition-timing;
@@ -127,8 +126,8 @@
 
     @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
         --height: #{$size-7};
-        --icon-size: #{$size-5} !important; // !important for .ag-styles specificity
-        --font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
+        --icon-size: #{$size-5};
+        --font-size: var(--font-size-extra-large);
         --x-padding: 20px;
     }
 }

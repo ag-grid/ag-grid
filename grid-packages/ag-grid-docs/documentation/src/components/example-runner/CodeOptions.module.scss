@@ -1,0 +1,32 @@
+@use '../../design-system/' as *;
+
+.outer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: $size-1;
+    border-top: 2px solid var(--bright-blue-gray);
+
+    label {
+        display: block;
+    }
+}
+
+.simpleSelect {
+    margin-left: 0;
+    padding: 0 $size-3 0 0;
+    border: none;
+}
+
+.importInfoIcon svg {
+    --icon-size: 1.25em;
+    --text-color: var(--secondary-text-color);
+
+    position: relative;
+    bottom: 0.125em;
+
+    &:hover {
+        --text-color: var(--link-color);
+    }
+}

@@ -50,6 +50,8 @@ export declare class Pagination {
     constructor(chartUpdateCallback: (type: ChartUpdateType) => void, pageUpdateCallback: (newPage: number) => void, interactionManager: InteractionManager, cursorManager: CursorManager);
     totalPages: number;
     currentPage: number;
+    translationX: number;
+    translationY: number;
     private nextButtonDisabled;
     private previousButtonDisabled;
     private _visible;
@@ -62,10 +64,6 @@ export declare class Pagination {
     private _orientation;
     set orientation(value: AgChartOrientation);
     get orientation(): AgChartOrientation;
-    set translationX(value: number);
-    get translationX(): number;
-    set translationY(value: number);
-    get translationY(): number;
     private _nextButton;
     set nextButton(value: Marker);
     get nextButton(): Marker;
@@ -92,3 +90,4 @@ export declare class Pagination {
     computeBBox(): import("../../integrated-charts-scene").BBox;
 }
 export {};
+//# sourceMappingURL=pagination.d.ts.map

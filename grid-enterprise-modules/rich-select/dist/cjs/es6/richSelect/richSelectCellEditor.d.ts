@@ -16,7 +16,7 @@ export declare class RichSelectCellEditor extends PopupComponent implements ICel
     private onKeyDown;
     private confirmSelection;
     private onEnterKeyDown;
-    private onNavigationKeyPressed;
+    private onNavigationKeyDown;
     private searchText;
     private runSearch;
     private clearSearchString;

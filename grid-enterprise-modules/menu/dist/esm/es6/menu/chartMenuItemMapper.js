@@ -10,7 +10,7 @@ let ChartMenuItemMapper = ChartMenuItemMapper_1 = class ChartMenuItemMapper exte
     getChartItems(key) {
         var _a, _b;
         if (!this.chartService) {
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`);
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`, this.context.getGridId());
             return undefined;
         }
         const builder = key === 'pivotChart'

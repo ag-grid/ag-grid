@@ -139,11 +139,9 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
 
-        if (this.gridOptionsService.is('groupRowsSticky')) {
+        if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
-            if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
-                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else {
+            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
                     this.destroyRowCtrls.bind(this)
@@ -661,9 +659,8 @@ export class RowRenderer extends BeanStub {
                     cellCtrl.refreshCell(refreshCellParams);
                 }
             });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+
+        this.refreshFullWidthRows(params.rowNodes);
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
@@ -868,7 +865,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
@@ -972,8 +969,8 @@ export class RowRenderer extends BeanStub {
         this.updateAllRowCtrls();
     }
 
-    private dispatchDisplayedRowsChanged(): void {
-        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
+        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
 
@@ -1025,22 +1022,36 @@ export class RowRenderer extends BeanStub {
     }
 
     public refreshFullWidthRow(rowNode: RowNode) {
-        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    }
+
+    private refreshFullWidthRows(rowNodes?: IRowNode[]) {
+        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+
+        let redraw = false;
+        const indicesToForce: number[] = [];
+        fullWidthCtrls.forEach(fullWidthCtrl => {
+            const refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+
+            const node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                this.stickyRowFeature.refreshStickyNode(node);
+            } else {
+                indicesToForce.push(node.rowIndex!);
+            }
+            redraw = true;
+        });
+
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
 
-        const refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        } else {
-            this.removeRowCtrls([rowNode.rowIndex!]);
-        }
-        this.redrawAfterScroll();
     }
 
     private createOrUpdateRowCtrl(

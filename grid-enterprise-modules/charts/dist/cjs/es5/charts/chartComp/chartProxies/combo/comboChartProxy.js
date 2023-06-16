@@ -7,11 +7,24 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComboChartProxy = void 0;
 var cartesianChartProxy_1 = require("../cartesian/cartesianChartProxy");
@@ -37,12 +50,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(function (key) {
-                        var field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -56,9 +63,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });
                 var lastSecondaryAxis = i === secondaryYKeys.length - 1;
@@ -79,14 +83,9 @@ var ComboChartProxy = /** @class */ (function (_super) {
             var seriesChartType = seriesChartTypes.find(function (s) { return s.colId === field.colId; });
             if (seriesChartType) {
                 var chartType = seriesChartType.chartType;
-                return {
-                    type: seriesTypeMapper_1.getSeriesType(chartType),
-                    xKey: category.id,
-                    yKey: field.colId,
-                    yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
-                };
+                var grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
+                var groupedOpts = grouped ? { grouped: true } : {};
+                return __assign({ type: seriesTypeMapper_1.getSeriesType(chartType), xKey: category.id, yKey: field.colId, yName: field.displayName, stacked: ['stackedArea', 'stackedColumn'].includes(chartType) }, groupedOpts);
             }
         });
     };

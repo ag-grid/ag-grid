@@ -17,6 +17,7 @@ export class ColDefUtil {
         initialSort: undefined,
         field: undefined,
         type: undefined,
+        cellDataType: undefined,
         tooltipComponent: undefined,
         tooltipField: undefined,
         headerTooltip: undefined,
@@ -31,26 +32,19 @@ export class ColDefUtil {
         chartDataType: undefined,
         cellEditorPopupPosition: undefined,
         headerGroupComponent: undefined,
-        headerGroupComponentFramework: undefined,
         headerGroupComponentParams: undefined,
         cellStyle: undefined,
         cellRenderer: undefined,
         cellRendererParams: undefined,
-        cellRendererFramework: undefined,
         cellEditor: undefined,
-        cellEditorFramework: undefined,
         cellEditorParams: undefined,
-        filterFramework: undefined,
         filterParams: undefined,
         pivotValueColumn: undefined,
         headerComponent: undefined,
-        headerComponentFramework: undefined,
         headerComponentParams: undefined,
         floatingFilterComponent: undefined,
         floatingFilterComponentParams: undefined,
-        floatingFilterComponentFramework: undefined,
         tooltipComponentParams: undefined,
-        tooltipComponentFramework: undefined,
         refData: undefined,
         columnsMenuParams: undefined,
         children: undefined,
@@ -77,7 +71,7 @@ export class ColDefUtil {
         suppressFiltersToolPanel: undefined,
         openByDefault: undefined,
         marryChildren: undefined,
-        stickyLabel: undefined,
+        suppressStickyLabel: undefined,
         hide: undefined,
         initialHide: undefined,
         rowGroup: undefined,
@@ -139,20 +133,10 @@ export class ColDefUtil {
         tooltipValueGetter: undefined,
         cellRendererSelector: undefined,
         cellEditorSelector: undefined,
-        spanHeaderHeight: undefined
+        suppressSpanHeaderHeight: undefined,
+        useValueFormatterForExport: undefined,
+        useValueParserForImport: undefined,
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];
-
-    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to colDefs, gridOptions etc
-    public static FRAMEWORK_PROPERTIES = [
-        '__ob__',
-        '__v_skip',
-        '__metadata__',
-        'mappedColumnProperties',
-        'hasChildColumns',
-        'toColDef',
-        'createColDefFromGridColumn'
-    ];
 }

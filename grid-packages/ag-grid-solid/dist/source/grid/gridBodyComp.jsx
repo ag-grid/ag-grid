@@ -66,7 +66,7 @@ const GridBodyComp = () => {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: setBodyViewportWidth,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport, listener);
@@ -76,7 +76,7 @@ const GridBodyComp = () => {
         const ctrl = context.createBean(new GridBodyCtrl());
         onCleanup(() => context.destroyBean(ctrl));
         // fixme - should not be in a timeout,
-        // was becusae we need GridHeaderComp to be created first
+        // was because we need GridHeaderComp to be created first
         setTimeout(() => ctrl.setComp(compProxy, eRoot, eBodyViewport, eTop, eBottom, eStickyTop), 0);
     });
     const getRootClasses = createMemo(() => classesList('ag-root', 'ag-unselectable', getMovingCss(), getLayoutClass()));

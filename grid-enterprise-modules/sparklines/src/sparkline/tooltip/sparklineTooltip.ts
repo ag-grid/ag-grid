@@ -15,14 +15,14 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
         return input;
     }
 
-    defaults = defaults || {};
+    defaults = defaults ?? {};
 
     const {
-        content = defaults.content || '',
-        title = defaults.title || undefined,
+        content = defaults.content ?? '',
+        title = defaults.title ?? undefined,
         color = defaults.color,
         backgroundColor = defaults.backgroundColor,
-        opacity = defaults.opacity || 1,
+        opacity = defaults.opacity ?? 1,
     } = input;
 
     let titleHtml;

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -95,7 +97,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
                     if (!(column === null || column === void 0 ? void 0 : column.isPrimary()) && !(column === null || column === void 0 ? void 0 : column.getColDef().pivotValueColumn)) {
                         return null;
                     }
@@ -121,12 +123,14 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'rowGroup':
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    disabled: (column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
                     action: function () { return _this.columnModel.addRowGroupColumn(column, "contextMenu"); },
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
                     action: function () { return _this.columnModel.removeRowGroupColumn(column, "contextMenu"); },
                     icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
                 };
@@ -137,16 +141,16 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 };
             case 'expandAll':
                 return {
-                    name: localeTextFunc('expandAll', 'Expand All'),
+                    name: localeTextFunc('expandAll', 'Expand All Row Groups'),
                     action: function () { return _this.gridApi.expandAll(); }
                 };
             case 'contractAll':
                 return {
-                    name: localeTextFunc('collapseAll', 'Collapse All'),
+                    name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -158,7 +162,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -170,7 +174,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -182,7 +186,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'cut':
-                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
                     var focusedCell = this.focusService.getFocusedCell();
                     var rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     var isEditable = rowNode ? focusedCell === null || focusedCell === void 0 ? void 0 : focusedCell.column.isCellEditable(rowNode) : false;
@@ -191,14 +195,14 @@ var MenuItemMapper = /** @class */ (function (_super) {
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
                         disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
-                        action: function () { return _this.clipboardService.cutToClipboard(); }
+                        action: function () { return _this.clipboardService.cutToClipboard(undefined, 'contextMenu'); }
                     };
                 }
                 else {
                     return null;
                 }
             case 'paste':
-                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
@@ -212,8 +216,8 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 }
             case 'export':
                 var exportSubMenuItems = [];
-                var csvModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
-                var excelModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
+                var csvModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
+                var excelModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
                 if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }

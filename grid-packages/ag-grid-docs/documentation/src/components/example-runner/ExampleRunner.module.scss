@@ -1,106 +1,39 @@
-.example-runner {
-    border: 1px solid darken($light, 10%);
-    border-radius: 5px;
-    margin: 20px 0;
+@use "../../design-system/" as *;
+
+.tabsContainer {
+    container-type: inline-size;
+    margin-bottom: $size-2;
+}
+
+.externalLinks {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: $size-2;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-right: $size-2;
 
-    &__header {
-        background-image: linear-gradient(to bottom right, $primary, darken($primary, 10%));
-        background-color: blue;
-        padding: 10px;
-        border-radius: 5px 5px 0 0;
-        min-height: 3.2rem;
-        height: max-content;
+    li {
+        margin-bottom: 0.125em !important;
+    }
+}
 
-        display: grid;
-        grid-template: "a b c d" max-content/ minmax(auto, max-content) 1fr minmax(auto, max-content) max-content;
+.importInfoIcon {
+    margin-right: -$size-half;
 
+    &:hover svg {
+        opacity: 1;
     }
 
-    &__title {
-        display: flex;
-        flex: 1 1 0px;
-        align-items: center;
-        font-weight: bold;
-        color: $light !important;
-        line-height: 2rem;
-        font-size: 1rem;
+    svg {
+        --text-color: var(--secondary-text-color);
 
-        > svg {
-            height: 1rem;
-            width: 1rem;
-            margin-right: 0.3rem;
-        }
+        opacity: 0.5;
+        transition: opacity $default-transition-timing;
     }
+}
 
-    &__options {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        flex: 1 1 0;
-        justify-content: flex-end;
-        max-width: max-content;
-    }
-
-    &__import-type,
-    &__react-style {
-        &__select {
-            composes: form-control from global;
-
-            font-size: 0.9rem;
-            padding: 5px;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-    }
-
-    &__body {
-        overflow: hidden;
-        flex: 1 1 auto;
-        display: flex;
-    }
-
-    &__menu {
-        display: flex;
-        flex-direction: column;
-        background-color: $ag-light-grey;
-        padding: 20px 0;
-    }
-
-    &__menu-item {
-        height: 50px;
-        width: 50px;
-        text-align: center;
-        padding-top: 12px;
-        cursor: pointer;
-        color: $dark;
-
-        &:a {
-            color: $dark;
-
-            &:hover {
-                color: $dark;
-            }
-        }
-
-        &:focus,
-        * {
-            outline: none;
-        }
-
-        &--selected {
-            color: white;
-            background-color: $dark;
-            &:focus {
-                outline: 1px solid $light;
-                outline-offset: -2px;
-            }
-        }
-    }
-
-    &__content {
-        flex: 1 1 auto;
-        overflow: hidden;
-    }
+:global(.tabs-content).content {
+    overflow: auto;
+    padding: 0;
 }

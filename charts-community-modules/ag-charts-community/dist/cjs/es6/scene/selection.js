@@ -26,7 +26,7 @@ class Selection {
             data.slice(old.length).forEach((datum) => {
                 const node = factory(datum);
                 node.datum = datum;
-                init && init(node);
+                init === null || init === void 0 ? void 0 : init(node);
                 parent.appendChild(node);
                 this._nodes.push(node);
             });
@@ -46,7 +46,7 @@ class Selection {
         this.update([]);
         return this;
     }
-    select(predicate) {
+    static selectAll(parent, predicate) {
         const results = [];
         const traverse = (node) => {
             if (predicate(node)) {
@@ -54,8 +54,17 @@ class Selection {
             }
             node.children.forEach(traverse);
         };
-        traverse(this._parent);
+        traverse(parent);
         return results;
+    }
+    static selectByClass(node, Class) {
+        return Selection.selectAll(node, (node) => node instanceof Class);
+    }
+    static selectByTag(node, tag) {
+        return Selection.selectAll(node, (node) => node.tag === tag);
+    }
+    select(predicate) {
+        return Selection.selectAll(this._parent, predicate);
     }
     selectByClass(Class) {
         return this.select((node) => node instanceof Class);

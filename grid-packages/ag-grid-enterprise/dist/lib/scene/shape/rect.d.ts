@@ -24,10 +24,11 @@ export declare class Rect extends Path {
      * and crisp mode is on, the rectangle will still fit into the pixel,
      * but will be less opaque to make an effect of holding less space.
      */
-    private microPixelEffectOpacity;
+    protected microPixelEffectOpacity: number;
     updatePath(): void;
     computeBBox(): BBox;
     isPointInPath(x: number, y: number): boolean;
     protected applyFillAlpha(ctx: CanvasRenderingContext2D): void;
     protected renderStroke(ctx: CanvasRenderingContext2D): void;
 }
+//# sourceMappingURL=rect.d.ts.map

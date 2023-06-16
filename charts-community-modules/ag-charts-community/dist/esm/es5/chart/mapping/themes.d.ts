@@ -6,3 +6,4 @@ declare type ThemeMap = {
 export declare const themes: ThemeMap;
 export declare function getChartTheme(value?: string | ChartTheme | AgChartTheme): ChartTheme;
 export {};
+//# sourceMappingURL=themes.d.ts.map

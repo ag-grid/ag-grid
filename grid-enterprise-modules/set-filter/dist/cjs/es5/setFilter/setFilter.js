@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -272,7 +274,8 @@ var SetFilter = /** @class */ (function (_super) {
             }
         }
         if (params.excelMode && params.defaultToNothingSelected) {
-            core_1._.doOnce(function () { return console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" does not work with "excelMode".'); }, 'setFilterExcelModeDefaultToNothingSelect');
+            params.defaultToNothingSelected = false;
+            core_1._.doOnce(function () { return console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'); }, 'setFilterExcelModeDefaultToNothingSelect');
         }
     };
     SetFilter.prototype.addEventListenersForDataChanges = function () {
@@ -477,7 +480,7 @@ var SetFilter = /** @class */ (function (_super) {
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', function (e) { return _this.onMiniFilterKeyDown(e); });
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
@@ -768,7 +771,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.setMiniFilter(null);
         _super.prototype.handleCancelEnd.call(this, e);
     };
-    SetFilter.prototype.onMiniFilterKeyPress = function (e) {
+    SetFilter.prototype.onMiniFilterKeyDown = function (e) {
         var _a = this.setFilterParams || {}, excelMode = _a.excelMode, readOnly = _a.readOnly;
         if (e.key === core_1.KeyCode.ENTER && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();

@@ -6,3 +6,4 @@ export declare const utcWednesday: CountableTimeInterval;
 export declare const utcThursday: CountableTimeInterval;
 export declare const utcFriday: CountableTimeInterval;
 export declare const utcSaturday: CountableTimeInterval;
+//# sourceMappingURL=utcWeek.d.ts.map

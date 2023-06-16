@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -48,17 +50,14 @@ var ImmutableService = /** @class */ (function (_super) {
         }
     };
     ImmutableService.prototype.isActive = function () {
-        // we used to have a property immutableData for this. however this was deprecated
-        // in favour of having Immutable Data on by default when getRowId is provided
         var getRowIdProvided = this.gridOptionsService.exists('getRowId');
-        var immutableData = this.gridOptionsService.is('immutableData');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
         var resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
         if (resetRowDataOnUpdate) {
             return false;
         }
-        return getRowIdProvided || immutableData;
+        return getRowIdProvided;
     };
     ImmutableService.prototype.setRowData = function (rowData) {
         var transactionAndMap = this.createTransactionForRowData(rowData);
@@ -74,7 +73,7 @@ var ImmutableService = /** @class */ (function (_super) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;

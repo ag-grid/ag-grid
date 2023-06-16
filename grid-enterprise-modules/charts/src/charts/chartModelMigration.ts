@@ -3,7 +3,7 @@ import { AgChartThemeName } from 'ag-charts-community';
 // @ts-ignore
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
-import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
+import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
 import { VERSION } from '../version';
 
@@ -26,6 +26,9 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
     model = migrateIfBefore('29.0.0', model, migrateV29);
+    model = migrateIfBefore('29.1.0', model, migrateV29_1);
+    model = migrateIfBefore('29.2.0', model, migrateV29_2);
+    model = migrateIfBefore('30.0.0', model, migrateV30);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -180,6 +183,8 @@ function migrateV28(model: ChartModel) {
 function migrateV28_2(model: ChartModel) {
     model = jsonRename('chartOptions.pie.series.callout', 'calloutLine', model);
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?
@@ -189,11 +194,63 @@ function migrateV28_2(model: ChartModel) {
 
 function migrateV29(model: ChartModel) {
     model = jsonMoveIfMissing('chartOptions.scatter.series.fill', 'chartOptions.scatter.series.marker.fill', model);
-    model = jsonMoveIfMissing('chartOptions.scatter.series.fillOpacity', 'chartOptions.scatter.series.marker.fillOpacity', model);
+    model = jsonMoveIfMissing(
+        'chartOptions.scatter.series.fillOpacity',
+        'chartOptions.scatter.series.marker.fillOpacity',
+        model
+    );
     model = jsonMoveIfMissing('chartOptions.scatter.series.stroke', 'chartOptions.scatter.series.marker.stroke', model);
-    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
-    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
+    model = jsonMoveIfMissing(
+        'chartOptions.scatter.series.strokeOpacity',
+        'chartOptions.scatter.series.marker.strokeOpacity',
+        model
+    );
+    model = jsonMoveIfMissing(
+        'chartOptions.scatter.series.strokeWidth',
+        'chartOptions.scatter.series.marker.strokeWidth',
+        model
+    );
     model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+
+    return model;
+}
+
+function migrateV29_1(model: ChartModel) {
+    model = jsonDelete('chartOptions.axes[].tick.count', model);
+
+    return model;
+}
+
+function migrateV29_2(model: ChartModel) {
+    // https://github.com/ag-grid/ag-grid/commit/ce11956492e42e845932edb4e05d7b0b21db5c61
+    const tooltipOptUpdate = ({ tracking, ...opts }: any) => {
+        const output = { ...opts };
+        if (tracking === false) {
+            output.position ??= { type: 'pointer' };
+            output.range ??= 'nearest';
+        } else if (tracking === true) {
+            output.position ??= { type: 'node' };
+            output.range ??= 'nearest';
+        }
+        return output;
+    };
+    model = jsonMutate('chartOptions.*.tooltip', model, tooltipOptUpdate);
+
+    return model;
+}
+
+function migrateV30(model: ChartModel) {
+    // Repeated from migrateV28_2() as they were applied retrospectively for the v30 release.
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+    // Late-applied migrations for deprecations in the 29.x.y range.
+    model = migrateV29_1(model);
+    model = migrateV29_2(model);
+
+    // Actual v30 changes.
+    model = jsonDelete('chartOptions.*.series.flipXY', model);
+    model = jsonAdd('chartOptions.common.legend.enabled', true, model);
+    model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
 
     return model;
 }
@@ -298,6 +355,24 @@ function jsonBackfill(path: string | string[], defaultValue: any, json: any): an
             parent[prop] = defaultValue;
         }
     });
+}
+
+function jsonAdd(path: string | string[], value: any, json: any): any {
+    if (typeof path === 'string') {
+        path = path.split('.');
+    }
+
+    const nextPath = path[0];
+    if (path.length > 1) {
+        json[nextPath] = jsonAdd(path.slice(1), value, json[nextPath] ?? {});
+    }
+
+    const hasProperty = Object.keys(json).includes(nextPath);
+    if (!hasProperty) {
+        json[nextPath] = value;
+    }
+
+    return json;
 }
 
 function jsonMove(from: string, to: string, json: any): any {

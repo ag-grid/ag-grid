@@ -15,7 +15,7 @@ export class Group extends Node {
         this.opts = opts;
         this.opacity = 1;
         this.lastBBox = undefined;
-        const { zIndex, zIndexSubOrder } = opts || {};
+        const { zIndex, zIndexSubOrder } = opts !== null && opts !== void 0 ? opts : {};
         this.isContainerNode = true;
         if (zIndex !== undefined) {
             this.zIndex = zIndex;
@@ -35,7 +35,7 @@ export class Group extends Node {
         return this.layer != null;
     }
     _setLayerManager(scene) {
-        var _a;
+        var _a, _b;
         if (this._layerManager && this.layer) {
             this._layerManager.removeLayer(this.layer);
             this.layer = undefined;
@@ -45,7 +45,7 @@ export class Group extends Node {
         }
         super._setLayerManager(scene);
         if (scene && ((_a = this.opts) === null || _a === void 0 ? void 0 : _a.layer)) {
-            const { zIndex, zIndexSubOrder, name } = this.opts || {};
+            const { zIndex, zIndexSubOrder, name } = (_b = this.opts) !== null && _b !== void 0 ? _b : {};
             const getComputedOpacity = () => this.getComputedOpacity();
             const getVisibility = () => this.getVisibility();
             this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity, getVisibility });

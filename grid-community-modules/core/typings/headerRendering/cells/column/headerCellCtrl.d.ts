@@ -45,7 +45,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupSelectAll;
     getSelectAllGui(): HTMLElement;
     protected handleKeyDown(e: KeyboardEvent): void;
-    private onEnterKeyPressed;
+    private onEnterKeyDown;
     isMenuEnabled(): boolean;
     private onFocusIn;
     private onFocusOut;

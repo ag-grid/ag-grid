@@ -14,8 +14,8 @@ export declare class EnterpriseMenuFactory extends BeanStub implements IMenuFact
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void;
     showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: ColumnMenuTab[]): void;
     private showMenu;
-    private getClosedCallback;
     private addStopAnchoring;
+    private getClosedCallback;
     private getMenuParams;
     isMenuEnabled(column: Column): boolean;
 }

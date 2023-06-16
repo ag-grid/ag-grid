@@ -1,4 +1,4 @@
-import { BeanStub, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams } from "@ag-grid-community/core";
+import { BeanStub, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams } from "@ag-grid-community/core";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 export declare class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel;
@@ -12,7 +12,7 @@ export declare class GroupSelectsChildrenStrategy extends BeanStub implements IS
     getSelectedState(): IServerSideGroupSelectionState;
     setSelectedState(state: IServerSideGroupSelectionState): void;
     deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean;
-    setNodeSelected(params: ISetNodeSelectedParams): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     private isNodePathSelected;
     private getRouteToNode;

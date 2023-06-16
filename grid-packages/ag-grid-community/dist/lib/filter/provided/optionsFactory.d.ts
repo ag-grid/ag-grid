@@ -7,7 +7,6 @@ export declare class OptionsFactory {
     protected filterOptions: (IFilterOptionDef | string)[];
     protected defaultOption: string;
     init(params: ScalarFilterParams, defaultOptions: string[]): void;
-    private checkForDeprecatedParams;
     getFilterOptions(): (IFilterOptionDef | string)[];
     private mapCustomOptions;
     private selectDefaultItem;

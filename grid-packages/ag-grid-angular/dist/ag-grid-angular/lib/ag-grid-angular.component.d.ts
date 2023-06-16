@@ -1,6 +1,6 @@
 import { AfterViewInit, ComponentFactoryResolver, ElementRef, EventEmitter, OnChanges, OnDestroy, ViewContainerRef } from "@angular/core";
 import { GridOptions, Module } from "ag-grid-community";
-import { AgChartTheme, AgChartThemeOverrides, AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditRequestEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellPosition, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ChartRefParams, ChartToolPanelsDef, ColDef, ColGroupDef, ColumnAggFuncChangeRequestEvent, ColumnApi, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangeRequestEvent, ColumnPivotChangedEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangeRequestEvent, ColumnRowGroupChangedEvent, ColumnValueChangeRequestEvent, ColumnValueChangedEvent, ColumnVisibleEvent, ComponentStateChangedEvent, CsvExportParams, DisplayedColumnsChangedEvent, DomLayoutType, DragStartedEvent, DragStoppedEvent, ExcelExportParams, ExcelStyle, ExpandCollapseAllEvent, FillOperationParams, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent, GetChartToolbarItems, GetContextMenuItems, GetDataPath, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItems, GetRowIdFunc, GetRowNodeIdFunc, GetServerSideGroupKey, GetServerSideGroupLevelParamsParams, GridApi, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, HeaderPosition, IAggFunc, IDatasource, IRowDragItem, IRowNode, IServerSideDatasource, IViewportDatasource, InitialGroupOrderComparatorParams, IsApplyServerSideTransaction, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsRowFilterable, IsRowMaster, IsRowSelectable, IsServerSideGroup, IsServerSideGroupOpenByDefaultParams, LoadingCellRendererSelectorFunc, ModelUpdatedEvent, NavigateToNextCellParams, NavigateToNextHeaderParams, NewColumnsLoadedEvent, PaginationChangedEvent, PaginationNumberFormatterParams, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, PostProcessPopupParams, PostSortRowsParams, ProcessCellForExportParams, ProcessDataFromClipboardParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams, ProcessRowParams, RangeSelectionChangedEvent, RedoEndedEvent, RedoStartedEvent, RowClassParams, RowClassRules, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowGroupingDisplayType, RowHeightParams, RowModelType, RowSelectedEvent, RowStyle, RowValueChangedEvent, SelectionChangedEvent, SendToClipboardParams, ServerSideGroupLevelParams, ServerSideStoreType, SideBarDef, SortChangedEvent, SortDirection, StatusPanelDef, StoreRefreshedEvent, TabToNextCellParams, TabToNextHeaderParams, ToolPanelSizeChangedEvent, ToolPanelVisibleChangedEvent, TreeDataDisplayType, UndoEndedEvent, UndoStartedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "ag-grid-community";
+import { AgChartTheme, AgChartThemeOverrides, AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditRequestEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellPosition, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ChartRefParams, ChartToolPanelsDef, ColDef, ColGroupDef, ColumnAggFuncChangeRequestEvent, ColumnApi, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangeRequestEvent, ColumnPivotChangedEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangeRequestEvent, ColumnRowGroupChangedEvent, ColumnValueChangeRequestEvent, ColumnValueChangedEvent, ColumnVisibleEvent, ComponentStateChangedEvent, CsvExportParams, CutEndEvent, CutStartEvent, DataTypeDefinition, DisplayedColumnsChangedEvent, DomLayoutType, DragStartedEvent, DragStoppedEvent, ExcelExportParams, ExcelStyle, ExpandCollapseAllEvent, FillOperationParams, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GetChartToolbarItems, GetContextMenuItems, GetDataPath, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItems, GetRowIdFunc, GetServerSideGroupKey, GetServerSideGroupLevelParamsParams, GridApi, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, HeaderPosition, IAggFunc, IDatasource, IRowDragItem, IRowNode, IServerSideDatasource, IViewportDatasource, InitialGroupOrderComparatorParams, IsApplyServerSideTransaction, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsRowFilterable, IsRowMaster, IsRowSelectable, IsServerSideGroup, IsServerSideGroupOpenByDefaultParams, LoadingCellRendererSelectorFunc, ModelUpdatedEvent, NavigateToNextCellParams, NavigateToNextHeaderParams, NewColumnsLoadedEvent, PaginationChangedEvent, PaginationNumberFormatterParams, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, PostProcessPopupParams, PostSortRowsParams, ProcessCellForExportParams, ProcessDataFromClipboardParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams, ProcessRowParams, RangeDeleteEndEvent, RangeDeleteStartEvent, RangeSelectionChangedEvent, RedoEndedEvent, RedoStartedEvent, RowClassParams, RowClassRules, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowGroupingDisplayType, RowHeightParams, RowModelType, RowSelectedEvent, RowStyle, RowValueChangedEvent, SelectionChangedEvent, SendToClipboardParams, ServerSideGroupLevelParams, ServerSideStoreType, SideBarDef, SortChangedEvent, SortDirection, StatusPanelDef, StoreRefreshedEvent, TabToNextCellParams, TabToNextHeaderParams, ToolPanelSizeChangedEvent, ToolPanelVisibleChangedEvent, TreeDataDisplayType, UndoEndedEvent, UndoStartedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "ag-grid-community";
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
 import * as i0 from "@angular/core";
@@ -23,6 +23,10 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     protected isEmitterUsed(eventType: string): boolean;
     private globalEventListener;
     gridOptions: GridOptions<TData> | undefined;
+    /**
+    * Used to register AG Grid Modules directly with this instance of the grid.
+    * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information.
+    */
     modules: Module[] | undefined;
     /** Specifies the status bar components to use in the status bar.     */
     statusBar: {
@@ -87,6 +91,14 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     columnTypes: {
         [key: string]: ColDef<TData>;
     } | undefined;
+    /** An object map of cell data types to their definitions.
+         * Cell data types can either override/update the pre-defined data types
+         * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+         * or can be custom data types.
+         */
+    dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    } | undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     maintainColumnOrder: boolean | undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
@@ -126,35 +138,33 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     components: {
         [p: string]: any;
     } | undefined;
-    /** @deprecated As of v27, use `components` for framework components too.     */
-    frameworkComponents: {
-        [p: string]: {
-            new (): any;
-        };
-    } | any | undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     editType: 'fullRow' | undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
     singleClickEdit: boolean | undefined;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
     suppressClickEdit: boolean | undefined;
-    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.         */
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`     */
     readOnlyEdit: boolean | undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
          * The default is that the grid stays editing until focus goes onto another cell.
          * Default: `false`
          */
     stopEditingWhenCellsLoseFocus: boolean | undefined;
-    /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-         * i.e. pressing the `Enter` key will move down to the cell beneath.
-         * Default: `false`
-         */
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`.     */
     enterMovesDown: boolean | undefined;
-    /** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-         * i.e. pressing the Enter key will move down to the cell beneath.
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`.     */
+    enterMovesDownAfterEdit: boolean | undefined;
+    /** Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
+         * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
          * Default: `false`
          */
-    enterMovesDownAfterEdit: boolean | undefined;
+    enterNavigatesVertically: boolean | undefined;
+    /** Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
+         * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
+         * Default: `false`
+         */
+    enterNavigatesVerticallyAfterEdit: boolean | undefined;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.     */
     enableCellEditingOnBackspace: boolean | undefined;
     /** Set to `true` to enable Undo / Redo while editing.     */
@@ -175,16 +185,21 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     quickFilterText: string | undefined;
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false`     */
     cacheQuickFilter: boolean | undefined;
-    /** Set to `true` to exclude hidden columns from being checked by the Quick Filter.
-         * This can give a significant performance improvement when there are a large number of hidden columns,
-         * and you are only interested in filtering on what's visible. Default: `false`
+    /** @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.
          */
     excludeHiddenColumnsFromQuickFilter: boolean | undefined;
+    /** Hidden columns are excluded from the Quick Filter by default.
+         * To include hidden columns, set to `true`.
+         * Default: `false`
+         */
+    includeHiddenColumnsInQuickFilter: boolean | undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     excludeChildrenWhenTreeDataFiltering: boolean | undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     enableCharts: boolean | undefined;
-    /** The list of chart themes to be used.     */
+    /** The list of chart themes that a user can chose from in the chart settings panel.
+         * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+         */
     chartThemes: string[] | undefined;
     /** A map containing custom chart themes.     */
     customChartThemes: {
@@ -202,8 +217,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
         */
     loadingCellRenderer: any;
-    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.     */
-    loadingCellRendererFramework: any;
     /** Params to be passed to the `loadingCellRenderer` component.     */
     loadingCellRendererParams: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
@@ -222,8 +235,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
         */
     detailCellRenderer: any;
-    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.     */
-    detailCellRendererFramework: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     detailCellRendererParams: any;
     /** Set fixed height in pixels for each detail row.     */
@@ -276,8 +287,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
         */
     loadingOverlayComponent: any;
-    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.     */
-    loadingOverlayComponentFramework: any;
     /** Customise the parameters provided to the loading overlay component.     */
     loadingOverlayComponentParams: any;
     /** Disables the 'loading' overlay. Default: `false`     */
@@ -288,8 +297,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
         */
     noRowsOverlayComponent: any;
-    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.     */
-    noRowsOverlayComponentFramework: any;
     /** Customise the parameters provided to the no rows overlay component.     */
     noRowsOverlayComponentParams: any;
     /** Disables the 'no rows' overlay. Default: `false`     */
@@ -328,7 +335,9 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     } | undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     suppressAggFuncInHeader: boolean | undefined;
-    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
+    /** When using aggregations, the grid will always calculate the root level aggregation value. Default: `false`     */
+    alwaysAggregateAtRootLevel: boolean | undefined;
+    /** @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel      */
     suppressAggAtRootLevel: boolean | undefined;
     /** When using change detection, only the updated column will be re-aggregated. Default: `false`     */
     aggregateOnlyChangedColumns: boolean | undefined;
@@ -387,8 +396,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
         */
     fullWidthCellRenderer: any;
-    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.     */
-    fullWidthCellRendererFramework: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     fullWidthCellRendererParams: any;
     /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally .     */
@@ -442,18 +449,16 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
         * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
         */
     groupRowRenderer: any;
-    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.     */
-    groupRowRendererFramework: any;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     groupRowRendererParams: any;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`     */
     suppressMakeColumnVisibleAfterUnGroup: boolean | undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     treeData: boolean | undefined;
-    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`.     */
+    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`     */
     rowGroupPanelSuppressSort: boolean | undefined;
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
-    groupRowsSticky: boolean | undefined;
+    /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false`     */
+    suppressGroupRowsSticky: boolean | undefined;
     /** @deprecated v24 - no longer needed, transaction updates keep group state     */
     rememberGroupStateWhenNewData: boolean | undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
@@ -464,9 +469,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     rowModelType: RowModelType | undefined;
     /** Set the data to be displayed as rows in the grid.     */
     rowData: TData[] | null | undefined;
-    /** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
-         * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`     */
-    immutableData: boolean | undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     asyncTransactionWaitMillis: number | undefined;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`     */
@@ -513,7 +515,9 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     serverSideDatasource: IServerSideDatasource | undefined;
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false`     */
     serverSideSortAllLevels: boolean | undefined;
-    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
+    /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
+    serverSideOnlyRefreshFilteredGroups: boolean | undefined;
+    /** @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead     */
     serverSideFilterAllLevels: boolean | undefined;
     /**
          * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
@@ -526,7 +530,7 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     serverSideFilterOnServer: boolean | undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     serverSideSortingAlwaysResets: boolean | undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.     */
     serverSideFilteringAlwaysResets: boolean | undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     viewportDatasource: IViewportDatasource | undefined;
@@ -562,9 +566,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     suppressRowDeselection: boolean | undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     suppressRowClickSelection: boolean | undefined;
-    /** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
-         */
-    suppressCellSelection: boolean | undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
     suppressCellFocus: boolean | undefined;
     /** If `true`, only a single range can be selected. Default: `false`     */
@@ -617,6 +618,8 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     suppressRowTransform: boolean | undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false`     */
     columnHoverHighlight: boolean | undefined;
+    /** Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.      */
+    gridId: string | undefined;
     deltaSort: boolean | undefined;
     treeDataDisplayType: TreeDataDisplayType | undefined;
     /** @deprecated v29.2     */
@@ -656,24 +659,18 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.      */
     tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined;
-    /** @deprecated v27.2 - Use `getLocaleText` instead.     */
-    localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined;
     /** A callback for localising text within the grid.     */
     getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     getDocument: (() => Document) | undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined;
-    /** @deprecated v27.2 - Use `getGroupRowAgg` instead.     */
-    groupRowAggNodes: ((nodes: IRowNode[]) => any) | undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
     getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined;
     /** Allows default sorting of groups.     */
     initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined;
-    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead     */
-    defaultGroupOrderComparator: ((nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number) | undefined;
     /** @deprecated v28 - Use `processPivotResultColDef` instead     */
     processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
@@ -702,9 +699,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
     getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined;
-    /** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
-         * Allows you to set the ID for a particular row node based on the data.     */
-    getRowNodeId: GetRowNodeIdFunc<TData> | undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
     getRowId: GetRowIdFunc<TData> | undefined;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
@@ -717,8 +711,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     isRowMaster: IsRowMaster<TData> | undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     fillOperation: ((params: FillOperationParams<TData>) => any) | undefined;
-    /** @deprecated v27.2 Use `postSortRows` instead     */
-    postSort: ((nodes: IRowNode<TData>[]) => void) | undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
@@ -727,14 +719,16 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined;
-    /** @deprecated v27.2 Use `isFullWidthRow` instead.     */
-    isFullWidthCell: ((rowNode: IRowNode<TData>) => boolean) | undefined;
     /** Tells the grid if this row should be rendered as full width.     */
     isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined;
-    /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
+    /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.     */
     toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>>;
     /** The tool panel size has been changed.     */
     toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>>;
+    /** Cut operation has started.     */
+    cutStart: EventEmitter<CutStartEvent<TData>>;
+    /** Cut operation has ended.     */
+    cutEnd: EventEmitter<CutEndEvent<TData>>;
     /** Paste operation has started.     */
     pasteStart: EventEmitter<PasteStartEvent<TData>>;
     /** Paste operation has ended.     */
@@ -794,6 +788,10 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     redoStarted: EventEmitter<RedoStartedEvent<TData>>;
     /** Redo operation has ended.     */
     redoEnded: EventEmitter<RedoEndedEvent<TData>>;
+    /** Range delete operation (cell clear) has started.     */
+    rangeDeleteStart: EventEmitter<RangeDeleteStartEvent<TData>>;
+    /** Range delete operation (cell clear) has ended.     */
+    rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>>;
     /** Filter has been opened.     */
     filterOpened: EventEmitter<FilterOpenedEvent<TData>>;
     /** Filter has been modified and applied.     */
@@ -810,8 +808,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     chartDestroyed: EventEmitter<ChartDestroyed<TData>>;
     /** DOM event `keyDown` happened on a cell.     */
     cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>;
-    /** DOM event `keyPress` happened on a cell.     */
-    cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>;
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     gridReady: EventEmitter<GridReadyEvent<TData>>;
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
@@ -899,7 +895,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>;
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
-    static ngAcceptInputType_suppressCellSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';
     static ngAcceptInputType_suppressHorizontalScroll: boolean | null | '';
     static ngAcceptInputType_alwaysShowHorizontalScroll: boolean | null | '';
@@ -946,6 +941,7 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_pivotMode: boolean | null | '';
     static ngAcceptInputType_suppressAggFuncInHeader: boolean | null | '';
     static ngAcceptInputType_suppressColumnVirtualisation: boolean | null | '';
+    static ngAcceptInputType_alwaysAggregateAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressAggAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressFocusAfterRefresh: boolean | null | '';
     static ngAcceptInputType_functionsPassive: boolean | null | '';
@@ -972,6 +968,7 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_suppressScrollWhenPopupsAreOpen: boolean | null | '';
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
+    static ngAcceptInputType_includeHiddenColumnsInQuickFilter: boolean | null | '';
     static ngAcceptInputType_excludeHiddenColumnsFromQuickFilter: boolean | null | '';
     static ngAcceptInputType_ensureDomOrder: boolean | null | '';
     static ngAcceptInputType_accentedSort: boolean | null | '';
@@ -985,8 +982,10 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_suppressMultiRangeSelection: boolean | null | '';
-    static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
     static ngAcceptInputType_enterMovesDown: boolean | null | '';
+    static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
+    static ngAcceptInputType_enterNavigatesVerticallyAfterEdit: boolean | null | '';
+    static ngAcceptInputType_enterNavigatesVertically: boolean | null | '';
     static ngAcceptInputType_suppressPropertyNamesCheck: boolean | null | '';
     static ngAcceptInputType_rowMultiSelectWithClick: boolean | null | '';
     static ngAcceptInputType_suppressRowHoverHighlight: boolean | null | '';
@@ -1007,15 +1006,15 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_preventDefaultOnContextMenu: boolean | null | '';
     static ngAcceptInputType_undoRedoCellEditing: boolean | null | '';
     static ngAcceptInputType_allowDragFromColumnsToolPanel: boolean | null | '';
-    static ngAcceptInputType_immutableData: boolean | null | '';
     static ngAcceptInputType_pivotSuppressAutoColumn: boolean | null | '';
     static ngAcceptInputType_suppressExpandablePivotGroups: boolean | null | '';
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
     static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';
+    static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
-    static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
     static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';
     static ngAcceptInputType_suppressAggFilteredOnly: boolean | null | '';
@@ -1026,7 +1025,6 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
-    static ngAcceptInputType_reactUi: boolean | null | '';
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
@@ -1034,11 +1032,11 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
-    static ngAcceptInputType_groupRowsSticky: boolean | null | '';
+    static ngAcceptInputType_suppressGroupRowsSticky: boolean | null | '';
     static ngAcceptInputType_suppressServerSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
     static ɵfac: i0.ɵɵFactoryDeclaration<AgGridAngular<any, any>, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AgGridAngular<any, any>, "ag-grid-angular", never, { "gridOptions": "gridOptions"; "modules": "modules"; "statusBar": "statusBar"; "sideBar": "sideBar"; "suppressContextMenu": "suppressContextMenu"; "preventDefaultOnContextMenu": "preventDefaultOnContextMenu"; "allowContextMenuWithControlKey": "allowContextMenuWithControlKey"; "suppressMenuHide": "suppressMenuHide"; "enableBrowserTooltips": "enableBrowserTooltips"; "tooltipShowDelay": "tooltipShowDelay"; "tooltipHideDelay": "tooltipHideDelay"; "tooltipMouseTrack": "tooltipMouseTrack"; "popupParent": "popupParent"; "copyHeadersToClipboard": "copyHeadersToClipboard"; "copyGroupHeadersToClipboard": "copyGroupHeadersToClipboard"; "clipboardDelimiter": "clipboardDelimiter"; "suppressCopyRowsToClipboard": "suppressCopyRowsToClipboard"; "suppressCopySingleCellRanges": "suppressCopySingleCellRanges"; "suppressLastEmptyLineOnPaste": "suppressLastEmptyLineOnPaste"; "suppressClipboardPaste": "suppressClipboardPaste"; "suppressClipboardApi": "suppressClipboardApi"; "suppressCutToClipboard": "suppressCutToClipboard"; "columnDefs": "columnDefs"; "defaultColDef": "defaultColDef"; "defaultColGroupDef": "defaultColGroupDef"; "columnTypes": "columnTypes"; "maintainColumnOrder": "maintainColumnOrder"; "suppressFieldDotNotation": "suppressFieldDotNotation"; "headerHeight": "headerHeight"; "groupHeaderHeight": "groupHeaderHeight"; "floatingFiltersHeight": "floatingFiltersHeight"; "pivotHeaderHeight": "pivotHeaderHeight"; "pivotGroupHeaderHeight": "pivotGroupHeaderHeight"; "allowDragFromColumnsToolPanel": "allowDragFromColumnsToolPanel"; "suppressMovableColumns": "suppressMovableColumns"; "suppressColumnMoveAnimation": "suppressColumnMoveAnimation"; "suppressDragLeaveHidesColumns": "suppressDragLeaveHidesColumns"; "suppressRowGroupHidesColumns": "suppressRowGroupHidesColumns"; "colResizeDefault": "colResizeDefault"; "suppressAutoSize": "suppressAutoSize"; "autoSizePadding": "autoSizePadding"; "skipHeaderOnAutoSize": "skipHeaderOnAutoSize"; "components": "components"; "frameworkComponents": "frameworkComponents"; "editType": "editType"; "singleClickEdit": "singleClickEdit"; "suppressClickEdit": "suppressClickEdit"; "readOnlyEdit": "readOnlyEdit"; "stopEditingWhenCellsLoseFocus": "stopEditingWhenCellsLoseFocus"; "enterMovesDown": "enterMovesDown"; "enterMovesDownAfterEdit": "enterMovesDownAfterEdit"; "enableCellEditingOnBackspace": "enableCellEditingOnBackspace"; "undoRedoCellEditing": "undoRedoCellEditing"; "undoRedoCellEditingLimit": "undoRedoCellEditingLimit"; "defaultCsvExportParams": "defaultCsvExportParams"; "suppressCsvExport": "suppressCsvExport"; "defaultExcelExportParams": "defaultExcelExportParams"; "suppressExcelExport": "suppressExcelExport"; "excelStyles": "excelStyles"; "quickFilterText": "quickFilterText"; "cacheQuickFilter": "cacheQuickFilter"; "excludeHiddenColumnsFromQuickFilter": "excludeHiddenColumnsFromQuickFilter"; "excludeChildrenWhenTreeDataFiltering": "excludeChildrenWhenTreeDataFiltering"; "enableCharts": "enableCharts"; "chartThemes": "chartThemes"; "customChartThemes": "customChartThemes"; "chartThemeOverrides": "chartThemeOverrides"; "enableChartToolPanelsButton": "enableChartToolPanelsButton"; "suppressChartToolPanelsButton": "suppressChartToolPanelsButton"; "chartToolPanelsDef": "chartToolPanelsDef"; "loadingCellRenderer": "loadingCellRenderer"; "loadingCellRendererFramework": "loadingCellRendererFramework"; "loadingCellRendererParams": "loadingCellRendererParams"; "loadingCellRendererSelector": "loadingCellRendererSelector"; "localeText": "localeText"; "masterDetail": "masterDetail"; "keepDetailRows": "keepDetailRows"; "keepDetailRowsCount": "keepDetailRowsCount"; "detailCellRenderer": "detailCellRenderer"; "detailCellRendererFramework": "detailCellRendererFramework"; "detailCellRendererParams": "detailCellRendererParams"; "detailRowHeight": "detailRowHeight"; "detailRowAutoHeight": "detailRowAutoHeight"; "context": "context"; "alignedGrids": "alignedGrids"; "tabIndex": "tabIndex"; "rowBuffer": "rowBuffer"; "valueCache": "valueCache"; "valueCacheNeverExpires": "valueCacheNeverExpires"; "enableCellExpressions": "enableCellExpressions"; "suppressParentsInRowNodes": "suppressParentsInRowNodes"; "suppressTouch": "suppressTouch"; "suppressFocusAfterRefresh": "suppressFocusAfterRefresh"; "suppressAsyncEvents": "suppressAsyncEvents"; "suppressBrowserResizeObserver": "suppressBrowserResizeObserver"; "suppressPropertyNamesCheck": "suppressPropertyNamesCheck"; "suppressChangeDetection": "suppressChangeDetection"; "debug": "debug"; "overlayLoadingTemplate": "overlayLoadingTemplate"; "loadingOverlayComponent": "loadingOverlayComponent"; "loadingOverlayComponentFramework": "loadingOverlayComponentFramework"; "loadingOverlayComponentParams": "loadingOverlayComponentParams"; "suppressLoadingOverlay": "suppressLoadingOverlay"; "overlayNoRowsTemplate": "overlayNoRowsTemplate"; "noRowsOverlayComponent": "noRowsOverlayComponent"; "noRowsOverlayComponentFramework": "noRowsOverlayComponentFramework"; "noRowsOverlayComponentParams": "noRowsOverlayComponentParams"; "suppressNoRowsOverlay": "suppressNoRowsOverlay"; "pagination": "pagination"; "paginationPageSize": "paginationPageSize"; "paginationAutoPageSize": "paginationAutoPageSize"; "paginateChildRows": "paginateChildRows"; "suppressPaginationPanel": "suppressPaginationPanel"; "pivotMode": "pivotMode"; "pivotPanelShow": "pivotPanelShow"; "pivotColumnGroupTotals": "pivotColumnGroupTotals"; "pivotRowTotals": "pivotRowTotals"; "pivotSuppressAutoColumn": "pivotSuppressAutoColumn"; "suppressExpandablePivotGroups": "suppressExpandablePivotGroups"; "functionsReadOnly": "functionsReadOnly"; "aggFuncs": "aggFuncs"; "suppressAggFuncInHeader": "suppressAggFuncInHeader"; "suppressAggAtRootLevel": "suppressAggAtRootLevel"; "aggregateOnlyChangedColumns": "aggregateOnlyChangedColumns"; "suppressAggFilteredOnly": "suppressAggFilteredOnly"; "removePivotHeaderRowWhenSingleValueColumn": "removePivotHeaderRowWhenSingleValueColumn"; "animateRows": "animateRows"; "enableCellChangeFlash": "enableCellChangeFlash"; "cellFlashDelay": "cellFlashDelay"; "cellFadeDelay": "cellFadeDelay"; "allowShowChangeAfterFilter": "allowShowChangeAfterFilter"; "domLayout": "domLayout"; "ensureDomOrder": "ensureDomOrder"; "enableRtl": "enableRtl"; "suppressColumnVirtualisation": "suppressColumnVirtualisation"; "suppressMaxRenderedRowRestriction": "suppressMaxRenderedRowRestriction"; "suppressRowVirtualisation": "suppressRowVirtualisation"; "rowDragManaged": "rowDragManaged"; "suppressRowDrag": "suppressRowDrag"; "suppressMoveWhenRowDragging": "suppressMoveWhenRowDragging"; "rowDragEntireRow": "rowDragEntireRow"; "rowDragMultiRow": "rowDragMultiRow"; "rowDragText": "rowDragText"; "fullWidthCellRenderer": "fullWidthCellRenderer"; "fullWidthCellRendererFramework": "fullWidthCellRendererFramework"; "fullWidthCellRendererParams": "fullWidthCellRendererParams"; "embedFullWidthRows": "embedFullWidthRows"; "groupDisplayType": "groupDisplayType"; "groupDefaultExpanded": "groupDefaultExpanded"; "autoGroupColumnDef": "autoGroupColumnDef"; "groupMaintainOrder": "groupMaintainOrder"; "groupSelectsChildren": "groupSelectsChildren"; "groupAggFiltering": "groupAggFiltering"; "groupIncludeFooter": "groupIncludeFooter"; "groupIncludeTotalFooter": "groupIncludeTotalFooter"; "groupSuppressBlankHeader": "groupSuppressBlankHeader"; "groupSelectsFiltered": "groupSelectsFiltered"; "showOpenedGroup": "showOpenedGroup"; "groupRemoveSingleChildren": "groupRemoveSingleChildren"; "groupRemoveLowestSingleChildren": "groupRemoveLowestSingleChildren"; "groupHideOpenParents": "groupHideOpenParents"; "groupAllowUnbalanced": "groupAllowUnbalanced"; "rowGroupPanelShow": "rowGroupPanelShow"; "groupRowRenderer": "groupRowRenderer"; "groupRowRendererFramework": "groupRowRendererFramework"; "groupRowRendererParams": "groupRowRendererParams"; "suppressMakeColumnVisibleAfterUnGroup": "suppressMakeColumnVisibleAfterUnGroup"; "treeData": "treeData"; "rowGroupPanelSuppressSort": "rowGroupPanelSuppressSort"; "groupRowsSticky": "groupRowsSticky"; "rememberGroupStateWhenNewData": "rememberGroupStateWhenNewData"; "pinnedTopRowData": "pinnedTopRowData"; "pinnedBottomRowData": "pinnedBottomRowData"; "rowModelType": "rowModelType"; "rowData": "rowData"; "immutableData": "immutableData"; "asyncTransactionWaitMillis": "asyncTransactionWaitMillis"; "suppressModelUpdateAfterUpdateTransaction": "suppressModelUpdateAfterUpdateTransaction"; "datasource": "datasource"; "cacheOverflowSize": "cacheOverflowSize"; "infiniteInitialRowCount": "infiniteInitialRowCount"; "serverSideInitialRowCount": "serverSideInitialRowCount"; "serverSideStoreType": "serverSideStoreType"; "suppressServerSideInfiniteScroll": "suppressServerSideInfiniteScroll"; "cacheBlockSize": "cacheBlockSize"; "maxBlocksInCache": "maxBlocksInCache"; "maxConcurrentDatasourceRequests": "maxConcurrentDatasourceRequests"; "blockLoadDebounceMillis": "blockLoadDebounceMillis"; "purgeClosedRowNodes": "purgeClosedRowNodes"; "serverSideDatasource": "serverSideDatasource"; "serverSideSortAllLevels": "serverSideSortAllLevels"; "serverSideFilterAllLevels": "serverSideFilterAllLevels"; "serverSideSortOnServer": "serverSideSortOnServer"; "serverSideFilterOnServer": "serverSideFilterOnServer"; "serverSideSortingAlwaysResets": "serverSideSortingAlwaysResets"; "serverSideFilteringAlwaysResets": "serverSideFilteringAlwaysResets"; "viewportDatasource": "viewportDatasource"; "viewportRowModelPageSize": "viewportRowModelPageSize"; "viewportRowModelBufferSize": "viewportRowModelBufferSize"; "alwaysShowHorizontalScroll": "alwaysShowHorizontalScroll"; "alwaysShowVerticalScroll": "alwaysShowVerticalScroll"; "debounceVerticalScrollbar": "debounceVerticalScrollbar"; "suppressHorizontalScroll": "suppressHorizontalScroll"; "suppressScrollOnNewData": "suppressScrollOnNewData"; "suppressScrollWhenPopupsAreOpen": "suppressScrollWhenPopupsAreOpen"; "suppressAnimationFrame": "suppressAnimationFrame"; "suppressMiddleClickScrolls": "suppressMiddleClickScrolls"; "suppressPreventDefaultOnMouseWheel": "suppressPreventDefaultOnMouseWheel"; "scrollbarWidth": "scrollbarWidth"; "rowSelection": "rowSelection"; "rowMultiSelectWithClick": "rowMultiSelectWithClick"; "suppressRowDeselection": "suppressRowDeselection"; "suppressRowClickSelection": "suppressRowClickSelection"; "suppressCellSelection": "suppressCellSelection"; "suppressCellFocus": "suppressCellFocus"; "suppressMultiRangeSelection": "suppressMultiRangeSelection"; "enableCellTextSelection": "enableCellTextSelection"; "enableRangeSelection": "enableRangeSelection"; "enableRangeHandle": "enableRangeHandle"; "enableFillHandle": "enableFillHandle"; "fillHandleDirection": "fillHandleDirection"; "suppressClearOnFillReduction": "suppressClearOnFillReduction"; "sortingOrder": "sortingOrder"; "accentedSort": "accentedSort"; "unSortIcon": "unSortIcon"; "suppressMultiSort": "suppressMultiSort"; "alwaysMultiSort": "alwaysMultiSort"; "multiSortKey": "multiSortKey"; "suppressMaintainUnsortedOrder": "suppressMaintainUnsortedOrder"; "icons": "icons"; "rowHeight": "rowHeight"; "rowStyle": "rowStyle"; "rowClass": "rowClass"; "rowClassRules": "rowClassRules"; "suppressRowHoverHighlight": "suppressRowHoverHighlight"; "suppressRowTransform": "suppressRowTransform"; "columnHoverHighlight": "columnHoverHighlight"; "deltaSort": "deltaSort"; "treeDataDisplayType": "treeDataDisplayType"; "functionsPassive": "functionsPassive"; "enableGroupEdit": "enableGroupEdit"; "getContextMenuItems": "getContextMenuItems"; "getMainMenuItems": "getMainMenuItems"; "postProcessPopup": "postProcessPopup"; "processCellForClipboard": "processCellForClipboard"; "processHeaderForClipboard": "processHeaderForClipboard"; "processGroupHeaderForClipboard": "processGroupHeaderForClipboard"; "processCellFromClipboard": "processCellFromClipboard"; "sendToClipboard": "sendToClipboard"; "processDataFromClipboard": "processDataFromClipboard"; "isExternalFilterPresent": "isExternalFilterPresent"; "doesExternalFilterPass": "doesExternalFilterPass"; "getChartToolbarItems": "getChartToolbarItems"; "createChartContainer": "createChartContainer"; "navigateToNextHeader": "navigateToNextHeader"; "tabToNextHeader": "tabToNextHeader"; "navigateToNextCell": "navigateToNextCell"; "tabToNextCell": "tabToNextCell"; "localeTextFunc": "localeTextFunc"; "getLocaleText": "getLocaleText"; "getDocument": "getDocument"; "paginationNumberFormatter": "paginationNumberFormatter"; "groupRowAggNodes": "groupRowAggNodes"; "getGroupRowAgg": "getGroupRowAgg"; "isGroupOpenByDefault": "isGroupOpenByDefault"; "initialGroupOrderComparator": "initialGroupOrderComparator"; "defaultGroupOrderComparator": "defaultGroupOrderComparator"; "processSecondaryColDef": "processSecondaryColDef"; "processSecondaryColGroupDef": "processSecondaryColGroupDef"; "processPivotResultColDef": "processPivotResultColDef"; "processPivotResultColGroupDef": "processPivotResultColGroupDef"; "getDataPath": "getDataPath"; "getChildCount": "getChildCount"; "getServerSideGroupLevelParams": "getServerSideGroupLevelParams"; "getServerSideStoreParams": "getServerSideStoreParams"; "isServerSideGroupOpenByDefault": "isServerSideGroupOpenByDefault"; "isApplyServerSideTransaction": "isApplyServerSideTransaction"; "isServerSideGroup": "isServerSideGroup"; "getServerSideGroupKey": "getServerSideGroupKey"; "getBusinessKeyForNode": "getBusinessKeyForNode"; "getRowNodeId": "getRowNodeId"; "getRowId": "getRowId"; "resetRowDataOnUpdate": "resetRowDataOnUpdate"; "processRowPostCreate": "processRowPostCreate"; "isRowSelectable": "isRowSelectable"; "isRowMaster": "isRowMaster"; "fillOperation": "fillOperation"; "postSort": "postSort"; "postSortRows": "postSortRows"; "getRowStyle": "getRowStyle"; "getRowClass": "getRowClass"; "getRowHeight": "getRowHeight"; "isFullWidthCell": "isFullWidthCell"; "isFullWidthRow": "isFullWidthRow"; }, { "toolPanelVisibleChanged": "toolPanelVisibleChanged"; "toolPanelSizeChanged": "toolPanelSizeChanged"; "pasteStart": "pasteStart"; "pasteEnd": "pasteEnd"; "columnVisible": "columnVisible"; "columnPinned": "columnPinned"; "columnResized": "columnResized"; "columnMoved": "columnMoved"; "columnValueChanged": "columnValueChanged"; "columnPivotModeChanged": "columnPivotModeChanged"; "columnPivotChanged": "columnPivotChanged"; "columnGroupOpened": "columnGroupOpened"; "newColumnsLoaded": "newColumnsLoaded"; "gridColumnsChanged": "gridColumnsChanged"; "displayedColumnsChanged": "displayedColumnsChanged"; "virtualColumnsChanged": "virtualColumnsChanged"; "columnEverythingChanged": "columnEverythingChanged"; "componentStateChanged": "componentStateChanged"; "cellValueChanged": "cellValueChanged"; "cellEditRequest": "cellEditRequest"; "rowValueChanged": "rowValueChanged"; "cellEditingStarted": "cellEditingStarted"; "cellEditingStopped": "cellEditingStopped"; "rowEditingStarted": "rowEditingStarted"; "rowEditingStopped": "rowEditingStopped"; "undoStarted": "undoStarted"; "undoEnded": "undoEnded"; "redoStarted": "redoStarted"; "redoEnded": "redoEnded"; "filterOpened": "filterOpened"; "filterChanged": "filterChanged"; "filterModified": "filterModified"; "chartCreated": "chartCreated"; "chartRangeSelectionChanged": "chartRangeSelectionChanged"; "chartOptionsChanged": "chartOptionsChanged"; "chartDestroyed": "chartDestroyed"; "cellKeyDown": "cellKeyDown"; "cellKeyPress": "cellKeyPress"; "gridReady": "gridReady"; "firstDataRendered": "firstDataRendered"; "gridSizeChanged": "gridSizeChanged"; "modelUpdated": "modelUpdated"; "virtualRowRemoved": "virtualRowRemoved"; "viewportChanged": "viewportChanged"; "bodyScroll": "bodyScroll"; "bodyScrollEnd": "bodyScrollEnd"; "dragStarted": "dragStarted"; "dragStopped": "dragStopped"; "paginationChanged": "paginationChanged"; "rowDragEnter": "rowDragEnter"; "rowDragMove": "rowDragMove"; "rowDragLeave": "rowDragLeave"; "rowDragEnd": "rowDragEnd"; "columnRowGroupChanged": "columnRowGroupChanged"; "rowGroupOpened": "rowGroupOpened"; "expandOrCollapseAll": "expandOrCollapseAll"; "pinnedRowDataChanged": "pinnedRowDataChanged"; "rowDataChanged": "rowDataChanged"; "rowDataUpdated": "rowDataUpdated"; "asyncTransactionsFlushed": "asyncTransactionsFlushed"; "storeRefreshed": "storeRefreshed"; "cellClicked": "cellClicked"; "cellDoubleClicked": "cellDoubleClicked"; "cellFocused": "cellFocused"; "cellMouseOver": "cellMouseOver"; "cellMouseOut": "cellMouseOut"; "cellMouseDown": "cellMouseDown"; "rowClicked": "rowClicked"; "rowDoubleClicked": "rowDoubleClicked"; "rowSelected": "rowSelected"; "selectionChanged": "selectionChanged"; "cellContextMenu": "cellContextMenu"; "rangeSelectionChanged": "rangeSelectionChanged"; "sortChanged": "sortChanged"; "columnRowGroupChangeRequest": "columnRowGroupChangeRequest"; "columnPivotChangeRequest": "columnPivotChangeRequest"; "columnValueChangeRequest": "columnValueChangeRequest"; "columnAggFuncChangeRequest": "columnAggFuncChangeRequest"; }, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AgGridAngular<any, any>, "ag-grid-angular", never, { "gridOptions": "gridOptions"; "modules": "modules"; "statusBar": "statusBar"; "sideBar": "sideBar"; "suppressContextMenu": "suppressContextMenu"; "preventDefaultOnContextMenu": "preventDefaultOnContextMenu"; "allowContextMenuWithControlKey": "allowContextMenuWithControlKey"; "suppressMenuHide": "suppressMenuHide"; "enableBrowserTooltips": "enableBrowserTooltips"; "tooltipShowDelay": "tooltipShowDelay"; "tooltipHideDelay": "tooltipHideDelay"; "tooltipMouseTrack": "tooltipMouseTrack"; "popupParent": "popupParent"; "copyHeadersToClipboard": "copyHeadersToClipboard"; "copyGroupHeadersToClipboard": "copyGroupHeadersToClipboard"; "clipboardDelimiter": "clipboardDelimiter"; "suppressCopyRowsToClipboard": "suppressCopyRowsToClipboard"; "suppressCopySingleCellRanges": "suppressCopySingleCellRanges"; "suppressLastEmptyLineOnPaste": "suppressLastEmptyLineOnPaste"; "suppressClipboardPaste": "suppressClipboardPaste"; "suppressClipboardApi": "suppressClipboardApi"; "suppressCutToClipboard": "suppressCutToClipboard"; "columnDefs": "columnDefs"; "defaultColDef": "defaultColDef"; "defaultColGroupDef": "defaultColGroupDef"; "columnTypes": "columnTypes"; "dataTypeDefinitions": "dataTypeDefinitions"; "maintainColumnOrder": "maintainColumnOrder"; "suppressFieldDotNotation": "suppressFieldDotNotation"; "headerHeight": "headerHeight"; "groupHeaderHeight": "groupHeaderHeight"; "floatingFiltersHeight": "floatingFiltersHeight"; "pivotHeaderHeight": "pivotHeaderHeight"; "pivotGroupHeaderHeight": "pivotGroupHeaderHeight"; "allowDragFromColumnsToolPanel": "allowDragFromColumnsToolPanel"; "suppressMovableColumns": "suppressMovableColumns"; "suppressColumnMoveAnimation": "suppressColumnMoveAnimation"; "suppressDragLeaveHidesColumns": "suppressDragLeaveHidesColumns"; "suppressRowGroupHidesColumns": "suppressRowGroupHidesColumns"; "colResizeDefault": "colResizeDefault"; "suppressAutoSize": "suppressAutoSize"; "autoSizePadding": "autoSizePadding"; "skipHeaderOnAutoSize": "skipHeaderOnAutoSize"; "components": "components"; "editType": "editType"; "singleClickEdit": "singleClickEdit"; "suppressClickEdit": "suppressClickEdit"; "readOnlyEdit": "readOnlyEdit"; "stopEditingWhenCellsLoseFocus": "stopEditingWhenCellsLoseFocus"; "enterMovesDown": "enterMovesDown"; "enterMovesDownAfterEdit": "enterMovesDownAfterEdit"; "enterNavigatesVertically": "enterNavigatesVertically"; "enterNavigatesVerticallyAfterEdit": "enterNavigatesVerticallyAfterEdit"; "enableCellEditingOnBackspace": "enableCellEditingOnBackspace"; "undoRedoCellEditing": "undoRedoCellEditing"; "undoRedoCellEditingLimit": "undoRedoCellEditingLimit"; "defaultCsvExportParams": "defaultCsvExportParams"; "suppressCsvExport": "suppressCsvExport"; "defaultExcelExportParams": "defaultExcelExportParams"; "suppressExcelExport": "suppressExcelExport"; "excelStyles": "excelStyles"; "quickFilterText": "quickFilterText"; "cacheQuickFilter": "cacheQuickFilter"; "excludeHiddenColumnsFromQuickFilter": "excludeHiddenColumnsFromQuickFilter"; "includeHiddenColumnsInQuickFilter": "includeHiddenColumnsInQuickFilter"; "excludeChildrenWhenTreeDataFiltering": "excludeChildrenWhenTreeDataFiltering"; "enableCharts": "enableCharts"; "chartThemes": "chartThemes"; "customChartThemes": "customChartThemes"; "chartThemeOverrides": "chartThemeOverrides"; "enableChartToolPanelsButton": "enableChartToolPanelsButton"; "suppressChartToolPanelsButton": "suppressChartToolPanelsButton"; "chartToolPanelsDef": "chartToolPanelsDef"; "loadingCellRenderer": "loadingCellRenderer"; "loadingCellRendererParams": "loadingCellRendererParams"; "loadingCellRendererSelector": "loadingCellRendererSelector"; "localeText": "localeText"; "masterDetail": "masterDetail"; "keepDetailRows": "keepDetailRows"; "keepDetailRowsCount": "keepDetailRowsCount"; "detailCellRenderer": "detailCellRenderer"; "detailCellRendererParams": "detailCellRendererParams"; "detailRowHeight": "detailRowHeight"; "detailRowAutoHeight": "detailRowAutoHeight"; "context": "context"; "alignedGrids": "alignedGrids"; "tabIndex": "tabIndex"; "rowBuffer": "rowBuffer"; "valueCache": "valueCache"; "valueCacheNeverExpires": "valueCacheNeverExpires"; "enableCellExpressions": "enableCellExpressions"; "suppressParentsInRowNodes": "suppressParentsInRowNodes"; "suppressTouch": "suppressTouch"; "suppressFocusAfterRefresh": "suppressFocusAfterRefresh"; "suppressAsyncEvents": "suppressAsyncEvents"; "suppressBrowserResizeObserver": "suppressBrowserResizeObserver"; "suppressPropertyNamesCheck": "suppressPropertyNamesCheck"; "suppressChangeDetection": "suppressChangeDetection"; "debug": "debug"; "overlayLoadingTemplate": "overlayLoadingTemplate"; "loadingOverlayComponent": "loadingOverlayComponent"; "loadingOverlayComponentParams": "loadingOverlayComponentParams"; "suppressLoadingOverlay": "suppressLoadingOverlay"; "overlayNoRowsTemplate": "overlayNoRowsTemplate"; "noRowsOverlayComponent": "noRowsOverlayComponent"; "noRowsOverlayComponentParams": "noRowsOverlayComponentParams"; "suppressNoRowsOverlay": "suppressNoRowsOverlay"; "pagination": "pagination"; "paginationPageSize": "paginationPageSize"; "paginationAutoPageSize": "paginationAutoPageSize"; "paginateChildRows": "paginateChildRows"; "suppressPaginationPanel": "suppressPaginationPanel"; "pivotMode": "pivotMode"; "pivotPanelShow": "pivotPanelShow"; "pivotColumnGroupTotals": "pivotColumnGroupTotals"; "pivotRowTotals": "pivotRowTotals"; "pivotSuppressAutoColumn": "pivotSuppressAutoColumn"; "suppressExpandablePivotGroups": "suppressExpandablePivotGroups"; "functionsReadOnly": "functionsReadOnly"; "aggFuncs": "aggFuncs"; "suppressAggFuncInHeader": "suppressAggFuncInHeader"; "alwaysAggregateAtRootLevel": "alwaysAggregateAtRootLevel"; "suppressAggAtRootLevel": "suppressAggAtRootLevel"; "aggregateOnlyChangedColumns": "aggregateOnlyChangedColumns"; "suppressAggFilteredOnly": "suppressAggFilteredOnly"; "removePivotHeaderRowWhenSingleValueColumn": "removePivotHeaderRowWhenSingleValueColumn"; "animateRows": "animateRows"; "enableCellChangeFlash": "enableCellChangeFlash"; "cellFlashDelay": "cellFlashDelay"; "cellFadeDelay": "cellFadeDelay"; "allowShowChangeAfterFilter": "allowShowChangeAfterFilter"; "domLayout": "domLayout"; "ensureDomOrder": "ensureDomOrder"; "enableRtl": "enableRtl"; "suppressColumnVirtualisation": "suppressColumnVirtualisation"; "suppressMaxRenderedRowRestriction": "suppressMaxRenderedRowRestriction"; "suppressRowVirtualisation": "suppressRowVirtualisation"; "rowDragManaged": "rowDragManaged"; "suppressRowDrag": "suppressRowDrag"; "suppressMoveWhenRowDragging": "suppressMoveWhenRowDragging"; "rowDragEntireRow": "rowDragEntireRow"; "rowDragMultiRow": "rowDragMultiRow"; "rowDragText": "rowDragText"; "fullWidthCellRenderer": "fullWidthCellRenderer"; "fullWidthCellRendererParams": "fullWidthCellRendererParams"; "embedFullWidthRows": "embedFullWidthRows"; "groupDisplayType": "groupDisplayType"; "groupDefaultExpanded": "groupDefaultExpanded"; "autoGroupColumnDef": "autoGroupColumnDef"; "groupMaintainOrder": "groupMaintainOrder"; "groupSelectsChildren": "groupSelectsChildren"; "groupAggFiltering": "groupAggFiltering"; "groupIncludeFooter": "groupIncludeFooter"; "groupIncludeTotalFooter": "groupIncludeTotalFooter"; "groupSuppressBlankHeader": "groupSuppressBlankHeader"; "groupSelectsFiltered": "groupSelectsFiltered"; "showOpenedGroup": "showOpenedGroup"; "groupRemoveSingleChildren": "groupRemoveSingleChildren"; "groupRemoveLowestSingleChildren": "groupRemoveLowestSingleChildren"; "groupHideOpenParents": "groupHideOpenParents"; "groupAllowUnbalanced": "groupAllowUnbalanced"; "rowGroupPanelShow": "rowGroupPanelShow"; "groupRowRenderer": "groupRowRenderer"; "groupRowRendererParams": "groupRowRendererParams"; "suppressMakeColumnVisibleAfterUnGroup": "suppressMakeColumnVisibleAfterUnGroup"; "treeData": "treeData"; "rowGroupPanelSuppressSort": "rowGroupPanelSuppressSort"; "suppressGroupRowsSticky": "suppressGroupRowsSticky"; "rememberGroupStateWhenNewData": "rememberGroupStateWhenNewData"; "pinnedTopRowData": "pinnedTopRowData"; "pinnedBottomRowData": "pinnedBottomRowData"; "rowModelType": "rowModelType"; "rowData": "rowData"; "asyncTransactionWaitMillis": "asyncTransactionWaitMillis"; "suppressModelUpdateAfterUpdateTransaction": "suppressModelUpdateAfterUpdateTransaction"; "datasource": "datasource"; "cacheOverflowSize": "cacheOverflowSize"; "infiniteInitialRowCount": "infiniteInitialRowCount"; "serverSideInitialRowCount": "serverSideInitialRowCount"; "serverSideStoreType": "serverSideStoreType"; "suppressServerSideInfiniteScroll": "suppressServerSideInfiniteScroll"; "cacheBlockSize": "cacheBlockSize"; "maxBlocksInCache": "maxBlocksInCache"; "maxConcurrentDatasourceRequests": "maxConcurrentDatasourceRequests"; "blockLoadDebounceMillis": "blockLoadDebounceMillis"; "purgeClosedRowNodes": "purgeClosedRowNodes"; "serverSideDatasource": "serverSideDatasource"; "serverSideSortAllLevels": "serverSideSortAllLevels"; "serverSideOnlyRefreshFilteredGroups": "serverSideOnlyRefreshFilteredGroups"; "serverSideFilterAllLevels": "serverSideFilterAllLevels"; "serverSideSortOnServer": "serverSideSortOnServer"; "serverSideFilterOnServer": "serverSideFilterOnServer"; "serverSideSortingAlwaysResets": "serverSideSortingAlwaysResets"; "serverSideFilteringAlwaysResets": "serverSideFilteringAlwaysResets"; "viewportDatasource": "viewportDatasource"; "viewportRowModelPageSize": "viewportRowModelPageSize"; "viewportRowModelBufferSize": "viewportRowModelBufferSize"; "alwaysShowHorizontalScroll": "alwaysShowHorizontalScroll"; "alwaysShowVerticalScroll": "alwaysShowVerticalScroll"; "debounceVerticalScrollbar": "debounceVerticalScrollbar"; "suppressHorizontalScroll": "suppressHorizontalScroll"; "suppressScrollOnNewData": "suppressScrollOnNewData"; "suppressScrollWhenPopupsAreOpen": "suppressScrollWhenPopupsAreOpen"; "suppressAnimationFrame": "suppressAnimationFrame"; "suppressMiddleClickScrolls": "suppressMiddleClickScrolls"; "suppressPreventDefaultOnMouseWheel": "suppressPreventDefaultOnMouseWheel"; "scrollbarWidth": "scrollbarWidth"; "rowSelection": "rowSelection"; "rowMultiSelectWithClick": "rowMultiSelectWithClick"; "suppressRowDeselection": "suppressRowDeselection"; "suppressRowClickSelection": "suppressRowClickSelection"; "suppressCellFocus": "suppressCellFocus"; "suppressMultiRangeSelection": "suppressMultiRangeSelection"; "enableCellTextSelection": "enableCellTextSelection"; "enableRangeSelection": "enableRangeSelection"; "enableRangeHandle": "enableRangeHandle"; "enableFillHandle": "enableFillHandle"; "fillHandleDirection": "fillHandleDirection"; "suppressClearOnFillReduction": "suppressClearOnFillReduction"; "sortingOrder": "sortingOrder"; "accentedSort": "accentedSort"; "unSortIcon": "unSortIcon"; "suppressMultiSort": "suppressMultiSort"; "alwaysMultiSort": "alwaysMultiSort"; "multiSortKey": "multiSortKey"; "suppressMaintainUnsortedOrder": "suppressMaintainUnsortedOrder"; "icons": "icons"; "rowHeight": "rowHeight"; "rowStyle": "rowStyle"; "rowClass": "rowClass"; "rowClassRules": "rowClassRules"; "suppressRowHoverHighlight": "suppressRowHoverHighlight"; "suppressRowTransform": "suppressRowTransform"; "columnHoverHighlight": "columnHoverHighlight"; "gridId": "gridId"; "deltaSort": "deltaSort"; "treeDataDisplayType": "treeDataDisplayType"; "functionsPassive": "functionsPassive"; "enableGroupEdit": "enableGroupEdit"; "getContextMenuItems": "getContextMenuItems"; "getMainMenuItems": "getMainMenuItems"; "postProcessPopup": "postProcessPopup"; "processCellForClipboard": "processCellForClipboard"; "processHeaderForClipboard": "processHeaderForClipboard"; "processGroupHeaderForClipboard": "processGroupHeaderForClipboard"; "processCellFromClipboard": "processCellFromClipboard"; "sendToClipboard": "sendToClipboard"; "processDataFromClipboard": "processDataFromClipboard"; "isExternalFilterPresent": "isExternalFilterPresent"; "doesExternalFilterPass": "doesExternalFilterPass"; "getChartToolbarItems": "getChartToolbarItems"; "createChartContainer": "createChartContainer"; "navigateToNextHeader": "navigateToNextHeader"; "tabToNextHeader": "tabToNextHeader"; "navigateToNextCell": "navigateToNextCell"; "tabToNextCell": "tabToNextCell"; "getLocaleText": "getLocaleText"; "getDocument": "getDocument"; "paginationNumberFormatter": "paginationNumberFormatter"; "getGroupRowAgg": "getGroupRowAgg"; "isGroupOpenByDefault": "isGroupOpenByDefault"; "initialGroupOrderComparator": "initialGroupOrderComparator"; "processSecondaryColDef": "processSecondaryColDef"; "processSecondaryColGroupDef": "processSecondaryColGroupDef"; "processPivotResultColDef": "processPivotResultColDef"; "processPivotResultColGroupDef": "processPivotResultColGroupDef"; "getDataPath": "getDataPath"; "getChildCount": "getChildCount"; "getServerSideGroupLevelParams": "getServerSideGroupLevelParams"; "getServerSideStoreParams": "getServerSideStoreParams"; "isServerSideGroupOpenByDefault": "isServerSideGroupOpenByDefault"; "isApplyServerSideTransaction": "isApplyServerSideTransaction"; "isServerSideGroup": "isServerSideGroup"; "getServerSideGroupKey": "getServerSideGroupKey"; "getBusinessKeyForNode": "getBusinessKeyForNode"; "getRowId": "getRowId"; "resetRowDataOnUpdate": "resetRowDataOnUpdate"; "processRowPostCreate": "processRowPostCreate"; "isRowSelectable": "isRowSelectable"; "isRowMaster": "isRowMaster"; "fillOperation": "fillOperation"; "postSortRows": "postSortRows"; "getRowStyle": "getRowStyle"; "getRowClass": "getRowClass"; "getRowHeight": "getRowHeight"; "isFullWidthRow": "isFullWidthRow"; }, { "toolPanelVisibleChanged": "toolPanelVisibleChanged"; "toolPanelSizeChanged": "toolPanelSizeChanged"; "cutStart": "cutStart"; "cutEnd": "cutEnd"; "pasteStart": "pasteStart"; "pasteEnd": "pasteEnd"; "columnVisible": "columnVisible"; "columnPinned": "columnPinned"; "columnResized": "columnResized"; "columnMoved": "columnMoved"; "columnValueChanged": "columnValueChanged"; "columnPivotModeChanged": "columnPivotModeChanged"; "columnPivotChanged": "columnPivotChanged"; "columnGroupOpened": "columnGroupOpened"; "newColumnsLoaded": "newColumnsLoaded"; "gridColumnsChanged": "gridColumnsChanged"; "displayedColumnsChanged": "displayedColumnsChanged"; "virtualColumnsChanged": "virtualColumnsChanged"; "columnEverythingChanged": "columnEverythingChanged"; "componentStateChanged": "componentStateChanged"; "cellValueChanged": "cellValueChanged"; "cellEditRequest": "cellEditRequest"; "rowValueChanged": "rowValueChanged"; "cellEditingStarted": "cellEditingStarted"; "cellEditingStopped": "cellEditingStopped"; "rowEditingStarted": "rowEditingStarted"; "rowEditingStopped": "rowEditingStopped"; "undoStarted": "undoStarted"; "undoEnded": "undoEnded"; "redoStarted": "redoStarted"; "redoEnded": "redoEnded"; "rangeDeleteStart": "rangeDeleteStart"; "rangeDeleteEnd": "rangeDeleteEnd"; "filterOpened": "filterOpened"; "filterChanged": "filterChanged"; "filterModified": "filterModified"; "chartCreated": "chartCreated"; "chartRangeSelectionChanged": "chartRangeSelectionChanged"; "chartOptionsChanged": "chartOptionsChanged"; "chartDestroyed": "chartDestroyed"; "cellKeyDown": "cellKeyDown"; "gridReady": "gridReady"; "firstDataRendered": "firstDataRendered"; "gridSizeChanged": "gridSizeChanged"; "modelUpdated": "modelUpdated"; "virtualRowRemoved": "virtualRowRemoved"; "viewportChanged": "viewportChanged"; "bodyScroll": "bodyScroll"; "bodyScrollEnd": "bodyScrollEnd"; "dragStarted": "dragStarted"; "dragStopped": "dragStopped"; "paginationChanged": "paginationChanged"; "rowDragEnter": "rowDragEnter"; "rowDragMove": "rowDragMove"; "rowDragLeave": "rowDragLeave"; "rowDragEnd": "rowDragEnd"; "columnRowGroupChanged": "columnRowGroupChanged"; "rowGroupOpened": "rowGroupOpened"; "expandOrCollapseAll": "expandOrCollapseAll"; "pinnedRowDataChanged": "pinnedRowDataChanged"; "rowDataChanged": "rowDataChanged"; "rowDataUpdated": "rowDataUpdated"; "asyncTransactionsFlushed": "asyncTransactionsFlushed"; "storeRefreshed": "storeRefreshed"; "cellClicked": "cellClicked"; "cellDoubleClicked": "cellDoubleClicked"; "cellFocused": "cellFocused"; "cellMouseOver": "cellMouseOver"; "cellMouseOut": "cellMouseOut"; "cellMouseDown": "cellMouseDown"; "rowClicked": "rowClicked"; "rowDoubleClicked": "rowDoubleClicked"; "rowSelected": "rowSelected"; "selectionChanged": "selectionChanged"; "cellContextMenu": "cellContextMenu"; "rangeSelectionChanged": "rangeSelectionChanged"; "sortChanged": "sortChanged"; "columnRowGroupChangeRequest": "columnRowGroupChangeRequest"; "columnPivotChangeRequest": "columnPivotChangeRequest"; "columnValueChangeRequest": "columnValueChangeRequest"; "columnAggFuncChangeRequest": "columnAggFuncChangeRequest"; }, never, never>;
 }

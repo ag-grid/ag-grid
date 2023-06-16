@@ -1,8 +1,16 @@
-import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
+import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
 import { ModuleContext } from '../../util/module';
+import { Default } from '../../util/default';
+import { BaseAxisTick } from '../../axis';
+
+class TimeAxisTick extends BaseAxisTick<TimeScale, number | Date> {
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    @Default(NaN)
+    maxSpacing: number = NaN;
+}
 
 export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
@@ -40,7 +48,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         }
 
         if (d.length > 2) {
-            d = (extent(d) || [0, 1000]).map((x) => new Date(x));
+            d = (extent(d) ?? [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];
@@ -55,6 +63,10 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         return d;
     }
 
+    protected createTick() {
+        return new TimeAxisTick();
+    }
+
     protected onLabelFormatChange(ticks: any[], format?: string) {
         if (format) {
             super.onLabelFormatChange(ticks, format);
@@ -65,7 +77,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     }
 
     formatDatum(datum: Date): string {
-        return this.datumFormatter(datum);
+        return this.moduleCtx.callbackCache.call(this.datumFormatter, datum) ?? String(datum);
     }
 
     calculatePadding(_min: number, _max: number) {

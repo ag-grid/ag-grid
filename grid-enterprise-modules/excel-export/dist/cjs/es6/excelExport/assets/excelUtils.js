@@ -3,16 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getExcelColumnName = exports.createXmlPart = exports.setExcelImageTotalHeight = exports.setExcelImageTotalWidth = exports.getHeightFromProperty = exports.getFontFamilyId = exports.pixelsToEMU = exports.pointsToPixel = exports.pixelsToPoint = void 0;
 const csv_export_1 = require("@ag-grid-community/csv-export");
 const excelConstants_1 = require("./excelConstants");
-exports.pixelsToPoint = (pixels) => {
+const pixelsToPoint = (pixels) => {
     return Math.round(pixels * 72 / 96);
 };
-exports.pointsToPixel = (points) => {
+exports.pixelsToPoint = pixelsToPoint;
+const pointsToPixel = (points) => {
     return Math.round(points * 96 / 72);
 };
-exports.pixelsToEMU = (value) => {
+exports.pointsToPixel = pointsToPixel;
+const pixelsToEMU = (value) => {
     return Math.ceil(value * excelConstants_1.INCH_TO_EMU);
 };
-exports.getFontFamilyId = (name) => {
+exports.pixelsToEMU = pixelsToEMU;
+const getFontFamilyId = (name) => {
     if (name === undefined) {
         return;
     }
@@ -20,7 +23,8 @@ exports.getFontFamilyId = (name) => {
     const pos = families.indexOf(name || 'Automatic');
     return Math.max(pos, 0);
 };
-exports.getHeightFromProperty = (rowIndex, height) => {
+exports.getFontFamilyId = getFontFamilyId;
+const getHeightFromProperty = (rowIndex, height) => {
     if (!height) {
         return;
     }
@@ -34,7 +38,8 @@ exports.getHeightFromProperty = (rowIndex, height) => {
     }
     return exports.pixelsToPoint(finalHeight);
 };
-exports.setExcelImageTotalWidth = (image, columnsToExport) => {
+exports.getHeightFromProperty = getHeightFromProperty;
+const setExcelImageTotalWidth = (image, columnsToExport) => {
     const { colSpan, column } = image.position;
     if (image.width) {
         if (colSpan) {
@@ -56,7 +61,8 @@ exports.setExcelImageTotalWidth = (image, columnsToExport) => {
         }
     }
 };
-exports.setExcelImageTotalHeight = (image, rowHeight) => {
+exports.setExcelImageTotalWidth = setExcelImageTotalWidth;
+const setExcelImageTotalHeight = (image, rowHeight) => {
     const { rowSpan, row } = image.position;
     if (image.height) {
         if (rowSpan) {
@@ -79,7 +85,8 @@ exports.setExcelImageTotalHeight = (image, rowHeight) => {
         }
     }
 };
-exports.createXmlPart = (body) => {
+exports.setExcelImageTotalHeight = setExcelImageTotalHeight;
+const createXmlPart = (body) => {
     const header = csv_export_1.XmlFactory.createHeader({
         encoding: 'UTF-8',
         standalone: 'yes'
@@ -87,7 +94,8 @@ exports.createXmlPart = (body) => {
     const xmlBody = csv_export_1.XmlFactory.createXml(body);
     return `${header}${xmlBody}`;
 };
-exports.getExcelColumnName = (colIdx) => {
+exports.createXmlPart = createXmlPart;
+const getExcelColumnName = (colIdx) => {
     const startCode = 65;
     const tableWidth = 26;
     const fromCharCode = String.fromCharCode;
@@ -104,3 +112,4 @@ exports.getExcelColumnName = (colIdx) => {
     }
     return exports.getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
+exports.getExcelColumnName = getExcelColumnName;

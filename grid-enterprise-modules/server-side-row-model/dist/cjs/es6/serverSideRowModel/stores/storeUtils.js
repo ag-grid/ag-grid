@@ -107,8 +107,8 @@ let StoreUtils = class StoreUtils extends core_1.BeanStub {
     isServerSideSortAllLevels() {
         return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
-    isServerSideFilterAllLevels() {
-        return this.gridOptionsService.is('serverSideFilterAllLevels') && this.assertRowModelIsServerSide('serverSideFilterAllLevels');
+    isServerSideOnlyRefreshFilteredGroups() {
+        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     }
     isServerSideSortOnServer() {
         return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');

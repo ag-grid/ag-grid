@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -72,7 +74,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
         }
         var userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
         object_1.mergeDeep(defaultAutoColDef, userAutoColDef);
-        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
+        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colId);
         defaultAutoColDef.colId = colId;
         // For tree data the filter is always allowed
         if (!this.gridOptionsService.isTreeData()) {
@@ -91,15 +93,23 @@ var AutoGroupColService = /** @class */ (function (_super) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
         var existingCol = existingCols.find(function (col) { return col.getId() == colId; });
+        var isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (existingCol) {
+            if (isSortingCoupled) {
+                // if col is coupled sorting, and has sort attribute, we want to ignore this
+                // because we only accept the sort on creation of the col
+                defaultAutoColDef.sort = undefined;
+                defaultAutoColDef.sortIndex = undefined;
+            }
             existingCol.setColDef(defaultAutoColDef, null);
             this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
             return existingCol;
         }
-        var isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort) && !defaultAutoColDef.field) {
+        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
             // if no field, then this column cannot hold its own sort state
-            object_1.mergeDeep(defaultAutoColDef, { sort: null, initialSort: null }, true, true);
+            defaultAutoColDef.sort = null;
+            defaultAutoColDef.sortIndex = null;
+            defaultAutoColDef.initialSort = null;
         }
         var newCol = new column_1.Column(defaultAutoColDef, null, colId, true);
         this.context.createBean(newCol);
@@ -112,7 +122,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
             headerName: localeTextFunc('group', 'Group')
         };
         var userHasProvidedGroupCellRenderer = userDef &&
-            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector);
+            (userDef.cellRenderer || userDef.cellRendererSelector);
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
             res.cellRenderer = 'agGroupCellRenderer';
@@ -126,11 +136,10 @@ var AutoGroupColService = /** @class */ (function (_super) {
                 headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
-            if (colDef.cellRenderer || colDef.cellRendererFramework) {
+            if (colDef.cellRenderer) {
                 Object.assign(res, {
                     cellRendererParams: {
                         innerRenderer: colDef.cellRenderer,
-                        innerRendererFramework: colDef.cellRendererFramework,
                         innerRendererParams: colDef.cellRendererParams
                     }
                 });

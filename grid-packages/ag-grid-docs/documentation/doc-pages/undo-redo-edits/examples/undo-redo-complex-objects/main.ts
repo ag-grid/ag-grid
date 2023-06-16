@@ -4,16 +4,18 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'a',
+      valueFormatter: valueFormatterA,
       valueGetter: valueGetterA,
       valueParser: valueParserA,
       valueSetter: valueSetterA,
       equals: equalsA,
+      cellDataType: 'object',
     },
     {
       field: 'b',
       valueFormatter: valueFormatterB,
       valueParser: valueParserB,
-      cellEditorParams: cellEditorParamsB,
+      cellDataType: 'object',
     },
   ],
   defaultColDef: {
@@ -22,9 +24,6 @@ const gridOptions: GridOptions = {
   rowData: getRows(),
   enableRangeSelection: true,
   enableFillHandle: true,
-  fillHandleDirection: 'y',
-  processCellForClipboard: processCellForClipboard,
-  processCellFromClipboard: processCellFromClipboard,
   undoRedoCellEditing: true,
   undoRedoCellEditingLimit: 5,
   enableCellChangeFlash: true,
@@ -33,14 +32,15 @@ const gridOptions: GridOptions = {
 }
 
 function createValueA(value: string, data: any) {
-  return {    
+  return value == null ? null : {    
     actualValueA: value,
     anotherPropertyA: data.anotherPropertyA,
-    // `toString` is the equivalent to having a `valueFormatter`. Convert complex object to string for rendering
-    toString: function () {     
-      return this.actualValueA;
-    },
   };
+}
+
+function valueFormatterA(params: ValueFormatterParams) {
+  // Convert complex object to string
+  return params.value ? params.value.actualValueA : '';
 }
 
 function valueGetterA(params: ValueGetterParams) {
@@ -49,7 +49,7 @@ function valueGetterA(params: ValueGetterParams) {
 };
 
 function valueParserA(params: ValueParserParams) {
-  // Convert string `newValue` back into complex object (reverse of `toString` on complex object). `newValue` is string.
+  // Convert string `newValue` back into complex object (reverse of `valueFormatterA`). `newValue` is string.
   // We have access to `data` (as well as `oldValue`) to retrieve any other properties we need to recreate the complex object.
   // For undo/redo to work, we need immutable data, so can't mutate `oldValue`
   return createValueA(params.newValue, params.data);
@@ -57,17 +57,17 @@ function valueParserA(params: ValueParserParams) {
 
 function valueSetterA(params: ValueSetterParams) {
   // Update data from complex object (reverse of `valueGetterA`)
-  params.data[params.colDef.field!] = params.newValue.actualValueA;
+  params.data[params.colDef.field!] = params.newValue ? params.newValue.actualValueA : null;
   return true;
 }
 
 function equalsA(valueA: any, valueB: any) {
-  // Used to detect whether cell value has changed for refreshing
-  return valueA.actualValueA === valueB.actualValueA;
+  // Used to detect whether cell value has changed for refreshing. Needed as `valueGetter` returns different references.
+  return (valueA == null && valueB == null) || (valueA != null && valueB != null && valueA.actualValueA === valueB.actualValueA);
 }
 
 function createValueB(value: string, data: any) {
-  return {
+  return value == null ? null : {
     actualValueB: value,
     anotherPropertyB: data.anotherPropertyB
   };
@@ -75,42 +75,12 @@ function createValueB(value: string, data: any) {
 
 function valueFormatterB(params: ValueFormatterParams) {
   // Convert complex object to string
-  return params.value.actualValueB;
+  return params.value ? params.value.actualValueB : '';
 }
 
 function valueParserB(params: ValueParserParams) {
   // Convert string `newValue` back into complex object (reverse of `valueFormatterB`). `newValue` is string
   return createValueB(params.newValue, params.data);
-}
-
-function cellEditorParamsB(params: ICellEditorParams) {
-  // Display formatted string value when editing cell
-  return {
-    ...params,
-    value: params.formatValue(params.value),
-  }
-}
-
-function processCellForClipboard(params: ProcessCellForExportParams) {
-  // Cell copying requires string values, so we need to convert from complex objects
-  const colId = params.column.getId();
-  if (colId === 'a') {
-    return params.value.actualValueA;
-  } else if (colId === 'b') {
-    return params.value.actualValueB;
-  }
-  return params.value;
-}
-
-function processCellFromClipboard(params: ProcessCellForExportParams) {
-  // Cell pasting uses string values, so we need to convert to complex values
-  const colId = params.column.getId();
-  if (colId === 'a') {
-    return createValueA(params.value, params.node!.data);
-  } else if (colId === 'b') {
-    return createValueB(params.value, params.node!.data);
-  }
-  return params.value;
 }
 
 function undo() {

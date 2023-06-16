@@ -1,10 +1,5 @@
 @use '../../design-system' as *;
 
-@import '~bootstrap/scss/card';
-@import '~bootstrap/scss/list-group';
-@import '~bootstrap/scss/utilities/display';
-@import '~bootstrap/scss/utilities/spacing';
-
 .searchResults {
     display: none;
     position: absolute;
@@ -28,7 +23,7 @@
 
     li {
         line-height: var(--line-height-tight);
-        margin-bottom: -2px;
+        margin-bottom: -2px !important;
     }
 
     li:first-child a {
@@ -42,8 +37,8 @@
         display: block;
         padding: $size-2;
         border: 2px solid var(--border-color);
-        background-color: transparent !important; // !important needed because of .ag-styles specificity
-        outline: none !important; // !important needed because of .ag-styles specificity
+        background-color: transparent;
+        outline: none;
         transition: color $default-transition-timing, background-color $default-transition-timing,
             border-color $default-transition-timing;
 
@@ -51,23 +46,29 @@
         &:focus-visible {
             position: relative;
             border-color: var(--input-focus-border-color);
-            background-color: var(--bright-blue-gray) !important; // !important needed because of .ag-styles specificity
+            background-color: var(--bright-blue-gray);
             z-index: 1002;
+        }
+
+        &:disabled {
+            display: none;
         }
     }
 
-    a {
-        color: var(--text-color) !important; // !important needed because of .ag-styles specificity
+    a,
+    a:hover {
+        color: var(--text-color);
     }
 
     h4 {
-        margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
-        font-weight: var(--font-weight-bold) !important; // !important needed because of .ag-styles specificity
+        margin-bottom: $size-half;
+        font-weight: var(--font-weight-bold);
     }
 
     a:hover h4,
     a:hover .breadcrumb {
         color: var(--link-color);
+        transition: color $default-transition-timing;
     }
 
     mark {
@@ -85,8 +86,8 @@
 }
 
 :global(.ais-InfiniteHits-list) {
-    margin-bottom: 0 !important; // !important needed because of .ag-styles specificity
-    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+    margin-bottom: 0 !important;
+    padding-left: 0;
     list-style: none;
 }
 
@@ -97,17 +98,17 @@
 }
 
 button:global(.ais-InfiniteHits-loadMore) {
+    --button-text-color: var(--link-color);
+
     width: 100%;
-    padding: $size-half !important; // !important for .ag-styles specificity
-    margin-bottom: -2px !important; // !important for .ag-styles specificity
-    border-top-right-radius: 0 !important; // !important for .ag-styles specifici!important; // !important for .ag-styles specificityy
-    border-top-left-radius: 0 !important; // !important for .ag-styles specificity
-    font-weight: var(--font-weight-normal) !important; // !important for .ag-styles specificity
-    box-shadow: none !important; // !important needed because of .ag-styles specificity
-    color: var(--link-color) !important; // !important for .ag-styles specificity
+    padding: $size-half !important;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    font-weight: var(--font-weight-normal);
+    box-shadow: none;
 
     &:hover {
-        background-color: var(--bright-blue-gray) !important; // !important needed because of .ag-styles specificity
+        background-color: var(--bright-blue-gray);
     }
 }
 

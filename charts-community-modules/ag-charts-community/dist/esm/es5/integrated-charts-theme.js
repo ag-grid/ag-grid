@@ -16,7 +16,7 @@ var __read = (this && this.__read) || function (o, n) {
 };
 import { themes as themeFactories } from './chart/mapping/themes';
 export { getChartTheme } from './chart/mapping/themes';
-export { ChartTheme } from './chart/themes/chartTheme';
+export { ChartTheme, EXTENDS_SERIES_DEFAULTS, OVERRIDE_SERIES_LABEL_DEFAULTS, DEFAULT_FONT_FAMILY, } from './chart/themes/chartTheme';
 export var themes = Object.entries(themeFactories).reduce(function (obj, _a) {
     var _b = __read(_a, 2), name = _b[0], factory = _b[1];
     obj[name] = factory();

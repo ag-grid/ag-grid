@@ -5,7 +5,7 @@ export declare class ExcelXmlSerializingSession extends BaseExcelSerializingSess
     protected getDataTypeForValue(valueForCell?: string): ExcelDataType;
     protected getType(type: ExcelDataType, style: ExcelStyle | null, value: string | null): ExcelDataType | null;
     protected addImage(): undefined;
-    protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell;
+    protected createCell(styleId: string | null, type: ExcelDataType, value: string, valueFormatted?: string | null): ExcelCell;
     private getValueTransformed;
     protected createMergedCell(styleId: string | null, type: ExcelDataType, value: string, numOfCells: number): ExcelCell;
 }

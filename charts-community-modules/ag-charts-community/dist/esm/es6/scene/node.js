@@ -242,7 +242,9 @@ export class Node extends ChangeDetectable {
             // for more complex shapes, so discarding items based on this will save a lot of
             // processing when the point is nowhere near the child.
             for (let i = children.length - 1; i >= 0; i--) {
-                const hit = ((_a = children[i].computeBBox()) === null || _a === void 0 ? void 0 : _a.containsPoint(x, y)) ? children[i].pickNode(x, y) : undefined;
+                const child = children[i];
+                const containsPoint = (_a = child.computeTransformedBBox()) === null || _a === void 0 ? void 0 : _a.containsPoint(x, y);
+                const hit = containsPoint ? child.pickNode(x, y) : undefined;
                 if (hit) {
                     return hit;
                 }
@@ -341,7 +343,7 @@ export class Node extends ChangeDetectable {
         return this._dirty;
     }
     markClean(opts) {
-        const { force = false, recursive = true } = opts || {};
+        const { force = false, recursive = true } = opts !== null && opts !== void 0 ? opts : {};
         if (this._dirty === RedrawType.NONE && !force) {
             return;
         }

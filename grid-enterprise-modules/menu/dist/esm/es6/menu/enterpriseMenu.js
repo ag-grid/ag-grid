@@ -67,18 +67,20 @@ let EnterpriseMenuFactory = class EnterpriseMenuFactory extends BeanStub {
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
             positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
-            anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
-        // if user starts showing / hiding columns, or otherwise move the underlying column
-        // for this menu, we want to stop tracking the menu with the column position. otherwise
-        // the menu would move as the user is using the columns tab inside the menu.
-        this.addStopAnchoring(addPopupRes === null || addPopupRes === void 0 ? void 0 : addPopupRes.stopAnchoringPromise, column, closedFuncs);
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
             // reposition the menu because the method above could load
             // an element that is bigger than enterpriseMenu header.
             positionCallback(menu);
+        }
+        // if user starts showing / hiding columns, or otherwise move the underlying column
+        // for this menu, we want to stop tracking the menu with the column position. otherwise
+        // the menu would move as the user is using the columns tab inside the menu.
+        const stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+        if (stopAnchoringPromise) {
+            this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event) => {
             this.lastSelectedTab = event.key;
@@ -89,6 +91,16 @@ let EnterpriseMenuFactory = class EnterpriseMenuFactory extends BeanStub {
             if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
+        });
+    }
+    addStopAnchoring(stopAnchoringPromise, column, closedFuncsArr) {
+        stopAnchoringPromise.then((stopAnchoringFunc) => {
+            column.addEventListener('leftChanged', stopAnchoringFunc);
+            column.addEventListener('visibleChanged', stopAnchoringFunc);
+            closedFuncsArr.push(() => {
+                column.removeEventListener('leftChanged', stopAnchoringFunc);
+                column.removeEventListener('visibleChanged', stopAnchoringFunc);
+            });
         });
     }
     getClosedCallback(column, menu, headerPosition, columnIndex, eventSource) {
@@ -123,19 +135,6 @@ let EnterpriseMenuFactory = class EnterpriseMenuFactory extends BeanStub {
                 }
             }
         };
-    }
-    addStopAnchoring(stopAnchoringPromise, column, closedFuncsArr) {
-        if (!stopAnchoringPromise) {
-            return;
-        }
-        stopAnchoringPromise.then((stopAnchoringFunc) => {
-            column.addEventListener('leftChanged', stopAnchoringFunc);
-            column.addEventListener('visibleChanged', stopAnchoringFunc);
-            closedFuncsArr.push(() => {
-                column.removeEventListener('leftChanged', stopAnchoringFunc);
-                column.removeEventListener('visibleChanged', stopAnchoringFunc);
-            });
-        });
     }
     getMenuParams(column, restrictToTabs, eventSource) {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
@@ -210,7 +209,7 @@ export class EnterpriseMenu extends BeanStub {
     }
     isModuleLoaded(menuTabName) {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule);
+            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
         }
         return true;
     }

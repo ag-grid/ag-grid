@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -18,7 +18,7 @@ export declare class RowDragComp extends Component {
     private readonly suppressVisibilityChange?;
     private dragSource;
     private readonly beans;
-    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column | undefined, customGui?: HTMLElement | undefined, dragStartPixels?: number | undefined, suppressVisibilityChange?: boolean | undefined);
+    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column<any> | undefined, customGui?: HTMLElement | undefined, dragStartPixels?: number | undefined, suppressVisibilityChange?: boolean | undefined);
     isCustomGui(): boolean;
     private postConstruct;
     setDragElement(dragElement: HTMLElement, dragStartPixels?: number): void;

@@ -13,6 +13,7 @@ export class ToolPanelWrapper extends Component {
     setupResize() {
         const eGui = this.getGui();
         const resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
+        eGui.setAttribute('id', `ag-${this.getCompId()}`);
         resizeBar.setElementToResize(eGui);
         this.appendChild(resizeBar);
     }
@@ -27,7 +28,7 @@ export class ToolPanelWrapper extends Component {
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
         if (componentPromise == null) {
-            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
+            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -61,7 +62,7 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelCompInstance.refresh();
     }
 }
-ToolPanelWrapper.TEMPLATE = `<div class="ag-tool-panel-wrapper"/>`;
+ToolPanelWrapper.TEMPLATE = `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
 __decorate([
     Autowired("userComponentFactory")
 ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);

@@ -8,7 +8,8 @@ import { Autowired, Bean, BeanStub, } from "@ag-grid-community/core";
 let FilterAggregatesStage = class FilterAggregatesStage extends BeanStub {
     execute(params) {
         const isPivotMode = this.columnModel.isPivotMode();
-        const isAggFilterActive = this.filterManager.isAggregateFilterPresent();
+        const isAggFilterActive = this.filterManager.isAggregateFilterPresent()
+            || this.filterManager.isAggregateQuickFilterPresent();
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
         const defaultPrimaryColumnPredicate = (params) => !params.node.group;

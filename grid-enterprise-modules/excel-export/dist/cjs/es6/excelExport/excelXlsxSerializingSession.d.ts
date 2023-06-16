@@ -8,7 +8,7 @@ export declare class ExcelXlsxSerializingSession extends BaseExcelSerializingSes
         image: ExcelImage;
         value?: string;
     } | undefined;
-    protected createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string): ExcelCell;
+    protected createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string, valueFormatted?: string | null): ExcelCell;
     protected createMergedCell(styleId: string | null, type: ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell;
     private getCellValue;
 }

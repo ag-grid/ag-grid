@@ -15,7 +15,6 @@ const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
 const {
     getFlattenedBuildChainInfo,
     buildPackages,
-    buildCss,
     watchCss,
     generateAutoDocFiles
 } = require('./lernaOperations');
@@ -33,6 +32,62 @@ const flattenArray = array => [].concat.apply([], array);
 const lnk = require('lnk').sync;
 
 const EXPRESS_HTTPS_PORT = 8080;
+
+function debounce(cb, timeout = 500) {
+    return debounceByPath(cb, 0, 0, timeout);
+}
+
+/** Correct depth to pickup docs section. */
+const DEFAULT_GROUP_DEPTH = 3;
+/** Correct depth to pickup specific example directory. */
+const DEFAULT_PATH_DEPTH = 5;
+
+function debounceByPath(cb, groupDepth = DEFAULT_GROUP_DEPTH, pathDepth = DEFAULT_PATH_DEPTH, timeout = 500) {
+    let timeouts = {};
+
+    const pathFn = (path, depth) => {
+        const pathParts = path.split('/');
+        let key = pathParts.slice(0, depth).join('/');
+        if (pathParts.length > depth) {
+            key += '/';
+        }
+
+        return key;
+    };
+
+    const groupFn = (path) => pathFn(path, groupDepth);
+    const keyFn = (path) => pathFn(path, pathDepth);
+
+    return (file) => {
+        const group = groupFn(file);
+        const key = keyFn(file);
+
+        if (timeouts[group]?.timeoutRef) {
+            clearTimeout(timeouts[group].timeoutRef);
+        }
+
+        const timeoutRef = setTimeout(() => {
+            const paths = [];
+            const keys = Object.keys(timeouts[group].keys);
+            if (keys.length < 5) {
+                // If only a few example changed, use the more specific path(s).
+                paths.push(...keys);
+            } else {
+                // More than a few examples changed, trigger rebuild for all examples in a section.
+                paths.push(group);
+            }
+
+            delete timeouts[group];
+            for (const path of paths) {
+                cb(path);
+            }
+        }, timeout);
+
+        timeouts[group] ??= { keys: {} };
+        timeouts[group].timeoutRef = timeoutRef;
+        timeouts[group].keys[key] = true;
+    };
+}
 
 function reporter(middlewareOptions, options) {
     const {log, state, stats} = options;
@@ -106,9 +161,9 @@ function servePackage(app, framework) {
     app.use(`/dev/${framework}`, express.static(`./_dev/${framework}`));
 }
 
-function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
+function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
     console.log("Serving modules");
-    gridCommunityModules.concat(gridEnterpriseModules).concat(chartCommunityModules).forEach(module => {
+    gridCommunityModules.concat(gridEnterpriseModules).concat(chartCommunityModules).concat(chartEnterpriseModules).forEach(module => {
         console.log(`Serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
@@ -122,7 +177,7 @@ function getTscPath() {
     return 'node_modules/.bin/tsc';
 }
 
-function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
+function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
     if (fs.existsSync('_dev')) {
@@ -141,11 +196,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'angular'
-    });
-    lnk('../../grid-community-modules/angular-legacy/', '_dev/@ag-grid-community', {
-        force: true,
-        type: linkType,
-        rename: 'angular-legacy'
     });
     lnk('../../grid-community-modules/react/', '_dev/@ag-grid-community', {
         force: true,
@@ -179,6 +229,14 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 rename: module.publishedName
             });
         });
+    chartEnterpriseModules
+        .forEach(module => {
+            lnk(module.rootDir, '_dev/', {
+                force: true,
+                type: linkType,
+                rename: module.publishedName
+            });
+        });
 
     lnk('../../grid-community-modules/styles/', '_dev/@ag-grid-community', {
         force: true,
@@ -196,11 +254,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'ag-charts-angular'
-    });
-    lnk('../../charts-community-modules/ag-charts-angular-legacy/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-angular-legacy'
     });
     lnk('../../charts-community-modules/ag-charts-vue/', '_dev/', {
         force: true,
@@ -228,11 +281,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'ag-grid-angular'
-    });
-    lnk('../../grid-packages/ag-grid-angular-legacy/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-grid-angular-legacy'
     });
     lnk('../../grid-packages/ag-grid-react/', '_dev/', {
         force: true,
@@ -279,11 +327,11 @@ async function watchAndGenerateExamples(chartsOnly) {
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
-        .on('change', file => regenerateDocumentationExamplesForFileChange(file, chartsOnly));
+        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
 
     chokidar
         .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
-        .on('add', file => regenerateDocumentationExamplesForFileChange(file, chartsOnly));
+        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
 }
 
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -340,7 +388,7 @@ function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModu
     updateWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
 }
 
-function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
+function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
     console.log("Updating SystemJS mapping with modules...");
 
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
@@ -350,7 +398,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
         '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
         gridCommunityModules.concat(chartCommunityModules),
-        gridEnterpriseModules,
+        gridEnterpriseModules.concat(chartEnterpriseModules),
         module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`,
         module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`);
 
@@ -395,7 +443,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
 
-    const frameworks = ['angular', 'angular-legacy', 'react', 'vue', 'vue3'];
+    const frameworks = ['angular', 'react', 'vue', 'vue3'];
 
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
@@ -484,7 +532,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
 
 const updateCoreModuleHashes = () => {
     const coreModuleRootNames = ['grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
-    const exclusions = ['react', 'angular', 'angular-legacy', 'vue', 'vue3', 'polymer'];
+    const exclusions = ['react', 'angular', 'vue', 'vue3', 'polymer'];
 
     coreModuleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = `../../${moduleRootName}/`;
@@ -570,7 +618,7 @@ function updateModuleChangedHash(moduleRoot) {
     cp.spawnSync(npm, ['run', 'hash'], {cwd: resolvedPath});
 }
 
-function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules) {
+function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules, chartEnterpriseModules) {
     console.log("Updating framework SystemJS boilerplate config with modules...");
 
     const systemJsFiles = [
@@ -583,7 +631,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
 
     const getModuleConfig = module => [
         `            '${module.publishedName}': {`,
-        `                main: './dist/cjs/es5/main.js',`,
+        `                main: './dist/esm/es6/main.js',`,
         `                defaultExtension: 'js'`,
         `            },`
     ].join(EOL);
@@ -595,7 +643,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
             '            /* START OF MODULES - DO NOT DELETE */',
             '            /* END OF MODULES - DO NOT DELETE */',
             gridCommunityModules.concat(chartsCommunityModules),
-            gridEnterpriseModules,
+            gridEnterpriseModules.concat(chartEnterpriseModules),
             getModuleConfig,
             getModuleConfig,
         );
@@ -624,6 +672,7 @@ const addWebpackMiddleware = (app, chartsOnly) => {
     // for js examples that just require charts community functionality (landing pages, vanilla charts examples etc)
     // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
     addWebpackMiddlewareForConfig(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
+    addWebpackMiddlewareForConfig(app, 'webpack.charts-enterprise-umd.config.js', '/dev/ag-charts-enterprise/dist', 'ag-charts-enterprise.js');
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
@@ -643,13 +692,13 @@ const watchFrameworkModules = async () => {
         '.AUTO.json',
     ];
 
-    const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
+    const moduleFrameworks = ['angular', 'vue', 'vue3', 'react'];
     const moduleRootDirectory = `../../grid-community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
 
         const ignoredFolders = [...defaultIgnoreFolders];
-        if (moduleFramework !== 'angular' && moduleFramework !== 'angular-legacy') {
+        if (moduleFramework !== 'angular') {
             ignoredFolders.push('**/lib/**/*');
         }
 
@@ -657,9 +706,7 @@ const watchFrameworkModules = async () => {
             ignored: ignoredFolders,
             cwd: frameworkDirectory,
             persistent: true
-        }).on('change', async (data) => {
-            await rebuildPackagesBasedOnChangeState(false, false, false);
-        });
+        }).on('change', debounce(() => rebuildPackagesBasedOnChangeState(false, false, false)));
     });
 };
 
@@ -682,7 +729,7 @@ const watchAutoDocFiles = async () => {
         '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
         '../../grid-community-modules/react/src/shared/**/*.ts',
         '../../charts-community-modules/ag-charts-community/src/**/*.ts',
-        '../../charts-enterprise-modules/core/src/**/*.ts',
+        '../../charts-enterprise-modules/ag-charts-enterprise/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -690,28 +737,23 @@ const watchAutoDocFiles = async () => {
     chokidar.watch(INTERFACE_GLOBS, {
         ignored: ignoredFolders,
         persistent: true
-    }).on('change', async (data) => {
-        await generateAutoDocFiles();
-    });
+    }).on('change', debounce(() => generateAutoDocFiles()));
 };
 
-const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) => {
-    serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) => {
+    serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
     servePackage(app, '@ag-grid-community/angular');
-    servePackage(app, '@ag-grid-community/angular-legacy');
     servePackage(app, '@ag-grid-community/vue');
     servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
-    servePackage(app, 'ag-charts-angular-legacy');
     servePackage(app, 'ag-charts-vue');
     servePackage(app, 'ag-charts-vue3');
     servePackage(app, 'ag-grid-community');
     servePackage(app, 'ag-grid-enterprise');
     servePackage(app, 'ag-grid-angular');
-    servePackage(app, 'ag-grid-angular-legacy');
     servePackage(app, 'ag-grid-vue');
     servePackage(app, 'ag-grid-vue3');
     servePackage(app, 'ag-grid-react');
@@ -767,13 +809,24 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
             }
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules} = getAllModules();
 
             const app = express();
 
-            // necessary for plunkers
-            app.use(function (req, res, next) {
+            const updateCorsHeaders = (req, res) => {
+                // necessary for plunkers and localhost
                 res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+                res.setHeader('Access-Control-Allow-Private-Network', 'true');
+            }
+
+            app.options("/*", function (req, res, next) {
+                updateCorsHeaders(req, res);
+                res.sendStatus(200);
+            });
+            app.use(function (req, res, next) {
+                updateCorsHeaders(req, res);
                 return next();
             });
 
@@ -798,12 +851,13 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             }
 
             addWebpackMiddleware(app, chartsOnly);
-            symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+            symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
-            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
-            updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+            // spl todo - add this back post release (allow for different local, build and prod end points)
+            // updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
-            serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+            serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             if (skipExampleGeneration) {
                 console.log("Skipping Example Generation");

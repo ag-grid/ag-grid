@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -46,7 +48,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
         }
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
-        this.addManagedListener(this.eventService, Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
+        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.key === 'filters') {

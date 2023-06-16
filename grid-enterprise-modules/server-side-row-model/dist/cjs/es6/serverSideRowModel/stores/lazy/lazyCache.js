@@ -32,7 +32,7 @@ class LazyCache extends core_1.BeanStub {
         this.nodesToRefresh = new Set();
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new lazyBlockLoader_1.LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
-        this.getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         this.isMasterDetail = this.gridOptionsService.isMasterDetail();
     }
     destroyRowNodes() {
@@ -92,15 +92,14 @@ class LazyCache extends core_1.BeanStub {
         }
         const { previousNode, nextNode } = adjacentNodes;
         // if the node before this node is expanded, this node might be a child of that node
-        if (previousNode && previousNode.expanded && ((_c = previousNode.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
-            return (_d = previousNode.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
+        if (previousNode && previousNode.node.expanded && ((_c = previousNode.node.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
+            return (_d = previousNode.node.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
         }
         // if we have the node after this node, we can calculate the store index of this node by the difference
         // in display indexes between the two nodes.
         if (nextNode) {
-            const nextSimpleRowStoreIndex = this.nodeMap.getBy('node', nextNode);
-            const displayIndexDiff = nextNode.rowIndex - displayIndex;
-            const newStoreIndex = nextSimpleRowStoreIndex.index - displayIndexDiff;
+            const displayIndexDiff = nextNode.node.rowIndex - displayIndex;
+            const newStoreIndex = nextNode.index - displayIndexDiff;
             return this.createStubNode(newStoreIndex, displayIndex);
         }
         // if no next node, calculate from end index of this store
@@ -140,11 +139,6 @@ class LazyCache extends core_1.BeanStub {
             return;
         }
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        // these are recorded so that the previous node can be found more quickly when a node is missing
-        this.skippedDisplayIndexes.push({
-            from: displayIndexSeq.peek(),
-            to: displayIndexSeq.peek() + numberOfRowsToSkip
-        });
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
@@ -155,7 +149,6 @@ class LazyCache extends core_1.BeanStub {
     setDisplayIndexes(displayIndexSeq, nextRowTop) {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
-        this.skippedDisplayIndexes = [];
         // create an object indexed by store index, as this will sort all of the nodes when we iterate
         // the object
         const orderedMap = {};
@@ -163,8 +156,7 @@ class LazyCache extends core_1.BeanStub {
             orderedMap[lazyNode.index] = lazyNode.node;
         });
         let lastIndex = -1;
-        // iterate over the nodes in order, setting the display index on each node. When display indexes
-        // are skipped, they're added to the skippedDisplayIndexes array
+        // iterate over the nodes in order, setting the display index on each node.
         for (const stringIndex in orderedMap) {
             const node = orderedMap[stringIndex];
             const numericIndex = Number(stringIndex);
@@ -174,13 +166,6 @@ class LazyCache extends core_1.BeanStub {
             // set this nodes index and row top
             this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
             this.nodeDisplayIndexMap.set(node.rowIndex, node);
-            const passedRows = displayIndexSeq.peek() - node.rowIndex;
-            if (passedRows > 1) {
-                this.skippedDisplayIndexes.push({
-                    from: node.rowIndex + 1,
-                    to: displayIndexSeq.peek()
-                });
-            }
             // store this index for skipping after this
             lastIndex = numericIndex;
         }
@@ -220,17 +205,27 @@ class LazyCache extends core_1.BeanStub {
      * @returns the previous and next loaded row nodes surrounding the given display index
      */
     getSurroundingNodesByDisplayIndex(displayIndex) {
-        // iterate over the skipped display indexes to find the bound this display index belongs to
-        for (let i in this.skippedDisplayIndexes) {
-            const skippedRowBound = this.skippedDisplayIndexes[i];
-            if (skippedRowBound.from <= displayIndex && skippedRowBound.to >= displayIndex) {
-                // take the node before and after the boundary and return those
-                const previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
-                const nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
-                return { previousNode, nextNode };
+        let nextNode;
+        let previousNode;
+        this.nodeMap.forEach(lazyNode => {
+            // previous node
+            if (displayIndex > lazyNode.node.rowIndex) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.node.rowIndex < lazyNode.node.rowIndex) {
+                    previousNode = lazyNode;
+                }
+                return;
             }
-        }
-        return null;
+            // next node
+            // get the smallest next node
+            if (nextNode == null || nextNode.node.rowIndex > lazyNode.node.rowIndex) {
+                nextNode = lazyNode;
+                return;
+            }
+        });
+        if (!previousNode && !nextNode)
+            return null;
+        return { previousNode, nextNode };
     }
     /**
      * Get or calculate the display index for a given store index
@@ -238,20 +233,38 @@ class LazyCache extends core_1.BeanStub {
      * @returns the rows visible display index relative to the grid
      */
     getDisplayIndexFromStoreIndex(storeIndex) {
-        const nodesAfterThis = this.nodeMap.filter(lazyNode => lazyNode.index > storeIndex);
-        if (nodesAfterThis.length === 0) {
-            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
+        var _a, _b;
+        const nodeAtIndex = this.nodeMap.getBy('index', storeIndex);
+        if (nodeAtIndex) {
+            return nodeAtIndex.node.rowIndex;
         }
         let nextNode;
-        for (let i = 0; i < nodesAfterThis.length; i++) {
-            const lazyNode = nodesAfterThis[i];
+        let previousNode;
+        this.nodeMap.forEach(lazyNode => {
+            // previous node
+            if (storeIndex > lazyNode.index) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.index < lazyNode.index) {
+                    previousNode = lazyNode;
+                }
+                return;
+            }
+            // next node
+            // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
+                return;
             }
+        });
+        if (!nextNode) {
+            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
         }
-        const nextDisplayIndex = nextNode.node.rowIndex;
-        const storeIndexDiff = nextNode.index - storeIndex;
-        return nextDisplayIndex - storeIndexDiff;
+        if (!previousNode) {
+            return this.store.getDisplayIndexStart() + storeIndex;
+        }
+        const storeIndexDiff = storeIndex - previousNode.index;
+        const previousDisplayIndex = ((_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex);
+        return previousDisplayIndex + storeIndexDiff;
     }
     /**
      * Creates a new row and inserts it at the given index
@@ -321,7 +334,6 @@ class LazyCache extends core_1.BeanStub {
     getBlockStates() {
         const blockCounts = {};
         const blockStates = {};
-        const dirtyBlocks = new Set();
         this.nodeMap.forEach(({ node, index }) => {
             var _a;
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
@@ -335,11 +347,8 @@ class LazyCache extends core_1.BeanStub {
             else if (this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
             }
-            else if (this.nodesToRefresh.has(node)) {
+            else if (this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
             if (!blockStates[blockStart]) {
                 blockStates[blockStart] = new Set();
@@ -421,27 +430,14 @@ class LazyCache extends core_1.BeanStub {
         const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRow);
         this.nodeMap.forEach(lazyNode => {
-            if (this.rowLoader.isRowLoading(lazyNode.index)) {
+            // failed loads are still useful, so we don't purge them
+            if (this.rowLoader.isRowLoading(lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
             }
             if (lazyNode.node.stub && (lazyNode.index < firstRowBlockStart || lazyNode.index > lastRowBlockEnd)) {
                 this.destroyRowAtIndex(lazyNode.index);
             }
         });
-    }
-    /**
-     * Calculates the number of rows to cache based on either the viewport, or number of cached blocks
-     */
-    getNumberOfRowsToRetain(firstRow, lastRow) {
-        const numberOfCachedBlocks = this.storeParams.maxBlocksInCache;
-        if (numberOfCachedBlocks == null) {
-            return null;
-        }
-        const blockSize = this.rowLoader.getBlockSize();
-        const numberOfViewportBlocks = Math.ceil((lastRow - firstRow) / blockSize);
-        const numberOfBlocksToRetain = Math.max(numberOfCachedBlocks, numberOfViewportBlocks);
-        const numberOfRowsToRetain = numberOfBlocksToRetain * blockSize;
-        return numberOfRowsToRetain;
     }
     getBlocksDistanceFromRow(nodes, otherDisplayIndex) {
         const blockDistanceToMiddle = {};
@@ -462,62 +458,62 @@ class LazyCache extends core_1.BeanStub {
         return Object.entries(blockDistanceToMiddle);
     }
     purgeExcessRows() {
+        var _a;
         // Delete all stub nodes which aren't in the viewport or already loading
         this.purgeStubsOutsideOfViewport();
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
-        const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRowInViewport);
-        const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRowInViewport);
-        // number of blocks to cache on top of the viewport blocks
-        let numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
-        if (this.store.getDisplayIndexEnd() == null || numberOfRowsToRetain == null) {
+        if (this.store.getDisplayIndexEnd() == null || this.storeParams.maxBlocksInCache == null) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
         }
-        // don't check the nodes that could have been cached out of necessity
-        const disposableNodes = this.nodeMap.filter(({ node }) => !node.stub && !this.isNodeCached(node));
-        if (disposableNodes.length <= numberOfRowsToRetain) {
-            // not enough rows to bother clearing any
+        const firstRowInViewport = this.api.getFirstDisplayedRow();
+        const lastRowInViewport = this.api.getLastDisplayedRow();
+        // the start storeIndex of every block in this store
+        const allLoadedBlocks = new Set();
+        // the start storeIndex of every displayed block in this store
+        const blocksInViewport = new Set();
+        this.nodeMap.forEach(({ index, node }) => {
+            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            allLoadedBlocks.add(blockStart);
+            const isInViewport = node.rowIndex >= firstRowInViewport && node.rowIndex <= lastRowInViewport;
+            if (isInViewport) {
+                blocksInViewport.add(blockStart);
+            }
+        });
+        // if the viewport is larger than the max blocks, then the viewport size is minimum cache size
+        const numberOfBlocksToRetain = Math.max(blocksInViewport.size, (_a = this.storeParams.maxBlocksInCache) !== null && _a !== void 0 ? _a : 0);
+        // ensure there is blocks that can be removed
+        const loadedBlockCount = allLoadedBlocks.size;
+        const blocksToRemove = loadedBlockCount - numberOfBlocksToRetain;
+        if (blocksToRemove <= 0) {
             return;
         }
-        const disposableNodesNotInViewport = disposableNodes.filter(({ node }) => {
-            const startRowNum = node.rowIndex;
-            if (startRowNum == null || startRowNum === -1) {
-                // row is not displayed and can be disposed
-                return true;
+        // the first and last block in the viewport
+        let firstRowBlockStart = Number.MAX_SAFE_INTEGER;
+        let lastRowBlockStart = Number.MIN_SAFE_INTEGER;
+        blocksInViewport.forEach(blockStart => {
+            if (firstRowBlockStart > blockStart) {
+                firstRowBlockStart = blockStart;
             }
-            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
-                // start row in viewport, block is in viewport
-                return false;
+            if (lastRowBlockStart < blockStart) {
+                lastRowBlockStart = blockStart;
             }
-            const lastRowNum = startRowNum + blockSize;
-            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
-                // end row in viewport, block is in viewport
-                return false;
-            }
-            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
-                // full block surrounds in viewport
-                return false;
-            }
-            // block does not appear in viewport and can be disposed
-            return true;
         });
-        // reduce the number of rows to retain by the number in viewport which were retained
-        numberOfRowsToRetain = numberOfRowsToRetain - (disposableNodes.length - disposableNodesNotInViewport.length);
-        if (!disposableNodesNotInViewport.length) {
+        // all nodes which aren't cached or in the viewport, and so can be removed
+        const disposableNodes = this.nodeMap.filter(({ node, index }) => {
+            const rowBlockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
+            return !rowBlockInViewport && !this.isNodeCached(node);
+        });
+        if (disposableNodes.length === 0) {
             return;
         }
         const midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
+        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
         const blockSize = this.rowLoader.getBlockSize();
-        const numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
-        if (blockDistanceArray.length <= numberOfBlocksToRetain) {
-            return;
-        }
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort((a, b) => Math.sign(b[1] - a[1]));
-        const blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
-        for (let i = 0; i < blocksToRemove; i++) {
+        // remove excess blocks, starting from furthest from viewport
+        for (let i = 0; i < Math.min(blocksToRemove, blockDistanceArray.length); i++) {
             const blockStart = Number(blockDistanceArray[i][0]);
             for (let x = blockStart; x < blockStart + blockSize; x++) {
                 const lazyNode = this.nodeMap.getBy('index', x);
@@ -540,7 +536,7 @@ class LazyCache extends core_1.BeanStub {
         return hasFocus;
     }
     isNodeCached(node) {
-        return (!!node.group && node.expanded) || this.isNodeFocused(node);
+        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node);
     }
     extractDuplicateIds(rows) {
         if (!this.getRowIdFunc == null) {
@@ -559,8 +555,11 @@ class LazyCache extends core_1.BeanStub {
         return [...duplicates];
     }
     onLoadSuccess(firstRowIndex, numberOfRowsExpected, response) {
+        var _a;
         if (!this.live)
             return;
+        const info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
@@ -629,15 +628,35 @@ class LazyCache extends core_1.BeanStub {
         return this.isLastRowKnown;
     }
     onLoadFailed(firstRowIndex, numberOfRowsExpected) {
+        var _a;
         if (!this.live)
             return;
-        const failedNodes = this.nodeMap.filter(node => node.index >= firstRowIndex && node.index < firstRowIndex + numberOfRowsExpected);
-        failedNodes.forEach(node => node.node.failedLoad = true);
+        const wasRefreshing = this.nodesToRefresh.size > 0;
+        for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
+            let { node } = (_a = this.nodeMap.getBy('index', i)) !== null && _a !== void 0 ? _a : {};
+            if (node) {
+                this.nodesToRefresh.delete(node);
+            }
+            if (!node || !node.stub) {
+                if (node && !node.stub) {
+                    // if node is not a stub, we destroy it and recreate as nodes can't go from data to stub
+                    this.destroyRowAtIndex(i);
+                }
+                node = this.createRowAtIndex(i);
+            }
+            // this node has been refreshed, even if it wasn't successful
+            node.__needsRefreshWhenVisible = false;
+            node.failedLoad = true;
+        }
+        const finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
         this.fireStoreUpdatedEvent();
     }
     markNodesForRefresh() {
         this.nodeMap.forEach(lazyNode => {
-            if (lazyNode.node.stub) {
+            if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
             }
             this.nodesToRefresh.add(lazyNode.node);

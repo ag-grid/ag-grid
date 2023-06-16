@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -40,9 +42,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RowContainerCtrl = exports.getRowContainerTypeForName = exports.RowContainerType = exports.RowContainerName = void 0;
@@ -247,7 +250,7 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         var allStickyTopNoFW = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT];
         var allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
         var allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
-        var allNoFW = __spread(allTopNoFW, allBottomNoFW, allMiddleNoFW, allStickyTopNoFW);
+        var allNoFW = __spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(allTopNoFW)), __read(allBottomNoFW)), __read(allMiddleNoFW)), __read(allStickyTopNoFW));
         var allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
         var allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER];
         var allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT];
@@ -292,7 +295,7 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, function () { return _this.onScrollVisibilityChanged(); });
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, function () { return _this.onDisplayedColumnsChanged(); });
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, function () { return _this.onDisplayedColumnsWidthChanged(); });
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, function () { return _this.onDisplayedRowsChanged(); });
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, function (params) { return _this.onDisplayedRowsChanged(params.afterScroll); });
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -334,12 +337,13 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         this.forContainers([RowContainerName.CENTER], function () { return _this.onHorizontalViewportChanged(); });
     };
     RowContainerCtrl.prototype.onScrollVisibilityChanged = function () {
+        var _this = this;
         var scrollWidth = this.gridOptionsService.getScrollbarWidth() || 0;
         if (this.name === RowContainerName.CENTER) {
             var visible = this.scrollVisibleService.isHorizontalScrollShowing();
             var scrollbarWidth = visible ? scrollWidth : 0;
-            var size = scrollbarWidth == 0 ? '100%' : "calc(100% + " + scrollbarWidth + "px)";
-            this.comp.setViewportHeight(size);
+            var size_1 = scrollbarWidth == 0 ? '100%' : "calc(100% + " + scrollbarWidth + "px)";
+            this.animationFrameService.requestAnimationFrame(function () { return _this.comp.setViewportHeight(size_1); });
         }
         if (this.name === RowContainerName.FULL_WIDTH) {
             var pad = browser_1.isInvisibleScrollbar() ? 16 : 0;
@@ -421,10 +425,14 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             this.refreshPaddingForFakeScrollbar();
         }
     };
-    RowContainerCtrl.prototype.onDisplayedRowsChanged = function () {
+    RowContainerCtrl.prototype.onDisplayedRowsChanged = function (useFlushSync) {
         var _this = this;
+        if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.visible) {
             var printLayout_1 = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             var doesRowMatch = function (rowCtrl) {
                 var fullWidthRow = rowCtrl.isFullWidth();
                 var embedFW = _this.embedFullWidthRows || printLayout_1;
@@ -436,10 +444,10 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             var rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         }
         else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }
     };
     RowContainerCtrl.prototype.getRowCtrls = function () {
@@ -478,6 +486,9 @@ var RowContainerCtrl = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('resizeObserverService')
     ], RowContainerCtrl.prototype, "resizeObserverService", void 0);
+    __decorate([
+        context_1.Autowired('animationFrameService')
+    ], RowContainerCtrl.prototype, "animationFrameService", void 0);
     __decorate([
         context_1.Autowired('rowRenderer')
     ], RowContainerCtrl.prototype, "rowRenderer", void 0);

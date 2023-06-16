@@ -156,6 +156,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageDown(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -173,6 +174,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageUp(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -451,7 +453,7 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        nextCell.startEditing(null, null, true, event);
+        nextCell.startEditing(null, true, event);
         nextCell.focusCell(false);
         return true;
     }
@@ -479,7 +481,7 @@ export class NavigationService extends BeanStub {
             pRow!.stopEditing();
 
             const nRow = nextCell.getRowCtrl();
-            nRow!.startRowEditing(undefined, undefined, undefined, event);
+            nRow!.startRowEditing(undefined, undefined, event);
         }
 
         if (nextEditable) {
@@ -817,7 +819,8 @@ export class NavigationService extends BeanStub {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = this.gridOptionsService.is('groupRowsSticky');
+        const isGroupStickyEnabled = this.gridOptionsService.isGroupRowsSticky();
+
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         const skipScrollToRow = isGroupStickyEnabled && rowNode?.sticky;

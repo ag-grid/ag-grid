@@ -1,12 +1,12 @@
-import { BeanStub, ChangedPath, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams } from "@ag-grid-community/core";
-import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
+import { BeanStub, ChangedPath, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams } from "@ag-grid-community/core";
 export declare class ServerSideSelectionService extends BeanStub implements ISelectionService {
     private rowModel;
-    selectionStrategy: ISelectionStrategy;
+    private selectionStrategy;
+    private rowSelection;
     private init;
     getServerSideSelectionState(): any;
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
-    setNodeSelected(params: ISetNodeSelectedParams): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     /**
      * Deletes the selection state for a set of nodes, for use after deleting nodes via
      * transaction. As this is designed for transactions, all nodes should belong to the same group.

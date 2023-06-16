@@ -6,11 +6,24 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -69,9 +82,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -84,11 +98,10 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var _a;
+var _a, _b;
 import { Series, SeriesNodeBaseClickEvent, } from '../series';
 import { SeriesMarker } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
-import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
@@ -100,11 +113,15 @@ import { OPT_FUNCTION, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
-import { Logger } from '../../../util/logger';
+import { StateMachine } from '../../../motion/states';
 var DEFAULT_DIRECTION_KEYS = (_a = {},
     _a[ChartAxisDirection.X] = ['xKey'],
     _a[ChartAxisDirection.Y] = ['yKey'],
     _a);
+var DEFAULT_DIRECTION_NAMES = (_b = {},
+    _b[ChartAxisDirection.X] = ['xName'],
+    _b[ChartAxisDirection.Y] = ['yName'],
+    _b);
 var CartesianSeriesNodeBaseClickEvent = /** @class */ (function (_super) {
     __extends(CartesianSeriesNodeBaseClickEvent, _super);
     function CartesianSeriesNodeBaseClickEvent(xKey, yKey, nativeEvent, datum, series) {
@@ -136,16 +153,18 @@ var CartesianSeriesNodeDoubleClickEvent = /** @class */ (function (_super) {
     return CartesianSeriesNodeDoubleClickEvent;
 }(CartesianSeriesNodeBaseClickEvent));
 export { CartesianSeriesNodeDoubleClickEvent };
+var CartesianStateMachine = /** @class */ (function (_super) {
+    __extends(CartesianStateMachine, _super);
+    function CartesianStateMachine() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return CartesianStateMachine;
+}(StateMachine));
 var CartesianSeries = /** @class */ (function (_super) {
     __extends(CartesianSeries, _super);
     function CartesianSeries(opts) {
-        if (opts === void 0) { opts = {}; }
-        var _a;
-        var _this = _super.call(this, {
-            useSeriesGroupLayer: true,
-            pickModes: opts.pickModes,
-            directionKeys: (_a = opts.directionKeys) !== null && _a !== void 0 ? _a : DEFAULT_DIRECTION_KEYS,
-        }) || this;
+        var _a, _b;
+        var _this = _super.call(this, __assign(__assign({}, opts), { useSeriesGroupLayer: true, directionKeys: (_a = opts.directionKeys) !== null && _a !== void 0 ? _a : DEFAULT_DIRECTION_KEYS, directionNames: (_b = opts.directionNames) !== null && _b !== void 0 ? _b : DEFAULT_DIRECTION_NAMES })) || this;
         _this._contextNodeData = [];
         _this.nodeDataDependencies = {};
         _this.highlightSelection = Selection.select(_this.highlightNode, function () {
@@ -159,8 +178,38 @@ var CartesianSeries = /** @class */ (function (_super) {
          * in the {@link yKeys} setter.
          */
         _this.seriesItemEnabled = new Map();
-        var _b = opts.pathsPerSeries, pathsPerSeries = _b === void 0 ? 1 : _b, _c = opts.hasMarkers, hasMarkers = _c === void 0 ? false : _c, _d = opts.pathsZIndexSubOrderOffset, pathsZIndexSubOrderOffset = _d === void 0 ? [] : _d, _e = opts.renderLayerPerSubSeries, renderLayerPerSubSeries = _e === void 0 ? true : _e;
-        _this.opts = { pathsPerSeries: pathsPerSeries, hasMarkers: hasMarkers, pathsZIndexSubOrderOffset: pathsZIndexSubOrderOffset, renderLayerPerSubSeries: renderLayerPerSubSeries };
+        var _c = opts.pathsPerSeries, pathsPerSeries = _c === void 0 ? 1 : _c, _d = opts.hasMarkers, hasMarkers = _d === void 0 ? false : _d, _e = opts.pathsZIndexSubOrderOffset, pathsZIndexSubOrderOffset = _e === void 0 ? [] : _e;
+        _this.opts = { pathsPerSeries: pathsPerSeries, hasMarkers: hasMarkers, pathsZIndexSubOrderOffset: pathsZIndexSubOrderOffset };
+        _this.animationState = new CartesianStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateEmptyUpdateReady(data); },
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateReadyUpdate(data); },
+                    },
+                    highlight: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateReadyHighlight(data); },
+                    },
+                    highlightMarkers: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateReadyHighlightMarkers(data); },
+                    },
+                    resize: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateReadyResize(data); },
+                    },
+                },
+            },
+        });
         return _this;
     }
     Object.defineProperty(CartesianSeries.prototype, "contextNodeData", {
@@ -171,6 +220,12 @@ var CartesianSeries = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    CartesianSeries.prototype.addChartEventListeners = function () {
+        var _this = this;
+        var _a, _b;
+        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
+        (_b = this.chartEventManager) === null || _b === void 0 ? void 0 : _b.addListener('legend-item-double-click', function (event) { return _this.onLegendItemDoubleClick(event); });
+    };
     CartesianSeries.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         this._contextNodeData.splice(0, this._contextNodeData.length);
@@ -214,7 +269,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                         _d = this, seriesItemEnabled = _d.seriesItemEnabled, visible = _d.visible;
                         series = ((_c = (_b = this.highlightManager) === null || _b === void 0 ? void 0 : _b.getActiveHighlight()) !== null && _c !== void 0 ? _c : {}).series;
                         seriesHighlighted = series ? series === this : undefined;
-                        anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread(seriesItemEnabled.values()).some(function (v) { return v === true; });
+                        anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spreadArray([], __read(seriesItemEnabled.values())).some(function (v) { return v === true; });
                         newNodeDataDependencies = {
                             seriesRectWidth: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width,
                             seriesRectHeight: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.height,
@@ -222,6 +277,21 @@ var CartesianSeries = /** @class */ (function (_super) {
                         if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
                             this.nodeDataDependencies = newNodeDataDependencies;
                             this.markNodeDataDirty();
+                            this.animationState.transition('resize', {
+                                datumSelections: this.subGroups.map(function (_a) {
+                                    var datumSelection = _a.datumSelection;
+                                    return datumSelection;
+                                }),
+                                markerSelections: this.subGroups.map(function (_a) {
+                                    var markerSelection = _a.markerSelection;
+                                    return markerSelection;
+                                }),
+                                contextData: this._contextNodeData,
+                                paths: this.subGroups.map(function (_a) {
+                                    var paths = _a.paths;
+                                    return paths;
+                                }),
+                            });
                         }
                         return [4 /*yield*/, this.updateSelections(seriesHighlighted, anySeriesItemEnabled)];
                     case 1:
@@ -229,6 +299,26 @@ var CartesianSeries = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.updateNodes(seriesHighlighted, anySeriesItemEnabled)];
                     case 2:
                         _e.sent();
+                        this.animationState.transition('update', {
+                            datumSelections: this.subGroups.map(function (_a) {
+                                var datumSelection = _a.datumSelection;
+                                return datumSelection;
+                            }),
+                            markerSelections: this.subGroups.map(function (_a) {
+                                var markerSelection = _a.markerSelection;
+                                return markerSelection;
+                            }),
+                            labelSelections: this.subGroups.map(function (_a) {
+                                var labelSelection = _a.labelSelection;
+                                return labelSelection;
+                            }),
+                            contextData: this._contextNodeData,
+                            paths: this.subGroups.map(function (_a) {
+                                var paths = _a.paths;
+                                return paths;
+                            }),
+                            seriesRect: seriesRect,
+                        });
                         return [2 /*return*/];
                 }
             });
@@ -259,7 +349,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                     case 3:
                         _b.sent();
                         _b.label = 4;
-                    case 4: return [4 /*yield*/, Promise.all(this.subGroups.map(function (g, i) { return _this.updateSeriesGroupSelections(g, i, seriesHighlighted); }))];
+                    case 4: return [4 /*yield*/, Promise.all(this.subGroups.map(function (g, i) { return _this.updateSeriesGroupSelections(g, i); }))];
                     case 5:
                         _b.sent();
                         return [2 /*return*/];
@@ -267,37 +357,34 @@ var CartesianSeries = /** @class */ (function (_super) {
             });
         });
     };
-    CartesianSeries.prototype.updateSeriesGroupSelections = function (subGroup, seriesIdx, seriesHighlighted) {
+    CartesianSeries.prototype.updateSeriesGroupSelections = function (subGroup, seriesIdx) {
         return __awaiter(this, void 0, void 0, function () {
-            var datumSelection, labelSelection, markerSelection, paths, contextData, nodeData, labelData, itemId, _a, _b, _c;
+            var datumSelection, labelSelection, markerSelection, contextData, nodeData, labelData, _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths;
+                        datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection;
                         contextData = this._contextNodeData[seriesIdx];
-                        nodeData = contextData.nodeData, labelData = contextData.labelData, itemId = contextData.itemId;
-                        return [4 /*yield*/, this.updatePaths({ seriesHighlighted: seriesHighlighted, itemId: itemId, contextData: contextData, paths: paths, seriesIdx: seriesIdx })];
-                    case 1:
-                        _d.sent();
+                        nodeData = contextData.nodeData, labelData = contextData.labelData;
                         _a = subGroup;
                         return [4 /*yield*/, this.updateDatumSelection({ nodeData: nodeData, datumSelection: datumSelection, seriesIdx: seriesIdx })];
-                    case 2:
+                    case 1:
                         _a.datumSelection = _d.sent();
                         _b = subGroup;
                         return [4 /*yield*/, this.updateLabelSelection({ labelData: labelData, labelSelection: labelSelection, seriesIdx: seriesIdx })];
-                    case 3:
+                    case 2:
                         _b.labelSelection = _d.sent();
-                        if (!markerSelection) return [3 /*break*/, 5];
+                        if (!markerSelection) return [3 /*break*/, 4];
                         _c = subGroup;
                         return [4 /*yield*/, this.updateMarkerSelection({
                                 nodeData: nodeData,
                                 markerSelection: markerSelection,
                                 seriesIdx: seriesIdx,
                             })];
-                    case 4:
+                    case 3:
                         _c.markerSelection = _d.sent();
-                        _d.label = 5;
-                    case 5: return [2 /*return*/];
+                        _d.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -312,10 +399,10 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.updateSeriesGroups = function () {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, contextNodeData, contentGroup, subGroups, _c, pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries, totalGroups, layer, subGroupId, subGroupZOffset, dataNodeGroup, markerGroup, labelGroup, pathParentGroup, paths, index;
+            var _b, contextNodeData, contentGroup, subGroups, _c, pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, totalGroups, layer, subGroupId, subGroupZOffset, dataNodeGroup, markerGroup, labelGroup, paths, index;
             var _this = this;
             return __generator(this, function (_d) {
-                _b = this, contextNodeData = _b._contextNodeData, contentGroup = _b.contentGroup, subGroups = _b.subGroups, _c = _b.opts, pathsPerSeries = _c.pathsPerSeries, hasMarkers = _c.hasMarkers, pathsZIndexSubOrderOffset = _c.pathsZIndexSubOrderOffset, renderLayerPerSubSeries = _c.renderLayerPerSubSeries;
+                _b = this, contextNodeData = _b._contextNodeData, contentGroup = _b.contentGroup, subGroups = _b.subGroups, _c = _b.opts, pathsPerSeries = _c.pathsPerSeries, hasMarkers = _c.hasMarkers, pathsZIndexSubOrderOffset = _c.pathsZIndexSubOrderOffset;
                 if (contextNodeData.length === subGroups.length) {
                     return [2 /*return*/];
                 }
@@ -347,7 +434,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 }
                 totalGroups = contextNodeData.length;
                 while (totalGroups > subGroups.length) {
-                    layer = renderLayerPerSubSeries;
+                    layer = false;
                     subGroupId = this.subGroupId++;
                     subGroupZOffset = subGroupId;
                     dataNodeGroup = new Group({
@@ -375,7 +462,6 @@ var CartesianSeries = /** @class */ (function (_super) {
                     if (markerGroup) {
                         contentGroup.appendChild(markerGroup);
                     }
-                    pathParentGroup = renderLayerPerSubSeries ? dataNodeGroup : contentGroup;
                     paths = [];
                     for (index = 0; index < pathsPerSeries; index++) {
                         paths[index] = new Path();
@@ -384,7 +470,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                             function () { return _this._declarationOrder; },
                             ((_a = pathsZIndexSubOrderOffset[index]) !== null && _a !== void 0 ? _a : 0) + subGroupZOffset,
                         ];
-                        pathParentGroup.appendChild(paths[index]);
+                        contentGroup.appendChild(paths[index]);
                     }
                     subGroups.push({
                         paths: paths,
@@ -403,12 +489,12 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.updateNodes = function (seriesHighlighted, anySeriesItemEnabled) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, highlightSelection, highlightLabelSelection, contextNodeData, seriesItemEnabled, _c, hasMarkers, renderLayerPerSubSeries, visible, seriesOpacity, subGroupOpacities, isSubGroupOpacityDifferent;
+            var _b, highlightSelection, highlightLabelSelection, contextNodeData, seriesItemEnabled, hasMarkers, visible, seriesOpacity, subGroupOpacities, isSubGroupOpacityDifferent;
             var _this = this;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, _c = _b.opts, hasMarkers = _c.hasMarkers, renderLayerPerSubSeries = _c.renderLayerPerSubSeries;
+                        _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, hasMarkers = _b.opts.hasMarkers;
                         visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
                         this.rootGroup.visible = visible;
                         this.contentGroup.visible = visible;
@@ -427,15 +513,17 @@ var CartesianSeries = /** @class */ (function (_super) {
                                 seriesIdx: -1,
                             })];
                     case 1:
-                        _d.sent();
+                        _c.sent();
+                        this.animationState.transition('highlightMarkers', highlightSelection);
                         return [3 /*break*/, 4];
                     case 2: return [4 /*yield*/, this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 })];
                     case 3:
-                        _d.sent();
-                        _d.label = 4;
+                        _c.sent();
+                        this.animationState.transition('highlight', highlightSelection);
+                        _c.label = 4;
                     case 4: return [4 /*yield*/, this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 })];
                     case 5:
-                        _d.sent();
+                        _c.sent();
                         return [4 /*yield*/, Promise.all(this.subGroups.map(function (subGroup, seriesIdx) { return __awaiter(_this, void 0, void 0, function () {
                                 var dataNodeGroup, markerGroup, datumSelection, labelSelection, markerSelection, paths, labelGroup, itemId, subGroupVisible, subGroupOpacity, paths_2, paths_2_1, path;
                                 var e_2, _a;
@@ -464,10 +552,8 @@ var CartesianSeries = /** @class */ (function (_super) {
                                             try {
                                                 for (paths_2 = __values(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                                                     path = paths_2_1.value;
-                                                    if (!renderLayerPerSubSeries) {
-                                                        path.opacity = subGroupOpacity;
-                                                        path.visible = subGroupVisible;
-                                                    }
+                                                    path.opacity = subGroupOpacity;
+                                                    path.visible = subGroupVisible;
                                                 }
                                             }
                                             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -480,26 +566,23 @@ var CartesianSeries = /** @class */ (function (_super) {
                                             if (!dataNodeGroup.visible) {
                                                 return [2 /*return*/];
                                             }
-                                            return [4 /*yield*/, this.updatePathNodes({ seriesHighlighted: seriesHighlighted, itemId: itemId, paths: paths, seriesIdx: seriesIdx })];
+                                            return [4 /*yield*/, this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx: seriesIdx })];
                                         case 1:
                                             _c.sent();
-                                            return [4 /*yield*/, this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx: seriesIdx })];
+                                            return [4 /*yield*/, this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx: seriesIdx })];
                                         case 2:
                                             _c.sent();
-                                            return [4 /*yield*/, this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx: seriesIdx })];
+                                            if (!(hasMarkers && markerSelection)) return [3 /*break*/, 4];
+                                            return [4 /*yield*/, this.updateMarkerNodes({ markerSelection: markerSelection, isHighlight: false, seriesIdx: seriesIdx })];
                                         case 3:
                                             _c.sent();
-                                            if (!(hasMarkers && markerSelection)) return [3 /*break*/, 5];
-                                            return [4 /*yield*/, this.updateMarkerNodes({ markerSelection: markerSelection, isHighlight: false, seriesIdx: seriesIdx })];
-                                        case 4:
-                                            _c.sent();
-                                            _c.label = 5;
-                                        case 5: return [2 /*return*/];
+                                            _c.label = 4;
+                                        case 4: return [2 /*return*/];
                                     }
                                 });
                             }); }))];
                     case 6:
-                        _d.sent();
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -703,6 +786,19 @@ var CartesianSeries = /** @class */ (function (_super) {
             return { datum: closestDatum, distance: distance };
         }
     };
+    CartesianSeries.prototype.onLegendItemClick = function (event) {
+        var enabled = event.enabled, itemId = event.itemId, series = event.series;
+        if (series.id !== this.id)
+            return;
+        this.toggleSeriesItem(itemId, enabled);
+    };
+    CartesianSeries.prototype.onLegendItemDoubleClick = function (event) {
+        var enabled = event.enabled, itemId = event.itemId, series = event.series, numVisibleItems = event.numVisibleItems;
+        var totalVisibleItems = Object.values(numVisibleItems).reduce(function (p, v) { return p + v; }, 0);
+        var wasClicked = series.id === this.id;
+        var newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
+        this.toggleSeriesItem(itemId, newEnabled);
+    };
     CartesianSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         if (this.seriesItemEnabled.size > 0) {
             this.seriesItemEnabled.set(itemId, enabled);
@@ -759,50 +855,6 @@ var CartesianSeries = /** @class */ (function (_super) {
             finally { if (e_10) throw e_10.error; }
         }
         return false;
-    };
-    CartesianSeries.prototype.validateXYData = function (xKey, yKey, data, xAxis, yAxis, xData, yData, yDepth) {
-        var _a;
-        if (yDepth === void 0) { yDepth = 1; }
-        if (((_a = this.chart) === null || _a === void 0 ? void 0 : _a.mode) === 'integrated') {
-            // Integrated Charts use-cases do not require this validation.
-            return true;
-        }
-        if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
-            return true;
-        }
-        var hasNumber = function (items, depth, maxDepth) {
-            if (depth === void 0) { depth = 0; }
-            if (maxDepth === void 0) { maxDepth = 0; }
-            return items.some(depth === maxDepth ? function (y) { return isContinuous(y); } : function (arr) { return hasNumber(arr, depth + 1, maxDepth); });
-        };
-        var isContinuousX = xAxis.scale instanceof ContinuousScale;
-        var isContinuousY = yAxis.scale instanceof ContinuousScale;
-        var validationResult = true;
-        if (isContinuousX && !hasNumber(xData)) {
-            Logger.warnOnce("the number axis has no numeric data supplied for xKey: [" + xKey + "].");
-            validationResult = false;
-        }
-        if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
-            Logger.warnOnce("the number axis has no numeric data supplied for yKey: [" + yKey + "].");
-            validationResult = false;
-        }
-        return validationResult;
-    };
-    CartesianSeries.prototype.updatePaths = function (opts) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                // Override point for sub-classes.
-                opts.paths.forEach(function (p) { return (p.visible = false); });
-                return [2 /*return*/];
-            });
-        });
-    };
-    CartesianSeries.prototype.updatePathNodes = function (_opts) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
     };
     CartesianSeries.prototype.updateHighlightSelectionItem = function (opts) {
         return __awaiter(this, void 0, void 0, function () {
@@ -861,6 +913,21 @@ var CartesianSeries = /** @class */ (function (_super) {
                 return [2 /*return*/];
             });
         });
+    };
+    CartesianSeries.prototype.animateEmptyUpdateReady = function (_data) {
+        // Override point for sub-classes.
+    };
+    CartesianSeries.prototype.animateReadyUpdate = function (_data) {
+        // Override point for sub-classes.
+    };
+    CartesianSeries.prototype.animateReadyHighlight = function (_data) {
+        // Override point for sub-classes.
+    };
+    CartesianSeries.prototype.animateReadyHighlightMarkers = function (_data) {
+        // Override point for sub-classes.
+    };
+    CartesianSeries.prototype.animateReadyResize = function (_data) {
+        // Override point for sub-classes.
     };
     return CartesianSeries;
 }(Series));

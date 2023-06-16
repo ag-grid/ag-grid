@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -209,11 +209,13 @@ class PositionableFeature extends beanStub_1.BeanStub {
             height = dom_1.getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            const availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                const availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {

@@ -33,8 +33,11 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession {
     addImage() {
         return;
     }
-    createCell(styleId, type, value) {
+    createCell(styleId, type, value, valueFormatted) {
         const actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,

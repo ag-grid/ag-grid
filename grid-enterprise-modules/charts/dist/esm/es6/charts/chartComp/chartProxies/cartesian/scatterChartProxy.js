@@ -1,5 +1,5 @@
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { ChartDataModel } from "../../chartDataModel";
+import { ChartDataModel } from "../../model/chartDataModel";
 export class ScatterChartProxy extends CartesianChartProxy {
     constructor(params) {
         super(params);

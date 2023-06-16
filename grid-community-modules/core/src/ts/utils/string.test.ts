@@ -1,4 +1,4 @@
-import { camelCaseToHumanText } from './string'
+import { camelCaseToHumanText, camelCaseToHyphenated } from './string'
 
 
 describe('camelCaseToHumanText', () => {
@@ -15,5 +15,15 @@ describe('camelCaseToHumanText', () => {
 
     ])('Value: %s', (field, expected) => {
         expect(camelCaseToHumanText(field)).toBe(expected);
+    });
+});
+
+describe('camelCaseToHyphenated', () => {
+    it.each([
+        ['backgroundColor', 'background-color'],
+        ['marginLeft', 'margin-left'],
+        ['thisIsARandomTest', 'this-is-a-random-test']
+    ])('Value %s', (field, expected) => {
+        expect(camelCaseToHyphenated(field)).toBe(expected);
     });
 });

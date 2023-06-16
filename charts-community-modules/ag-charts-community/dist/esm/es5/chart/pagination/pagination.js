@@ -112,6 +112,8 @@ var Pagination = /** @class */ (function () {
         this.label = new PaginationLabel();
         this.totalPages = 0;
         this.currentPage = 0;
+        this.translationX = 0;
+        this.translationY = 0;
         this.nextButtonDisabled = false;
         this.previousButtonDisabled = false;
         this._visible = true;
@@ -179,26 +181,6 @@ var Pagination = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Pagination.prototype, "translationX", {
-        get: function () {
-            return this.group.translationX;
-        },
-        set: function (value) {
-            this.group.translationX = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Pagination.prototype, "translationY", {
-        get: function () {
-            return this.group.translationY;
-        },
-        set: function (value) {
-            this.group.translationY = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(Pagination.prototype, "nextButton", {
         get: function () {
             return this._nextButton;
@@ -233,6 +215,8 @@ var Pagination = /** @class */ (function () {
         this.enableOrDisableButtons();
     };
     Pagination.prototype.updatePositions = function () {
+        this.group.translationX = this.translationX;
+        this.group.translationY = this.translationY;
         this.updateLabelPosition();
         this.updateNextButtonPosition();
     };

@@ -1,3 +1,3 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 export declare const useEffectOnce: (effect: () => void | (() => void)) => void;
 export declare const useLayoutEffectOnce: (effect: () => void | (() => void)) => void;

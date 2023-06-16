@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.INTERACTION_RANGE = exports.POSITION = exports.OPT_LINE_JOIN = exports.LINE_JOIN = exports.OPT_LINE_CAP = exports.LINE_CAP = exports.OPT_LINE_DASH = exports.LINE_DASH = exports.OPT_FONT_WEIGHT = exports.FONT_WEIGHT = exports.OPT_FONT_STYLE = exports.FONT_STYLE = exports.OPT_BOOLEAN_ARRAY = exports.BOOLEAN_ARRAY = exports.STRING_UNION = exports.OPT_STRING_ARRAY = exports.STRING_ARRAY = exports.OPT_NUMBER_ARRAY = exports.NUMBER_ARRAY = exports.NUMBER_OR_NAN = exports.OPT_NUMBER = exports.NUMBER = exports.OPT_COLOR_STRING_ARRAY = exports.COLOR_STRING_ARRAY = exports.OPT_COLOR_STRING = exports.COLOR_STRING = exports.OPT_DATE_OR_DATETIME_MS = exports.OPT_DATETIME_MS = exports.DATETIME_MS = exports.DATE_ARRAY = exports.OPT_DATE = exports.DATE = exports.OPT_STRING = exports.STRING = exports.OPT_BOOLEAN = exports.BOOLEAN = exports.OPT_FUNCTION = exports.FUNCTION = exports.GREATER_THAN = exports.LESS_THAN = exports.OR = exports.AND = exports.OPT_ARRAY = exports.ARRAY = exports.OPTIONAL = exports.predicateWithMessage = exports.Validate = void 0;
+exports.TEXT_WRAP = exports.INTERACTION_RANGE = exports.POSITION = exports.OPT_LINE_JOIN = exports.LINE_JOIN = exports.OPT_LINE_CAP = exports.LINE_CAP = exports.OPT_LINE_DASH = exports.LINE_DASH = exports.OPT_FONT_WEIGHT = exports.FONT_WEIGHT = exports.OPT_FONT_STYLE = exports.FONT_STYLE = exports.OPT_BOOLEAN_ARRAY = exports.BOOLEAN_ARRAY = exports.STRING_UNION = exports.OPT_STRING_ARRAY = exports.STRING_ARRAY = exports.OPT_NUMBER_ARRAY = exports.NUMBER_ARRAY = exports.NUMBER_OR_NAN = exports.OPT_NUMBER = exports.NUMBER = exports.OPT_COLOR_STRING_ARRAY = exports.COLOR_STRING_ARRAY = exports.OPT_COLOR_STRING = exports.COLOR_STRING = exports.OPT_DATE_OR_DATETIME_MS = exports.OPT_DATETIME_MS = exports.DATETIME_MS = exports.DATE_ARRAY = exports.OPT_DATE = exports.DATE = exports.OPT_STRING = exports.STRING = exports.OPT_BOOLEAN = exports.BOOLEAN = exports.OPT_FUNCTION = exports.FUNCTION = exports.GREATER_THAN = exports.LESS_THAN = exports.OR = exports.AND = exports.OPT_ARRAY = exports.ARRAY = exports.OPTIONAL = exports.predicateWithMessage = exports.Validate = void 0;
 var color_1 = require("./color");
 var decorator_1 = require("./decorator");
 var logger_1 = require("./logger");
@@ -31,20 +31,23 @@ function predicateWithMessage(predicate, message) {
     return predicate;
 }
 exports.predicateWithMessage = predicateWithMessage;
-exports.OPTIONAL = function (v, ctx, predicate) {
+var OPTIONAL = function (v, ctx, predicate) {
     return v === undefined || predicate(v, ctx);
 };
-exports.ARRAY = function (length, predicate) {
+exports.OPTIONAL = OPTIONAL;
+var ARRAY = function (length, predicate) {
     return predicateWithMessage(function (v, ctx) {
         return Array.isArray(v) &&
             (length ? v.length === length : true) &&
             (predicate ? v.every(function (e) { return predicate(e, ctx); }) : true);
     }, "expecting an Array");
 };
-exports.OPT_ARRAY = function (length) {
+exports.ARRAY = ARRAY;
+var OPT_ARRAY = function (length) {
     return predicateWithMessage(function (v, ctx) { return exports.OPTIONAL(v, ctx, exports.ARRAY(length)); }, 'expecting an optional Array');
 };
-exports.AND = function () {
+exports.OPT_ARRAY = OPT_ARRAY;
+var AND = function () {
     var predicates = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         predicates[_i] = arguments[_i];
@@ -54,7 +57,8 @@ exports.AND = function () {
         .filter(function (m) { return m != null; })
         .join(' AND '));
 };
-exports.OR = function () {
+exports.AND = AND;
+var OR = function () {
     var predicates = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         predicates[_i] = arguments[_i];
@@ -64,19 +68,22 @@ exports.OR = function () {
         .filter(function (m) { return m != null; })
         .join(' OR '));
 };
+exports.OR = OR;
 var isComparable = function (v) {
     return v != null && !isNaN(v);
 };
-exports.LESS_THAN = function (otherField) {
+var LESS_THAN = function (otherField) {
     return predicateWithMessage(function (v, ctx) {
         return !isComparable(v) || !isComparable(ctx.target[otherField]) || v < ctx.target[otherField];
     }, "expected to be less than " + otherField);
 };
-exports.GREATER_THAN = function (otherField) {
+exports.LESS_THAN = LESS_THAN;
+var GREATER_THAN = function (otherField) {
     return predicateWithMessage(function (v, ctx) {
         return !isComparable(v) || !isComparable(ctx.target[otherField]) || v > ctx.target[otherField];
     }, "expected to be greater than " + otherField);
 };
+exports.GREATER_THAN = GREATER_THAN;
 exports.FUNCTION = predicateWithMessage(function (v) { return typeof v === 'function'; }, 'expecting a Function');
 exports.OPT_FUNCTION = predicateWithMessage(function (v, ctx) { return exports.OPTIONAL(v, ctx, exports.FUNCTION); }, "expecting an optional Function");
 exports.BOOLEAN = predicateWithMessage(function (v) { return v === true || v === false; }, 'expecting a Boolean');
@@ -173,3 +180,5 @@ var POSITIONS = ['top', 'right', 'bottom', 'left'];
 exports.POSITION = predicateWithMessage(function (v) { return POSITIONS.includes(v); }, "expecting a position keyword such as 'top', 'right', 'bottom' or 'left");
 var INTERACTION_RANGES = ['exact', 'nearest'];
 exports.INTERACTION_RANGE = predicateWithMessage(function (v) { return (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v); }, "expecting an interaction range of 'exact', 'nearest' or a number");
+var TEXT_WRAPS = ['never', 'always', 'hyphenate', 'on-space'];
+exports.TEXT_WRAP = predicateWithMessage(function (v) { return TEXT_WRAPS.includes(v); }, "expecting a text wrap strategy keyword such as 'never', 'always', 'hyphenate', 'on-space'");

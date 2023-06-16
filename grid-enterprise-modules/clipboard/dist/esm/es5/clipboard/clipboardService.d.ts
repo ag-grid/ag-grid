@@ -13,6 +13,8 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private cellNavigationService;
     cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
+    private valueFormatterService;
+    private valueParserService;
     private clientSideRowModel;
     private logger;
     private gridCtrl;
@@ -37,7 +39,7 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private pasteMultipleValues;
     private updateCellValue;
     copyToClipboard(params?: IClipboardCopyParams): void;
-    cutToClipboard(params?: IClipboardCopyParams): void;
+    cutToClipboard(params?: IClipboardCopyParams, source?: 'api' | 'ui' | 'contextMenu'): void;
     private copyOrCutToClipboard;
     private clearCellsAfterCopy;
     private clearSelectedRows;

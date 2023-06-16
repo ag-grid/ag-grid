@@ -17,9 +17,6 @@ const options: AgChartOptions = {
       yName: 'Race time',
     },
   ],
-  legend: {
-    enabled: false,
-  },
   axes: [
     {
       type: 'number',

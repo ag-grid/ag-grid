@@ -59,6 +59,14 @@ AgChartsVue = __decorate([
             options: {},
         },
         emits: ['onChartReady'],
+        // watch: {
+        //     options: {
+        //         handler(currentValue, previousValue) {
+        //             this.processChanges( currentValue, previousValue);
+        //         },
+        //         deep: true,
+        //     },
+        // },
     })
 ], AgChartsVue);
 export { AgChartsVue };

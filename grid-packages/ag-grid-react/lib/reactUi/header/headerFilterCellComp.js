@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -48,31 +48,20 @@ var HeaderFilterCellComp = function (props) {
     var eFloatingFilterBody = react_1.useRef(null);
     var eButtonWrapper = react_1.useRef(null);
     var eButtonShowMainFilter = react_1.useRef(null);
-    var alreadyResolved = react_1.useRef(false);
     var userCompResolve = react_1.useRef();
     var userCompPromise = react_1.useRef();
-    useEffectOnce_1.useLayoutEffectOnce(function () {
-        userCompPromise.current = new ag_grid_community_1.AgPromise(function (resolve) {
-            userCompResolve.current = resolve;
-        });
-    });
     var userCompRef = function (value) {
-        // i don't know why, but react was calling this method multiple
-        // times, thus un-setting, them immediately setting the reference again.
-        // because we are resolving a promise, it's not good to be resolving
-        // the promise multiple times, so we only resolve the first time.
-        if (alreadyResolved.current) {
-            return;
-        }
-        // we also skip when it's un-setting
+        // We skip when it's un-setting
         if (value == null) {
             return;
         }
         userCompResolve.current && userCompResolve.current(value);
-        alreadyResolved.current = true;
     };
     var ctrl = props.ctrl;
     useEffectOnce_1.useLayoutEffectOnce(function () {
+        userCompPromise.current = new ag_grid_community_1.AgPromise(function (resolve) {
+            userCompResolve.current = resolve;
+        });
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             addOrRemoveBodyCssClass: function (name, on) { return setBodyCssClasses(function (prev) { return prev.setClass(name, on); }); },
@@ -80,10 +69,14 @@ var HeaderFilterCellComp = function (props) {
                 setButtonWrapperCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); });
                 setButtonWrapperAriaHidden(!displayed ? "true" : "false");
             },
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setCompDetails: function (compDetails) { return setUserCompDetails(compDetails); },
             getFloatingFilterComp: function () { return userCompPromise.current ? userCompPromise.current : null; },
-            setMenuIcon: function (eIcon) { return eButtonShowMainFilter.current.appendChild(eIcon); }
+            setMenuIcon: function (eIcon) { var _a; return (_a = eButtonShowMainFilter.current) === null || _a === void 0 ? void 0 : _a.appendChild(eIcon); }
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
     });
@@ -105,6 +98,6 @@ var HeaderFilterCellComp = function (props) {
             reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params)),
             reactUserComp && !userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params, { ref: userCompRef }))),
         react_1.default.createElement("div", { ref: eButtonWrapper, "aria-hidden": buttonWrapperAriaHidden, className: buttonWrapperClassName, role: "presentation" },
-            react_1.default.createElement("button", { ref: eButtonShowMainFilter, type: "button", "aria-label": "Open Filter Menu", className: "ag-floating-filter-button-button", tabIndex: -1 }))));
+            react_1.default.createElement("button", { ref: eButtonShowMainFilter, type: "button", className: "ag-button ag-floating-filter-button-button", tabIndex: -1 }))));
 };
 exports.default = react_1.memo(HeaderFilterCellComp);

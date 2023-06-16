@@ -12,11 +12,13 @@ class MySimpleEditor {
 
         let startValue = params.value;
 
-        const isBackspace = params.eventKey === KEY_BACKSPACE;
+        const eventKey = params.eventKey;
+        const isBackspace = eventKey === KEY_BACKSPACE;
+
         if (isBackspace) {
             startValue = '';
-        } else if (params.charPress) {
-            startValue = params.charPress;
+        } else if (eventKey && eventKey.length === 1) {
+            startValue = eventKey;
         }
 
         if (startValue !== null && startValue !== undefined) {

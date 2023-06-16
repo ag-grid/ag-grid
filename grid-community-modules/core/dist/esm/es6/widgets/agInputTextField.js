@@ -1,11 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
 import { AgAbstractInputField } from './agAbstractInputField';
 import { exists } from '../utils/generic';
+import { isEventFromPrintableCharacter } from '../utils/keyboard';
 export class AgInputTextField extends AgAbstractInputField {
     constructor(config, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
@@ -23,18 +24,21 @@ export class AgInputTextField extends AgAbstractInputField {
         }
         return ret;
     }
+    /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
+    setStartValue(value) {
+        this.setValue(value, true);
+    }
     preventDisallowedCharacters() {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
-        const preventDisallowedCharacters = (event) => {
-            if (event.ctrlKey || event.metaKey) {
-                // copy/paste can fall in here on certain browsers (e.g. Safari)
+        const preventCharacters = (event) => {
+            if (!isEventFromPrintableCharacter(event)) {
                 return;
             }
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();
             }
         };
-        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
         this.addManagedListener(this.eInput, 'paste', (e) => {
             var _a;
             const text = (_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text');

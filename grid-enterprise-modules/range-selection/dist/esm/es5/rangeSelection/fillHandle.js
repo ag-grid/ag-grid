@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -44,9 +46,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Autowired, Events, SelectionHandleType, _ } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
@@ -225,6 +228,7 @@ var FillHandle = /** @class */ (function (_super) {
             }
         };
         var fillValues = function (currentValues, col, rowNode, updateInitialSet) {
+            var _a, _b;
             var currentValue;
             var skipValue = false;
             if (withinInitialRange) {
@@ -233,10 +237,20 @@ var FillHandle = /** @class */ (function (_super) {
                 withinInitialRange = updateInitialSet();
             }
             else {
-                var _a = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _a.value, fromUserFunction = _a.fromUserFunction;
+                var _c = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     var cellValue = _this.valueService.getValue(col, rowNode);
+                    if (!fromUserFunction) {
+                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                            currentValue = (_b = _this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
+                        }
+                        if (col.getColDef().useValueParserForImport) {
+                            currentValue = _this.valueParserService.parseValue(col, rowNode, 
+                            // if no sourceCol, then currentValue is a number
+                            sourceCol ? currentValue : _.toStringOrNull(currentValue), cellValue);
+                        }
+                    }
                     if (!fromUserFunction || cellValue !== currentValue) {
                         rowNode.setDataValue(col, currentValue, 'rangeService');
                     }
@@ -246,7 +260,11 @@ var FillHandle = /** @class */ (function (_super) {
                 }
             }
             if (!skipValue) {
-                currentValues.push(currentValue);
+                currentValues.push({
+                    value: currentValue,
+                    column: col,
+                    rowNode: rowNode
+                });
             }
         };
         if (isVertical) {
@@ -255,7 +273,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spread(finalRange.columns).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns)).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -266,7 +284,7 @@ var FillHandle = /** @class */ (function (_super) {
             columns: columns,
             startColumn: columns[0]
         };
-        this.rangeService.clearCellRangeCellValues([cellRange]);
+        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     };
     FillHandle.prototype.processValues = function (event, values, initialValues, col, rowNode, idx) {
         var userFillOperation = this.gridOptionsService.getCallback('fillOperation');
@@ -281,7 +299,10 @@ var FillHandle = /** @class */ (function (_super) {
         if (userFillOperation) {
             var params = {
                 event: event,
-                values: values,
+                values: values.map(function (_a) {
+                    var value = _a.value;
+                    return value;
+                }),
                 initialValues: initialValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
@@ -294,9 +315,10 @@ var FillHandle = /** @class */ (function (_super) {
                 return { value: userResult, fromUserFunction: true };
             }
         }
-        var allNumbers = !values.some(function (val) {
-            var asFloat = parseFloat(val);
-            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        var allNumbers = !values.some(function (_a) {
+            var value = _a.value;
+            var asFloat = parseFloat(value);
+            return isNaN(asFloat) || asFloat.toString() !== value.toString();
         });
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
@@ -306,11 +328,15 @@ var FillHandle = /** @class */ (function (_super) {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 var multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return { value: parseFloat(_.last(values)) + 1 * multiplier, fromUserFunction: false };
+                return { value: parseFloat(_.last(values).value) + 1 * multiplier, fromUserFunction: false };
             }
-            return { value: values[idx % values.length], fromUserFunction: false };
+            var _a = values[idx % values.length], value = _a.value, sourceCol = _a.column, sourceRowNode = _a.rowNode;
+            return { value: value, fromUserFunction: false, sourceCol: sourceCol, sourceRowNode: sourceRowNode };
         }
-        return { value: _.last(findLineByLeastSquares(values.map(Number))), fromUserFunction: false };
+        return { value: _.last(findLineByLeastSquares(values.map(function (_a) {
+                var value = _a.value;
+                return Number(value);
+            }))), fromUserFunction: false };
     };
     FillHandle.prototype.clearValues = function () {
         this.clearMarkedPath();
@@ -515,6 +541,12 @@ var FillHandle = /** @class */ (function (_super) {
     __decorate([
         Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
+    __decorate([
+        Autowired('valueParserService')
+    ], FillHandle.prototype, "valueParserService", void 0);
+    __decorate([
+        Autowired('valueFormatterService')
+    ], FillHandle.prototype, "valueFormatterService", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 export { FillHandle };

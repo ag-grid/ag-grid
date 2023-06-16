@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -63,5 +63,5 @@ export declare class UserComponentFactory extends BeanStub {
     private newAgStackInstance;
     mergeParamsWithApplicationProvidedParams(defObject: DefinitionObject, type: ComponentType, paramsFromGrid: any, paramsFromSelector?: any): any;
     private initComponent;
-    getDefaultFloatingFilterType(def: IFilterDef): string | null;
+    getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null;
 }

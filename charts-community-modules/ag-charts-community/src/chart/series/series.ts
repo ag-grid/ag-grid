@@ -1,10 +1,9 @@
 import { Group } from '../../scene/group';
-import { LegendDatum } from '../legendDatum';
+import { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
-import { checkDatum, isNumber } from '../../util/value';
-import { createDeprecationWarning } from '../../util/deprecation';
+import { checkDatum } from '../../util/value';
 import {
     BOOLEAN,
     OPT_BOOLEAN,
@@ -18,11 +17,15 @@ import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { AnimationManager } from '../interaction/animationManager';
+import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
+import { ModuleContext } from '../../util/module';
 
 /**
  * Processed series datum used in node selections,
@@ -58,37 +61,69 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-const warnDeprecated = createDeprecationWarning();
-const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
-
 export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
     const result: DatumPropertyDefinition<K> = {
-        ...opts,
         property: propName,
         type: 'key',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+        ...opts,
     };
     return result;
 }
 
 export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
     const result: DatumPropertyDefinition<K> = {
-        ...opts,
         property: propName,
         type: 'value',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+        ...opts,
     };
     return result;
 }
 
-export function sumProperties<K>(props: K[]) {
-    const result: OutputPropertyDefinition<K> = {
-        properties: props,
-        type: 'sum',
-    };
+export function rangedValueProperty<K>(
+    propName: K,
+    opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
+): DatumPropertyDefinition<K> {
+    const { min = -Infinity, max = Infinity, ...defOpts } = opts;
+    return {
+        type: 'value',
+        property: propName,
+        valueType: 'range',
+        validation: (v) => checkDatum(v, true) != null,
+        processor: () => (datum) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
 
+            return Math.min(Math.max(datum, min), max);
+        },
+        ...defOpts,
+    };
+}
+
+export function accumulativeValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: accumulatedValue(),
+    };
+    return result;
+}
+
+export function trailingAccumulatedValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: trailingAccumulatedValue(),
+    };
     return result;
 }
 
@@ -98,18 +133,10 @@ export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements T
     readonly event: Event;
     readonly seriesId: string;
 
-    private readonly _series: Series;
-    /** @deprecated */
-    get series() {
-        warnSeriesDeprecated();
-        return this._series;
-    }
-
     constructor(nativeEvent: Event, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
     }
 }
 
@@ -119,7 +146,7 @@ export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> extends Se
     readonly type = 'nodeDoubleClick';
 }
 
-class SeriesItemHighlightStyle {
+export class SeriesItemHighlightStyle {
     @Validate(OPT_COLOR_STRING)
     fill?: string = 'yellow';
 
@@ -157,7 +184,10 @@ export class HighlightStyle {
 
 export class SeriesTooltip {
     @Validate(BOOLEAN)
-    enabled = true;
+    enabled: boolean = true;
+
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
 
@@ -182,7 +212,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly id = createId(this);
 
     get type(): string {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     // The group node that contains all the nodes used to render this series.
@@ -207,12 +237,15 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    animationManager?: AnimationManager;
+    chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
-    directionKeys: { [key in ChartAxisDirection]?: string[] };
+    private directionKeys: { [key in ChartAxisDirection]?: string[] };
+    private directionNames: { [key in ChartAxisDirection]?: string[] };
 
     // Flag to determine if we should recalculate node data.
     protected nodeDataRefresh = true;
@@ -260,17 +293,32 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     _declarationOrder: number = -1;
 
-    constructor({
-        useSeriesGroupLayer = true,
-        useLabelLayer = false,
-        pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
-        directionKeys = {} as { [key in ChartAxisDirection]?: string[] },
-    } = {}) {
+    protected readonly ctx: ModuleContext;
+
+    constructor(opts: {
+        moduleCtx: ModuleContext;
+        useSeriesGroupLayer?: boolean;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
+        directionKeys?: { [key in ChartAxisDirection]?: string[] };
+        directionNames?: { [key in ChartAxisDirection]?: string[] };
+    }) {
         super();
+
+        this.ctx = opts.moduleCtx;
+
+        const {
+            useSeriesGroupLayer = true,
+            useLabelLayer = false,
+            pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
+            directionKeys = {},
+            directionNames = {},
+        } = opts;
 
         const { rootGroup } = this;
 
         this.directionKeys = directionKeys;
+        this.directionNames = directionNames;
 
         this.contentGroup = rootGroup.appendChild(
             new Group({
@@ -307,21 +355,20 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
+    addChartEventListeners(): void {
+        return;
+    }
+
     destroy(): void {
         // Override point for sub-classes.
     }
 
-    set grouped(g: boolean) {
-        if (g === true) {
-            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
-        }
-    }
-
-    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
+    private getDirectionValues(
+        direction: ChartAxisDirection,
+        properties: { [key in ChartAxisDirection]?: string[] }
+    ): string[] {
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = properties?.[resolvedDirection];
         const values: string[] = [];
 
         const flatten = (...array: any[]) => {
@@ -333,6 +380,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         const addValue = (value: any) => {
             if (Array.isArray(value)) {
                 flatten(...value);
+            } else if (typeof value === 'object') {
+                flatten(Object.values(value));
             } else {
                 values.push(value);
             }
@@ -343,12 +392,18 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         keys.forEach((key) => {
             const value = (this as any)[key];
 
-            if (!value) return;
-
             addValue(value);
         });
 
         return values;
+    }
+
+    getKeys(direction: ChartAxisDirection): string[] {
+        return this.getDirectionValues(direction, this.directionKeys);
+    }
+
+    getNames(direction: ChartAxisDirection): (string | undefined)[] {
+        return this.getDirectionValues(direction, this.directionNames);
     }
 
     protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection {
@@ -536,20 +591,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return new SeriesNodeDoubleClickEvent(event, datum, this);
     }
 
-    abstract getLegendData(): LegendDatum[];
+    abstract getLegendData(): ChartLegendDatum[];
 
-    toggleSeriesItem(_itemId: any, enabled: boolean): void {
+    protected toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
         this.nodeDataRefresh = true;
-    }
-
-    toggleOtherSeriesItems(
-        _seriesToggled: Series<any>,
-        _datumToggled: any,
-        _enabled?: boolean,
-        _suggestedEnabled?: boolean
-    ): void {
-        return;
     }
 
     isEnabled() {
@@ -559,41 +605,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly highlightStyle = new HighlightStyle();
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = fixNumericExtent(extent);
+
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
 
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
-
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
             const padding = axis?.calculatePadding(min, max) ?? 1;
             min -= padding;
             max += padding;
-        }
-
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
         }
 
         return [min, max];

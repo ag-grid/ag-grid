@@ -13,11 +13,13 @@ Exporting the grid into different sheets follows a specific process:
 1. You call this method multiple times either on the same grid with different data (or different export params) or on different instances of the grid, and you store each exported data set as an element of an Array. 
 1. Once all the needed sheets have been stored in the Array, call the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` methods to package them in a single Excel workbook.
 
-[[note]]
-| When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
+<note>
+When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
+</note>
 
-[[warning]]
+<warning>
 | Calling `getSheetDataForExcel` starts a **Multiple Sheet** export process, that can only be ended by calling the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` methods. Until one of these two methods is called to complete the process, no data can be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
+</warning>
 
 ## Using Selected Rows
 In this example, we use the `onlySelected=true` property to segment the grid data into multiple sheets, each containing 100 data rows.

@@ -41,7 +41,11 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
+                main: './dist/esm/es6/main.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
+                main: './dist/esm/es6/main.js',
                 defaultExtension: 'js'
             },
         },
@@ -57,3 +61,7 @@
         }
     });
 })(this);
+
+window.addEventListener('error', e => {
+    console.error('ERROR', e.message, e.filename)
+});

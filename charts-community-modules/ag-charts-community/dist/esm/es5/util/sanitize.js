@@ -1,6 +1,6 @@
 var element = null;
 export function sanitizeHtml(text) {
-    element = element || document.createElement('div');
+    element = element !== null && element !== void 0 ? element : document.createElement('div');
     if (!text) {
         return '';
     }

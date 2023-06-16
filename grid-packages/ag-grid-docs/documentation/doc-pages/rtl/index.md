@@ -4,9 +4,9 @@ title: "RTL - Right To Left"
 
 RTL is used for displaying languages that go from Right to Left, eg Hebrew and Arabic. To get AG Grid to display in RTL format, set the property `enableRtl=true`.
 
-## Simple Example
+## RTL Example
 
-Below shows a simple example of a grid using RTL. To make it look better we should really be using an RTL language, however none of us in AG Grid knows any RTL languages, so we are sticking with English.
+Below shows an example of a grid using RTL. To make it look better we should really be using an RTL language, however none of us in AG Grid knows any RTL languages, so we are sticking with English.
 
 <grid-example title='RTL Simple' name='rtl-simple' type='generated'></grid-example>
 
@@ -14,7 +14,7 @@ Below shows a simple example of a grid using RTL. To make it look better we shou
 
 Below shows a more complex example. It's the same example as used on the AG Grid main demo page. To demonstrate all the edge cases of RTL, the tool panel and pinned areas are shown. This example is using AG Grid Enterprise - hence the tool panel and context menu's are active.
 
-<grid-example title='RTL Complex' name='rtl-complex' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar", "richselect"] }'></grid-example>
+<grid-example title='RTL Complex' name='rtl-complex' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar", "richselect"], "extras": ["fontawesome"] }'></grid-example>
 
 ## How it Works
 

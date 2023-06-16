@@ -1,12 +1,13 @@
-[[only-angular]]
-|
+<framework-specific-section frameworks="angular">
 |Here we use the safe navigation operator (`?`) to ensure that both `params` and `data` are valid before attempting to access `theBoldValue`:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// cell renderer component  
 |@Component({
 |    selector: 'cell-renderer',
-|    template: `<span>{{params?.data?.theBoldValue}}</span>`
+|    template: `&lt;span>{{params?.data?.theBoldValue}}&lt;/span>`
 |})
 |class CellRendererComponent implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;
@@ -20,4 +21,5 @@
 |        return false;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -38,9 +40,10 @@ var LogAxis = /** @class */ (function (_super) {
         return _this;
     }
     LogAxis.prototype.normaliseDataDomain = function (d) {
-        var _a = this, min = _a.min, max = _a.max;
+        var _a;
+        var _b = this, min = _b.min, max = _b.max;
         if (d.length > 2) {
-            d = extent(d) || [NaN, NaN];
+            d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];

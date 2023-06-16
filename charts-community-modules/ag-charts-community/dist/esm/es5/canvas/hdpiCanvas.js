@@ -105,7 +105,7 @@ var HdpiCanvas = /** @class */ (function () {
      */
     HdpiCanvas.prototype.download = function (fileName, fileFormat) {
         if (fileFormat === void 0) { fileFormat = 'image/png'; }
-        fileName = (fileName || '').trim() || 'image';
+        fileName = (fileName !== null && fileName !== void 0 ? fileName : '').trim() || 'image';
         var dataUrl = this.getDataURL(fileFormat);
         var document = this.document;
         var a = document.createElement('a');

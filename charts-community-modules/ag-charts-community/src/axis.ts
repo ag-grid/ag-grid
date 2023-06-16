@@ -3,7 +3,7 @@ import { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { Text } from './scene/shape/text';
+import { getFont, measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
@@ -30,22 +30,39 @@ import {
     LESS_THAN,
     NUMBER_OR_NAN,
     AND,
-    GREATER_THAN,
+    TEXT_WRAP,
+    OPT_FUNCTION,
 } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
+import {
+    AgAxisCaptionFormatterParams,
+    AgAxisCaptionOptions,
+    AgAxisGridStyle,
+    AgAxisLabelFormatterParams,
+    FontStyle,
+    FontWeight,
+    TextWrap,
+} from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
-import { calculateLabelRotation } from './chart/label';
+import {
+    calculateLabelRotation,
+    calculateLabelBBox,
+    getLabelSpacing,
+    getTextAlign,
+    getTextBaseline,
+    Flag,
+} from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
+import { ModuleContext } from './util/module';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -82,7 +99,40 @@ export enum Tags {
     AxisLine,
 }
 
+type TickStrategyParams = {
+    index: number;
+    tickData: TickData;
+    textProps: TextSizeProperties;
+    labelOverlap: boolean;
+    terminate: boolean;
+    primaryTickCount?: number;
+};
+
+type TickStrategyResult = {
+    index: number;
+    tickData: TickData;
+    autoRotation: number;
+    terminate: boolean;
+};
+
+type TickStrategy = (params: TickStrategyParams) => TickStrategyResult;
+
+enum TickGenerationType {
+    CREATE,
+    CREATE_SECONDARY,
+    FILTER,
+    VALUES,
+}
+
 type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
+
+type TickDatum = {
+    tickLabel: string;
+    tick: any;
+    translationY: number;
+};
+
+type TickData = { rawTicks: any[]; ticks: TickDatum[]; labelCount: number };
 
 export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
 
@@ -94,7 +144,10 @@ export class AxisLine {
     color?: string = 'rgba(195, 195, 195, 1)';
 }
 
-class AxisTick<S extends Scale<D, number>, D = any> {
+export class BaseAxisTick<S extends Scale<D, number, I>, D = any, I = any> {
+    @Validate(BOOLEAN)
+    enabled = true;
+
     /**
      * The line width to be used by axis ticks.
      */
@@ -137,12 +190,26 @@ class AxisTick<S extends Scale<D, number>, D = any> {
     @Default(NaN)
     minSpacing: number = NaN;
 
-    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
-    @Default(NaN)
-    maxSpacing: number = NaN;
+    // Maybe initialised and validated in sub-classes - DO NOT ASSIGN A VALUE HERE.
+    maxSpacing?: number;
 }
 
 export class AxisLabel {
+    @Validate(BOOLEAN)
+    enabled = true;
+
+    /** If set to `false`, axis labels will not be wrapped on multiple lines. */
+    @Validate(OPT_BOOLEAN)
+    autoWrap: boolean = false;
+
+    /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
+    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
+
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
@@ -221,6 +288,15 @@ export class AxisLabel {
     mirrored: boolean = false;
 
     /**
+     * The side of the axis line to position the labels on.
+     * -1 = left (default)
+     * 1 = right
+     */
+    getSideFlag(): Flag {
+        return this.mirrored ? 1 : -1;
+    }
+
+    /**
      * Labels are rendered perpendicular to the axis line by default.
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
@@ -238,6 +314,39 @@ export class AxisLabel {
 
     @Validate(OPT_STRING)
     format: string | undefined = undefined;
+
+    getFont(): string {
+        return getFont(this);
+    }
+}
+
+export class AxisTitle implements AgAxisCaptionOptions {
+    @Validate(BOOLEAN)
+    enabled = false;
+
+    @Validate(OPT_STRING)
+    text?: string = undefined;
+
+    @Validate(OPT_FONT_STYLE)
+    fontStyle: FontStyle | undefined = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
+    fontWeight: FontWeight | undefined = undefined;
+
+    @Validate(NUMBER(0))
+    fontSize: number = 10;
+
+    @Validate(STRING)
+    fontFamily: string = 'sans-serif';
+
+    @Validate(OPT_COLOR_STRING)
+    color: string | undefined = undefined;
+
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'always';
+
+    @Validate(OPT_FUNCTION)
+    formatter?: (params: AgAxisCaptionFormatterParams) => string = undefined;
 }
 
 /**
@@ -249,7 +358,7 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     static readonly defaultTickMinSpacing = 50;
 
     readonly id = createId(this);
@@ -311,7 +420,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     readonly line = new AxisLine();
-    readonly tick = new AxisTick<S>();
+    readonly tick: BaseAxisTick<S> = this.createTick();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -319,9 +428,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     protected readonly layout: Pick<AxisLayout, 'label'> = {
         label: {
-            align: 'center',
-            baseline: 'middle',
-            rotation: 0,
             fractionDigits: 0,
             padding: this.label.padding,
             format: this.label.format,
@@ -336,9 +442,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.crossLineGroup.removeChild(crossLine.group);
     }
 
-    constructor(scale: S) {
+    constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
         this._scale = scale;
         this.refreshScale();
+
+        this._titleCaption.node.rotation = -Math.PI / 2;
+        this.axisGroup.appendChild(this._titleCaption.node);
     }
 
     public destroy() {
@@ -346,14 +455,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     protected refreshScale() {
-        this.requestedRange = this.scale.range.slice();
+        this.range = this.scale.range.slice();
         this.crossLines?.forEach((crossLine) => {
             this.initCrossLine(crossLine);
         });
     }
 
     protected updateRange() {
-        const { requestedRange: rr, visibleRange: vr, scale } = this;
+        const { range: rr, visibleRange: vr, scale } = this;
         const span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         const shift = span * vr[0];
         const start = rr[0] - shift;
@@ -404,30 +513,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return 0; // in range
     }
 
-    protected requestedRange: number[] = [0, 1];
-    set range(value: number[]) {
-        this.requestedRange = value.slice();
-        this.updateRange();
-    }
-    get range(): number[] {
-        return this.requestedRange;
-    }
-
-    protected _visibleRange: number[] = [0, 1];
-    set visibleRange(value: number[]) {
-        if (value && value.length === 2) {
-            let [min, max] = value;
-            min = Math.max(0, min);
-            max = Math.min(1, max);
-            min = Math.min(min, max);
-            max = Math.max(min, max);
-            this._visibleRange = [min, max];
-            this.updateRange();
-        }
-    }
-    get visibleRange(): number[] {
-        return this._visibleRange.slice();
-    }
+    range: number[] = [0, 1];
+    visibleRange: number[] = [0, 1];
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
@@ -454,30 +541,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
     }
 
-    protected _title: Caption | undefined = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                this.axisGroup.removeChild(oldTitle.node);
-            }
-
-            if (value) {
-                value.node.rotation = -Math.PI / 2;
-                this.axisGroup.appendChild(value.node);
-            }
-
-            this._title = value;
-
-            // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.setTickCount(this.tick.count);
-            this.setTickInterval(this.tick.interval);
-            this.updateTitle({ ticks: this.scale.ticks!() });
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
+    public title: AxisTitle | undefined = undefined;
+    protected _titleCaption = new Caption();
 
     private setDomain() {
         const {
@@ -583,28 +648,77 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      */
     seriesAreaPadding = 0;
 
+    protected createTick(): BaseAxisTick<S> {
+        return new BaseAxisTick();
+    }
+
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
+        const sideFlag = this.label.getSideFlag();
+        const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
+
+        this.updateScale();
+        this.updatePosition({ rotation, sideFlag });
+        this.updateLine();
+
+        const { tickData, combinedRotation, textBaseline, textAlign, ...ticksResult } = this.generateTicks({
+            primaryTickCount,
+            parallelFlipRotation,
+            regularFlipRotation,
+            labelX,
+            sideFlag,
+        });
+
+        this.updateSelections(tickData.ticks);
+        this.updateLabels({
+            tickLabelGroupSelection: this.tickLabelGroupSelection,
+            combinedRotation,
+            textBaseline,
+            textAlign,
+            labelX,
+        });
+
+        this.updateVisibility();
+        this.updateGridLines(sideFlag);
+        this.updateTickLines(sideFlag);
+        this.updateTitle({ anyTickVisible: tickData.ticks.length > 0, sideFlag });
+        this.updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation, sideFlag });
+        this.updateLayoutState();
+
+        primaryTickCount = ticksResult.primaryTickCount;
+        return primaryTickCount;
+    }
+
+    private updateLayoutState() {
+        this.layout.label = {
+            fractionDigits: this.fractionDigits,
+            padding: this.label.padding,
+            format: this.label.format,
+        };
+    }
+
+    private updateScale() {
+        this.updateRange();
         this.calculateDomain();
+        this.setDomain();
+        this.setTickInterval(this.tick.interval);
 
-        const {
-            scale,
-            gridLength,
-            tick,
-            label: { parallel: parallelLabels, mirrored, avoidCollisions },
-            requestedRange,
-        } = this;
-        const requestedRangeMin = Math.min(...requestedRange);
-        const requestedRangeMax = Math.max(...requestedRange);
+        const { scale, nice } = this;
+        if (!(scale instanceof ContinuousScale)) {
+            return;
+        }
+
+        this.setTickCount(this.tick.count);
+
+        scale.nice = nice;
+        scale.update();
+    }
+
+    private calculateRotations() {
         const rotation = toRadians(this.rotation);
-        const anySeriesActive = this.isAnySeriesActive();
-
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        const sideFlag = mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -616,173 +730,339 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         //  1 = don't flip (default)
         const parallelFlipRotation = normalizeAngle360(rotation);
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
+        return { rotation, parallelFlipRotation, regularFlipRotation };
+    }
 
-        const nice = this.nice;
-        this.setDomain();
+    private generateTicks({
+        primaryTickCount,
+        parallelFlipRotation,
+        regularFlipRotation,
+        labelX,
+        sideFlag,
+    }: {
+        primaryTickCount?: number;
+        parallelFlipRotation: number;
+        regularFlipRotation: number;
+        labelX: number;
+        sideFlag: Flag;
+    }): {
+        tickData: TickData;
+        primaryTickCount?: number;
+        combinedRotation: number;
+        textBaseline: CanvasTextBaseline;
+        textAlign: CanvasTextAlign;
+    } {
+        const {
+            scale,
+            tick,
+            label: { parallel, rotation, fontFamily, fontSize, fontStyle, fontWeight },
+        } = this;
 
-        this.setTickInterval(this.tick.interval);
-
-        if (scale instanceof ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(this.tick.count);
-            scale.update();
-        }
-
-        const halfBandwidth = (scale.bandwidth || 0) / 2;
-
-        this.updatePosition();
-        this.updateLine();
-
-        let i = 0;
-        let labelOverlap = true;
-        let ticks: any[] = [];
-        const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
-            minSpacing: this.tick.minSpacing,
-            maxSpacing: this.tick.maxSpacing,
-        });
-        const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
-        const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
-        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
-
-        while (labelOverlap) {
-            let unchanged = true;
-            while (unchanged) {
-                if (i > maxIterations) {
-                    // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
-                    // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
-                    // Break out of the while loops when then iteration count reaches `defaultTickCount`
-                    break;
-                }
-
-                const prevTicks = ticks;
-                const tickCount = Math.max(defaultTickCount - i, minTickCount);
-
-                const filterTicks =
-                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
-
-                if (this.tick.values) {
-                    ticks = this.tick.values;
-                } else if (maxTickCount === 0) {
-                    ticks = [];
-                } else if (i === 0 || !filterTicks) {
-                    this.setTickCount(this.tick.count ?? tickCount, minTickCount, maxTickCount);
-                    ticks = scale.ticks!();
-                }
-
-                if (filterTicks) {
-                    const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
-                    ticks = ticks.filter((_, i) => i % keepEvery === 0);
-                }
-
-                let secondaryAxisTicks;
-                if (secondaryAxis) {
-                    // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
-                    secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
-                    ticks = secondaryAxisTicks;
-                }
-
-                this.updateSelections({
-                    halfBandwidth,
-                    gridLength,
-                    ticks,
-                });
-
-                if (!secondaryAxis && ticks.length > 0) {
-                    primaryTickCount = ticks.length;
-                }
-
-                unchanged = checkForOverlap ? areArrayNumbersEqual(ticks, prevTicks) : false;
-                i++;
-            }
-
-            if (unchanged) {
-                break;
-            }
-
-            // When the scale domain or the ticks change, the label format may change
-            this.onLabelFormatChange(ticks, this.label.format);
-
-            const { labelData, rotated } = this.updateLabels({
-                parallelFlipRotation,
-                regularFlipRotation,
-                sideFlag,
-                tickLabelGroupSelection: this.tickLabelGroupSelection,
-                ticks,
-            });
-
-            const labelSpacing = this.getLabelSpacing(rotated);
-
-            // no need for further iterations if `avoidCollisions` is false
-            labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelSpacing) : false;
-        }
-
-        this.updateGridLines({
-            gridLength,
-            halfBandwidth,
-            sideFlag,
+        const { defaultRotation, configuredRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
+            rotation,
+            parallel,
+            regularFlipRotation,
+            parallelFlipRotation,
         });
 
-        let anyTickVisible = false;
-        const visibleFn = (node: Line | Text | Arc) => {
-            const min = Math.floor(requestedRangeMin);
-            const max = Math.ceil(requestedRangeMax);
-            if (min === max) {
-                node.visible = false;
-                return;
-            }
+        const initialRotation = configuredRotation + defaultRotation;
+        const labelMatrix = new Matrix();
 
-            // Fix an effect of rounding error
-            if (node.translationY >= min - 1 && node.translationY < min) {
-                node.translationY = min;
-            }
-            if (node.translationY > max && node.translationY <= max + 1) {
-                node.translationY = max;
-            }
+        const { maxTickCount } = this.estimateTickCount({
+            minSpacing: tick.minSpacing,
+            maxSpacing: tick.maxSpacing ?? NaN,
+        });
 
-            const visible = node.translationY >= min && node.translationY <= max;
-            if (visible) {
-                anyTickVisible = true;
-            }
-            node.visible = visible;
+        const continuous = scale instanceof ContinuousScale;
+        const maxIterations = tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
+
+        let textAlign = getTextAlign(parallel, configuredRotation, 0, sideFlag, regularFlipFlag);
+        const textBaseline = getTextBaseline(parallel, configuredRotation, sideFlag, parallelFlipFlag);
+
+        const textProps: TextSizeProperties = {
+            fontFamily,
+            fontSize,
+            fontStyle,
+            fontWeight,
+            textBaseline,
+            textAlign,
         };
 
-        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
-        gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
-        tickLineGroupSelection.each(visibleFn);
-        tickLabelGroupSelection.each(visibleFn);
+        let tickData: TickData = {
+            rawTicks: [],
+            ticks: [],
+            labelCount: 0,
+        };
 
-        this.tickLineGroup.visible = anyTickVisible;
-        this.tickLabelGroup.visible = anyTickVisible;
-        this.gridLineGroup.visible = anyTickVisible;
-        this.gridArcGroup.visible = anyTickVisible;
+        let index = 0;
+        let autoRotation = 0;
+        let labelOverlap = true;
+        let terminate = false;
+        while (labelOverlap && index <= maxIterations) {
+            if (terminate) {
+                break;
+            }
+            autoRotation = 0;
+            textAlign = getTextAlign(parallel, configuredRotation, 0, sideFlag, regularFlipFlag);
 
-        this.crossLines?.forEach((crossLine) => {
-            crossLine.sideFlag = -sideFlag as -1 | 1;
-            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
-            crossLine.label.parallel =
-                crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
-            crossLine.parallelFlipRotation = parallelFlipRotation;
-            crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anySeriesActive);
+            const tickStrategies = this.getTickStrategies({ secondaryAxis, index });
+
+            for (const strategy of tickStrategies) {
+                ({ tickData, index, autoRotation, terminate } = strategy({
+                    index,
+                    tickData,
+                    textProps,
+                    labelOverlap,
+                    terminate,
+                    primaryTickCount,
+                }));
+
+                const ticksResult = tickData.ticks;
+
+                textAlign = getTextAlign(parallel, configuredRotation, autoRotation, sideFlag, regularFlipFlag);
+                const rotated = configuredRotation !== 0 || autoRotation !== 0;
+                const rotation = initialRotation + autoRotation;
+                labelOverlap = this.checkLabelOverlap(rotation, rotated, labelMatrix, ticksResult, labelX, {
+                    ...textProps,
+                    textAlign,
+                });
+            }
+        }
+
+        const combinedRotation = defaultRotation + configuredRotation + autoRotation;
+
+        if (!secondaryAxis && tickData.rawTicks.length > 0) {
+            primaryTickCount = tickData.rawTicks.length;
+        }
+
+        return { tickData, primaryTickCount, combinedRotation, textBaseline, textAlign };
+    }
+
+    private getTickStrategies({ index, secondaryAxis }: { index: number; secondaryAxis: boolean }): TickStrategy[] {
+        const { scale, label, tick } = this;
+        const continuous = scale instanceof ContinuousScale;
+        const avoidLabelCollisions = label.enabled && label.avoidCollisions;
+        const filterTicks = !(continuous && this.tick.count === undefined) && index !== 0 && avoidLabelCollisions;
+        const autoRotate = label.autoRotate === true && label.rotation === undefined;
+
+        const strategies: TickStrategy[] = [];
+        let tickGenerationType: TickGenerationType;
+        if (this.tick.values) {
+            tickGenerationType = TickGenerationType.VALUES;
+        } else if (secondaryAxis) {
+            tickGenerationType = TickGenerationType.CREATE_SECONDARY;
+        } else if (filterTicks) {
+            tickGenerationType = TickGenerationType.FILTER;
+        } else {
+            tickGenerationType = TickGenerationType.CREATE;
+        }
+
+        const tickGenerationStrategy = ({ index, tickData, primaryTickCount, terminate }: TickStrategyParams) =>
+            this.createTickData(tickGenerationType, index, tickData, terminate, primaryTickCount);
+
+        strategies.push(tickGenerationStrategy);
+
+        if (!continuous && !isNaN(tick.minSpacing)) {
+            const tickFilterStrategy = ({ index, tickData, primaryTickCount, terminate }: TickStrategyParams) =>
+                this.createTickData(TickGenerationType.FILTER, index, tickData, terminate, primaryTickCount);
+            strategies.push(tickFilterStrategy);
+        }
+
+        if (!avoidLabelCollisions) {
+            return strategies;
+        }
+
+        if (label.autoWrap) {
+            const autoWrapStrategy = ({ index, tickData, textProps }: TickStrategyParams) =>
+                this.wrapLabels(tickData, index, textProps);
+
+            strategies.push(autoWrapStrategy);
+        } else if (autoRotate) {
+            const autoRotateStrategy = ({ index, tickData, labelOverlap, terminate }: TickStrategyParams) => ({
+                index,
+                tickData,
+                autoRotation: this.getAutoRotation(labelOverlap),
+                terminate,
+            });
+
+            strategies.push(autoRotateStrategy);
+        }
+
+        return strategies;
+    }
+
+    createTickData(
+        tickGenerationType: TickGenerationType,
+        index: number,
+        tickData: TickData,
+        terminate: boolean,
+        primaryTickCount?: number
+    ): TickStrategyResult {
+        const { scale, tick } = this;
+        const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
+            minSpacing: tick.minSpacing,
+            maxSpacing: tick.maxSpacing ?? NaN,
         });
 
-        this.updateTitle({ ticks });
+        const continuous = scale instanceof ContinuousScale;
+        const maxIterations = tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
-        tickLineGroupSelection.each((line) => {
-            line.strokeWidth = tick.width;
-            line.stroke = tick.color;
-            line.visible = anyTickVisible;
-            line.x1 = sideFlag * tick.size;
-            line.x2 = 0;
-            line.y1 = 0;
-            line.y2 = 0;
-        });
+        let tickCount = tick.count ?? (continuous ? Math.max(defaultTickCount - index, minTickCount) : maxTickCount);
 
-        return primaryTickCount;
+        const regenerateTicks =
+            tick.interval === undefined &&
+            tick.values === undefined &&
+            tick.count === undefined &&
+            tickCount > minTickCount &&
+            (continuous || tickGenerationType === TickGenerationType.FILTER);
+
+        let unchanged = true;
+        while (unchanged && index <= maxIterations) {
+            const prevTicks = tickData.rawTicks;
+            tickCount = tick.count ?? (continuous ? Math.max(defaultTickCount - index, minTickCount) : maxTickCount);
+
+            const { rawTicks, ticks, labelCount } = this.getTicks({
+                tickGenerationType,
+                previousTicks: prevTicks,
+                tickCount,
+                minTickCount,
+                maxTickCount,
+                primaryTickCount,
+            });
+
+            tickData.rawTicks = rawTicks;
+            tickData.ticks = ticks;
+            tickData.labelCount = labelCount;
+
+            unchanged = regenerateTicks ? areArrayNumbersEqual(rawTicks, prevTicks) : false;
+            index++;
+        }
+
+        const shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+
+        terminate ||= shouldTerminate;
+
+        return { tickData, index, autoRotation: 0, terminate };
+    }
+
+    private checkLabelOverlap(
+        rotation: number,
+        rotated: boolean,
+        labelMatrix: Matrix,
+        tickData: TickDatum[],
+        labelX: number,
+        textProps: TextSizeProperties
+    ): boolean {
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, rotation, 0, 0);
+
+        const labelData: PointLabelDatum[] = this.createLabelData(tickData, labelX, textProps, labelMatrix);
+        const labelSpacing = getLabelSpacing(this.label.minSpacing, rotated);
+
+        return axisLabelsOverlap(labelData, labelSpacing);
+    }
+
+    private createLabelData(
+        tickData: TickDatum[],
+        labelX: number,
+        textProps: TextSizeProperties,
+        labelMatrix: Matrix
+    ): PointLabelDatum[] {
+        const labelData: PointLabelDatum[] = [];
+        for (const tickDatum of tickData) {
+            const { tickLabel, translationY } = tickDatum;
+            if (tickLabel === '' || tickLabel == undefined) {
+                // skip user hidden ticks
+                continue;
+            }
+
+            const lines = splitText(tickLabel);
+
+            const { width, height } = measureText(lines, labelX, translationY, textProps);
+
+            const bbox = new BBox(labelX, translationY, width, height);
+
+            const labelDatum = calculateLabelBBox(tickLabel, bbox, labelX, translationY, labelMatrix);
+
+            labelData.push(labelDatum);
+        }
+        return labelData;
+    }
+
+    private getAutoRotation(labelOveralap: boolean): number {
+        return labelOveralap ? normalizeAngle360(toRadians(this.label.autoRotateAngle)) : 0;
+    }
+
+    private getTicks({
+        tickGenerationType,
+        previousTicks,
+        tickCount,
+        minTickCount,
+        maxTickCount,
+        primaryTickCount,
+    }: {
+        tickGenerationType: TickGenerationType;
+        previousTicks: TickDatum[];
+        tickCount: number;
+        minTickCount: number;
+        maxTickCount: number;
+        primaryTickCount?: number;
+    }) {
+        const { scale } = this;
+
+        let rawTicks: any[] = [];
+
+        switch (tickGenerationType) {
+            case TickGenerationType.VALUES:
+                rawTicks = this.tick.values!;
+                break;
+            case TickGenerationType.CREATE_SECONDARY:
+                // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
+                rawTicks = this.updateSecondaryAxisTicks(primaryTickCount);
+                break;
+            case TickGenerationType.FILTER:
+                rawTicks = this.filterTicks(previousTicks, tickCount);
+                break;
+            default:
+                rawTicks = this.createTicks(tickCount, minTickCount, maxTickCount);
+                break;
+        }
+
+        // When the scale domain or the ticks change, the label format may change
+        this.onLabelFormatChange(rawTicks, this.label.format);
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        this.fractionDigits = (rawTicks as any).fractionDigits >= 0 ? (rawTicks as any).fractionDigits : 0;
+
+        const halfBandwidth = (this.scale.bandwidth ?? 0) / 2;
+        const ticks: TickDatum[] = [];
+
+        let labelCount = 0;
+        for (let i = 0; i < rawTicks.length; i++) {
+            const rawTick = rawTicks[i];
+            const translationY = scale.convert(rawTick) + halfBandwidth;
+
+            const tickLabel = this.formatTick(rawTick, i);
+            ticks.push({ tick: rawTick, tickLabel, translationY });
+
+            if (tickLabel === '' || tickLabel == undefined) {
+                continue;
+            }
+            labelCount++;
+        }
+
+        return { rawTicks, ticks, labelCount };
+    }
+
+    private filterTicks(ticks: any, tickCount: number): any[] {
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing ?? NaN);
+        const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
+        return ticks.filter((_: any, i: number) => i % keepEvery === 0);
+    }
+
+    private createTicks(tickCount: number, minTickCount: number, maxTickCount: number) {
+        this.setTickCount(tickCount, minTickCount, maxTickCount);
+        return this.scale.ticks!();
     }
 
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
@@ -790,12 +1070,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         maxTickCount: number;
         defaultTickCount: number;
     } {
-        const { requestedRange } = this;
-
-        const min = Math.min(...requestedRange);
-        const max = Math.max(...requestedRange);
-
-        const availableRange = max - min;
+        const availableRange = this.calculateAvailableRange();
 
         const defaultMinSpacing = Math.max(
             Axis.defaultTickMinSpacing,
@@ -839,32 +1114,92 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return { minTickCount, maxTickCount, defaultTickCount };
     }
 
-    private getLabelSpacing(rotated?: boolean): number {
-        const { label } = this;
-        if (!isNaN(label.minSpacing)) {
-            return label.minSpacing;
-        }
-        return rotated ? 0 : 10;
+    private updateVisibility() {
+        const { range: requestedRange } = this;
+
+        const requestedRangeMin = Math.min(...requestedRange);
+        const requestedRangeMax = Math.max(...requestedRange);
+
+        const visibleFn = (node: Line | Text | Arc) => {
+            const min = Math.floor(requestedRangeMin);
+            const max = Math.ceil(requestedRangeMax);
+            if (min === max) {
+                node.visible = false;
+                return;
+            }
+
+            // Fix an effect of rounding error
+            if (node.translationY >= min - 1 && node.translationY < min) {
+                node.translationY = min;
+            }
+            if (node.translationY > max && node.translationY <= max + 1) {
+                node.translationY = max;
+            }
+
+            const visible = node.translationY >= min && node.translationY <= max;
+            node.visible = visible;
+        };
+
+        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        gridLineGroupSelection.each(visibleFn);
+        gridArcGroupSelection.each(visibleFn);
+        tickLineGroupSelection.each(visibleFn);
+        tickLabelGroupSelection.each(visibleFn);
+
+        this.tickLineGroup.visible = this.tick.enabled;
+        this.tickLabelGroup.visible = this.label.enabled;
+    }
+
+    private updateCrossLines({
+        rotation,
+        parallelFlipRotation,
+        regularFlipRotation,
+        sideFlag,
+    }: {
+        rotation: number;
+        parallelFlipRotation: number;
+        regularFlipRotation: number;
+        sideFlag: Flag;
+    }) {
+        const anySeriesActive = this.isAnySeriesActive();
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.sideFlag = -sideFlag as Flag;
+            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel = crossLine.label.parallel ?? this.label.parallel;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
+            crossLine.update(anySeriesActive);
+        });
+    }
+
+    private updateTickLines(sideFlag: Flag) {
+        const { tick } = this;
+        this.tickLineGroupSelection.each((line) => {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.x1 = sideFlag * tick.size;
+            line.x2 = 0;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
+    }
+
+    private calculateAvailableRange(): number {
+        const { range: requestedRange } = this;
+
+        const min = Math.min(...requestedRange);
+        const max = Math.max(...requestedRange);
+
+        return max - min;
     }
 
     protected calculateDomain() {
         // Placeholder for subclasses to override.
     }
 
-    updatePosition() {
-        const {
-            label,
-            crossLineGroup,
-            axisGroup,
-            gridGroup,
-            translation,
-            gridLineGroupSelection,
-            gridPadding,
-            gridLength,
-        } = this;
-        const rotation = toRadians(this.rotation);
-        const sideFlag = label.mirrored ? 1 : -1;
-
+    updatePosition({ rotation, sideFlag }: { rotation: number; sideFlag: Flag }) {
+        const { crossLineGroup, axisGroup, gridGroup, translation, gridLineGroupSelection, gridPadding, gridLength } =
+            this;
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
 
@@ -892,26 +1227,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         throw new Error('AG Charts - unexpected call to updateSecondaryAxisTicks() - check axes configuration.');
     }
 
-    private updateSelections({
-        ticks,
-        halfBandwidth,
-        gridLength,
-    }: {
-        ticks: any[];
-        halfBandwidth: number;
-        gridLength: number;
-    }) {
-        const { scale } = this;
-        const data = ticks.map((t) => ({ tick: t, translationY: scale.convert(t) + halfBandwidth }));
+    private updateSelections(data: TickDatum[]) {
+        const gridData = this.gridLength ? data : [];
         const gridLineGroupSelection = this.radialGrid
             ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridLength ? data : [], (group) => {
+            : this.gridLineGroupSelection.update(gridData, (group) => {
                   const node = new Line();
                   node.tag = Tags.GridLine;
                   group.append(node);
               });
         const gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridLength ? data : [], (group) => {
+            ? this.gridArcGroupSelection.update(gridData, (group) => {
                   const node = new Arc();
                   node.tag = Tags.GridArc;
                   group.append(node);
@@ -942,22 +1268,15 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines({
-        gridLength,
-        halfBandwidth,
-        sideFlag,
-    }: {
-        gridLength: number;
-        halfBandwidth: number;
-        sideFlag: -1 | 1;
-    }) {
-        const { gridStyle, scale, tick, gridPadding } = this;
+    private updateGridLines(sideFlag: Flag) {
+        const { gridStyle, scale, tick, gridPadding, gridLength } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let grid: Selection<Line | Arc, Group>;
 
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
+                const halfBandwidth = (this.scale.bandwidth ?? 0) / 2;
 
                 grid = this.gridArcGroupSelection.each((arc, datum) => {
                     const radius = Math.round(scale.convert(datum) + halfBandwidth);
@@ -988,188 +1307,81 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private updateLabels({
-        ticks,
         tickLabelGroupSelection,
-        sideFlag,
-        parallelFlipRotation,
-        regularFlipRotation,
+        combinedRotation,
+        textBaseline,
+        textAlign,
+        labelX,
     }: {
-        ticks: any[];
         tickLabelGroupSelection: Selection<Text, any>;
-        sideFlag: -1 | 1;
-        parallelFlipRotation: number;
-        regularFlipRotation: number;
+        combinedRotation: number;
+        textBaseline: CanvasTextBaseline;
+        textAlign: CanvasTextAlign;
+        labelX: number;
     }) {
         const {
             label,
-            label: { parallel, rotation },
-            tick,
+            label: { enabled: labelsEnabled },
         } = this;
-        let labelAutoRotation = 0;
 
-        const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
-            rotation,
-            parallel,
-            regularFlipRotation,
-            parallelFlipRotation,
-        });
+        if (!labelsEnabled) {
+            return { labelData: [], rotated: false };
+        }
 
-        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
-        this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
-
-        // Update properties that affect the size of the axis labels and measure the labels
-        const labelBboxes: Map<number, BBox | null> = new Map();
-
-        const labelX = sideFlag * (tick.size + label.padding + this.seriesAreaPadding);
-
-        const labelMatrix = new Matrix();
-        Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
-
-        let labelData: PointLabelDatum[] = [];
-
-        const labelSelection = tickLabelGroupSelection.each((node, datum, index) => {
-            const { tick, translationY } = datum;
+        // Apply label option values
+        tickLabelGroupSelection.each((node, datum) => {
+            const { tickLabel } = datum;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
-            node.text = this.formatTickDatum(tick, index);
-
+            node.text = tickLabel;
             const userHidden = node.text === '' || node.text == undefined;
 
-            const bbox = node.computeBBox();
-            const { width, height } = bbox;
-
-            const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
-
-            const { x = 0, y = 0 } = bbox;
-            bbox.width = width;
-            bbox.height = height;
-
-            labelBboxes.set(index, userHidden ? null : bbox);
-
             if (userHidden) {
+                node.visible = false; // hide empty labels
                 return;
             }
 
-            labelData.push({
-                point: {
-                    x,
-                    y,
-                    size: 0,
-                },
-                label: {
-                    width,
-                    height,
-                    text: '',
-                },
-            });
+            // Position labels
+            node.textBaseline = textBaseline;
+            node.textAlign = textAlign;
+            node.x = labelX;
+            node.rotationCenterX = labelX;
+            node.rotation = combinedRotation;
+            node.visible = true;
+        });
+    }
+
+    private wrapLabels(tickData: TickData, index: number, labelProps: TextSizeProperties): TickStrategyResult {
+        const {
+            label: { parallel, maxWidth, maxHeight },
+        } = this;
+
+        const defaultMaxLabelWidth = parallel
+            ? Math.round(this.calculateAvailableRange() / tickData.labelCount)
+            : this.maxThickness;
+        const maxLabelWidth = maxWidth ?? defaultMaxLabelWidth;
+
+        const defaultMaxLabelHeight = parallel
+            ? this.maxThickness
+            : Math.round(this.calculateAvailableRange() / tickData.labelCount);
+        const maxLabelHeight = maxHeight ?? defaultMaxLabelHeight;
+
+        tickData.ticks.forEach((tickDatum) => {
+            const { tickLabel } = tickDatum;
+            const wrapping: TextWrap = 'hyphenate';
+            const wrappedTickLabel = Text.wrap(tickLabel, maxLabelWidth, maxLabelHeight, labelProps, wrapping);
+            tickDatum.tickLabel = wrappedTickLabel;
         });
 
-        const labelSpacing = this.getLabelSpacing();
-        const rotate = axisLabelsOverlap(labelData, labelSpacing);
-
-        if (label.rotation === undefined && label.autoRotate === true && rotate) {
-            // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
-            // automatically rotate the labels
-            labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
-        }
-
-        let labelTextBaseline: 'hanging' | 'bottom' | 'middle' = 'middle';
-        if (parallel && !labelRotation) {
-            if (sideFlag * parallelFlipFlag === -1) {
-                labelTextBaseline = 'hanging';
-            } else {
-                labelTextBaseline = 'bottom';
-            }
-        }
-
-        const labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
-        const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
-        const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
-
-        let labelTextAlign: 'start' | 'end' | 'center' = 'start';
-        if (parallel) {
-            if (labelRotation || labelAutoRotation) {
-                if (sideFlag * alignFlag === -1) {
-                    labelTextAlign = 'end';
-                }
-            } else {
-                labelTextAlign = 'center';
-            }
-        } else if (sideFlag * regularFlipFlag === -1) {
-            labelTextAlign = 'end';
-        }
-
-        const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
-        if (combinedRotation) {
-            Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
-        }
-
-        labelData = [];
-        labelSelection.each((label, datum, index) => {
-            if (label.text === '' || label.text == undefined) {
-                label.visible = false; // hide empty labels
-                return;
-            }
-
-            label.textBaseline = labelTextBaseline;
-            label.textAlign = labelTextAlign;
-            label.x = labelX;
-            label.rotationCenterX = labelX;
-            label.rotation = combinedRotation;
-
-            // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
-            // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
-            // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
-            // this makes label collision detection a lot simpler
-
-            const bbox = labelBboxes.get(index);
-            if (!bbox) {
-                return;
-            }
-
-            label.visible = true;
-
-            const { width = 0, height = 0 } = bbox;
-
-            const { translationY } = datum;
-            const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
-
-            const { x = 0, y = 0 } = bbox;
-
-            labelData.push({
-                point: {
-                    x,
-                    y,
-                    size: 0,
-                },
-                label: {
-                    width,
-                    height,
-                    text: label.text,
-                },
-            });
-        });
-
-        this.layout.label = {
-            align: labelTextAlign,
-            baseline: labelTextBaseline,
-            rotation: combinedRotation,
-            fractionDigits: this.fractionDigits,
-            padding: this.label.padding,
-            format: this.label.format,
-        };
-
-        return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
+        return { tickData, index, autoRotation: 0, terminate: true };
     }
 
     private updateLine() {
         // Render axis line.
-        const { lineNode, requestedRange } = this;
+        const { lineNode, range: requestedRange } = this;
 
         lineNode.x1 = 0;
         lineNode.x2 = 0;
@@ -1180,21 +1392,40 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         lineNode.visible = true;
     }
 
-    private updateTitle({ ticks }: { ticks: any[] }): void {
-        const { label, rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
+    private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
+        const identityFormatter = (params: AgAxisCaptionFormatterParams) => params.defaultValue;
+        const {
+            rotation,
+            title,
+            _titleCaption,
+            lineNode,
+            range: requestedRange,
+            tickLineGroup,
+            tickLabelGroup,
+            moduleCtx: { callbackCache },
+        } = this;
+        const { formatter = identityFormatter } = this.title ?? {};
 
         if (!title) {
+            _titleCaption.enabled = false;
             return;
         }
 
+        _titleCaption.enabled = title.enabled;
+        _titleCaption.fontFamily = title.fontFamily;
+        _titleCaption.fontSize = title.fontSize;
+        _titleCaption.fontStyle = title.fontStyle;
+        _titleCaption.fontWeight = title.fontWeight;
+        _titleCaption.color = title.color;
+        _titleCaption.wrapping = title.wrapping;
+
         let titleVisible = false;
+        const titleNode = _titleCaption.node;
         if (title.enabled && lineNode.visible) {
             titleVisible = true;
 
-            const sideFlag = label.mirrored ? 1 : -1;
             const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = Caption.PADDING;
-            const titleNode = title.node;
             const titleRotationFlag =
                 sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
 
@@ -1202,37 +1433,49 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             titleNode.x = Math.floor((titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1])) / 2);
 
             let bboxYDimension = 0;
-            if (ticks?.length > 0) {
+
+            if (anyTickVisible) {
                 const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
                 const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
                 if (Math.abs(tickWidth) < Infinity) {
                     bboxYDimension += tickWidth;
                 }
             }
+
             if (sideFlag === -1) {
                 titleNode.y = Math.floor(titleRotationFlag * (-padding - bboxYDimension));
             } else {
                 titleNode.y = Math.floor(-padding - bboxYDimension);
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+
+            titleNode.text = callbackCache.call(formatter, this.getTitleFormatterParams());
         }
 
-        title.node.visible = titleVisible;
+        titleNode.visible = titleVisible;
     }
 
     // For formatting (nice rounded) tick values.
-    formatTickDatum(datum: any, index: number): string {
-        const { label, labelFormatter, fractionDigits } = this;
+    formatTick(datum: any, index: number): string {
+        const {
+            label,
+            labelFormatter,
+            fractionDigits,
+            moduleCtx: { callbackCache },
+        } = this;
 
         if (label.formatter) {
-            return label.formatter({
-                value: fractionDigits > 0 ? datum : String(datum),
-                index,
-                fractionDigits,
-                formatter: labelFormatter,
-            });
+            const defaultValue = fractionDigits > 0 ? datum : String(datum);
+            return (
+                callbackCache.call(label.formatter, {
+                    value: defaultValue,
+                    index,
+                    fractionDigits,
+                    formatter: labelFormatter,
+                }) ?? defaultValue
+            );
         } else if (labelFormatter) {
-            return labelFormatter(datum);
+            return callbackCache.call(labelFormatter, datum) ?? String(datum);
         }
         // The axis is using a logScale or the`datum` is an integer, a string or an object
         return String(datum);
@@ -1245,6 +1488,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     @Validate(NUMBER(0))
     thickness: number = 0;
+    maxThickness: number = Infinity;
 
     computeBBox(): BBox {
         return this.axisGroup.computeBBox();
@@ -1270,4 +1514,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     calculatePadding(min: number, _max: number): number {
         return Math.abs(min * 0.01);
     }
+
+    protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
 }

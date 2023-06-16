@@ -20,9 +20,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -52,7 +53,7 @@ import { Pagination } from './pagination/pagination';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { Logger } from '../util/logger';
 var ORIENTATIONS = ['horizontal', 'vertical'];
-export var OPT_ORIENTATION = predicateWithMessage(function (v, ctx) { return OPTIONAL(v, ctx, function (v) { return ORIENTATIONS.includes(v); }); }, "expecting an orientation keyword such as 'horizontal' or 'vertical'");
+var OPT_ORIENTATION = predicateWithMessage(function (v, ctx) { return OPTIONAL(v, ctx, function (v) { return ORIENTATIONS.includes(v); }); }, "expecting an orientation keyword such as 'horizontal' or 'vertical'");
 var LegendLabel = /** @class */ (function () {
     function LegendLabel() {
         this.maxLength = undefined;
@@ -63,9 +64,6 @@ var LegendLabel = /** @class */ (function () {
         this.fontFamily = 'Verdana, sans-serif';
         this.formatter = undefined;
     }
-    LegendLabel.prototype.getFont = function () {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    };
     __decorate([
         Validate(OPT_NUMBER(0))
     ], LegendLabel.prototype, "maxLength", void 0);
@@ -171,15 +169,10 @@ var LegendListeners = /** @class */ (function () {
     return LegendListeners;
 }());
 var Legend = /** @class */ (function () {
-    function Legend(chart, interactionManager, cursorManager, highlightManager, tooltipManager, layoutService) {
+    function Legend(ctx) {
         var _a;
         var _this = this;
-        this.chart = chart;
-        this.interactionManager = interactionManager;
-        this.cursorManager = cursorManager;
-        this.highlightManager = highlightManager;
-        this.tooltipManager = tooltipManager;
-        this.layoutService = layoutService;
+        this.ctx = ctx;
         this.id = createId(this);
         this.group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
         this.itemSelection = Selection.select(this.group, MarkerLabel);
@@ -193,7 +186,7 @@ var Legend = /** @class */ (function () {
         this.truncatedItems = new Set();
         this._data = [];
         this._enabled = true;
-        this.position = 'right';
+        this.position = 'bottom';
         /** Used to constrain the width of the legend. */
         this.maxWidth = undefined;
         /** Used to constrain the height of the legend. */
@@ -209,39 +202,19 @@ var Legend = /** @class */ (function () {
         this.size = [0, 0];
         this._visible = true;
         this.item.marker.parent = this;
-        this.pagination = new Pagination(function (type) { return _this.chart.update(type); }, function (page) { return _this.updatePageNumber(page); }, this.interactionManager, this.cursorManager);
+        this.pagination = new Pagination(function (type) { return ctx.updateService.update(type); }, function (page) { return _this.updatePageNumber(page); }, ctx.interactionManager, ctx.cursorManager);
         this.pagination.attachPagination(this.group);
         this.item.marker.parent = this;
         var interactionListeners = [
-            this.interactionManager.addListener('click', function (e) { return _this.checkLegendClick(e); }),
-            this.interactionManager.addListener('dblclick', function (e) { return _this.checkLegendDoubleClick(e); }),
-            this.interactionManager.addListener('hover', function (e) { return _this.handleLegendMouseMove(e); }),
+            ctx.interactionManager.addListener('click', function (e) { return _this.checkLegendClick(e); }),
+            ctx.interactionManager.addListener('dblclick', function (e) { return _this.checkLegendDoubleClick(e); }),
+            ctx.interactionManager.addListener('hover', function (e) { return _this.handleLegendMouseMove(e); }),
         ];
         var layoutListeners = [
-            this.layoutService.addListener('start-layout', function (e) { return _this.positionLegend(e.shrinkRect); }),
+            ctx.layoutService.addListener('start-layout', function (e) { return _this.positionLegend(e.shrinkRect); }),
         ];
-        (_a = this.destroyFns).push.apply(_a, __spread(interactionListeners.map(function (s) { return function () { return _this.interactionManager.removeListener(s); }; }), layoutListeners.map(function (s) { return function () { return _this.layoutService.removeListener(s); }; })));
+        (_a = this.destroyFns).push.apply(_a, __spreadArray(__spreadArray(__spreadArray([], __read(interactionListeners.map(function (s) { return function () { return ctx.interactionManager.removeListener(s); }; }))), __read(layoutListeners.map(function (s) { return function () { return ctx.layoutService.removeListener(s); }; }))), [function () { return _this.detachLegend(); }]));
     }
-    Object.defineProperty(Legend.prototype, "translationX", {
-        get: function () {
-            return this.group.translationX;
-        },
-        set: function (value) {
-            this.group.translationX = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Legend.prototype, "translationY", {
-        get: function () {
-            return this.group.translationY;
-        },
-        set: function (value) {
-            this.group.translationY = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(Legend.prototype, "data", {
         get: function () {
             return this._data;
@@ -312,6 +285,22 @@ var Legend = /** @class */ (function () {
     Legend.prototype.attachLegend = function (node) {
         node.append(this.group);
     };
+    Legend.prototype.detachLegend = function () {
+        var _a;
+        (_a = this.group.parent) === null || _a === void 0 ? void 0 : _a.removeChild(this.group);
+    };
+    Legend.prototype.getItemLabel = function (datum) {
+        var callbackCache = this.ctx.callbackCache;
+        var formatter = this.item.label.formatter;
+        if (formatter) {
+            return callbackCache.call(formatter, {
+                itemId: datum.itemId,
+                value: datum.label.text,
+                seriesId: datum.seriesId,
+            });
+        }
+        return datum.label.text;
+    };
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will
@@ -327,20 +316,20 @@ var Legend = /** @class */ (function () {
     Legend.prototype.performLayout = function (width, height) {
         var _this = this;
         var _a = this.item, paddingX = _a.paddingX, paddingY = _a.paddingY, label = _a.label, maxWidth = _a.maxWidth, _b = _a.marker, markerSize = _b.size, markerPadding = _b.padding, markerShape = _b.shape, _c = _a.label, _d = _c.maxLength, maxLength = _d === void 0 ? Infinity : _d, fontStyle = _c.fontStyle, fontWeight = _c.fontWeight, fontSize = _c.fontSize, fontFamily = _c.fontFamily;
-        var data = __spread(this.data);
+        var data = __spreadArray([], __read(this.data));
         if (this.reverseOrder) {
             data.reverse();
         }
         this.itemSelection.update(data);
         // Update properties that affect the size of the legend items and measure them.
         var bboxes = [];
-        var font = label.getFont();
+        var font = getFont(label);
         var itemMaxWidthPercentage = 0.8;
         var maxItemWidth = maxWidth !== null && maxWidth !== void 0 ? maxWidth : width * itemMaxWidthPercentage;
         var paddedMarkerWidth = markerSize + markerPadding + paddingX;
         this.itemSelection.each(function (markerLabel, datum) {
             var _a;
-            var Marker = getMarker(markerShape || datum.marker.shape);
+            var Marker = getMarker(markerShape !== null && markerShape !== void 0 ? markerShape : datum.marker.shape);
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
             }
@@ -350,8 +339,9 @@ var Legend = /** @class */ (function () {
             markerLabel.fontWeight = fontWeight;
             markerLabel.fontSize = fontSize;
             markerLabel.fontFamily = fontFamily;
-            var id = datum.itemId || datum.id;
-            var text = ((_a = datum.label.text) !== null && _a !== void 0 ? _a : '<unknown>').replace(/\r?\n/g, ' ');
+            var id = (_a = datum.itemId) !== null && _a !== void 0 ? _a : datum.id;
+            var labelText = _this.getItemLabel(datum);
+            var text = (labelText !== null && labelText !== void 0 ? labelText : '<unknown>').replace(/\r?\n/g, ' ');
             markerLabel.text = _this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
             bboxes.push(markerLabel.computeBBox());
         });
@@ -572,7 +562,7 @@ var Legend = /** @class */ (function () {
         this.pagination.update();
         this.pagination.updateMarkers();
         this.updatePositions(pageNumber);
-        this.chart.update(ChartUpdateType.SCENE_RENDER);
+        this.ctx.updateService.update(ChartUpdateType.SCENE_RENDER);
     };
     Legend.prototype.update = function () {
         var _a = this.item, strokeWidth = _a.marker.strokeWidth, color = _a.label.color;
@@ -644,13 +634,17 @@ var Legend = /** @class */ (function () {
         return actualBBox;
     };
     Legend.prototype.checkLegendClick = function (event) {
-        var _a = this, legendItemClick = _a.listeners.legendItemClick, chart = _a.chart, highlightManager = _a.highlightManager, toggleSeriesVisible = _a.item.toggleSeriesVisible;
-        var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        var _a = this, legendItemClick = _a.listeners.legendItemClick, _b = _a.ctx, dataService = _b.dataService, highlightManager = _b.highlightManager, toggleSeriesVisible = _a.item.toggleSeriesVisible;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var legendBBox = this.computeBBox();
+        var pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        var datum = this.getDatumForPoint(offsetX, offsetY);
+        if (!pointerInsideLegend || !datum) {
             return;
         }
         var id = datum.id, itemId = datum.itemId, enabled = datum.enabled;
-        var series = chart.series.find(function (s) { return s.id === id; });
+        var chartSeries = dataService.getSeries();
+        var series = chartSeries.find(function (s) { return s.id === id; });
         if (!series) {
             return;
         }
@@ -658,14 +652,7 @@ var Legend = /** @class */ (function () {
         var newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-            chart.series.forEach(function (s) {
-                if (s.id === series.id) {
-                    s.toggleSeriesItem(itemId, newEnabled);
-                }
-                else {
-                    s.toggleOtherSeriesItems(series, datum, newEnabled);
-                }
-            });
+            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled);
         }
         if (!newEnabled) {
             highlightManager.updateHighlight(this.id);
@@ -677,70 +664,50 @@ var Legend = /** @class */ (function () {
                 datum: undefined,
             });
         }
-        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+        this.ctx.updateService.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
         legendItemClick === null || legendItemClick === void 0 ? void 0 : legendItemClick({ type: 'click', enabled: newEnabled, itemId: itemId, seriesId: series.id });
     };
     Legend.prototype.checkLegendDoubleClick = function (event) {
-        var _a, _b;
-        var _c = this, legendItemDoubleClick = _c.listeners.legendItemDoubleClick, chart = _c.chart, toggleSeriesVisible = _c.item.toggleSeriesVisible;
+        var _a;
+        var _b = this, legendItemDoubleClick = _b.listeners.legendItemDoubleClick, dataService = _b.ctx.dataService, toggleSeriesVisible = _b.item.toggleSeriesVisible;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
         // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
         // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
-        if (chart.mode === 'integrated') {
+        if (this.ctx.mode === 'integrated') {
             return;
         }
-        var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        var legendBBox = this.computeBBox();
+        var pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        var datum = this.getDatumForPoint(offsetX, offsetY);
+        if (!pointerInsideLegend || !datum) {
             return;
         }
         var id = datum.id, itemId = datum.itemId, seriesId = datum.seriesId;
-        var series = chart.series.find(function (s) { return s.id === id; });
+        var chartSeries = dataService.getSeries();
+        var series = chartSeries.find(function (s) { return s.id === id; });
         if (!series) {
             return;
         }
         event.consume();
         if (toggleSeriesVisible) {
-            var legendData = chart.series.reduce(function (ls, s) { return __spread(ls, s.getLegendData()); }, []);
-            var visibleItemsCount = legendData.filter(function (d) { return d.enabled; }).length;
-            var clickedItem = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
-            var seriesItemCounts = legendData.reduce(function (acc, d) {
+            var legendData = chartSeries.reduce(function (ls, s) { return __spreadArray(__spreadArray([], __read(ls)), __read(s.getLegendData().filter(function (d) { return d.legendType === 'category'; }))); }, []);
+            var numVisibleItems_1 = {};
+            legendData.forEach(function (d) {
                 var _a;
                 var _b;
-                (_a = acc[_b = d.seriesId]) !== null && _a !== void 0 ? _a : (acc[_b] = 0);
-                acc[d.seriesId]++;
-                return acc;
-            }, {});
-            var seriesItemEnabledCounts = legendData.reduce(function (acc, d) {
-                var _a;
-                var _b;
-                if (!d.enabled)
-                    return acc;
-                (_a = acc[_b = d.seriesId]) !== null && _a !== void 0 ? _a : (acc[_b] = 0);
-                acc[d.seriesId]++;
-                return acc;
-            }, {});
-            var eachSeriesHasSingleItem_1 = Object.values(seriesItemCounts).filter(function (c) { return c > 1; }).length === 0;
-            var singleEnabledInEachSeries = Object.values(seriesItemEnabledCounts).filter(function (count) { return count > 1; }).length === 0;
-            var singleSelectedWasNotClicked_1 = visibleItemsCount === 1 && ((_a = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _a !== void 0 ? _a : false);
-            var singleEnabledInEachSeriesWasNotClicked_1 = singleEnabledInEachSeries && ((_b = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _b !== void 0 ? _b : false);
-            chart.series.forEach(function (s) {
-                var legendData = s.getLegendData();
-                legendData.forEach(function (d) {
-                    var wasClicked = d.itemId === itemId && d.seriesId === seriesId;
-                    var newEnabled = wasClicked ||
-                        (eachSeriesHasSingleItem_1 && singleSelectedWasNotClicked_1) ||
-                        (!eachSeriesHasSingleItem_1 && singleEnabledInEachSeriesWasNotClicked_1);
-                    s.toggleSeriesItem(d.itemId, newEnabled);
-                });
-                if (s.id !== series.id) {
-                    s.toggleOtherSeriesItems(series, datum, undefined, singleEnabledInEachSeriesWasNotClicked_1);
-                }
+                (_a = numVisibleItems_1[_b = d.seriesId]) !== null && _a !== void 0 ? _a : (numVisibleItems_1[_b] = 0);
+                if (d.enabled)
+                    numVisibleItems_1[d.seriesId]++;
             });
+            var clickedItem = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
+            this.ctx.chartEventManager.legendItemDoubleClick(series, itemId, (_a = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _a !== void 0 ? _a : false, numVisibleItems_1);
         }
-        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+        this.ctx.updateService.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
         legendItemDoubleClick === null || legendItemDoubleClick === void 0 ? void 0 : legendItemDoubleClick({ type: 'dblclick', enabled: true, itemId: itemId, seriesId: series.id });
     };
     Legend.prototype.handleLegendMouseMove = function (event) {
-        var _a = this, enabled = _a.enabled, toggleSeriesVisible = _a.item.toggleSeriesVisible, listeners = _a.listeners;
+        var _a;
+        var _b = this, enabled = _b.enabled, toggleSeriesVisible = _b.item.toggleSeriesVisible, listeners = _b.listeners;
         if (!enabled) {
             return;
         }
@@ -748,9 +715,9 @@ var Legend = /** @class */ (function () {
         var pageX = event.pageX, pageY = event.pageY, offsetX = event.offsetX, offsetY = event.offsetY;
         var pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
         if (!pointerInsideLegend) {
-            this.cursorManager.updateCursor(this.id);
-            this.highlightManager.updateHighlight(this.id);
-            this.tooltipManager.removeTooltip(this.id);
+            this.ctx.cursorManager.updateCursor(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
+            this.ctx.tooltipManager.removeTooltip(this.id);
             return;
         }
         // Prevent other handlers from consuming this event if it's generated inside the legend
@@ -759,29 +726,30 @@ var Legend = /** @class */ (function () {
         var datum = this.getDatumForPoint(offsetX, offsetY);
         var pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerOverLegendDatum) {
-            this.cursorManager.updateCursor(this.id);
-            this.highlightManager.updateHighlight(this.id);
+            this.ctx.cursorManager.updateCursor(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
             return;
         }
-        var series = datum ? this.chart.series.find(function (series) { return series.id === (datum === null || datum === void 0 ? void 0 : datum.id); }) : undefined;
-        if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
-            this.tooltipManager.updateTooltip(this.id, { pageX: pageX, pageY: pageY, offsetX: offsetX, offsetY: offsetY, event: event }, toTooltipHtml({ content: datum.label.text }));
+        var series = datum ? this.ctx.dataService.getSeries().find(function (series) { return series.id === (datum === null || datum === void 0 ? void 0 : datum.id); }) : undefined;
+        if (datum && this.truncatedItems.has((_a = datum.itemId) !== null && _a !== void 0 ? _a : datum.id)) {
+            var labelText = this.getItemLabel(datum);
+            this.ctx.tooltipManager.updateTooltip(this.id, { pageX: pageX, pageY: pageY, offsetX: offsetX, offsetY: offsetY, event: event, showArrow: false }, toTooltipHtml({ content: labelText }));
         }
         else {
-            this.tooltipManager.removeTooltip(this.id);
+            this.ctx.tooltipManager.removeTooltip(this.id);
         }
-        if (toggleSeriesVisible || listeners.legendItemClick != null) {
-            this.cursorManager.updateCursor(this.id, 'pointer');
+        if (toggleSeriesVisible || listeners.legendItemClick != null || listeners.legendItemDoubleClick != null) {
+            this.ctx.cursorManager.updateCursor(this.id, 'pointer');
         }
         if ((datum === null || datum === void 0 ? void 0 : datum.enabled) && series) {
-            this.highlightManager.updateHighlight(this.id, {
+            this.ctx.highlightManager.updateHighlight(this.id, {
                 series: series,
                 itemId: datum === null || datum === void 0 ? void 0 : datum.itemId,
                 datum: undefined,
             });
         }
         else {
-            this.highlightManager.updateHighlight(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
         }
     };
     Legend.prototype.positionLegend = function (shrinkRect) {
@@ -791,10 +759,8 @@ var Legend = /** @class */ (function () {
             return { shrinkRect: newShrinkRect };
         }
         var _a = __read(this.calculateLegendDimensions(shrinkRect), 2), legendWidth = _a[0], legendHeight = _a[1];
-        var translationX = 0;
-        var translationY = 0;
-        this.translationX = 0;
-        this.translationY = 0;
+        this.group.translationX = 0;
+        this.group.translationY = 0;
         this.performLayout(legendWidth, legendHeight);
         var legendBBox = this.computePagedBBox();
         var calculateTranslationPerpendicularDimension = function () {
@@ -811,6 +777,8 @@ var Legend = /** @class */ (function () {
             }
         };
         if (this.visible) {
+            var translationX = void 0;
+            var translationY = void 0;
             switch (this.position) {
                 case 'top':
                 case 'bottom':
@@ -826,19 +794,19 @@ var Legend = /** @class */ (function () {
                     newShrinkRect.shrink(legendBBox.width, this.position);
             }
             // Round off for pixel grid alignment to work properly.
-            this.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
-            this.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
+            this.group.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
+            this.group.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
         }
         if (this.visible && this.enabled && this.data.length) {
             var legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
             var legendPositionedBBox = legendBBox.clone();
-            legendPositionedBBox.x += this.translationX;
-            legendPositionedBBox.y += this.translationY;
-            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+            legendPositionedBBox.x += this.group.translationX;
+            legendPositionedBBox.y += this.group.translationY;
+            this.ctx.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
         }
         else {
-            this.tooltipManager.updateExclusiveRect(this.id);
+            this.ctx.tooltipManager.updateExclusiveRect(this.id);
         }
         return { shrinkRect: newShrinkRect };
     };

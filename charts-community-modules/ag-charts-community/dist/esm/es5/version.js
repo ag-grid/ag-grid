@@ -1,2 +1,2 @@
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-export var VERSION = '7.3.0';
+export var VERSION = '8.0.0';

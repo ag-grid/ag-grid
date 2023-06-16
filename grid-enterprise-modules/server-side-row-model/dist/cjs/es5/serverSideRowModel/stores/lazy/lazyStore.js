@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LazyStore = void 0;
@@ -53,6 +56,7 @@ var LazyStore = /** @class */ (function (_super) {
         _this.level = parentRowNode.level + 1;
         _this.group = ssrmParams.rowGroupCols ? _this.level < ssrmParams.rowGroupCols.length : false;
         _this.leafGroup = ssrmParams.rowGroupCols ? _this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        _this.info = {};
         return _this;
     }
     LazyStore.prototype.init = function () {
@@ -82,7 +86,7 @@ var LazyStore = /** @class */ (function (_super) {
     LazyStore.prototype.applyTransaction = function (transaction) {
         var _this = this;
         var _a, _b, _c;
-        var idFunc = this.gridOptionsService.getRowIdFunc();
+        var idFunc = this.gridOptionsService.getCallback('getRowId');
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -117,7 +121,7 @@ var LazyStore = /** @class */ (function (_super) {
         var removedNodes = undefined;
         if ((_c = transaction.remove) === null || _c === void 0 ? void 0 : _c.length) {
             var allIdsToRemove = transaction.remove.map(function (data) { return (idFunc({ level: _this.level, parentKeys: _this.parentRowNode.getGroupKeys(), data: data })); });
-            var allUniqueIdsToRemove = __spread(new Set(allIdsToRemove));
+            var allUniqueIdsToRemove = __spreadArray([], __read(new Set(allIdsToRemove)));
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
@@ -129,25 +133,24 @@ var LazyStore = /** @class */ (function (_super) {
         };
     };
     LazyStore.prototype.updateSelectionAfterTransaction = function (updatedNodes, removedNodes) {
-        var fireSelectionUpdatedEvent = false;
+        var nodesToDeselect = [];
         updatedNodes === null || updatedNodes === void 0 ? void 0 : updatedNodes.forEach(function (node) {
             if (node.isSelected() && !node.selectable) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
         removedNodes === null || removedNodes === void 0 ? void 0 : removedNodes.forEach(function (node) {
             if (node.isSelected()) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
-        if (fireSelectionUpdatedEvent) {
-            var event_1 = {
-                type: core_1.Events.EVENT_SELECTION_CHANGED,
-                source: 'rowDataChanged'
-            };
-            this.eventService.dispatchEvent(event_1);
+        if (nodesToDeselect.length) {
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                clearSelection: false,
+                nodes: nodesToDeselect,
+                source: 'rowDataChanged',
+            });
         }
     };
     /**
@@ -158,6 +161,9 @@ var LazyStore = /** @class */ (function (_super) {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.cache.getNodes().forEach(function (lazyNode) { return _this.blockUtils.clearDisplayIndex(lazyNode.node); });
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
+        }
         this.cache.clearDisplayIndexes();
     };
     /**
@@ -176,6 +182,9 @@ var LazyStore = /** @class */ (function (_super) {
      * @returns the virtual size of this store
      */
     LazyStore.prototype.getRowCount = function () {
+        if (this.parentRowNode.sibling) {
+            return this.cache.getRowCount() + 1;
+        }
         return this.cache.getRowCount();
     };
     /**
@@ -208,6 +217,9 @@ var LazyStore = /** @class */ (function (_super) {
         this.topPx = nextRowTop.value;
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
     };
@@ -280,6 +292,9 @@ var LazyStore = /** @class */ (function (_super) {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     LazyStore.prototype.getRowUsingDisplayIndex = function (displayRowIndex) {
+        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+            return this.parentRowNode.sibling;
+        }
         return this.cache.getRowByDisplayIndex(displayRowIndex);
     };
     /**
@@ -303,7 +318,7 @@ var LazyStore = /** @class */ (function (_super) {
         var _b = (_a = this.cache.getSurroundingNodesByDisplayIndex(displayIndex)) !== null && _a !== void 0 ? _a : {}, previousNode = _b.previousNode, nextNode = _b.nextNode;
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
-            var boundsFromRow = this.blockUtils.extractRowBounds(previousNode, displayIndex);
+            var boundsFromRow = this.blockUtils.extractRowBounds(previousNode.node, displayIndex);
             if (boundsFromRow != null) {
                 return boundsFromRow;
             }
@@ -311,15 +326,15 @@ var LazyStore = /** @class */ (function (_super) {
         var defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            var numberOfRowDiff_1 = Math.floor((nextNode.rowIndex - displayIndex) * defaultRowHeight);
+            var numberOfRowDiff_1 = (nextNode.node.rowIndex - displayIndex) * defaultRowHeight;
             return {
-                rowTop: nextNode.rowTop - numberOfRowDiff_1,
+                rowTop: nextNode.node.rowTop - numberOfRowDiff_1,
                 rowHeight: defaultRowHeight,
             };
         }
         // otherwise calculate from end of store
         var lastTop = this.topPx + this.heightPx;
-        var numberOfRowDiff = Math.floor((this.getDisplayIndexEnd() - displayIndex) * defaultRowHeight);
+        var numberOfRowDiff = (this.getDisplayIndexEnd() - displayIndex) * defaultRowHeight;
         return {
             rowTop: lastTop - numberOfRowDiff,
             rowHeight: defaultRowHeight,
@@ -447,7 +462,7 @@ var LazyStore = /** @class */ (function (_super) {
      * @param params a set of properties pertaining to the filter changes
      */
     LazyStore.prototype.refreshAfterFilter = function (params) {
-        var serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        var serverFiltersAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.refreshStore(true);
             return;
@@ -547,7 +562,9 @@ var LazyStore = /** @class */ (function (_super) {
         return this.ssrmParams;
     };
     LazyStore.prototype.setStoreInfo = function (info) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     };
     // gets called 1) row count changed 2) cache purged
     LazyStore.prototype.fireStoreUpdatedEvent = function () {
@@ -584,6 +601,9 @@ var LazyStore = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnModel')
     ], LazyStore.prototype, "columnModel", void 0);
+    __decorate([
+        core_1.Autowired('selectionService')
+    ], LazyStore.prototype, "selectionService", void 0);
     __decorate([
         core_1.PostConstruct
     ], LazyStore.prototype, "init", null);

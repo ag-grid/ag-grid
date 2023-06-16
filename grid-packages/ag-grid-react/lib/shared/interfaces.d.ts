@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 import { ColumnApi, GridApi, GridOptions, ICellEditor, ICellRenderer, IDate, IFilter, IFloatingFilter, IHeader, IHeaderGroup, IStatusPanel, IToolPanel, Module } from 'ag-grid-community';
 /** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
 export declare enum ChangeDetectionStrategyType {
@@ -8,6 +8,10 @@ export declare enum ChangeDetectionStrategyType {
 }
 export interface SharedProps<TData = any> extends GridOptions<TData> {
     gridOptions?: GridOptions<TData>;
+    /**
+     * Used to register AG Grid Modules directly with this instance of the grid.
+     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/react-data-grid/modules/#providing-modules-to-individual-grids) for more information.
+     */
     modules?: Module[];
     containerStyle?: any;
     className?: string;

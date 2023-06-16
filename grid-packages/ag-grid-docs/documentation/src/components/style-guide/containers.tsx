@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tabs } from '../tabs/Tabs';
 
 export const Containers = () => {
     return (
@@ -8,8 +9,7 @@ export const Containers = () => {
                 <code>.card</code>
             </p>
 
-            {/* `.ag-card` used because of bootstrap clash with `.card`. (.ag-styles issue)*/}
-            <div className="ag-card">
+            <div className="card">
                 <header>
                     <h3>Card header example</h3>
                 </header>
@@ -40,6 +40,51 @@ export const Containers = () => {
                     </ul>
                 </div>
             </div>
+
+            <p className="item-label">
+                <span>Tabbed section:</span>
+                <code>&lt;Tabs&gt;&lt;div tab-label="..."&gt;...&lt;/div&gt;&lt;/Tabs&gt;</code>
+            </p>
+            <Tabs>
+                <div tab-label="Section ONE">
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum autem
+                    deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate labore
+                    tempore saepe qui qui facilis.
+                </div>
+                <div tab-label="Section TWO">
+                    <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
+                    doloribus illum fuga quam est mollitia. Et molestiae quia vero quos ipsa est eius voluptates
+                    repellendus. Placeat consequatur maiores provident.
+                </div>
+                <div tab-label="Section THREE">
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut. Odit in
+                    quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic repellat.
+                </div>
+            </Tabs>
+
+            <p className="item-label">
+                <span>Tabbed section with links:</span>
+                <code>&lt;Tabs&gt;&lt;div tabs-links="true"&gt;...&lt;/div&gt;...&lt;/Tabs&gt;</code>
+            </p>
+            <Tabs>
+                <div tabs-links="true">
+                    <a href="https://ag-grid.com/">AG Grid</a>
+                </div>
+                <div tab-label="Section ONE">
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum autem
+                    deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate labore
+                    tempore saepe qui qui facilis.
+                </div>
+                <div tab-label="Section TWO">
+                    <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
+                    doloribus illum fuga quam est mollitia. Et molestiae quia vero quos ipsa est eius voluptates
+                    repellendus. Placeat consequatur maiores provident.
+                </div>
+                <div tab-label="Section THREE">
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut. Odit in
+                    quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic repellat.
+                </div>
+            </Tabs>
         </>
     );
 };

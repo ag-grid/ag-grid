@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/status-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/status-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -57,6 +59,8 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -156,6 +160,8 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -199,6 +205,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -283,6 +291,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -359,6 +369,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -423,6 +435,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -497,6 +511,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -614,9 +630,14 @@ var AggregationComp = /** @class */ (function (_super) {
                         if (core._.missing(value) || value === '') {
                             return;
                         }
+                        count++;
                         // see if value is wrapped, can happen when doing count() or avg() functions
                         if (typeof value === 'object' && 'value' in value) {
                             value = value.value;
+                            // ensure that the new value wouldn't have been skipped by the previous check
+                            if (value === '') {
+                                return;
+                            }
                         }
                         if (typeof value === 'string') {
                             value = Number(value);
@@ -631,7 +652,6 @@ var AggregationComp = /** @class */ (function (_super) {
                             }
                             numberCount++;
                         }
-                        count++;
                     });
                     currentRow = _this.cellNavigationService.getRowBelow(currentRow);
                 }
@@ -691,7 +711,7 @@ var AggregationComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var StatusBarModule = {
     version: VERSION,

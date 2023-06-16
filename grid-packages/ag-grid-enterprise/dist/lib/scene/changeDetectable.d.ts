@@ -4,7 +4,7 @@ export declare enum RedrawType {
     MINOR = 2,
     MAJOR = 3
 }
-export declare type SceneChangeDetectionOptions = {
+declare type SceneChangeDetectionOptions = {
     redraw?: RedrawType;
     type?: 'normal' | 'transform' | 'path' | 'font';
     convertor?: (o: any) => any;
@@ -21,3 +21,5 @@ export declare abstract class ChangeDetectable {
     }): void;
     isDirty(): boolean;
 }
+export {};
+//# sourceMappingURL=changeDetectable.d.ts.map

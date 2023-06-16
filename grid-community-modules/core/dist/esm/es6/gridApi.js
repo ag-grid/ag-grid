@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,10 @@ let GridApi = class GridApi {
             dynamicApi[setterName](value);
         }
     }
+    /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
+    getGridId() {
+        return this.context.getGridId();
+    }
     /** Register a detail grid with the master grid when it is created. */
     addDetailGridInfo(id, gridInfo) {
         this.detailGridInfoMap[id] = gridInfo;
@@ -99,13 +103,13 @@ let GridApi = class GridApi {
     }
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     getDataAsCsv(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
             return this.csvCreator.getDataAsCsv(params);
         }
     }
     /** Downloads a CSV export of the grid's data. */
     exportDataAsCsv(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
             this.csvCreator.exportDataAsCsv(params);
         }
     }
@@ -115,7 +119,7 @@ let GridApi = class GridApi {
         return mergedParams.exportMode;
     }
     assertNotExcelMultiSheet(method, params) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method)) {
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) {
             return false;
         }
         const exportMode = this.getExcelExportMode(params);
@@ -139,7 +143,7 @@ let GridApi = class GridApi {
     }
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     getSheetDataForExcel(params) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) {
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) {
             return;
         }
         const exportMode = this.getExcelExportMode(params);
@@ -148,13 +152,13 @@ let GridApi = class GridApi {
     }
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     getMultipleSheetsAsExcel(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
     /** Downloads an Excel export of multiple sheets in one file. */
     exportMultipleSheetsAsExcel(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -262,7 +266,7 @@ let GridApi = class GridApi {
     getPinnedTopRow(index) {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
-    /** Gets the top pinned row with the specified index. */
+    /** Gets the bottom pinned row with the specified index. */
     getPinnedBottomRow(index) {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
@@ -459,38 +463,66 @@ let GridApi = class GridApi {
         this.gridOptionsService.set('quickFilterText', newFilter);
     }
     /**
-     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
-     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
-     * This can give a significant performance improvement when there are a large number of hidden columns,
-     * and you are only interested in filtering on what's visible.
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     setExcludeHiddenColumnsFromQuickFilter(value) {
-        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
+        logDeprecation('30', 'setExcludeHiddenColumnsFromQuickFilter', undefined, 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `setIncludeHiddenColumnsInQuickFilter`');
+        this.setIncludeHiddenColumnsInQuickFilter(!value);
+    }
+    /**
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInQuickFilter(value) {
+        this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', value);
+    }
+    /**
+     * Set all of the provided nodes selection state to the provided value.
+     */
+    setNodesSelected(params) {
+        const allNodesValid = params.nodes.every(node => {
+            if (node.rowPinned) {
+                console.warn('AG Grid: cannot select pinned rows');
+                return false;
+            }
+            if (node.id === undefined) {
+                console.warn('AG Grid: cannot select node until id for node is known');
+                return false;
+            }
+            return true;
+        });
+        if (!allNodesValid) {
+            return;
+        }
+        const { nodes, source, newValue } = params;
+        const nodesAsRowNode = nodes;
+        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source !== null && source !== void 0 ? source : 'api', newValue });
     }
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     selectAll(source = 'apiSelectAll') {
         this.selectionService.selectAllRowNodes({ source });
     }
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     deselectAll(source = 'apiSelectAll') {
         this.selectionService.deselectAllRowNodes({ source });
     }
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     selectAllFiltered(source = 'apiSelectAllFiltered') {
         this.selectionService.selectAllRowNodes({ source, justFiltered: true });
     }
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     deselectAllFiltered(source = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
@@ -523,14 +555,14 @@ let GridApi = class GridApi {
     }
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     selectAllOnCurrentPage(source = 'apiSelectAllCurrentPage') {
         this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
     }
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     deselectAllOnCurrentPage(source = 'apiSelectAllCurrentPage') {
         this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
@@ -692,7 +724,7 @@ let GridApi = class GridApi {
     }
     /** Gets the status panel instance corresponding to the supplied `id`. */
     getStatusPanel(key) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel')) {
+        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) {
             return;
         }
         const comp = this.statusBarService.getStatusPanel(key);
@@ -776,8 +808,8 @@ let GridApi = class GridApi {
      * Defaults to `normal` if no domLayout provided.
      */
     setDomLayout(domLayout) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
-            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.`);
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.`);
             return;
         }
         this.gridOptionsService.set('domLayout', domLayout);
@@ -833,11 +865,6 @@ let GridApi = class GridApi {
     setRowGroupPanelShow(rowGroupPanelShow) {
         this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
     }
-    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
-    setGroupRowAggNodes(groupRowAggNodesFunc) {
-        logDeprecation('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
-        this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
-    }
     setGetGroupRowAgg(getGroupRowAggFunc) {
         this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
@@ -850,21 +877,11 @@ let GridApi = class GridApi {
     setProcessRowPostCreate(processRowPostCreateFunc) {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
-    /** @deprecated v27.1 Use `setGetRowId` instead  */
-    setGetRowNodeId(getRowNodeIdFunc) {
-        logDeprecation('27.1', 'setGetRowNodeId', 'setGetRowId');
-        this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
-    }
     setGetRowId(getRowIdFunc) {
         this.gridOptionsService.set('getRowId', getRowIdFunc);
     }
     setGetRowClass(rowClassFunc) {
         this.gridOptionsService.set('getRowClass', rowClassFunc);
-    }
-    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
-    setIsFullWidthCell(isFullWidthCellFunc) {
-        logDeprecation('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
-        this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
     }
     setIsFullWidthRow(isFullWidthRowFunc) {
         this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
@@ -874,11 +891,6 @@ let GridApi = class GridApi {
     }
     setIsRowMaster(isRowMasterFunc) {
         this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
-    }
-    /** @deprecated v27.2 Use `setPostSortRows` instead */
-    setPostSort(postSortFunc) {
-        logDeprecation('27.2', 'setPostSort', 'setPostSortRows');
-        this.gridOptionsService.set('postSort', postSortFunc);
     }
     setPostSortRows(postSortRowsFunc) {
         this.gridOptionsService.set('postSortRows', postSortRowsFunc);
@@ -920,11 +932,6 @@ let GridApi = class GridApi {
     setPostProcessPopup(postProcessPopupFunc) {
         this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
-    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
-    setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc) {
-        logDeprecation('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
-        this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
-    }
     setInitialGroupOrderComparator(initialGroupOrderComparatorFunc) {
         this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
@@ -961,7 +968,7 @@ let GridApi = class GridApi {
         this.gridOptionsService.set('getRowHeight', rowHeightFunc);
     }
     assertSideBarLoaded(apiMethod) {
-        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod);
+        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     }
     /** Returns `true` if the side bar is visible. */
     isSideBarVisible() {
@@ -1166,7 +1173,7 @@ let GridApi = class GridApi {
         if (this.rangeService) {
             return this.rangeService.getCellRanges();
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
         return null;
     }
     /** Adds the provided cell range to the selected ranges. */
@@ -1175,14 +1182,14 @@ let GridApi = class GridApi {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
     }
     /** Clears the selected ranges. */
     clearRangeSelection() {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     }
     /** Reverts the last cell edit. */
     undoCellEditing() {
@@ -1202,92 +1209,104 @@ let GridApi = class GridApi {
     }
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     getChartModels() {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
             return this.chartService.getChartModels();
         }
     }
     /** Returns the `ChartRef` using the supplied `chartId`. */
     getChartRef(chartId) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
             return this.chartService.getChartRef(chartId);
         }
     }
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     getChartImageDataURL(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
     /** Starts a browser-based image download for the referenced chartId. */
     downloadChart(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
             return this.chartService.downloadChart(params);
         }
     }
     /** Open the Chart Tool Panel. */
     openChartToolPanel(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
             return this.chartService.openChartToolPanel(params);
         }
     }
     /** Close the Chart Tool Panel. */
     closeChartToolPanel(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
             return this.chartService.closeChartToolPanel(params.chartId);
         }
     }
     /** Used to programmatically create charts from a range. */
     createRangeChart(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
             return this.chartService.createRangeChart(params);
-        }
-    }
-    /** Used to programmatically create cross filter charts from a range. */
-    createCrossFilterChart(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
-            return this.chartService.createCrossFilterChart(params);
-        }
-    }
-    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
-    restoreChart(chartModel, chartContainer) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
-            return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
     /** Used to programmatically create pivot charts from a grid. */
     createPivotChart(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
             return this.chartService.createPivotChart(params);
+        }
+    }
+    /** Used to programmatically create cross filter charts from a range. */
+    createCrossFilterChart(params) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
+            return this.chartService.createCrossFilterChart(params);
+        }
+    }
+    /** Used to programmatically update a chart. */
+    updateChart(params) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+            this.chartService.updateChart(params);
+        }
+    }
+    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
+    restoreChart(chartModel, chartContainer) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     copyToClipboard(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
             this.clipboardService.copyToClipboard(params);
         }
     }
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     cutToClipboard(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
-            this.clipboardService.cutToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
+            this.clipboardService.cutToClipboard(params, 'api');
         }
     }
     /** Copies the selected rows to the clipboard. */
     copySelectedRowsToClipboard(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRowsToClipboard(params);
         }
     }
     /** Copies the selected ranges to the clipboard. */
     copySelectedRangeToClipboard(params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRangeToClipboard(params);
         }
     }
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     copySelectedRangeDown() {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
             this.clipboardService.copyRangeDown();
+        }
+    }
+    /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
+    pasteFromClipboard() {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+            this.clipboardService.pasteFromClipboard();
         }
     }
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
@@ -1370,7 +1389,7 @@ let GridApi = class GridApi {
         if (!cell) {
             return;
         }
-        cell.startRowOrCellEdit(params.key, params.charPress);
+        cell.startRowOrCellEdit(params.key);
     }
     /** Add an aggregation function with the specified key. */
     addAggFunc(key, aggFunc) {
@@ -1551,12 +1570,20 @@ let GridApi = class GridApi {
     getDisplayedRowCount() {
         return this.rowModel.getRowCount();
     }
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    setDataTypeDefinitions(dataTypeDefinitions) {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
+    }
     /**
      * Set whether the grid paginates the data or not.
      *  - `true` to enable pagination
      *  - `false` to disable pagination
      */
     setPagination(value) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error(`AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.`);
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     }
     /**

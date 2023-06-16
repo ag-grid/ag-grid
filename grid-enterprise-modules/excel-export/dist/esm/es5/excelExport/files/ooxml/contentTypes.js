@@ -14,9 +14,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import contentTypeFactory from './contentType';
@@ -42,7 +43,7 @@ var contentTypesFactory = {
             ContentType: "image/" + ext,
             Extension: ext
         }); });
-        var children = __spread(imageTypes, [
+        var children = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(imageTypes)), [
             {
                 name: 'Default',
                 Extension: 'rels',
@@ -56,7 +57,7 @@ var contentTypesFactory = {
                 ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml',
                 PartName: "/xl/workbook.xml"
             }
-        ], worksheets, [
+        ]), __read(worksheets)), [
             {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml',
@@ -70,7 +71,7 @@ var contentTypesFactory = {
                 ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml',
                 PartName: '/xl/sharedStrings.xml'
             }
-        ], imageDocs, [
+        ]), __read(imageDocs)), [
             {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -43,6 +45,20 @@ var validation_1 = require("../../util/validation");
 var default_1 = require("../../util/default");
 var secondaryAxisTicks_1 = require("../../util/secondaryAxisTicks");
 var logger_1 = require("../../util/logger");
+var axis_1 = require("../../axis");
+var NumberAxisTick = /** @class */ (function (_super) {
+    __extends(NumberAxisTick, _super);
+    function NumberAxisTick() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.maxSpacing = NaN;
+        return _this;
+    }
+    __decorate([
+        validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.GREATER_THAN('minSpacing'))),
+        default_1.Default(NaN)
+    ], NumberAxisTick.prototype, "maxSpacing", void 0);
+    return NumberAxisTick;
+}(axis_1.BaseAxisTick));
 var NumberAxis = /** @class */ (function (_super) {
     __extends(NumberAxis, _super);
     function NumberAxis(moduleCtx, scale) {
@@ -54,9 +70,10 @@ var NumberAxis = /** @class */ (function (_super) {
         return _this;
     }
     NumberAxis.prototype.normaliseDataDomain = function (d) {
-        var _a = this, min = _a.min, max = _a.max;
+        var _a;
+        var _b = this, min = _b.min, max = _b.max;
         if (d.length > 2) {
-            d = array_1.extent(d) || [NaN, NaN];
+            d = (_a = array_1.extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];
@@ -77,6 +94,9 @@ var NumberAxis = /** @class */ (function (_super) {
             logger_1.Logger.warnOnce('data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
             return String(datum);
         }
+    };
+    NumberAxis.prototype.createTick = function () {
+        return new NumberAxisTick();
     };
     NumberAxis.prototype.updateSecondaryAxisTicks = function (primaryTickCount) {
         if (this.dataDomain == null) {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IProvidedFilter } from "../filter/provided/providedFilter";
@@ -19,14 +19,10 @@ export interface IMultiFilterDef extends IFilterDef {
     title?: string;
     /** Child filter component to use inside the Multi Filter. */
     filter?: IFilterType;
-    /** Child filter component to use inside the Multi Filter. */
-    filterFramework?: any;
     /** Custom parameters to be passed to the child filter component. */
     filterParams?: any;
     /** Floating filter component to use for the child filter. */
     floatingFilterComponent?: IFloatingFilterType;
-    /** Floating framework filter component to use for the child filter. */
-    floatingFilterComponentFramework?: any;
     /** Custom parameters to be passed to the floating filter component. */
     floatingFilterComponentParams?: any;
 }

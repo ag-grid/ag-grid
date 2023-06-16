@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -85,7 +87,8 @@ var SeriesPanel = /** @class */ (function (_super) {
                 _this.initSeriesSelect();
             }
             _this.seriesWidgetMappings[_this.seriesType].forEach(function (w) { return _this.widgetFuncs[w](); });
-        });
+        })
+            .catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
     SeriesPanel.prototype.initSeriesSelect = function () {
         var _this = this;
@@ -236,7 +239,8 @@ var SeriesPanel = /** @class */ (function (_super) {
     };
     SeriesPanel.prototype.initBins = function () {
         var _this = this;
-        var currentValue = this.getSeriesOption("bins").length;
+        var _a;
+        var currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins")).length;
         var seriesBinCountSlider = this.createBean(new core_1.AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
@@ -258,11 +262,14 @@ var SeriesPanel = /** @class */ (function (_super) {
         this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     };
     SeriesPanel.prototype.getChartSeriesType = function () {
-        if (this.chartController.getSeriesChartTypes().length === 0) {
+        if (this.chartController.getSeriesChartTypes().length === 0)
             return 'column';
-        }
         var ct = this.chartController.getSeriesChartTypes()[0].chartType;
-        return (ct === 'columnLineCombo') ? 'column' : (ct === 'areaColumnCombo') ? 'area' : seriesTypeMapper_1.getSeriesType(ct);
+        if (ct === 'columnLineCombo')
+            return 'column';
+        if (ct === 'areaColumnCombo')
+            return 'area';
+        return seriesTypeMapper_1.getSeriesType(ct);
     };
     SeriesPanel.prototype.getSeriesSelectOptions = function () {
         var _this = this;

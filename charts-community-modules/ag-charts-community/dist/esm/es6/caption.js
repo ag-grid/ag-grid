@@ -6,27 +6,35 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Text } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
-import { BOOLEAN, NUMBER, OPT_COLOR_STRING, OPT_FONT_STYLE, OPT_FONT_WEIGHT, OPT_NUMBER, STRING, Validate, } from './util/validation';
+import { BOOLEAN, NUMBER, OPT_COLOR_STRING, OPT_FONT_STYLE, OPT_FONT_WEIGHT, OPT_NUMBER, OPT_STRING, STRING, TEXT_WRAP, Validate, } from './util/validation';
 import { ProxyPropertyOnWrite } from './util/proxy';
 export class Caption {
     constructor() {
         this.node = new Text();
         this.enabled = false;
-        this.text = '';
+        this.text = undefined;
         this.fontSize = 10;
         this.fontFamily = 'sans-serif';
         this.spacing = Caption.PADDING;
-        this._lineHeight = undefined;
+        this.lineHeight = undefined;
+        this.maxWidth = undefined;
+        this.maxHeight = undefined;
+        this.wrapping = 'always';
         const node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = PointerEvents.None;
     }
-    get lineHeight() {
-        return this._lineHeight;
-    }
-    set lineHeight(value) {
-        this._lineHeight = value;
-        this.node.lineHeight = value;
+    computeTextWrap(containerWidth, containerHeight) {
+        var _a, _b;
+        const { text, wrapping } = this;
+        const maxWidth = Math.min((_a = this.maxWidth) !== null && _a !== void 0 ? _a : Infinity, containerWidth);
+        const maxHeight = (_b = this.maxHeight) !== null && _b !== void 0 ? _b : containerHeight;
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        const wrapped = Text.wrap(text !== null && text !== void 0 ? text : '', maxWidth, maxHeight, this, wrapping);
+        this.node.text = wrapped;
     }
 }
 Caption.PADDING = 10;
@@ -34,7 +42,7 @@ __decorate([
     Validate(BOOLEAN)
 ], Caption.prototype, "enabled", void 0);
 __decorate([
-    Validate(STRING),
+    Validate(OPT_STRING),
     ProxyPropertyOnWrite('node')
 ], Caption.prototype, "text", void 0);
 __decorate([
@@ -62,4 +70,13 @@ __decorate([
 ], Caption.prototype, "spacing", void 0);
 __decorate([
     Validate(OPT_NUMBER(0))
-], Caption.prototype, "_lineHeight", void 0);
+], Caption.prototype, "lineHeight", void 0);
+__decorate([
+    Validate(OPT_NUMBER(0))
+], Caption.prototype, "maxWidth", void 0);
+__decorate([
+    Validate(OPT_NUMBER(0))
+], Caption.prototype, "maxHeight", void 0);
+__decorate([
+    Validate(TEXT_WRAP)
+], Caption.prototype, "wrapping", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -23,6 +23,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     constructor(pinned) {
         super();
         this.hidden = false;
+        this.includeFloatingFilter = false;
         this.groupsRowCtrls = [];
         this.pinned = pinned;
     }
@@ -33,6 +34,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupPinnedWidth();
         this.setupDragAndDrop(this.eViewport);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
         if (this.columnModel.isReady()) {
             this.refresh();
@@ -65,11 +67,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
             }
         };
         const refreshFilters = () => {
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
-            if (!includeFloatingFilter) {
+            if (!this.includeFloatingFilter) {
                 destroyPreviousComp();
                 return;
             }
@@ -111,6 +113,12 @@ export class HeaderRowContainerCtrl extends BeanStub {
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     onGridColumnsChanged() {
         this.refresh(true);
+    }
+    onDisplayedColumnsChanged() {
+        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        if (this.includeFloatingFilter !== includeFloatingFilter) {
+            this.refresh(true);
+        }
     }
     setupCenterWidth() {
         if (this.pinned != null) {

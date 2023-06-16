@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -26,6 +26,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private pinned;
     private comp;
     private hidden;
+    private includeFloatingFilter;
     private filtersRowCtrl;
     private columnsRowCtrl;
     private groupsRowCtrls;
@@ -37,6 +38,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private restoreFocusOnHeader;
     private getAllCtrls;
     private onGridColumnsChanged;
+    private onDisplayedColumnsChanged;
     private setupCenterWidth;
     setHorizontalScroll(offset: number): void;
     private setupPinnedWidth;

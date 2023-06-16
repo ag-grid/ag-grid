@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -122,4 +122,15 @@ export function setAriaSelected(element, selected) {
 }
 export function setAriaChecked(element, checked) {
     setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
+}
+export function setAriaControls(controllerElement, controlledElement) {
+    toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
+    setAriaLabelledBy(controlledElement, controllerElement.id);
+}
+export function getAriaCheckboxStateName(translate, state) {
+    return state === undefined
+        ? translate('ariaIndeterminate', 'indeterminate')
+        : (state === true
+            ? translate('ariaChecked', 'checked')
+            : translate('ariaUnchecked', 'unchecked'));
 }

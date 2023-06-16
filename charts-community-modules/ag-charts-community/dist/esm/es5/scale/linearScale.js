@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -110,7 +112,7 @@ var LinearScale = /** @class */ (function (_super) {
     };
     LinearScale.prototype.tickFormat = function (_a) {
         var ticks = _a.ticks, specifier = _a.specifier;
-        return tickFormat(ticks || this.ticks(), specifier);
+        return tickFormat(ticks !== null && ticks !== void 0 ? ticks : this.ticks(), specifier);
     };
     return LinearScale;
 }(ContinuousScale));

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -16,15 +16,6 @@ class OptionsFactory {
         this.filterOptions = params.filterOptions || defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);
-        this.checkForDeprecatedParams();
-    }
-    checkForDeprecatedParams() {
-        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.test != null)) {
-            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, test() has been replaced with predicate().`);
-        }
-        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.hideFilterInput != null)) {
-            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, useOfHideFilterInput has been replaced with numberOfInputs.`);
-        }
     }
     getFilterOptions() {
         return this.filterOptions;
@@ -49,17 +40,7 @@ class OptionsFactory {
                 this.filterOptions = this.filterOptions.filter(v => v === filterOption) || [];
                 return;
             }
-            const { test } = filterOption;
-            const mutatedFilterOptions = Object.assign({}, filterOption);
-            if (test != null && filterOption.predicate == null) {
-                mutatedFilterOptions.predicate = (v, cv) => test(v[0], cv);
-                delete mutatedFilterOptions.test;
-            }
-            if (mutatedFilterOptions.hideFilterInput && mutatedFilterOptions.numberOfInputs == null) {
-                mutatedFilterOptions.numberOfInputs = 0;
-                delete mutatedFilterOptions.hideFilterInput;
-            }
-            this.customFilterOptions[filterOption.displayKey] = mutatedFilterOptions;
+            this.customFilterOptions[filterOption.displayKey] = filterOption;
         });
     }
     selectDefaultItem(params) {

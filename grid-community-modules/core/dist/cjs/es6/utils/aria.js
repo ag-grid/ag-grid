@@ -1,12 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setAriaChecked = exports.setAriaSelected = exports.removeAriaSort = exports.setAriaSort = exports.setAriaColSpan = exports.setAriaColIndex = exports.setAriaColCount = exports.setAriaRowIndex = exports.setAriaRowCount = exports.setAriaMultiSelectable = exports.setAriaPosInSet = exports.setAriaSetSize = exports.removeAriaExpanded = exports.setAriaExpanded = exports.setAriaHidden = exports.setAriaDisabled = exports.setAriaLevel = exports.setAriaLive = exports.setAriaDescribedBy = exports.setAriaDescription = exports.setAriaLabelledBy = exports.setAriaLabel = exports.getAriaDescribedBy = exports.getAriaPosInSet = exports.getAriaLevel = exports.getAriaSortState = exports.setAriaRole = void 0;
+exports.getAriaCheckboxStateName = exports.setAriaControls = exports.setAriaChecked = exports.setAriaSelected = exports.removeAriaSort = exports.setAriaSort = exports.setAriaColSpan = exports.setAriaColIndex = exports.setAriaColCount = exports.setAriaRowIndex = exports.setAriaRowCount = exports.setAriaMultiSelectable = exports.setAriaPosInSet = exports.setAriaSetSize = exports.removeAriaExpanded = exports.setAriaExpanded = exports.setAriaHidden = exports.setAriaDisabled = exports.setAriaLevel = exports.setAriaLive = exports.setAriaDescribedBy = exports.setAriaDescription = exports.setAriaLabelledBy = exports.setAriaLabel = exports.getAriaDescribedBy = exports.getAriaPosInSet = exports.getAriaLevel = exports.getAriaSortState = exports.setAriaRole = void 0;
 // ARIA HELPER FUNCTIONS
 function toggleAriaAttribute(element, attribute, value) {
     if (value == null || value == '') {
@@ -153,3 +153,16 @@ function setAriaChecked(element, checked) {
     setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
 }
 exports.setAriaChecked = setAriaChecked;
+function setAriaControls(controllerElement, controlledElement) {
+    toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
+    setAriaLabelledBy(controlledElement, controllerElement.id);
+}
+exports.setAriaControls = setAriaControls;
+function getAriaCheckboxStateName(translate, state) {
+    return state === undefined
+        ? translate('ariaIndeterminate', 'indeterminate')
+        : (state === true
+            ? translate('ariaChecked', 'checked')
+            : translate('ariaUnchecked', 'unchecked'));
+}
+exports.getAriaCheckboxStateName = getAriaCheckboxStateName;

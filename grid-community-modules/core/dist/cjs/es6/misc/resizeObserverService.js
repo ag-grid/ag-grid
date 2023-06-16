@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -23,8 +23,7 @@ let ResizeObserverService = class ResizeObserverService extends beanStub_1.BeanS
         this.polyfillFunctions = [];
     }
     observeResize(element, callback) {
-        const eDocument = this.gridOptionsService.getDocument();
-        const win = (eDocument.defaultView || window);
+        const win = this.gridOptionsService.getWindow();
         const useBrowserResizeObserver = () => {
             const resizeObserver = new win.ResizeObserver(callback);
             resizeObserver.observe(element);

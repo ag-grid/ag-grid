@@ -94,8 +94,12 @@ The example below demonstrates hiding open parents using auto group columns. To 
 
 Filter is achieved for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
 
+<note>
+When `groupHideOpenParents=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](../grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
+</note>
+
 <grid-example title='Hide Open Parents' name='hide-open-parents' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 ## Next Up
 
-Continue to the next section to learn about the [Group Rows](../grouping-group-rows/) display type.
+Continue to the next section to learn about the [Group Rows](/grouping-group-rows/) display type.

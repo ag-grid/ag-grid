@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -244,6 +244,7 @@ export class SimpleFilter extends ProvidedFilter {
         this.filterPlaceholder = params.filterPlaceholder;
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
+        this.createFilterListOptions();
         this.createOption();
         this.createMissingConditionsAndOperators();
     }
@@ -311,17 +312,19 @@ export class SimpleFilter extends ProvidedFilter {
     getDefaultJoinOperator(defaultJoinOperator) {
         return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
     }
-    putOptionsIntoDropdown(eType) {
+    createFilterListOptions() {
         const filterOptions = this.optionsFactory.getFilterOptions();
-        // Add specified options to all condition drop-downs.
-        filterOptions.forEach(option => {
-            const listOption = typeof option === 'string' ?
-                this.createBoilerplateListOption(option) :
-                this.createCustomListOption(option);
+        this.filterListOptions = filterOptions.map(option => typeof option === 'string' ?
+            this.createBoilerplateListOption(option) :
+            this.createCustomListOption(option));
+    }
+    putOptionsIntoDropdown(eType) {
+        // Add specified options to condition drop-down.
+        this.filterListOptions.forEach(listOption => {
             eType.addOption(listOption);
         });
         // Make drop-downs read-only if there is only one option.
-        eType.setDisabled(filterOptions.length <= 1);
+        eType.setDisabled(this.filterListOptions.length <= 1);
     }
     createBoilerplateListOption(option) {
         return { value: option, text: this.translate(option) };
@@ -390,15 +393,12 @@ export class SimpleFilter extends ProvidedFilter {
     updateConditionStatusesAndValues(lastUiCompletePosition, joinOperator) {
         this.eTypes.forEach((eType, position) => {
             const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
-            const group = position === 1 ? [eType, this.eJoinOperatorPanels[0], this.eJoinOperatorsAnd[0], this.eJoinOperatorsOr[0]] : [eType];
-            group.forEach(element => {
-                if (element instanceof AgAbstractInputField || element instanceof AgSelect) {
-                    element.setDisabled(disabled);
-                }
-                else {
-                    setDisabled(element, disabled);
-                }
-            });
+            eType.setDisabled(disabled || this.filterListOptions.length <= 1);
+            if (position === 1) {
+                setDisabled(this.eJoinOperatorPanels[0], disabled);
+                this.eJoinOperatorsAnd[0].setDisabled(disabled);
+                this.eJoinOperatorsOr[0].setDisabled(disabled);
+            }
         });
         this.eConditionBodies.forEach((element, index) => {
             setDisplayed(element, this.isConditionBodyVisible(index));
@@ -461,7 +461,7 @@ export class SimpleFilter extends ProvidedFilter {
     afterGuiDetached() {
         super.afterGuiDetached();
         const appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
+        if (!this.areModelsEqual(appliedModel, this.getModelFromUi()) || this.hasInvalidInputs()) {
             this.resetUiToActiveModel(appliedModel);
         }
         // remove incomplete positions
@@ -654,7 +654,7 @@ export class SimpleFilter extends ProvidedFilter {
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)
             .setAriaLabel(filteringLabel)
-            .setDisabled(this.isReadOnly());
+            .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
     resetJoinOperatorAnd(eJoinOperatorAnd, index, uniqueGroupId) {
         this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'), uniqueGroupId);
@@ -737,6 +737,9 @@ export class SimpleFilter extends ProvidedFilter {
     isBlank(cellValue) {
         return cellValue == null ||
             (typeof cellValue === 'string' && cellValue.trim().length === 0);
+    }
+    hasInvalidInputs() {
+        return false;
     }
 }
 SimpleFilter.EMPTY = 'empty';

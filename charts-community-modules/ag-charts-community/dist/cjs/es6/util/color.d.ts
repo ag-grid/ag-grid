@@ -59,9 +59,11 @@ export declare class Color {
     private derive;
     brighter(): Color;
     darker(): Color;
+    static interpolate(color: string, other: string): (t: number) => string;
     /**
      * CSS Color Module Level 4:
      * https://drafts.csswg.org/css-color/#named-colors
      */
     private static nameToHex;
 }
+//# sourceMappingURL=color.d.ts.map

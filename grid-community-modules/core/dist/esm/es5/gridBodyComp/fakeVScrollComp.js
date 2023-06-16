@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,6 +29,7 @@ import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
+import { Events } from "../eventKeys";
 var FakeVScrollComp = /** @class */ (function (_super) {
     __extends(FakeVScrollComp, _super);
     function FakeVScrollComp() {
@@ -36,6 +39,7 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         _super.prototype.postConstruct.call(this);
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.registerFakeVScrollComp(this);
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onRowContainerHeightChanged.bind(this));
     };
     FakeVScrollComp.prototype.setScrollVisible = function () {
         var vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
@@ -47,6 +51,13 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         setFixedWidth(this.eViewport, adjustedScrollbarWidth);
         setFixedWidth(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
+    };
+    FakeVScrollComp.prototype.onRowContainerHeightChanged = function () {
+        var gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        var gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
+        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
+            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        }
     };
     FakeVScrollComp.TEMPLATE = "<div class=\"ag-body-vertical-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-body-vertical-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-vertical-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n        </div>";
     __decorate([

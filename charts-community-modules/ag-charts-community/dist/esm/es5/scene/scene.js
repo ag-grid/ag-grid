@@ -61,9 +61,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -103,7 +104,7 @@ function buildSceneNodeHighlight() {
 }
 var Scene = /** @class */ (function () {
     function Scene(opts) {
-        var _a, _b;
+        var _a, _b, _c;
         this.id = createId(this);
         this.layers = [];
         this._nextZIndex = 0;
@@ -117,12 +118,12 @@ var Scene = /** @class */ (function () {
             consoleLog: false,
             sceneNodeHighlight: [],
         };
-        var _c = opts.document, document = _c === void 0 ? window.document : _c, _d = opts.mode, mode = _d === void 0 ? windowValue('agChartsSceneRenderModel') || 'adv-composite' : _d, width = opts.width, height = opts.height, _e = opts.overrideDevicePixelRatio, overrideDevicePixelRatio = _e === void 0 ? undefined : _e;
+        var _d = opts.document, document = _d === void 0 ? window.document : _d, _e = opts.mode, mode = _e === void 0 ? (_a = windowValue('agChartsSceneRenderModel')) !== null && _a !== void 0 ? _a : 'adv-composite' : _e, width = opts.width, height = opts.height, _f = opts.overrideDevicePixelRatio, overrideDevicePixelRatio = _f === void 0 ? undefined : _f;
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
         this.opts = { document: document, mode: mode };
         this.debug.consoleLog = windowValue('agChartsDebug') === true;
-        this.debug.stats = (_a = windowValue('agChartsSceneStats')) !== null && _a !== void 0 ? _a : false;
-        this.debug.dirtyTree = (_b = windowValue('agChartsSceneDirtyTree')) !== null && _b !== void 0 ? _b : false;
+        this.debug.stats = (_b = windowValue('agChartsSceneStats')) !== null && _b !== void 0 ? _b : false;
+        this.debug.dirtyTree = (_c = windowValue('agChartsSceneDirtyTree')) !== null && _c !== void 0 ? _c : false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
         this.canvas = new HdpiCanvas({ document: document, width: width, height: height, overrideDevicePixelRatio: overrideDevicePixelRatio });
     }
@@ -249,7 +250,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.sortLayers = function () {
         this.layers.sort(function (a, b) {
             var _a, _b;
-            return compoundAscending(__spread([a.zIndex], ((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]), [a.id]), __spread([b.zIndex], ((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]), [b.id]), ascendingStringNumberUndefined);
+            return compoundAscending(__spreadArray(__spreadArray([a.zIndex], __read(((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]))), [a.id]), __spreadArray(__spreadArray([b.zIndex], __read(((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]))), [b.id]), ascendingStringNumberUndefined);
         });
     };
     Scene.prototype.markDirty = function () {
@@ -321,13 +322,13 @@ var Scene = /** @class */ (function () {
             var _b, _c, debugSplitTimes, _d, extraDebugStats, _e, canvas, ctx, root, layers, pendingSize, mode, renderCtx, canvasCleared, _f, dirtyTree, paths;
             var _g;
             return __generator(this, function (_h) {
-                _b = opts || {}, _c = _b.debugSplitTimes, debugSplitTimes = _c === void 0 ? [performance.now()] : _c, _d = _b.extraDebugStats, extraDebugStats = _d === void 0 ? {} : _d;
+                _b = opts !== null && opts !== void 0 ? opts : {}, _c = _b.debugSplitTimes, debugSplitTimes = _c === void 0 ? [performance.now()] : _c, _d = _b.extraDebugStats, extraDebugStats = _d === void 0 ? {} : _d;
                 _e = this, canvas = _e.canvas, ctx = _e.canvas.context, root = _e.root, layers = _e.layers, pendingSize = _e.pendingSize, mode = _e.opts.mode;
                 if (pendingSize) {
-                    (_g = this.canvas).resize.apply(_g, __spread(pendingSize));
+                    (_g = this.canvas).resize.apply(_g, __spreadArray([], __read(pendingSize)));
                     this.layers.forEach(function (layer) {
                         var _a;
-                        return (_a = layer.canvas).resize.apply(_a, __spread(pendingSize));
+                        return (_a = layer.canvas).resize.apply(_a, __spreadArray([], __read(pendingSize)));
                     });
                     this.pendingSize = undefined;
                 }
@@ -435,22 +436,31 @@ var Scene = /** @class */ (function () {
                 this.debug.stats === 'detailed' ? "Layers: " + pct(layersRendered, layersSkipped) : null,
                 this.debug.stats === 'detailed' ? "Nodes: " + pct(nodesRendered, nodesSkipped) : null,
             ].filter(function (v) { return v != null; });
-            var lineHeight = 15;
+            var statsSize = stats.map(function (t) { return [t, HdpiCanvas.getTextSize(t, ctx.font)]; });
+            var width = Math.max.apply(Math, __spreadArray([], __read(statsSize.map(function (_a) {
+                var _b = __read(_a, 2), width = _b[1].width;
+                return width;
+            }))));
+            var height = statsSize.reduce(function (total, _a) {
+                var _b = __read(_a, 2), height = _b[1].height;
+                return total + height;
+            }, 0);
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 200, 10 + lineHeight * stats.length);
+            ctx.fillRect(0, 0, width, height);
             ctx.fillStyle = 'black';
-            var index = 0;
+            var y = 0;
             try {
-                for (var stats_1 = __values(stats), stats_1_1 = stats_1.next(); !stats_1_1.done; stats_1_1 = stats_1.next()) {
-                    var stat = stats_1_1.value;
-                    ctx.fillText(stat, 2, 10 + index++ * lineHeight);
+                for (var statsSize_1 = __values(statsSize), statsSize_1_1 = statsSize_1.next(); !statsSize_1_1.done; statsSize_1_1 = statsSize_1.next()) {
+                    var _g = __read(statsSize_1_1.value, 2), stat = _g[0], size = _g[1];
+                    y += size.height;
+                    ctx.fillText(stat, 2, y);
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
-                    if (stats_1_1 && !stats_1_1.done && (_a = stats_1.return)) _a.call(stats_1);
+                    if (statsSize_1_1 && !statsSize_1_1.done && (_a = statsSize_1.return)) _a.call(statsSize_1);
                 }
                 finally { if (e_2) throw e_2.error; }
             }
@@ -546,8 +556,7 @@ var Scene = /** @class */ (function () {
         var _this = this;
         var _a;
         var name = (_a = (node instanceof Group ? node.name : null)) !== null && _a !== void 0 ? _a : node.id;
-        return __assign({ name: name,
-            node: node, dirty: RedrawType[node.dirty] }, node.children
+        return __assign({ name: name, node: node, dirty: RedrawType[node.dirty] }, node.children
             .map(function (c) { return _this.buildTree(c); })
             .reduce(function (result, childTree) {
             var treeNodeName = childTree.name;
@@ -584,12 +593,12 @@ var Scene = /** @class */ (function () {
                 .reduce(function (r, p) { return r.concat(p); }, [])
                 .map(function (p) { return name + "." + p; });
         return {
-            dirtyTree: __assign({ name: name,
-                node: node, dirty: RedrawType[node.dirty] }, childrenDirtyTree
+            dirtyTree: __assign({ name: name, node: node, dirty: RedrawType[node.dirty] }, childrenDirtyTree
                 .map(function (c) { return c.dirtyTree; })
                 .filter(function (t) { return t.dirty !== undefined; })
                 .reduce(function (result, childTree) {
-                result[childTree.name || '<unknown>'] = childTree;
+                var _a;
+                result[(_a = childTree.name) !== null && _a !== void 0 ? _a : '<unknown>'] = childTree;
                 return result;
             }, {})),
             paths: paths,

@@ -1,6 +1,5 @@
-import { AgChartInstance } from "ag-charts-community";
+import { _Scene, AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
 export declare function deproxy(chartOrProxy: AgChartInstance): AgChartActual;
-import { AgCartesianAxisType, _Scene } from 'ag-charts-community';
 export interface AgChartActual extends AgChartInstance {
     title?: _Scene.Caption;
     width: number;

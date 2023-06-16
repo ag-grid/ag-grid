@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -110,6 +110,7 @@ let NavigationService = class NavigationService extends BeanStub {
             this.rangeService.setRangeToCell(cellPosition);
         }
     }
+    // this method is throttled, see the `constructor`
     onPageDown(gridCell) {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -124,6 +125,7 @@ let NavigationService = class NavigationService extends BeanStub {
             this.navigateToNextPage(gridCell, currentPageBottomRow);
         }
     }
+    // this method is throttled, see the `constructor`
     onPageUp(gridCell) {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -375,7 +377,7 @@ let NavigationService = class NavigationService extends BeanStub {
         }
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        nextCell.startEditing(null, null, true, event);
+        nextCell.startEditing(null, true, event);
         nextCell.focusCell(false);
         return true;
     }
@@ -397,7 +399,7 @@ let NavigationService = class NavigationService extends BeanStub {
             const pRow = previousCell.getRowCtrl();
             pRow.stopEditing();
             const nRow = nextCell.getRowCtrl();
-            nRow.startRowEditing(undefined, undefined, undefined, event);
+            nRow.startRowEditing(undefined, undefined, event);
         }
         if (nextEditable) {
             nextCell.setFocusInOnEditor();
@@ -695,7 +697,7 @@ let NavigationService = class NavigationService extends BeanStub {
         };
     }
     ensureCellVisible(gridCell) {
-        const isGroupStickyEnabled = this.gridOptionsService.is('groupRowsSticky');
+        const isGroupStickyEnabled = this.gridOptionsService.isGroupRowsSticky();
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         const skipScrollToRow = isGroupStickyEnabled && (rowNode === null || rowNode === void 0 ? void 0 : rowNode.sticky);

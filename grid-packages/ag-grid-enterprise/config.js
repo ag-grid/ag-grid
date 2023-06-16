@@ -28,6 +28,20 @@ const builds = {
         format: 'cjs',
         env: 'production',
         banner
+    },
+    'enterprise-esm-dev': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise.esm.js'),
+        format: 'esm',
+        env: 'development',
+        banner
+    },
+    'enterprise-esm-prod': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise.esm.min.js'),
+        format: 'esm',
+        env: 'production',
+        banner
     }
 };
 
@@ -44,7 +58,7 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            node(),
+            node({browser: true}),      // for utils package - defaulting to use index.js
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),

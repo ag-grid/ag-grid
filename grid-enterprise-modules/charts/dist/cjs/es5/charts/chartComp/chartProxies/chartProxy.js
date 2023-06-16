@@ -90,14 +90,14 @@ var ChartProxy = /** @class */ (function () {
         }
         return data;
     };
-    ChartProxy.prototype.getCommonChartOptions = function () {
+    ChartProxy.prototype.getCommonChartOptions = function (updatedOverrides) {
         var _a, _b;
         // Only apply active overrides if chart is initialised.
         var existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions()) !== null && _b !== void 0 ? _b : {};
         var formattingPanelOverrides = this.chart != null ?
             { overrides: this.getActiveFormattingPanelOverrides() } : {};
         this.clearThemeOverrides = false;
-        return __assign(__assign({}, existingOptions), { theme: __assign(__assign({}, chartTheme_1.createAgChartTheme(this.chartProxyParams, this)), formattingPanelOverrides), container: this.chartProxyParams.parentElement, mode: 'integrated' });
+        return __assign(__assign({}, existingOptions), { theme: __assign(__assign({}, chartTheme_1.createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
     };
     ChartProxy.prototype.getActiveFormattingPanelOverrides = function () {
         var _a, _b;
@@ -105,11 +105,10 @@ var ChartProxy = /** @class */ (function () {
             return {};
         }
         var inUseTheme = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions().theme;
-        var overrides = (_b = inUseTheme === null || inUseTheme === void 0 ? void 0 : inUseTheme.overrides) !== null && _b !== void 0 ? _b : {};
-        return overrides;
+        return (_b = inUseTheme === null || inUseTheme === void 0 ? void 0 : inUseTheme.overrides) !== null && _b !== void 0 ? _b : {};
     };
     ChartProxy.prototype.destroy = function (_a) {
-        var _b = (_a === void 0 ? {} : _a).keepChartInstance, keepChartInstance = _b === void 0 ? false : _b;
+        var _b = _a === void 0 ? {} : _a, _c = _b.keepChartInstance, keepChartInstance = _c === void 0 ? false : _c;
         if (keepChartInstance) {
             return this.chart;
         }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -40,9 +42,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserComponentRegistry = void 0;
@@ -74,6 +77,11 @@ var tooltipComponent_1 = require("../../rendering/tooltipComponent");
 var function_1 = require("../../utils/function");
 var object_1 = require("../../utils/object");
 var fuzzyMatch_1 = require("../../utils/fuzzyMatch");
+var numberCellEditor_1 = require("../../rendering/cellEditors/numberCellEditor");
+var dateCellEditor_1 = require("../../rendering/cellEditors/dateCellEditor");
+var dateStringCellEditor_1 = require("../../rendering/cellEditors/dateStringCellEditor");
+var checkboxCellRenderer_1 = require("../../rendering/cellRenderers/checkboxCellRenderer");
+var checkboxCellEditor_1 = require("../../rendering/cellEditors/checkboxCellEditor");
 var UserComponentRegistry = /** @class */ (function (_super) {
     __extends(UserComponentRegistry, _super);
     function UserComponentRegistry() {
@@ -96,11 +104,16 @@ var UserComponentRegistry = /** @class */ (function (_super) {
             agGroupCellRenderer: groupCellRenderer_1.GroupCellRenderer,
             agGroupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
             agLoadingCellRenderer: loadingCellRenderer_1.LoadingCellRenderer,
+            agCheckboxCellRenderer: checkboxCellRenderer_1.CheckboxCellRenderer,
             //editors
             agCellEditor: textCellEditor_1.TextCellEditor,
             agTextCellEditor: textCellEditor_1.TextCellEditor,
+            agNumberCellEditor: numberCellEditor_1.NumberCellEditor,
+            agDateCellEditor: dateCellEditor_1.DateCellEditor,
+            agDateStringCellEditor: dateStringCellEditor_1.DateStringCellEditor,
             agSelectCellEditor: selectCellEditor_1.SelectCellEditor,
             agLargeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
+            agCheckboxCellEditor: checkboxCellEditor_1.CheckboxCellEditor,
             //filter
             agTextColumnFilter: textFilter_1.TextFilter,
             agNumberColumnFilter: numberFilter_1.NumberFilter,
@@ -124,21 +137,13 @@ var UserComponentRegistry = /** @class */ (function (_super) {
             agDetailCellRenderer: moduleNames_1.ModuleNames.MasterDetailModule,
             agSparklineCellRenderer: moduleNames_1.ModuleNames.SparklinesModule
         };
-        _this.deprecatedAgGridDefaults = {
-            agPopupTextCellEditor: 'AG Grid: Since v27.1 The agPopupTextCellEditor is deprecated. Instead use { cellEditor: "agTextCellEditor", cellEditorPopup: true }',
-            agPopupSelectCellEditor: 'AG Grid: Since v27.1 the agPopupSelectCellEditor is deprecated. Instead use { cellEditor: "agSelectCellEditor", cellEditorPopup: true }',
-        };
         _this.jsComps = {};
-        _this.fwComps = {};
         return _this;
     }
     UserComponentRegistry.prototype.init = function () {
         var _this = this;
         if (this.gridOptions.components != null) {
             object_1.iterateObject(this.gridOptions.components, function (key, component) { return _this.registerJsComponent(key, component); });
-        }
-        if (this.gridOptions.frameworkComponents != null) {
-            object_1.iterateObject(this.gridOptions.frameworkComponents, function (key, component) { return _this.registerFwComponent(key, component); });
         }
     };
     UserComponentRegistry.prototype.registerDefaultComponent = function (name, component) {
@@ -149,20 +154,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         this.agGridDefaults[name] = component;
     };
     UserComponentRegistry.prototype.registerJsComponent = function (name, component) {
-        if (this.fwComps[name]) {
-            console.error("Trying to register a component that you have already registered for frameworks: " + name);
-            return;
-        }
         this.jsComps[name] = component;
-    };
-    /**
-     * B the business interface (ie IHeader)
-     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
-     */
-    UserComponentRegistry.prototype.registerFwComponent = function (name, component) {
-        var warningMessage = "AG Grid: As of v27, registering components via grid property frameworkComponents is deprecated. Instead register both JavaScript AND Framework Components via the components property.";
-        function_1.doOnce(function () { return console.warn(warningMessage); }, "UserComponentRegistry.frameworkComponentsDeprecated");
-        this.fwComps[name] = component;
     };
     UserComponentRegistry.prototype.retrieve = function (propertyName, name) {
         var _this = this;
@@ -173,10 +165,6 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         var registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.gridOptions.components);
         if (registeredViaFrameworkComp != null) {
             return createResult(registeredViaFrameworkComp, true);
-        }
-        var frameworkComponent = this.fwComps[name];
-        if (frameworkComponent) {
-            return createResult(frameworkComponent, true);
         }
         var jsComponent = this.jsComps[name];
         if (jsComponent) {
@@ -189,10 +177,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         }
         var moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleForComponent, "AG Grid '" + propertyName + "' component: " + name);
-        }
-        else if (this.deprecatedAgGridDefaults[name]) {
-            function_1.doOnce(function () { return console.warn(_this.deprecatedAgGridDefaults[name]); }, name);
+            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleForComponent, "AG Grid '" + propertyName + "' component: " + name, this.context.getGridId());
         }
         else {
             function_1.doOnce(function () { _this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);
@@ -200,7 +185,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         return null;
     };
     UserComponentRegistry.prototype.warnAboutMissingComponent = function (propertyName, componentName) {
-        var validComponents = __spread(Object.keys(this.agGridDefaults).filter(function (k) { return !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k); }), Object.keys(this.jsComps), Object.keys(this.fwComps));
+        var validComponents = __spreadArray(__spreadArray([], __read(Object.keys(this.agGridDefaults).filter(function (k) { return !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k); }))), __read(Object.keys(this.jsComps)));
         var suggestions = fuzzyMatch_1.fuzzySuggestions(componentName, validComponents, true, 0.8);
         console.warn("AG Grid: Could not find '" + componentName + "' component. It was configured as \"" + propertyName + ": '" + componentName + "'\" but it wasn't found in the list of registered components.");
         if (suggestions.length > 0) {

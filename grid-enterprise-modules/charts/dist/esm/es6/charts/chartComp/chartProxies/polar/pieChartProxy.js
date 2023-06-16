@@ -8,7 +8,7 @@ export class PieChartProxy extends ChartProxy {
     }
     update(params) {
         const { data, category } = params;
-        const options = Object.assign(Object.assign({}, this.getCommonChartOptions()), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
+        const options = Object.assign(Object.assign({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
         AgChart.update(this.getChartRef(), options);
     }
     getSeries(params) {

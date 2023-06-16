@@ -3,6 +3,7 @@ import { exists } from './generic';
 import { setAriaHidden } from './aria';
 import { RowStyle } from '../entities/gridOptions';
 import { CellStyle } from '../entities/colDef';
+import { camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
 
@@ -380,12 +381,12 @@ export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle |
         if (!key || !key.length || value == null) { continue; }
 
         // changes the key from camelCase into a hyphenated-string
-        const parsedKey = key.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);
+        const parsedKey = camelCaseToHyphenated(key);
         const valueAsString = value.toString();
         const parsedValue = valueAsString.replace(/\s*!important/g, '');
         const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
 
-        eElement.style.setProperty(parsedKey, value, priority);
+        eElement.style.setProperty(parsedKey, parsedValue, priority);
     }
 }
 

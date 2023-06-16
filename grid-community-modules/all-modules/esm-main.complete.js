@@ -1,4 +1,4 @@
-export * from './dist/esm/es5/main';
+export * from './dist/esm/es6/main';
 
-import {AllCommunityModules, ModuleRegistry} from "./dist/esm/es5/main";
+import {AllCommunityModules, ModuleRegistry} from "./dist/esm/es6/main";
 ModuleRegistry.registerModules(AllCommunityModules);

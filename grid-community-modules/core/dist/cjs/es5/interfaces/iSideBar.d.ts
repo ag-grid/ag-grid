@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IToolPanel } from "./iToolPanel";
@@ -35,8 +35,6 @@ export interface ToolPanelDef {
      * To provide your own custom panel component, you reference it here.
      */
     toolPanel?: any;
-    /** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components */
-    toolPanelFramework?: any;
     /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;
 }

@@ -2,9 +2,10 @@
 title: "Crosshairs"
 enterprise: true
 ---
+
 Crosshairs show a reference line on the chart, along with the corresponding axis value at a specific position.
 
-When hovering over the chart, the crosshairs can either follow the mouse pointer position or snap to the highlighted 
+When hovering over the chart, the crosshairs can either follow the mouse pointer position or snap to the highlighted
 item's position to display the axis value at that specific point.
 
 ## Enabling Crosshairs
@@ -23,7 +24,7 @@ axes: [
 ]
 ```
 
-[Crosshair Example](https://plnkr.co/edit/CIja77MQKhSnePn4?open=main.js)
+<chart-example title='Enabling Crosshairs' name='enabling-crosshairs' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Snap
 
@@ -43,7 +44,7 @@ axes: [
 ]
 ```
 
-[Crosshair Snap False Example](https://plnkr.co/edit/KIZfPMY3yG31rScl?open=main.js)
+<chart-example title='Crosshair Snap False' name='crosshair-snap' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Styles
 
@@ -57,7 +58,7 @@ crosshair: {
 },
 ```
 
-[Crosshair Styles Example](https://plnkr.co/edit/WWShmKEk4U2EiOoU?open=main.js)
+<chart-example title='Crosshair Styles' name='crosshair-styles' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Label
 
@@ -71,7 +72,7 @@ crosshair: {
 },
 ```
 
-## Crosshair Label position
+## Crosshair Label Position
 
 The label position relative to the crosshair can be modified using the `xOffset` and `yOffset` properties in `crosshair.label` options as shown below:
 
@@ -83,8 +84,21 @@ crosshair: {
   }
 }
 ```
+<chart-example title='Crosshair Label Offset' name='crosshair-label-offset' type='generated' options='{ "enterprise": true }'></chart-example>
 
-[Crosshair Label Offset Example](https://plnkr.co/edit/cMwlh8WT7VSTD1pg?open=main.js)
+## Crosshair Label Format
+
+The `crosshair.label.format` property can be used to format the crosshair label.
+
+If a format string is not provided, the `axis.label.format` string will be used.
+
+If neither is present, default formatting will be used: one granularity above axis tick fraction digits for number axes and no formatting for category and time axes.
+
+The example below demonstrates this behaviour.
+
+Notice how when you click on one of the buttons in the example to change the provided configuration, the crosshair label format changes.
+
+<chart-example title='Crosshair Label Format' name='crosshair-label-format' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Label Renderer
 
@@ -114,7 +128,7 @@ const labelRenderer = ({ value, fractionDigits }) => {
 }
 ```
 
-[Crosshair Default Label Custom Renderer Styles Example](https://plnkr.co/edit/emFruynNi7HiwDae?open=main.js)
+<chart-example title='Crosshair Default Label With Custom Renderer' name='crosshair-default-label-custom-renderer' type='generated' options='{ "enterprise": true }'></chart-example>
 
 The default label HTML element uses CSS class name `ag-crosshair-label`. Custom CSS styling can be applied by providing a class name via the `crosshair.label.className` config. This class name will be added to the class list of the label's element.
 
@@ -140,7 +154,7 @@ This is shown in the example below. Note that:
 
 - The default label template is used and the style definitions are overriden in the styles.css file.
 
-[Crosshair Default Label Custom CSS Example](https://plnkr.co/edit/BJ0UoCFvMknL2jN7?open=main.js)
+<chart-example title='Crosshair Default Label With Custom CSS' name='crosshair-default-label-custom-css' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ### Custom Label
 
@@ -163,4 +177,64 @@ Note that:
 - The elements have custom CSS class attributes, but the default class names can also be used so that the label gets the default styling.
 - The styles for the elements are defined in the external styles.css file.
 
-[Crosshair Custom Label Style Example](https://plnkr.co/edit/7uBJFVUN75sL625M?open=main.js)
+<chart-example title='Crosshair Custom Label' name='crosshair-custom-label' type='generated' options='{ "enterprise": true }'></chart-example>
+
+## API Reference
+
+<!-- TODO: replace with api reference component -->
+
+```ts
+interface AgCrosshairOptions {
+    /** Whether or not to show the crosshair. */
+    enabled?: boolean;
+    /** When true, the crosshair snaps to the highlighted data point. By default this property is false and the crosshair is rendered at the mouse pointer position. */
+    snap?: boolean;
+    /** The colour of the stroke for the lines. */
+    stroke?: CssColor;
+    /** The width in pixels of the stroke for the lines. */
+    strokeWidth?: PixelSize;
+    /** The opacity of the stroke for the lines. */
+    strokeOpacity?: Opacity;
+    /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    lineDash?: PixelSize[];
+    /** The initial offset of the dashed line in pixels. */
+    lineDashOffset?: PixelSize;
+    /** The crosshair label configuration */
+    label?: AgCrosshairLabel;
+}
+
+interface AgCrosshairLabel {
+    /** Whether or not to show label when the crosshair is visible. */
+    enabled?: boolean;
+    /** A class name to be added to the crosshair label element. */
+    className?: string;
+    /** The horizontal offset in pixels for the label. */
+    xOffset?: PixelSize;
+    /** The vertical offset in pixels for the label. */
+    yOffset?: PixelSize;
+    /** Format string used when rendering the crosshair label. */
+    format?: string;
+    /** Function used to create the content for the label. */
+    renderer?: (params: AgCrosshairLabelRendererParams) => string | AgCrosshairLabelRendererResult;
+}
+
+interface AgCrosshairLabelRendererParams {
+    /** Axis value that the label is being rendered for. */
+    readonly value: any;
+    /** If the axis value is a number, the fractional digits used to format the value. */
+    readonly fractionDigits?: number;
+}
+
+interface AgCrosshairLabelRendererResult {
+    /** Text for the label. */
+    text?: string;
+    /** Label text color. */
+    color?: CssColor;
+    /** Label background color. */
+    backgroundColor?: CssColor;
+    /** Opacity of the label. */
+    opacity?: Opacity;
+}
+```
+
+<!-- <interface-documentation interfaceName='AgCrosshairOptions' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation> -->

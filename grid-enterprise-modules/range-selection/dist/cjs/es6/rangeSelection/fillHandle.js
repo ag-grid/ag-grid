@@ -176,6 +176,7 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
             }
         };
         const fillValues = (currentValues, col, rowNode, updateInitialSet) => {
+            var _a, _b;
             let currentValue;
             let skipValue = false;
             if (withinInitialRange) {
@@ -184,10 +185,20 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
                 withinInitialRange = updateInitialSet();
             }
             else {
-                const { value, fromUserFunction } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
+                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     const cellValue = this.valueService.getValue(col, rowNode);
+                    if (!fromUserFunction) {
+                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                            currentValue = (_b = this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
+                        }
+                        if (col.getColDef().useValueParserForImport) {
+                            currentValue = this.valueParserService.parseValue(col, rowNode, 
+                            // if no sourceCol, then currentValue is a number
+                            sourceCol ? currentValue : core_1._.toStringOrNull(currentValue), cellValue);
+                        }
+                    }
                     if (!fromUserFunction || cellValue !== currentValue) {
                         rowNode.setDataValue(col, currentValue, 'rangeService');
                     }
@@ -197,7 +208,11 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
                 }
             }
             if (!skipValue) {
-                currentValues.push(currentValue);
+                currentValues.push({
+                    value: currentValue,
+                    column: col,
+                    rowNode
+                });
             }
         };
         if (isVertical) {
@@ -217,7 +232,7 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
             columns,
             startColumn: columns[0]
         };
-        this.rangeService.clearCellRangeCellValues([cellRange]);
+        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     }
     processValues(event, values, initialValues, col, rowNode, idx) {
         const userFillOperation = this.gridOptionsService.getCallback('fillOperation');
@@ -232,7 +247,7 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
         if (userFillOperation) {
             const params = {
                 event,
-                values,
+                values: values.map(({ value }) => value),
                 initialValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
@@ -245,9 +260,9 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
                 return { value: userResult, fromUserFunction: true };
             }
         }
-        const allNumbers = !values.some(val => {
-            const asFloat = parseFloat(val);
-            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        const allNumbers = !values.some(({ value }) => {
+            const asFloat = parseFloat(value);
+            return isNaN(asFloat) || asFloat.toString() !== value.toString();
         });
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
@@ -257,11 +272,12 @@ class FillHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return { value: parseFloat(core_1._.last(values)) + 1 * multiplier, fromUserFunction: false };
+                return { value: parseFloat(core_1._.last(values).value) + 1 * multiplier, fromUserFunction: false };
             }
-            return { value: values[idx % values.length], fromUserFunction: false };
+            const { value, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
+            return { value, fromUserFunction: false, sourceCol, sourceRowNode };
         }
-        return { value: core_1._.last(utils_1.findLineByLeastSquares(values.map(Number))), fromUserFunction: false };
+        return { value: core_1._.last(utils_1.findLineByLeastSquares(values.map(({ value }) => Number(value)))), fromUserFunction: false };
     }
     clearValues() {
         this.clearMarkedPath();
@@ -465,4 +481,10 @@ FillHandle.TEMPLATE = `<div class="ag-fill-handle"></div>`;
 __decorate([
     core_1.Autowired('valueService')
 ], FillHandle.prototype, "valueService", void 0);
+__decorate([
+    core_1.Autowired('valueParserService')
+], FillHandle.prototype, "valueParserService", void 0);
+__decorate([
+    core_1.Autowired('valueFormatterService')
+], FillHandle.prototype, "valueFormatterService", void 0);
 exports.FillHandle = FillHandle;

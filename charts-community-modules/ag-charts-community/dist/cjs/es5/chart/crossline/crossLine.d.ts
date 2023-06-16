@@ -1,5 +1,4 @@
 import { Group } from '../../scene/group';
-import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { CrossLineLabelPosition } from './crossLineLabelPosition';
@@ -66,6 +65,7 @@ export declare class CrossLine {
     protected getZIndex(isRange?: boolean): number;
     private getRange;
     private computeLabelBBox;
-    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>, seriesRect: BBox): void;
+    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>): void;
 }
 export {};
+//# sourceMappingURL=crossLine.d.ts.map

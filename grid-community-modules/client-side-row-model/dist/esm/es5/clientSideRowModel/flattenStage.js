@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -70,7 +72,7 @@ var FlattenStage = /** @class */ (function (_super) {
                 rowNode.childrenAfterGroup.length === 1;
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
-            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             var isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
@@ -92,7 +94,7 @@ var FlattenStage = /** @class */ (function (_super) {
                     this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, skipLeafNodes, uiLevelForChildren);
                     // put a footer in if user is looking for it
                     if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
                     }
                 }
             }

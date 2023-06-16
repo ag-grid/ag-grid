@@ -35,9 +35,6 @@ const options: AgChartOptions = {
       position: "left",
     },
   ],
-  legend: {
-    enabled: false,
-  },
   listeners: {
     click: (_event: AgChartClickEvent) => {
       console.log("click")

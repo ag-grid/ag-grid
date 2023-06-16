@@ -290,7 +290,7 @@ var Sparkline = /** @class */ (function () {
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
-            this.scene.render();
+            this.scene.render().catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
         }
         var tooltipEnabled = (_c = (_b = (_a = this.processedOptions) === null || _a === void 0 ? void 0 : _a.tooltip) === null || _b === void 0 ? void 0 : _b.enabled) !== null && _c !== void 0 ? _c : true;
         if (tooltipEnabled) {
@@ -304,7 +304,7 @@ var Sparkline = /** @class */ (function () {
     Sparkline.prototype.onMouseOut = function (event) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
-        this.scene.render();
+        this.scene.render().catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
     // Fetch required values from the data object and process them.
     Sparkline.prototype.processData = function () {
@@ -387,11 +387,8 @@ var Sparkline = /** @class */ (function () {
                 }
             }
         }
-        // update axes
         this.updateAxes();
-        // produce data joins and update selection's nodes
-        this.update();
-        this.scene.render();
+        this.immediateLayout();
     };
     /**
      * Return the type of data provided to the sparkline based on the first truthy value in the data array.
@@ -464,20 +461,23 @@ var Sparkline = /** @class */ (function () {
             cancelAnimationFrame(this.layoutId);
         }
         this.layoutId = requestAnimationFrame(function () {
-            _this.setSparklineDimensions();
-            if (_this.invalidData(_this.data)) {
-                return;
-            }
-            // update axes ranges
-            _this.updateXScaleRange();
-            _this.updateYScaleRange();
-            // update axis line
-            _this.updateAxisLine();
-            // produce data joins and update selection's nodes
-            _this.update();
-            _this.scene.render();
+            _this.immediateLayout();
             _this.layoutId = 0;
         });
+    };
+    Sparkline.prototype.immediateLayout = function () {
+        this.setSparklineDimensions();
+        if (this.invalidData(this.data)) {
+            return;
+        }
+        // update axes ranges
+        this.updateXScaleRange();
+        this.updateYScaleRange();
+        // update axis line
+        this.updateAxisLine();
+        // produce data joins and update selection's nodes
+        this.update();
+        this.scene.render().catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
     Sparkline.prototype.setSparklineDimensions = function () {
         var _a = this, width = _a.width, height = _a.height, padding = _a.padding, seriesRect = _a.seriesRect, rootGroup = _a.rootGroup;

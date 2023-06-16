@@ -15,10 +15,11 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
         }));
 
     return (
-        <div className={classNames(styles.topBar, 'ag-styles')}>
+        <div className={styles.topBar}>
             <div className="page-margin">
                 <div className={styles.topBarInner}>
                     <button
+                        id="top-bar-docs-button"
                         className={classNames(styles.topBarNavButton, 'button-input')}
                         type="button"
                         data-toggle="collapse"

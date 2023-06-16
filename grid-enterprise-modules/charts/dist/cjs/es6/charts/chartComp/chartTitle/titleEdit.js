@@ -16,7 +16,7 @@ class TitleEdit extends core_1.Component {
         this.editing = false;
     }
     init() {
-        this.addManagedListener(this.getGui(), 'keypress', (e) => {
+        this.addManagedListener(this.getGui(), 'keydown', (e) => {
             if (this.editing && e.key === 'Enter' && !e.shiftKey) {
                 this.handleEndEditing();
                 e.preventDefault();

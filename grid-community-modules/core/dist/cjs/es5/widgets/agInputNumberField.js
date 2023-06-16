@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -22,6 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgInputNumberField = void 0;
 var agInputTextField_1 = require("./agInputTextField");
 var dom_1 = require("../utils/dom");
+var generic_1 = require("../utils/generic");
 var AgInputNumberField = /** @class */ (function (_super) {
     __extends(AgInputNumberField, _super);
     function AgInputNumberField(config) {
@@ -50,7 +53,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
         if (value === '') {
             return '';
         }
-        if (this.precision) {
+        if (this.precision != null) {
             value = this.adjustPrecision(value);
         }
         var val = parseFloat(value);
@@ -62,12 +65,25 @@ var AgInputNumberField = /** @class */ (function (_super) {
         }
         return value;
     };
-    AgInputNumberField.prototype.adjustPrecision = function (value) {
-        if (this.precision) {
-            var floatString = parseFloat(value).toFixed(this.precision);
-            value = parseFloat(floatString).toString();
+    AgInputNumberField.prototype.adjustPrecision = function (value, isScientificNotation) {
+        if (this.precision == null) {
+            return value;
         }
-        return value;
+        if (isScientificNotation) {
+            var floatString = parseFloat(value).toFixed(this.precision);
+            return parseFloat(floatString).toString();
+        }
+        // can't use toFixed here because we don't want to round up
+        var parts = String(value).split('.');
+        if (parts.length > 1) {
+            if (parts[1].length <= this.precision) {
+                return value;
+            }
+            else if (this.precision > 0) {
+                return parts[0] + "." + parts[1].slice(0, this.precision);
+            }
+        }
+        return parts[0];
     };
     AgInputNumberField.prototype.setMin = function (min) {
         if (this.min === min) {
@@ -98,14 +114,44 @@ var AgInputNumberField = /** @class */ (function (_super) {
         return this;
     };
     AgInputNumberField.prototype.setValue = function (value, silent) {
-        if (value != null) {
-            value = this.adjustPrecision(value);
-            var normalizedValue = this.normalizeValue(value);
-            if (value != normalizedValue) {
-                return this;
+        var _this = this;
+        return this.setValueOrInputValue(function (v) { return _super.prototype.setValue.call(_this, v, silent); }, function () { return _this; }, value);
+    };
+    AgInputNumberField.prototype.setStartValue = function (value) {
+        var _this = this;
+        return this.setValueOrInputValue(function (v) { return _super.prototype.setValue.call(_this, v, true); }, function (v) { _this.eInput.value = v; }, value);
+    };
+    AgInputNumberField.prototype.setValueOrInputValue = function (setValueFunc, setInputValueOnlyFunc, value) {
+        if (generic_1.exists(value)) {
+            // need to maintain the scientific notation format whilst typing (e.g. 1e10)
+            var setInputValueOnly = this.isScientificNotation(value);
+            if (setInputValueOnly && this.eInput.validity.valid) {
+                return setValueFunc(value);
+            }
+            if (!setInputValueOnly) {
+                value = this.adjustPrecision(value);
+                var normalizedValue = this.normalizeValue(value);
+                // outside of valid range
+                setInputValueOnly = value != normalizedValue;
+            }
+            if (setInputValueOnly) {
+                return setInputValueOnlyFunc(value);
             }
         }
-        return _super.prototype.setValue.call(this, value, silent);
+        return setValueFunc(value);
+    };
+    AgInputNumberField.prototype.getValue = function () {
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
+        var inputValue = this.eInput.value;
+        if (this.isScientificNotation(inputValue)) {
+            return this.adjustPrecision(inputValue, true);
+        }
+        return _super.prototype.getValue.call(this);
+    };
+    AgInputNumberField.prototype.isScientificNotation = function (value) {
+        return typeof value === 'string' && value.includes('e');
     };
     return AgInputNumberField;
 }(agInputTextField_1.AgInputTextField));

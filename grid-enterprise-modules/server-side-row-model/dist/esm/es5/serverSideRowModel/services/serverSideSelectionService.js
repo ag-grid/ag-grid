@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -39,6 +41,8 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
             };
             _this.eventService.dispatchEvent(event);
         });
+        this.rowSelection = this.gridOptionsService.get('rowSelection');
+        this.addManagedPropertyListener('rowSelection', function (propChange) { return _this.rowSelection = propChange.currentValue; });
         var StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     };
@@ -54,8 +58,16 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(event);
     };
-    ServerSideSelectionService.prototype.setNodeSelected = function (params) {
-        var changedNodes = this.selectionStrategy.setNodeSelected(params);
+    ServerSideSelectionService.prototype.setNodesSelected = function (params) {
+        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+            console.warn("AG Grid: cannot multi select while rowSelection='single'");
+            return 0;
+        }
+        if (params.nodes.length > 1 && params.rangeSelect) {
+            console.warn("AG Grid: cannot use range selection when multi selecting rows");
+            return 0;
+        }
+        var changedNodes = this.selectionStrategy.setNodesSelected(params);
         this.shotgunResetNodeSelectionState(params.source);
         var event = {
             type: Events.EVENT_SELECTION_CHANGED,

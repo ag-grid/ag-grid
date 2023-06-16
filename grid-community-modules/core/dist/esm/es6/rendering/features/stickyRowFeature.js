@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ export class StickyRowFeature extends BeanStub {
     }
     checkStickyRows() {
         let height = 0;
-        if (!this.gridOptionsService.is('groupRowsSticky')) {
+        if (!this.gridOptionsService.isGroupRowsSticky()) {
             this.refreshNodesAndContainerHeight([], height);
             return;
         }
@@ -61,8 +61,13 @@ export class StickyRowFeature extends BeanStub {
             }
             // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
             else {
-                const storeBounds = (_a = stickyRow.childStore) === null || _a === void 0 ? void 0 : _a.getStoreBounds();
-                lastChildBottom = ((_b = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.heightPx) !== null && _b !== void 0 ? _b : 0) + ((_c = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.topPx) !== null && _c !== void 0 ? _c : 0);
+                if (stickyRow.master) {
+                    lastChildBottom = stickyRow.detailNode.rowTop + stickyRow.detailNode.rowHeight;
+                }
+                else {
+                    const storeBounds = (_a = stickyRow.childStore) === null || _a === void 0 ? void 0 : _a.getStoreBounds();
+                    lastChildBottom = ((_b = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.heightPx) !== null && _b !== void 0 ? _b : 0) + ((_c = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.topPx) !== null && _c !== void 0 ? _c : 0);
+                }
             }
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight;
             if (lastChildBottom < stickRowBottom) {

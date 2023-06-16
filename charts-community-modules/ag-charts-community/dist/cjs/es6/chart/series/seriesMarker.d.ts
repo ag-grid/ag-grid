@@ -22,3 +22,4 @@ export declare class SeriesMarker extends ChangeDetectable {
     fillOpacity?: number;
     strokeOpacity?: number;
 }
+//# sourceMappingURL=seriesMarker.d.ts.map

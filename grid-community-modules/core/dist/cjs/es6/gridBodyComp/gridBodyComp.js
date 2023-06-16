@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -99,7 +99,7 @@ class GridBodyComp extends component_1.Component {
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
             setCellSelectableCss: (cssClass, selectable) => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => ct.classList.toggle(gridBodyCtrl_1.CSS_CLASS_CELL_SELECTABLE, selectable));
+                    .forEach(ct => ct.classList.toggle(cssClass, selectable));
             },
             setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };

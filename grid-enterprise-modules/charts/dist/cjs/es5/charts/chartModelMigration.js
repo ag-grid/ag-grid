@@ -73,6 +73,9 @@ function upgradeChartModel(model) {
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
     model = migrateIfBefore('29.0.0', model, migrateV29);
+    model = migrateIfBefore('29.1.0', model, migrateV29_1);
+    model = migrateIfBefore('29.2.0', model, migrateV29_2);
+    model = migrateIfBefore('30.0.0', model, migrateV30);
     model = cleanup(model);
     // Bump version to latest.
     model = migrateIfBefore(version_1.VERSION, model, function (m) { return m; });
@@ -98,9 +101,7 @@ function migrateV24(model) {
     _c = _b.chartOptions, xAxis = _c.xAxis, yAxis = _c.yAxis, chartOptions = __rest(_c, ["xAxis", "yAxis"]), chartModel = __rest(_b, ["chartType", "chartPalette", "chartOptions"]);
     var axesTypes = axisTypeMapper_1.getLegacyAxisType(chartType);
     var axes = axesTypes === null || axesTypes === void 0 ? void 0 : axesTypes.map(function (type, i) { return (__assign({ type: type }, (i === 0 ? xAxis : yAxis))); });
-    return __assign({ chartType: chartType, chartThemeName: (_a = LEGACY_PALETTES[chartPalette]) !== null && _a !== void 0 ? _a : 'ag-default', chartOptions: __assign(__assign({}, chartOptions), { axes: axes,
-            xAxis: xAxis,
-            yAxis: yAxis }) }, chartModel);
+    return __assign({ chartType: chartType, chartThemeName: (_a = LEGACY_PALETTES[chartPalette]) !== null && _a !== void 0 ? _a : 'ag-default', chartOptions: __assign(__assign({}, chartOptions), { axes: axes, xAxis: xAxis, yAxis: yAxis }) }, chartModel);
 }
 function migrateV25_1(model) {
     // https://github.com/ag-grid/ag-grid/commit/61943f9fecbfb5ac1b9a1fd93788f9fdd8687181
@@ -186,6 +187,8 @@ function migrateV28(model) {
 function migrateV28_2(model) {
     model = jsonRename('chartOptions.pie.series.callout', 'calloutLine', model);
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
     // series.yKeys => yKey ?
     // series.yNames => yName ?
     return model;
@@ -197,6 +200,42 @@ function migrateV29(model) {
     model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
     model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
     model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+    return model;
+}
+function migrateV29_1(model) {
+    model = jsonDelete('chartOptions.axes[].tick.count', model);
+    return model;
+}
+function migrateV29_2(model) {
+    // https://github.com/ag-grid/ag-grid/commit/ce11956492e42e845932edb4e05d7b0b21db5c61
+    var tooltipOptUpdate = function (_a) {
+        var _b, _c, _d, _e;
+        var tracking = _a.tracking, opts = __rest(_a, ["tracking"]);
+        var output = __assign({}, opts);
+        if (tracking === false) {
+            (_b = output.position) !== null && _b !== void 0 ? _b : (output.position = { type: 'pointer' });
+            (_c = output.range) !== null && _c !== void 0 ? _c : (output.range = 'nearest');
+        }
+        else if (tracking === true) {
+            (_d = output.position) !== null && _d !== void 0 ? _d : (output.position = { type: 'node' });
+            (_e = output.range) !== null && _e !== void 0 ? _e : (output.range = 'nearest');
+        }
+        return output;
+    };
+    model = jsonMutate('chartOptions.*.tooltip', model, tooltipOptUpdate);
+    return model;
+}
+function migrateV30(model) {
+    // Repeated from migrateV28_2() as they were applied retrospectively for the v30 release.
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+    // Late-applied migrations for deprecations in the 29.x.y range.
+    model = migrateV29_1(model);
+    model = migrateV29_2(model);
+    // Actual v30 changes.
+    model = jsonDelete('chartOptions.*.series.flipXY', model);
+    model = jsonAdd('chartOptions.common.legend.enabled', true, model);
+    model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
     return model;
 }
 function cleanup(model) {
@@ -221,7 +260,8 @@ function heuristicVersionDetection(model) {
     };
     var chartOptions = modelAny.chartOptions;
     var seriesOptions = hasKey(chartOptions, 'seriesDefaults')
-        ? chartOptions === null || chartOptions === void 0 ? void 0 : chartOptions.seriesDefaults : chartOptions === null || chartOptions === void 0 ? void 0 : chartOptions[Object.keys(chartOptions)[0]];
+        ? chartOptions === null || chartOptions === void 0 ? void 0 : chartOptions.seriesDefaults
+        : chartOptions === null || chartOptions === void 0 ? void 0 : chartOptions[Object.keys(chartOptions)[0]];
     var hints = {
         '27.0.0': hasKey(modelAny, 'seriesChartTypes'),
         '26.2.0': !hasKey(chartOptions, 'seriesDefaults'),
@@ -291,6 +331,21 @@ function jsonBackfill(path, defaultValue, json) {
             parent[prop] = defaultValue;
         }
     });
+}
+function jsonAdd(path, value, json) {
+    var _a;
+    if (typeof path === 'string') {
+        path = path.split('.');
+    }
+    var nextPath = path[0];
+    if (path.length > 1) {
+        json[nextPath] = jsonAdd(path.slice(1), value, (_a = json[nextPath]) !== null && _a !== void 0 ? _a : {});
+    }
+    var hasProperty = Object.keys(json).includes(nextPath);
+    if (!hasProperty) {
+        json[nextPath] = value;
+    }
+    return json;
 }
 function jsonMove(from, to, json) {
     var valueToMove = undefined;

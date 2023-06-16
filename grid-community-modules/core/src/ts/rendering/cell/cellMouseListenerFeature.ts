@@ -54,9 +54,9 @@ export class CellMouseListenerFeature extends Beans {
         }
 
         const { eventService, rangeService, gridOptionsService } = this.beans;
-        const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
-        if (rangeService && multiKeyPressed) {
+        if (rangeService && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
             if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
@@ -108,7 +108,7 @@ export class CellMouseListenerFeature extends Beans {
         const editOnDoubleClick = !this.beans.gridOptionsService.is('singleClickEdit')
             && !this.beans.gridOptionsService.is('suppressClickEdit');
         if (editOnDoubleClick) {
-            this.cellCtrl.startRowOrCellEdit(null, null, mouseEvent);
+            this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
     }
 
@@ -150,8 +150,8 @@ export class CellMouseListenerFeature extends Beans {
             if (shiftKey) {
                 rangeService.extendLatestRangeToCell(thisCell);
             } else {
-                const ctrlKeyPressed = ctrlKey || metaKey;
-                rangeService.setRangeToCell(thisCell, ctrlKeyPressed);
+                const isMultiKey = ctrlKey || metaKey;
+                rangeService.setRangeToCell(thisCell, isMultiKey);
             }
         }
 

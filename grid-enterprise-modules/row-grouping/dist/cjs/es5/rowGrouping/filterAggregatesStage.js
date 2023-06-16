@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -29,7 +31,8 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
     FilterAggregatesStage.prototype.execute = function (params) {
         var _this = this;
         var isPivotMode = this.columnModel.isPivotMode();
-        var isAggFilterActive = this.filterManager.isAggregateFilterPresent();
+        var isAggFilterActive = this.filterManager.isAggregateFilterPresent()
+            || this.filterManager.isAggregateQuickFilterPresent();
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
         var defaultPrimaryColumnPredicate = function (params) { return !params.node.group; };

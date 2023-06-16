@@ -20,9 +20,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { PointerEvents } from '../../scene/node';
 import { Group } from '../../scene/group';
@@ -30,7 +31,7 @@ import { Text } from '../../scene/shape/text';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation, } from './crossLineLabelPosition';
+import { labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation, calculateLabelChartPadding, } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
 import { Range } from '../../scene/shape/range';
@@ -177,7 +178,7 @@ var CrossLine = /** @class */ (function () {
         }
         var bandwidth = (_d = scale.bandwidth) !== null && _d !== void 0 ? _d : 0;
         var clippedRangeClamper = function (x) {
-            return Math.max(Math.min.apply(Math, __spread(clippedRange)), Math.min(Math.max.apply(Math, __spread(clippedRange)), x));
+            return Math.max(Math.min.apply(Math, __spreadArray([], __read(clippedRange))), Math.min(Math.max.apply(Math, __spreadArray([], __read(clippedRange))), x));
         };
         var _j = __read([0, sideFlag * gridLength], 2), xStart = _j[0], xEnd = _j[1];
         var _k = __read(this.getRange(), 2), yStart = _k[0], yEnd = _k[1];
@@ -259,8 +260,8 @@ var CrossLine = /** @class */ (function () {
             parallel: parallel,
             regularFlipRotation: regularFlipRotation,
             parallelFlipRotation: parallelFlipRotation,
-        }), autoRotation = _j.autoRotation, labelRotation = _j.labelRotation;
-        crossLineLabel.rotation = autoRotation + labelRotation;
+        }), defaultRotation = _j.defaultRotation, configuredRotation = _j.configuredRotation;
+        crossLineLabel.rotation = defaultRotation + configuredRotation;
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';
         var bbox = this.computeLabelBBox();
@@ -280,14 +281,14 @@ var CrossLine = /** @class */ (function () {
         return CrossLine.LINE_LAYER_ZINDEX;
     };
     CrossLine.prototype.getRange = function () {
-        var _a;
-        var _b = this, value = _b.value, range = _b.range, scale = _b.scale;
+        var _a = this, value = _a.value, range = _a.range, scale = _a.scale;
         var isContinuous = scale instanceof ContinuousScale;
-        var _c = __read(range !== null && range !== void 0 ? range : [value, undefined], 2), start = _c[0], end = _c[1];
+        var _b = __read(range !== null && range !== void 0 ? range : [value, undefined], 2), start = _b[0], end = _b[1];
         if (!isContinuous && end === undefined) {
             end = start;
         }
-        _a = __read([checkDatum(start, isContinuous), checkDatum(end, isContinuous)], 2), start = _a[0], end = _a[1];
+        start = checkDatum(start, isContinuous) != null ? start : undefined;
+        end = checkDatum(end, isContinuous) != null ? end : undefined;
         if (isContinuous && start === end) {
             end = undefined;
         }
@@ -300,41 +301,28 @@ var CrossLine = /** @class */ (function () {
     CrossLine.prototype.computeLabelBBox = function () {
         return this.crossLineLabel.computeTransformedBBox();
     };
-    CrossLine.prototype.calculatePadding = function (padding, seriesRect) {
-        var _a, _b, _c, _d, _e, _f;
-        var _g = this, isRange = _g.isRange, startLine = _g.startLine, endLine = _g.endLine;
+    CrossLine.prototype.calculatePadding = function (padding) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _j = this, isRange = _j.isRange, startLine = _j.startLine, endLine = _j.endLine, direction = _j.direction, _k = _j.label, _l = _k.padding, labelPadding = _l === void 0 ? 0 : _l, _m = _k.position, position = _m === void 0 ? 'top' : _m;
         if (!isRange && !startLine && !endLine) {
             return;
         }
         var crossLineLabelBBox = this.computeLabelBBox();
         var labelX = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.x;
         var labelY = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.y;
-        if (labelX == undefined || labelY == undefined) {
+        if (!crossLineLabelBBox || labelX == undefined || labelY == undefined) {
             return;
         }
-        var labelWidth = (_a = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.width) !== null && _a !== void 0 ? _a : 0;
-        var labelHeight = (_b = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.height) !== null && _b !== void 0 ? _b : 0;
-        if (labelWidth > seriesRect.width || labelHeight > seriesRect.height) {
-            // If label is bigger than seriesRect, trying to pad is just going to cause
-            // layout instability.
-            return;
-        }
-        if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
-            var paddingRight = labelX + labelWidth - (seriesRect.x + seriesRect.width);
-            padding.right = ((_c = padding.right) !== null && _c !== void 0 ? _c : 0) >= paddingRight ? padding.right : paddingRight;
-        }
-        else if (labelX <= seriesRect.x) {
-            var paddingLeft = seriesRect.x - labelX;
-            padding.left = ((_d = padding.left) !== null && _d !== void 0 ? _d : 0) >= paddingLeft ? padding.left : paddingLeft;
-        }
-        if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
-            var paddingBottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
-            padding.bottom = ((_e = padding.bottom) !== null && _e !== void 0 ? _e : 0) >= paddingBottom ? padding.bottom : paddingBottom;
-        }
-        else if (labelY <= seriesRect.y) {
-            var paddingTop = seriesRect.y - labelY;
-            padding.top = ((_f = padding.top) !== null && _f !== void 0 ? _f : 0) >= paddingTop ? padding.top : paddingTop;
-        }
+        var chartPadding = calculateLabelChartPadding({
+            yDirection: direction === ChartAxisDirection.Y,
+            padding: labelPadding,
+            position: position,
+            bbox: crossLineLabelBBox,
+        });
+        padding.left = Math.max((_a = padding.left) !== null && _a !== void 0 ? _a : 0, (_b = chartPadding.left) !== null && _b !== void 0 ? _b : 0);
+        padding.right = Math.max((_c = padding.right) !== null && _c !== void 0 ? _c : 0, (_d = chartPadding.right) !== null && _d !== void 0 ? _d : 0);
+        padding.top = Math.max((_e = padding.top) !== null && _e !== void 0 ? _e : 0, (_f = chartPadding.top) !== null && _f !== void 0 ? _f : 0);
+        padding.bottom = Math.max((_g = padding.bottom) !== null && _g !== void 0 ? _g : 0, (_h = chartPadding.bottom) !== null && _h !== void 0 ? _h : 0);
     };
     CrossLine.LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
     CrossLine.RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;

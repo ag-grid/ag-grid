@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,6 @@ var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var array_1 = require("../utils/array");
-var gridOptionsValidator_1 = require("../gridOptionsValidator");
 var ColumnGroup = /** @class */ (function () {
     function ColumnGroup(providedColumnGroup, groupId, partId, pinned) {
         // depends on the open/closed state of the group, only displaying columns are stored here
@@ -222,11 +221,6 @@ var ColumnGroup = /** @class */ (function () {
     };
     ColumnGroup.prototype.getProvidedColumnGroup = function () {
         return this.providedColumnGroup;
-    };
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    ColumnGroup.prototype.getOriginalColumnGroup = function () {
-        gridOptionsValidator_1.logDeprecation('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
-        return this.getProvidedColumnGroup();
     };
     ColumnGroup.prototype.getPaddingLevel = function () {
         var parent = this.getParent();

@@ -46,7 +46,7 @@ export class GroupedCategoryAxis extends ChartAxis {
         const { tickLineGroup, tickLabelGroup, gridLineGroup, tickScale, scale } = this;
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
-        this.requestedRange = scale.range.slice();
+        this.range = scale.range.slice();
         this.refreshScale();
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
@@ -55,15 +55,8 @@ export class GroupedCategoryAxis extends ChartAxis {
         this.separatorSelection = Selection.select(tickLineGroup, Line);
         this.labelSelection = Selection.select(tickLabelGroup, Text);
     }
-    set range(value) {
-        this.requestedRange = value.slice();
-        this.updateRange();
-    }
-    get range() {
-        return this.requestedRange.slice();
-    }
     updateRange() {
-        const { requestedRange: rr, visibleRange: vr, scale } = this;
+        const { range: rr, visibleRange: vr, scale } = this;
         const span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         const shift = span * vr[0];
         const start = rr[0] - shift;
@@ -71,12 +64,13 @@ export class GroupedCategoryAxis extends ChartAxis {
         this.resizeTickTree();
     }
     resizeTickTree() {
+        var _a;
         const s = this.scale;
         const range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         const layout = this.tickTreeLayout;
         const lineHeight = this.lineHeight;
         if (layout) {
-            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2, -layout.depth * lineHeight, range[1] - range[0] < 0);
+            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, (Math.min(range[0], range[1]) || 0) + ((_a = s.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2, -layout.depth * lineHeight, range[1] - range[0] < 0);
         }
     }
     get lineHeight() {
@@ -97,6 +91,7 @@ export class GroupedCategoryAxis extends ChartAxis {
         return this._gridLength;
     }
     calculateDomain() {
+        var _a;
         const { direction, boundSeries } = this;
         const domains = [];
         let isNumericX = undefined;
@@ -120,8 +115,9 @@ export class GroupedCategoryAxis extends ChartAxis {
             }
         });
         const domain = new Array().concat(...domains);
-        const values = extent(domain) || domain;
+        const values = (_a = extent(domain)) !== null && _a !== void 0 ? _a : domain;
         this.dataDomain = this.normaliseDataDomain(values);
+        this.scale.domain = this.dataDomain;
     }
     normaliseDataDomain(d) {
         // Prevent duplicate categories.
@@ -148,22 +144,21 @@ export class GroupedCategoryAxis extends ChartAxis {
      * it will also make it harder to reason about the program.
      */
     update(primaryTickCount) {
+        this.updateDirection();
         this.calculateDomain();
-        const { scale, label, label: { parallel }, tickScale, requestedRange, } = this;
-        scale.domain = this.dataDomain;
+        this.updateRange();
+        const { scale, label, label: { parallel }, moduleCtx: { callbackCache }, tickScale, range: requestedRange, title, title: { formatter = (p) => p.defaultValue } = {}, _titleCaption, } = this;
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
         const bandwidth = rangeLength / scale.domain.length || 0;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        this.updatePosition();
-        const title = this.title;
+        const sideFlag = label.getSideFlag();
+        this.updatePosition({ rotation, sideFlag });
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        if (title) {
-            title.node.visible = false;
-        }
+        _titleCaption.node.visible = false;
         const lineHeight = this.lineHeight;
         // Render ticks and labels.
         const tickTreeLayout = this.tickTreeLayout;
@@ -171,10 +166,6 @@ export class GroupedCategoryAxis extends ChartAxis {
         const treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
         const isLabelTree = tickTreeLayout ? tickTreeLayout.depth > 1 : false;
         const ticks = tickScale.ticks();
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        const sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -184,7 +175,7 @@ export class GroupedCategoryAxis extends ChartAxis {
         // and then rotated, zero rotation means 12 (not 3) o-clock.
         // -1 = flip
         //  1 = don't flip (default)
-        const { autoRotation, labelRotation, parallelFlipFlag } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation, parallelFlipFlag } = calculateLabelRotation({
             rotation: label.rotation,
             parallel,
             regularFlipRotation: normalizeAngle360(rotation - Math.PI / 2),
@@ -196,6 +187,7 @@ export class GroupedCategoryAxis extends ChartAxis {
         const labelBBoxes = new Map();
         let maxLeafLabelWidth = 0;
         labelSelection.each((node, datum, index) => {
+            var _a;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
@@ -207,9 +199,9 @@ export class GroupedCategoryAxis extends ChartAxis {
             node.translationY = datum.screenX;
             if (index === 0) {
                 // use the phantom root as the axis title
-                if (title && title.enabled && labels.length > 0) {
+                if ((title === null || title === void 0 ? void 0 : title.enabled) && labels.length > 0) {
                     node.visible = true;
-                    node.text = title.text;
+                    node.text = callbackCache.call(formatter, this.getTitleFormatterParams());
                     node.fontSize = title.fontSize;
                     node.fontStyle = title.fontStyle;
                     node.fontWeight = title.fontWeight;
@@ -220,13 +212,16 @@ export class GroupedCategoryAxis extends ChartAxis {
                     node.visible = false;
                 }
             }
-            else {
-                node.text = labelFormatter
-                    ? labelFormatter({
+            else if (labelFormatter) {
+                node.text =
+                    (_a = callbackCache.call(labelFormatter, {
                         value: String(datum.label),
                         index,
-                    })
-                    : String(datum.label);
+                    })) !== null && _a !== void 0 ? _a : String(datum.label);
+                node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
+            }
+            else {
+                node.text = String(datum.label);
                 node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
             }
             const bbox = node.computeBBox();
@@ -242,7 +237,7 @@ export class GroupedCategoryAxis extends ChartAxis {
             label.x = labelX;
             label.rotationCenterX = labelX;
             if (!datum.children.length) {
-                label.rotation = labelRotation;
+                label.rotation = configuredRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
                 const bbox = labelBBoxes.get(label.id);
@@ -258,7 +253,7 @@ export class GroupedCategoryAxis extends ChartAxis {
                     label.visible = false;
                 }
                 else if (isHorizontal) {
-                    label.rotation = autoRotation;
+                    label.rotation = defaultRotation;
                 }
                 else {
                     label.rotation = -Math.PI / 2;

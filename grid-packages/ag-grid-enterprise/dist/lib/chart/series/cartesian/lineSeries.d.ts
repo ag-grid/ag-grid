@@ -1,13 +1,15 @@
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import { BBox } from '../../../scene/bbox';
 import { Text } from '../../../scene/shape/text';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDatum, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { Label } from '../../label';
 import { Marker } from '../../marker/marker';
 import { AgCartesianSeriesLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, AgTooltipRendererResult, FontStyle, FontWeight } from '../../agChartOptions';
+import { ModuleContext } from '../../../util/module';
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
         readonly moveTo: boolean;
@@ -34,9 +36,6 @@ declare type LineContext = SeriesNodeDataContext<LineNodeDatum>;
 export declare class LineSeries extends CartesianSeries<LineContext> {
     static className: string;
     static type: "line";
-    private xDomain;
-    private yDomain;
-    private pointsData;
     readonly marker: CartesianSeriesMarker;
     readonly label: LineSeriesLabel;
     title?: string;
@@ -46,32 +45,19 @@ export declare class LineSeries extends CartesianSeries<LineContext> {
     strokeWidth: number;
     strokeOpacity: number;
     tooltip: LineSeriesTooltip;
-    constructor();
-    protected _xKey: string;
-    set xKey(value: string);
-    get xKey(): string;
-    xName: string;
-    protected _yKey: string;
-    set yKey(value: string);
-    get yKey(): string;
-    yName: string;
-    getDomain(direction: ChartAxisDirection): any[];
+    constructor(moduleCtx: ModuleContext);
+    xKey?: string;
+    xName?: string;
+    yKey?: string;
+    yName?: string;
     processData(): Promise<void>;
+    getDomain(direction: ChartAxisDirection): any[];
     createNodeData(): Promise<{
         itemId: string;
         nodeData: LineNodeDatum[];
         labelData: LineNodeDatum[];
     }[]>;
     protected isPathOrSelectionDirty(): boolean;
-    protected updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        contextData: LineContext;
-        paths: Path[];
-    }): Promise<void>;
-    protected updatePathNodes(opts: {
-        seriesHighlighted?: boolean;
-        paths: Path[];
-    }): Promise<void>;
     protected markerFactory(): Marker;
     protected updateMarkerSelection(opts: {
         nodeData: LineNodeDatum[];
@@ -91,7 +77,31 @@ export declare class LineSeries extends CartesianSeries<LineContext> {
     protected getNodeClickEvent(event: MouseEvent, datum: LineNodeDatum): CartesianSeriesNodeClickEvent<any>;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: LineNodeDatum): CartesianSeriesNodeDoubleClickEvent<any>;
     getTooltipHtml(nodeDatum: LineNodeDatum): string;
-    getLegendData(): LegendDatum[];
+    getLegendData(): ChartLegendDatum[];
+    animateEmptyUpdateReady({ markerSelections, labelSelections, contextData, paths, seriesRect, }: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        labelSelections: Array<Selection<Text, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }): void;
+    animateReadyUpdate(data: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+    }): void;
+    animateReadyResize(data: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+    }): void;
+    resetMarkersAndPaths({ markerSelections, contextData, paths, }: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+    }): void;
+    private animateFormatter;
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=lineSeries.d.ts.map

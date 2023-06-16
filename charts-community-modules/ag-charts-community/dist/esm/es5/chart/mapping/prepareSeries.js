@@ -36,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Logger } from '../../util/logger';
 /**
@@ -47,6 +48,7 @@ import { Logger } from '../../util/logger';
  */
 export function groupSeriesByType(seriesOptions) {
     var e_1, _a;
+    var _b;
     var indexMap = {};
     var result = [];
     try {
@@ -57,7 +59,7 @@ export function groupSeriesByType(seriesOptions) {
                 result.push([s]);
                 continue;
             }
-            var seriesType = s.type || 'line';
+            var seriesType = (_b = s.type) !== null && _b !== void 0 ? _b : 'line';
             var groupingKey = s.stacked ? 'stacked' : 'grouped';
             var indexKey = seriesType + "-" + s.xKey + "-" + groupingKey;
             if (indexMap[indexKey] == null) {
@@ -81,7 +83,7 @@ var FAIL = Symbol();
 var SKIP = Symbol();
 var ARRAY_REDUCER = function (prop) { return function (result, next) {
     var _a;
-    return result.concat.apply(result, __spread(((_a = next[prop]) !== null && _a !== void 0 ? _a : [])));
+    return result.concat.apply(result, __spreadArray([], __read(((_a = next[prop]) !== null && _a !== void 0 ? _a : []))));
 }; };
 var BOOLEAN_OR_REDUCER = function (prop, defaultValue) { return function (result, next) {
     if (typeof next[prop] === 'boolean') {
@@ -114,13 +116,13 @@ var DEFAULTING_ARRAY_REDUCER = function (prop, defaultValue) { return function (
 }; };
 var YKEYS_REDUCER = function (prop, activationValue) { return function (result, next) {
     if (next[prop] === activationValue) {
-        return result.concat.apply(result, __spread((next.yKey ? [next.yKey] : next.yKeys)));
+        return result.concat.apply(result, __spreadArray([], __read((next.yKey ? [next.yKey] : next.yKeys))));
     }
     return result;
 }; };
 var STACK_GROUPS_REDUCER = function () { return function (result, next) {
     var _a;
-    return __assign(__assign({}, result), (_a = {}, _a[next.stackGroup] = __spread((result[next.stackGroup] || []), [next.yKey]), _a));
+    return __assign(__assign({}, result), (_a = {}, _a[next.stackGroup] = __spreadArray(__spreadArray([], __read((result[next.stackGroup] || []))), [next.yKey]), _a));
 }; };
 var REDUCE_CONFIG = {
     hideInChart: { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
@@ -130,6 +132,11 @@ var REDUCE_CONFIG = {
     stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
     yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+    legendItemName: {
+        outputProp: 'legendItemNames',
+        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', SKIP),
+        start: [],
+    },
     grouped: {
         outputProp: 'grouped',
         reducer: BOOLEAN_OR_REDUCER('grouped'),
@@ -186,9 +193,10 @@ export function processSeriesOptions(seriesOptions) {
     var e_2, _a;
     var result = [];
     var preprocessed = seriesOptions.map(function (series) {
+        var _a;
         // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
         if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
-            return __assign(__assign({}, series), { grouped: series.grouped != null ? series.grouped : true });
+            return __assign(__assign({}, series), { grouped: (_a = series.grouped) !== null && _a !== void 0 ? _a : true });
         }
         return series;
     });

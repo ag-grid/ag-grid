@@ -1,13 +1,18 @@
 import { Series, SeriesNodePickMode } from '../series';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 export class PolarSeries extends Series {
-    constructor({ useLabelLayer = false }) {
+    constructor({ moduleCtx, useLabelLayer = false, pickModes = [SeriesNodePickMode.EXACT_SHAPE_MATCH], }) {
         super({
+            moduleCtx,
             useLabelLayer,
-            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            pickModes,
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],
+            },
+            directionNames: {
+                [ChartAxisDirection.X]: ['angleName'],
+                [ChartAxisDirection.Y]: ['radiusName'],
             },
         });
         /**
@@ -28,7 +33,7 @@ export class PolarSeries extends Series {
     getLabelData() {
         return [];
     }
-    computeLabelsBBox(_options) {
+    computeLabelsBBox(_options, _seriesRect) {
         return null;
     }
 }

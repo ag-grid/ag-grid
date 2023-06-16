@@ -9,16 +9,18 @@ const options: AgChartOptions = {
             type: 'treemap',
             labelKey: 'name',
             gradient: false,
-            nodePadding: 2,
+            nodePadding: 0,
+            nodeGap: 4,
             sizeKey: 'exports',
             tileStroke: 'white',
-            tileStrokeWidth: 1,
+            tileStrokeWidth: 2,
             labelShadow: {
                 enabled: false,
             },
             groupFill: 'transparent',
             title: {
                 color: 'black',
+                padding: 4,
             },
             subtitle: {
                 color: 'black',
@@ -42,7 +44,7 @@ const options: AgChartOptions = {
                 }
 
                 const fill = parent.name === 'Foodstuffs' ? 'rgb(64, 172, 64)' : 'rgb(32, 96, 224)';
-                const stroke = highlighted ? 'black' : 'white';
+                const stroke = highlighted ? 'black' : fill;
                 return { fill, stroke };
             },
         } as AgTreemapSeriesOptions,

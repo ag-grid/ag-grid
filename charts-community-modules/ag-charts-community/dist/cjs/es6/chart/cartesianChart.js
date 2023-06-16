@@ -15,6 +15,7 @@ const categoryAxis_1 = require("./axis/categoryAxis");
 const groupedCategoryAxis_1 = require("./axis/groupedCategoryAxis");
 const chartAxisDirection_1 = require("./chartAxisDirection");
 const logger_1 = require("../util/logger");
+const angle_1 = require("../util/angle");
 const directions = ['top', 'right', 'bottom', 'left'];
 class CartesianChart extends chart_1.Chart {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
@@ -31,8 +32,6 @@ class CartesianChart extends chart_1.Chart {
             crossLines: true,
             series: true,
         };
-        const root = this.scene.root;
-        this.legend.attachLegend(root);
     }
     performLayout() {
         const _super = Object.create(null, {
@@ -161,7 +160,7 @@ class CartesianChart extends chart_1.Chart {
         let clipSeries = false;
         const primaryTickCounts = {};
         const paddedBounds = this.applySeriesPadding(bounds);
-        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
+        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(axisWidths) : {};
         const axisBound = this.buildAxisBound(paddedBounds, axisWidths, crossLinePadding, visibility);
         const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
         // Set the number of ticks for continuous axes based on the available range
@@ -172,6 +171,7 @@ class CartesianChart extends chart_1.Chart {
             const { clipSeries: newClipSeries, axisThickness, axisOffset, } = this.calculateAxisDimensions({
                 axis,
                 seriesRect,
+                paddedBounds,
                 axisWidths,
                 newAxisWidths,
                 primaryTickCounts,
@@ -192,13 +192,13 @@ class CartesianChart extends chart_1.Chart {
         });
         return { clipSeries, seriesRect, axisWidths: newAxisWidths, visibility };
     }
-    buildCrossLinePadding(lastPassSeriesRect, axisWidths) {
+    buildCrossLinePadding(axisWidths) {
         var _a;
         const crossLinePadding = {};
         this.axes.forEach((axis) => {
             if (axis.crossLines) {
                 axis.crossLines.forEach((crossLine) => {
-                    crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
+                    crossLine.calculatePadding(crossLinePadding);
                 });
             }
         });
@@ -264,7 +264,7 @@ class CartesianChart extends chart_1.Chart {
     }
     calculateAxisDimensions(opts) {
         var _a, _b, _c, _d, _e, _f;
-        const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
+        const { axis, seriesRect, paddedBounds, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
         let { clipSeries } = opts;
         const { position, direction } = axis;
         const axisLeftRightRange = (axis) => {
@@ -273,7 +273,6 @@ class CartesianChart extends chart_1.Chart {
             }
             return [seriesRect.height, 0];
         };
-        axis.label.mirrored = ['top', 'right'].includes(position);
         const axisOffset = (_a = newAxisWidths[position]) !== null && _a !== void 0 ? _a : 0;
         switch (position) {
             case 'top':
@@ -294,6 +293,16 @@ class CartesianChart extends chart_1.Chart {
             clipSeries = true;
         }
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
+        const paddedBoundsCoefficient = 0.3;
+        if (axis.thickness > 0) {
+            axis.maxThickness = axis.thickness;
+        }
+        else if (direction === chartAxisDirection_1.ChartAxisDirection.Y) {
+            axis.maxThickness = paddedBounds.width * paddedBoundsCoefficient;
+        }
+        else {
+            axis.maxThickness = paddedBounds.height * paddedBoundsCoefficient;
+        }
         primaryTickCount = axis.update(primaryTickCount);
         primaryTickCounts[direction] = (_c = primaryTickCounts[direction]) !== null && _c !== void 0 ? _c : primaryTickCount;
         let axisThickness = 0;
@@ -336,7 +345,7 @@ class CartesianChart extends chart_1.Chart {
                 axis.translation.x = this.clampToOutsideSeriesRect(seriesRect, axisBound.x + axisBound.width - axisThickness - axisOffset, 'x', -1);
                 break;
         }
-        axis.updatePosition();
+        axis.updatePosition({ rotation: angle_1.toRadians(axis.rotation), sideFlag: axis.label.getSideFlag() });
     }
 }
 exports.CartesianChart = CartesianChart;

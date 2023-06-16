@@ -11,6 +11,18 @@ const validation_1 = require("../../util/validation");
 const timeScale_1 = require("../../scale/timeScale");
 const array_1 = require("../../util/array");
 const chartAxis_1 = require("../chartAxis");
+const default_1 = require("../../util/default");
+const axis_1 = require("../../axis");
+class TimeAxisTick extends axis_1.BaseAxisTick {
+    constructor() {
+        super(...arguments);
+        this.maxSpacing = NaN;
+    }
+}
+__decorate([
+    validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.GREATER_THAN('minSpacing'))),
+    default_1.Default(NaN)
+], TimeAxisTick.prototype, "maxSpacing", void 0);
 class TimeAxis extends chartAxis_1.ChartAxis {
     constructor(moduleCtx) {
         super(moduleCtx, new timeScale_1.TimeScale());
@@ -25,6 +37,7 @@ class TimeAxis extends chartAxis_1.ChartAxis {
         });
     }
     normaliseDataDomain(d) {
+        var _a;
         let { min, max } = this;
         if (typeof min === 'number') {
             min = new Date(min);
@@ -33,7 +46,7 @@ class TimeAxis extends chartAxis_1.ChartAxis {
             max = new Date(max);
         }
         if (d.length > 2) {
-            d = (array_1.extent(d) || [0, 1000]).map((x) => new Date(x));
+            d = ((_a = array_1.extent(d)) !== null && _a !== void 0 ? _a : [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];
@@ -46,6 +59,9 @@ class TimeAxis extends chartAxis_1.ChartAxis {
         }
         return d;
     }
+    createTick() {
+        return new TimeAxisTick();
+    }
     onLabelFormatChange(ticks, format) {
         if (format) {
             super.onLabelFormatChange(ticks, format);
@@ -56,7 +72,8 @@ class TimeAxis extends chartAxis_1.ChartAxis {
         }
     }
     formatDatum(datum) {
-        return this.datumFormatter(datum);
+        var _a;
+        return (_a = this.moduleCtx.callbackCache.call(this.datumFormatter, datum)) !== null && _a !== void 0 ? _a : String(datum);
     }
     calculatePadding(_min, _max) {
         // numbers in domain correspond to Unix timestamps

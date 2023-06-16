@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -14,8 +16,8 @@ var __extends = (this && this.__extends) || (function () {
 import { Series, SeriesNodePickMode } from '../series';
 var HierarchySeries = /** @class */ (function (_super) {
     __extends(HierarchySeries, _super);
-    function HierarchySeries() {
-        return _super.call(this, { pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
+    function HierarchySeries(moduleCtx) {
+        return _super.call(this, { moduleCtx: moduleCtx, pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
     }
     HierarchySeries.prototype.getLabelData = function () {
         return [];

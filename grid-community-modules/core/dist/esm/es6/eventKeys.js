@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -60,19 +60,18 @@ Events.EVENT_CHART_DESTROYED = 'chartDestroyed';
 /** For when the tool panel is shown / hidden */
 Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
 Events.EVENT_TOOL_PANEL_SIZE_CHANGED = 'toolPanelSizeChanged';
-/**
- * This is a replacement event for EVENT_TOOL_PANEL_VISIBLE_CHANGED. In v30, the original event interface will be dropped
- * and replaced with the new event (but using the old event type and interface name)
- */
-Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED = 'internalToolPanelVisibleChanged';
 Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START = 'columnPanelItemDragStart';
 Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END = 'columnPanelItemDragEnd';
 /** Model was updated - grid updates the drawn rows when this happens */
 Events.EVENT_MODEL_UPDATED = 'modelUpdated';
+Events.EVENT_CUT_START = 'cutStart';
+Events.EVENT_CUT_END = 'cutEnd';
 Events.EVENT_PASTE_START = 'pasteStart';
 Events.EVENT_PASTE_END = 'pasteEnd';
 Events.EVENT_FILL_START = 'fillStart';
 Events.EVENT_FILL_END = 'fillEnd';
+Events.EVENT_RANGE_DELETE_START = 'rangeDeleteStart';
+Events.EVENT_RANGE_DELETE_END = 'rangeDeleteEnd';
 /** Undo operation has started. */
 Events.EVENT_UNDO_STARTED = 'undoStarted';
 /** Undo operation has ended. */
@@ -96,7 +95,6 @@ Events.EVENT_FULL_WIDTH_ROW_FOCUSED = 'fullWidthRowFocused';
 Events.EVENT_ROW_SELECTED = 'rowSelected';
 Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
 Events.EVENT_CELL_KEY_DOWN = 'cellKeyDown';
-Events.EVENT_CELL_KEY_PRESS = 'cellKeyPress';
 Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
 Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */

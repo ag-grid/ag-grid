@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -51,9 +53,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FocusService = void 0;
@@ -105,7 +108,7 @@ var FocusService = /** @class */ (function (_super) {
         var docControllers = FocusService_1.instancesMonitored.get(doc);
         var newControllers = [];
         if (docControllers && docControllers.length) {
-            newControllers = __spread(docControllers).filter(function (currentGridCore) { return currentGridCore !== controller; });
+            newControllers = __spreadArray([], __read(docControllers)).filter(function (currentGridCore) { return currentGridCore !== controller; });
             FocusService_1.instancesMonitored.set(doc, newControllers);
         }
         if (newControllers.length === 0) {
@@ -260,8 +263,7 @@ var FocusService = /** @class */ (function (_super) {
             rowPinned: generic_1.makeNull(rowPinned),
             column: gridColumn
         } : null;
-        var event = __assign(__assign({ type: events_1.Events.EVENT_CELL_FOCUSED }, this.getFocusEventParams()), { forceBrowserFocus: forceBrowserFocus,
-            preventScrollOnBrowserFocus: preventScrollOnBrowserFocus, floating: null });
+        var event = __assign(__assign({ type: events_1.Events.EVENT_CELL_FOCUSED }, this.getFocusEventParams()), { forceBrowserFocus: forceBrowserFocus, preventScrollOnBrowserFocus: preventScrollOnBrowserFocus, floating: null });
         this.eventService.dispatchEvent(event);
     };
     FocusService.prototype.isCellFocused = function (cellPosition) {

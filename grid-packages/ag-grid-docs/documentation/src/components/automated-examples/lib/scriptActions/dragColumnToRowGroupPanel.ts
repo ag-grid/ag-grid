@@ -6,8 +6,9 @@ import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
 import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
-import { createTween } from './createTween';
+import { createMoveMouse } from './createMoveMouse';
 import { moveTarget } from './move';
+import { removeDragAndDropHandles } from './removeDragAndDropHandles';
 
 interface DragColumnToRowGroupPanelParams {
     mouse: Mouse;
@@ -58,11 +59,14 @@ export async function dragColumnToRowGroupPanel({
 
     const offset = mouse.getOffset();
     const scrollOffset = getScrollOffset();
-    await createTween({
-        group: tweenGroup,
-        fromPos,
+
+    await createMoveMouse({
+        mouse,
         toPos,
-        onChange: ({ coords }) => {
+        duration,
+        tweenGroup,
+        easing,
+        tweenOnChange: ({ coords }) => {
             const currentScrollOffset = getScrollOffset();
             const currentScrollDiff = minusPoint(scrollOffset, currentScrollOffset);
             const mouseCoords = addPoints(coords, currentScrollDiff);
@@ -81,8 +85,7 @@ export async function dragColumnToRowGroupPanel({
             // Move mouse as well
             moveTarget({ target: mouse.getTarget(), coords, offset });
         },
-        duration,
-        easing,
+        scriptDebugger,
     });
 
     const draggedHeaderItem = document.querySelector(AG_DND_GHOST_SELECTOR);
@@ -96,8 +99,5 @@ export async function dragColumnToRowGroupPanel({
         scriptDebugger?.errorLog('No dragged header item:', headerCellName);
     }
 
-    // Clean up any dangling drag items
-    document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
-        el.remove();
-    });
+    removeDragAndDropHandles();
 }

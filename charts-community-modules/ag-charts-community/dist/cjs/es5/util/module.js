@@ -38,7 +38,9 @@ exports.BaseModuleInstance = BaseModuleInstance;
 exports.REGISTERED_MODULES = [];
 function registerModule(module) {
     var otherModule = exports.REGISTERED_MODULES.find(function (other) {
-        return module.type === other.type && module.optionsKey === other.optionsKey;
+        return (module.type === other.type &&
+            module.optionsKey === other.optionsKey &&
+            module.identifier === other.identifier);
     });
     if (otherModule) {
         if (module.packageType === 'enterprise' && otherModule.packageType === 'community') {

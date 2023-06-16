@@ -44,6 +44,9 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
+        if (rowNode.sibling) {
+            this.destroyRowNode(rowNode.sibling, false);
+        }
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
@@ -75,6 +78,12 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
                 console.warn(`data is `, rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
+        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+            rowNode.createFooter();
+            if (rowNode.sibling) {
+                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
+            }
+        }
     }
     setMasterDetailInfo(rowNode) {
         const isMasterFunc = this.gridOptionsService.get('isRowMaster');
@@ -104,6 +113,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
         }
     }
     setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight) {
+        var _a;
         rowNode.stub = false;
         if (core_1._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -129,6 +139,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
         // getting set, if it's a group node and colDef.autoHeight=true
         if (core_1._.exists(data)) {
             rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            (_a = rowNode.sibling) === null || _a === void 0 ? void 0 : _a.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
     }
     setChildCountIntoRowNode(rowNode) {

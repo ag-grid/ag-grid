@@ -1,14 +1,14 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 import { ComponentType, AgPromise } from 'ag-grid-community';
 import { ReactComponent } from './reactComponent';
-import { PortalManager } from './portalManager';
+import { LegacyPortalManager } from './portalManager';
 export declare class NewReactComponent extends ReactComponent {
     private key;
     private portalKey;
     private oldPortal;
     private reactElement;
     private params;
-    constructor(reactComponent: any, parentComponent: PortalManager, componentType: ComponentType);
+    constructor(reactComponent: any, parentComponent: LegacyPortalManager, componentType: ComponentType);
     init(params: any): AgPromise<void>;
     private createOrUpdatePortal;
     private createReactComponent;

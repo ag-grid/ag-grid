@@ -14,4 +14,8 @@ export declare class AgInputNumberField extends AgInputTextField {
     setPrecision(precision: number): this;
     setStep(step?: number): this;
     setValue(value?: string | null, silent?: boolean): this;
+    setStartValue(value?: string | null): void;
+    private setValueOrInputValue;
+    getValue(): string | null | undefined;
+    private isScientificNotation;
 }

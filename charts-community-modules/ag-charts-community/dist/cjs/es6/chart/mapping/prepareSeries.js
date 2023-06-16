@@ -7,6 +7,7 @@ const logger_1 = require("../../util/logger");
  * Returns an array of arrays containing the ordered and grouped series options objects.
  */
 function groupSeriesByType(seriesOptions) {
+    var _a;
     const indexMap = {};
     const result = [];
     for (const s of seriesOptions) {
@@ -15,7 +16,7 @@ function groupSeriesByType(seriesOptions) {
             result.push([s]);
             continue;
         }
-        const seriesType = s.type || 'line';
+        const seriesType = (_a = s.type) !== null && _a !== void 0 ? _a : 'line';
         const groupingKey = s.stacked ? 'stacked' : 'grouped';
         const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
         if (indexMap[indexKey] == null) {
@@ -80,6 +81,11 @@ const REDUCE_CONFIG = {
     stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
     yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+    legendItemName: {
+        outputProp: 'legendItemNames',
+        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', SKIP),
+        start: [],
+    },
     grouped: {
         outputProp: 'grouped',
         reducer: BOOLEAN_OR_REDUCER('grouped'),
@@ -136,9 +142,10 @@ exports.reduceSeries = reduceSeries;
 function processSeriesOptions(seriesOptions) {
     const result = [];
     const preprocessed = seriesOptions.map((series) => {
+        var _a;
         // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
         if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
-            return Object.assign(Object.assign({}, series), { grouped: series.grouped != null ? series.grouped : true });
+            return Object.assign(Object.assign({}, series), { grouped: (_a = series.grouped) !== null && _a !== void 0 ? _a : true });
         }
         return series;
     });

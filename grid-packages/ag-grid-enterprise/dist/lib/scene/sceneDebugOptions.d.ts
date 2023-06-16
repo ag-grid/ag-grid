@@ -5,3 +5,4 @@ export interface SceneDebugOptions {
     consoleLog: boolean;
     sceneNodeHighlight: (string | RegExp)[];
 }
+//# sourceMappingURL=sceneDebugOptions.d.ts.map

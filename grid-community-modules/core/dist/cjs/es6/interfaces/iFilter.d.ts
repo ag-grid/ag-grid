@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ValueGetterFunc } from '../entities/colDef';
@@ -24,18 +24,14 @@ export interface IFilterDef {
      * - Set to a `IFilterComp`.
      */
     filter?: any;
-    /** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.  */
-    filterFramework?: any;
-    /** Params to be passed to the filter component specified in `filter` or `filterFramework`. */
+    /** Params to be passed to the filter component specified in `filter`. */
     filterParams?: any;
     /**
      * The custom component to be used for rendering the floating filter.
      * If none is specified the default AG Grid is used.
      */
     floatingFilterComponent?: any;
-    /** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components. */
-    floatingFilterComponentFramework?: any;
-    /** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */
+    /** Params to be passed to `floatingFilterComponent`. */
     floatingFilterComponentParams?: any;
 }
 export interface IFilter {
@@ -110,10 +106,6 @@ export interface IFilterOptionDef {
     predicate?: (filterValues: any[], cellValue: any) => boolean;
     /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
     numberOfInputs?: 0 | 1 | 2;
-    /** @deprecated v26.2 use `predicate` instead. */
-    test?: (filterValue: any, cellValue: any) => boolean;
-    /** @deprecated v26.2 use `numberOfInputs: 0` instead. */
-    hideFilterInput?: boolean;
 }
 /**
  * Parameters provided by the grid to the `init` method of an `IFilterComp`

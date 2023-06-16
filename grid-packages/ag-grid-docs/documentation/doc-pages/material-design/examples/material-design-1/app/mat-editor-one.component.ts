@@ -32,6 +32,9 @@ export class MatEditorComponentOne {
             onGridReady: () => {
                 this.gridOptions.api!.sizeColumnsToFit();
             },
+            defaultColDef: {
+                wrapHeaderText: true,
+            },
             rowHeight: 48 // recommended row height for material design data grids,
         };
     }

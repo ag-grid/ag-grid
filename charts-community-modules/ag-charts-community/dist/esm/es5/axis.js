@@ -1,8 +1,30 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -20,14 +42,26 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { Text } from './scene/shape/text';
+import { getFont, measureText, Text, splitText } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
@@ -35,7 +69,7 @@ import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { TimeInterval } from './util/time/interval';
 import { areArrayNumbersEqual } from './util/equal';
-import { Validate, BOOLEAN, OPT_BOOLEAN, NUMBER, OPT_NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, STRING, OPT_COLOR_STRING, OPTIONAL, ARRAY, predicateWithMessage, OPT_STRING, OPT_ARRAY, LESS_THAN, NUMBER_OR_NAN, AND, GREATER_THAN, } from './util/validation';
+import { Validate, BOOLEAN, OPT_BOOLEAN, NUMBER, OPT_NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, STRING, OPT_COLOR_STRING, OPTIONAL, ARRAY, predicateWithMessage, OPT_STRING, OPT_ARRAY, LESS_THAN, NUMBER_OR_NAN, AND, TEXT_WRAP, OPT_FUNCTION, } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
@@ -46,7 +80,7 @@ import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
-import { calculateLabelRotation } from './chart/label';
+import { calculateLabelRotation, calculateLabelBBox, getLabelSpacing, getTextAlign, getTextBaseline, } from './chart/label';
 import { Logger } from './util/logger';
 var TICK_COUNT = predicateWithMessage(function (v, ctx) { return NUMBER(0)(v, ctx) || v instanceof TimeInterval; }, "expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'");
 var OPT_TICK_COUNT = predicateWithMessage(function (v, ctx) { return OPTIONAL(v, ctx, TICK_COUNT); }, "expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'");
@@ -68,6 +102,13 @@ export var Tags;
     Tags[Tags["GridArc"] = 3] = "GridArc";
     Tags[Tags["AxisLine"] = 4] = "AxisLine";
 })(Tags || (Tags = {}));
+var TickGenerationType;
+(function (TickGenerationType) {
+    TickGenerationType[TickGenerationType["CREATE"] = 0] = "CREATE";
+    TickGenerationType[TickGenerationType["CREATE_SECONDARY"] = 1] = "CREATE_SECONDARY";
+    TickGenerationType[TickGenerationType["FILTER"] = 2] = "FILTER";
+    TickGenerationType[TickGenerationType["VALUES"] = 3] = "VALUES";
+})(TickGenerationType || (TickGenerationType = {}));
 var AxisLine = /** @class */ (function () {
     function AxisLine() {
         this.width = 1;
@@ -82,8 +123,9 @@ var AxisLine = /** @class */ (function () {
     return AxisLine;
 }());
 export { AxisLine };
-var AxisTick = /** @class */ (function () {
-    function AxisTick() {
+var BaseAxisTick = /** @class */ (function () {
+    function BaseAxisTick() {
+        this.enabled = true;
         /**
          * The line width to be used by axis ticks.
          */
@@ -110,39 +152,45 @@ var AxisTick = /** @class */ (function () {
         this.interval = undefined;
         this.values = undefined;
         this.minSpacing = NaN;
-        this.maxSpacing = NaN;
     }
     __decorate([
-        Validate(NUMBER(0))
-    ], AxisTick.prototype, "width", void 0);
+        Validate(BOOLEAN)
+    ], BaseAxisTick.prototype, "enabled", void 0);
     __decorate([
         Validate(NUMBER(0))
-    ], AxisTick.prototype, "size", void 0);
+    ], BaseAxisTick.prototype, "width", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], BaseAxisTick.prototype, "size", void 0);
     __decorate([
         Validate(OPT_COLOR_STRING)
-    ], AxisTick.prototype, "color", void 0);
+    ], BaseAxisTick.prototype, "color", void 0);
     __decorate([
         Validate(OPT_TICK_COUNT),
         Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-    ], AxisTick.prototype, "count", void 0);
+    ], BaseAxisTick.prototype, "count", void 0);
     __decorate([
         Validate(OPT_TICK_INTERVAL)
-    ], AxisTick.prototype, "interval", void 0);
+    ], BaseAxisTick.prototype, "interval", void 0);
     __decorate([
         Validate(OPT_ARRAY())
-    ], AxisTick.prototype, "values", void 0);
+    ], BaseAxisTick.prototype, "values", void 0);
     __decorate([
         Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing'))),
         Default(NaN)
-    ], AxisTick.prototype, "minSpacing", void 0);
-    __decorate([
-        Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing'))),
-        Default(NaN)
-    ], AxisTick.prototype, "maxSpacing", void 0);
-    return AxisTick;
+    ], BaseAxisTick.prototype, "minSpacing", void 0);
+    return BaseAxisTick;
 }());
+export { BaseAxisTick };
 var AxisLabel = /** @class */ (function () {
     function AxisLabel() {
+        this.enabled = true;
+        /** If set to `false`, axis labels will not be wrapped on multiple lines. */
+        this.autoWrap = false;
+        /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
+        this.maxWidth = undefined;
+        /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
+        this.maxHeight = undefined;
         this.fontStyle = undefined;
         this.fontWeight = undefined;
         this.fontSize = 12;
@@ -210,6 +258,29 @@ var AxisLabel = /** @class */ (function () {
         this.formatter = undefined;
         this.format = undefined;
     }
+    /**
+     * The side of the axis line to position the labels on.
+     * -1 = left (default)
+     * 1 = right
+     */
+    AxisLabel.prototype.getSideFlag = function () {
+        return this.mirrored ? 1 : -1;
+    };
+    AxisLabel.prototype.getFont = function () {
+        return getFont(this);
+    };
+    __decorate([
+        Validate(BOOLEAN)
+    ], AxisLabel.prototype, "enabled", void 0);
+    __decorate([
+        Validate(OPT_BOOLEAN)
+    ], AxisLabel.prototype, "autoWrap", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0))
+    ], AxisLabel.prototype, "maxWidth", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0))
+    ], AxisLabel.prototype, "maxHeight", void 0);
     __decorate([
         Validate(OPT_FONT_STYLE)
     ], AxisLabel.prototype, "fontStyle", void 0);
@@ -256,6 +327,48 @@ var AxisLabel = /** @class */ (function () {
     return AxisLabel;
 }());
 export { AxisLabel };
+var AxisTitle = /** @class */ (function () {
+    function AxisTitle() {
+        this.enabled = false;
+        this.text = undefined;
+        this.fontStyle = undefined;
+        this.fontWeight = undefined;
+        this.fontSize = 10;
+        this.fontFamily = 'sans-serif';
+        this.color = undefined;
+        this.wrapping = 'always';
+        this.formatter = undefined;
+    }
+    __decorate([
+        Validate(BOOLEAN)
+    ], AxisTitle.prototype, "enabled", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], AxisTitle.prototype, "text", void 0);
+    __decorate([
+        Validate(OPT_FONT_STYLE)
+    ], AxisTitle.prototype, "fontStyle", void 0);
+    __decorate([
+        Validate(OPT_FONT_WEIGHT)
+    ], AxisTitle.prototype, "fontWeight", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], AxisTitle.prototype, "fontSize", void 0);
+    __decorate([
+        Validate(STRING)
+    ], AxisTitle.prototype, "fontFamily", void 0);
+    __decorate([
+        Validate(OPT_COLOR_STRING)
+    ], AxisTitle.prototype, "color", void 0);
+    __decorate([
+        Validate(TEXT_WRAP)
+    ], AxisTitle.prototype, "wrapping", void 0);
+    __decorate([
+        Validate(OPT_FUNCTION)
+    ], AxisTitle.prototype, "formatter", void 0);
+    return AxisTitle;
+}());
+export { AxisTitle };
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -266,7 +379,8 @@ export { AxisLabel };
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
-    function Axis(scale) {
+    function Axis(moduleCtx, scale) {
+        this.moduleCtx = moduleCtx;
         this.id = createId(this);
         this.nice = true;
         this.dataDomain = [];
@@ -290,23 +404,21 @@ var Axis = /** @class */ (function () {
         this.gridArcGroupSelection = Selection.select(this.gridArcGroup, Arc);
         this._crossLines = [];
         this.line = new AxisLine();
-        this.tick = new AxisTick();
+        this.tick = this.createTick();
         this.label = new AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
         this.layout = {
             label: {
-                align: 'center',
-                baseline: 'middle',
-                rotation: 0,
                 fractionDigits: 0,
                 padding: this.label.padding,
                 format: this.label.format,
             },
         };
-        this.requestedRange = [0, 1];
-        this._visibleRange = [0, 1];
-        this._title = undefined;
+        this.range = [0, 1];
+        this.visibleRange = [0, 1];
+        this.title = undefined;
+        this._titleCaption = new Caption();
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
          * In case {@link radialGrid} is `true`, the value is interpreted as an angle
@@ -341,8 +453,11 @@ var Axis = /** @class */ (function () {
          */
         this.seriesAreaPadding = 0;
         this.thickness = 0;
+        this.maxThickness = Infinity;
         this._scale = scale;
         this.refreshScale();
+        this._titleCaption.node.rotation = -Math.PI / 2;
+        this.axisGroup.appendChild(this._titleCaption.node);
     }
     Object.defineProperty(Axis.prototype, "scale", {
         get: function () {
@@ -380,14 +495,14 @@ var Axis = /** @class */ (function () {
     Axis.prototype.refreshScale = function () {
         var _this = this;
         var _a;
-        this.requestedRange = this.scale.range.slice();
+        this.range = this.scale.range.slice();
         (_a = this.crossLines) === null || _a === void 0 ? void 0 : _a.forEach(function (crossLine) {
             _this.initCrossLine(crossLine);
         });
     };
     Axis.prototype.updateRange = function () {
         var _a;
-        var _b = this, rr = _b.requestedRange, vr = _b.visibleRange, scale = _b.scale;
+        var _b = this, rr = _b.range, vr = _b.visibleRange, scale = _b.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         var shift = span * vr[0];
         var start = rr[0] - shift;
@@ -435,35 +550,6 @@ var Axis = /** @class */ (function () {
         }
         return 0; // in range
     };
-    Object.defineProperty(Axis.prototype, "range", {
-        get: function () {
-            return this.requestedRange;
-        },
-        set: function (value) {
-            this.requestedRange = value.slice();
-            this.updateRange();
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Axis.prototype, "visibleRange", {
-        get: function () {
-            return this._visibleRange.slice();
-        },
-        set: function (value) {
-            if (value && value.length === 2) {
-                var _a = __read(value, 2), min = _a[0], max = _a[1];
-                min = Math.max(0, min);
-                max = Math.min(1, max);
-                min = Math.min(min, max);
-                max = Math.max(min, max);
-                this._visibleRange = [min, max];
-                this.updateRange();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Axis.prototype.onLabelFormatChange = function (ticks, format) {
         var _a = this, scale = _a.scale, fractionDigits = _a.fractionDigits;
         var logScale = scale instanceof LogScale;
@@ -486,30 +572,6 @@ var Axis = /** @class */ (function () {
             this.labelFormatter = defaultLabelFormatter;
         }
     };
-    Object.defineProperty(Axis.prototype, "title", {
-        get: function () {
-            return this._title;
-        },
-        set: function (value) {
-            var oldTitle = this._title;
-            if (oldTitle !== value) {
-                if (oldTitle) {
-                    this.axisGroup.removeChild(oldTitle.node);
-                }
-                if (value) {
-                    value.node.rotation = -Math.PI / 2;
-                    this.axisGroup.appendChild(value.node);
-                }
-                this._title = value;
-                // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-                this.setTickCount(this.tick.count);
-                this.setTickInterval(this.tick.interval);
-                this.updateTitle({ ticks: this.scale.ticks() });
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Axis.prototype.setDomain = function () {
         var _a;
         var _b = this, scale = _b.scale, dataDomain = _b.dataDomain, tickValues = _b.tick.values;
@@ -576,21 +638,65 @@ var Axis = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Axis.prototype.createTick = function () {
+        return new BaseAxisTick();
+    };
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     Axis.prototype.update = function (primaryTickCount) {
-        var _a, _b;
+        var _a = this.calculateRotations(), rotation = _a.rotation, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation;
+        var sideFlag = this.label.getSideFlag();
+        var labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
+        this.updateScale();
+        this.updatePosition({ rotation: rotation, sideFlag: sideFlag });
+        this.updateLine();
+        var _b = this.generateTicks({
+            primaryTickCount: primaryTickCount,
+            parallelFlipRotation: parallelFlipRotation,
+            regularFlipRotation: regularFlipRotation,
+            labelX: labelX,
+            sideFlag: sideFlag,
+        }), tickData = _b.tickData, combinedRotation = _b.combinedRotation, textBaseline = _b.textBaseline, textAlign = _b.textAlign, ticksResult = __rest(_b, ["tickData", "combinedRotation", "textBaseline", "textAlign"]);
+        this.updateSelections(tickData.ticks);
+        this.updateLabels({
+            tickLabelGroupSelection: this.tickLabelGroupSelection,
+            combinedRotation: combinedRotation,
+            textBaseline: textBaseline,
+            textAlign: textAlign,
+            labelX: labelX,
+        });
+        this.updateVisibility();
+        this.updateGridLines(sideFlag);
+        this.updateTickLines(sideFlag);
+        this.updateTitle({ anyTickVisible: tickData.ticks.length > 0, sideFlag: sideFlag });
+        this.updateCrossLines({ rotation: rotation, parallelFlipRotation: parallelFlipRotation, regularFlipRotation: regularFlipRotation, sideFlag: sideFlag });
+        this.updateLayoutState();
+        primaryTickCount = ticksResult.primaryTickCount;
+        return primaryTickCount;
+    };
+    Axis.prototype.updateLayoutState = function () {
+        this.layout.label = {
+            fractionDigits: this.fractionDigits,
+            padding: this.label.padding,
+            format: this.label.format,
+        };
+    };
+    Axis.prototype.updateScale = function () {
+        this.updateRange();
         this.calculateDomain();
-        var _c = this, scale = _c.scale, gridLength = _c.gridLength, tick = _c.tick, _d = _c.label, parallelLabels = _d.parallel, mirrored = _d.mirrored, avoidCollisions = _d.avoidCollisions, requestedRange = _c.requestedRange;
-        var requestedRangeMin = Math.min.apply(Math, __spread(requestedRange));
-        var requestedRangeMax = Math.max.apply(Math, __spread(requestedRange));
+        this.setDomain();
+        this.setTickInterval(this.tick.interval);
+        var _a = this, scale = _a.scale, nice = _a.nice;
+        if (!(scale instanceof ContinuousScale)) {
+            return;
+        }
+        this.setTickCount(this.tick.count);
+        scale.nice = nice;
+        scale.update();
+    };
+    Axis.prototype.calculateRotations = function () {
         var rotation = toRadians(this.rotation);
-        var anySeriesActive = this.isAnySeriesActive();
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        var sideFlag = mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -602,153 +708,269 @@ var Axis = /** @class */ (function () {
         //  1 = don't flip (default)
         var parallelFlipRotation = normalizeAngle360(rotation);
         var regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
-        var nice = this.nice;
-        this.setDomain();
-        this.setTickInterval(this.tick.interval);
-        if (scale instanceof ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(this.tick.count);
-            scale.update();
-        }
-        var halfBandwidth = (scale.bandwidth || 0) / 2;
-        this.updatePosition();
-        this.updateLine();
-        var i = 0;
-        var labelOverlap = true;
-        var ticks = [];
-        var _e = this.estimateTickCount({
-            minSpacing: this.tick.minSpacing,
-            maxSpacing: this.tick.maxSpacing,
-        }), maxTickCount = _e.maxTickCount, minTickCount = _e.minTickCount, defaultTickCount = _e.defaultTickCount;
-        var continuous = scale instanceof ContinuousScale;
+        return { rotation: rotation, parallelFlipRotation: parallelFlipRotation, regularFlipRotation: regularFlipRotation };
+    };
+    Axis.prototype.generateTicks = function (_a) {
+        var e_1, _b, _c;
+        var _d;
+        var primaryTickCount = _a.primaryTickCount, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation, labelX = _a.labelX, sideFlag = _a.sideFlag;
+        var _e = this, scale = _e.scale, tick = _e.tick, _f = _e.label, parallel = _f.parallel, rotation = _f.rotation, fontFamily = _f.fontFamily, fontSize = _f.fontSize, fontStyle = _f.fontStyle, fontWeight = _f.fontWeight;
         var secondaryAxis = primaryTickCount !== undefined;
-        var checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
-        var tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        var maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
-        while (labelOverlap) {
-            var unchanged = true;
-            var _loop_1 = function () {
-                if (i > maxIterations) {
-                    return "break";
-                }
-                var prevTicks = ticks;
-                var tickCount = Math.max(defaultTickCount - i, minTickCount);
-                var filterTicks = checkForOverlap && !(continuous && this_1.tick.count === undefined) && (tickSpacing || i !== 0);
-                if (this_1.tick.values) {
-                    ticks = this_1.tick.values;
-                }
-                else if (maxTickCount === 0) {
-                    ticks = [];
-                }
-                else if (i === 0 || !filterTicks) {
-                    this_1.setTickCount((_a = this_1.tick.count) !== null && _a !== void 0 ? _a : tickCount, minTickCount, maxTickCount);
-                    ticks = scale.ticks();
-                }
-                if (filterTicks) {
-                    var keepEvery_1 = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
-                    ticks = ticks.filter(function (_, i) { return i % keepEvery_1 === 0; });
-                }
-                var secondaryAxisTicks = void 0;
-                if (secondaryAxis) {
-                    // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
-                    secondaryAxisTicks = this_1.updateSecondaryAxisTicks(primaryTickCount);
-                    ticks = secondaryAxisTicks;
-                }
-                this_1.updateSelections({
-                    halfBandwidth: halfBandwidth,
-                    gridLength: gridLength,
-                    ticks: ticks,
-                });
-                if (!secondaryAxis && ticks.length > 0) {
-                    primaryTickCount = ticks.length;
-                }
-                unchanged = checkForOverlap ? areArrayNumbersEqual(ticks, prevTicks) : false;
-                i++;
-            };
-            var this_1 = this;
-            while (unchanged) {
-                var state_1 = _loop_1();
-                if (state_1 === "break")
-                    break;
-            }
-            if (unchanged) {
+        var _g = calculateLabelRotation({
+            rotation: rotation,
+            parallel: parallel,
+            regularFlipRotation: regularFlipRotation,
+            parallelFlipRotation: parallelFlipRotation,
+        }), defaultRotation = _g.defaultRotation, configuredRotation = _g.configuredRotation, parallelFlipFlag = _g.parallelFlipFlag, regularFlipFlag = _g.regularFlipFlag;
+        var initialRotation = configuredRotation + defaultRotation;
+        var labelMatrix = new Matrix();
+        var maxTickCount = this.estimateTickCount({
+            minSpacing: tick.minSpacing,
+            maxSpacing: (_d = tick.maxSpacing) !== null && _d !== void 0 ? _d : NaN,
+        }).maxTickCount;
+        var continuous = scale instanceof ContinuousScale;
+        var maxIterations = tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
+        var textAlign = getTextAlign(parallel, configuredRotation, 0, sideFlag, regularFlipFlag);
+        var textBaseline = getTextBaseline(parallel, configuredRotation, sideFlag, parallelFlipFlag);
+        var textProps = {
+            fontFamily: fontFamily,
+            fontSize: fontSize,
+            fontStyle: fontStyle,
+            fontWeight: fontWeight,
+            textBaseline: textBaseline,
+            textAlign: textAlign,
+        };
+        var tickData = {
+            rawTicks: [],
+            ticks: [],
+            labelCount: 0,
+        };
+        var index = 0;
+        var autoRotation = 0;
+        var labelOverlap = true;
+        var terminate = false;
+        while (labelOverlap && index <= maxIterations) {
+            if (terminate) {
                 break;
             }
-            // When the scale domain or the ticks change, the label format may change
-            this.onLabelFormatChange(ticks, this.label.format);
-            var _f = this.updateLabels({
-                parallelFlipRotation: parallelFlipRotation,
-                regularFlipRotation: regularFlipRotation,
-                sideFlag: sideFlag,
-                tickLabelGroupSelection: this.tickLabelGroupSelection,
-                ticks: ticks,
-            }), labelData = _f.labelData, rotated = _f.rotated;
-            var labelSpacing = this.getLabelSpacing(rotated);
-            // no need for further iterations if `avoidCollisions` is false
-            labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelSpacing) : false;
+            autoRotation = 0;
+            textAlign = getTextAlign(parallel, configuredRotation, 0, sideFlag, regularFlipFlag);
+            var tickStrategies = this.getTickStrategies({ secondaryAxis: secondaryAxis, index: index });
+            try {
+                for (var tickStrategies_1 = (e_1 = void 0, __values(tickStrategies)), tickStrategies_1_1 = tickStrategies_1.next(); !tickStrategies_1_1.done; tickStrategies_1_1 = tickStrategies_1.next()) {
+                    var strategy = tickStrategies_1_1.value;
+                    (_c = strategy({
+                        index: index,
+                        tickData: tickData,
+                        textProps: textProps,
+                        labelOverlap: labelOverlap,
+                        terminate: terminate,
+                        primaryTickCount: primaryTickCount,
+                    }), tickData = _c.tickData, index = _c.index, autoRotation = _c.autoRotation, terminate = _c.terminate);
+                    var ticksResult = tickData.ticks;
+                    textAlign = getTextAlign(parallel, configuredRotation, autoRotation, sideFlag, regularFlipFlag);
+                    var rotated = configuredRotation !== 0 || autoRotation !== 0;
+                    var rotation_1 = initialRotation + autoRotation;
+                    labelOverlap = this.checkLabelOverlap(rotation_1, rotated, labelMatrix, ticksResult, labelX, __assign(__assign({}, textProps), { textAlign: textAlign }));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (tickStrategies_1_1 && !tickStrategies_1_1.done && (_b = tickStrategies_1.return)) _b.call(tickStrategies_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
         }
-        this.updateGridLines({
-            gridLength: gridLength,
-            halfBandwidth: halfBandwidth,
-            sideFlag: sideFlag,
-        });
-        var anyTickVisible = false;
-        var visibleFn = function (node) {
-            var min = Math.floor(requestedRangeMin);
-            var max = Math.ceil(requestedRangeMax);
-            if (min === max) {
-                node.visible = false;
-                return;
-            }
-            // Fix an effect of rounding error
-            if (node.translationY >= min - 1 && node.translationY < min) {
-                node.translationY = min;
-            }
-            if (node.translationY > max && node.translationY <= max + 1) {
-                node.translationY = max;
-            }
-            var visible = node.translationY >= min && node.translationY <= max;
-            if (visible) {
-                anyTickVisible = true;
-            }
-            node.visible = visible;
+        var combinedRotation = defaultRotation + configuredRotation + autoRotation;
+        if (!secondaryAxis && tickData.rawTicks.length > 0) {
+            primaryTickCount = tickData.rawTicks.length;
+        }
+        return { tickData: tickData, primaryTickCount: primaryTickCount, combinedRotation: combinedRotation, textBaseline: textBaseline, textAlign: textAlign };
+    };
+    Axis.prototype.getTickStrategies = function (_a) {
+        var _this = this;
+        var index = _a.index, secondaryAxis = _a.secondaryAxis;
+        var _b = this, scale = _b.scale, label = _b.label, tick = _b.tick;
+        var continuous = scale instanceof ContinuousScale;
+        var avoidLabelCollisions = label.enabled && label.avoidCollisions;
+        var filterTicks = !(continuous && this.tick.count === undefined) && index !== 0 && avoidLabelCollisions;
+        var autoRotate = label.autoRotate === true && label.rotation === undefined;
+        var strategies = [];
+        var tickGenerationType;
+        if (this.tick.values) {
+            tickGenerationType = TickGenerationType.VALUES;
+        }
+        else if (secondaryAxis) {
+            tickGenerationType = TickGenerationType.CREATE_SECONDARY;
+        }
+        else if (filterTicks) {
+            tickGenerationType = TickGenerationType.FILTER;
+        }
+        else {
+            tickGenerationType = TickGenerationType.CREATE;
+        }
+        var tickGenerationStrategy = function (_a) {
+            var index = _a.index, tickData = _a.tickData, primaryTickCount = _a.primaryTickCount, terminate = _a.terminate;
+            return _this.createTickData(tickGenerationType, index, tickData, terminate, primaryTickCount);
         };
-        var _g = this, gridLineGroupSelection = _g.gridLineGroupSelection, gridArcGroupSelection = _g.gridArcGroupSelection, tickLineGroupSelection = _g.tickLineGroupSelection, tickLabelGroupSelection = _g.tickLabelGroupSelection;
-        gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
-        tickLineGroupSelection.each(visibleFn);
-        tickLabelGroupSelection.each(visibleFn);
-        this.tickLineGroup.visible = anyTickVisible;
-        this.tickLabelGroup.visible = anyTickVisible;
-        this.gridLineGroup.visible = anyTickVisible;
-        this.gridArcGroup.visible = anyTickVisible;
-        (_b = this.crossLines) === null || _b === void 0 ? void 0 : _b.forEach(function (crossLine) {
-            crossLine.sideFlag = -sideFlag;
-            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
-            crossLine.label.parallel =
-                crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
-            crossLine.parallelFlipRotation = parallelFlipRotation;
-            crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anySeriesActive);
-        });
-        this.updateTitle({ ticks: ticks });
-        tickLineGroupSelection.each(function (line) {
-            line.strokeWidth = tick.width;
-            line.stroke = tick.color;
-            line.visible = anyTickVisible;
-            line.x1 = sideFlag * tick.size;
-            line.x2 = 0;
-            line.y1 = 0;
-            line.y2 = 0;
-        });
-        return primaryTickCount;
+        strategies.push(tickGenerationStrategy);
+        if (!continuous && !isNaN(tick.minSpacing)) {
+            var tickFilterStrategy = function (_a) {
+                var index = _a.index, tickData = _a.tickData, primaryTickCount = _a.primaryTickCount, terminate = _a.terminate;
+                return _this.createTickData(TickGenerationType.FILTER, index, tickData, terminate, primaryTickCount);
+            };
+            strategies.push(tickFilterStrategy);
+        }
+        if (!avoidLabelCollisions) {
+            return strategies;
+        }
+        if (label.autoWrap) {
+            var autoWrapStrategy = function (_a) {
+                var index = _a.index, tickData = _a.tickData, textProps = _a.textProps;
+                return _this.wrapLabels(tickData, index, textProps);
+            };
+            strategies.push(autoWrapStrategy);
+        }
+        else if (autoRotate) {
+            var autoRotateStrategy = function (_a) {
+                var index = _a.index, tickData = _a.tickData, labelOverlap = _a.labelOverlap, terminate = _a.terminate;
+                return ({
+                    index: index,
+                    tickData: tickData,
+                    autoRotation: _this.getAutoRotation(labelOverlap),
+                    terminate: terminate,
+                });
+            };
+            strategies.push(autoRotateStrategy);
+        }
+        return strategies;
+    };
+    Axis.prototype.createTickData = function (tickGenerationType, index, tickData, terminate, primaryTickCount) {
+        var _a, _b, _c;
+        var _d = this, scale = _d.scale, tick = _d.tick;
+        var _e = this.estimateTickCount({
+            minSpacing: tick.minSpacing,
+            maxSpacing: (_a = tick.maxSpacing) !== null && _a !== void 0 ? _a : NaN,
+        }), maxTickCount = _e.maxTickCount, minTickCount = _e.minTickCount, defaultTickCount = _e.defaultTickCount;
+        var continuous = scale instanceof ContinuousScale;
+        var maxIterations = tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
+        var tickCount = (_b = tick.count) !== null && _b !== void 0 ? _b : (continuous ? Math.max(defaultTickCount - index, minTickCount) : maxTickCount);
+        var regenerateTicks = tick.interval === undefined &&
+            tick.values === undefined &&
+            tick.count === undefined &&
+            tickCount > minTickCount &&
+            (continuous || tickGenerationType === TickGenerationType.FILTER);
+        var unchanged = true;
+        while (unchanged && index <= maxIterations) {
+            var prevTicks = tickData.rawTicks;
+            tickCount = (_c = tick.count) !== null && _c !== void 0 ? _c : (continuous ? Math.max(defaultTickCount - index, minTickCount) : maxTickCount);
+            var _f = this.getTicks({
+                tickGenerationType: tickGenerationType,
+                previousTicks: prevTicks,
+                tickCount: tickCount,
+                minTickCount: minTickCount,
+                maxTickCount: maxTickCount,
+                primaryTickCount: primaryTickCount,
+            }), rawTicks = _f.rawTicks, ticks = _f.ticks, labelCount = _f.labelCount;
+            tickData.rawTicks = rawTicks;
+            tickData.ticks = ticks;
+            tickData.labelCount = labelCount;
+            unchanged = regenerateTicks ? areArrayNumbersEqual(rawTicks, prevTicks) : false;
+            index++;
+        }
+        var shouldTerminate = tick.interval !== undefined || tick.values !== undefined;
+        terminate || (terminate = shouldTerminate);
+        return { tickData: tickData, index: index, autoRotation: 0, terminate: terminate };
+    };
+    Axis.prototype.checkLabelOverlap = function (rotation, rotated, labelMatrix, tickData, labelX, textProps) {
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, rotation, 0, 0);
+        var labelData = this.createLabelData(tickData, labelX, textProps, labelMatrix);
+        var labelSpacing = getLabelSpacing(this.label.minSpacing, rotated);
+        return axisLabelsOverlap(labelData, labelSpacing);
+    };
+    Axis.prototype.createLabelData = function (tickData, labelX, textProps, labelMatrix) {
+        var e_2, _a;
+        var labelData = [];
+        try {
+            for (var tickData_1 = __values(tickData), tickData_1_1 = tickData_1.next(); !tickData_1_1.done; tickData_1_1 = tickData_1.next()) {
+                var tickDatum = tickData_1_1.value;
+                var tickLabel = tickDatum.tickLabel, translationY = tickDatum.translationY;
+                if (tickLabel === '' || tickLabel == undefined) {
+                    // skip user hidden ticks
+                    continue;
+                }
+                var lines = splitText(tickLabel);
+                var _b = measureText(lines, labelX, translationY, textProps), width = _b.width, height = _b.height;
+                var bbox = new BBox(labelX, translationY, width, height);
+                var labelDatum = calculateLabelBBox(tickLabel, bbox, labelX, translationY, labelMatrix);
+                labelData.push(labelDatum);
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (tickData_1_1 && !tickData_1_1.done && (_a = tickData_1.return)) _a.call(tickData_1);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return labelData;
+    };
+    Axis.prototype.getAutoRotation = function (labelOveralap) {
+        return labelOveralap ? normalizeAngle360(toRadians(this.label.autoRotateAngle)) : 0;
+    };
+    Axis.prototype.getTicks = function (_a) {
+        var _b;
+        var tickGenerationType = _a.tickGenerationType, previousTicks = _a.previousTicks, tickCount = _a.tickCount, minTickCount = _a.minTickCount, maxTickCount = _a.maxTickCount, primaryTickCount = _a.primaryTickCount;
+        var scale = this.scale;
+        var rawTicks = [];
+        switch (tickGenerationType) {
+            case TickGenerationType.VALUES:
+                rawTicks = this.tick.values;
+                break;
+            case TickGenerationType.CREATE_SECONDARY:
+                // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
+                rawTicks = this.updateSecondaryAxisTicks(primaryTickCount);
+                break;
+            case TickGenerationType.FILTER:
+                rawTicks = this.filterTicks(previousTicks, tickCount);
+                break;
+            default:
+                rawTicks = this.createTicks(tickCount, minTickCount, maxTickCount);
+                break;
+        }
+        // When the scale domain or the ticks change, the label format may change
+        this.onLabelFormatChange(rawTicks, this.label.format);
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        this.fractionDigits = rawTicks.fractionDigits >= 0 ? rawTicks.fractionDigits : 0;
+        var halfBandwidth = ((_b = this.scale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
+        var ticks = [];
+        var labelCount = 0;
+        for (var i = 0; i < rawTicks.length; i++) {
+            var rawTick = rawTicks[i];
+            var translationY = scale.convert(rawTick) + halfBandwidth;
+            var tickLabel = this.formatTick(rawTick, i);
+            ticks.push({ tick: rawTick, tickLabel: tickLabel, translationY: translationY });
+            if (tickLabel === '' || tickLabel == undefined) {
+                continue;
+            }
+            labelCount++;
+        }
+        return { rawTicks: rawTicks, ticks: ticks, labelCount: labelCount };
+    };
+    Axis.prototype.filterTicks = function (ticks, tickCount) {
+        var _a;
+        var tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN((_a = this.tick.maxSpacing) !== null && _a !== void 0 ? _a : NaN);
+        var keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
+        return ticks.filter(function (_, i) { return i % keepEvery === 0; });
+    };
+    Axis.prototype.createTicks = function (tickCount, minTickCount, maxTickCount) {
+        this.setTickCount(tickCount, minTickCount, maxTickCount);
+        return this.scale.ticks();
     };
     Axis.prototype.estimateTickCount = function (_a) {
         var minSpacing = _a.minSpacing, maxSpacing = _a.maxSpacing;
-        var requestedRange = this.requestedRange;
-        var min = Math.min.apply(Math, __spread(requestedRange));
-        var max = Math.max.apply(Math, __spread(requestedRange));
-        var availableRange = max - min;
+        var availableRange = this.calculateAvailableRange();
         var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultMaxTickCount);
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
             minSpacing = defaultMinSpacing;
@@ -783,20 +1005,73 @@ var Axis = /** @class */ (function () {
         }
         return { minTickCount: minTickCount, maxTickCount: maxTickCount, defaultTickCount: defaultTickCount };
     };
-    Axis.prototype.getLabelSpacing = function (rotated) {
-        var label = this.label;
-        if (!isNaN(label.minSpacing)) {
-            return label.minSpacing;
-        }
-        return rotated ? 0 : 10;
+    Axis.prototype.updateVisibility = function () {
+        var requestedRange = this.range;
+        var requestedRangeMin = Math.min.apply(Math, __spreadArray([], __read(requestedRange)));
+        var requestedRangeMax = Math.max.apply(Math, __spreadArray([], __read(requestedRange)));
+        var visibleFn = function (node) {
+            var min = Math.floor(requestedRangeMin);
+            var max = Math.ceil(requestedRangeMax);
+            if (min === max) {
+                node.visible = false;
+                return;
+            }
+            // Fix an effect of rounding error
+            if (node.translationY >= min - 1 && node.translationY < min) {
+                node.translationY = min;
+            }
+            if (node.translationY > max && node.translationY <= max + 1) {
+                node.translationY = max;
+            }
+            var visible = node.translationY >= min && node.translationY <= max;
+            node.visible = visible;
+        };
+        var _a = this, gridLineGroupSelection = _a.gridLineGroupSelection, gridArcGroupSelection = _a.gridArcGroupSelection, tickLineGroupSelection = _a.tickLineGroupSelection, tickLabelGroupSelection = _a.tickLabelGroupSelection;
+        gridLineGroupSelection.each(visibleFn);
+        gridArcGroupSelection.each(visibleFn);
+        tickLineGroupSelection.each(visibleFn);
+        tickLabelGroupSelection.each(visibleFn);
+        this.tickLineGroup.visible = this.tick.enabled;
+        this.tickLabelGroup.visible = this.label.enabled;
+    };
+    Axis.prototype.updateCrossLines = function (_a) {
+        var _this = this;
+        var _b;
+        var rotation = _a.rotation, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation, sideFlag = _a.sideFlag;
+        var anySeriesActive = this.isAnySeriesActive();
+        (_b = this.crossLines) === null || _b === void 0 ? void 0 : _b.forEach(function (crossLine) {
+            var _a;
+            crossLine.sideFlag = -sideFlag;
+            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel = (_a = crossLine.label.parallel) !== null && _a !== void 0 ? _a : _this.label.parallel;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
+            crossLine.update(anySeriesActive);
+        });
+    };
+    Axis.prototype.updateTickLines = function (sideFlag) {
+        var tick = this.tick;
+        this.tickLineGroupSelection.each(function (line) {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.x1 = sideFlag * tick.size;
+            line.x2 = 0;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
+    };
+    Axis.prototype.calculateAvailableRange = function () {
+        var requestedRange = this.range;
+        var min = Math.min.apply(Math, __spreadArray([], __read(requestedRange)));
+        var max = Math.max.apply(Math, __spreadArray([], __read(requestedRange)));
+        return max - min;
     };
     Axis.prototype.calculateDomain = function () {
         // Placeholder for subclasses to override.
     };
-    Axis.prototype.updatePosition = function () {
-        var _a = this, label = _a.label, crossLineGroup = _a.crossLineGroup, axisGroup = _a.axisGroup, gridGroup = _a.gridGroup, translation = _a.translation, gridLineGroupSelection = _a.gridLineGroupSelection, gridPadding = _a.gridPadding, gridLength = _a.gridLength;
-        var rotation = toRadians(this.rotation);
-        var sideFlag = label.mirrored ? 1 : -1;
+    Axis.prototype.updatePosition = function (_a) {
+        var rotation = _a.rotation, sideFlag = _a.sideFlag;
+        var _b = this, crossLineGroup = _b.crossLineGroup, axisGroup = _b.axisGroup, gridGroup = _b.gridGroup, translation = _b.translation, gridLineGroupSelection = _b.gridLineGroupSelection, gridPadding = _b.gridPadding, gridLength = _b.gridLength;
         var translationX = Math.floor(translation.x);
         var translationY = Math.floor(translation.y);
         crossLineGroup.translationX = translationX;
@@ -818,19 +1093,17 @@ var Axis = /** @class */ (function () {
     Axis.prototype.updateSecondaryAxisTicks = function (_primaryTickCount) {
         throw new Error('AG Charts - unexpected call to updateSecondaryAxisTicks() - check axes configuration.');
     };
-    Axis.prototype.updateSelections = function (_a) {
-        var ticks = _a.ticks, halfBandwidth = _a.halfBandwidth, gridLength = _a.gridLength;
-        var scale = this.scale;
-        var data = ticks.map(function (t) { return ({ tick: t, translationY: scale.convert(t) + halfBandwidth }); });
+    Axis.prototype.updateSelections = function (data) {
+        var gridData = this.gridLength ? data : [];
         var gridLineGroupSelection = this.radialGrid
             ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridLength ? data : [], function (group) {
+            : this.gridLineGroupSelection.update(gridData, function (group) {
                 var node = new Line();
                 node.tag = Tags.GridLine;
                 group.append(node);
             });
         var gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridLength ? data : [], function (group) {
+            ? this.gridArcGroupSelection.update(gridData, function (group) {
                 var node = new Arc();
                 node.tag = Tags.GridArc;
                 group.append(node);
@@ -858,16 +1131,17 @@ var Axis = /** @class */ (function () {
         this.gridLineGroupSelection = gridLineGroupSelection;
         this.gridArcGroupSelection = gridArcGroupSelection;
     };
-    Axis.prototype.updateGridLines = function (_a) {
-        var gridLength = _a.gridLength, halfBandwidth = _a.halfBandwidth, sideFlag = _a.sideFlag;
-        var _b = this, gridStyle = _b.gridStyle, scale = _b.scale, tick = _b.tick, gridPadding = _b.gridPadding;
+    Axis.prototype.updateGridLines = function (sideFlag) {
+        var _a;
+        var _b = this, gridStyle = _b.gridStyle, scale = _b.scale, tick = _b.tick, gridPadding = _b.gridPadding, gridLength = _b.gridLength;
         if (gridLength && gridStyle.length) {
             var styleCount_1 = gridStyle.length;
             var grid = void 0;
             if (this.radialGrid) {
                 var angularGridLength_1 = normalizeAngle360Inclusive(toRadians(gridLength));
+                var halfBandwidth_1 = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
                 grid = this.gridArcGroupSelection.each(function (arc, datum) {
-                    var radius = Math.round(scale.convert(datum) + halfBandwidth);
+                    var radius = Math.round(scale.convert(datum) + halfBandwidth_1);
                     arc.centerX = 0;
                     arc.centerY = scale.range[0] - radius;
                     arc.endAngle = angularGridLength_1;
@@ -892,145 +1166,55 @@ var Axis = /** @class */ (function () {
         }
     };
     Axis.prototype.updateLabels = function (_a) {
-        var _this = this;
-        var ticks = _a.ticks, tickLabelGroupSelection = _a.tickLabelGroupSelection, sideFlag = _a.sideFlag, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation;
-        var _b = this, label = _b.label, _c = _b.label, parallel = _c.parallel, rotation = _c.rotation, tick = _b.tick;
-        var labelAutoRotation = 0;
-        var _d = calculateLabelRotation({
-            rotation: rotation,
-            parallel: parallel,
-            regularFlipRotation: regularFlipRotation,
-            parallelFlipRotation: parallelFlipRotation,
-        }), autoRotation = _d.autoRotation, labelRotation = _d.labelRotation, parallelFlipFlag = _d.parallelFlipFlag, regularFlipFlag = _d.regularFlipFlag;
-        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
-        this.fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
-        // Update properties that affect the size of the axis labels and measure the labels
-        var labelBboxes = new Map();
-        var labelX = sideFlag * (tick.size + label.padding + this.seriesAreaPadding);
-        var labelMatrix = new Matrix();
-        Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
-        var labelData = [];
-        var labelSelection = tickLabelGroupSelection.each(function (node, datum, index) {
-            var tick = datum.tick, translationY = datum.translationY;
+        var tickLabelGroupSelection = _a.tickLabelGroupSelection, combinedRotation = _a.combinedRotation, textBaseline = _a.textBaseline, textAlign = _a.textAlign, labelX = _a.labelX;
+        var _b = this, label = _b.label, labelsEnabled = _b.label.enabled;
+        if (!labelsEnabled) {
+            return { labelData: [], rotated: false };
+        }
+        // Apply label option values
+        tickLabelGroupSelection.each(function (node, datum) {
+            var tickLabel = datum.tickLabel;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
-            node.text = _this.formatTickDatum(tick, index);
+            node.text = tickLabel;
             var userHidden = node.text === '' || node.text == undefined;
-            var bbox = node.computeBBox();
-            var width = bbox.width, height = bbox.height;
-            var translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
-            var _a = bbox.x, x = _a === void 0 ? 0 : _a, _b = bbox.y, y = _b === void 0 ? 0 : _b;
-            bbox.width = width;
-            bbox.height = height;
-            labelBboxes.set(index, userHidden ? null : bbox);
             if (userHidden) {
+                node.visible = false; // hide empty labels
                 return;
             }
-            labelData.push({
-                point: {
-                    x: x,
-                    y: y,
-                    size: 0,
-                },
-                label: {
-                    width: width,
-                    height: height,
-                    text: '',
-                },
-            });
+            // Position labels
+            node.textBaseline = textBaseline;
+            node.textAlign = textAlign;
+            node.x = labelX;
+            node.rotationCenterX = labelX;
+            node.rotation = combinedRotation;
+            node.visible = true;
         });
-        var labelSpacing = this.getLabelSpacing();
-        var rotate = axisLabelsOverlap(labelData, labelSpacing);
-        if (label.rotation === undefined && label.autoRotate === true && rotate) {
-            // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
-            // automatically rotate the labels
-            labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
-        }
-        var labelTextBaseline = 'middle';
-        if (parallel && !labelRotation) {
-            if (sideFlag * parallelFlipFlag === -1) {
-                labelTextBaseline = 'hanging';
-            }
-            else {
-                labelTextBaseline = 'bottom';
-            }
-        }
-        var labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
-        var labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
-        var alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
-        var labelTextAlign = 'start';
-        if (parallel) {
-            if (labelRotation || labelAutoRotation) {
-                if (sideFlag * alignFlag === -1) {
-                    labelTextAlign = 'end';
-                }
-            }
-            else {
-                labelTextAlign = 'center';
-            }
-        }
-        else if (sideFlag * regularFlipFlag === -1) {
-            labelTextAlign = 'end';
-        }
-        var combinedRotation = autoRotation + labelRotation + labelAutoRotation;
-        if (combinedRotation) {
-            Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
-        }
-        labelData = [];
-        labelSelection.each(function (label, datum, index) {
-            if (label.text === '' || label.text == undefined) {
-                label.visible = false; // hide empty labels
-                return;
-            }
-            label.textBaseline = labelTextBaseline;
-            label.textAlign = labelTextAlign;
-            label.x = labelX;
-            label.rotationCenterX = labelX;
-            label.rotation = combinedRotation;
-            // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
-            // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
-            // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
-            // this makes label collision detection a lot simpler
-            var bbox = labelBboxes.get(index);
-            if (!bbox) {
-                return;
-            }
-            label.visible = true;
-            var _a = bbox.width, width = _a === void 0 ? 0 : _a, _b = bbox.height, height = _b === void 0 ? 0 : _b;
-            var translationY = datum.translationY;
-            var translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
-            var _c = bbox.x, x = _c === void 0 ? 0 : _c, _d = bbox.y, y = _d === void 0 ? 0 : _d;
-            labelData.push({
-                point: {
-                    x: x,
-                    y: y,
-                    size: 0,
-                },
-                label: {
-                    width: width,
-                    height: height,
-                    text: label.text,
-                },
-            });
+    };
+    Axis.prototype.wrapLabels = function (tickData, index, labelProps) {
+        var _a = this.label, parallel = _a.parallel, maxWidth = _a.maxWidth, maxHeight = _a.maxHeight;
+        var defaultMaxLabelWidth = parallel
+            ? Math.round(this.calculateAvailableRange() / tickData.labelCount)
+            : this.maxThickness;
+        var maxLabelWidth = maxWidth !== null && maxWidth !== void 0 ? maxWidth : defaultMaxLabelWidth;
+        var defaultMaxLabelHeight = parallel
+            ? this.maxThickness
+            : Math.round(this.calculateAvailableRange() / tickData.labelCount);
+        var maxLabelHeight = maxHeight !== null && maxHeight !== void 0 ? maxHeight : defaultMaxLabelHeight;
+        tickData.ticks.forEach(function (tickDatum) {
+            var tickLabel = tickDatum.tickLabel;
+            var wrapping = 'hyphenate';
+            var wrappedTickLabel = Text.wrap(tickLabel, maxLabelWidth, maxLabelHeight, labelProps, wrapping);
+            tickDatum.tickLabel = wrappedTickLabel;
         });
-        this.layout.label = {
-            align: labelTextAlign,
-            baseline: labelTextBaseline,
-            rotation: combinedRotation,
-            fractionDigits: this.fractionDigits,
-            padding: this.label.padding,
-            format: this.label.format,
-        };
-        return { labelData: labelData, rotated: !!(labelRotation || labelAutoRotation) };
+        return { tickData: tickData, index: index, autoRotation: 0, terminate: true };
     };
     Axis.prototype.updateLine = function () {
         // Render axis line.
-        var _a = this, lineNode = _a.lineNode, requestedRange = _a.requestedRange;
+        var _a = this, lineNode = _a.lineNode, requestedRange = _a.range;
         lineNode.x1 = 0;
         lineNode.x2 = 0;
         lineNode.y1 = requestedRange[0];
@@ -1040,23 +1224,33 @@ var Axis = /** @class */ (function () {
         lineNode.visible = true;
     };
     Axis.prototype.updateTitle = function (_a) {
-        var ticks = _a.ticks;
-        var _b = this, label = _b.label, rotation = _b.rotation, title = _b.title, lineNode = _b.lineNode, requestedRange = _b.requestedRange, tickLineGroup = _b.tickLineGroup, tickLabelGroup = _b.tickLabelGroup;
+        var _b;
+        var anyTickVisible = _a.anyTickVisible, sideFlag = _a.sideFlag;
+        var identityFormatter = function (params) { return params.defaultValue; };
+        var _c = this, rotation = _c.rotation, title = _c.title, _titleCaption = _c._titleCaption, lineNode = _c.lineNode, requestedRange = _c.range, tickLineGroup = _c.tickLineGroup, tickLabelGroup = _c.tickLabelGroup, callbackCache = _c.moduleCtx.callbackCache;
+        var _d = ((_b = this.title) !== null && _b !== void 0 ? _b : {}).formatter, formatter = _d === void 0 ? identityFormatter : _d;
         if (!title) {
+            _titleCaption.enabled = false;
             return;
         }
+        _titleCaption.enabled = title.enabled;
+        _titleCaption.fontFamily = title.fontFamily;
+        _titleCaption.fontSize = title.fontSize;
+        _titleCaption.fontStyle = title.fontStyle;
+        _titleCaption.fontWeight = title.fontWeight;
+        _titleCaption.color = title.color;
+        _titleCaption.wrapping = title.wrapping;
         var titleVisible = false;
+        var titleNode = _titleCaption.node;
         if (title.enabled && lineNode.visible) {
             titleVisible = true;
-            var sideFlag = label.mirrored ? 1 : -1;
             var parallelFlipRotation = normalizeAngle360(rotation);
             var padding = Caption.PADDING;
-            var titleNode = title.node;
             var titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
             titleNode.rotation = (titleRotationFlag * sideFlag * Math.PI) / 2;
             titleNode.x = Math.floor((titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1])) / 2);
             var bboxYDimension = 0;
-            if ((ticks === null || ticks === void 0 ? void 0 : ticks.length) > 0) {
+            if (anyTickVisible) {
                 var tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
                 var tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
                 if (Math.abs(tickWidth) < Infinity) {
@@ -1070,22 +1264,25 @@ var Axis = /** @class */ (function () {
                 titleNode.y = Math.floor(-padding - bboxYDimension);
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+            titleNode.text = callbackCache.call(formatter, this.getTitleFormatterParams());
         }
-        title.node.visible = titleVisible;
+        titleNode.visible = titleVisible;
     };
     // For formatting (nice rounded) tick values.
-    Axis.prototype.formatTickDatum = function (datum, index) {
-        var _a = this, label = _a.label, labelFormatter = _a.labelFormatter, fractionDigits = _a.fractionDigits;
+    Axis.prototype.formatTick = function (datum, index) {
+        var _a, _b;
+        var _c = this, label = _c.label, labelFormatter = _c.labelFormatter, fractionDigits = _c.fractionDigits, callbackCache = _c.moduleCtx.callbackCache;
         if (label.formatter) {
-            return label.formatter({
-                value: fractionDigits > 0 ? datum : String(datum),
+            var defaultValue = fractionDigits > 0 ? datum : String(datum);
+            return ((_a = callbackCache.call(label.formatter, {
+                value: defaultValue,
                 index: index,
                 fractionDigits: fractionDigits,
                 formatter: labelFormatter,
-            });
+            })) !== null && _a !== void 0 ? _a : defaultValue);
         }
         else if (labelFormatter) {
-            return labelFormatter(datum);
+            return (_b = callbackCache.call(labelFormatter, datum)) !== null && _b !== void 0 ? _b : String(datum);
         }
         // The axis is using a logScale or the`datum` is an integer, a string or an object
         return String(datum);

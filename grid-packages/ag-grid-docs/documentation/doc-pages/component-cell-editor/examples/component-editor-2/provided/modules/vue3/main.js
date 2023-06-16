@@ -108,6 +108,7 @@ const VueExample = {
                         ],
                     },
                     editable: true,
+                    cellDataType: false,
                 },
                 {
                     field: 'address',

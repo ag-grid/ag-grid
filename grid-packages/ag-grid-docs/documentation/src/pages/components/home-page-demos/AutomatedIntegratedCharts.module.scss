@@ -1,5 +1,6 @@
 @use "sass:map";
-@use '../../../design-system' as ds;
+@use '../../../design-system' as *;
+@use '../../../components/automated-examples/lib/vars.module' as *;
 
 $z-index-grid: 0;
 $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
@@ -14,10 +15,10 @@ $z-index-splash-contents: 10;
     border-radius: var(--border-radius);
     z-index: $z-index-grid;
 
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
         height: 450px !important;
-        margin-bottom: calc(450px / -2 + ds.$size-2);
+        margin-bottom: calc(450px / -2 + $size-2);
         transform-origin: top left;
         transform: scale(0.5);
         border-radius: calc(var(--border-radius) * 2);
@@ -28,11 +29,11 @@ $z-index-splash-contents: 10;
         }
     }
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         height: 450px;
     }
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
         height: 600px;
     }
 
@@ -47,134 +48,38 @@ $z-index-splash-contents: 10;
         z-index: 1;
     }
 
-    // Copy default theme slider styles to deal with .ag-styles specificity issues
-    input[type='range'] {
-        &::-webkit-slider-runnable-track {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            height: 3px !important;
-            background-color: var(--ag-border-color) !important;
-            border-radius: var(--ag-border-radius) !important;
-            border-radius: var(--ag-checkbox-border-radius) !important;
-        }
+    :global(.country) {
+        display: flex;
+        align-items: center;
+        gap: $size-half;
 
-        &::-webkit-slider-thumb {
-            margin: 0 !important;
-            padding: 0 !important;
-            -webkit-appearance: none !important;
-            width: var(--ag-icon-size) !important;
-            height: var(--ag-icon-size) !important;
-            background-color: var(--ag-background-color) !important;
-            border: 1px solid !important;
-            border-color: var(--ag-checkbox-unchecked-color) !important;
-            border-radius: var(--ag-icon-size) !important;
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+            gap: $size-1;
         }
     }
 
-    // Button overrides for .ag-styles specificity
-    :global(button.ag-side-button-button) {
-        // Inherit text styles
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: inherit;
-        line-height: inherit;
+    :global(.flag) {
+        font-size: 1.75rem;
 
-        // Button styles
-        background: transparent;
-        padding: calc(var(--ag-grid-size) * 2) 0 calc(var(--ag-grid-size) * 2) 0;
-        width: 100%;
-        margin: 0;
-        min-height: calc(var(--ag-grid-size) * 18);
-        background-position-y: center;
-        background-position-x: center;
-        background-repeat: no-repeat;
-
-        border: none;
-        border-top: var(--ag-borders-side-button) var(--ag-border-color);
-        border-bottom: var(--ag-borders-side-button) var(--ag-border-color);
-
-        &:focus {
-            box-shadow: none;
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+            font-size: 1.25rem;
         }
     }
 
     :global(.ag-root-wrapper) {
         border-radius: var(--border-radius);
 
-        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
             border-radius: calc(var(--border-radius) * 2);
         }
     }
 
-    // Set chart side menu expand/collapse button overrides for .ag-styles specificity
     :global(.ag-chart-menu-close) {
         color: var(--ag-foreground-color);
 
         &:hover {
             color: var(--ag-alpine-active-color);
         }
-    }
-
-    // Set chart thumbnail overrides for .ag-styles specificity
-    :global(.ag-chart-mini-thumbnail) {
-        border: 1px solid var(--ag-secondary-border-color);
-        border-radius: 5px;
-        margin: 5px;
-
-        &:global(.ag-selected) {
-            border-color: var(--ag-minichart-selected-chart-color);
-        }
-    }
-
-    // Set mini filter overrides for .ag-styles specificity
-    :global(.ag-mini-filter) {
-        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    }
-
-    // Set filter overrides for .ag-styles specificity
-    :global(.ag-set-filter-item) {
-        margin: 0px var(--ag-widget-container-horizontal-padding);
-    }
-
-    // Set chart panel button overrides for .ag-styles specificity
-    :global(.ag-chart-tool-panel-button-enable) {
-        :global(.ag-chart-menu-close) {
-            position: absolute;
-            top: 50%;
-            transition: transform 0.33s ease-in-out;
-            padding: 0;
-            display: block;
-            cursor: pointer;
-            border: none;
-
-            right: 0;
-
-            :global(.ag-icon) {
-                padding: 14px 5px 14px 2px;
-            }
-
-            &::before {
-                content: '';
-                position: absolute;
-                top: -40px;
-                bottom: -40px;
-
-                right: 0;
-            }
-        }
-    }
-
-    // Set chart panel group container overrides for .ag-styles specificity
-    :global(.ag-charts-format-top-level-group-container) {
-        margin-left: calc(var(--ag-grid-size) * 2);
-    }
-    :global(.ag-charts-format-top-level-group-item) {
-        margin: var(--ag-grid-size) 0;
-    }
-    :global(.ag-charts-format-sub-level-group-container > *) {
-        margin-bottom: var(--ag-widget-vertical-spacing);
     }
 }
 
@@ -183,16 +88,24 @@ $z-index-splash-contents: 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
+    margin-bottom: $size-2;
 
     h2 {
-        margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
+        margin-bottom: $size-2;
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-ultra-tight);
+
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+            font-size: var(--font-size-massive);
+        }
     }
 
     p {
         max-width: 50em;
+
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+            font-size: var(--font-size-large);
+        }
     }
 }
 
@@ -200,42 +113,42 @@ $z-index-splash-contents: 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: ds.$size-6;
-    margin-top: ds.$size-3 !important; // !important for .ag-styles specificity;
+    gap: $size-6;
+    margin-top: $size-3;
 
     button {
-        margin-left: ds.$size-1 !important; // !important for .ag-styles specificity;
+        margin-left: $size-1;
     }
 }
 
 .exploreButtonOuter {
     display: none;
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         display: block;
         margin-left: -80px;
     }
 
-    @media screen and (min-width: ds.$max-page-width) {
+    @media screen and (min-width: $max-page-width) {
         margin-left: -100px;
     }
 }
 
 .exploreExampleButton {
-    padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
+    padding: 0.375em 0.5em 0.5em 0.5em;
 
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-        display: none !important; // !important for .ag-styles specificity;
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none;
     }
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
+        font-size: var(--font-size-extra-large);
     }
 
     :global(.icon) {
-        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+        --icon-size: 1.5em;
 
-        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+        margin: -1em 0 -1em 0.25em;
     }
 }
 
@@ -245,8 +158,8 @@ $z-index-splash-contents: 10;
 
     position: relative;
     display: inline-block;
-    padding-right: ds.$size-3;
-    transition: color ds.$default-transition-timing;
+    padding-right: $size-3;
+    transition: color $default-transition-timing;
 
     &::after {
         content: '';
@@ -256,9 +169,9 @@ $z-index-splash-contents: 10;
         left: 0;
         height: 2px;
         background-color: var(--text-color);
-        transition: background-color ds.$default-transition-timing;
+        transition: background-color $default-transition-timing;
 
-        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
             display: none;
         }
     }
@@ -276,7 +189,7 @@ $z-index-splash-contents: 10;
         position: absolute;
         bottom: 0;
         right: -0.33em;
-        transition: transform ds.$default-transition-timing, fill ds.$default-transition-timing;
+        transition: transform $default-transition-timing, fill $default-transition-timing;
     }
 }
 
@@ -286,7 +199,6 @@ $z-index-splash-contents: 10;
     height: 100%;
     top: 0;
     left: 0;
-    margin: 41px 1rem 1rem;
     overflow: hidden;
     z-index: $z-index-mouse-mask;
     pointer-events: none;
@@ -294,15 +206,19 @@ $z-index-splash-contents: 10;
     // Start off hidden
     opacity: 0;
 
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-        // Hide mouse when automated example is not interactive
-        display: none;
-    }
-
     :global(.mouse) {
+        --mobile-mouse-scale: #{$mobile-grid-scale};
+
         position: absolute;
-        top: 6px;
-        left: 4px;
+        top: $mouse-offset-top;
+        left: $mouse-offset-left;
+
+        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+            top: calc(#{$mouse-offset-top} * var(--mobile-mouse-scale));
+            left: calc(#{$mouse-offset-left} * var(--mobile-mouse-scale));
+            width: calc(#{$mouse-base-width} * var(--mobile-mouse-scale));
+            height: calc(#{$mouse-base-height} * var(--mobile-mouse-scale));
+        }
     }
 
     // Override inline styles for 'dark-mode' automated cursor

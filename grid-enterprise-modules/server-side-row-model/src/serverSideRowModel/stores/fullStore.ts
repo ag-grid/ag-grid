@@ -26,7 +26,8 @@ import {
     StoreUpdatedEvent,
     WithoutGridCommon,
     IsApplyServerSideTransactionParams,
-    IRowNode
+    IRowNode,
+    ISelectionService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -42,6 +43,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
@@ -242,7 +244,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
             if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
@@ -303,7 +305,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-        const serverIsFiltering = this.storeUtils.isServerSideFilterAllLevels() || this.storeUtils.isServerSideFilterOnServer();
+        const serverIsFiltering = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups() || this.storeUtils.isServerSideFilterOnServer();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         const groupLevel = this.groupLevel;
@@ -477,7 +479,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
         const serverIsFiltering = this.storeUtils.isServerSideFilterOnServer();
         const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
-        const serverIsFilteringAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        const serverIsFilteringAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
             this.refreshStore(true);
             this.sortRowNodes();
@@ -553,8 +555,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private updateSelection(nodesToUnselect: RowNode[]): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true, 'rowDataChanged');
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                clearSelection: false,
+                source: 'rowDataChanged',
             });
 
             const event: WithoutGridCommon<SelectionChangedEvent> = {
@@ -638,7 +644,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,9 +35,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { ContinuousScale } from './continuousScale';
 import generateTicks, { range } from '../util/ticks';
@@ -151,8 +154,8 @@ var LogScale = /** @class */ (function (_super) {
         var isPositive = d0 > 0;
         p0 = Math.floor(p0) - 1;
         p1 = Math.round(p1) + 1;
-        var min = Math.min.apply(Math, __spread(this.range));
-        var max = Math.max.apply(Math, __spread(this.range));
+        var min = Math.min.apply(Math, __spreadArray([], __read(this.range)));
+        var max = Math.max.apply(Math, __spreadArray([], __read(this.range)));
         var availableSpacing = (max - min) / count;
         var lastTickPosition = Infinity;
         for (var p = p0; p <= p1; p++) {
@@ -184,10 +187,9 @@ var LogScale = /** @class */ (function (_super) {
         if (count === Infinity) {
             return specifier;
         }
-        if (count == null) {
-            count = 10;
+        if (ticks == null) {
+            this.ticks();
         }
-        ticks = ticks !== null && ticks !== void 0 ? ticks : this.ticks();
         return function (d) {
             return specifier(d);
         };

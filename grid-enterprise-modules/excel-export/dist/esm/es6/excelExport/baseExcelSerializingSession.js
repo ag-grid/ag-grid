@@ -17,6 +17,10 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
     addCustomContent(customContent) {
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
+            let outlineLevel;
+            if (!this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
             const rowObj = {
                 height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
                 cells: (row.cells || []).map((cell, idx) => {
@@ -37,7 +41,7 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
                     }
                     return this.createCell(excelStyleId, type, value);
                 }),
-                outlineLevel: row.outlineLevel || undefined
+                outlineLevel
             };
             if (row.collapsed != null) {
                 rowObj.collapsed = row.collapsed;
@@ -64,8 +68,45 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
     onNewHeaderRow() {
         return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     }
-    onNewBodyRow() {
-        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+    onNewBodyRow(node) {
+        const rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+        if (node) {
+            this.addRowOutlineIfNecessary(node);
+        }
+        return rowAccumulator;
+    }
+    addRowOutlineIfNecessary(node) {
+        const { gridOptionsService, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
+        const isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
+        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) {
+            return;
+        }
+        const padding = node.footer ? 1 : 0;
+        const currentRow = _.last(this.rows);
+        currentRow.outlineLevel = node.level + padding;
+        if (rowGroupExpandState === 'expanded') {
+            return;
+        }
+        const collapseAll = rowGroupExpandState === 'collapsed';
+        if (node.isExpandable()) {
+            const isExpanded = !collapseAll && node.expanded;
+            currentRow.collapsed = !isExpanded;
+        }
+        currentRow.hidden =
+            // always show the node if there is no parent to be expanded
+            !!node.parent &&
+                // or if it is a child of the root node
+                node.parent.level !== -1 &&
+                (collapseAll || this.isAnyParentCollapsed(node.parent));
+    }
+    isAnyParentCollapsed(node) {
+        while (node && node.level !== -1) {
+            if (!node.expanded) {
+                return true;
+            }
+            node = node.parent;
+        }
+        return false;
     }
     prepare(columnsToExport) {
         super.prepare(columnsToExport);
@@ -94,6 +135,9 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
         return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
     isNumerical(value) {
+        if (typeof value === 'bigint') {
+            return true;
+        }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     }
     getStyleById(styleId) {
@@ -140,11 +184,7 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
                 skipCols -= 1;
                 return;
             }
-            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
-                const padding = node.footer ? 1 : 0;
-                _.last(this.rows).outlineLevel = node.level + padding;
-            }
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
@@ -157,7 +197,7 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }

@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "29.3.2",
+  "version": "30.0.1",
   "description": "AG Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -38,10 +38,10 @@
   "devDependencies": {
     "@babel/runtime": "^7.16.3",
     "prop-types": "^15.6.2",
-    "ag-grid-community": "~29.3.2",
-    "@ag-grid-community/react": "~29.3.2",
-    "@ag-grid-community/client-side-row-model": "~29.3.2",
-    "@ag-grid-community/core": "~29.3.2",
+    "ag-grid-community": "~30.0.1",
+    "@ag-grid-community/react": "~30.0.1",
+    "@ag-grid-community/client-side-row-model": "~30.0.1",
+    "@ag-grid-community/core": "~30.0.1",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
@@ -72,14 +72,15 @@
     "@babel/plugin-proposal-throw-expressions": "7.14.5",
     "babel-preset-react-app": "^10.0.0",
     "webpack": "^5.64.4",
-    "typescript": "~4.0.8",
-    "rimraf": "3.0.2"
+    "typescript": "~4.3.5",
+    "rimraf": "3.0.2",
+    "tslib": "2.5.0"
   },
   "dependencies": {
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "ag-grid-community": "~29.3.2",
+    "ag-grid-community": "~30.0.1",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

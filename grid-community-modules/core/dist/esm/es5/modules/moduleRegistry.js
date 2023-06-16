@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -20,17 +20,49 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 import { ModuleNames } from "./moduleNames";
 import { doOnce } from "../utils/function";
 import { values } from "../utils/generic";
 var ModuleRegistry = /** @class */ (function () {
     function ModuleRegistry() {
     }
-    ModuleRegistry.register = function (module, moduleBased) {
+    ModuleRegistry.register = function (module, moduleBased, gridId) {
         if (moduleBased === void 0) { moduleBased = true; }
+        if (gridId === void 0) { gridId = undefined; }
         ModuleRegistry.runVersionChecks(module);
-        ModuleRegistry.modulesMap[module.moduleName] = module;
+        if (gridId !== undefined) {
+            ModuleRegistry.areGridScopedModules = true;
+            if (ModuleRegistry.gridModulesMap[gridId] === undefined) {
+                ModuleRegistry.gridModulesMap[gridId] = {};
+            }
+            ModuleRegistry.gridModulesMap[gridId][module.moduleName] = module;
+        }
+        else {
+            ModuleRegistry.globalModulesMap[module.moduleName] = module;
+        }
         ModuleRegistry.setModuleBased(moduleBased);
+    };
+    ModuleRegistry.unRegisterGridModules = function (gridId) {
+        delete ModuleRegistry.gridModulesMap[gridId];
+    };
+    ModuleRegistry.registerModules = function (modules, moduleBased, gridId) {
+        if (moduleBased === void 0) { moduleBased = true; }
+        if (gridId === void 0) { gridId = undefined; }
+        ModuleRegistry.setModuleBased(moduleBased);
+        if (!modules) {
+            return;
+        }
+        modules.forEach(function (module) { return ModuleRegistry.register(module, moduleBased, gridId); });
+    };
+    ModuleRegistry.isValidModuleVersion = function (module) {
+        var _a = __read(module.version.split('.') || [], 2), moduleMajor = _a[0], moduleMinor = _a[1];
+        var _b = __read(ModuleRegistry.currentModuleVersion.split('.') || [], 2), currentModuleMajor = _b[0], currentModuleMinor = _b[1];
+        return moduleMajor === currentModuleMajor && moduleMinor === currentModuleMinor;
     };
     ModuleRegistry.runVersionChecks = function (module) {
         if (!ModuleRegistry.currentModuleVersion) {
@@ -39,7 +71,7 @@ var ModuleRegistry = /** @class */ (function () {
         if (!module.version) {
             console.error("AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '" + module.moduleName + "' is incompatible. Please update all modules to the same version.");
         }
-        else if (module.version !== ModuleRegistry.currentModuleVersion) {
+        else if (!ModuleRegistry.isValidModuleVersion(module)) {
             console.error("AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '" + module.moduleName + "' is version " + module.version + " but the other modules are version " + this.currentModuleVersion + ". Please update all modules to the same version.");
         }
         if (module.validate) {
@@ -69,18 +101,9 @@ var ModuleRegistry = /** @class */ (function () {
     ModuleRegistry.setIsBundled = function () {
         ModuleRegistry.isBundled = true;
     };
-    // noinspection JSUnusedGlobalSymbols
-    ModuleRegistry.registerModules = function (modules, moduleBased) {
-        if (moduleBased === void 0) { moduleBased = true; }
-        ModuleRegistry.setModuleBased(moduleBased);
-        if (!modules) {
-            return;
-        }
-        modules.forEach(function (module) { return ModuleRegistry.register(module, moduleBased); });
-    };
-    ModuleRegistry.assertRegistered = function (moduleName, reason) {
+    ModuleRegistry.assertRegistered = function (moduleName, reason, gridId) {
         var _a;
-        if (this.isRegistered(moduleName)) {
+        if (this.isRegistered(moduleName, gridId)) {
             return true;
         }
         var warningKey = reason + moduleName;
@@ -97,7 +120,7 @@ var ModuleRegistry = /** @class */ (function () {
                 return v === moduleName;
             })) === null || _a === void 0 ? void 0 : _a[0];
             warningMessage =
-                "AG Grid: unable to use " + reason + " as the " + modName + " is not registered. Check if you have registered the module:\n           \n    import { ModuleRegistry } from '@ag-grid-community/core';\n    import { " + modName + " } from '" + moduleName + "';\n    \n    ModuleRegistry.registerModules([ " + modName + " ]);\n\nFor more info see: https://www.ag-grid.com/javascript-grid/modules/";
+                "AG Grid: unable to use " + reason + " as the " + modName + " is not registered" + (ModuleRegistry.areGridScopedModules ? " for gridId: " + gridId : '') + ". Check if you have registered the module:\n           \n    import { ModuleRegistry } from '@ag-grid-community/core';\n    import { " + modName + " } from '" + moduleName + "';\n    \n    ModuleRegistry.registerModules([ " + modName + " ]);\n\nFor more info see: https://www.ag-grid.com/javascript-grid/modules/";
         }
         else {
             warningMessage =
@@ -108,17 +131,20 @@ var ModuleRegistry = /** @class */ (function () {
         }, warningKey);
         return false;
     };
-    ModuleRegistry.isRegistered = function (moduleName) {
-        return !!ModuleRegistry.modulesMap[moduleName];
+    ModuleRegistry.isRegistered = function (moduleName, gridId) {
+        var _a;
+        return !!ModuleRegistry.globalModulesMap[moduleName] || !!((_a = ModuleRegistry.gridModulesMap[gridId]) === null || _a === void 0 ? void 0 : _a[moduleName]);
     };
-    ModuleRegistry.getRegisteredModules = function () {
-        return values(ModuleRegistry.modulesMap);
+    ModuleRegistry.getRegisteredModules = function (gridId) {
+        return __spreadArray(__spreadArray([], __read(values(ModuleRegistry.globalModulesMap))), __read(values(ModuleRegistry.gridModulesMap[gridId] || {})));
     };
     ModuleRegistry.isPackageBased = function () {
         return !ModuleRegistry.moduleBased;
     };
     // having in a map a) removes duplicates and b) allows fast lookup
-    ModuleRegistry.modulesMap = {};
+    ModuleRegistry.globalModulesMap = {};
+    ModuleRegistry.gridModulesMap = {};
+    ModuleRegistry.areGridScopedModules = false;
     return ModuleRegistry;
 }());
 export { ModuleRegistry };

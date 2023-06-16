@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
@@ -59,8 +59,6 @@ export declare class ColumnGroup implements IHeaderColumn {
     getChildren(): IHeaderColumn[] | null;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     getProvidedColumnGroup(): ProvidedColumnGroup;
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    getOriginalColumnGroup(): ProvidedColumnGroup;
     getPaddingLevel(): number;
     calculateDisplayedColumns(): void;
 }

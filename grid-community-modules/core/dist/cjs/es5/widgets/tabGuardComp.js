@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabGuardComp = void 0;
@@ -87,7 +90,7 @@ var TabGuardComp = /** @class */ (function (_super) {
     TabGuardComp.prototype.removeAllChildrenExceptTabGuards = function () {
         var tabGuards = [this.eTopGuard, this.eBottomGuard];
         dom_1.clearElement(this.getFocusableElement());
-        this.addTabGuards.apply(this, __spread(tabGuards));
+        this.addTabGuards.apply(this, __spreadArray([], __read(tabGuards)));
     };
     TabGuardComp.prototype.forceFocusOutOfContainer = function (up) {
         if (up === void 0) { up = false; }

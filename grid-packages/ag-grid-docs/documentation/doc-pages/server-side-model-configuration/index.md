@@ -13,7 +13,7 @@ understand how the grid organises data obtained from the server into caches.
 The grid arranges rows into blocks which are in turn stored in a cache as illustrated below:
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/serverSideCache.png" alt="serverSideCache" style="width: 30%;" />
+    <image-caption src="server-side-model-configuration/resources/serverSideCache.png" alt="serverSideCache" constrained="true" centered="true"></image-caption>
     <div>Fig 1. Server-side Cache</div>
 </div>
 
@@ -49,8 +49,9 @@ The example below shows how debouncing block loading can be achieved. Note the f
 When using the server-side row model the initial scroll position of the grid can be set. This is achieved by calling 
 `api.ensureIndexVisible()` after setting the data source to the grid. 
 
-[[note]]
-| It is important that the `serverSideInitialRowCount` property is set to a value that is greater than the sum of the row index provided to `api.ensureIndexVisible()` and the number of rows displayed in the grid's viewport.
+<note>
+It is important that the `serverSideInitialRowCount` property is set to a value that is greater than the sum of the row index provided to `api.ensureIndexVisible()` and the number of rows displayed in the grid's viewport.
+</note>
 
 This is demonstrated in the example below, note the following:
 

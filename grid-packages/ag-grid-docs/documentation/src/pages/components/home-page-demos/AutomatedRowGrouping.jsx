@@ -6,14 +6,20 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { ROW_GROUPING_ID } from '../../../components/automated-examples/lib/constants';
+import automatedExamplesVars from '../../../components/automated-examples/lib/vars.module.scss';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
+import FeaturesList from '../../../components/FeaturesList';
 import LogoMark from '../../../components/LogoMark';
+import breakpoints from '../../../design-system/breakpoint.module.scss';
+import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '../../../utils/analytics';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
-import FeaturesList from './FeaturesList';
+
+const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
+const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -48,6 +54,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
     const exampleRef = useRef(null);
+    const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
@@ -64,7 +71,18 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
         }
         exampleRef.current.setUpdateFrequency(value);
         setFrequency(value);
+
+        trackOnceHomepageExampleRowGrouping({
+            type: 'updatedFrequency',
+        });
     }, []);
+    const gridInteraction = useCallback(() => {
+        if (!scriptIsEnabled) {
+            trackOnceHomepageExampleRowGrouping({
+                type: 'interactedWithGrid',
+            });
+        }
+    }, [scriptIsEnabled]);
 
     useIntersectionObserver({
         elementRef: gridRef,
@@ -72,6 +90,10 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             if (isIntersecting) {
                 debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
+
+                trackOnceHomepageExampleRowGrouping({
+                    type: 'hasStarted',
+                });
             } else {
                 debuggerManager.log(`${exampleId} not intersecting - inactive`);
                 automatedExampleManager.inactive(exampleId);
@@ -84,6 +106,13 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     useEffect(() => {
         let params = {
             gridClassname,
+            getOverlay: () => {
+                return overlayRef.current;
+            },
+            getContainerScale: () => {
+                const isMobileWidth = window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
+                return isMobileWidth ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
+            },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
@@ -96,7 +125,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon.svg" />`,
+                    icon: `<img src="${hostPrefix}/images/automated-examples/replay-demo-icon.svg" />`,
                 },
             ],
             onStateChange(state) {
@@ -130,8 +159,10 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             </header>
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
-            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark" onClick={gridInteraction}>
                 <OverlayButton
+                    ref={overlayRef}
                     ariaLabel="Give me control"
                     isHidden={!scriptIsEnabled}
                     onPointerEnter={() => setGridIsHoveredOver(true)}
@@ -139,6 +170,11 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                     onClick={() => {
                         setAllScriptEnabledVars(false);
                         automatedExampleManager.stop(exampleId);
+
+                        trackHomepageExampleRowGrouping({
+                            type: 'controlGridClick',
+                            clickType: 'overlay',
+                        });
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
@@ -156,6 +192,12 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                                 setAllScriptEnabledVars(true);
                                 automatedExampleManager.start(exampleId);
                             }
+
+                            trackHomepageExampleRowGrouping({
+                                type: 'controlGridClick',
+                                clickType: 'button',
+                                value: scriptIsEnabled ? 'stop' : 'start',
+                            });
                         }}
                         isHoveredOver={gridIsHoveredOver}
                         scriptIsActive={scriptIsEnabled}

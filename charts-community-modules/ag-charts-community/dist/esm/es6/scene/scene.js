@@ -34,7 +34,7 @@ function buildSceneNodeHighlight() {
 }
 export class Scene {
     constructor(opts) {
-        var _a, _b;
+        var _a, _b, _c;
         this.id = createId(this);
         this.layers = [];
         this._nextZIndex = 0;
@@ -48,12 +48,12 @@ export class Scene {
             consoleLog: false,
             sceneNodeHighlight: [],
         };
-        const { document = window.document, mode = windowValue('agChartsSceneRenderModel') || 'adv-composite', width, height, overrideDevicePixelRatio = undefined, } = opts;
+        const { document = window.document, mode = (_a = windowValue('agChartsSceneRenderModel')) !== null && _a !== void 0 ? _a : 'adv-composite', width, height, overrideDevicePixelRatio = undefined, } = opts;
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
         this.opts = { document, mode };
         this.debug.consoleLog = windowValue('agChartsDebug') === true;
-        this.debug.stats = (_a = windowValue('agChartsSceneStats')) !== null && _a !== void 0 ? _a : false;
-        this.debug.dirtyTree = (_b = windowValue('agChartsSceneDirtyTree')) !== null && _b !== void 0 ? _b : false;
+        this.debug.stats = (_b = windowValue('agChartsSceneStats')) !== null && _b !== void 0 ? _b : false;
+        this.debug.dirtyTree = (_c = windowValue('agChartsSceneDirtyTree')) !== null && _c !== void 0 ? _c : false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
         this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });
     }
@@ -218,7 +218,7 @@ export class Scene {
     render(opts) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
+            const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts !== null && opts !== void 0 ? opts : {};
             const { canvas, canvas: { context: ctx }, root, layers, pendingSize, opts: { mode }, } = this;
             if (pendingSize) {
                 this.canvas.resize(...pendingSize);
@@ -321,14 +321,17 @@ export class Scene {
                 this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
                 this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
             ].filter((v) => v != null);
-            const lineHeight = 15;
+            const statsSize = stats.map((t) => [t, HdpiCanvas.getTextSize(t, ctx.font)]);
+            const width = Math.max(...statsSize.map(([, { width }]) => width));
+            const height = statsSize.reduce((total, [, { height }]) => total + height, 0);
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 200, 10 + lineHeight * stats.length);
+            ctx.fillRect(0, 0, width, height);
             ctx.fillStyle = 'black';
-            let index = 0;
-            for (const stat of stats) {
-                ctx.fillText(stat, 2, 10 + index++ * lineHeight);
+            let y = 0;
+            for (const [stat, size] of statsSize) {
+                y += size.height;
+                ctx.fillText(stat, 2, y);
             }
             ctx.restore();
         }
@@ -432,7 +435,8 @@ export class Scene {
                 .map((c) => c.dirtyTree)
                 .filter((t) => t.dirty !== undefined)
                 .reduce((result, childTree) => {
-                result[childTree.name || '<unknown>'] = childTree;
+                var _a;
+                result[(_a = childTree.name) !== null && _a !== void 0 ? _a : '<unknown>'] = childTree;
                 return result;
             }, {})),
             paths,

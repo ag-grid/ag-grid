@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -20,9 +20,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
@@ -115,6 +116,9 @@ import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
+import { DataTypeService } from "./columns/dataTypeService";
+import { AgInputDateField } from "./widgets/agInputDateField";
+import { ValueParserService } from "./valueService/valueParserService";
 // creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
 // be wrapped by the framework wrappers
 var Grid = /** @class */ (function () {
@@ -137,6 +141,7 @@ var Grid = /** @class */ (function () {
     return Grid;
 }());
 export { Grid };
+var nextGridId = 1;
 // created services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 var GridCoreCreator = /** @class */ (function () {
@@ -144,9 +149,11 @@ var GridCoreCreator = /** @class */ (function () {
     }
     GridCoreCreator.prototype.create = function (eGridDiv, gridOptions, createUi, acceptChanges, params) {
         var _this = this;
+        var _a;
         var debug = !!gridOptions.debug;
-        var registeredModules = this.getRegisteredModules(params);
-        var beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules);
+        var gridId = (_a = gridOptions.gridId) !== null && _a !== void 0 ? _a : String(nextGridId++);
+        var registeredModules = this.getRegisteredModules(params, gridId);
+        var beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         var providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
         if (!beanClasses) {
             return;
@@ -154,7 +161,8 @@ var GridCoreCreator = /** @class */ (function () {
         var contextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            debug: debug
+            debug: debug,
+            gridId: gridId,
         };
         var logger = new Logger('AG Grid', function () { return gridOptions.debug; });
         var contextLogger = new Logger('Context', function () { return contextParams.debug; });
@@ -168,7 +176,7 @@ var GridCoreCreator = /** @class */ (function () {
         beans.ctrlsService.whenReady(function () {
             _this.setColumnsAndData(beans);
             _this.dispatchGridReadyEvent(beans);
-            var isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+            var isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
             logger.log("initialised successfully, enterprise = " + isEnterprise);
         });
         if (acceptChanges) {
@@ -186,30 +194,30 @@ var GridCoreCreator = /** @class */ (function () {
         var agStackComponents = this.createAgStackComponentsList(registeredModules);
         beans.agStackComponentsRegistry.setupComponents(agStackComponents);
     };
-    GridCoreCreator.prototype.getRegisteredModules = function (params) {
+    GridCoreCreator.prototype.getRegisteredModules = function (params, gridId) {
         var passedViaConstructor = params ? params.modules : null;
-        var registered = ModuleRegistry.getRegisteredModules();
+        var registered = ModuleRegistry.getRegisteredModules(gridId);
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(moduleBased, mod) {
-            function addIndividualModule(currentModule) {
+        var addModule = function (moduleBased, mod, gridId) {
+            var addIndividualModule = function (currentModule) {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    ModuleRegistry.register(currentModule, moduleBased);
+                    ModuleRegistry.register(currentModule, moduleBased, gridId);
                 }
-            }
+            };
             addIndividualModule(mod);
             if (mod.dependantModules) {
-                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
+                mod.dependantModules.forEach(function (m) { return addModule(moduleBased, m, gridId); });
             }
-        }
+        };
         if (passedViaConstructor) {
-            passedViaConstructor.forEach(addModule.bind(null, true));
+            passedViaConstructor.forEach(function (m) { return addModule(true, m, gridId); });
         }
         if (registered) {
-            registered.forEach(addModule.bind(null, !ModuleRegistry.isPackageBased()));
+            registered.forEach(function (m) { return addModule(!ModuleRegistry.isPackageBased(), m, undefined); });
         }
         return allModules;
     };
@@ -243,6 +251,7 @@ var GridCoreCreator = /** @class */ (function () {
             { componentName: 'AgInputTextField', componentClass: AgInputTextField },
             { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
@@ -262,7 +271,7 @@ var GridCoreCreator = /** @class */ (function () {
         components = components.concat(moduleAgStackComps);
         return components;
     };
-    GridCoreCreator.prototype.createBeansList = function (rowModelType, registeredModules) {
+    GridCoreCreator.prototype.createBeansList = function (rowModelType, registeredModules, gridId) {
         if (rowModelType === void 0) { rowModelType = 'clientSide'; }
         // only load beans matching the required row model
         var rowModelModules = registeredModules.filter(function (module) { return !module.rowModel || module.rowModel === rowModelType; });
@@ -277,7 +286,7 @@ var GridCoreCreator = /** @class */ (function () {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
             return;
         }
-        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], "rowModelType = '" + rowModelType + "'")) {
+        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], "rowModelType = '" + rowModelType + "'", gridId)) {
             return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
@@ -296,10 +305,10 @@ var GridCoreCreator = /** @class */ (function () {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService
         ];
         var moduleBeans = this.extractModuleEntity(rowModelModules, function (module) { return module.beans ? module.beans : []; });
-        beans.push.apply(beans, __spread(moduleBeans));
+        beans.push.apply(beans, __spreadArray([], __read(moduleBeans)));
         // check for duplicates, as different modules could include the same beans that
         // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
         var beansNoDuplicates = [];
@@ -311,7 +320,7 @@ var GridCoreCreator = /** @class */ (function () {
         return beansNoDuplicates;
     };
     GridCoreCreator.prototype.extractModuleEntity = function (moduleEntities, extractor) {
-        return [].concat.apply([], __spread(moduleEntities.map(extractor)));
+        return [].concat.apply([], __spreadArray([], __read(moduleEntities.map(extractor))));
     };
     GridCoreCreator.prototype.setColumnsAndData = function (beans) {
         var columnDefs = beans.gridOptionsService.get('columnDefs');

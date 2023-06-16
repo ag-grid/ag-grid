@@ -17,7 +17,7 @@ const getAllModules = () => {
         .map(module => {
             // this relies on the module name within the module class to be the same as the filename
             const fullPath = `${module}`;
-            const fullJsPath = fullPath.replace("/ts/", "").replace("/src/", "/dist/cjs/es5/");
+            const fullJsPath = fullPath.replace("/ts/", "").replace("/src/", "/dist/esm/es6/");
             const filename = module.substr(module.lastIndexOf('/') + 1);
             const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1).replace('.ts', '');
 
@@ -31,13 +31,13 @@ const getAllModules = () => {
             const enterprise = publishedName.includes("enterprise");
             const allModules = publishedName.includes("all-modules");
 
-            const realCjsFile = glob.sync(`${rootDir}/dist/*.cjs.js`)[0];
+            const realCjsFile = glob.sync(`${rootDir}/dist/*.esm.js`)[0];
             const realCjsRelativePath = realCjsFile ? realCjsFile.substr(realCjsFile.lastIndexOf("dist"), realCjsFile.length) : null;
-            const derivedCjsRelativePath = `dist/${publishedName.substr(publishedName.lastIndexOf("/") + 1, publishedName.length)}.cjs.js`;
+            const derivedCjsRelativePath = `dist/${publishedName.substr(publishedName.lastIndexOf("/") + 1, publishedName.length)}.esm.js`;
 
             const cjsRelativePath = realCjsRelativePath ? realCjsRelativePath : derivedCjsRelativePath;
-            const cjsFilename = `${publishedName}/${allModules ? enterprise ? "dist/ag-grid-enterprise.cjs.js" : "dist/ag-grid-community.cjs.js" : cjsRelativePath}`;
-            const minVersionedCjs = cjsFilename.replace('.cjs.js', '.cjs.min.js').replace('/dist/', '@\${agGridVersion}/dist/')
+            const cjsFilename = `${publishedName}/${allModules ? enterprise ? "dist/ag-grid-enterprise.esm.js" : "dist/ag-grid-community.esm.js" : cjsRelativePath}`;
+            const minVersionedCjs = cjsFilename.replace('.esm.js', '.esm.min.js').replace('/dist/', '@\${agGridVersion}/dist/')
 
             return {
                 publishedName,
@@ -57,8 +57,9 @@ const getAllModules = () => {
     const gridEnterpriseModules = mapModules('grid-enterprise-modules');
 
     const chartCommunityModules = mapModules('charts-community-modules');
+    const chartEnterpriseModules = mapModules('charts-enterprise-modules');
 
-    return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules };
+    return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules };
 };
 
 function updateBetweenStrings(

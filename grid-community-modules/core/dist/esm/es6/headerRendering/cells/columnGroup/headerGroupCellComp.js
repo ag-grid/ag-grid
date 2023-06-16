@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -41,9 +41,11 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
             destroyFunc();
             return;
         }
-        this.getGui().appendChild(headerGroupComp.getGui());
+        const eGui = this.getGui();
+        const eHeaderGroupGui = headerGroupComp.getGui();
+        eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
-        this.ctrl.setDragSource(headerGroupComp.getGui());
+        this.ctrl.setDragSource(eGui);
     }
 }
 HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,7 @@ class AgPickerField extends agAbstractField_1.AgAbstractField {
     }
     postConstruct() {
         super.postConstruct();
-        const displayId = `${this.getCompId()}-display`;
+        const displayId = `ag-${this.getCompId()}-display`;
         this.eDisplayField.setAttribute('id', displayId);
         aria_1.setAriaDescribedBy(this.eWrapper, displayId);
         const clickHandler = () => {

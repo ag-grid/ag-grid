@@ -156,31 +156,32 @@ class GridExample extends Component {
                         remove: nodes.map(function (node) { return node.data; })
                     });
                 } else if (this.state.radioChecked === 1) {
-                    nodes.forEach(function (node) {
-                        node.setSelected(false);
-                    });
+                    this.state.leftApi.setNodesSelected({ nodes, newValue: false });
                 }
             }
         });
 
+        this.state.leftApi.removeRowDropZone(dropZoneParams);
         this.state.leftApi.addRowDropZone(dropZoneParams);
     }
 
     onGridReady(params, side) {
+        const addGridDropZone = () => {
+            if (this.state.leftApi && this.state.rightApi) {
+                this.addGridDropZone();
+            }
+        }
         if (side === 0) {
             this.setState({
                 leftApi: params.api,
                 leftColumnApi: params.columnApi
-            });
+            }, () => addGridDropZone());
         }
 
         if (side === 1) {
             this.setState({
                 rightApi: params.api,
-            });
-        }
-        if (this.state.leftApi && this.state.rightApi) {
-            this.addGridDropZone();
+            }, () => addGridDropZone());
         }
     }
 
@@ -188,18 +189,18 @@ class GridExample extends Component {
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
                 <div onChange={this.onRadioChange} >
-                    <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />
-                    <label for="move">Remove Source Rows</label>
-                    <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />
-                    <label for="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />
-                    <label for="none">None</label>
+                    <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />{' '}
+                    <label htmlFor="move">Remove Source Rows</label>
+                    <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />{' '}
+                    <label htmlFor="deselect">Only Deselect Source Rows</label>
+                    <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />{' '}
+                    <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />
-                <label for="toggleCheck">Checkbox Select</label>
+                <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={this.reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={this.reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
@@ -211,7 +212,7 @@ class GridExample extends Component {
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={this.getRowId}
                     rowDragManaged={true}
@@ -232,7 +233,7 @@ class GridExample extends Component {
     render = () => (
         <div className="top-container">
             {this.getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}
             </div>

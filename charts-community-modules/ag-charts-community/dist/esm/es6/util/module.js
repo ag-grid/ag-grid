@@ -11,7 +11,9 @@ export class BaseModuleInstance {
 export const REGISTERED_MODULES = [];
 export function registerModule(module) {
     const otherModule = REGISTERED_MODULES.find((other) => {
-        return module.type === other.type && module.optionsKey === other.optionsKey;
+        return (module.type === other.type &&
+            module.optionsKey === other.optionsKey &&
+            module.identifier === other.identifier);
     });
     if (otherModule) {
         if (module.packageType === 'enterprise' && otherModule.packageType === 'community') {

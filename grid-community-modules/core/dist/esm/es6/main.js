@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -87,6 +87,10 @@ export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
+export { NumberCellEditor } from "./rendering/cellEditors/numberCellEditor";
+export { DateCellEditor } from "./rendering/cellEditors/dateCellEditor";
+export { DateStringCellEditor } from "./rendering/cellEditors/dateStringCellEditor";
+export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 // rendering / cellRenderers
 export { Beans } from "./rendering/beans";
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
@@ -105,6 +109,7 @@ export { RowCtrl } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { CssClassManager } from "./rendering/cssClassManager";
+export { CheckboxCellRenderer } from "./rendering/cellRenderers/checkboxCellRenderer";
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
@@ -124,6 +129,7 @@ export { AgToggleButton } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
@@ -170,6 +176,7 @@ export * from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
+export { ValueParserService } from "./valueService/valueParserService";
 export { CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPositionUtils } from "./headerRendering/common/headerPosition";

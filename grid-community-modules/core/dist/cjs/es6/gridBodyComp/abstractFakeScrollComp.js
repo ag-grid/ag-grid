@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -53,7 +53,7 @@ class AbstractFakeScrollComp extends component_1.Component {
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();
         }
-        this.setScrollVisible();
+        this.animationFrameService.requestAnimationFrame(() => this.setScrollVisible());
     }
     hideAndShowInvisibleScrollAsNeeded() {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_SCROLL, (params) => {
@@ -91,4 +91,7 @@ __decorate([
 __decorate([
     context_1.Autowired('ctrlsService')
 ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
+__decorate([
+    context_1.Autowired('animationFrameService')
+], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
 exports.AbstractFakeScrollComp = AbstractFakeScrollComp;

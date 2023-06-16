@@ -47,7 +47,7 @@ let ServerSideRowModel = class ServerSideRowModel extends core_1.BeanStub {
         this.verifyProps();
     }
     verifyProps() {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
             const message = `AG Grid: initialGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Infinite Scroll, then sorting is done on the server side, nothing to do with the client.`;
             core_1._.doOnce(() => console.warn(message), 'SSRM.InitialGroupOrderComparator');
         }

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
@@ -48,7 +48,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupSelectAll;
     getSelectAllGui(): HTMLElement;
     protected handleKeyDown(e: KeyboardEvent): void;
-    private onEnterKeyPressed;
+    private onEnterKeyDown;
     isMenuEnabled(): boolean;
     private onFocusIn;
     private onFocusOut;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
@@ -125,12 +125,6 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * be rendered differently in the filter.
      */
     cellRenderer?: any;
-    /**
-     * @deprecated as of v27, use cellRenderer for Framework components also
-     * Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to
-     * be rendered differently in the filter.
-     */
-    cellRendererFramework?: any;
     /**
      * Set to `true` to hide the Mini Filter.
      *

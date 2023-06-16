@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ import { HoverFeature } from "../hoverFeature";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
-import { doOnce } from "../../../utils/function";
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     constructor(column, parentRowCtrl) {
         super(column, parentRowCtrl);
@@ -116,13 +115,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     handleKeyDown(e) {
         super.handleKeyDown(e);
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyPressed(e);
+            this.selectAllFeature.onSpaceKeyDown(e);
         }
         if (e.key === KeyCode.ENTER) {
-            this.onEnterKeyPressed(e);
+            this.onEnterKeyDown(e);
         }
     }
-    onEnterKeyPressed(e) {
+    onEnterKeyDown(e) {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.getUserCompInstance();
         if (!headerComp) {
@@ -420,16 +419,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         let isMeasuring = false;
         let stopResizeObserver;
         const checkMeasuring = () => {
-            const isSpanHeaderHeight = this.column.isSpanHeaderHeight();
             const newValue = this.column.isAutoHeaderHeight();
-            if (isSpanHeaderHeight) {
-                stopMeasuring();
-                if (newValue) {
-                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
-                    doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
-                }
-                return;
-            }
             if (newValue && !isMeasuring) {
                 startMeasuring();
             }

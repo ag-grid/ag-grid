@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -33,10 +33,12 @@ var BaseCreator = /** @class */ (function () {
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
         this.groupColumns = [];
-        var columnModel = config.columnModel, valueService = config.valueService, gridOptionsService = config.gridOptionsService, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
+        var columnModel = config.columnModel, valueService = config.valueService, gridOptionsService = config.gridOptionsService, valueFormatterService = config.valueFormatterService, valueParserService = config.valueParserService, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
         this.columnModel = columnModel;
         this.valueService = valueService;
         this.gridOptionsService = gridOptionsService;
+        this.valueFormatterService = valueFormatterService;
+        this.valueParserService = valueParserService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
@@ -63,7 +65,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
             processCellCallback: this.processCellCallback,
             type: type
         });
-        return processedValue != null ? processedValue : '';
+        return processedValue;
     };
     BaseGridSerializingSession.prototype.shouldRenderGroupSummaryCell = function (node, column, currentColumnIndex) {
         var _a;
@@ -119,20 +121,32 @@ var BaseGridSerializingSession = /** @class */ (function () {
         return isFooter ? "Total " + groupValue : groupValue;
     };
     BaseGridSerializingSession.prototype.processCell = function (params) {
+        var _this = this;
+        var _a;
         var accumulatedRowIndex = params.accumulatedRowIndex, rowNode = params.rowNode, column = params.column, value = params.value, processCellCallback = params.processCellCallback, type = params.type;
         if (processCellCallback) {
-            return processCellCallback({
-                accumulatedRowIndex: accumulatedRowIndex,
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-                type: type
-            });
+            return {
+                value: (_a = processCellCallback({
+                    accumulatedRowIndex: accumulatedRowIndex,
+                    column: column,
+                    node: rowNode,
+                    value: value,
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    type: type,
+                    parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode, valueToParse, _this.valueService.getValue(column, rowNode)); },
+                    formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
+                })) !== null && _a !== void 0 ? _a : ''
+            };
         }
-        return value != null ? value : '';
+        if (column.getColDef().useValueFormatterForExport) {
+            return {
+                value: value !== null && value !== void 0 ? value : '',
+                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+            };
+        }
+        return { value: value !== null && value !== void 0 ? value : '' };
     };
     return BaseGridSerializingSession;
 }());
@@ -175,6 +189,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -257,10 +273,12 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         };
     };
     CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
+        var _a;
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
+        var rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        this.result += this.putInQuotes((_a = rowCellValue.valueFormatted) !== null && _a !== void 0 ? _a : rowCellValue.value);
     };
     CsvSerializingSession.prototype.putInQuotes = function (value) {
         if (this.suppressQuotes) {
@@ -304,6 +322,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -358,12 +378,14 @@ var CsvCreator = /** @class */ (function (_super) {
         return 'csv';
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
-        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService;
+        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
         var _b = params, processCellCallback = _b.processCellCallback, processHeaderCallback = _b.processHeaderCallback, processGroupHeaderCallback = _b.processGroupHeaderCallback, processRowGroupCallback = _b.processRowGroupCallback, suppressQuotes = _b.suppressQuotes, columnSeparator = _b.columnSeparator;
         return new CsvSerializingSession({
             columnModel: columnModel,
             valueService: valueService,
             gridOptionsService: gridOptionsService,
+            valueFormatterService: valueFormatterService,
+            valueParserService: valueParserService,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,
@@ -388,6 +410,12 @@ var CsvCreator = /** @class */ (function (_super) {
         core.Autowired('gridOptionsService')
     ], CsvCreator.prototype, "gridOptionsService", void 0);
     __decorate$1([
+        core.Autowired('valueFormatterService')
+    ], CsvCreator.prototype, "valueFormatterService", void 0);
+    __decorate$1([
+        core.Autowired('valueParserService')
+    ], CsvCreator.prototype, "valueParserService", void 0);
+    __decorate$1([
         core.PostConstruct
     ], CsvCreator.prototype, "postConstruct", null);
     CsvCreator = __decorate$1([
@@ -404,6 +432,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -470,7 +500,7 @@ var GridSerializer = /** @class */ (function (_super) {
         if (shouldRowBeSkipped) {
             return;
         }
-        var rowAccumulator = gridSerializingSession.onNewBodyRow();
+        var rowAccumulator = gridSerializingSession.onNewBodyRow(node);
         columnsToExport.forEach(function (column, index) {
             rowAccumulator.onColumn(column, index, node);
         });
@@ -680,7 +710,7 @@ var GridSerializer = /** @class */ (function (_super) {
             var columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([core.GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     };
@@ -766,7 +796,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var CsvExportModule = {
     version: VERSION,

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -21,7 +23,6 @@ import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 import { ScalarFilter } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { isBrowserChrome } from '../../../utils/browser';
 import { setAriaRole } from '../../../utils/aria';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 var NumberFilterModelFormatter = /** @class */ (function (_super) {
@@ -46,15 +47,7 @@ var NumberFilterModelFormatter = /** @class */ (function (_super) {
 export { NumberFilterModelFormatter };
 export function getAllowedCharPattern(filterParams) {
     var allowedCharPattern = (filterParams !== null && filterParams !== void 0 ? filterParams : {}).allowedCharPattern;
-    if (allowedCharPattern) {
-        return allowedCharPattern;
-    }
-    if (!isBrowserChrome()) {
-        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
-        // constraint instead
-        return '\\d\\-\\.';
-    }
-    return null;
+    return allowedCharPattern !== null && allowedCharPattern !== void 0 ? allowedCharPattern : null;
 }
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
@@ -171,6 +164,16 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.getModelAsString = function (model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
+    };
+    NumberFilter.prototype.hasInvalidInputs = function () {
+        var invalidInputs = false;
+        this.forEachInput(function (element) {
+            if (!element.getInputElement().validity.valid) {
+                invalidInputs = true;
+                return;
+            }
+        });
+        return invalidInputs;
     };
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,

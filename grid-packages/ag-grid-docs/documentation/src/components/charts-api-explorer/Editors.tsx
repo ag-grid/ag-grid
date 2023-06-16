@@ -3,19 +3,23 @@
  * type of the particular option.
  */
 
-import { FontFamily, FontSize, FontStyle, FontWeight, Opacity, Ratio } from 'ag-charts-community';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import { AlphaPicker, HuePicker } from 'react-color';
 import { JsonModelProperty, JsonProperty } from '../expandable-snippet/model';
-import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
+
+type FontFamily = string;
+type FontSize = number;
+type FontStyle = string;
+type FontWeight = string;
+type Opacity = number;
+type Ratio = number;
 
 type AliasTypeProps<T> = {
     default?: T;
     options?: T[];
     suggestions?: T[];
-    breakIndex?: number;
     min?: T;
     max?: T;
     step?: T;
@@ -24,7 +28,6 @@ type AliasTypeProps<T> = {
 
 const FONT_WEIGHT_EDITOR_PROPS: AliasTypeProps<FontWeight> = {
     default: 'normal',
-    breakIndex: 4,
     options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
 };
 
@@ -259,14 +262,14 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
     }
 
     const rangeClassName = classnames({
-        [styles['number-editor__slider']]: true,
-        [styles['number-editor__slider_hidden']]: min == null || max == null,
+        [styles.slider]: true,
+        [styles.hidden]: min == null || max == null,
     });
 
     return (
-        <span className={styles['number-editor']}>
+        <span className={styles.numberEditor}>
             <input type="range" className={rangeClassName} {...props} />
-            <input type="number" className={styles['number-editor__input']} {...props} />
+            <input type="number" {...props} />
             {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
         </span>
     );
@@ -287,7 +290,7 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
 
     return (
         <input
-            className={styles['string-editor__input']}
+            className={styles.stringEditor}
             type="text"
             value={stateValue}
             maxLength={200}
@@ -342,10 +345,10 @@ export const CoercedEditor = (props) => {
 };
 
 export const BooleanEditor = ({ value, onChange }) => (
-    <PresetEditor options={[false, true]} value={value} onChange={onChange} />
+    <PresetEditor options={[true, false]} value={value} onChange={onChange} />
 );
 
-export const PresetEditor = ({ value, options, suggestions = undefined, breakIndex = Infinity, onChange }) => {
+export const PresetEditor = ({ value, options, suggestions = undefined, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = (newValue) => {
         setValueChange(newValue);
@@ -355,37 +358,19 @@ export const PresetEditor = ({ value, options, suggestions = undefined, breakInd
     const optionsToUse = options || suggestions;
 
     const createOptionElement = (o) => (
-        <div
-            key={o}
-            role="button"
-            tabIndex={0}
-            className={classnames(styles['preset-editor__option'], {
-                [styles['preset-editor__option--selected']]: stateValue === o,
-            })}
-            onClick={() => inputOnChange(o)}
-            onKeyDown={(e) => doOnEnter(e, () => inputOnChange(o))}
-        >
-            {Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}
-        </div>
+        <label key={o}>
+            <input type="radio" checked={stateValue === o} onChange={() => inputOnChange(o)} />
+            <span>{Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}</span>
+        </label>
     );
 
-    const elementsBeforeBreak = [];
-    const elementsAfterBreak = [];
-
-    (Array.isArray(optionsToUse) ? optionsToUse : Object.keys(optionsToUse)).forEach((option, i) => {
-        const element = createOptionElement(option);
-
-        if (breakIndex && i >= breakIndex) {
-            elementsAfterBreak.push(element);
-        } else {
-            elementsBeforeBreak.push(element);
-        }
+    const elements = optionsToUse.map((option) => {
+        return createOptionElement(option);
     });
 
     return (
         <React.Fragment>
-            {elementsBeforeBreak.length > 0 && <div className={styles['preset-editor']}>{elementsBeforeBreak}</div>}
-            {elementsAfterBreak.length > 0 && <div className={styles['preset-editor']}>{elementsAfterBreak}</div>}
+            <div className={styles.presetEditor}>{elements}</div>
         </React.Fragment>
     );
 };
@@ -418,18 +403,12 @@ export const ColourEditor = ({ value, onChange }) => {
     const color = rgb || colourString || 'black';
 
     return (
-        <div className={styles['colour-editor']}>
-            <div className={styles['colour-editor__input-wrapper']}>
-                <input
-                    className={styles['colour-editor__input']}
-                    type="text"
-                    value={colourString}
-                    maxLength={25}
-                    onChange={inputOnChange}
-                />
-                <div style={{ backgroundColor: colourString }} className={styles['colour-editor__sample']}></div>
+        <div className={styles.colourEditor}>
+            <div className={styles.inputWrapper}>
+                <input type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
+                <div style={{ backgroundColor: colourString }} className={styles.sample}></div>
             </div>
-            <div className={styles['colour-editor__slider']}>
+            <div className={styles.slider}>
                 <HuePicker
                     width={'100%'}
                     height={15}
@@ -437,7 +416,7 @@ export const ColourEditor = ({ value, onChange }) => {
                     onChange={(value) => sliderOnChange(value, false)}
                 />
             </div>
-            <div className={styles['colour-editor__slider']}>
+            <div className={styles.slider}>
                 <AlphaPicker
                     width={'100%'}
                     height={15}

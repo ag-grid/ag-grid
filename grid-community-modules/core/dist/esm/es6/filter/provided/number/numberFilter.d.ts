@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ISimpleFilterModel, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
@@ -66,4 +66,5 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     protected createCondition(position: number): NumberFilterModel;
     protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField>;
     getModelAsString(model: ISimpleFilterModel): string;
+    protected hasInvalidInputs(): boolean;
 }

@@ -13,3 +13,9 @@ export declare function escapeString(toEscape?: string | null, skipEscapingHtmlC
  * @return {string}
  */
 export declare function camelCaseToHumanText(camelCase: string | undefined): string | null;
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+export declare function camelCaseToHyphenated(camelCase: string): string;

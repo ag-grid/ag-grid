@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -28,7 +28,7 @@ export declare class SortController extends BeanStub {
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     private getIndexedSortMap;
-    getColumnsWithSortingOrdered(includeRedundantColumns?: boolean): Column[];
+    getColumnsWithSortingOrdered(): Column[];
     getSortModel(): SortModelItem[];
     getSortOptions(): SortOption[];
     canColumnDisplayMixedSort(column: Column): boolean;

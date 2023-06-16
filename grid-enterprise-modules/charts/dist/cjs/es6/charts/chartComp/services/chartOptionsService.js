@@ -36,7 +36,8 @@ class ChartOptionsService extends core_1.BeanStub {
     }
     awaitChartOptionUpdate(func) {
         const chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(() => func());
+        chart.waitForUpdate().then(() => func())
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
     getAxisProperty(expression) {
         var _a;
@@ -138,9 +139,7 @@ class ChartOptionsService extends core_1.BeanStub {
         this.eventService.dispatchEvent(event);
     }
     static isMatchingSeries(seriesType, series) {
-        const mapTypeToImplType = (type) => type === 'column' ? 'bar' : type;
-        return seriesTypeMapper_1.VALID_SERIES_TYPES.includes(seriesType) &&
-            series.type === mapTypeToImplType(seriesType);
+        return seriesTypeMapper_1.VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
     }
     destroy() {
         super.destroy();

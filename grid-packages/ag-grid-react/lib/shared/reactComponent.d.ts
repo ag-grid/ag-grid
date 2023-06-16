@@ -1,7 +1,7 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 import { ReactPortal } from 'react';
 import { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
-import { PortalManager } from './portalManager';
+import { LegacyPortalManager } from './portalManager';
 declare abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
     abstract getGui(): HTMLElement;
     abstract getFrameworkComponentInstance(): any;
@@ -15,11 +15,11 @@ export declare abstract class ReactComponent extends BaseReactComponent {
     protected eParentElement: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected portalManager: PortalManager;
+    protected portalManager: LegacyPortalManager;
     protected portal: ReactPortal | null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
-    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType);
+    constructor(reactComponent: any, portalManager: LegacyPortalManager, componentType: ComponentType);
     getGui(): HTMLElement;
     destroy(): void;
     protected createParentElement(params: any): HTMLElement;

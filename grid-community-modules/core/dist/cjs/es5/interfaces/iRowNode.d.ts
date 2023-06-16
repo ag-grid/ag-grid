@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -121,10 +121,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
-     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`
      * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
      */
-    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType): void;
     /** Returns:
      * - `true` if node is selected.
      * - `false` if the node isn't selected.
@@ -191,12 +190,12 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
+     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
      * @param eventSource The source of the event
-     * @returns `True` if the value was changed, otherwise `False`.
+     * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
     /**

@@ -1,0 +1,398 @@
+@use "sass:math";
+@use '../design-system' as *;
+
+$z-index-base: 10000; // For automated example mouse
+$z-index-debug-canvas: $z-index-base + 10;
+$z-index-debug-panel: $z-index-debug-canvas + 200;
+
+$z-index-gatsby-overlay: 10100;
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+// Increase z-index, so gatsby errors show on top of the splash
+gatsby-fast-refresh {
+    --z-index-overlay: #{$z-index-gatsby-overlay};
+}
+
+.homepageHero {
+    --text-color: var(--white);
+
+    padding-top: $size-5;
+    background-color: var(--dark-cerulean-blue);
+
+    @media screen and (min-width: $breakpoint-hero-small) {
+        padding-top: $size-7;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        padding-top: $size-8;
+    }
+}
+
+.heroHeadings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        text-align: unset;
+    }
+
+    h1,
+    h2 {
+        --line-height: var(--line-height-tight);
+
+        color: var(--text-color);
+    }
+
+    h1 {
+        --font-size: 28px;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            --font-size: var(--font-size-massive);
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            --font-size: min(3.4vw, 54px);
+
+            margin-top: -0.225em;
+            margin-bottom: 0.5em;
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 1.4em;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            --font-size: 22px;
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            --font-size: min(1.9vw, 30px);
+            --font-weight: var(--font-weight-thin);
+
+            max-width: unset;
+        }
+    }
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 $size-4;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        flex-direction: row;
+    }
+}
+
+.heroGrid {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 320px;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        width: 860px;
+        height: 416px;
+    }
+}
+
+.homepageFrameworks {
+    background-color: var(--bright-blue-gray);
+    padding-top: $size-2;
+    padding-bottom: $size-6;
+
+    @media screen and (min-width: 640px) {
+        padding-top: $size-6;
+    }
+}
+
+.homepageExample {
+    padding-top: $size-6;
+    padding-bottom: $size-7;
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        padding-top: $size-8;
+        padding-bottom: $size-9;
+    }
+}
+
+.automatedIntegratedChartsOuter {
+    margin-bottom: $size-8;
+    background-color: var(--bright-blue-gray);
+}
+
+.frameworksInner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $size-1;
+
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+    }
+
+    @media screen and (min-width: 1020px) {
+        gap: $size-2;
+    }
+}
+
+.frameworksLabel {
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+
+    @media screen and (min-width: 1020px) {
+        --font-size: var(--font-size-extra-large);
+        --font-weight: var(--font-weight-thin);
+    }
+}
+
+.homepageQuotes {
+    padding-top: $size-7;
+    padding-bottom: $size-1;
+    background-color: var(--ghost-blue);
+
+    @media screen and (min-width: 940px) {
+        padding-top: $size-8;
+        padding-bottom: $size-2;
+    }
+}
+
+.homepageCustomers {
+    background-color: var(--ghost-blue);
+    padding-bottom: $size-6;
+}
+
+.customersInner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: $size-3;
+
+    p {
+        margin-bottom: 0;
+        text-align: center;
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: var(--font-size-extra-large);
+        }
+    }
+}
+
+.customerLogos {
+    display: inline-flex;
+    max-width: 58em;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $size-4;
+
+    @media screen and (min-width: 640px) {
+        gap: 0 $size-6;
+    }
+
+    img {
+        height: $size-1 * 7;
+
+        @media screen and (min-width: 640px) {
+            height: $size-1 * 10;
+        }
+    }
+}
+
+.sponsorshipInner {
+    margin-bottom: $size-10;
+
+    @media screen and (min-width: $breakpoint-sponsorship-large) {
+        display: flex;
+        justify-content: center;
+        gap: $size-4;
+    }
+
+    > div {
+        --line-height: var(--line-height-tight);
+
+        text-align: center;
+        margin-bottom: $size-5;
+
+        @media screen and (min-width: $breakpoint-sponsorship-large) {
+            text-align: unset;
+        }
+    }
+
+    > div h3 {
+        max-width: 12em;
+        margin-left: auto;
+        margin-right: auto;
+
+        @media screen and (min-width: $breakpoint-sponsorship-large) {
+            margin-left: unset;
+            margin-right: unset;
+        }
+    }
+}
+
+.projectsList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.project {
+    --icon-size: #{$size-7};
+
+    display: grid;
+    grid-template-columns: var(--icon-size) auto;
+    grid-template-rows: $size-4 auto;
+    grid-template-areas:
+        'icon name'
+        'icon link';
+    width: min(100%, 25em);
+    gap: 0 $size-2;
+
+    &:not(:last-child) {
+        margin-bottom: $size-4 !important;
+    }
+
+    img {
+        grid-area: icon;
+        width: var(--icon-size);
+        height: var(--icon-size);
+    }
+
+    h3 {
+        grid-area: name;
+        margin-bottom: 0;
+    }
+
+    a {
+        grid-area: link;
+    }
+}
+
+.automatedExampleDebugPanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 220px;
+    height: fit-content;
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: $size-2;
+    z-index: $z-index-debug-panel;
+
+    :global(.disabled) {
+        h2 {
+            color: var(--ag-grid-grey);
+
+            &::after {
+                content: ' (disabled)';
+            }
+        }
+    }
+
+    h2 {
+        font-size: $font-size-medium;
+        margin-bottom: $size-half;
+        margin-top: $size-1;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    :global(.state) {
+        &::before {
+            content: 'State: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.step) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        :global(.index) {
+            &::after {
+                content: ':';
+            }
+        }
+    }
+
+    :global(.paused-state) {
+        &::before {
+            content: 'Paused at: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.controls) {
+        display: flex;
+        justify-content: space-between;
+
+        button {
+            padding: $size-half;
+            line-height: $line-height-ultra-tight;
+        }
+    }
+
+    :global(.draw-checkbox) {
+        margin-top: $size-1;
+        cursor: pointer;
+    }
+
+    :global(.mouse-position) {
+        margin-top: $size-1;
+        cursor: pointer;
+
+        &::before {
+            content: 'Mouse: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.manager-state) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &::before {
+            content: 'Manager: ';
+            color: var(--dull-light-gray);
+        }
+    }
+}
+
+.automatedExampleDebugCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: $z-index-debug-canvas;
+}
+
+:global(.automated-example-drag) {
+    pointer-events: none;
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        transform-origin: center left;
+        transform: translate(-30px, 0) scale(0.5);
+    }
+}

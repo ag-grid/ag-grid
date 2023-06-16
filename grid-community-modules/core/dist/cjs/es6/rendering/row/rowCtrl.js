@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -55,24 +55,28 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.updateColumnListsPending = false;
         this.businessKeySanitised = null;
         this.beans = beans;
+        this.gridOptionsService = beans.gridOptionsService;
         this.rowNode = rowNode;
-        this.paginationPage = this.beans.paginationProxy.getCurrentPage();
+        this.paginationPage = beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
-        this.rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
-        this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
+        this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
         this.setRowType();
         this.addListeners();
     }
     initRowBusinessKey() {
-        const businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
-        if (typeof businessKeyForNodeFunc !== 'function') {
+        this.businessKeyForNodeFunc = this.gridOptionsService.get('getBusinessKeyForNode');
+        this.updateRowBusinessKey();
+    }
+    updateRowBusinessKey() {
+        if (typeof this.businessKeyForNodeFunc !== 'function') {
             return;
         }
-        const businessKey = businessKeyForNodeFunc(this.rowNode);
+        const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = string_1.escapeString(businessKey);
     }
     isSticky() {
@@ -123,14 +127,15 @@ class RowCtrl extends beanStub_1.BeanStub {
     }
     isCacheable() {
         return this.rowType === RowType.FullWidthDetail
-            && this.beans.gridOptionsService.is('keepDetailRows');
+            && this.gridOptionsService.is('keepDetailRows');
     }
     setCached(cached) {
         const displayValue = cached ? 'none' : '';
         this.allRowGuis.forEach(rg => rg.element.style.display = displayValue);
     }
     initialiseRowComp(gui) {
-        const gos = this.beans.gridOptionsService;
+        const gos = this.gridOptionsService;
+        this.listenOnDomOrder(gui);
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
@@ -147,14 +152,9 @@ class RowCtrl extends beanStub_1.BeanStub {
         if (this.rowNode.group) {
             aria_1.setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
-        const rowIdSanitised = string_1.escapeString(this.rowNode.id);
-        if (rowIdSanitised != null) {
-            comp.setRowId(rowIdSanitised);
-        }
-        if (this.businessKeySanitised != null) {
-            comp.setRowBusinessKey(this.businessKeySanitised);
-        }
-        if (this.isFullWidth() && !this.beans.gridOptionsService.is('suppressCellFocus')) {
+        this.setRowCompRowId(comp);
+        this.setRowCompRowBusinessKey(comp);
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
         }
         // DOM DATA
@@ -190,6 +190,19 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
         this.executeProcessRowPostCreateFunc();
     }
+    setRowCompRowBusinessKey(comp) {
+        if (this.businessKeySanitised == null) {
+            return;
+        }
+        comp.setRowBusinessKey(this.businessKeySanitised);
+    }
+    setRowCompRowId(comp) {
+        const rowId = string_1.escapeString(this.rowNode.id);
+        if (rowId == null) {
+            return;
+        }
+        comp.setRowId(rowId);
+    }
     executeSlideAndFadeAnimations(gui) {
         const { containerType } = gui;
         const shouldSlide = this.slideInAnimation[containerType];
@@ -208,7 +221,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
     }
     addRowDraggerToRow(gui) {
-        if (this.beans.gridOptionsService.isEnableRangeSelection()) {
+        if (this.gridOptionsService.isEnableRangeSelection()) {
             function_1.doOnce(() => {
                 console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             }, 'rowDragAndRangeSelectionEnabled');
@@ -222,7 +235,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         const pinned = this.getPinnedForContainer(gui.containerType);
         const params = this.createFullWidthParams(gui.element, pinned);
         if (this.rowType == RowType.FullWidthDetail) {
-            if (!moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
+            if (!moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.beans.context.getGridId())) {
                 return;
             }
         }
@@ -257,7 +270,7 @@ class RowCtrl extends beanStub_1.BeanStub {
     }
     executeProcessRowPostCreateFunc() {
         var _a;
-        const func = this.beans.gridOptionsService.getCallback('processRowPostCreate');
+        const func = this.gridOptionsService.getCallback('processRowPostCreate');
         if (!func || !this.areAllContainersReady()) {
             return;
         }
@@ -287,7 +300,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
         const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && this.beans.gridOptionsService.isGroupUseEntireRow(pivotMode);
+        const isFullWidthGroup = isGroupRow && this.gridOptionsService.isGroupUseEntireRow(pivotMode);
         if (isStub) {
             this.rowType = RowType.FullWidthLoading;
         }
@@ -304,15 +317,15 @@ class RowCtrl extends beanStub_1.BeanStub {
             this.rowType = RowType.Normal;
         }
     }
-    updateColumnLists(suppressAnimationFrame = false) {
+    updateColumnLists(suppressAnimationFrame = false, useFlushSync = false) {
         if (this.isFullWidth()) {
             return;
         }
         const noAnimation = suppressAnimationFrame
-            || this.beans.gridOptionsService.is('suppressAnimationFrame')
+            || this.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
         if (this.updateColumnListsPending) {
@@ -322,7 +335,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             if (!this.active) {
                 return;
             }
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(true);
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     }
@@ -360,7 +373,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         });
         return res;
     }
-    updateColumnListsImpl() {
+    updateColumnListsImpl(useFlushSync = false) {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -379,7 +392,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === rowContainerCtrl_1.RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === rowContainerCtrl_1.RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
     isCellEligibleToBeRemoved(cellCtrl, nextContainerPinned) {
@@ -401,6 +414,15 @@ class RowCtrl extends beanStub_1.BeanStub {
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
         return REMOVE_CELL;
+    }
+    listenOnDomOrder(gui) {
+        const listener = () => {
+            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
+            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+        };
+        this.addManagedPropertyListener('domLayout', listener);
+        listener();
     }
     setAnimateFlags(animateIn) {
         if (this.isSticky() || !animateIn) {
@@ -514,6 +536,12 @@ class RowCtrl extends beanStub_1.BeanStub {
             suppressFlash: !event.update,
             newData: !event.update
         }));
+        // as data has changed update the dom row id attributes
+        this.allRowGuis.forEach(gui => {
+            this.setRowCompRowId(gui.rowComp);
+            this.updateRowBusinessKey();
+            this.setRowCompRowBusinessKey(gui.rowComp);
+        });
         // check for selected also, as this could be after lazy loading of the row data, in which case
         // the id might of just gotten set inside the row and the row selected state may of changed
         // as a result. this is what happens when selected rows are loaded in virtual pagination.
@@ -568,7 +596,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
     }
     onVirtualColumnsChanged() {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
     getRowPosition() {
         return {
@@ -664,9 +692,9 @@ class RowCtrl extends beanStub_1.BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex,
             rowPinned: this.rowNode.rowPinned,
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             event: domEvent
         };
     }
@@ -713,15 +741,15 @@ class RowCtrl extends beanStub_1.BeanStub {
         const agEvent = this.createRowEventWithSource(events_1.Events.EVENT_ROW_CLICKED, mouseEvent);
         this.beans.eventService.dispatchEvent(agEvent);
         // ctrlKey for windows, metaKey for Apple
-        const multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        const shiftKeyPressed = mouseEvent.shiftKey;
+        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const isShiftKey = mouseEvent.shiftKey;
         // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
         // handle this is broken. to observe, change the logic below and allow groups to be selected.
         // you will see the group gets selected, then all children get selected, then the grid unselects
         // the children (as the default behaviour when clicking is to unselect other rows) which results
         // in the group getting unselected (as all children are unselected). the correct thing would be
-        // to change this, so that children of the selected group are not then subsequenly un-selected.
-        const groupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
+        // to change this, so that children of the selected group are not then subsequently un-selected.
+        const groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
         if (
         // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
         // so return if it's a group row
@@ -732,38 +760,38 @@ class RowCtrl extends beanStub_1.BeanStub {
             // we also don't allow selection of pinned rows
             this.rowNode.rowPinned ||
             // if no selection method enabled, do nothing
-            !this.beans.gridOptionsService.isRowSelection() ||
+            !this.gridOptionsService.isRowSelection() ||
             // if click selection suppressed, do nothing
-            this.beans.gridOptionsService.is('suppressRowClickSelection')) {
+            this.gridOptionsService.is('suppressRowClickSelection')) {
             return;
         }
-        const multiSelectOnClick = this.beans.gridOptionsService.is('rowMultiSelectWithClick');
-        const rowDeselectionWithCtrl = !this.beans.gridOptionsService.is('suppressRowDeselection');
+        const multiSelectOnClick = this.gridOptionsService.is('rowMultiSelectWithClick');
+        const rowDeselectionWithCtrl = !this.gridOptionsService.is('suppressRowDeselection');
         const source = 'rowClicked';
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
                 this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
             }
-            else if (multiSelectKeyPressed) {
+            else if (isMultiKey) {
                 if (rowDeselectionWithCtrl) {
                     this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
                 }
             }
             else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !isShiftKey, rangeSelect: isShiftKey, event: mouseEvent, source });
             }
         }
         else {
-            const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+            const clearSelection = multiSelectOnClick ? false : !isMultiKey;
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: isShiftKey, event: mouseEvent, source });
         }
     }
     setupDetailRowAutoHeight(eDetailGui) {
         if (this.rowType !== RowType.FullWidthDetail) {
             return;
         }
-        if (!this.beans.gridOptionsService.is('detailRowAutoHeight')) {
+        if (!this.gridOptionsService.is('detailRowAutoHeight')) {
             return;
         }
         const checkRowSizeFunc = () => {
@@ -799,9 +827,9 @@ class RowCtrl extends beanStub_1.BeanStub {
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
             rowIndex: this.rowNode.rowIndex,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
@@ -890,7 +918,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             : this.createRowEvent(events_1.Events.EVENT_ROW_EDITING_STOPPED);
         this.beans.eventService.dispatchEvent(event);
     }
-    startRowEditing(key = null, charPress = null, sourceRenderedCell = null, event = null) {
+    startRowEditing(key = null, sourceRenderedCell = null, event = null) {
         // don't do it if already editing
         if (this.editingRow) {
             return;
@@ -898,10 +926,10 @@ class RowCtrl extends beanStub_1.BeanStub {
         const atLeastOneEditing = this.getAllCellCtrls().reduce((prev, cellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellCtrl.startEditing(key, charPress, cellStartedEdit, event);
+                cellCtrl.startEditing(key, cellStartedEdit, event);
             }
             else {
-                cellCtrl.startEditing(null, null, cellStartedEdit, event);
+                cellCtrl.startEditing(null, cellStartedEdit, event);
             }
             if (prev) {
                 return true;
@@ -966,13 +994,13 @@ class RowCtrl extends beanStub_1.BeanStub {
     }
     processStylesFromGridOptions() {
         // part 1 - rowStyle
-        const rowStyle = this.beans.gridOptionsService.get('rowStyle');
+        const rowStyle = this.gridOptionsService.get('rowStyle');
         if (rowStyle && typeof rowStyle === 'function') {
             console.warn('AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
         // part 1 - rowStyleFunc
-        const rowStyleFunc = this.beans.gridOptionsService.getCallback('getRowStyle');
+        const rowStyleFunc = this.gridOptionsService.getCallback('getRowStyle');
         let rowStyleFuncResult;
         if (rowStyleFunc) {
             const params = {
@@ -997,7 +1025,7 @@ class RowCtrl extends beanStub_1.BeanStub {
     }
     createAriaLabel() {
         const selected = this.rowNode.isSelected();
-        if (selected && this.beans.gridOptionsService.is('suppressRowDeselection')) {
+        if (selected && this.gridOptionsService.is('suppressRowDeselection')) {
             return undefined;
         }
         const translate = this.beans.localeService.getLocaleTextFunc();
@@ -1028,7 +1056,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
             if (!this.beans.dragService.isDragging() &&
-                !this.beans.gridOptionsService.is('suppressRowHoverHighlight')) {
+                !this.gridOptionsService.is('suppressRowHoverHighlight')) {
                 eRow.classList.add('ag-row-hover');
                 this.rowNode.setHovered(true);
             }
@@ -1065,8 +1093,8 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
         const rowHeight = this.rowNode.rowHeight;
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
-        const isHeightFromFunc = this.beans.gridOptionsService.isGetRowHeightFunction();
-        const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height : undefined;
+        const isHeightFromFunc = this.gridOptionsService.isGetRowHeightFunction();
+        const heightFromFunc = isHeightFromFunc ? this.gridOptionsService.getRowHeightForNode(this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
         this.forEachGui(gui, gui => {
             gui.element.style.height = `${rowHeight}px`;
@@ -1079,7 +1107,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             // and we found using the autoHeight result causes a loop, where changing the
             // line-height them impacts the cell height, resulting in a new autoHeight,
             // resulting in a new line-height and so on loop.
-            // const heightFromFunc = this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height;
+            // const heightFromFunc = this.gridOptionsService.getRowHeightForNode(this.rowNode).height;
             if (lineHeight) {
                 gui.element.style.setProperty('--ag-line-height', lineHeight);
             }
@@ -1096,7 +1124,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.active = false;
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
-        if (this.beans.gridOptionsService.isAnimateRows()) {
+        if (this.gridOptionsService.isAnimateRows()) {
             this.setupRemoveAnimation();
         }
         this.rowNode.setHovered(false);
@@ -1206,11 +1234,11 @@ class RowCtrl extends beanStub_1.BeanStub {
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
     getInitialRowTop(rowContainerType) {
-        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
+        const suppressRowTransform = this.gridOptionsService.is('suppressRowTransform');
         return suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
     }
     getInitialTransform(rowContainerType) {
-        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
+        const suppressRowTransform = this.gridOptionsService.is('suppressRowTransform');
         return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
     }
     getInitialRowTopShared(rowContainerType) {
@@ -1232,7 +1260,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         return rowTop + 'px';
     }
     setRowTopStyle(topPx) {
-        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
+        const suppressRowTransform = this.gridOptionsService.is('suppressRowTransform');
         this.allRowGuis.forEach(gui => suppressRowTransform ?
             gui.rowComp.setTop(topPx) :
             gui.rowComp.setTransform(`translateY(${topPx})`));

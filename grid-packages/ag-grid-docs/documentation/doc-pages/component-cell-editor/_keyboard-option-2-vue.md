@@ -1,15 +1,14 @@
-[[only-vue]]
-|
-|```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
 |const MyGrid = {
 |    template: `
-|       <ag-grid-vue
+|       &lt;ag-grid-vue
 |           class="ag-theme-alpine"
 |           :columnDefs="columnDefs">
-|       </ag-grid-vue>
+|       &lt;/ag-grid-vue>
 |    `,
 |    components: {
 |        'ag-grid-vue': AgGridVue
@@ -36,4 +35,5 @@
 |
 |    // rest of the component
 |}
-|```
+</snippet>
+</framework-specific-section>

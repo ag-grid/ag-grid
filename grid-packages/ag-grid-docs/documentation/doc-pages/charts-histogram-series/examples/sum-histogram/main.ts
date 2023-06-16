@@ -20,9 +20,6 @@ const options: AgChartOptions = {
       aggregation: 'sum',
     },
   ],
-  legend: {
-    enabled: false,
-  },
   axes: [
     {
       type: 'number',

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMinMax = exports.extent = void 0;
+exports.extent = void 0;
 function extent(values) {
     const { length } = values;
     if (length === 0) {
@@ -30,21 +30,3 @@ function extent(values) {
     return extent;
 }
 exports.extent = extent;
-/**
- * finds the min and max using a process appropriate for stacked values. Ie,
- * summing up the positive and negative numbers, and returning the totals of each
- */
-function findMinMax(values) {
-    let min = undefined;
-    let max = undefined;
-    for (const value of values) {
-        if (value < 0) {
-            min = (min !== null && min !== void 0 ? min : 0) + value;
-        }
-        else if (value >= 0) {
-            max = (max !== null && max !== void 0 ? max : 0) + value;
-        }
-    }
-    return { min, max };
-}
-exports.findMinMax = findMinMax;

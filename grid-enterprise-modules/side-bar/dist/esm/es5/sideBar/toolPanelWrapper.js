@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,6 +29,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setupResize = function () {
         var eGui = this.getGui();
         var resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
+        eGui.setAttribute('id', "ag-" + this.getCompId());
         resizeBar.setElementToResize(eGui);
         this.appendChild(resizeBar);
     };
@@ -41,7 +44,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
         var compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         var componentPromise = compDetails.newAgStackInstance();
         if (componentPromise == null) {
-            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify either 'toolPanel' or 'toolPanelFramework'");
+            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify 'toolPanel'");
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -75,7 +78,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.refresh = function () {
         this.toolPanelCompInstance.refresh();
     };
-    ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\"/>";
+    ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\" role=\"tabpanel\"/>";
     __decorate([
         Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);

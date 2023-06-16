@@ -16,10 +16,10 @@ const excelUtils_1 = require("./assets/excelUtils");
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
 class ExcelXlsxFactory {
-    static createExcel(styles, worksheet, margins, pageSetup, headerFooterConfig) {
+    static createExcel(styles, worksheet, config) {
         this.addSheetName(worksheet);
         stylesheet_1.registerStyles(styles, this.sheetNames.length);
-        return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
+        return this.createWorksheet(worksheet, config);
     }
     static buildImageMap(image, rowIndex, col, columnsToExport, rowHeight) {
         const currentSheetIndex = this.sheetNames.length;
@@ -180,13 +180,11 @@ class ExcelXlsxFactory {
             }]);
         return excelUtils_1.createXmlPart(rs);
     }
-    static createWorksheet(worksheet, margins, pageSetup, headerFooterConfig) {
+    static createWorksheet(worksheet, config) {
         return excelUtils_1.createXmlPart(worksheet_1.default.getTemplate({
             worksheet,
             currentSheet: this.sheetNames.length - 1,
-            margins,
-            pageSetup,
-            headerFooterConfig
+            config
         }));
     }
 }

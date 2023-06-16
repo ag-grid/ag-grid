@@ -15,12 +15,13 @@ export declare class RowContainerEventsFeature extends BeanStub {
     private element;
     constructor(element: HTMLElement);
     postConstruct(): void;
-    private addKeyboardEvents;
+    private addKeyboardListeners;
     private addMouseListeners;
     private processMouseEvent;
     private mockContextMenuForIPad;
     private getRowForEvent;
     private handleContextMenuMouseEvent;
+    private getControlsForEventTarget;
     private processKeyboardEvent;
     private processCellKeyboardEvent;
     private processFullWidthRowKeyboardEvent;

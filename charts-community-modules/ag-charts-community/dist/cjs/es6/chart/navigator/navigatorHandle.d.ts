@@ -17,3 +17,4 @@ export declare class NavigatorHandle {
     get gripLineLength(): number;
     constructor(rangeHandle: RangeHandle);
 }
+//# sourceMappingURL=navigatorHandle.d.ts.map

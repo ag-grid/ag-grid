@@ -8,10 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartController = exports.DEFAULT_THEMES = void 0;
 const core_1 = require("@ag-grid-community/core");
-const chartDataModel_1 = require("./chartDataModel");
 const ag_charts_community_1 = require("ag-charts-community");
 const seriesTypeMapper_1 = require("./utils/seriesTypeMapper");
 const chartTheme_1 = require("./chartProxies/chartTheme");
+const UpdateParamsValidator_1 = require("./utils/UpdateParamsValidator");
 exports.DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
 class ChartController extends core_1.BeanStub {
     constructor(model) {
@@ -37,11 +37,53 @@ class ChartController extends core_1.BeanStub {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
+    update(params) {
+        var _a, _b, _c, _d, _e, _f, _g;
+        if (!this.validUpdateType(params) || !UpdateParamsValidator_1.UpdateParamsValidator.validateChartParams(params)) {
+            return false;
+        }
+        const { chartId, chartType, chartThemeName, unlinkChart } = params;
+        // create a common base for the chart model parameters (this covers pivot chart updates)
+        const common = {
+            chartId: chartId,
+            pivotChart: this.model.pivotChart,
+            chartType: chartType !== null && chartType !== void 0 ? chartType : this.model.chartType,
+            chartThemeName: chartThemeName !== null && chartThemeName !== void 0 ? chartThemeName : this.model.chartThemeName,
+            unlinkChart: unlinkChart !== null && unlinkChart !== void 0 ? unlinkChart : this.model.unlinked,
+            cellRange: this.model.suppliedCellRange,
+            aggFunc: this.model.aggFunc,
+            seriesChartTypes: undefined,
+            suppressChartRanges: false,
+            crossFiltering: false
+        };
+        let chartModelParams = Object.assign({}, common);
+        // modify the chart model properties based on the type of update
+        switch (params.type) {
+            case 'rangeChartUpdate':
+                chartModelParams.cellRange = (_a = this.createCellRange(params)) !== null && _a !== void 0 ? _a : this.model.suppliedCellRange;
+                chartModelParams.aggFunc = (_b = params.aggFunc) !== null && _b !== void 0 ? _b : this.model.aggFunc;
+                chartModelParams.seriesChartTypes = params.seriesChartTypes;
+                chartModelParams.suppressChartRanges = (_c = params.suppressChartRanges) !== null && _c !== void 0 ? _c : this.model.suppressChartRanges;
+                break;
+            case 'crossFilterChartUpdate':
+                chartModelParams.cellRange = (_d = this.createCellRange(params)) !== null && _d !== void 0 ? _d : this.model.suppliedCellRange;
+                chartModelParams.aggFunc = (_e = params.aggFunc) !== null && _e !== void 0 ? _e : this.model.aggFunc;
+                chartModelParams.crossFiltering = true;
+                chartModelParams.suppressChartRanges = (_f = params.suppressChartRanges) !== null && _f !== void 0 ? _f : this.model.suppressChartRanges;
+                break;
+        }
+        this.model.updateModel(chartModelParams);
+        // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
+        const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
+        removeChartCellRanges ? (_g = this.rangeService) === null || _g === void 0 ? void 0 : _g.setCellRanges([]) : this.setChartRange();
+        return true;
+    }
     updateForGridChange() {
         if (this.model.unlinked) {
             return;
         }
         this.model.updateCellRanges();
+        this.model.updateData();
         this.setChartRange();
     }
     updateForDataChange() {
@@ -57,10 +99,11 @@ class ChartController extends core_1.BeanStub {
     }
     updateForPanelChange(updatedCol) {
         this.model.updateCellRanges(updatedCol);
+        this.model.updateData();
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
     }
-    getChartUpdateParams() {
+    getChartUpdateParams(updatedOverrides) {
         const selectedCols = this.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
@@ -76,12 +119,13 @@ class ChartController extends core_1.BeanStub {
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }),
-            seriesChartTypes: this.getSeriesChartTypes()
+            seriesChartTypes: this.getSeriesChartTypes(),
+            updatedOverrides: updatedOverrides
         };
     }
     getChartModel() {
         const modelType = this.model.pivotChart ? 'pivot' : 'range';
-        const seriesChartTypes = this.isComboChart() ? this.model.seriesChartTypes : undefined;
+        const seriesChartTypes = this.isComboChart() ? this.model.comboChartModel.seriesChartTypes : undefined;
         return {
             modelType,
             chartId: this.model.chartId,
@@ -107,7 +151,7 @@ class ChartController extends core_1.BeanStub {
     }
     setChartType(chartType) {
         this.model.chartType = chartType;
-        this.model.updateSeriesChartTypes();
+        this.model.comboChartModel.updateSeriesChartTypes();
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     }
@@ -128,6 +172,9 @@ class ChartController extends core_1.BeanStub {
     isGrouping() {
         return this.model.isGrouping();
     }
+    isCrossFilterChart() {
+        return this.model.crossFiltering;
+    }
     getThemes() {
         return this.gridOptionsService.get('chartThemes') || exports.DEFAULT_THEMES;
     }
@@ -145,9 +192,6 @@ class ChartController extends core_1.BeanStub {
     getSelectedValueColState() {
         return this.getValueColState().filter(cs => cs.selected);
     }
-    getDimensionColState() {
-        return this.model.dimensionColState;
-    }
     getSelectedDimension() {
         return this.model.getSelectedDimension();
     }
@@ -158,9 +202,6 @@ class ChartController extends core_1.BeanStub {
     }
     getColStateForMenu() {
         return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
-    }
-    isDefaultCategorySelected() {
-        return this.model.getSelectedDimension().colId === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY;
     }
     setChartRange(silent = false) {
         if (this.rangeService && !this.model.suppressChartRanges && !this.model.unlinked) {
@@ -197,16 +238,17 @@ class ChartController extends core_1.BeanStub {
         return !this.model.unlinked;
     }
     customComboExists() {
-        return this.model.savedCustomSeriesChartTypes && this.model.savedCustomSeriesChartTypes.length > 0;
+        const savedCustomSeriesChartTypes = this.model.comboChartModel.savedCustomSeriesChartTypes;
+        return savedCustomSeriesChartTypes && savedCustomSeriesChartTypes.length > 0;
     }
     getSeriesChartTypes() {
-        return this.model.seriesChartTypes;
+        return this.model.comboChartModel.seriesChartTypes;
     }
     isComboChart() {
         return this.model.isComboChart();
     }
     updateSeriesChartType(colId, chartType, secondaryAxis) {
-        const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
+        const seriesChartType = this.model.comboChartModel.seriesChartTypes.find(s => s.colId === colId);
         if (seriesChartType) {
             // once a combo chart has been modified it is now a 'customCombo' chart
             const updateChartType = this.model.chartType !== 'customCombo';
@@ -221,9 +263,9 @@ class ChartController extends core_1.BeanStub {
                 seriesChartType.secondaryAxis = secondaryAxis;
             }
             // replace existing custom series types with this latest version
-            this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
+            this.model.comboChartModel.savedCustomSeriesChartTypes = this.model.comboChartModel.seriesChartTypes;
             // series chart types can be modified, i.e. column chart types should be moved to primary axis
-            this.model.updateSeriesChartTypes();
+            this.model.comboChartModel.updateSeriesChartTypes();
             this.updateForDataChange();
             if (updateChartType) {
                 // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
@@ -251,6 +293,29 @@ class ChartController extends core_1.BeanStub {
     getCellRanges() {
         return [this.model.dimensionCellRange, this.model.valueCellRange].filter(r => r);
     }
+    createCellRange(params) {
+        var _a;
+        return params.cellRange && ((_a = this.rangeService) === null || _a === void 0 ? void 0 : _a.createCellRangeFromCellRangeParams(params.cellRange));
+    }
+    validUpdateType(params) {
+        var _a;
+        if (!params.type) {
+            console.warn(`AG Grid - Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`);
+            return false;
+        }
+        const chartTypeMap = {
+            'Range Chart': () => !this.isPivotChart() && !this.isCrossFilterChart(),
+            'Pivot Chart': () => this.isPivotChart(),
+            'Cross Filter Chart': () => this.isCrossFilterChart()
+        };
+        const currentChartType = (_a = Object.keys(chartTypeMap).find(type => chartTypeMap[type]())) !== null && _a !== void 0 ? _a : 'Range Chart';
+        const valid = params.type ===
+            `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
+        if (!valid) {
+            console.warn(`AG Grid - Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`);
+        }
+        return valid;
+    }
     getCellRangeParams() {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
@@ -273,6 +338,12 @@ class ChartController extends core_1.BeanStub {
     raiseChartUpdatedEvent() {
         const event = {
             type: ChartController.EVENT_CHART_UPDATED
+        };
+        this.dispatchEvent(event);
+    }
+    raiseChartApiUpdateEvent() {
+        const event = {
+            type: ChartController.EVENT_CHART_API_UPDATE
         };
         this.dispatchEvent(event);
     }
@@ -304,6 +375,7 @@ class ChartController extends core_1.BeanStub {
     }
 }
 ChartController.EVENT_CHART_UPDATED = 'chartUpdated';
+ChartController.EVENT_CHART_API_UPDATE = 'chartApiUpdate';
 ChartController.EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
 ChartController.EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
 ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';

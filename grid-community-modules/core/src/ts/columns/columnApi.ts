@@ -198,11 +198,6 @@ export class ColumnApi {
         logDeprecation<ColumnApi>('28.0', 'getAllColumns', 'getColumns');
         return this.getColumns();
     }
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null {
-        logDeprecation<ColumnApi>('27.0', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
-        return this.columnModel.getProvidedColumnGroup(name);
-    }
     /** @deprecated v28 Use `getColumns` instead. */
     public getPrimaryColumns(): Column[] | null {
         logDeprecation<ColumnApi>('28.0', 'getPrimaryColumns', 'getColumns');

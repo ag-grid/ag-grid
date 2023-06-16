@@ -7,11 +7,24 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -70,20 +83,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AreaSeries = void 0;
@@ -104,6 +107,9 @@ var validation_1 = require("../../../util/validation");
 var logAxis_1 = require("../../axis/logAxis");
 var dataModel_1 = require("../../data/dataModel");
 var timeAxis_1 = require("../../axis/timeAxis");
+var aggregateFunctions_1 = require("../../data/aggregateFunctions");
+var processors_1 = require("../../data/processors");
+var easing = require("../../../motion/easing");
 var AreaSeriesLabel = /** @class */ (function (_super) {
     __extends(AreaSeriesLabel, _super);
     function AreaSeriesLabel() {
@@ -141,16 +147,21 @@ var AreaSeriesTag;
 })(AreaSeriesTag || (AreaSeriesTag = {}));
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
-    function AreaSeries() {
+    function AreaSeries(moduleCtx) {
+        var _a, _b;
         var _this = _super.call(this, {
+            moduleCtx: moduleCtx,
             pathsPerSeries: 2,
             pathsZIndexSubOrderOffset: [0, 1000],
             hasMarkers: true,
-            renderLayerPerSubSeries: false,
-            directionKeys: {
-                x: ['xKey'],
-                y: ['yKeys'],
-            },
+            directionKeys: (_a = {},
+                _a[chartAxisDirection_1.ChartAxisDirection.X] = ['xKey'],
+                _a[chartAxisDirection_1.ChartAxisDirection.Y] = ['yKeys'],
+                _a),
+            directionNames: (_b = {},
+                _b[chartAxisDirection_1.ChartAxisDirection.X] = ['xName'],
+                _b[chartAxisDirection_1.ChartAxisDirection.Y] = ['yNames'],
+                _b),
         }) || this;
         _this.tooltip = new AreaSeriesTooltip();
         _this.marker = new cartesianSeries_1.CartesianSeriesMarker();
@@ -161,29 +172,18 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.strokeOpacity = 1;
         _this.lineDash = [0];
         _this.lineDashOffset = 0;
-        _this._xKey = '';
-        _this.xName = '';
+        _this.xKey = undefined;
+        _this.xName = undefined;
         _this._yKeys = [];
         _this._visibles = [];
         _this.yNames = [];
         _this.strokeWidth = 2;
         _this.shadow = undefined;
-        var _a = _this, marker = _a.marker, label = _a.label;
+        var _c = _this, marker = _c.marker, label = _c.label;
         marker.enabled = false;
         label.enabled = false;
         return _this;
     }
-    Object.defineProperty(AreaSeries.prototype, "xKey", {
-        get: function () {
-            return this._xKey;
-        },
-        set: function (value) {
-            this._xKey = value;
-            this.processedData = undefined;
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(AreaSeries.prototype, "yKeys", {
         get: function () {
             return this._yKeys;
@@ -229,13 +229,13 @@ var AreaSeries = /** @class */ (function (_super) {
     });
     AreaSeries.prototype.processData = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo, data, isContinuousX, isContinuousY, enabledYKeys, normaliseTo;
+            var _a, xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo, data, isContinuousX, isContinuousY, enabledYKeys, normaliseTo, extraProps;
             return __generator(this, function (_b) {
                 _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled, xAxis = _a.xAxis, yAxis = _a.yAxis, normalizedTo = _a.normalizedTo;
                 data = xKey && yKeys.length && this.data ? this.data : [];
                 isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
                 isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
-                enabledYKeys = __spread(seriesItemEnabled.entries()).filter(function (_a) {
+                enabledYKeys = __spreadArray([], __read(seriesItemEnabled.entries())).filter(function (_a) {
                     var _b = __read(_a, 2), enabled = _b[1];
                     return enabled;
                 }).map(function (_a) {
@@ -243,21 +243,24 @@ var AreaSeries = /** @class */ (function (_super) {
                     return yKey;
                 });
                 normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+                extraProps = [];
+                if (normaliseTo) {
+                    extraProps.push(processors_1.normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
+                }
                 this.dataModel = new dataModel_1.DataModel({
-                    props: __spread([
-                        series_1.keyProperty(xKey, isContinuousX)
-                    ], enabledYKeys.map(function (yKey) {
+                    props: __spreadArray(__spreadArray(__spreadArray([
+                        series_1.keyProperty(xKey, isContinuousX, { id: 'xValue' })
+                    ], __read(enabledYKeys.map(function (yKey) {
                         return series_1.valueProperty(yKey, isContinuousY, {
+                            id: "yValue-" + yKey,
                             missingValue: NaN,
                             invalidValue: undefined,
                         });
-                    }), [
-                        series_1.sumProperties(enabledYKeys),
-                        dataModel_1.SUM_VALUE_EXTENT,
-                    ]),
+                    }))), [
+                        aggregateFunctions_1.sum(enabledYKeys)
+                    ]), __read(extraProps)),
                     groupByKeys: true,
                     dataVisible: this.visible && enabledYKeys.length > 0,
-                    normaliseTo: normaliseTo,
                 });
                 this.processedData = this.dataModel.processData(data);
                 return [2 /*return*/];
@@ -268,7 +271,7 @@ var AreaSeries = /** @class */ (function (_super) {
         var _a = this, processedData = _a.processedData, xAxis = _a.xAxis, yAxis = _a.yAxis;
         if (!processedData)
             return [];
-        var _b = processedData, _c = __read(_b.defs.keys, 1), keyDef = _c[0], _d = _b.domain, _e = __read(_d.keys, 1), keys = _e[0], _f = __read(_d.values, 1), yExtent = _f[0], _g = _b.reduced, _h = dataModel_1.SUM_VALUE_EXTENT.property, ySumExtent = (_g === void 0 ? {} : _g)[_h];
+        var _b = __read(processedData.defs.keys, 1), keyDef = _b[0], _c = processedData.domain, _d = __read(_c.keys, 1), keys = _d[0], _e = __read(_c.values, 1), yExtent = _e[0], _f = _c.aggValues, _g = _f === void 0 ? [] : _f, _h = __read(_g, 1), ySumExtent = _h[0];
         if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
             if (keyDef.valueType === 'category') {
                 return keys;
@@ -283,20 +286,21 @@ var AreaSeries = /** @class */ (function (_super) {
         }
     };
     AreaSeries.prototype.createNodeData = function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xAxis, yAxis, data, _b, groupedData, contexts, _c, yKeys, xKey, marker, label, fills, strokes, seriesId, xScale, yScale, continuousY, xOffset, xDataCount, cumulativePathValues, cumulativeMarkerValues, createPathCoordinates, createMarkerCoordinate;
+            var _b, xAxis, yAxis, data, _c, _d, groupedData, callbackCache, contexts, _e, yKeys, _f, xKey, marker, label, fills, strokes, seriesId, xScale, yScale, continuousY, xOffset, xDataCount, cumulativePathValues, cumulativeMarkerValues, createPathCoordinates, createMarkerCoordinate;
             var _this = this;
-            return __generator(this, function (_d) {
-                _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, data = _a.data, _b = _a.processedData, groupedData = (_b === void 0 ? {} : _b).data;
+            return __generator(this, function (_g) {
+                _b = this, xAxis = _b.xAxis, yAxis = _b.yAxis, data = _b.data, _c = _b.processedData, _d = _c === void 0 ? {} : _c, groupedData = _d.data, callbackCache = _b.ctx.callbackCache;
                 if (!xAxis || !yAxis || !data) {
                     return [2 /*return*/, []];
                 }
                 contexts = [];
-                _c = this, yKeys = _c.yKeys, xKey = _c.xKey, marker = _c.marker, label = _c.label, fills = _c.fills, strokes = _c.strokes, seriesId = _c.id;
+                _e = this, yKeys = _e.yKeys, _f = _e.xKey, xKey = _f === void 0 ? '' : _f, marker = _e.marker, label = _e.label, fills = _e.fills, strokes = _e.strokes, seriesId = _e.id;
                 xScale = xAxis.scale;
                 yScale = yAxis.scale;
                 continuousY = yScale instanceof continuousScale_1.ContinuousScale;
-                xOffset = (xScale.bandwidth || 0) / 2;
+                xOffset = ((_a = xScale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
                 xDataCount = data.length;
                 cumulativePathValues = new Array(xDataCount)
                     .fill(null)
@@ -331,7 +335,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 };
                 yKeys.forEach(function (yKey, seriesIdx) {
                     var _a;
-                    var yKeyDataIndex = (_a = _this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndex(yKey);
+                    var yKeyDataIndex = (_a = _this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndexById("yValue-" + yKey);
                     var labelSelectionData = [];
                     var markerSelectionData = [];
                     var strokeSelectionData = { itemId: yKey, points: [], yValues: [] };
@@ -354,6 +358,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     groupedData === null || groupedData === void 0 ? void 0 : groupedData.forEach(function (datumGroup, dataIdx) {
                         var _a = __read(datumGroup.keys, 1), xDatum = _a[0], datumArray = datumGroup.datum, valuesArray = datumGroup.values;
                         valuesArray.forEach(function (values, valueIdx) {
+                            var _a;
                             datumIdx++;
                             var seriesDatum = datumArray[valueIdx];
                             var rawYDatum = values[yKeyDataIndex.index];
@@ -385,7 +390,7 @@ var AreaSeries = /** @class */ (function (_super) {
                             // label data
                             var labelText;
                             if (label.formatter) {
-                                labelText = label.formatter({ value: yDatum, seriesId: seriesId });
+                                labelText = (_a = callbackCache.call(label.formatter, { value: yDatum, seriesId: seriesId })) !== null && _a !== void 0 ? _a : '';
                             }
                             else {
                                 labelText = value_1.isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
@@ -448,104 +453,6 @@ var AreaSeries = /** @class */ (function (_super) {
     AreaSeries.prototype.isPathOrSelectionDirty = function () {
         return this.marker.isDirty();
     };
-    AreaSeries.prototype.updatePaths = function (opts) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, fillSelectionData, strokeSelectionData, _b, fill, stroke;
-            return __generator(this, function (_c) {
-                _a = opts.contextData, fillSelectionData = _a.fillSelectionData, strokeSelectionData = _a.strokeSelectionData, _b = __read(opts.paths, 2), fill = _b[0], stroke = _b[1];
-                fill.datum = fillSelectionData;
-                fill.tag = AreaSeriesTag.Fill;
-                fill.lineJoin = 'round';
-                fill.stroke = undefined;
-                fill.pointerEvents = node_1.PointerEvents.None;
-                stroke.datum = strokeSelectionData;
-                stroke.tag = AreaSeriesTag.Stroke;
-                stroke.fill = undefined;
-                stroke.lineJoin = stroke.lineCap = 'round';
-                stroke.pointerEvents = node_1.PointerEvents.None;
-                return [2 /*return*/];
-            });
-        });
-    };
-    AreaSeries.prototype.updatePathNodes = function (opts) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, fill, stroke, seriesIdx, itemId, _b, strokes, fills, fillOpacity, strokeOpacity, strokeWidth, shadow, points, path, i, points_1, points_1_1, p, _c, points, yValues, moveTo_1, path, i, points_2, points_2_1, p;
-            var e_1, _d, e_2, _e;
-            return __generator(this, function (_f) {
-                _a = __read(opts.paths, 2), fill = _a[0], stroke = _a[1], seriesIdx = opts.seriesIdx, itemId = opts.itemId;
-                _b = this, strokes = _b.strokes, fills = _b.fills, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, strokeWidth = _b.strokeWidth, shadow = _b.shadow;
-                {
-                    points = fill.datum.points;
-                    fill.fill = fills[seriesIdx % fills.length];
-                    fill.fillOpacity = fillOpacity;
-                    fill.strokeOpacity = strokeOpacity;
-                    fill.strokeWidth = strokeWidth;
-                    fill.lineDash = this.lineDash;
-                    fill.lineDashOffset = this.lineDashOffset;
-                    fill.fillShadow = shadow;
-                    path = fill.path;
-                    path.clear({ trackChanges: true });
-                    i = 0;
-                    try {
-                        for (points_1 = __values(points), points_1_1 = points_1.next(); !points_1_1.done; points_1_1 = points_1.next()) {
-                            p = points_1_1.value;
-                            if (i++ > 0) {
-                                path.lineTo(p.x, p.y);
-                            }
-                            else {
-                                path.moveTo(p.x, p.y);
-                            }
-                        }
-                    }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                    finally {
-                        try {
-                            if (points_1_1 && !points_1_1.done && (_d = points_1.return)) _d.call(points_1);
-                        }
-                        finally { if (e_1) throw e_1.error; }
-                    }
-                    path.closePath();
-                    fill.checkPathDirty();
-                }
-                {
-                    _c = stroke.datum, points = _c.points, yValues = _c.yValues;
-                    moveTo_1 = true;
-                    stroke.stroke = strokes[seriesIdx % strokes.length];
-                    stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId: itemId });
-                    stroke.strokeOpacity = strokeOpacity;
-                    stroke.lineDash = this.lineDash;
-                    stroke.lineDashOffset = this.lineDashOffset;
-                    path = stroke.path;
-                    path.clear({ trackChanges: true });
-                    i = 0;
-                    try {
-                        for (points_2 = __values(points), points_2_1 = points_2.next(); !points_2_1.done; points_2_1 = points_2.next()) {
-                            p = points_2_1.value;
-                            if (yValues[i++] === undefined) {
-                                moveTo_1 = true;
-                            }
-                            else if (moveTo_1) {
-                                path.moveTo(p.x, p.y);
-                                moveTo_1 = false;
-                            }
-                            else {
-                                path.lineTo(p.x, p.y);
-                            }
-                        }
-                    }
-                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                    finally {
-                        try {
-                            if (points_2_1 && !points_2_1.done && (_e = points_2.return)) _e.call(points_2);
-                        }
-                        finally { if (e_2) throw e_2.error; }
-                    }
-                    stroke.checkPathDirty();
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
     AreaSeries.prototype.markerFactory = function () {
         var shape = this.marker.shape;
         var MarkerShape = util_1.getMarker(shape);
@@ -568,30 +475,31 @@ var AreaSeries = /** @class */ (function (_super) {
         });
     };
     AreaSeries.prototype.updateMarkerNodes = function (opts) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var markerSelection, isDatumHighlighted, _a, seriesId, xKey, marker, seriesItemEnabled, yKeys, fills, strokes, seriesFillOpacity, _b, markerFillOpacity, strokeOpacity, _c, highlightedFill, _d, highlightFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, size, formatter, markerStrokeWidth, customMarker;
-            return __generator(this, function (_e) {
+            var markerSelection, isDatumHighlighted, _b, seriesId, _c, xKey, marker, seriesItemEnabled, yKeys, fills, strokes, seriesFillOpacity, _d, markerFillOpacity, strokeOpacity, _e, highlightedFill, _f, highlightFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, callbackCache, size, formatter, markerStrokeWidth, customMarker;
+            return __generator(this, function (_g) {
                 markerSelection = opts.markerSelection, isDatumHighlighted = opts.isHighlight;
-                _a = this, seriesId = _a.id, xKey = _a.xKey, marker = _a.marker, seriesItemEnabled = _a.seriesItemEnabled, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, seriesFillOpacity = _a.fillOpacity, _b = _a.marker.fillOpacity, markerFillOpacity = _b === void 0 ? seriesFillOpacity : _b, strokeOpacity = _a.strokeOpacity, _c = _a.highlightStyle.item, highlightedFill = _c.fill, _d = _c.fillOpacity, highlightFillOpacity = _d === void 0 ? markerFillOpacity : _d, highlightedStroke = _c.stroke, highlightedDatumStrokeWidth = _c.strokeWidth;
+                _b = this, seriesId = _b.id, _c = _b.xKey, xKey = _c === void 0 ? '' : _c, marker = _b.marker, seriesItemEnabled = _b.seriesItemEnabled, yKeys = _b.yKeys, fills = _b.fills, strokes = _b.strokes, seriesFillOpacity = _b.fillOpacity, _d = _b.marker.fillOpacity, markerFillOpacity = _d === void 0 ? seriesFillOpacity : _d, strokeOpacity = _b.strokeOpacity, _e = _b.highlightStyle.item, highlightedFill = _e.fill, _f = _e.fillOpacity, highlightFillOpacity = _f === void 0 ? markerFillOpacity : _f, highlightedStroke = _e.stroke, highlightedDatumStrokeWidth = _e.strokeWidth, callbackCache = _b.ctx.callbackCache;
                 size = marker.size, formatter = marker.formatter;
-                markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+                markerStrokeWidth = (_a = marker.strokeWidth) !== null && _a !== void 0 ? _a : this.strokeWidth;
                 customMarker = typeof marker.shape === 'function';
                 markerSelection.each(function (node, datum) {
-                    var _a, _b;
+                    var _a, _b, _c, _d, _e, _f, _g, _h;
                     var yKeyIndex = yKeys.indexOf(datum.yKey);
                     var fill = isDatumHighlighted && highlightedFill !== undefined
                         ? highlightedFill
-                        : marker.fill || fills[yKeyIndex % fills.length];
+                        : (_a = marker.fill) !== null && _a !== void 0 ? _a : fills[yKeyIndex % fills.length];
                     var fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
                     var stroke = isDatumHighlighted && highlightedStroke !== undefined
                         ? highlightedStroke
-                        : marker.stroke || strokes[yKeyIndex % fills.length];
+                        : (_b = marker.stroke) !== null && _b !== void 0 ? _b : strokes[yKeyIndex % fills.length];
                     var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                         ? highlightedDatumStrokeWidth
                         : markerStrokeWidth;
                     var format = undefined;
                     if (formatter) {
-                        format = formatter({
+                        format = callbackCache.call(formatter, {
                             datum: datum.datum,
                             xKey: xKey,
                             yKey: datum.yKey,
@@ -603,12 +511,12 @@ var AreaSeries = /** @class */ (function (_super) {
                             seriesId: seriesId,
                         });
                     }
-                    node.fill = (format && format.fill) || fill;
-                    node.stroke = (format && format.stroke) || stroke;
-                    node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+                    node.fill = (_c = format === null || format === void 0 ? void 0 : format.fill) !== null && _c !== void 0 ? _c : fill;
+                    node.stroke = (_d = format === null || format === void 0 ? void 0 : format.stroke) !== null && _d !== void 0 ? _d : stroke;
+                    node.strokeWidth = (_e = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _e !== void 0 ? _e : strokeWidth;
                     node.fillOpacity = fillOpacity !== null && fillOpacity !== void 0 ? fillOpacity : 1;
-                    node.strokeOpacity = (_b = (_a = marker.strokeOpacity) !== null && _a !== void 0 ? _a : strokeOpacity) !== null && _b !== void 0 ? _b : 1;
-                    node.size = format && format.size !== undefined ? format.size : size;
+                    node.strokeOpacity = (_g = (_f = marker.strokeOpacity) !== null && _f !== void 0 ? _f : strokeOpacity) !== null && _g !== void 0 ? _g : 1;
+                    node.size = (_h = format === null || format === void 0 ? void 0 : format.size) !== null && _h !== void 0 ? _h : size;
                     node.translationX = datum.point.x;
                     node.translationY = datum.point.y;
                     node.visible =
@@ -616,7 +524,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     if (!customMarker || node.dirtyPath) {
                         return;
                     }
-                    // Only for cutom marker shapes
+                    // Only for custom marker shapes
                     node.path.clear({ trackChanges: true });
                     node.updatePath();
                     node.checkPathDirty();
@@ -669,27 +577,29 @@ var AreaSeries = /** @class */ (function (_super) {
         });
     };
     AreaSeries.prototype.getNodeClickEvent = function (event, datum) {
-        return new cartesianSeries_1.CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+        var _a;
+        return new cartesianSeries_1.CartesianSeriesNodeClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', datum.yKey, event, datum, this);
     };
     AreaSeries.prototype.getNodeDoubleClickEvent = function (event, datum) {
-        return new cartesianSeries_1.CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
+        var _a;
+        return new cartesianSeries_1.CartesianSeriesNodeDoubleClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', datum.yKey, event, datum, this);
     };
     AreaSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var _a, _b, _c;
-        var _d = this, xKey = _d.xKey, seriesId = _d.id;
+        var _a, _b, _c, _d;
+        var _e = this, xKey = _e.xKey, seriesId = _e.id;
         var yKey = nodeDatum.yKey;
-        var yKeyDataIndex = (_a = this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndex(yKey);
+        var yKeyDataIndex = (_a = this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndexById("yValue-" + yKey);
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';
         }
         var datum = nodeDatum.datum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, yKeys = _e.yKeys;
+        var _f = this, xAxis = _f.xAxis, yAxis = _f.yAxis, yKeys = _f.yKeys;
         if (!(xAxis && yAxis && value_1.isNumber(yValue)) || !yKeyDataIndex) {
             return '';
         }
-        var _f = this, xName = _f.xName, yNames = _f.yNames, fills = _f.fills, strokes = _f.strokes, tooltip = _f.tooltip, marker = _f.marker;
+        var _g = this, xName = _g.xName, yNames = _g.yNames, fills = _g.fills, strokes = _g.strokes, tooltip = _g.tooltip, marker = _g.marker;
         var size = marker.size, markerFormatter = marker.formatter, markerStrokeWidth = marker.strokeWidth, markerFill = marker.fill, markerStroke = marker.stroke;
         var xString = xAxis.formatDatum(xValue);
         var yString = yAxis.formatDatum(yValue);
@@ -698,9 +608,9 @@ var AreaSeries = /** @class */ (function (_super) {
         var yName = yNames[yKeyIndex];
         var title = sanitize_1.sanitizeHtml(yName);
         var content = sanitize_1.sanitizeHtml(xString + ': ' + yString);
-        var strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
-        var fill = markerFill || fills[yKeyIndex % fills.length];
-        var stroke = markerStroke || strokes[yKeyIndex % fills.length];
+        var strokeWidth = markerStrokeWidth !== null && markerStrokeWidth !== void 0 ? markerStrokeWidth : this.strokeWidth;
+        var fill = markerFill !== null && markerFill !== void 0 ? markerFill : fills[yKeyIndex % fills.length];
+        var stroke = markerStroke !== null && markerStroke !== void 0 ? markerStroke : strokes[yKeyIndex % fills.length];
         var format = undefined;
         if (markerFormatter) {
             format = markerFormatter({
@@ -715,7 +625,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 seriesId: seriesId,
             });
         }
-        var color = (format && format.fill) || fill;
+        var color = (_d = format === null || format === void 0 ? void 0 : format.fill) !== null && _d !== void 0 ? _d : fill;
         var defaults = {
             title: title,
             backgroundColor: color,
@@ -748,9 +658,9 @@ var AreaSeries = /** @class */ (function (_super) {
         return tooltip_1.toTooltipHtml(defaults);
     };
     AreaSeries.prototype.getLegendData = function () {
-        var _a, _b;
-        var _c = this, data = _c.data, id = _c.id, xKey = _c.xKey, yKeys = _c.yKeys, yNames = _c.yNames, seriesItemEnabled = _c.seriesItemEnabled, marker = _c.marker, fills = _c.fills, strokes = _c.strokes, fillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity;
-        if (!data || !data.length || !xKey || !yKeys.length) {
+        var _a, _b, _c, _d, _e;
+        var _f = this, data = _f.data, id = _f.id, xKey = _f.xKey, yKeys = _f.yKeys, yNames = _f.yNames, seriesItemEnabled = _f.seriesItemEnabled, marker = _f.marker, fills = _f.fills, strokes = _f.strokes, fillOpacity = _f.fillOpacity, strokeOpacity = _f.strokeOpacity;
+        if (!(data === null || data === void 0 ? void 0 : data.length) || !xKey || !yKeys.length) {
             return [];
         }
         var legendData = [];
@@ -759,23 +669,259 @@ var AreaSeries = /** @class */ (function (_super) {
         for (var index = yKeys.length - 1; index >= 0; index--) {
             var yKey = yKeys[index];
             legendData.push({
+                legendType: 'category',
                 id: id,
                 itemId: yKey,
                 seriesId: id,
-                enabled: seriesItemEnabled.get(yKey) || false,
+                enabled: (_a = seriesItemEnabled.get(yKey)) !== null && _a !== void 0 ? _a : false,
                 label: {
                     text: yNames[index] || yKeys[index],
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fills[index % fills.length],
-                    stroke: marker.stroke || strokes[index % strokes.length],
-                    fillOpacity: (_a = marker.fillOpacity) !== null && _a !== void 0 ? _a : fillOpacity,
-                    strokeOpacity: (_b = marker.strokeOpacity) !== null && _b !== void 0 ? _b : strokeOpacity,
+                    fill: (_b = marker.fill) !== null && _b !== void 0 ? _b : fills[index % fills.length],
+                    stroke: (_c = marker.stroke) !== null && _c !== void 0 ? _c : strokes[index % strokes.length],
+                    fillOpacity: (_d = marker.fillOpacity) !== null && _d !== void 0 ? _d : fillOpacity,
+                    strokeOpacity: (_e = marker.strokeOpacity) !== null && _e !== void 0 ? _e : strokeOpacity,
                 },
             });
         }
         return legendData;
+    };
+    AreaSeries.prototype.onLegendItemDoubleClick = function (event) {
+        var _this = this;
+        var enabled = event.enabled, itemId = event.itemId, series = event.series, numVisibleItems = event.numVisibleItems;
+        var newEnableds = {};
+        var totalVisibleItems = Object.values(numVisibleItems).reduce(function (p, v) { return p + v; }, 0);
+        var singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+        if (series.id === this.id) {
+            var singleEnabledInEachSeries_1 = Object.values(numVisibleItems).filter(function (v) { return v === 1; }).length === Object.keys(numVisibleItems).length;
+            this.yKeys.forEach(function (yKey) {
+                var _a;
+                var matches = yKey === itemId;
+                var newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries_1 && enabled);
+                newEnableds[yKey] = (_a = newEnableds[yKey]) !== null && _a !== void 0 ? _a : newEnabled;
+            });
+        }
+        else {
+            this.yKeys.forEach(function (yKey) {
+                newEnableds[yKey] = singleEnabledWasClicked;
+            });
+        }
+        Object.keys(newEnableds).forEach(function (yKey) {
+            _super.prototype.toggleSeriesItem.call(_this, yKey, newEnableds[yKey]);
+        });
+    };
+    AreaSeries.prototype.animateEmptyUpdateReady = function (_a) {
+        var _this = this;
+        var markerSelections = _a.markerSelections, labelSelections = _a.labelSelections, contextData = _a.contextData, paths = _a.paths, seriesRect = _a.seriesRect;
+        var _b = this, strokes = _b.strokes, fills = _b.fills, fillOpacity = _b.fillOpacity, lineDash = _b.lineDash, lineDashOffset = _b.lineDashOffset, strokeOpacity = _b.strokeOpacity, strokeWidth = _b.strokeWidth, shadow = _b.shadow;
+        contextData.forEach(function (_a, seriesIdx) {
+            var _b, _c, _d;
+            var fillSelectionData = _a.fillSelectionData, strokeSelectionData = _a.strokeSelectionData, itemId = _a.itemId;
+            var _e = __read(paths[seriesIdx], 2), fill = _e[0], stroke = _e[1];
+            var duration = 1000;
+            var markerDuration = 200;
+            var animationOptions = {
+                from: 0,
+                to: (_b = seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) !== null && _b !== void 0 ? _b : 0,
+                disableInteractions: true,
+                duration: duration,
+                ease: easing.linear,
+                repeat: 0,
+            };
+            // Stroke
+            {
+                var points_1 = strokeSelectionData.points, yValues_1 = strokeSelectionData.yValues;
+                stroke.tag = AreaSeriesTag.Stroke;
+                stroke.fill = undefined;
+                stroke.lineJoin = stroke.lineCap = 'round';
+                stroke.pointerEvents = node_1.PointerEvents.None;
+                stroke.stroke = strokes[seriesIdx % strokes.length];
+                stroke.strokeWidth = _this.getStrokeWidth(_this.strokeWidth, { itemId: itemId });
+                stroke.strokeOpacity = strokeOpacity;
+                stroke.lineDash = lineDash;
+                stroke.lineDashOffset = lineDashOffset;
+                (_c = _this.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_stroke_" + seriesIdx, __assign(__assign({}, animationOptions), { onUpdate: function (xValue) {
+                        stroke.path.clear({ trackChanges: true });
+                        var moveTo = true;
+                        points_1.forEach(function (point, index) {
+                            // Draw/move the full segment if past the end of this segment
+                            if (yValues_1[index] === undefined || isNaN(point.x) || isNaN(point.y)) {
+                                moveTo = true;
+                            }
+                            else if (point.x <= xValue) {
+                                if (moveTo) {
+                                    stroke.path.moveTo(point.x, point.y);
+                                    moveTo = false;
+                                }
+                                else {
+                                    stroke.path.lineTo(point.x, point.y);
+                                }
+                            }
+                            else if (index > 0 &&
+                                yValues_1[index] !== undefined &&
+                                yValues_1[index - 1] !== undefined &&
+                                points_1[index - 1].x <= xValue) {
+                                // Draw/move partial line if in between the start and end of this segment
+                                var start = points_1[index - 1];
+                                var end = point;
+                                var x = xValue;
+                                var y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                                stroke.path.lineTo(x, y);
+                            }
+                        });
+                        stroke.checkPathDirty();
+                    } }));
+            }
+            // Fill
+            {
+                var allPoints = fillSelectionData.points;
+                var points_2 = allPoints.slice(0, allPoints.length / 2);
+                var bottomPoints_1 = allPoints.slice(allPoints.length / 2);
+                fill.tag = AreaSeriesTag.Fill;
+                fill.stroke = undefined;
+                fill.lineJoin = 'round';
+                fill.pointerEvents = node_1.PointerEvents.None;
+                fill.fill = fills[seriesIdx % fills.length];
+                fill.fillOpacity = fillOpacity;
+                fill.strokeOpacity = strokeOpacity;
+                fill.strokeWidth = strokeWidth;
+                fill.lineDash = lineDash;
+                fill.lineDashOffset = lineDashOffset;
+                fill.fillShadow = shadow;
+                (_d = _this.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready_fill_" + seriesIdx, __assign(__assign({}, animationOptions), { onUpdate: function (xValue) {
+                        fill.path.clear({ trackChanges: true });
+                        var x = 0;
+                        var y = 0;
+                        points_2.forEach(function (point, index) {
+                            if (point.x <= xValue) {
+                                // Draw/move the full segment if past the end of this segment
+                                x = point.x;
+                                y = point.y;
+                                fill.path.lineTo(point.x, point.y);
+                            }
+                            else if (index > 0 && points_2[index - 1].x < xValue) {
+                                // Draw/move partial line if in between the start and end of this segment
+                                var start = points_2[index - 1];
+                                var end = point;
+                                x = xValue;
+                                y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                                fill.path.lineTo(x, y);
+                            }
+                        });
+                        bottomPoints_1.forEach(function (point, index) {
+                            var reverseIndex = bottomPoints_1.length - index - 1;
+                            if (point.x <= xValue) {
+                                fill.path.lineTo(point.x, point.y);
+                            }
+                            else if (reverseIndex > 0 && points_2[reverseIndex - 1].x < xValue) {
+                                var start = point;
+                                var end = bottomPoints_1[index + 1];
+                                var bottomY = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                                fill.path.lineTo(x, bottomY);
+                            }
+                        });
+                        if (bottomPoints_1.length > 0) {
+                            fill.path.lineTo(bottomPoints_1[bottomPoints_1.length - 1].x, bottomPoints_1[bottomPoints_1.length - 1].y);
+                        }
+                        fill.path.closePath();
+                        fill.checkPathDirty();
+                    } }));
+            }
+            markerSelections[seriesIdx].each(function (marker, datum) {
+                var _a, _b, _c, _d;
+                var delay = (seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) ? (datum.point.x / seriesRect.width) * duration : 0;
+                var format = _this.animateFormatter(datum);
+                var size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
+                (_c = _this.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign(__assign({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
+                        marker.size = size;
+                    } }));
+            });
+            labelSelections[seriesIdx].each(function (label, datum) {
+                var _a;
+                var delay = (seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) ? (datum.point.x / seriesRect.width) * duration : 0;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                    from: 0,
+                    to: 1,
+                    delay: delay,
+                    duration: markerDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: function (opacity) {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
+    };
+    AreaSeries.prototype.animateReadyUpdate = function (_a) {
+        var _this = this;
+        var contextData = _a.contextData, paths = _a.paths;
+        var _b = this, strokes = _b.strokes, fills = _b.fills, fillOpacity = _b.fillOpacity, lineDash = _b.lineDash, lineDashOffset = _b.lineDashOffset, strokeOpacity = _b.strokeOpacity, strokeWidth = _b.strokeWidth, shadow = _b.shadow;
+        contextData.forEach(function (_a, seriesIdx) {
+            var strokeSelectionData = _a.strokeSelectionData, fillSelectionData = _a.fillSelectionData, itemId = _a.itemId;
+            var _b = __read(paths[seriesIdx], 2), fill = _b[0], stroke = _b[1];
+            // Stroke
+            stroke.stroke = strokes[seriesIdx % strokes.length];
+            stroke.strokeWidth = _this.getStrokeWidth(_this.strokeWidth, { itemId: itemId });
+            stroke.strokeOpacity = strokeOpacity;
+            stroke.lineDash = lineDash;
+            stroke.lineDashOffset = lineDashOffset;
+            stroke.path.clear({ trackChanges: true });
+            var moveTo = true;
+            strokeSelectionData.points.forEach(function (point, index) {
+                if (strokeSelectionData.yValues[index] === undefined || isNaN(point.x) || isNaN(point.y)) {
+                    moveTo = true;
+                }
+                else if (moveTo) {
+                    stroke.path.moveTo(point.x, point.y);
+                    moveTo = false;
+                }
+                else {
+                    stroke.path.lineTo(point.x, point.y);
+                }
+            });
+            stroke.checkPathDirty();
+            // Fill
+            fill.fill = fills[seriesIdx % fills.length];
+            fill.fillOpacity = fillOpacity;
+            fill.strokeOpacity = strokeOpacity;
+            fill.strokeWidth = strokeWidth;
+            fill.lineDash = lineDash;
+            fill.lineDashOffset = lineDashOffset;
+            fill.fillShadow = shadow;
+            fill.path.clear({ trackChanges: true });
+            fillSelectionData.points.forEach(function (point) {
+                fill.path.lineTo(point.x, point.y);
+            });
+            fill.path.closePath();
+            fill.checkPathDirty();
+        });
+    };
+    AreaSeries.prototype.animateFormatter = function (datum) {
+        var _a, _b, _c;
+        var _d = this, marker = _d.marker, fills = _d.fills, strokes = _d.strokes, _e = _d.xKey, xKey = _e === void 0 ? '' : _e, yKeys = _d.yKeys, seriesId = _d.id, callbackCache = _d.ctx.callbackCache;
+        var size = marker.size, formatter = marker.formatter;
+        var yKeyIndex = yKeys.indexOf(datum.yKey);
+        var fill = (_a = marker.fill) !== null && _a !== void 0 ? _a : fills[yKeyIndex % fills.length];
+        var stroke = (_b = marker.stroke) !== null && _b !== void 0 ? _b : strokes[yKeyIndex % fills.length];
+        var strokeWidth = (_c = marker.strokeWidth) !== null && _c !== void 0 ? _c : this.strokeWidth;
+        var format = undefined;
+        if (formatter) {
+            format = callbackCache.call(formatter, {
+                datum: datum.datum,
+                xKey: xKey,
+                yKey: datum.yKey,
+                fill: fill,
+                stroke: stroke,
+                strokeWidth: strokeWidth,
+                size: size,
+                highlighted: false,
+                seriesId: seriesId,
+            });
+        }
+        return format;
     };
     AreaSeries.prototype.isLabelEnabled = function () {
         return this.label.enabled;
@@ -801,10 +947,10 @@ var AreaSeries = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.NUMBER(0))
     ], AreaSeries.prototype, "lineDashOffset", void 0);
     __decorate([
-        validation_1.Validate(validation_1.STRING)
-    ], AreaSeries.prototype, "_xKey", void 0);
+        validation_1.Validate(validation_1.OPT_STRING)
+    ], AreaSeries.prototype, "xKey", void 0);
     __decorate([
-        validation_1.Validate(validation_1.STRING)
+        validation_1.Validate(validation_1.OPT_STRING)
     ], AreaSeries.prototype, "xName", void 0);
     __decorate([
         validation_1.Validate(validation_1.STRING_ARRAY)

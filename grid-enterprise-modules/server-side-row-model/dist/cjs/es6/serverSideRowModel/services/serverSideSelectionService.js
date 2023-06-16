@@ -24,6 +24,8 @@ let ServerSideSelectionService = class ServerSideSelectionService extends core_1
             };
             this.eventService.dispatchEvent(event);
         });
+        this.rowSelection = this.gridOptionsService.get('rowSelection');
+        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
         const StrategyClazz = !groupSelectsChildren ? defaultStrategy_1.DefaultStrategy : groupSelectsChildrenStrategy_1.GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
@@ -39,8 +41,16 @@ let ServerSideSelectionService = class ServerSideSelectionService extends core_1
         };
         this.eventService.dispatchEvent(event);
     }
-    setNodeSelected(params) {
-        const changedNodes = this.selectionStrategy.setNodeSelected(params);
+    setNodesSelected(params) {
+        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+            console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
+            return 0;
+        }
+        if (params.nodes.length > 1 && params.rangeSelect) {
+            console.warn(`AG Grid: cannot use range selection when multi selecting rows`);
+            return 0;
+        }
+        const changedNodes = this.selectionStrategy.setNodesSelected(params);
         this.shotgunResetNodeSelectionState(params.source);
         const event = {
             type: core_1.Events.EVENT_SELECTION_CHANGED,

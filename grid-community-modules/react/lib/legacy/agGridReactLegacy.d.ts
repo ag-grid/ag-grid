@@ -1,8 +1,8 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 import { ColumnApi, GridApi, GridOptions } from '@ag-grid-community/core';
 import React, { Component } from 'react';
 import { AgGridReactProps } from '../shared/interfaces';
-import { PortalManager } from '../shared/portalManager';
+import { LegacyPortalManager } from '../shared/portalManager';
 export declare class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<TData>, {}> {
     props: AgGridReactProps<TData>;
     private static MAX_COMPONENT_CREATION_TIME_IN_MS;
@@ -15,7 +15,7 @@ export declare class AgGridReactLegacy<TData = any> extends Component<AgGridReac
     gridOptions: GridOptions<TData>;
     api: GridApi<TData> | null;
     columnApi: ColumnApi;
-    portalManager: PortalManager;
+    portalManager: LegacyPortalManager;
     destroyed: boolean;
     protected eGridDiv: HTMLElement;
     readonly SYNCHRONOUS_CHANGE_PROPERTIES: string[];

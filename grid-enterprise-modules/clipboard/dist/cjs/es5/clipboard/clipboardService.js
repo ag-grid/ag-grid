@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -194,15 +196,15 @@ var ClipboardService = /** @class */ (function (_super) {
                         // exit quoted field
                         insideQuotedField = false;
                     }
-                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
+                    // continue;
                 }
                 else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
                     // enter quoted field
                     insideQuotedField = true;
-                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
+                    // continue;
                 }
             }
-            if (!insideQuotedField) {
+            if (!insideQuotedField && currentChar !== '"') {
                 if (currentChar === delimiter) {
                     // move to next column
                     column++;
@@ -301,7 +303,7 @@ var ClipboardService = /** @class */ (function (_super) {
                 if (idx >= currentRowData.length) {
                     idx = idx % currentRowData.length;
                 }
-                var newValue = _this.processCell(rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                var newValue = _this.processCell(rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
@@ -362,7 +364,7 @@ var ClipboardService = /** @class */ (function (_super) {
                     // two reasons for looping through columns
                     columns.forEach(function (column) {
                         // get the initial values to copy down
-                        var value = _this.processCell(rowNode, column, _this.valueService.getValue(column, rowNode), EXPORT_TYPE_DRAG_COPY, processCellForClipboardFunc);
+                        var value = _this.processCell(rowNode, column, _this.valueService.getValue(column, rowNode), EXPORT_TYPE_DRAG_COPY, processCellForClipboardFunc, false, true);
                         firstRowValues.push(value);
                     });
                 }
@@ -373,7 +375,7 @@ var ClipboardService = /** @class */ (function (_super) {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                             return;
                         }
-                        var firstRowValue = _this.processCell(rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                        var firstRowValue = _this.processCell(rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
@@ -421,7 +423,7 @@ var ClipboardService = /** @class */ (function (_super) {
         var rowPointer = currentRow;
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        var skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.isTreeData();
+        var skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
         var getNextGoodRowNode = function () {
             while (true) {
                 if (!rowPointer) {
@@ -461,7 +463,11 @@ var ClipboardService = /** @class */ (function (_super) {
             column.isSuppressPaste(rowNode)) {
             return;
         }
-        var processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
+        // if the cell is a group and the col is an aggregation, skip the cell.
+        if (rowNode.group && column.isValueActive()) {
+            return;
+        }
+        var processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         var rowIndex = rowNode.rowIndex, rowPinned = rowNode.rowPinned;
         var cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex, column: column, rowPinned: rowPinned });
@@ -474,12 +480,23 @@ var ClipboardService = /** @class */ (function (_super) {
         if (params === void 0) { params = {}; }
         this.copyOrCutToClipboard(params);
     };
-    ClipboardService.prototype.cutToClipboard = function (params) {
+    ClipboardService.prototype.cutToClipboard = function (params, source) {
         if (params === void 0) { params = {}; }
+        if (source === void 0) { source = 'api'; }
         if (this.gridOptionsService.is('suppressCutToClipboard')) {
             return;
         }
+        var startEvent = {
+            type: core_1.Events.EVENT_CUT_START,
+            source: source
+        };
+        this.eventService.dispatchEvent(startEvent);
         this.copyOrCutToClipboard(params, true);
+        var endEvent = {
+            type: core_1.Events.EVENT_CUT_END,
+            source: source
+        };
+        this.eventService.dispatchEvent(endEvent);
     };
     ClipboardService.prototype.copyOrCutToClipboard = function (params, cut) {
         var includeHeaders = params.includeHeaders, includeGroupHeaders = params.includeGroupHeaders;
@@ -514,7 +531,7 @@ var ClipboardService = /** @class */ (function (_super) {
     ClipboardService.prototype.clearCellsAfterCopy = function (type) {
         this.eventService.dispatchEvent({ type: core_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
+            this.rangeService.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         }
         else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
@@ -733,6 +750,7 @@ var ClipboardService = /** @class */ (function (_super) {
         return this.csvCreator.getDataAsCsv(exportParams, true);
     };
     ClipboardService.prototype.processRowGroupCallback = function (params) {
+        var _this = this;
         var node = params.node;
         var key = node.key;
         var value = key != null ? key : '';
@@ -745,15 +763,17 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var processCellForClipboard = this.gridOptionsService.getCallback('processCellForClipboard');
         if (processCellForClipboard) {
-            var column = node.rowGroupColumn;
-            if (!column && node.footer && node.level === -1) {
-                column = this.columnModel.getRowGroupColumns()[0];
+            var column_1 = node.rowGroupColumn;
+            if (!column_1 && node.footer && node.level === -1) {
+                column_1 = this.columnModel.getRowGroupColumns()[0];
             }
             return processCellForClipboard({
                 value: value,
                 node: node,
-                column: column,
-                type: 'clipboard'
+                column: column_1,
+                type: 'clipboard',
+                formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column_1, node, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; },
+                parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column_1, node, valueToParse, _this.valueService.getValue(column_1, node)); }
             });
         }
         return value;
@@ -768,15 +788,25 @@ var ClipboardService = /** @class */ (function (_super) {
             _this.eventService.dispatchEvent(event);
         }, 0);
     };
-    ClipboardService.prototype.processCell = function (rowNode, column, value, type, func) {
+    ClipboardService.prototype.processCell = function (rowNode, column, value, type, func, canParse, canFormat) {
+        var _this = this;
+        var _a;
         if (func) {
             var params = {
                 column: column,
                 node: rowNode,
                 value: value,
                 type: type,
+                formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; },
+                parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, valueToParse, _this.valueService.getValue(column, rowNode)); }
             };
             return func(params);
+        }
+        if (canParse && column.getColDef().useValueParserForImport) {
+            return this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value, this.valueService.getValue(column, rowNode));
+        }
+        else if (canFormat && column.getColDef().useValueFormatterForExport) {
+            return (_a = this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value)) !== null && _a !== void 0 ? _a : value;
         }
         return value;
     };
@@ -907,6 +937,12 @@ var ClipboardService = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('rowPositionUtils')
     ], ClipboardService.prototype, "rowPositionUtils", void 0);
+    __decorate([
+        core_1.Autowired('valueFormatterService')
+    ], ClipboardService.prototype, "valueFormatterService", void 0);
+    __decorate([
+        core_1.Autowired('valueParserService')
+    ], ClipboardService.prototype, "valueParserService", void 0);
     __decorate([
         core_1.PostConstruct
     ], ClipboardService.prototype, "init", null);

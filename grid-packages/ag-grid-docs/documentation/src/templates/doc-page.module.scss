@@ -2,7 +2,7 @@
 @use '../design-system' as *;
 
 .doc-page-wrapper {
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+    --docs-page-max-width: 68em;
 
     display: flex;
     justify-content: space-between;
@@ -13,6 +13,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
         padding-right: var(--horizontal-margin);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        --docs-page-max-width: 74em;
     }
 }
 
@@ -33,7 +37,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-7;
-        max-width: 60em;
+        max-width: var(--docs-page-max-width);
     }
 
     &.noSideMenu {
@@ -47,33 +51,6 @@
         }
     }
 
-    h2:first-child,
-    h3:first-child,
-    h4:first-child {
-        margin-bottom: $size-half; // Required because of .ag-styles wrapper
-    }
-
-    h2:first-child {
-        margin-top: $size-6;
-    }
-
-    h3:first-child,
-    h4:first-child {
-        margin-top: $size-4;
-    }
-
-    // Required because of .ag-styles wrapper
-    p,
-    ul,
-    ol {
-        margin-bottom: $size-2 !important;
-    }
-
-    // Required because of .ag-styles wrapper
-    li p:last-child {
-        margin-bottom: $size-1 !important;
-    }
-
     h1,
     h2,
     h3,
@@ -85,17 +62,11 @@
         }
     }
 
-    // Required because of docs .ag-styles <div> wrapping
-    li ol,
-    li ul {
-        padding-left: 1.125em;
-    }
-
     :global(.docs-header-icon) {
         position: relative;
         padding-left: 0;
         margin-left: $size-1;
-        font-size: inherit !important; // !important for .ag-styles specificity
+        font-size: inherit;
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
 
@@ -120,35 +91,10 @@
         margin-left: 0.25rem;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 3rem;
-        table-layout: fixed;
-
-        th,
-        td {
-            border-bottom: 1px solid #dee2e6;
-            border-top: 1px solid #dee2e6;
-            padding: 0.5rem 1rem;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #f9fcff;
-        }
-
-        tr:nth-child(2n) {
-            td {
-                background-color: #f9fcff;
-            }
-        }
-    }
-
     a {
         &:hover {
             text-decoration: none;
-            color: $ag-orange;
+            color: var(--ag-grid-orange);
         }
     }
 
@@ -162,18 +108,8 @@
         margin-bottom: 0.25rem;
     }
 
-    // Required to overwrite bootstrap styles
-    kbd {
-        color: map.get($abstract-colors, map.get($semantic-colors, text-color));
-        display: inline-block;
-        margin: 0.1em 0.1em;
-        padding: 0.1em 0.6em;
-        border-radius: 0.25em;
-        font-family: $font-family;
-        background-color: white;
-        border: 1px solid #ccc;
-        box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px white;
-        text-shadow: 0 1px 0 white;
+    :global(.alert) {
+        margin-bottom: $size-2;
     }
 }
 
@@ -182,18 +118,18 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         padding-right: 166px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+        line-height: var(--line-height-ultra-tight);
     }
 
     > span {
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1;
     }
 }
 
@@ -235,8 +171,13 @@
     }
 }
 
+// Align two column markdown tables
+.pageSections > div > table {
+    table-layout: fixed;
+}
+
 // Hack to target "intro" section of docs page
-.pageSections > div > div:first-child {
+.pageSections > div > p:first-child {
     --font-size-extra-large: #{$font-size-extra-large};
 
     font-size: var(--font-size-extra-large);
@@ -247,22 +188,42 @@
     }
 }
 
-// Reduce spacing between page intro & first heading
-.pageSections > div > div:nth-child(2) {
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: $size-2;
+// Hack to target markdown images and not images within components
+.pageSections > div > div *:not([class]) img {
+    max-width: 100%;
+}
+
+.pageSections > div {
+    > h2 {
+        margin-top: $size-6;
     }
 
-    // Fix for tables that are directly below page intro
-    table h2,
-    table h3,
-    table h4,
-    table h5,
-    table h6 {
-        margin-top: 0;
+    > h3,
+    > h4 {
+        margin-top: $size-4;
+    }
+
+    p,
+    > ul,
+    > ol,
+    > table,
+    > pre {
+        font-size: var(--font-size-medium);
+    }
+
+    > h1,
+    > h2,
+    > h3,
+    > h4,
+    > h5,
+    > h6,
+    > p,
+    > ul,
+    > ol,
+    > table,
+    > hr {
+        @media screen and (min-width: $max-page-width) {
+            @include font-size-responsive();
+        }
     }
 }

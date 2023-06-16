@@ -13,8 +13,7 @@ exports.AgChart = void 0;
 const cartesianChart_1 = require("./cartesianChart");
 const polarChart_1 = require("./polarChart");
 const hierarchyChart_1 = require("./hierarchyChart");
-const caption_1 = require("../caption");
-const seriesTypes_1 = require("./series/seriesTypes");
+const seriesTypes_1 = require("./factory/seriesTypes");
 const pieSeries_1 = require("./series/polar/pieSeries");
 const logAxis_1 = require("./axis/logAxis");
 const numberAxis_1 = require("./axis/numberAxis");
@@ -22,15 +21,14 @@ const categoryAxis_1 = require("./axis/categoryAxis");
 const groupedCategoryAxis_1 = require("./axis/groupedCategoryAxis");
 const timeAxis_1 = require("./axis/timeAxis");
 const chartUpdateType_1 = require("./chartUpdateType");
-const dropShadow_1 = require("../scene/dropShadow");
 const json_1 = require("../util/json");
 const prepare_1 = require("./mapping/prepare");
-const crossLine_1 = require("./crossline/crossLine");
 const window_1 = require("../util/window");
 const logger_1 = require("../util/logger");
-const backgroundImage_1 = require("./background/backgroundImage");
+const chartOptions_1 = require("./chartOptions");
 // Deliberately imported via `module-support` so that internal module registration happens.
 const module_support_1 = require("../module-support");
+const setupModules_1 = require("./factory/setupModules");
 function chartType(options) {
     if (prepare_1.isAgCartesianChartOptions(options)) {
         return 'cartesian';
@@ -139,7 +137,14 @@ class AgChartInstanceProxy {
     }
 }
 class AgChartInternal {
+    static initialiseModules() {
+        if (AgChartInternal.initialised)
+            return;
+        setupModules_1.setupModules();
+        AgChartInternal.initialised = true;
+    }
     static createOrUpdate(userOptions, proxy) {
+        AgChartInternal.initialiseModules();
         debug('>>> createOrUpdate() user options', userOptions);
         const mixinOpts = {};
         if (AgChartInternal.DEBUG() === true) {
@@ -147,8 +152,7 @@ class AgChartInternal {
         }
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
-        seriesTypes_1.initialiseSeriesModules();
-        const processedOptions = prepare_1.prepareOptions(userOptions, mixinOpts, seriesTypes_1.seriesDefaults);
+        const processedOptions = prepare_1.prepareOptions(userOptions, mixinOpts);
         let chart = proxy === null || proxy === void 0 ? void 0 : proxy.chart;
         if (chart == null || chartType(userOptions) !== chartType(chart.processedOptions)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -203,7 +207,7 @@ class AgChartInternal {
                 maybeClone.destroy();
             }
         });
-        asyncDownload();
+        asyncDownload().catch((e) => logger_1.Logger.errorOnce(e));
     }
     static getImageDataURL(proxy, opts) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -219,7 +223,7 @@ class AgChartInternal {
     static prepareResizedChart(proxy, opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { chart } = proxy;
-            let { width, height } = opts || {};
+            let { width, height } = opts !== null && opts !== void 0 ? opts : {};
             const currentWidth = chart.width;
             const currentHeight = chart.height;
             const unchanged = (width === undefined && height === undefined) ||
@@ -250,9 +254,10 @@ class AgChartInternal {
         throw new Error(`AG Charts - couldn't apply configuration, check type of options: ${options['type']}`);
     }
     static updateDelta(chart, processedOptions, userOptions) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (processedOptions.type == null) {
-                processedOptions = Object.assign(Object.assign({}, processedOptions), { type: chart.processedOptions.type || prepare_1.optionsType(processedOptions) });
+                processedOptions = Object.assign(Object.assign({}, processedOptions), { type: (_a = chart.processedOptions.type) !== null && _a !== void 0 ? _a : prepare_1.optionsType(processedOptions) });
             }
             yield chart.awaitUpdateCompletion();
             if (chart.destroyed)
@@ -263,6 +268,7 @@ class AgChartInternal {
     }
 }
 AgChartInternal.DEBUG = () => { var _a; return (_a = window_1.windowValue('agChartsDebug')) !== null && _a !== void 0 ? _a : false; };
+AgChartInternal.initialised = false;
 function debug(message, ...optionalParams) {
     if ([true, 'opts'].includes(AgChartInternal.DEBUG())) {
         logger_1.Logger.debug(message, ...optionalParams);
@@ -272,7 +278,7 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     var _a, _b, _c, _d;
     const completeOptions = json_1.jsonMerge([(_a = chart.processedOptions) !== null && _a !== void 0 ? _a : {}, processedOptions], prepare_1.noDataCloneMergeOptions);
     const modulesChanged = applyModules(chart, completeOptions);
-    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
+    const skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
     if (prepare_1.isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -299,19 +305,13 @@ function applyChartOptions(chart, processedOptions, userOptions) {
             forceNodeDataRefresh = true;
         }
     }
+    applyLegend(chart, processedOptions);
     const seriesOpts = processedOptions.series;
     const seriesDataUpdate = !!processedOptions.data || (seriesOpts === null || seriesOpts === void 0 ? void 0 : seriesOpts.some((s) => s.data != null));
-    const otherRefreshUpdate = processedOptions.legend || processedOptions.title || processedOptions.subtitle;
+    const otherRefreshUpdate = (_c = (_b = processedOptions.legend) !== null && _b !== void 0 ? _b : processedOptions.title) !== null && _c !== void 0 ? _c : processedOptions.subtitle;
     forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
     if (processedOptions.data) {
         chart.data = processedOptions.data;
-    }
-    // Needs to be done last to avoid overrides by width/height properties.
-    if (processedOptions.autoSize != null) {
-        chart.autoSize = processedOptions.autoSize;
-    }
-    if ((_b = processedOptions.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
-        Object.assign(chart.legend.listeners, (_c = processedOptions.legend.listeners) !== null && _c !== void 0 ? _c : {});
     }
     if (processedOptions.listeners) {
         chart.updateAllSeriesListeners();
@@ -355,9 +355,9 @@ function applySeries(chart, options) {
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
         chart.series.forEach((s, i) => {
-            var _a, _b;
-            const previousOpts = ((_b = (_a = chart.processedOptions) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[i]) || {};
-            const seriesDiff = json_1.jsonDiff(previousOpts, optSeries[i] || {});
+            var _a, _b, _c, _d;
+            const previousOpts = (_c = (_b = (_a = chart.processedOptions) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[i]) !== null && _c !== void 0 ? _c : {};
+            const seriesDiff = json_1.jsonDiff(previousOpts, (_d = optSeries[i]) !== null && _d !== void 0 ? _d : {});
             if (!seriesDiff) {
                 return;
             }
@@ -367,7 +367,7 @@ function applySeries(chart, options) {
         });
         return;
     }
-    chart.series = createSeries(optSeries);
+    chart.series = createSeries(chart, optSeries);
 }
 function applyAxes(chart, options) {
     const optAxes = options.axes;
@@ -380,8 +380,8 @@ function applyAxes(chart, options) {
         const oldOpts = chart.processedOptions;
         if (prepare_1.isAgCartesianChartOptions(oldOpts)) {
             chart.axes.forEach((a, i) => {
-                var _a;
-                const previousOpts = ((_a = oldOpts.axes) === null || _a === void 0 ? void 0 : _a[i]) || {};
+                var _a, _b;
+                const previousOpts = (_b = (_a = oldOpts.axes) === null || _a === void 0 ? void 0 : _a[i]) !== null && _b !== void 0 ? _b : {};
                 const axisDiff = json_1.jsonDiff(previousOpts, optAxes[i]);
                 debug(`applying axis diff idx ${i}`, axisDiff);
                 const path = `axes[${i}]`;
@@ -394,12 +394,23 @@ function applyAxes(chart, options) {
     chart.axes = createAxis(chart, optAxes);
     return true;
 }
-function createSeries(options) {
+function applyLegend(chart, options) {
+    const skip = ['listeners'];
+    chart.setLegendInit((legend) => {
+        var _a, _b, _c;
+        applyOptionValues(legend, (_a = options.legend) !== null && _a !== void 0 ? _a : {}, { skip });
+        if ((_b = options.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
+            Object.assign(chart.legend.listeners, (_c = options.legend.listeners) !== null && _c !== void 0 ? _c : {});
+        }
+    });
+}
+function createSeries(chart, options) {
     const series = [];
+    const moduleContext = chart.getModuleContext();
     let index = 0;
-    for (const seriesOptions of options || []) {
+    for (const seriesOptions of options !== null && options !== void 0 ? options : []) {
         const path = `series[${index++}]`;
-        const seriesInstance = seriesTypes_1.getSeries(seriesOptions.type);
+        const seriesInstance = seriesTypes_1.getSeries(seriesOptions.type, moduleContext);
         applySeriesValues(seriesInstance, seriesOptions, { path, index });
         series.push(seriesInstance);
     }
@@ -410,7 +421,7 @@ function createAxis(chart, options) {
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
     let index = 0;
-    for (const axisOptions of options || []) {
+    for (const axisOptions of options !== null && options !== void 0 ? options : []) {
         let axis;
         switch (axisOptions.type) {
             case 'number':
@@ -465,34 +476,19 @@ function registerListeners(source, listeners) {
         source.addEventListener(property, listener);
     }
 }
-const JSON_APPLY_OPTIONS = {
-    constructors: {
-        title: caption_1.Caption,
-        subtitle: caption_1.Caption,
-        footnote: caption_1.Caption,
-        shadow: dropShadow_1.DropShadow,
-        innerCircle: pieSeries_1.DoughnutInnerCircle,
-        'axes[].crossLines[]': crossLine_1.CrossLine,
-        'series[].innerLabels[]': pieSeries_1.DoughnutInnerLabel,
-        'background.image': backgroundImage_1.BackgroundImage,
-    },
-    allowedTypes: {
-        'legend.pagination.marker.shape': ['primitive', 'function'],
-        'series[].marker.shape': ['primitive', 'function'],
-        'axis[].tick.count': ['primitive', 'class-instance'],
-    },
-};
 function applyOptionValues(target, options, { skip, path } = {}) {
-    const applyOpts = Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), { skip }), (path ? { path } : {}));
+    const applyOpts = Object.assign(Object.assign(Object.assign({}, chartOptions_1.getJsonApplyOptions()), { skip }), (path ? { path } : {}));
     return json_1.jsonApply(target, options, applyOpts);
 }
 function applySeriesValues(target, options, { path, index } = {}) {
+    var _a;
     const skip = ['series[].listeners'];
-    const ctrs = (JSON_APPLY_OPTIONS === null || JSON_APPLY_OPTIONS === void 0 ? void 0 : JSON_APPLY_OPTIONS.constructors) || {};
+    const jsonApplyOptions = chartOptions_1.getJsonApplyOptions();
+    const ctrs = (_a = jsonApplyOptions.constructors) !== null && _a !== void 0 ? _a : {};
     const seriesTypeOverrides = {
         constructors: Object.assign(Object.assign({}, ctrs), { title: target.type === 'pie' ? pieSeries_1.PieTitle : ctrs['title'] }),
     };
-    const applyOpts = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), seriesTypeOverrides), { skip: ['series[].type', ...(skip || [])] }), (path ? { path } : {})), { idx: index !== null && index !== void 0 ? index : -1 });
+    const applyOpts = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, jsonApplyOptions), seriesTypeOverrides), { skip: ['series[].type', ...(skip !== null && skip !== void 0 ? skip : [])] }), (path ? { path } : {})), { idx: index !== null && index !== void 0 ? index : -1 });
     const result = json_1.jsonApply(target, options, applyOpts);
     const listeners = options === null || options === void 0 ? void 0 : options.listeners;
     if (listeners != null) {

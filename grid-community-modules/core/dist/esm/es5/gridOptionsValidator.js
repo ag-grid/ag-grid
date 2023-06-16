@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -26,9 +26,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
@@ -43,44 +44,30 @@ export function logDeprecation(version, oldProp, newProp, message) {
     var newPropMsg = newProp ? "Please use '" + newProp + "' instead. " : '';
     doOnce(function () { return console.warn("AG Grid: since v" + version + ", '" + oldProp + "' is deprecated. " + newPropMsg + (message !== null && message !== void 0 ? message : '')); }, "Deprecated_" + oldProp);
 }
+// Vue adds these properties to all objects, so we ignore them when checking for invalid properties
+var VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 var GridOptionsValidator = /** @class */ (function () {
     function GridOptionsValidator() {
         this.deprecatedProperties = {
-            serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
             rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
-            suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
-            suppressColumnStateEvents: { version: '25', message: 'Events should be ignored based on the `event.source`, which will be "api" if the event was due to setting column state via the API.' },
-            defaultExportParams: { version: '25.2', message: 'The property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`' },
-            stopEditingWhenGridLosesFocus: { version: '25.2.2', newProp: 'stopEditingWhenCellsLoseFocus', copyToNewProp: true },
-            applyColumnDefOrder: { version: '26', message: 'The property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true' },
-            groupMultiAutoColumn: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'multipleColumns' },
-            groupUseEntireRow: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'groupRows' },
-            defaultGroupSortComparator: { version: '26', newProp: 'initialGroupOrderComparator' },
-            enableMultiRowDragging: { version: '26.1', newProp: 'rowDragMultiRow', copyToNewProp: true },
-            colWidth: { version: '26.1', newProp: 'defaultColDef.width' },
-            minColWidth: { version: '26.1', newProp: 'defaultColDef.minWidth' },
-            maxColWidth: { version: '26.1', newProp: 'defaultColDef.maxWidth' },
-            reactUi: { version: '26.1', message: 'React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.' },
-            suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
-            clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
-            getRowNodeId: { version: '27.1', newProp: 'getRowId', message: 'The difference: if getRowId() is implemented then immutable data is enabled by default.' },
-            defaultGroupOrderComparator: { version: '27.2', newProp: 'initialGroupOrderComparator' },
-            groupRowAggNodes: { version: '27.2', newProp: 'getGroupRowAgg' },
-            postSort: { version: '27.2', newProp: 'postSortRows' },
-            isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
-            localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
-            serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
+            serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
             serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
             suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
             processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
             processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
             getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
+            serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
             enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
             functionsPassive: { version: '29.2' },
             onColumnRowGroupChangeRequest: { version: '29.2' },
             onColumnPivotChangeRequest: { version: '29.2' },
             onColumnValueChangeRequest: { version: '29.2' },
             onColumnAggFuncChangeRequest: { version: '29.2' },
+            serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
+            suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
+            excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
+            enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
+            enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
         };
     }
     GridOptionsValidator.prototype.pickOneWarning = function (prop1, prop2) {
@@ -107,15 +94,17 @@ var GridOptionsValidator = /** @class */ (function () {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
         if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model.");
-            this.gridOptions.domLayout = 'normal';
+            if (!this.gridOptionsService.is('pagination')) {
+                console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.");
+                this.gridOptions.domLayout = 'normal';
+            }
         }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             var msg = function (prop, alt) { return ("AG Grid: '" + prop + "' is not supported on the Server-Side Row Model." + (alt ? " Please use " + alt + " instead." : '')); };
             if (this.gridOptionsService.exists('groupDefaultExpanded')) {
                 console.warn(msg('groupDefaultExpanded', 'isServerSideGroupOpenByDefault callback'));
             }
-            if (this.gridOptionsService.exists('groupIncludeFooter')) {
+            if (this.gridOptionsService.exists('groupIncludeFooter') && this.gridOptionsService.is('suppressServerSideInfiniteScroll')) {
                 console.warn(msg('groupIncludeFooter'));
             }
             if (this.gridOptionsService.exists('groupIncludeTotalFooter')) {
@@ -123,12 +112,12 @@ var GridOptionsValidator = /** @class */ (function () {
             }
         }
         if (this.gridOptionsService.is('enableRangeSelection')) {
-            ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
+            ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection', this.gridOptionsService.getGridId());
         }
         else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        var validateRegistered = function (prop, module) { return _this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop); };
+        var validateRegistered = function (prop, module) { return _this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop, _this.gridOptionsService.getGridId()); };
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
         // It is possible to use the SideBar only with your own custom tool panels.
         validateRegistered('sideBar', ModuleNames.SideBarModule);
@@ -137,27 +126,16 @@ var GridOptionsValidator = /** @class */ (function () {
         validateRegistered('getMainMenuItems', ModuleNames.MenuModule);
         validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
-        if (this.gridOptionsService.is('groupRowsSticky')) {
-            if (this.gridOptionsService.is('groupHideOpenParents')) {
-                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');
-            }
-            if (this.gridOptionsService.is('masterDetail')) {
-                this.pickOneWarning('groupRowsSticky', 'masterDetail');
-            }
-            if (this.gridOptionsService.is('pagination')) {
-                this.pickOneWarning('groupRowsSticky', 'pagination');
-            }
-        }
     };
     GridOptionsValidator.prototype.checkColumnDefProperties = function () {
         var _this = this;
         if (this.gridOptions.columnDefs == null) {
             return;
         }
-        var validProperties = __spread(ColDefUtil.ALL_PROPERTIES, ColDefUtil.FRAMEWORK_PROPERTIES);
+        var validProperties = ColDefUtil.ALL_PROPERTIES;
         var validateColDef = function (colDef, propertyName) {
             var userProperties = Object.getOwnPropertyNames(colDef);
-            _this.checkProperties(userProperties, validProperties, validProperties, propertyName, 'https://www.ag-grid.com/javascript-data-grid/column-properties/');
+            _this.checkProperties(userProperties, __spreadArray(__spreadArray([], __read(validProperties)), __read(VUE_FRAMEWORK_PROPS)), validProperties, propertyName, 'https://www.ag-grid.com/javascript-data-grid/column-properties/');
             if (colDef.children) {
                 colDef.children.forEach(function (child) { return validateColDef(child, 'columnDefs.children'); });
             }
@@ -199,8 +177,8 @@ var GridOptionsValidator = /** @class */ (function () {
     };
     GridOptionsValidator.prototype.checkGridOptionsProperties = function () {
         var userProperties = Object.getOwnPropertyNames(this.gridOptions);
-        var validProperties = __spread(PropertyKeys.ALL_PROPERTIES, PropertyKeys.FRAMEWORK_PROPERTIES, ComponentUtil.EVENT_CALLBACKS);
-        var validPropertiesAndExceptions = __spread(validProperties, ['api', 'columnApi'], Object.keys(this.deprecatedProperties));
+        var validProperties = __spreadArray(__spreadArray([], __read(PropertyKeys.ALL_PROPERTIES)), __read(ComponentUtil.EVENT_CALLBACKS));
+        var validPropertiesAndExceptions = __spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(validProperties)), ['api', 'columnApi']), __read(VUE_FRAMEWORK_PROPS)), __read(Object.keys(this.deprecatedProperties)));
         this.checkProperties(userProperties, validPropertiesAndExceptions, validProperties, 'gridOptions', 'https://www.ag-grid.com/javascript-data-grid/grid-options/');
     };
     GridOptionsValidator.prototype.checkProperties = function (userProperties, validPropertiesAndExceptions, validProperties, containerName, docsUrl) {
@@ -228,19 +206,6 @@ var GridOptionsValidator = /** @class */ (function () {
             }
         });
         // Manual messages and deprecation behaviour that don't fit our standard approach above.
-        if (options.groupSuppressAutoColumn) {
-            var propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
-            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `" + propName + " = 'custom'`");
-            options[propName] = 'custom';
-        }
-        if (options.immutableData) {
-            if (options.getRowId) {
-                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. With the `getRowId` callback implemented, immutable data is enabled by default so you can remove `immutableData=true`.');
-            }
-            else {
-                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To enable immutable data you must implement the `getRowId()` callback.');
-            }
-        }
         if (options.serverSideStoreType) {
             console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
             options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';

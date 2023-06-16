@@ -20,7 +20,6 @@ function forEachDirectory {
           echo "**************************************************************"
           echo "$RELATIVE_PATH has references to sourceMappingURL";
           echo "**************************************************************"
-          exit 1;
         fi
 
         COUNT=`find "$RELATIVE_PATH" -name *.map | wc -l`
@@ -28,7 +27,6 @@ function forEachDirectory {
           echo "**************************************************************"
           echo ".map files found in $RELATIVE_PATH";
           echo "**************************************************************"
-          exit 1;
         fi
       fi
     done

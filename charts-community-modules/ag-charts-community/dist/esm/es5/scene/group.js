@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -55,9 +57,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Node, RedrawType, SceneChangeDetection } from './node';
 import { BBox } from './bbox';
@@ -71,7 +74,7 @@ var Group = /** @class */ (function (_super) {
         _this.opts = opts;
         _this.opacity = 1;
         _this.lastBBox = undefined;
-        var _b = opts || {}, zIndex = _b.zIndex, zIndexSubOrder = _b.zIndexSubOrder;
+        var _b = opts !== null && opts !== void 0 ? opts : {}, zIndex = _b.zIndex, zIndexSubOrder = _b.zIndexSubOrder;
         _this.isContainerNode = true;
         if (zIndex !== undefined) {
             _this.zIndex = zIndex;
@@ -93,7 +96,7 @@ var Group = /** @class */ (function (_super) {
     };
     Group.prototype._setLayerManager = function (scene) {
         var _this = this;
-        var _a;
+        var _a, _b;
         if (this._layerManager && this.layer) {
             this._layerManager.removeLayer(this.layer);
             this.layer = undefined;
@@ -103,7 +106,7 @@ var Group = /** @class */ (function (_super) {
         }
         _super.prototype._setLayerManager.call(this, scene);
         if (scene && ((_a = this.opts) === null || _a === void 0 ? void 0 : _a.layer)) {
-            var _b = this.opts || {}, zIndex = _b.zIndex, zIndexSubOrder = _b.zIndexSubOrder, name_1 = _b.name;
+            var _c = (_b = this.opts) !== null && _b !== void 0 ? _b : {}, zIndex = _c.zIndex, zIndexSubOrder = _c.zIndexSubOrder, name_1 = _c.name;
             var getComputedOpacity = function () { return _this.getComputedOpacity(); };
             var getVisibility = function () { return _this.getVisibility(); };
             this.layer = scene.addLayer({ zIndex: zIndex, zIndexSubOrder: zIndexSubOrder, name: name_1, getComputedOpacity: getComputedOpacity, getVisibility: getVisibility });
@@ -154,9 +157,9 @@ var Group = /** @class */ (function (_super) {
     Group.prototype.render = function (renderCtx) {
         var e_1, _a;
         var _b, _c;
-        var _d = this.opts, _e = (_d === void 0 ? {} : _d).name, name = _e === void 0 ? undefined : _e;
-        var _f = this._debug, _g = (_f === void 0 ? {} : _f).consoleLog, consoleLog = _g === void 0 ? false : _g;
-        var _h = this, dirty = _h.dirty, dirtyZIndex = _h.dirtyZIndex, layer = _h.layer, children = _h.children, clipRect = _h.clipRect;
+        var _d = this.opts, _e = _d === void 0 ? {} : _d, _f = _e.name, name = _f === void 0 ? undefined : _f;
+        var _g = this._debug, _h = _g === void 0 ? {} : _g, _j = _h.consoleLog, consoleLog = _j === void 0 ? false : _j;
+        var _k = this, dirty = _k.dirty, dirtyZIndex = _k.dirtyZIndex, layer = _k.layer, children = _k.children, clipRect = _k.clipRect;
         var ctx = renderCtx.ctx, forceRender = renderCtx.forceRender, clipBBox = renderCtx.clipBBox;
         var resized = renderCtx.resized, stats = renderCtx.stats;
         var canvasCtxTransform = ctx.getTransform();
@@ -294,7 +297,7 @@ var Group = /** @class */ (function (_super) {
         this.dirtyZIndex = false;
         this.children.sort(function (a, b) {
             var _a, _b;
-            return compoundAscending(__spread([a.zIndex], ((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]), [a.serialNumber]), __spread([b.zIndex], ((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]), [b.serialNumber]), ascendingStringNumberUndefined);
+            return compoundAscending(__spreadArray(__spreadArray([a.zIndex], __read(((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]))), [a.serialNumber]), __spreadArray(__spreadArray([b.zIndex], __read(((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]))), [b.serialNumber]), ascendingStringNumberUndefined);
         });
     };
     Group.prototype.clipCtx = function (ctx, x, y, width, height) {

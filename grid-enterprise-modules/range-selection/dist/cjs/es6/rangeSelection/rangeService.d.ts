@@ -1,4 +1,4 @@
-import { CellPosition, CellPositionUtils, Column, IRangeService, CellRangeParams, CellRange, RowPosition, RowPositionUtils, BeanStub, CtrlsService, AutoScrollService } from "@ag-grid-community/core";
+import { CellPosition, CellPositionUtils, Column, IRangeService, CellRangeParams, CellRange, RowPosition, RowPositionUtils, BeanStub, CtrlsService, AutoScrollService, ClearCellRangeParams } from "@ag-grid-community/core";
 export declare class RangeService extends BeanStub implements IRangeService {
     private rowModel;
     private dragService;
@@ -36,7 +36,7 @@ export declare class RangeService extends BeanStub implements IRangeService {
     setCellRange(params: CellRangeParams): void;
     setCellRanges(cellRanges: CellRange[]): void;
     private setNewestRangeStartCell;
-    clearCellRangeCellValues(cellRanges?: CellRange[], source?: string): void;
+    clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
     addCellRange(params: CellRangeParams): void;
     getCellRanges(): CellRange[];

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -54,8 +56,6 @@ var keyCode_1 = require("../../constants/keyCode");
 var generic_1 = require("../../utils/generic");
 var array_1 = require("../../utils/array");
 var keyboard_2 = require("../../utils/keyboard");
-var moduleRegistry_1 = require("../../modules/moduleRegistry");
-var moduleNames_1 = require("../../modules/moduleNames");
 var cellCtrl_1 = require("../../rendering/cell/cellCtrl");
 var RowContainerEventsFeature = /** @class */ (function (_super) {
     __extends(RowContainerEventsFeature, _super);
@@ -65,17 +65,14 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         return _this;
     }
     RowContainerEventsFeature.prototype.postConstruct = function () {
+        this.addKeyboardListeners();
         this.addMouseListeners();
         this.mockContextMenuForIPad();
-        this.addKeyboardEvents();
     };
-    RowContainerEventsFeature.prototype.addKeyboardEvents = function () {
-        var _this = this;
-        var eventNames = ['keydown', 'keypress'];
-        eventNames.forEach(function (eventName) {
-            var listener = _this.processKeyboardEvent.bind(_this, eventName);
-            _this.addManagedListener(_this.element, eventName, listener);
-        });
+    RowContainerEventsFeature.prototype.addKeyboardListeners = function () {
+        var eventName = 'keydown';
+        var listener = this.processKeyboardEvent.bind(this, eventName);
+        this.addManagedListener(this.element, eventName, listener);
     };
     RowContainerEventsFeature.prototype.addMouseListeners = function () {
         var _this = this;
@@ -147,17 +144,22 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
             this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
         }
     };
+    RowContainerEventsFeature.prototype.getControlsForEventTarget = function (target) {
+        return {
+            cellCtrl: event_1.getCtrlForEventTarget(this.gridOptionsService, target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: event_1.getCtrlForEventTarget(this.gridOptionsService, target, rowCtrl_1.RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+        };
+    };
     RowContainerEventsFeature.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
-        var cellComp = event_1.getCtrlForEventTarget(this.gridOptionsService, keyboardEvent.target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        var rowComp = event_1.getCtrlForEventTarget(this.gridOptionsService, keyboardEvent.target, rowCtrl_1.RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        var _a = this.getControlsForEventTarget(keyboardEvent.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
         if (keyboardEvent.defaultPrevented) {
             return;
         }
-        if (cellComp) {
-            this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
+        if (cellCtrl) {
+            this.processCellKeyboardEvent(cellCtrl, eventName, keyboardEvent);
         }
-        else if (rowComp && rowComp.isFullWidth()) {
-            this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
+        else if (rowCtrl && rowCtrl.isFullWidth()) {
+            this.processFullWidthRowKeyboardEvent(rowCtrl, eventName, keyboardEvent);
         }
     };
     RowContainerEventsFeature.prototype.processCellKeyboardEvent = function (cellCtrl, eventName, keyboardEvent) {
@@ -166,29 +168,23 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         var editing = cellCtrl.isEditing();
         var gridProcessingAllowed = !keyboard_1.isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
         if (gridProcessingAllowed) {
-            switch (eventName) {
-                case 'keydown':
-                    // first see if it's a scroll key, page up / down, home / end etc
-                    var wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
-                    // if not a scroll key, then we pass onto cell
-                    if (!wasScrollKey) {
-                        cellCtrl.onKeyDown(keyboardEvent);
-                    }
-                    // perform clipboard and undo / redo operations
-                    this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
-                    break;
-                case 'keypress':
-                    cellCtrl.onKeyPress(keyboardEvent);
-                    break;
+            if (eventName === 'keydown') {
+                // first see if it's a scroll key, page up / down, home / end etc
+                var wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
+                // if not a scroll key, then we pass onto cell
+                if (!wasScrollKey) {
+                    cellCtrl.onKeyDown(keyboardEvent);
+                }
+                // perform clipboard and undo / redo operations
+                this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
+                if (keyboard_1.isEventFromPrintableCharacter(keyboardEvent)) {
+                    cellCtrl.processCharacter(keyboardEvent);
+                }
             }
         }
         if (eventName === 'keydown') {
             var cellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, events_1.Events.EVENT_CELL_KEY_DOWN);
             this.eventService.dispatchEvent(cellKeyDownEvent);
-        }
-        if (eventName === 'keypress') {
-            var cellKeyPressEvent = cellCtrl.createEvent(keyboardEvent, events_1.Events.EVENT_CELL_KEY_PRESS);
-            this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     };
     RowContainerEventsFeature.prototype.processFullWidthRowKeyboardEvent = function (rowComp, eventName, keyboardEvent) {
@@ -219,10 +215,6 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
             var cellKeyDownEvent = rowComp.createRowEvent(events_1.Events.EVENT_CELL_KEY_DOWN, keyboardEvent);
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
-        if (eventName === 'keypress') {
-            var cellKeyPressEvent = rowComp.createRowEvent(events_1.Events.EVENT_CELL_KEY_PRESS, keyboardEvent);
-            this.eventService.dispatchEvent(cellKeyPressEvent);
-        }
     };
     RowContainerEventsFeature.prototype.doGridOperations = function (keyboardEvent, editing) {
         // check if ctrl or meta key pressed
@@ -247,20 +239,20 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         if (keyCode === keyCode_1.KeyCode.C) {
             return this.onCtrlAndC(keyboardEvent);
         }
-        if (keyCode === keyCode_1.KeyCode.X) {
-            return this.onCtrlAndX(keyboardEvent);
-        }
-        if (keyCode === keyCode_1.KeyCode.V) {
-            return this.onCtrlAndV();
-        }
         if (keyCode === keyCode_1.KeyCode.D) {
             return this.onCtrlAndD(keyboardEvent);
         }
-        if (keyCode === keyCode_1.KeyCode.Z) {
-            return this.onCtrlAndZ(keyboardEvent);
+        if (keyCode === keyCode_1.KeyCode.V) {
+            return this.onCtrlAndV(keyboardEvent);
+        }
+        if (keyCode === keyCode_1.KeyCode.X) {
+            return this.onCtrlAndX(keyboardEvent);
         }
         if (keyCode === keyCode_1.KeyCode.Y) {
             return this.onCtrlAndY();
+        }
+        if (keyCode === keyCode_1.KeyCode.Z) {
+            return this.onCtrlAndZ(keyboardEvent);
         }
     };
     RowContainerEventsFeature.prototype.onCtrlAndA = function (event) {
@@ -300,8 +292,12 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) {
             return;
         }
-        this.clipboardService.copyToClipboard();
+        var _a = this.getControlsForEventTarget(event.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
+        if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
+            return;
+        }
         event.preventDefault();
+        this.clipboardService.copyToClipboard();
     };
     RowContainerEventsFeature.prototype.onCtrlAndX = function (event) {
         if (!this.clipboardService ||
@@ -309,16 +305,24 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
             this.gridOptionsService.is('suppressCutToClipboard')) {
             return;
         }
-        this.clipboardService.cutToClipboard();
+        var _a = this.getControlsForEventTarget(event.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
+        if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
+            return;
+        }
         event.preventDefault();
+        this.clipboardService.cutToClipboard(undefined, 'ui');
     };
-    RowContainerEventsFeature.prototype.onCtrlAndV = function () {
-        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+    RowContainerEventsFeature.prototype.onCtrlAndV = function (event) {
+        var _a = this.getControlsForEventTarget(event.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
+        if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
+            return;
+        }
+        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     };
     RowContainerEventsFeature.prototype.onCtrlAndD = function (event) {
-        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();

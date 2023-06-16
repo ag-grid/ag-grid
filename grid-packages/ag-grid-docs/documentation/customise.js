@@ -6,13 +6,14 @@
 
 const fs = require('fs-extra');
 
-const applyCustomisation = (packageName, expectedVersion, customisation, optional = false) => {
-    if (!fs.existsSync(`./node_modules/${packageName}/package.json`) && optional) {
-        console.log(`./node_modules/${packageName}/package.json doesn't exist but is optional - skipping`);
+const applyCustomisation = (packageName, expectedVersion, customisation, providedPath = null, optional = false) => {
+    const packagePath = providedPath ? providedPath : `./node_modules/${packageName}/package.json`;
+    if (!fs.existsSync(packagePath) && optional) {
+        console.log(`${packagePath} doesn't exist but is optional - skipping`);
         return true;
     }
 
-    const version = require(`./node_modules/${packageName}/package.json`).version;
+    const version = require(packagePath).version;
     const versionMatches = version === expectedVersion;
 
     if (versionMatches) {
@@ -38,7 +39,7 @@ const updateFileContents = (filename, existingContent, newContent) => {
 const addMarkdownIncludeSupport = () => {
     // updates the method for reading files to automatically replace the Markdown imports with file contents at this stage
 
-    return applyCustomisation('gatsby-source-filesystem', '3.14.0', {
+    return applyCustomisation('gatsby-source-filesystem', '5.9.0', {
         name: 'Add support for including Markdown files into other Markdown files',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/index.js',
@@ -69,7 +70,7 @@ const fixScrollingIssue = () => {
     // removes some of the scroll handling that this plugin adds which seems to cause the page to scroll to the wrong
     // position when hash URLs are initially loaded
 
-    return applyCustomisation('gatsby-remark-autolink-headers', '4.11.0', {
+    return applyCustomisation('gatsby-remark-autolink-headers', '6.9.0', {
         name: 'Fix scrolling issue for hash URLs',
         apply: () => updateFileContents(
             './node_modules/gatsby-remark-autolink-headers/gatsby-browser.js',
@@ -84,7 +85,7 @@ const ignoreFsUsages = () => {
     // this feature is added to allow for incremental builds but causes issue with code out of our control (algolia) as well as with the ExampleRunner
     // remove this check and just allow it to continue
 
-    return applyCustomisation('gatsby', '3.14.6', {
+    return applyCustomisation('gatsby', '5.9.1', {
         name: `Don't track fs usages when doing prod build`,
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/utils/webpack.config.js',
@@ -98,21 +99,51 @@ const fixFileLoadingIssue = () => {
     // adds error handling around loading of files to avoid the Gatsby process periodically dying when file contents
     // cannot be read correctly when saving examples
 
-    return applyCustomisation('gatsby-source-filesystem', '3.14.0', {
+    return applyCustomisation('gatsby-source-filesystem', '5.9.0', {
         name: 'Fix file loading issue',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/gatsby-node.js',
-            `
-  const createAndProcessNode = path => {
-    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions).then(fileNode => {
+            `  const createAndProcessNode = path => {
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache).then(fileNode => {
       createNode(fileNode);
       return null;
     });
     return fileNodePromise;
-  };`,
+  };
+  const deletePathNode = path => {
+    const node = getNode(createNodeId(path));
+    // It's possible the node was never created as sometimes tools will
+    // write and then immediately delete temporary files to the file system.
+    if (node) {
+      deleteNode(node);
+    }
+  };
+
+  // For every path that is reported before the 'ready' event, we throw them
+  // into a queue and then flush the queue when 'ready' event arrives.
+  // After 'ready', we handle the 'add' event without putting it into a queue.
+  let pathQueue = [];
+  const flushPathQueue = () => {
+    const queue = pathQueue.slice();
+    pathQueue = null;
+    return Promise.all(
+    // eslint-disable-next-line consistent-return
+    queue.map(({
+      op,
+      path
+    }) => {
+      switch (op) {
+        case \`delete\`:
+          return deletePathNode(path);
+        case \`upsert\`:
+          return createAndProcessNode(path);
+      }
+    }));
+  };
+`,
             `
   const createAndProcessNode = path => {
-    return createFileNode(path, createNodeId, pluginOptions)
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache)
       .catch(() => {
         reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
         return createFileNode(path, createNodeId, pluginOptions);
@@ -124,7 +155,52 @@ const fixFileLoadingIssue = () => {
       .catch(error => {
         reporter.error(\`Failed to create FileNode for \${path}\`, error);
       });
-  };`
+
+    return fileNodePromise;
+  };
+  const deletePathNode = path => {
+    const node = getNode(createNodeId(path));
+    // It's possible the node was never created as sometimes tools will
+    // write and then immediately delete temporary files to the file system.
+    if (node) {
+      deleteNode(node);
+    }
+  };
+
+  async function promiseAllInBatches(task, items, batchSize) {
+    let position = 0;
+    let results = [];
+    while (position < items.length) {
+      const itemsForBatch = items.slice(position, position + batchSize);
+      results = [...results, ...await Promise.all(itemsForBatch.map(item => task(item)))];
+      position += batchSize;
+      
+      console.log(\`Processing batch \${position}\`);
+    }
+    return results;
+  }
+
+  // For every path that is reported before the 'ready' event, we throw them
+  // into a queue and then flush the queue when 'ready' event arrives.
+  // After 'ready', we handle the 'add' event without putting it into a queue.
+  let pathQueue = [];
+  const flushPathQueue = async () => {
+    const queue = pathQueue.slice();
+    pathQueue = null;
+
+    return promiseAllInBatches(({
+                                                   op,
+                                                   path
+                                               }) => {
+        switch (op) {
+            case \`delete\`:
+                return deletePathNode(path);
+            case \`upsert\`:
+                return createAndProcessNode(path);
+        }
+    }, queue, 5000);
+  };
+            `
         )
     });
 };
@@ -132,7 +208,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '3.15.0', {
+    return applyCustomisation('gatsby-cli', '5.11.0', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',
@@ -147,6 +223,7 @@ const jsxErrorProcessingIssue = () => {
   }`,
             )
         },
+        null,
         true);
 };
 
@@ -156,8 +233,7 @@ const excludeDodgyLintRules = () => {
             name: 'Exclude React Lint Rules',
             apply: () => updateFileContents(
                 './node_modules/eslint-config-react-app/index.js',
-                `
-  rules: {
+                `rules: {
     // http://eslint.org/docs/rules/
     'array-callback-return': 'warn',
     'default-case': ['warn', { commentPattern: '^no default$' }],
@@ -355,13 +431,14 @@ const excludeDodgyLintRules = () => {
 rules: {}`,
             )
         },
+        null,
         true);
 };
 
 const restrictSearchForPageQueries = () => {
     // restricts the files that Gatsby searches for queries, which improves performance
 
-    return applyCustomisation('gatsby', '3.14.6', {
+    return applyCustomisation('gatsby', '5.9.1', {
         name: 'Restrict search for page queries',
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/query/query-compiler.js',
@@ -370,10 +447,11 @@ const restrictSearchForPageQueries = () => {
         )
     });
 };
-const renameSitemapXml = () => {
-    // renames sitemap-index.xml to sitemap.xml (which is standard
 
-    return applyCustomisation('gatsby-plugin-sitemap', '4.10.0', {
+const renameSitemapXml = () => {
+    // renames sitemap-index.xml to sitemap.xml (which is standard)
+
+    return applyCustomisation('gatsby-plugin-sitemap', '6.9.0', {
         name: 'Rename sitemap reference',
         apply: () => updateFileContents(
             './node_modules/gatsby-plugin-sitemap/gatsby-ssr.js',
@@ -381,6 +459,39 @@ const renameSitemapXml = () => {
             `href: withPrefix(_path.posix.join(output, "/sitemap.xml"))`,
         )
     });
+};
+
+const checkForRehypePluginExistance = () => {
+
+    return applyCustomisation('gatsby-transformer-rehype', '2.0.1', {
+        name: `Checks for plugin existence`,
+        apply: () => updateFileContents(
+            './node_modules/gatsby-transformer-rehype/create-schema-customization.js',
+            'const plugin = types.find(node => node.plugin.name === name);',
+            'const plugin = types.find(node => node.plugin && node.plugin.name === name);'
+        )
+    });
+};
+const suppressHydrationErrors = () => {
+
+    return applyCustomisation('gatsby', '5.9.1', {
+        name: `Suppress Hydration Errors`,
+        apply: () => updateFileContents(
+            './node_modules/gatsby/cache-dir/react-dom-utils.js',
+            'const hydrate = (Component, el) => reactDomClient.hydrateRoot(el, Component)',
+            'const hydrate = (Component, el) => reactDomClient.hydrateRoot(el, Component, {onRecoverableError: () => {}})'
+        )
+    });
+
+    // for development mode - we probably don't want to suppress this
+    // return applyCustomisation('gatsby', '5.9.1', {
+    //     name: `Suppress Hydration Errors`,
+    //     apply: () => updateFileContents(
+    //         './node_modules/gatsby/cache-dir/app.js',
+    //         'const root = reactDomClient.hydrateRoot(el, Component)',
+    //         'const root = reactDomClient.hydrateRoot(el, Component, {onRecoverableError: () => {}})'
+    //     )
+    // });
 };
 
 console.log(`--------------------------------------------------------------------------------`);
@@ -394,7 +505,9 @@ const success = [
     restrictSearchForPageQueries(),
     ignoreFsUsages(),
     jsxErrorProcessingIssue(),
-    excludeDodgyLintRules()
+    excludeDodgyLintRules(),
+    checkForRehypePluginExistance(),
+    suppressHydrationErrors()
 ].every(x => x);
 
 if (success) {

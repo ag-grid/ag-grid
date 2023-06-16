@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, PostConstruct, CssClassApplier, } from '@ag-grid-community/core';
+import { _, Autowired, Bean, PostConstruct, CssClassApplier } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -157,7 +157,7 @@ let ExcelCreator = class ExcelCreator extends BaseCreator {
         return this.getExportMode();
     }
     createSerializingSession(params) {
-        const { columnModel, valueService, gridOptionsService } = this;
+        const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
         let sheetName = 'ag-grid';
         if (params.sheetName != null) {
@@ -166,7 +166,9 @@ let ExcelCreator = class ExcelCreator extends BaseCreator {
         const config = Object.assign(Object.assign({}, params), { sheetName,
             columnModel,
             valueService,
-            gridOptionsService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+            gridOptionsService,
+            valueFormatterService,
+            valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
         return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
     }
     styleLinker(params) {
@@ -244,6 +246,12 @@ __decorate([
 __decorate([
     Autowired('gridOptionsService')
 ], ExcelCreator.prototype, "gridOptionsService", void 0);
+__decorate([
+    Autowired('valueFormatterService')
+], ExcelCreator.prototype, "valueFormatterService", void 0);
+__decorate([
+    Autowired('valueParserService')
+], ExcelCreator.prototype, "valueParserService", void 0);
 __decorate([
     PostConstruct
 ], ExcelCreator.prototype, "postConstruct", null);

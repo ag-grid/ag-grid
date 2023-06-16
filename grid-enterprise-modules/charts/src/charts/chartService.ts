@@ -2,10 +2,9 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ChartDownloadParams,
-    OpenChartToolPanelParams,
     CellRange,
     CellRangeParams,
+    ChartDownloadParams,
     ChartModel,
     ChartRef,
     ChartType,
@@ -17,9 +16,11 @@ import {
     IAggFunc,
     IChartService,
     IRangeService,
+    OpenChartToolPanelParams,
     Optional,
     PreDestroy,
-    SeriesChartType
+    SeriesChartType,
+    UpdateChartParams
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
@@ -48,6 +49,21 @@ export class ChartService extends BeanStub implements IChartService {
         lastSelectedChartId: '',
     };
 
+    public updateChart(params: UpdateChartParams): void {
+        if (this.activeChartComps.size === 0) {
+            console.warn(`AG Grid - No active charts to update.`);
+            return;
+        }
+
+        const chartComp = [...this.activeChartComps].find(chartComp => chartComp.getChartId() === params.chartId);
+        if (!chartComp) {
+            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            return;
+        }
+
+        chartComp.update(params);
+    }
+
     public getChartModels(): ChartModel[] {
         const models: ChartModel[] = [];
 
@@ -61,14 +77,22 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-
         this.activeCharts.forEach(cr => {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
         });
-
         return chartRef;
+    }
+
+    public getChartComp(chartId: string): GridChartComp | undefined {
+        let chartComp;
+        this.activeChartComps.forEach(comp => {
+            if (comp.getChartId() === chartId) {
+                chartComp = comp;
+            }
+        });
+        return chartComp;
     }
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
@@ -187,9 +211,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
-            : undefined;
+        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -249,9 +271,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
-            : undefined;
+        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -321,7 +341,7 @@ export class ChartService extends BeanStub implements IChartService {
             // if container exists, means developer initiated chart create via API, so place in provided container
             container.appendChild(chartComp.getGui());
 
-            // if the chart container was placed outside of an element that
+            // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             const theme = this.environment.getTheme();
@@ -330,7 +350,7 @@ export class ChartService extends BeanStub implements IChartService {
                 container.classList.add(theme.theme!);
             }
         } else if (createChartContainerFunc) {
-            // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
+            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
             // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         } else {
@@ -372,7 +392,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private generateId(): string {
-        return 'id-' + Math.random().toString(36).substr(2, 16);
+        return `id-${Math.random().toString(36).substring(2, 18)}`;
     }
 
     @PreDestroy

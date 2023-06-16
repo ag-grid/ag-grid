@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,14 +36,16 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartMenu = void 0;
 var core_1 = require("@ag-grid-community/core");
 var tabbedChartMenu_1 = require("./tabbedChartMenu");
+var chartController_1 = require("../chartController");
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
     function ChartMenu(eChartContainer, eMenuPanelContainer, chartController, chartOptionsService) {
@@ -59,6 +63,7 @@ var ChartMenu = /** @class */ (function (_super) {
             chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.panels = [];
+        _this.buttonListenersDestroyFuncs = [];
         _this.menuVisible = false;
         return _this;
     }
@@ -79,6 +84,7 @@ var ChartMenu = /** @class */ (function (_super) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     };
     ChartMenu.prototype.isVisible = function () {
         return this.menuVisible;
@@ -139,7 +145,7 @@ var ChartMenu = /** @class */ (function (_super) {
             this.defaultPanel = (defaultToolPanel && core_1.CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar
-                ? __spread([this.panels[0]], chartToolbarOptions) : chartToolbarOptions;
+                ? __spreadArray([this.panels[0]], __read(chartToolbarOptions)) : chartToolbarOptions;
         }
         else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
             var tabOptions = [
@@ -202,8 +208,11 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
+        this.buttonListenersDestroyFuncs.forEach(function (func) { return func(); });
+        this.buttonListenersDestroyFuncs = [];
         this.chartToolbarOptions = this.getToolbarOptions();
         var menuEl = this.eMenu;
+        core_1._.clearElement(menuEl);
         this.chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var _a = __read(buttonConfig, 2), iconName = _a[0], callback = _a[1];
@@ -213,7 +222,7 @@ var ChartMenu = /** @class */ (function (_super) {
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
-            _this.addManagedListener(buttonEl, 'click', callback);
+            _this.buttonListenersDestroyFuncs.push(_this.addManagedListener(buttonEl, 'click', callback));
             menuEl.appendChild(buttonEl);
         });
     };
@@ -342,7 +351,7 @@ var ChartMenu = /** @class */ (function (_super) {
         }
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
-    ChartMenu.TEMPLATE = "<div>\n        <div class=\"ag-chart-menu\" ref=\"eMenu\"></div>\n        <button class=\"ag-chart-menu-close\" ref=\"eHideButton\">\n            <span class=\"ag-icon ag-icon-contracted\" ref=\"eHideButtonIcon\"></span>\n        </button>\n    </div>";
+    ChartMenu.TEMPLATE = "<div>\n        <div class=\"ag-chart-menu\" ref=\"eMenu\"></div>\n        <button class=\"ag-button ag-chart-menu-close\" ref=\"eHideButton\">\n            <span class=\"ag-icon ag-icon-contracted\" ref=\"eHideButtonIcon\"></span>\n        </button>\n    </div>";
     __decorate([
         core_1.Autowired('chartTranslationService')
     ], ChartMenu.prototype, "chartTranslationService", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -31,9 +31,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
@@ -51,7 +52,7 @@ var ComponentUtil = /** @class */ (function () {
     };
     ComponentUtil.getCoercionLookup = function () {
         var coercionLookup = {};
-        __spread(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.FUNCTION_PROPERTIES, ComponentUtil.EVENT_CALLBACKS).forEach(function (key) { return coercionLookup[key] = 'none'; });
+        __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(ComponentUtil.ARRAY_PROPERTIES)), __read(ComponentUtil.OBJECT_PROPERTIES)), __read(ComponentUtil.STRING_PROPERTIES)), __read(ComponentUtil.FUNCTION_PROPERTIES)), __read(ComponentUtil.EVENT_CALLBACKS)).forEach(function (key) { return coercionLookup[key] = 'none'; });
         ComponentUtil.BOOLEAN_PROPERTIES
             .forEach(function (key) { return coercionLookup[key] = 'boolean'; });
         ComponentUtil.NUMBER_PROPERTIES
@@ -198,7 +199,6 @@ var ComponentUtil = /** @class */ (function () {
         Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
         Events.EVENT_HEADER_HEIGHT_CHANGED,
         Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
-        Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
         Events.EVENT_CELL_FOCUS_CLEARED,
         Events.EVENT_GRID_STYLES_CHANGED,
         Events.EVENT_FILTER_DESTROYED

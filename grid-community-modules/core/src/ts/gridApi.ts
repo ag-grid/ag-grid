@@ -41,8 +41,7 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
-import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -57,11 +56,17 @@ import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/export
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
-    ChartDownloadParams, ChartModel, CloseChartToolPanelParams, GetChartImageDataUrlParams,
-    IChartService, OpenChartToolPanelParams,
-    CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams,
+    ChartDownloadParams,
+    ChartModel,
+    CloseChartToolPanelParams,
+    CreateCrossFilterChartParams,
+    CreatePivotChartParams,
+    CreateRangeChartParams,
+    GetChartImageDataUrlParams,
+    IChartService,
+    OpenChartToolPanelParams, UpdateChartParams, UpdateRangeChartParams,
 } from './interfaces/IChartService';
-import { ClientSideRowModelSteps, IClientSideRowModel, ClientSideRowModelStep } from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -102,7 +107,14 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams, RowRenderer } from "./rendering/rowRenderer";
+import {
+    FlashCellsParams,
+    GetCellEditorInstancesParams,
+    GetCellRendererInstancesParams,
+    RedrawRowsParams,
+    RefreshCellsParams,
+    RowRenderer
+} from "./rendering/rowRenderer";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
@@ -112,6 +124,8 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
+import { RowNode } from "./entities/rowNode";
 
 export interface DetailGridInfo {
     /**
@@ -134,8 +148,6 @@ export interface StartEditingCellParams {
     rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
-    /** The charPress to pass to the cell editor */
-    charPress?: string;
 }
 
 export function unwrapUserComp<T>(comp: T): T {
@@ -250,6 +262,11 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
+    public getGridId(): string {
+        return this.context.getGridId();
+    }
+
     /** Register a detail grid with the master grid when it is created. */
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
         this.detailGridInfoMap[id] = gridInfo;
@@ -279,14 +296,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
             return this.csvCreator.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
             this.csvCreator.exportDataAsCsv(params);
         }
     }
@@ -297,7 +314,7 @@ export class GridApi<TData = any> {
         return mergedParams.exportMode;
     }
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method)) { return false }
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
         const exportMode = this.getExcelExportMode(params);
         if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
@@ -322,7 +339,7 @@ export class GridApi<TData = any> {
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) { return; }
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
         const exportMode = this.getExcelExportMode(params);
         this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
 
@@ -331,14 +348,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -455,7 +472,7 @@ export class GridApi<TData = any> {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
 
-    /** Gets the top pinned row with the specified index. */
+    /** Gets the bottom pinned row with the specified index. */
     public getPinnedBottomRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
@@ -681,18 +698,58 @@ export class GridApi<TData = any> {
     }
 
     /** 
-     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
-     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
-     * This can give a significant performance improvement when there are a large number of hidden columns,
-     * and you are only interested in filtering on what's visible.
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
-        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
+        logDeprecation<GridApi>(
+            '30',
+            'setExcludeHiddenColumnsFromQuickFilter',
+            undefined,
+            'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `setIncludeHiddenColumnsInQuickFilter`'
+        );
+        this.setIncludeHiddenColumnsInQuickFilter(!value);
+    }
+
+    /** 
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
+        this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', value);
     }
 
     /**
+     * Set all of the provided nodes selection state to the provided value.
+     */
+    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
+        const allNodesValid = params.nodes.every(node => {
+            if (node.rowPinned) {
+                console.warn('AG Grid: cannot select pinned rows');
+                return false;
+            }
+
+            if (node.id === undefined) {
+                console.warn('AG Grid: cannot select node until id for node is known');
+                return false;
+            }
+            return true;
+        });
+
+        if (!allNodesValid) {
+            return;
+        }
+
+
+        const { nodes, source, newValue } = params;
+        const nodesAsRowNode = nodes as RowNode[];
+        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+    }
+
+
+    /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.selectAllRowNodes({ source });
@@ -700,7 +757,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.deselectAllRowNodes({ source });
@@ -708,7 +765,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.selectAllRowNodes({ source, justFiltered: true });
@@ -716,7 +773,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
@@ -754,7 +811,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
@@ -762,7 +819,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
@@ -944,12 +1001,12 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel')) { return; }
+        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1044,8 +1101,8 @@ export class GridApi<TData = any> {
      * Defaults to `normal` if no domLayout provided.
      */
     public setDomLayout(domLayout?: DomLayoutType) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
-            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.`);
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.`);
             return;
         }
         this.gridOptionsService.set('domLayout', domLayout);
@@ -1116,11 +1173,7 @@ export class GridApi<TData = any> {
     public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
         this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
     }
-    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
-    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: IRowNode[]) => any): void {
-        logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
-        this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
-    }
+
     public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
         this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
@@ -1137,11 +1190,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
-    /** @deprecated v27.1 Use `setGetRowId` instead  */
-    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
-        logDeprecation<GridApi>('27.1', 'setGetRowNodeId', 'setGetRowId');
-        this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
-    }
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
         this.gridOptionsService.set('getRowId', getRowIdFunc);
     }
@@ -1150,11 +1198,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('getRowClass', rowClassFunc);
     }
 
-    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
-    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: IRowNode) => boolean): void {
-        logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
-        this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
-    }
     public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
         this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
     }
@@ -1167,11 +1210,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
     }
 
-    /** @deprecated v27.2 Use `setPostSortRows` instead */
-    public setPostSort(postSortFunc: (nodes: IRowNode[]) => void): void {
-        logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
-        this.gridOptionsService.set('postSort', postSortFunc);
-    }
     public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
         this.gridOptionsService.set('postSortRows', postSortRowsFunc);
     }
@@ -1224,11 +1262,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
 
-    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
-    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: IRowNode, nodeB: IRowNode) => number): void {
-        logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
-        this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
-    }
     public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
         this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
@@ -1276,7 +1309,7 @@ export class GridApi<TData = any> {
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod);
+        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     }
 
     /** Returns `true` if the side bar is visible. */
@@ -1429,7 +1462,7 @@ export class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    public getValue(colKey: string | Column, rowNode: IRowNode): any {
+    public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1516,7 +1549,7 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
         return null;
     }
 
@@ -1526,7 +1559,7 @@ export class GridApi<TData = any> {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
     }
 
     /** Clears the selected ranges. */
@@ -1534,7 +1567,7 @@ export class GridApi<TData = any> {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();    
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
@@ -1556,106 +1589,120 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
             return this.chartService.getChartModels();
         }
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
             return this.chartService.getChartRef(chartId);
         }
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
             return this.chartService.downloadChart(params);
         }
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
             return this.chartService.openChartToolPanel(params);
         }
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
             return this.chartService.closeChartToolPanel(params.chartId);
         }
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
             return this.chartService.createRangeChart(params);
-        }
-    }
-
-    /** Used to programmatically create cross filter charts from a range. */
-    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
-            return this.chartService.createCrossFilterChart(params);
-        }
-    }
-
-    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
-    public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
-            return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
             return this.chartService.createPivotChart(params);
+        }
+    }
+
+    /** Used to programmatically create cross filter charts from a range. */
+    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
+            return this.chartService.createCrossFilterChart(params);
+        }
+    }
+
+    /** Used to programmatically update a chart. */
+    public updateChart(params: UpdateChartParams): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+            this.chartService.updateChart(params);
+        }
+    }
+
+    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
+    public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
 
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
             this.clipboardService.copyToClipboard(params);
         }
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
-            this.clipboardService.cutToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
+            this.clipboardService.cutToClipboard(params, 'api');
         }
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRowsToClipboard(params);
         }
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRangeToClipboard(params);
         }
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
             this.clipboardService.copyRangeDown();
+        }
+    }
+
+    /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
+    public pasteFromClipboard(): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+            this.clipboardService.pasteFromClipboard();
         }
     }
 
@@ -1751,7 +1798,7 @@ export class GridApi<TData = any> {
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        cell.startRowOrCellEdit(params.key, params.charPress);
+        cell.startRowOrCellEdit(params.key);
     }
 
     /** Add an aggregation function with the specified key. */
@@ -1958,12 +2005,23 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
+    }
+
     /**
      * Set whether the grid paginates the data or not.
      *  - `true` to enable pagination
      *  - `false` to disable pagination
      */
     public setPagination(value: boolean) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error(`AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.`);
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     }
     /**

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -56,19 +56,18 @@ export declare class Events {
     /** For when the tool panel is shown / hidden */
     static EVENT_TOOL_PANEL_VISIBLE_CHANGED: 'toolPanelVisibleChanged';
     static EVENT_TOOL_PANEL_SIZE_CHANGED: 'toolPanelSizeChanged';
-    /**
-     * This is a replacement event for EVENT_TOOL_PANEL_VISIBLE_CHANGED. In v30, the original event interface will be dropped
-     * and replaced with the new event (but using the old event type and interface name)
-     */
-    static EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED: 'internalToolPanelVisibleChanged';
     static EVENT_COLUMN_PANEL_ITEM_DRAG_START: 'columnPanelItemDragStart';
     static EVENT_COLUMN_PANEL_ITEM_DRAG_END: 'columnPanelItemDragEnd';
     /** Model was updated - grid updates the drawn rows when this happens */
     static EVENT_MODEL_UPDATED: 'modelUpdated';
+    static EVENT_CUT_START: 'cutStart';
+    static EVENT_CUT_END: 'cutEnd';
     static EVENT_PASTE_START: 'pasteStart';
     static EVENT_PASTE_END: 'pasteEnd';
     static EVENT_FILL_START: 'fillStart';
     static EVENT_FILL_END: 'fillEnd';
+    static EVENT_RANGE_DELETE_START: 'rangeDeleteStart';
+    static EVENT_RANGE_DELETE_END: 'rangeDeleteEnd';
     /** Undo operation has started. */
     static EVENT_UNDO_STARTED: 'undoStarted';
     /** Undo operation has ended. */
@@ -92,7 +91,6 @@ export declare class Events {
     static EVENT_ROW_SELECTED: 'rowSelected';
     static EVENT_SELECTION_CHANGED: 'selectionChanged';
     static EVENT_CELL_KEY_DOWN: 'cellKeyDown';
-    static EVENT_CELL_KEY_PRESS: 'cellKeyPress';
     static EVENT_CELL_MOUSE_OVER: 'cellMouseOver';
     static EVENT_CELL_MOUSE_OUT: 'cellMouseOut';
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */

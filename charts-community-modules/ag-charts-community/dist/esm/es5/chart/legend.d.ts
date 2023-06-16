@@ -2,16 +2,8 @@ import { Node } from '../scene/node';
 import { BBox } from '../scene/bbox';
 import { Marker } from './marker/marker';
 import { AgChartLegendClickEvent, AgChartLegendDoubleClickEvent, AgChartLegendListeners, AgChartLegendLabelFormatterParams, AgChartLegendPosition, FontStyle, FontWeight, AgChartOrientation } from './agChartOptions';
-import { Series } from './series/series';
-import { ChartUpdateType } from './chartUpdateType';
-import { InteractionManager } from './interaction/interactionManager';
-import { CursorManager } from './interaction/cursorManager';
-import { HighlightManager } from './interaction/highlightManager';
-import { Page } from './gridLayout';
-import { TooltipManager } from './interaction/tooltipManager';
-import { LegendDatum } from './legendDatum';
-import { LayoutService } from './layout/layoutService';
-export declare const OPT_ORIENTATION: import("../util/validation").ValidatePredicate;
+import { CategoryLegendDatum } from './legendDatum';
+import { ModuleContext } from '../util/module';
 declare class LegendLabel {
     maxLength?: number;
     color: string;
@@ -20,7 +12,6 @@ declare class LegendLabel {
     fontSize: number;
     fontFamily: string;
     formatter?: (params: AgChartLegendLabelFormatterParams) => string;
-    getFont(): string;
 }
 declare class LegendMarker {
     size: number;
@@ -64,15 +55,9 @@ declare class LegendListeners implements AgChartLegendListeners {
     legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void;
 }
 export declare class Legend {
-    private readonly chart;
-    private readonly interactionManager;
-    private readonly cursorManager;
-    private readonly highlightManager;
-    private readonly tooltipManager;
-    private readonly layoutService;
+    private readonly ctx;
     static className: string;
     readonly id: string;
-    onLayoutChange?: () => void;
     private readonly group;
     private itemSelection;
     private oldSize;
@@ -84,18 +69,14 @@ export declare class Legend {
     readonly item: LegendItem;
     readonly listeners: LegendListeners;
     private readonly truncatedItems;
-    set translationX(value: number);
-    get translationX(): number;
-    set translationY(value: number);
-    get translationY(): number;
     private _data;
-    set data(value: LegendDatum[]);
-    get data(): LegendDatum[];
+    set data(value: CategoryLegendDatum[]);
+    get data(): CategoryLegendDatum[];
     private _enabled;
     set enabled(value: boolean);
     get enabled(): boolean;
     position: AgChartLegendPosition;
-    getOrientation(): AgChartOrientation;
+    private getOrientation;
     /** Used to constrain the width of the legend. */
     maxWidth?: number;
     /** Used to constrain the height of the legend. */
@@ -104,15 +85,7 @@ export declare class Legend {
     reverseOrder?: boolean;
     orientation?: AgChartOrientation;
     private destroyFns;
-    constructor(chart: {
-        readonly series: Series<any>[];
-        readonly element: HTMLElement;
-        readonly mode: 'standalone' | 'integrated';
-        update(type: ChartUpdateType, opts?: {
-            forceNodeDataRefresh?: boolean;
-            seriesToUpdate?: Iterable<Series>;
-        }): void;
-    }, interactionManager: InteractionManager, cursorManager: CursorManager, highlightManager: HighlightManager, tooltipManager: TooltipManager, layoutService: LayoutService);
+    constructor(ctx: ModuleContext);
     destroy(): void;
     onMarkerShapeChange(): void;
     /**
@@ -127,6 +100,8 @@ export declare class Legend {
     get visible(): boolean;
     private updateGroupVisibility;
     attachLegend(node: Node): void;
+    detachLegend(): void;
+    private getItemLabel;
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will
@@ -140,25 +115,15 @@ export declare class Legend {
      * @param height
      */
     private performLayout;
-    truncate(text: string, maxCharLength: number, maxItemWidth: number, paddedMarkerWidth: number, font: string, id: string): string;
-    updatePagination(bboxes: BBox[], width: number, height: number): {
-        maxPageHeight: number;
-        maxPageWidth: number;
-        pages: Page[];
-    };
-    calculatePagination(bboxes: BBox[], width: number, height: number): {
-        maxPageWidth: number;
-        maxPageHeight: number;
-        pages: Page[];
-        paginationBBox: BBox;
-        paginationVertical: boolean;
-    };
-    updatePositions(pageNumber?: number): void;
-    updatePageNumber(pageNumber: number): void;
+    private truncate;
+    private updatePagination;
+    private calculatePagination;
+    private updatePositions;
+    private updatePageNumber;
     update(): void;
-    getDatumForPoint(x: number, y: number): LegendDatum | undefined;
+    private getDatumForPoint;
     computeBBox(): BBox;
-    computePagedBBox(): BBox;
+    private computePagedBBox;
     private checkLegendClick;
     private checkLegendDoubleClick;
     private handleLegendMouseMove;
@@ -166,3 +131,4 @@ export declare class Legend {
     private calculateLegendDimensions;
 }
 export {};
+//# sourceMappingURL=legend.d.ts.map

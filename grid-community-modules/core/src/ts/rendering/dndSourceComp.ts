@@ -8,24 +8,21 @@ import { DndSourceOnRowDragParams } from "../entities/colDef";
 
 export class DndSourceComp extends Component {
 
-    private readonly beans: Beans;
-
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: Column, beans: Beans, eCell: HTMLElement) {
-        super(`<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
+    constructor(rowNode: RowNode, column: Column, eCell: HTMLElement) {
+        super(/* html */ `<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
-        this.beans = beans;
         this.eCell = eCell;
     }
 
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsService, null)!);
+        eGui.appendChild(createIconNoSpan('rowDrag', this.gridOptionsService, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
             e.stopPropagation();

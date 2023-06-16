@@ -12,43 +12,18 @@ version: 2
    .gatsby-resp-image-image {
        box-shadow: none !important;
    }
-
-   .code-tab pre {
-       margin-top: 0;
-   }
-
-   .code-tab .nav-item {
-       margin-bottom: 0 !important;
-   }
 </style>
 
 AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
 are building applications that would not be possible if AG Grid did not exist.
 
+<tabs>
 
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+<div tabs-links="true">
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" />
+</div>
 
-App.vue
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
-index.js
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-
+<div tab-label="App.vue">
 
 ```jsx
 <template>
@@ -95,8 +70,8 @@ export default {
 ```
 
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
+<div tab-label="index.js">
 
 ```jsx
 import Vue from 'vue';
@@ -109,17 +84,8 @@ new Vue({
 ```
 
 </div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
 
-<a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" target="_blank">
-    Open in CodeSandbox
-</a>
-
-</div>
-</div>
-</section>
+</tabs>
 
 <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
     In this article, we will walk you through the necessary steps to add AG Grid
@@ -131,24 +97,24 @@ new Vue({
 
 <br/><br/>
 
-[[note]]
+<note>
 | We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
-| in use is how you import the dependency:
-|
-| | Version | Package Imports  | Module Imports          |
-| | ------- | ---------------- | ----------------------- |
-| | Vue 2   | ag-grid-vue      | @ag-grid-community/vue  |
-| | Vue 3   | ag-grid-vue3     | @ag-grid-community/vue3 |
+| in use is how you import the dependency (see the table below).
 |
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
 |
 | For more information on import types please refer to the documentation [here.](/modules/)
 |
-| This tutorial, as well as ll of our examples, use Vue 2 by default.
-|
 | For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
 |
+</note>
+
+| Version | Package Imports  | Module Imports          |
+| ------- | ---------------- | ----------------------- |
+| Vue 2   | ag-grid-vue      | @ag-grid-community/vue  |
+| Vue 3   | ag-grid-vue3     | @ag-grid-community/vue3 |
+
 
 ## Add AG Grid to Your Project
 
@@ -270,9 +236,10 @@ The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one 
 available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
 matches your project design.
 
-[[note]]
-| In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
-| using SCSS, which is our recommended approach.
+<note>
+In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
+using SCSS, which is our recommended approach.
+</note>
 
 As this will be a simple example we can delete the `src/components` directory - our example
 application will live in `src/App.vue`.
@@ -342,7 +309,7 @@ provide the AG Grid functionality.
 
 If everything works as expected, you should see a simple grid like the one on the screenshot:
 
-![AG Grid hello world](resources/step1.png)
+<image-caption src="step1.png" alt="AG Grid hello world" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Enable Sorting And Filtering
 
@@ -380,7 +347,7 @@ With this property set, the grid will display a small column menu icon when you 
 Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and
 the text that you want to filter by.
 
-![AG Grid sorting and filtering](resources/step2.png)
+<image-caption src="step2.png" alt="AG Grid sorting and filtering" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Fetch Remote Data
 
@@ -469,7 +436,7 @@ export default {
 We've enabled [multiple row selection](/row-selection/#example-multiple-row-selection) by adding `rowSelection="multiple"`, and we've
 also added a checkbox to the `make` column with `checkboxSelection: true`.
 
-![Vue AG Grid Selection](resources/vue-grid-1.png)
+<image-caption src="vue-grid-1.png" alt="Vue AG Grid Selection" maxWidth="80%" constrained="true" centered="true"></image-caption> 
 
 Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
 we have to add is a button that gets the selected data and sends it to the server. To do this, we are
@@ -547,10 +514,11 @@ done with the tutorial.
 
 ## Grouping (enterprise)
 
-[[note]]
-| Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
-| to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
-| in a project intended for production.
+<note>
+Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
+in a project intended for production.
+</note>
 
 In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user
 to make sense out of large amounts of data.
@@ -583,7 +551,7 @@ enterprise license key. You can ignore the message as we are trialing. In additi
 the grid got a few UI improvements - a custom context menu and fancier column menu popup -
 feel free to look around:
 
-![AG Grid final](resources/step3.png)
+<image-caption src="step3.png" alt="AG Grid final" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
 the `columnDefs` with a `rowGroup`:
@@ -664,10 +632,11 @@ checkbox that selects/deselects all items in the group.
 Note that we also removed `checkboxSelection: true` from the `make` column definition as the `autoGroupColumnDef` definition allows for checkbox selection
 at both the group and leaf level.
 
-[[note]]
-| Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
-| supports complex interaction scenarios which you might not need initially. The grouping documentation
-| section contains plenty of real-world runnable examples that can get you started for your particular case.
+<note>
+Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
+supports complex interaction scenarios which you might not need initially. The grouping documentation
+section contains plenty of real-world runnable examples that can get you started for your particular case.
+</note>
 
 ## Customise the Theme Look
 

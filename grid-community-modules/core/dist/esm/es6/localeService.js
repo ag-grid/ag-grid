@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -25,10 +25,6 @@ let LocaleService = class LocaleService extends BeanStub {
                 };
                 return getLocaleText(params);
             };
-        }
-        const localeTextFunc = this.gridOptionsService.get('localeTextFunc');
-        if (localeTextFunc) {
-            return localeTextFunc;
         }
         const localeText = this.gridOptionsService.get('localeText');
         return (key, defaultValue, variableValues) => {

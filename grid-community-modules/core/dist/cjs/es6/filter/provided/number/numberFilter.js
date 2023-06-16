@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,6 @@ const simpleFilter_1 = require("../simpleFilter");
 const scalarFilter_1 = require("../scalarFilter");
 const generic_1 = require("../../../utils/generic");
 const agInputTextField_1 = require("../../../widgets/agInputTextField");
-const browser_1 = require("../../../utils/browser");
 const aria_1 = require("../../../utils/aria");
 const agInputNumberField_1 = require("../../../widgets/agInputNumberField");
 class NumberFilterModelFormatter extends simpleFilter_1.SimpleFilterModelFormatter {
@@ -31,15 +30,7 @@ class NumberFilterModelFormatter extends simpleFilter_1.SimpleFilterModelFormatt
 exports.NumberFilterModelFormatter = NumberFilterModelFormatter;
 function getAllowedCharPattern(filterParams) {
     const { allowedCharPattern } = filterParams !== null && filterParams !== void 0 ? filterParams : {};
-    if (allowedCharPattern) {
-        return allowedCharPattern;
-    }
-    if (!browser_1.isBrowserChrome()) {
-        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
-        // constraint instead
-        return '\\d\\-\\.';
-    }
-    return null;
+    return allowedCharPattern !== null && allowedCharPattern !== void 0 ? allowedCharPattern : null;
 }
 exports.getAllowedCharPattern = getAllowedCharPattern;
 class NumberFilter extends scalarFilter_1.ScalarFilter {
@@ -154,6 +145,16 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
     getModelAsString(model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
+    }
+    hasInvalidInputs() {
+        let invalidInputs = false;
+        this.forEachInput(element => {
+            if (!element.getInputElement().validity.valid) {
+                invalidInputs = true;
+                return;
+            }
+        });
+        return invalidInputs;
     }
 }
 exports.NumberFilter = NumberFilter;

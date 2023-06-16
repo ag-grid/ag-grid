@@ -6,17 +6,48 @@ import { values } from "../utils/generic";
 export class ModuleRegistry {
 
     // having in a map a) removes duplicates and b) allows fast lookup
-    private static modulesMap: { [name: string]: Module; } = {};
+    private static globalModulesMap: { [name: string]: Module; } = {};
+    private static gridModulesMap: { [gridId: string]: { [name: string]: Module; } } = {}
     private static moduleBased: boolean | undefined;
     private static currentModuleVersion: string;
     private static isBundled: boolean | undefined;
+    private static areGridScopedModules = false;
 
-    public static register(module: Module, moduleBased = true): void {
+
+    public static register(module: Module, moduleBased = true, gridId: string | undefined = undefined): void {
         ModuleRegistry.runVersionChecks(module);
 
-        ModuleRegistry.modulesMap[module.moduleName] = module;
+        if (gridId !== undefined) {
+            ModuleRegistry.areGridScopedModules = true;
+            if (ModuleRegistry.gridModulesMap[gridId] === undefined) {
+                ModuleRegistry.gridModulesMap[gridId] = {};
+            }
+            ModuleRegistry.gridModulesMap[gridId][module.moduleName] = module;
+        } else {
+            ModuleRegistry.globalModulesMap[module.moduleName] = module;
+        }
 
         ModuleRegistry.setModuleBased(moduleBased);
+    }
+
+    public static unRegisterGridModules(gridId: string): void {
+        delete ModuleRegistry.gridModulesMap[gridId];
+    }
+
+    public static registerModules(modules: Module[], moduleBased = true, gridId: string | undefined = undefined): void {
+        ModuleRegistry.setModuleBased(moduleBased);
+
+        if (!modules) {
+            return;
+        }
+        modules.forEach(module => ModuleRegistry.register(module, moduleBased, gridId));
+    }
+
+    private static isValidModuleVersion(module: Module): boolean {
+        const [moduleMajor, moduleMinor] = module.version.split('.') || [];
+        const [currentModuleMajor, currentModuleMinor] = ModuleRegistry.currentModuleVersion.split('.') || [];
+
+        return moduleMajor === currentModuleMajor && moduleMinor === currentModuleMinor;
     }
 
     private static runVersionChecks(module: Module) {
@@ -26,7 +57,7 @@ export class ModuleRegistry {
 
         if (!module.version) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`);
-        } else if (module.version !== ModuleRegistry.currentModuleVersion) {
+        } else if (!ModuleRegistry.isValidModuleVersion(module)) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`);
         }
 
@@ -61,18 +92,8 @@ export class ModuleRegistry {
         ModuleRegistry.isBundled = true;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    public static registerModules(modules: Module[], moduleBased = true): void {
-        ModuleRegistry.setModuleBased(moduleBased);
-
-        if (!modules) {
-            return;
-        }
-        modules.forEach(module => ModuleRegistry.register(module, moduleBased));
-    }
-
-    public static assertRegistered(moduleName: ModuleNames, reason: string): boolean {
-        if (this.isRegistered(moduleName)) {
+    public static assertRegistered(moduleName: ModuleNames, reason: string, gridId: string): boolean {
+        if (this.isRegistered(moduleName, gridId)) {
             return true;
         }
 
@@ -92,7 +113,7 @@ For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#get
         else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
             let modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
             warningMessage =
-                `AG Grid: unable to use ${reason} as the ${modName} is not registered. Check if you have registered the module:
+                `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
            
     import { ModuleRegistry } from '@ag-grid-community/core';
     import { ${modName} } from '${moduleName}';
@@ -116,12 +137,12 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         return false;
     }
 
-    public static isRegistered(moduleName: ModuleNames): boolean {
-        return !!ModuleRegistry.modulesMap[moduleName];
+    public static isRegistered(moduleName: ModuleNames, gridId: string): boolean {
+        return !!ModuleRegistry.globalModulesMap[moduleName] || !!ModuleRegistry.gridModulesMap[gridId]?.[moduleName];
     }
 
-    public static getRegisteredModules(): Module[] {
-        return values(ModuleRegistry.modulesMap);
+    public static getRegisteredModules(gridId: string): Module[] {
+        return [...values(ModuleRegistry.globalModulesMap), ...values(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
 
     public static isPackageBased(): boolean {

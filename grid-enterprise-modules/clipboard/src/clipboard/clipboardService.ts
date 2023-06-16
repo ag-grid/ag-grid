@@ -14,6 +14,8 @@ import {
     Column,
     ColumnModel,
     CsvExportParams,
+    CutEndEvent,
+    CutStartEvent,
     Events,
     FlashCellsEvent,
     FocusService,
@@ -39,6 +41,8 @@ import {
     CtrlsService,
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
+    ValueFormatterService,
+    ValueParserService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -76,9 +80,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-
-
-
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
@@ -253,15 +256,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         insideQuotedField = false;
                     }
 
-                    continue;
+                    // continue;
                 } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
                     // enter quoted field
                     insideQuotedField = true;
-                    continue;
+                    // continue;
                 }
             }
 
-            if (!insideQuotedField) {
+            if (!insideQuotedField && currentChar !== '"') {
                 if (currentChar === delimiter) {
                     // move to next column
                     column++;
@@ -380,7 +383,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 }
 
                 const newValue = this.processCell(
-                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
@@ -475,7 +478,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             column,
                             this.valueService.getValue(column, rowNode),
                             EXPORT_TYPE_DRAG_COPY,
-                            processCellForClipboardFunc);
+                            processCellForClipboardFunc, false, true);
 
                         firstRowValues.push(value);
                     });
@@ -486,7 +489,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
-                            rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                            rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
 
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
@@ -548,7 +551,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -595,7 +598,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             column.isSuppressPaste(rowNode)
         ) { return; }
 
-        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
+
+        // if the cell is a group and the col is an aggregation, skip the cell.
+        if (rowNode.group && column.isValueActive()) { return; }
+
+        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         
         const { rowIndex, rowPinned } = rowNode;
@@ -611,9 +618,23 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.copyOrCutToClipboard(params);
     }
 
-    public cutToClipboard(params: IClipboardCopyParams = {}): void {
+    public cutToClipboard(params: IClipboardCopyParams = {}, source: 'api' | 'ui' | 'contextMenu' = 'api'): void {
         if (this.gridOptionsService.is('suppressCutToClipboard')) { return; }
+
+        const startEvent: WithoutGridCommon<CutStartEvent> = {
+            type: Events.EVENT_CUT_START,
+            source
+        };
+        this.eventService.dispatchEvent(startEvent);
+
         this.copyOrCutToClipboard(params, true);
+
+        const endEvent: WithoutGridCommon<CutEndEvent> = {
+            type: Events.EVENT_CUT_END,
+            source
+        };
+        this.eventService.dispatchEvent(endEvent);
+
     }
 
     private copyOrCutToClipboard(params: IClipboardCopyParams, cut?: boolean): void {
@@ -654,7 +675,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private clearCellsAfterCopy(type: CellClearType) {
         this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
+            this.rangeService.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
@@ -901,7 +922,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 value,
                 node,
                 column,
-                type: 'clipboard'
+                type: 'clipboard',
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, node, valueToParse, this.valueService.getValue(column, node))
             });
         }
         return value;
@@ -923,16 +946,26 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         column: Column,
         value: T,
         type: string,
-        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T)): T {
+        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T),
+        canParse?: boolean,
+        canFormat?: boolean): T {
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
                 node: rowNode,
                 value,
                 type,
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode ?? null, valueToParse, this.valueService.getValue(column, rowNode))
+
             };
 
             return func(params);
+        }
+        if (canParse && column.getColDef().useValueParserForImport) {
+            return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
+        } else if (canFormat && column.getColDef().useValueFormatterForExport) {
+            return this.valueFormatterService.formatValue(column, rowNode ?? null, value) ?? value as any;
         }
 
         return value;

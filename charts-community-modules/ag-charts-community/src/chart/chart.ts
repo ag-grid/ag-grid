@@ -1,8 +1,8 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
+import { Text } from '../scene/shape/text';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
-import { Legend } from './legend';
 
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
@@ -20,27 +20,30 @@ import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
+import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleContext, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
+import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
+import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { LegendDatum } from './legendDatum';
+import { CategoryLegendDatum, ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
+import { getLegend } from './factory/legendTypes';
+import { CallbackCache } from '../util/callbackCache';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
-
-export type ChartUpdateOptions = { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> };
 
 type PickedNode = {
     series: Series<any>;
@@ -63,7 +66,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly legend: Legend;
+    legend: ChartLegend | undefined;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
     readonly highlight: ChartHighlight;
@@ -106,16 +109,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     @ActionOnSet<Chart>({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(value, this.height);
+            this.resize(value);
         },
     })
     width?: number;
 
     @ActionOnSet<Chart>({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(this.width, value);
+            this.resize(undefined, value);
         },
     })
     height?: number;
@@ -139,7 +140,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!this._lastAutoSize) {
                 return;
             }
-            this.resize(this._lastAutoSize[0], this._lastAutoSize[1]);
+            this.resize();
         } else {
             style.display = 'inline-block';
             style.width = 'auto';
@@ -193,15 +194,21 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._destroyed;
     }
 
-    protected readonly interactionManager: InteractionManager;
+    protected readonly animationManager: AnimationManager;
+    protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
     protected readonly updateService: UpdateService;
+    protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
-    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly callbackCache: CallbackCache;
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
+    protected readonly legendModules: Record<string, { instance: ModuleInstance }> = {};
+    private legendType: string | undefined;
 
     protected constructor(
         document = window.document,
@@ -234,12 +241,27 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.interactionManager = new InteractionManager(element);
+        this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.interactionManager = new InteractionManager(element);
         this.zoomManager = new ZoomManager();
+        this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
-        this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
+        this.updateService = new UpdateService((type = ChartUpdateType.FULL, { forceNodeDataRefresh }) =>
+            this.update(type, { forceNodeDataRefresh })
+        );
+        this.callbackCache = new CallbackCache();
+
+        this.animationManager = new AnimationManager(this.interactionManager);
+        this.animationManager.skipAnimations = true;
+        this.animationManager.play();
+
+        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
+        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
+        this.overlays = new ChartOverlays(this.element);
+        this.highlight = new ChartHighlight();
+        this.container = container;
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -252,29 +274,16 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 return;
             }
 
-            if (width === this.width && height === this.height) {
+            const [autoWidth = 0, authHeight = 0] = this._lastAutoSize ?? [];
+            if (autoWidth === width && authHeight === height) {
                 return;
             }
 
             this._lastAutoSize = [width, height];
-            this.resize(width, height);
+            this.resize();
         });
         this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
-
-        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
-        this.legend = new Legend(
-            this,
-            this.interactionManager,
-            this.cursorManager,
-            this.highlightManager,
-            this.tooltipManager,
-            this.layoutService
-        );
-        this.overlays = new ChartOverlays(this.element);
-        this.highlight = new ChartHighlight();
-        this.container = container;
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
@@ -284,11 +293,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('page-left', () => this.destroy());
         this.interactionManager.addListener('wheel', () => this.disablePointer());
 
+        this.animationManager.addListener('animation-frame', (_) => {
+            this.update(ChartUpdateType.SCENE_RENDER);
+        });
+        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
         );
 
-        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
+        this.attachLegend('category');
     }
 
     addModule(module: RootModule) {
@@ -296,13 +309,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
 
-        const moduleMeta = module.initialiseModule(this.getModuleContext());
-        this.modules[module.optionsKey] = moduleMeta;
+        const moduleInstance = new module.instanceConstructor(this.getModuleContext());
+        this.modules[module.optionsKey] = { instance: moduleInstance };
 
-        (this as any)[module.optionsKey] = moduleMeta.instance;
+        (this as any)[module.optionsKey] = moduleInstance;
     }
 
-    removeModule(module: Module) {
+    removeModule(module: RootModule) {
         this.modules[module.optionsKey]?.instance?.destroy();
         delete this.modules[module.optionsKey];
         delete (this as any)[module.optionsKey];
@@ -315,23 +328,33 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
+            dataService,
             layoutService,
             updateService,
+            mode,
+            callbackCache,
         } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
+            dataService,
             layoutService,
             updateService,
+            mode,
+            callbackCache,
         };
     }
 
@@ -348,7 +371,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.tooltipManager.destroy();
         this.tooltip.destroy();
-        this.legend.destroy();
+        this.legend?.destroy();
+        this.overlays.noData.hide();
         SizeMonitor.unobserve(this.element);
 
         for (const [key, module] of Object.entries(this.modules)) {
@@ -372,6 +396,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
+
+        this.callbackCache.invalidateCache();
 
         this._destroyed = true;
 
@@ -401,7 +427,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const count = callbacks.length;
         if (count === 0) {
             callbacks.push(cb);
-            this._processCallbacks();
+            this._processCallbacks().catch((e) => Logger.errorOnce(e));
         } else {
             // Factory callback process already running, the callback will be invoked asynchronously.
             // Clear the queue after the first callback to prevent unnecessary re-renderings.
@@ -418,6 +444,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
             try {
                 await callbacks[0]();
+                this.callbackCache.invalidateCache();
             } catch (e) {
                 Logger.error('update error', e);
             }
@@ -457,7 +484,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
     ) {
-        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts ?? {};
 
         if (forceNodeDataRefresh) {
             this.series.forEach((series) => series.markNodeDataDirty());
@@ -594,10 +621,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected initSeries(series: Series<any>) {
         series.chart = this;
         series.highlightManager = this.highlightManager;
+        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
+
+        series.chartEventManager = this.chartEventManager;
+        series.addChartEventListeners();
     }
 
     protected freeSeries(series: Series<any>) {
@@ -648,7 +679,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((axis) => {
             const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            const directionAxes = (directionToAxesMap[direction] ??= []);
             directionAxes.push(axis);
         });
 
@@ -704,6 +735,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private resize(width?: number, height?: number) {
+        width ??= this.width ?? (this.autoSize ? this._lastAutoSize?.[0] : this.scene.canvas.width);
+        height ??= this.height ?? (this.autoSize ? this._lastAutoSize?.[1] : this.scene.canvas.height);
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {
@@ -749,32 +782,71 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private async updateLegend() {
-        const legendData: LegendDatum[] = [];
+    private attachLegend(legendType: string) {
+        if (this.legendType === legendType) {
+            return;
+        }
 
+        this.legend?.destroy();
+        this.legend = undefined;
+
+        const ctx = this.getModuleContext();
+        this.legend = getLegend(legendType, ctx);
+        this.legend.attachLegend(this.scene.root);
+        this.legendType = legendType;
+    }
+
+    private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
+
+    setLegendInit(initLegend: (legend: ChartLegend) => void) {
+        this.applyLegendOptions = initLegend;
+    }
+
+    private async updateLegend() {
+        const legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
-                legendData.push(...series.getLegendData());
+                const data = series.getLegendData();
+                legendData.push(...data);
             });
+        const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
+        this.attachLegend(legendType);
+        this.applyLegendOptions?.(this.legend!);
 
-        const { formatter } = this.legend.item.label;
-        if (formatter) {
-            legendData.forEach(
-                (datum) =>
-                    (datum.label.text = formatter({
-                        get id() {
-                            Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
-                            return datum.seriesId;
-                        },
-                        itemId: datum.itemId,
-                        value: datum.label.text,
-                        seriesId: datum.seriesId,
-                    }))
-            );
+        if (legendType === 'category') {
+            this.validateLegendData(legendData);
         }
 
-        this.legend.data = legendData;
+        this.legend!.data = legendData;
+    }
+
+    protected validateLegendData(legendData: ChartLegendDatum[]) {
+        // Validate each series that shares a legend item label uses the same fill colour
+        const labelMarkerFills: { [key: string]: { [key: string]: Set<string> } } = {};
+
+        legendData.forEach((d) => {
+            const seriesType = this.series.find((s) => s.id === d.seriesId)?.type;
+            if (!seriesType) return;
+
+            const dc = d as CategoryLegendDatum;
+            labelMarkerFills[seriesType] ??= { [dc.label.text]: new Set() };
+            labelMarkerFills[seriesType][dc.label.text] ??= new Set();
+            if (dc.marker.fill != null) {
+                labelMarkerFills[seriesType][dc.label.text].add(dc.marker.fill);
+            }
+        });
+
+        Object.keys(labelMarkerFills).forEach((seriesType) => {
+            Object.keys(labelMarkerFills[seriesType]).forEach((name) => {
+                const fills = labelMarkerFills[seriesType][name];
+                if (fills.size > 1) {
+                    Logger.warnOnce(
+                        `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour.`
+                    );
+                }
+            });
+        });
     }
 
     protected async performLayout() {
@@ -806,11 +878,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
+        const updateCaption = (caption: Caption) => {
+            const defaultCaptionHeight = shrinkRect.height / 10;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * Text.defaultLineHeightRatio;
+            const maxWidth = shrinkRect.width;
+            const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            caption.computeTextWrap(maxWidth, maxHeight);
+        };
+
         const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'top';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -825,6 +906,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'bottom';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
@@ -840,7 +922,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         if (subtitle) {
-            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            subtitle.node.visible = (title?.enabled && subtitle.enabled) ?? false;
             if (subtitle.node.visible) {
                 positionTopAndShrinkBBox(subtitle);
             }
@@ -995,7 +1077,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             yOffset: pick.datum.series.tooltip.position.yOffset,
         };
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        const meta = this.mergePointerDatum(
+            { pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position },
+            pick.datum
+        );
         meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {
@@ -1141,8 +1226,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
-        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight ?? {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight ?? {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);

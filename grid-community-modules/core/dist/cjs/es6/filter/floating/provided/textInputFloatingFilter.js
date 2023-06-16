@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -44,7 +44,6 @@ class FloatingFilterTextInputService extends beanStub_1.BeanStub {
     addValueChangedListener(listener) {
         const inputGui = this.eFloatingFilterTextInput.getGui();
         this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keypress', listener);
         this.addManagedListener(inputGui, 'keydown', listener);
     }
 }
@@ -84,8 +83,8 @@ class TextInputFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilte
         }
     }
     syncUpWithParentFilter(e) {
-        const enterKeyPressed = e.key === keyCode_1.KeyCode.ENTER;
-        if (this.applyActive && !enterKeyPressed) {
+        const isEnterKey = e.key === keyCode_1.KeyCode.ENTER;
+        if (this.applyActive && !isEnterKey) {
             return;
         }
         let value = this.floatingFilterInputService.getValue();

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -50,8 +52,11 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     ExcelXmlSerializingSession.prototype.addImage = function () {
         return;
     };
-    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
         return {
             styleId: !!actualStyle ? styleId : undefined,

@@ -6,21 +6,23 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     const isHappy = (value: string) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const [interimValue, setInterimValue] = useState(isHappy(props.value));
-    const [happy, setHappy] = useState<boolean | null>(null);
-    const refContainer = useRef<any>(null);
+    const [happy, setHappy] = useState<boolean>(isHappy(props.value));
+    const [done, setDone] = useState(false);
+    const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event: any) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
-                setInterimValue(!interimValue);
-                event.stopPropagation();
-            } else if (event.key === "Enter") {
-                setHappy(interimValue)
+                const isLeft = event.key === 'ArrowLeft';
+                setHappy(isLeft);
                 event.stopPropagation();
             }
         }
     };
+
+    useEffect(() => {
+        if (done) props.stopEditing();
+    }, [done]);
 
     useEffect(() => {
         (ReactDOM.findDOMNode(refContainer.current) as any).focus();
@@ -35,11 +37,6 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         };
     }, [checkAndToggleMoodIfLeftRight, ready]);
 
-    useEffect(() => {
-        if (happy !== null) {
-            props.stopEditing();
-        }
-    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
@@ -49,12 +46,12 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         };
     });
 
-    const mood: any = {
+    const mood = {
         borderRadius: 15,
         border: '1px solid grey',
         background: '#e6e6e6',
         padding: 15,
-        textAlign: 'center',
+        textAlign: 'center' as const,
         display: 'inline-block'
     };
 
@@ -72,8 +69,8 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         padding: 4
     };
 
-    const happyStyle = interimValue ? selected : unselected;
-    const sadStyle = !interimValue ? selected : unselected;
+    const happyStyle = happy ? selected : unselected;
+    const sadStyle = !happy ? selected : unselected;
 
     return (
         <div ref={refContainer}
@@ -82,9 +79,11 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
+                setDone(true);
             }} style={happyStyle} />
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
+                setDone(true);
             }} style={sadStyle} />
         </div>
     );

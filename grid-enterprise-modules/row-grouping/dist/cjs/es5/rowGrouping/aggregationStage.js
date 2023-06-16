@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -26,6 +28,13 @@ var AggregationStage = /** @class */ (function (_super) {
     function AggregationStage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AggregationStage.prototype.init = function () {
+        var _this = this;
+        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
+        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', function (propChange) { return _this.alwaysAggregateAtRootLevel = propChange.currentValue; });
+        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
+        this.addManagedPropertyListener('groupIncludeTotalFooter', function (propChange) { return _this.groupIncludeTotalFooter = propChange.currentValue; });
+    };
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     AggregationStage.prototype.execute = function (params) {
@@ -35,24 +44,13 @@ var AggregationStage = /** @class */ (function (_super) {
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
         var noValueColumns = core_1._.missingOrEmpty(this.columnModel.getValueColumns());
-        var noUserAgg = !this.getGroupRowAggFunc();
+        var noUserAgg = !this.gridOptionsService.getCallback('getGroupRowAgg');
         var changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
             return;
         }
         var aggDetails = this.createAggDetails(params);
         this.recursivelyCreateAggData(aggDetails);
-    };
-    AggregationStage.prototype.getGroupRowAggFunc = function () {
-        var getGroupRowAgg = this.gridOptionsService.getCallback('getGroupRowAgg');
-        if (getGroupRowAgg) {
-            return getGroupRowAgg;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var groupRowAggNodes = this.gridOptionsService.get('groupRowAggNodes');
-        if (groupRowAggNodes) {
-            return function (params) { return groupRowAggNodes(params.nodes); };
-        }
     };
     AggregationStage.prototype.createAggDetails = function (params) {
         var pivotActive = this.columnModel.isPivotActive();
@@ -84,13 +82,12 @@ var AggregationStage = /** @class */ (function (_super) {
                 // never agg data for leaf nodes
                 return;
             }
-            //Optionally prevent the aggregation at the root Node
-            //https://ag-grid.atlassian.net/browse/AG-388
+            //Optionally enable the aggregation at the root Node
             var isRootNode = rowNode.level === -1;
-            if (isRootNode) {
+            // if total footer is displayed, the value is in use
+            if (isRootNode && !_this.groupIncludeTotalFooter) {
                 var notPivoting = !_this.columnModel.isPivotMode();
-                var suppressAggAtRootLevel = _this.gridOptionsService.is('suppressAggAtRootLevel');
-                if (suppressAggAtRootLevel && notPivoting) {
+                if (!_this.alwaysAggregateAtRootLevel && notPivoting) {
                     return;
                 }
             }
@@ -101,7 +98,7 @@ var AggregationStage = /** @class */ (function (_super) {
     AggregationStage.prototype.aggregateRowNode = function (rowNode, aggDetails) {
         var measureColumnsMissing = aggDetails.valueColumns.length === 0;
         var pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        var userFunc = this.getGroupRowAggFunc();
+        var userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
         var aggResult;
         if (userFunc) {
             var params = { nodes: rowNode.childrenAfterFilter };
@@ -261,6 +258,9 @@ var AggregationStage = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnApi')
     ], AggregationStage.prototype, "columnApi", void 0);
+    __decorate([
+        core_1.PostConstruct
+    ], AggregationStage.prototype, "init", null);
     AggregationStage = __decorate([
         core_1.Bean('aggregationStage')
     ], AggregationStage);

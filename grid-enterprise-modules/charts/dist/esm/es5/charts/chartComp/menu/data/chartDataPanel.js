@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,9 +35,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -69,6 +72,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     ChartDataPanel.prototype.init = function () {
         this.updatePanels();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.updatePanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.updatePanels.bind(this));
         this.createAutoScrollService();
     };
     ChartDataPanel.prototype.destroy = function () {
@@ -85,7 +89,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var groupExpandedState = this.getGroupExpandedState();
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
-            __spread(dimensionCols, valueCols).forEach(function (col) {
+            __spreadArray(__spreadArray([], __read(dimensionCols)), __read(valueCols)).forEach(function (col) {
                 _this.columnComps.get(col.colId).setValue(col.selected, true);
             });
             if (this.chartController.isActiveXYChart()) {
@@ -102,7 +106,6 @@ var ChartDataPanel = /** @class */ (function (_super) {
                 if (type === 'seriesChartType') {
                     return index;
                 }
-                ;
                 return prevVal;
             }, -1);
             if (seriesChartTypeIndex !== -1) {
@@ -446,7 +449,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var _this = this;
         if (this.lastHoveredItem) {
             var _a = this.chartController.getColStateForMenu(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-            var draggedColumnState = __spread(dimensionCols, valueCols).find(function (state) { return state.column === _this.lastDraggedColumn; });
+            var draggedColumnState = __spreadArray(__spreadArray([], __read(dimensionCols)), __read(valueCols)).find(function (state) { return state.column === _this.lastDraggedColumn; });
             if (draggedColumnState) {
                 var targetIndex = Array.from(this.columnComps.values()).indexOf(this.lastHoveredItem.comp);
                 if (this.lastHoveredItem.position === 'bottom') {

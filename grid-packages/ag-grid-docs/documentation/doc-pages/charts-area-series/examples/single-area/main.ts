@@ -19,9 +19,6 @@ const options: AgChartOptions = {
       yName: 'IE',
     },
   ],
-  legend: {
-    enabled: false,
-  },
 }
 
 AgChart.create(options)

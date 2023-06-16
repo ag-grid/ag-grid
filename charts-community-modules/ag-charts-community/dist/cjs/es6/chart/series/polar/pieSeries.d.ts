@@ -1,16 +1,17 @@
 import { Group } from '../../../scene/group';
 import { DropShadow } from '../../../scene/dropShadow';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, Series } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { AgPieSeriesLabelFormatterParams, AgPieSeriesTooltipRendererParams, AgTooltipRendererResult, AgPieSeriesFormat, AgPieSeriesFormatterParams } from '../../agChartOptions';
+import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import { ModuleContext } from '../../../util/module';
 declare class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
-    readonly labelKey?: string;
     readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
@@ -25,6 +26,8 @@ declare class PieSeriesNodeDoubleClickEvent extends PieSeriesNodeBaseClickEvent 
 interface PieNodeDatum extends SeriesNodeDatum {
     readonly index: number;
     readonly radius: number;
+    readonly angleValue: number;
+    readonly radiusValue?: number;
     readonly startAngle: number;
     readonly endAngle: number;
     readonly midAngle: number;
@@ -42,7 +45,8 @@ interface PieNodeDatum extends SeriesNodeDatum {
     readonly sectorLabel?: {
         readonly text: string;
     };
-    readonly sectorFormat: AgPieSeriesFormat;
+    readonly sectorFormat: Required<AgPieSeriesFormat>;
+    readonly legendItemKey?: string;
 }
 declare class PieSeriesCalloutLabel extends Label {
     offset: number;
@@ -84,22 +88,16 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     private calloutLabelSelection;
     private sectorLabelSelection;
     private innerLabelsSelection;
+    private animationState;
     readonly backgroundGroup: Group;
-    /**
-     * The processed data that gets visualized.
-     */
-    private groupSelectionData;
-    private sectorFormatData;
+    private nodeData;
     private angleScale;
     seriesItemEnabled: boolean[];
-    private _title?;
-    set title(value: PieTitle | undefined);
-    get title(): PieTitle | undefined;
+    title?: PieTitle;
+    private oldTitle?;
     calloutLabel: PieSeriesCalloutLabel;
-    label: PieSeriesCalloutLabel;
     readonly sectorLabel: PieSeriesSectorLabel;
     calloutLine: PieSeriesCalloutLine;
-    callout: PieSeriesCalloutLine;
     tooltip: PieSeriesTooltip;
     set data(input: any[] | undefined);
     get data(): any[] | undefined;
@@ -110,10 +108,9 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     angleKey: string;
     angleName: string;
     readonly innerLabels: DoughnutInnerLabel[];
-    private _innerCircleConfig?;
-    private _innerCircleNode?;
-    get innerCircle(): DoughnutInnerCircle | undefined;
-    set innerCircle(value: DoughnutInnerCircle | undefined);
+    innerCircle?: DoughnutInnerCircle;
+    private oldInnerCircle?;
+    private innerCircleNode?;
     /**
      * The key of the numeric field to use to determine the radii of pie sectors.
      * The largest value will correspond to the full radius and smaller values to
@@ -125,8 +122,6 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     radiusMax?: number;
     calloutLabelKey?: string;
     calloutLabelName?: string;
-    labelKey?: string;
-    labelName?: string;
     sectorLabelKey?: string;
     sectorLabelName?: string;
     legendItemKey?: string;
@@ -148,30 +143,45 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     strokeWidth: number;
     shadow?: DropShadow;
     readonly highlightStyle: HighlightStyle;
-    constructor();
+    surroundingRadius?: number;
+    constructor(moduleCtx: ModuleContext);
+    addChartEventListeners(): void;
     visibleChanged(): void;
     private processSeriesItemEnabled;
     getDomain(direction: ChartAxisDirection): any[];
     processData(): Promise<void>;
+    maybeRefreshNodeData(): void;
+    createNodeData(): Promise<{
+        itemId: string;
+        nodeData: PieNodeDatum[];
+        labelData: PieNodeDatum[];
+    }[]>;
+    private _createNodeData;
+    private getLabels;
+    private getLabelFormatterParams;
+    private getTextAlignment;
     private getSectorFormat;
-    createNodeData(): Promise<never[]>;
-    private getInnerRadius;
-    private getOuterRadius;
+    getInnerRadius(): number;
+    getOuterRadius(): number;
     updateRadiusScale(): void;
     private getTitleTranslationY;
-    update(): Promise<void>;
+    update({ seriesRect }: {
+        seriesRect: BBox;
+    }): Promise<void>;
+    private updateTitleNodes;
+    private updateInnerCircleNodes;
     private updateNodeMidPoint;
     private updateSelections;
     private updateGroupSelection;
-    private datumSectorRefs;
     private updateNodes;
     updateCalloutLineNodes(): void;
     private getLabelOverflow;
+    private bboxIntersectsSurroundingSeries;
     private computeCalloutLabelCollisionOffsets;
-    updateCalloutLabelNodes(): void;
+    private updateCalloutLabelNodes;
     computeLabelsBBox(options: {
         hideWhenNecessary: boolean;
-    }): BBox | null;
+    }, seriesRect: BBox): BBox | null;
     private setTextDimensionalProps;
     private updateSectorLabelNodes;
     private updateInnerCircle;
@@ -179,8 +189,12 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     protected getNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeClickEvent;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeDoubleClickEvent;
     getTooltipHtml(nodeDatum: PieNodeDatum): string;
-    getLegendData(): LegendDatum[];
-    toggleSeriesItem(itemId: number, enabled: boolean): void;
-    toggleOtherSeriesItems(seriesToggled: Series<any>, datumToggled: any, enabled?: boolean, suggestedEnabled?: boolean): void;
+    getLegendData(): ChartLegendDatum[];
+    onLegendItemClick(event: LegendItemClickChartEvent): void;
+    protected toggleSeriesItem(itemId: number, enabled: boolean): void;
+    toggleOtherSeriesItems(series: PieSeries, itemId: number, enabled: boolean): void;
+    animateEmptyUpdateReady(): void;
+    animateReadyUpdateReady(): void;
 }
 export {};
+//# sourceMappingURL=pieSeries.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
@@ -12,7 +12,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 export declare type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export declare type ColumnEventName = 'movingChanged' | 'leftChanged' | 'widthChanged' | 'lastLeftPinnedChanged' | 'firstRightPinnedChanged' | 'visibleChanged' | 'filterChanged' | 'filterActiveChanged' | 'sortChanged' | 'colDefChanged' | 'menuVisibleChanged' | 'columnRowGroupChanged' | 'columnPivotChanged' | 'columnValueChanged';
 export declare function getNextColInstanceId(): number;
-export declare class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
+export declare class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
     static EVENT_MOVING_CHANGED: ColumnEventName;
     static EVENT_LEFT_CHANGED: ColumnEventName;
     static EVENT_WIDTH_CHANGED: ColumnEventName;
@@ -61,16 +61,16 @@ export declare class Column implements IHeaderColumn, IProvidedColumn, IEventEmi
     private readonly primary;
     private parent;
     private originalParent;
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: string, primary: boolean);
+    constructor(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, colId: string, primary: boolean);
     getInstanceId(): number;
     private setState;
-    setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void;
+    setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null): void;
     /**
      * Returns the column definition provided by the application.
      * This may not be correct, as items can be superseded by default column options.
      * However it's useful for comparison, eg to know which application column definition matches that column.
      */
-    getUserProvidedColDef(): ColDef | null;
+    getUserProvidedColDef(): ColDef<TValue> | null;
     setParent(parent: ColumnGroup): void;
     /** Returns the parent column group, if column grouping is active. */
     getParent(): ColumnGroup;
@@ -153,7 +153,7 @@ export declare class Column implements IHeaderColumn, IProvidedColumn, IEventEmi
      * (e.g. `defaultColDef` grid option, or column types.
      *
      * Equivalent: `getDefinition` */
-    getColDef(): ColDef;
+    getColDef(): ColDef<TValue>;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     /**
      * Returns the unique ID for the column.
@@ -170,7 +170,7 @@ export declare class Column implements IHeaderColumn, IProvidedColumn, IEventEmi
      *
      * Equivalent: `getColId`, `getId` */
     getUniqueId(): string;
-    getDefinition(): AbstractColDef;
+    getDefinition(): AbstractColDef<TValue>;
     /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     getActualWidth(): number;
     getAutoHeaderHeight(): number | null;

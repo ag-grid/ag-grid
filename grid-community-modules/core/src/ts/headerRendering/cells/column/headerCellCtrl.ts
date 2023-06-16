@@ -172,14 +172,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyPressed(e);
+            this.selectAllFeature.onSpaceKeyDown(e);
         }
         if (e.key === KeyCode.ENTER) {
-            this.onEnterKeyPressed(e);
+            this.onEnterKeyDown(e);
         }
     }
 
-    private onEnterKeyPressed(e: KeyboardEvent): void {
+    private onEnterKeyDown(e: KeyboardEvent): void {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.getUserCompInstance() as HeaderComp;
         if (!headerComp) { return; }
@@ -533,17 +533,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         let stopResizeObserver: (() => void) | undefined;
 
         const checkMeasuring = () => {
-            const isSpanHeaderHeight = this.column.isSpanHeaderHeight();
             const newValue = this.column.isAutoHeaderHeight();
-
-            if (isSpanHeaderHeight) {
-                stopMeasuring();
-                if (newValue) {
-                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
-                    doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
-                }
-                return;
-            }
 
             if (newValue && !isMeasuring) {
                 startMeasuring();

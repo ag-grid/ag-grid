@@ -1,0 +1,226 @@
+@use "sass:map";
+@use "sass:math";
+@use '../core' as *;
+
+$vertical-padding: $size-1;
+
+pre.code,
+pre.code code {
+    color: black;
+    background: none;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre.code {
+    --comment-color: hsl(120, 30%, 40%);
+    --tag-color: #a31515;
+    --string-color: #a31515;
+    --punctuation-color: #393a34;
+    --symbol-color: #36acaa;
+    --function-color: #393a34;
+    --deleted-color: #9a050f;
+    --selector-color: #00009f;
+    --important-color: #e90;
+    --class-name-color: #2b91af;
+    --property-color: #0a2c80;
+
+    position: relative;
+    margin: 0 0 $size-2;
+    padding: 0;
+    border: 2px solid var(--bright-blue-gray);
+    overflow: visible;
+    overflow-y: auto !important;
+}
+
+pre.code > code {
+    position: relative;
+    z-index: 1;
+    font-size: 0.9375em;
+    background-color: white;
+    background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
+    background-size: 3em 3em;
+    background-origin: content-box;
+    background-attachment: local;
+    border: none;
+    border-radius: 0;
+    box-shadow: inset 0 $vertical-padding 0 0 white, inset 0 $vertical-padding * -1 0 0 white;
+    overflow-x: auto !important;
+}
+
+pre.code > code {
+    padding: $vertical-padding $size-2;
+    display: block;
+}
+
+pre.code.line-numbers.line-numbers code {
+    padding-left: 3.8em;
+}
+
+pre.code.line-numbers.line-numbers .line-numbers-rows {
+    left: 0;
+}
+
+pre.code[data-line] {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+pre[data-line] code {
+    position: relative;
+    padding-left: 4em;
+}
+pre.code .line-highlight {
+    margin-top: 0;
+}
+
+pre.code.line-numbers {
+    position: relative;
+    counter-reset: linenumber;
+}
+
+pre.code.line-numbers > code {
+    position: relative;
+    white-space: inherit;
+    min-height: 100%;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    min-height: 100%;
+    padding-top: $vertical-padding;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em;
+    letter-spacing: -1px;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+    content: counter(linenumber);
+    display: block;
+    padding-right: 0.8em;
+    text-align: right;
+}
+
+// Theme colors
+// ============
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: var(--comment-color);
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: 0.7;
+}
+
+.token.string {
+    color: var(--string-color);
+}
+
+.token.punctuation,
+.token.operator {
+    color: var(--punctuation-color);
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: var(--symbol-color);
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*='language-css'] {
+    color: #0000ff;
+}
+
+.token.function {
+    color: var(--function-color);
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: var(--deleted-color);
+}
+
+.token.important {
+    color: var(--important-color);
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.token.builtin,
+.language-json .token.property {
+    color: var(--class-name-color);
+}
+
+.token.tag {
+    color: var(--tag-color);
+}
+
+.token.selector {
+    color: var(--selector-color);
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: var(--property-color);
+}
+
+.language-css .token.property {
+    color: var(--tag-color)
+}
+
+.line-numbers .line-numbers-rows {
+    border-right: 1px solid rgba(map.get($abstract-colors, medium-electric-blue), 0.1);
+}
+
+.line-numbers-rows > span:before {
+    color: rgba(map.get($abstract-colors, medium-electric-blue), 0.33);
+}

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SortDirection } from '../entities/colDef';
@@ -30,3 +30,5 @@ export declare function setAriaSort(element: Element, sort: ColumnSortState): vo
 export declare function removeAriaSort(element: Element): void;
 export declare function setAriaSelected(element: Element, selected?: boolean): void;
 export declare function setAriaChecked(element: Element, checked?: boolean): void;
+export declare function setAriaControls(controllerElement: Element, controlledElement: Element): void;
+export declare function getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[]) => string, state?: boolean): string;

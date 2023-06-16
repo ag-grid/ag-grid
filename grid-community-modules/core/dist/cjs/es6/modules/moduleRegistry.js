@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -11,10 +11,34 @@ const moduleNames_1 = require("./moduleNames");
 const function_1 = require("../utils/function");
 const generic_1 = require("../utils/generic");
 class ModuleRegistry {
-    static register(module, moduleBased = true) {
+    static register(module, moduleBased = true, gridId = undefined) {
         ModuleRegistry.runVersionChecks(module);
-        ModuleRegistry.modulesMap[module.moduleName] = module;
+        if (gridId !== undefined) {
+            ModuleRegistry.areGridScopedModules = true;
+            if (ModuleRegistry.gridModulesMap[gridId] === undefined) {
+                ModuleRegistry.gridModulesMap[gridId] = {};
+            }
+            ModuleRegistry.gridModulesMap[gridId][module.moduleName] = module;
+        }
+        else {
+            ModuleRegistry.globalModulesMap[module.moduleName] = module;
+        }
         ModuleRegistry.setModuleBased(moduleBased);
+    }
+    static unRegisterGridModules(gridId) {
+        delete ModuleRegistry.gridModulesMap[gridId];
+    }
+    static registerModules(modules, moduleBased = true, gridId = undefined) {
+        ModuleRegistry.setModuleBased(moduleBased);
+        if (!modules) {
+            return;
+        }
+        modules.forEach(module => ModuleRegistry.register(module, moduleBased, gridId));
+    }
+    static isValidModuleVersion(module) {
+        const [moduleMajor, moduleMinor] = module.version.split('.') || [];
+        const [currentModuleMajor, currentModuleMinor] = ModuleRegistry.currentModuleVersion.split('.') || [];
+        return moduleMajor === currentModuleMajor && moduleMinor === currentModuleMinor;
     }
     static runVersionChecks(module) {
         if (!ModuleRegistry.currentModuleVersion) {
@@ -23,7 +47,7 @@ class ModuleRegistry {
         if (!module.version) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`);
         }
-        else if (module.version !== ModuleRegistry.currentModuleVersion) {
+        else if (!ModuleRegistry.isValidModuleVersion(module)) {
             console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`);
         }
         if (module.validate) {
@@ -53,17 +77,9 @@ class ModuleRegistry {
     static setIsBundled() {
         ModuleRegistry.isBundled = true;
     }
-    // noinspection JSUnusedGlobalSymbols
-    static registerModules(modules, moduleBased = true) {
-        ModuleRegistry.setModuleBased(moduleBased);
-        if (!modules) {
-            return;
-        }
-        modules.forEach(module => ModuleRegistry.register(module, moduleBased));
-    }
-    static assertRegistered(moduleName, reason) {
+    static assertRegistered(moduleName, reason, gridId) {
         var _a;
-        if (this.isRegistered(moduleName)) {
+        if (this.isRegistered(moduleName, gridId)) {
             return true;
         }
         const warningKey = reason + moduleName;
@@ -81,7 +97,7 @@ For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#get
         else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
             let modName = (_a = Object.entries(moduleNames_1.ModuleNames).find(([k, v]) => v === moduleName)) === null || _a === void 0 ? void 0 : _a[0];
             warningMessage =
-                `AG Grid: unable to use ${reason} as the ${modName} is not registered. Check if you have registered the module:
+                `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
            
     import { ModuleRegistry } from '@ag-grid-community/core';
     import { ${modName} } from '${moduleName}';
@@ -103,11 +119,12 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         }, warningKey);
         return false;
     }
-    static isRegistered(moduleName) {
-        return !!ModuleRegistry.modulesMap[moduleName];
+    static isRegistered(moduleName, gridId) {
+        var _a;
+        return !!ModuleRegistry.globalModulesMap[moduleName] || !!((_a = ModuleRegistry.gridModulesMap[gridId]) === null || _a === void 0 ? void 0 : _a[moduleName]);
     }
-    static getRegisteredModules() {
-        return generic_1.values(ModuleRegistry.modulesMap);
+    static getRegisteredModules(gridId) {
+        return [...generic_1.values(ModuleRegistry.globalModulesMap), ...generic_1.values(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
     static isPackageBased() {
         return !ModuleRegistry.moduleBased;
@@ -115,4 +132,6 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
 }
 exports.ModuleRegistry = ModuleRegistry;
 // having in a map a) removes duplicates and b) allows fast lookup
-ModuleRegistry.modulesMap = {};
+ModuleRegistry.globalModulesMap = {};
+ModuleRegistry.gridModulesMap = {};
+ModuleRegistry.areGridScopedModules = false;

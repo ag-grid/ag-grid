@@ -3,9 +3,9 @@ import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEven
 import { HierarchySeries } from './hierarchySeries';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
 import { BBox } from '../../../scene/bbox';
-import { AgTreemapSeriesTooltipRendererParams, AgTooltipRendererResult, AgTreemapSeriesFormatterParams, AgTreemapSeriesFormat } from '../../agChartOptions';
+import { AgTreemapSeriesTooltipRendererParams, AgTooltipRendererResult, AgTreemapSeriesFormatterParams, AgTreemapSeriesFormat, TextWrap } from '../../agChartOptions';
 declare type TreeDatum = {
     [prop: string]: any;
     children?: TreeDatum[];
@@ -38,6 +38,9 @@ declare class TreemapSeriesNodeDoubleClickEvent extends TreemapSeriesNodeBaseCli
 declare class TreemapSeriesLabel extends Label {
     padding: number;
 }
+declare class TreemapSeriesTileLabel extends Label {
+    wrapping: TextWrap;
+}
 declare class TreemapValueLabel {
     key?: string;
     name?: string;
@@ -49,7 +52,7 @@ declare class TreemapValueLabel {
 declare class TreemapTextHighlightStyle {
     color?: string;
 }
-export declare class TreemapHighlightStyle extends HighlightStyle {
+declare class TreemapHighlightStyle extends HighlightStyle {
     readonly text: TreemapTextHighlightStyle;
 }
 export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
@@ -61,12 +64,14 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     readonly title: TreemapSeriesLabel;
     readonly subtitle: TreemapSeriesLabel;
     readonly labels: {
-        large: Label;
-        medium: Label;
-        small: Label;
+        large: TreemapSeriesTileLabel;
+        medium: TreemapSeriesTileLabel;
+        small: TreemapSeriesTileLabel;
+        formatter: ((params: import("../../agChartOptions").AgTreemapSeriesLabelFormatterParams<any>) => string) | undefined;
         value: TreemapValueLabel;
     };
     nodePadding: number;
+    nodeGap: number;
     labelKey: string;
     sizeKey?: string;
     colorKey?: string;
@@ -93,6 +98,7 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
      * https://www.win.tue.nl/~vanwijk/stm.pdf
      */
     private squarify;
+    private applyGap;
     processData(): Promise<void>;
     createNodeData(): Promise<never[]>;
     update(): Promise<void>;
@@ -101,6 +107,7 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     private getTileFormat;
     updateNodes(): Promise<void>;
     private updateNodeMidPoint;
+    private getHighlightedSubtree;
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>): Map<TreemapNodeDatum, {
         label?: {
             text: string;
@@ -123,6 +130,7 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     protected getNodeClickEvent(event: MouseEvent, datum: TreemapNodeDatum): TreemapSeriesNodeClickEvent;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: TreemapNodeDatum): TreemapSeriesNodeDoubleClickEvent;
     getTooltipHtml(nodeDatum: TreemapNodeDatum): string;
-    getLegendData(): LegendDatum[];
+    getLegendData(): ChartLegendDatum[];
 }
 export {};
+//# sourceMappingURL=treemapSeries.d.ts.map

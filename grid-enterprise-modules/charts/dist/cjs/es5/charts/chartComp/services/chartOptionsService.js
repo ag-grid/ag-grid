@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -52,7 +54,8 @@ var ChartOptionsService = /** @class */ (function (_super) {
     };
     ChartOptionsService.prototype.awaitChartOptionUpdate = function (func) {
         var chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(function () { return func(); });
+        chart.waitForUpdate().then(function () { return func(); })
+            .catch(function (e) { return console.error("AG Grid - chart update failed", e); });
     };
     ChartOptionsService.prototype.getAxisProperty = function (expression) {
         var _a;
@@ -156,9 +159,7 @@ var ChartOptionsService = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     ChartOptionsService.isMatchingSeries = function (seriesType, series) {
-        var mapTypeToImplType = function (type) { return type === 'column' ? 'bar' : type; };
-        return seriesTypeMapper_1.VALID_SERIES_TYPES.includes(seriesType) &&
-            series.type === mapTypeToImplType(seriesType);
+        return seriesTypeMapper_1.VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
     };
     ChartOptionsService.prototype.destroy = function () {
         _super.prototype.destroy.call(this);

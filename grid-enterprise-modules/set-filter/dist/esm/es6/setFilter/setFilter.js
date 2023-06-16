@@ -256,7 +256,8 @@ export class SetFilter extends ProvidedFilter {
             }
         }
         if (params.excelMode && params.defaultToNothingSelected) {
-            _.doOnce(() => console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" does not work with "excelMode".'), 'setFilterExcelModeDefaultToNothingSelect');
+            params.defaultToNothingSelected = false;
+            _.doOnce(() => console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'), 'setFilterExcelModeDefaultToNothingSelect');
         }
     }
     addEventListenersForDataChanges() {
@@ -456,7 +457,7 @@ export class SetFilter extends ProvidedFilter {
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', e => this.onMiniFilterKeyDown(e));
     }
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
@@ -737,7 +738,7 @@ export class SetFilter extends ProvidedFilter {
         this.setMiniFilter(null);
         super.handleCancelEnd(e);
     }
-    onMiniFilterKeyPress(e) {
+    onMiniFilterKeyDown(e) {
         const { excelMode, readOnly } = this.setFilterParams || {};
         if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();

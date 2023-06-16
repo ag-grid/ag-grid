@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.labeldDirectionHandling = exports.POSITION_TOP_COORDINATES = exports.calculateLabelTranslation = void 0;
+exports.labeldDirectionHandling = exports.POSITION_TOP_COORDINATES = exports.calculateLabelChartPadding = exports.calculateLabelTranslation = void 0;
 var horizontalCrosslineTranslationDirections = {
     top: { xTranslationDirection: 0, yTranslationDirection: -1 },
     bottom: { xTranslationDirection: 0, yTranslationDirection: 1 },
@@ -39,23 +39,44 @@ var verticalCrossLineTranslationDirections = {
     insideTopRight: { xTranslationDirection: -1, yTranslationDirection: -1 },
     insideBottomRight: { xTranslationDirection: 1, yTranslationDirection: -1 },
 };
-exports.calculateLabelTranslation = function (_a) {
-    var _b;
-    var yDirection = _a.yDirection, _c = _a.padding, padding = _c === void 0 ? 0 : _c, position = _a.position, bbox = _a.bbox;
+function calculateLabelTranslation(_a) {
+    var yDirection = _a.yDirection, _b = _a.padding, padding = _b === void 0 ? 0 : _b, _c = _a.position, position = _c === void 0 ? 'top' : _c, bbox = _a.bbox;
     var crossLineTranslationDirections = yDirection
         ? horizontalCrosslineTranslationDirections
         : verticalCrossLineTranslationDirections;
-    var _d = (_b = crossLineTranslationDirections[position]) !== null && _b !== void 0 ? _b : crossLineTranslationDirections['top'], xTranslationDirection = _d.xTranslationDirection, yTranslationDirection = _d.yTranslationDirection;
+    var _d = crossLineTranslationDirections[position], xTranslationDirection = _d.xTranslationDirection, yTranslationDirection = _d.yTranslationDirection;
     var w = yDirection ? bbox.width : bbox.height;
     var h = yDirection ? bbox.height : bbox.width;
     var xTranslation = xTranslationDirection * (padding + w / 2);
     var yTranslation = yTranslationDirection * (padding + h / 2);
-    return {
+    var result = {
         xTranslation: xTranslation,
         yTranslation: yTranslation,
     };
-};
-exports.POSITION_TOP_COORDINATES = function (_a) {
+    return result;
+}
+exports.calculateLabelTranslation = calculateLabelTranslation;
+function calculateLabelChartPadding(_a) {
+    var yDirection = _a.yDirection, bbox = _a.bbox, _b = _a.padding, padding = _b === void 0 ? 0 : _b, _c = _a.position, position = _c === void 0 ? 'top' : _c;
+    var chartPadding = {};
+    if (position.startsWith('inside'))
+        return chartPadding;
+    if (position === 'top' && !yDirection) {
+        chartPadding.top = padding + bbox.height;
+    }
+    else if (position === 'bottom' && !yDirection) {
+        chartPadding.bottom = padding + bbox.height;
+    }
+    else if (position === 'left' && yDirection) {
+        chartPadding.left = padding + bbox.width;
+    }
+    else if (position === 'right' && yDirection) {
+        chartPadding.right = padding + bbox.width;
+    }
+    return chartPadding;
+}
+exports.calculateLabelChartPadding = calculateLabelChartPadding;
+var POSITION_TOP_COORDINATES = function (_a) {
     var yDirection = _a.yDirection, xEnd = _a.xEnd, yStart = _a.yStart, yEnd = _a.yEnd;
     if (yDirection) {
         return { x: xEnd / 2, y: yStart };
@@ -64,6 +85,7 @@ exports.POSITION_TOP_COORDINATES = function (_a) {
         return { x: xEnd, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };
     }
 };
+exports.POSITION_TOP_COORDINATES = POSITION_TOP_COORDINATES;
 var POSITION_LEFT_COORDINATES = function (_a) {
     var yDirection = _a.yDirection, xStart = _a.xStart, xEnd = _a.xEnd, yStart = _a.yStart, yEnd = _a.yEnd;
     if (yDirection) {

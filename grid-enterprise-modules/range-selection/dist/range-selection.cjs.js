@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -56,9 +58,10 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$1 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1(arguments[i]));
-    return ar;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -227,7 +230,7 @@ var RangeService = /** @class */ (function (_super) {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spread$1([colToMove], otherCols) : __spread$1(otherCols, [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArray$1([colToMove], __read$1(otherCols)) : __spreadArray$1(__spreadArray$1([], __read$1(otherCols)), [colToMove]);
             }
             else {
                 cellRange.columns = otherCols;
@@ -315,9 +318,17 @@ var RangeService = /** @class */ (function (_super) {
     RangeService.prototype.setNewestRangeStartCell = function (position) {
         this.newestRangeStartCell = position;
     };
-    RangeService.prototype.clearCellRangeCellValues = function (cellRanges, source) {
+    RangeService.prototype.clearCellRangeCellValues = function (params) {
         var _this = this;
-        if (source === void 0) { source = 'rangeService'; }
+        var cellRanges = params.cellRanges;
+        var _a = params.cellEventSource, cellEventSource = _a === void 0 ? 'rangeService' : _a, dispatchWrapperEvents = params.dispatchWrapperEvents, _b = params.wrapperEventSource, wrapperEventSource = _b === void 0 ? 'deleteKey' : _b;
+        if (dispatchWrapperEvents) {
+            var startEvent = {
+                type: core.Events.EVENT_RANGE_DELETE_START,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(startEvent);
+        }
         if (!cellRanges) {
             cellRanges = this.cellRanges;
         }
@@ -332,10 +343,17 @@ var RangeService = /** @class */ (function (_super) {
                     if (!column || !column.isCellEditable(rowNode)) {
                         return;
                     }
-                    rowNode.setDataValue(column, null, source);
+                    rowNode.setDataValue(column, null, cellEventSource);
                 }
             });
         });
+        if (dispatchWrapperEvents) {
+            var endEvent = {
+                type: core.Events.EVENT_RANGE_DELETE_END,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(endEvent);
+        }
     };
     RangeService.prototype.createCellRangeFromCellRangeParams = function (params) {
         var _this = this;
@@ -426,7 +444,7 @@ var RangeService = /** @class */ (function (_super) {
                 var currentRangeColIds = range.columns.map(function (col) { return col.getId(); });
                 if (columns) {
                     var filteredColumns = currentRangeColIds.filter(function (col) { return columns.indexOf(col) === -1; });
-                    columns.push.apply(columns, __spread$1(filteredColumns));
+                    columns.push.apply(columns, __spreadArray$1([], __read$1(filteredColumns)));
                 }
                 else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
@@ -544,11 +562,11 @@ var RangeService = /** @class */ (function (_super) {
         }
         var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
         // ctrlKey for windows, metaKey for Apple
-        var multiKeyPressed = ctrlKey || metaKey;
+        var isMultiKey = ctrlKey || metaKey;
         var allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
-        var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+        var isMultiSelect = allowMulti ? isMultiKey : false;
         var extendRange = shiftKey && core._.existsAndNotEmpty(this.cellRanges);
-        if (!multiSelectKeyPressed && (!extendRange || core._.exists(core._.last(this.cellRanges).type))) {
+        if (!isMultiSelect && (!extendRange || core._.exists(core._.last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
         // The browser changes the Event target of cached events when working with the ShadowDOM
@@ -562,7 +580,7 @@ var RangeService = /** @class */ (function (_super) {
         }
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
+        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
         }
@@ -625,7 +643,7 @@ var RangeService = /** @class */ (function (_super) {
             // Top
             if (_this.rowPositionUtils.before(startRow, intersectionStartRow)) {
                 var top_1 = {
-                    columns: __spread$1(cols),
+                    columns: __spreadArray$1([], __read$1(cols)),
                     startColumn: lastRange.startColumn,
                     startRow: __assign$2({}, startRow),
                     endRow: _this.cellNavigationService.getRowAbove(intersectionStartRow),
@@ -645,7 +663,7 @@ var RangeService = /** @class */ (function (_super) {
             // Bottom
             if (_this.rowPositionUtils.before(intersectionEndRow, endRow)) {
                 newRanges.push({
-                    columns: __spread$1(cols),
+                    columns: __spreadArray$1([], __read$1(cols)),
                     startColumn: lastRange.startColumn,
                     startRow: _this.cellNavigationService.getRowBelow(intersectionEndRow),
                     endRow: __assign$2({}, endRow),
@@ -794,6 +812,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1027,6 +1047,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1065,9 +1087,10 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var FillHandle = /** @class */ (function (_super) {
     __extends$2(FillHandle, _super);
@@ -1243,6 +1266,7 @@ var FillHandle = /** @class */ (function (_super) {
             }
         };
         var fillValues = function (currentValues, col, rowNode, updateInitialSet) {
+            var _a, _b;
             var currentValue;
             var skipValue = false;
             if (withinInitialRange) {
@@ -1251,10 +1275,20 @@ var FillHandle = /** @class */ (function (_super) {
                 withinInitialRange = updateInitialSet();
             }
             else {
-                var _a = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _a.value, fromUserFunction = _a.fromUserFunction;
+                var _c = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     var cellValue = _this.valueService.getValue(col, rowNode);
+                    if (!fromUserFunction) {
+                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                            currentValue = (_b = _this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
+                        }
+                        if (col.getColDef().useValueParserForImport) {
+                            currentValue = _this.valueParserService.parseValue(col, rowNode, 
+                            // if no sourceCol, then currentValue is a number
+                            sourceCol ? currentValue : core._.toStringOrNull(currentValue), cellValue);
+                        }
+                    }
                     if (!fromUserFunction || cellValue !== currentValue) {
                         rowNode.setDataValue(col, currentValue, 'rangeService');
                     }
@@ -1264,7 +1298,11 @@ var FillHandle = /** @class */ (function (_super) {
                 }
             }
             if (!skipValue) {
-                currentValues.push(currentValue);
+                currentValues.push({
+                    value: currentValue,
+                    column: col,
+                    rowNode: rowNode
+                });
             }
         };
         if (isVertical) {
@@ -1273,7 +1311,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spread(finalRange.columns).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns)).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -1284,7 +1322,7 @@ var FillHandle = /** @class */ (function (_super) {
             columns: columns,
             startColumn: columns[0]
         };
-        this.rangeService.clearCellRangeCellValues([cellRange]);
+        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     };
     FillHandle.prototype.processValues = function (event, values, initialValues, col, rowNode, idx) {
         var userFillOperation = this.gridOptionsService.getCallback('fillOperation');
@@ -1299,7 +1337,10 @@ var FillHandle = /** @class */ (function (_super) {
         if (userFillOperation) {
             var params = {
                 event: event,
-                values: values,
+                values: values.map(function (_a) {
+                    var value = _a.value;
+                    return value;
+                }),
                 initialValues: initialValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
@@ -1312,9 +1353,10 @@ var FillHandle = /** @class */ (function (_super) {
                 return { value: userResult, fromUserFunction: true };
             }
         }
-        var allNumbers = !values.some(function (val) {
-            var asFloat = parseFloat(val);
-            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        var allNumbers = !values.some(function (_a) {
+            var value = _a.value;
+            var asFloat = parseFloat(value);
+            return isNaN(asFloat) || asFloat.toString() !== value.toString();
         });
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
@@ -1324,11 +1366,15 @@ var FillHandle = /** @class */ (function (_super) {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 var multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return { value: parseFloat(core._.last(values)) + 1 * multiplier, fromUserFunction: false };
+                return { value: parseFloat(core._.last(values).value) + 1 * multiplier, fromUserFunction: false };
             }
-            return { value: values[idx % values.length], fromUserFunction: false };
+            var _a = values[idx % values.length], value = _a.value, sourceCol = _a.column, sourceRowNode = _a.rowNode;
+            return { value: value, fromUserFunction: false, sourceCol: sourceCol, sourceRowNode: sourceRowNode };
         }
-        return { value: core._.last(findLineByLeastSquares(values.map(Number))), fromUserFunction: false };
+        return { value: core._.last(findLineByLeastSquares(values.map(function (_a) {
+                var value = _a.value;
+                return Number(value);
+            }))), fromUserFunction: false };
     };
     FillHandle.prototype.clearValues = function () {
         this.clearMarkedPath();
@@ -1533,6 +1579,12 @@ var FillHandle = /** @class */ (function (_super) {
     __decorate$1([
         core.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
+    __decorate$1([
+        core.Autowired('valueParserService')
+    ], FillHandle.prototype, "valueParserService", void 0);
+    __decorate$1([
+        core.Autowired('valueFormatterService')
+    ], FillHandle.prototype, "valueFormatterService", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
@@ -1544,6 +1596,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1619,6 +1673,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1645,7 +1701,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var RangeSelectionModule = {
     version: VERSION,

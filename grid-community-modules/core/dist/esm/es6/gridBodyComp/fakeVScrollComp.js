@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
+import { Events } from "../eventKeys";
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     constructor() {
         super(FakeVScrollComp.TEMPLATE, 'vertical');
@@ -22,6 +23,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         super.postConstruct();
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.registerFakeVScrollComp(this);
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onRowContainerHeightChanged.bind(this));
     }
     setScrollVisible() {
         const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
@@ -33,6 +35,13 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         setFixedWidth(this.eViewport, adjustedScrollbarWidth);
         setFixedWidth(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
+    }
+    onRowContainerHeightChanged() {
+        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
+        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
+            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        }
     }
 }
 FakeVScrollComp.TEMPLATE = `<div class="ag-body-vertical-scroll" aria-hidden="true">

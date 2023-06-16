@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -33,7 +33,8 @@ const TabGuardCompRef = (props, forwardRef) => {
     const [tabIndex, setTabIndex] = react_1.useState();
     react_1.useImperativeHandle(forwardRef, () => ({
         forceFocusOutOfContainer() {
-            tabGuardCtrlRef.current.forceFocusOutOfContainer();
+            var _a;
+            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
         }
     }));
     useEffectOnce_1.useLayoutEffectOnce(() => {

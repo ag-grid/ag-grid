@@ -133,7 +133,7 @@ let GroupStage = class GroupStage extends BeanStub {
         if (this.usingTreeData) {
             return;
         }
-        const comparator = this.getInitialGroupOrderComparator();
+        const comparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
         if (_.exists(comparator)) {
             recursiveSort(rootNode);
         }
@@ -145,17 +145,6 @@ let GroupStage = class GroupStage extends BeanStub {
                 rowNode.childrenAfterGroup.sort((nodeA, nodeB) => comparator({ nodeA, nodeB }));
                 rowNode.childrenAfterGroup.forEach((childNode) => recursiveSort(childNode));
             }
-        }
-    }
-    getInitialGroupOrderComparator() {
-        const initialGroupOrderComparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
-        if (initialGroupOrderComparator) {
-            return initialGroupOrderComparator;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const defaultGroupOrderComparator = this.gridOptionsService.get('defaultGroupOrderComparator');
-        if (defaultGroupOrderComparator) {
-            return (params) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
         }
     }
     getExistingPathForNode(node, details) {

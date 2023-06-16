@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,6 +35,7 @@ var keyCode_1 = require("../constants/keyCode");
 var function_1 = require("../utils/function");
 var tabGuardComp_1 = require("./tabGuardComp");
 var eventKeys_1 = require("../eventKeys");
+var event_1 = require("../utils/event");
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList(cssIdentifier, ariaRole, listName) {
@@ -109,6 +112,7 @@ var VirtualList = /** @class */ (function (_super) {
             e.preventDefault();
         }
         else {
+            event_1.stopPropagationForAgGrid(e);
             this.forceFocusOutOfContainer(e.shiftKey);
         }
     };

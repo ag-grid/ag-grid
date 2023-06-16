@@ -27,3 +27,5 @@ export declare function setAriaSort(element: Element, sort: ColumnSortState): vo
 export declare function removeAriaSort(element: Element): void;
 export declare function setAriaSelected(element: Element, selected?: boolean): void;
 export declare function setAriaChecked(element: Element, checked?: boolean): void;
+export declare function setAriaControls(controllerElement: Element, controlledElement: Element): void;
+export declare function getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[]) => string, state?: boolean): string;

@@ -20,6 +20,8 @@ It is possible to remove items from the Filters Tool Panel. Items are suppressed
 
 <interface-documentation interfaceName='ToolPanelFiltersCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
+<br>
+
 To remove a particular column / filter from the tool panel, set the column property `suppressFiltersToolPanel` to `true`.
 
 <api-documentation source='column-properties/properties.json' section='filtering' names='["suppressFiltersToolPanel"]'></api-documentation>
@@ -170,9 +172,10 @@ const gridOptions = {
 
 Notice from the snippet above that it's possible to define groups in the tool panel that don't exist in the grid. Also note that filters can be omitted or positioned in a different order however note that all referenced columns (that contain filters) must already exist in the grid.
 
-[[note]]
-| When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the
-| tool panel params to prevent users changing the layout when moving columns in the grid.
+<note>
+When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the
+tool panel params to prevent users changing the layout when moving columns in the grid.
+</note>
 
 The example below shows two custom layouts for the Filters Tool Panel. Note the following:
 

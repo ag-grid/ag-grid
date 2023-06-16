@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -108,6 +110,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -135,9 +139,10 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.eToggleButton.setAttribute('id', "ag-" + this.getCompId() + "-button");
     };
     SideBarButtonComp.prototype.createTemplate = function () {
-        var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" class=\"ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";
+        var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" aria-expanded=\"false\" class=\"ag-button ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";
         return res;
     };
     SideBarButtonComp.prototype.setLabel = function () {
@@ -154,6 +159,10 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     };
     SideBarButtonComp.prototype.setSelected = function (selected) {
         this.addOrRemoveCssClass('ag-selected', selected);
+        core._.setAriaExpanded(this.eToggleButton, selected);
+    };
+    SideBarButtonComp.prototype.getButtonElement = function () {
+        return this.eToggleButton;
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate$4([
@@ -179,6 +188,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -209,9 +220,6 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
             e.preventDefault();
         }
     };
-    SideBarButtonsComp.prototype.setToolPanelDefs = function (toolPanelDefs) {
-        toolPanelDefs.forEach(this.addButtonComp.bind(this));
-    };
     SideBarButtonsComp.prototype.setActiveButton = function (id) {
         this.buttonComps.forEach(function (comp) {
             comp.setSelected(id === comp.getToolPanelId());
@@ -228,6 +236,7 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
                 toolPanelId: def.id
             });
         });
+        return buttonComp;
     };
     SideBarButtonsComp.prototype.clearButtons = function () {
         this.buttonComps = this.destroyBeans(this.buttonComps);
@@ -346,6 +355,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -365,6 +376,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setupResize = function () {
         var eGui = this.getGui();
         var resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
+        eGui.setAttribute('id', "ag-" + this.getCompId());
         resizeBar.setElementToResize(eGui);
         this.appendChild(resizeBar);
     };
@@ -379,7 +391,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
         var compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         var componentPromise = compDetails.newAgStackInstance();
         if (componentPromise == null) {
-            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify either 'toolPanel' or 'toolPanelFramework'");
+            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify 'toolPanel'");
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -413,7 +425,7 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.refresh = function () {
         this.toolPanelCompInstance.refresh();
     };
-    ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\"/>";
+    ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\" role=\"tabpanel\"/>";
     __decorate$2([
         core.Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
@@ -431,6 +443,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -441,6 +455,17 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var SideBarComp = /** @class */ (function (_super) {
     __extends$1(SideBarComp, _super);
@@ -555,8 +580,7 @@ var SideBarComp = /** @class */ (function (_super) {
             var shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
             var toolPanelDefs = this.sideBar.toolPanels;
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs);
             this.setSideBarPosition(this.sideBar.position);
             if (!this.sideBar.hiddenByDefault) {
                 this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
@@ -579,33 +603,54 @@ var SideBarComp = /** @class */ (function (_super) {
         });
         return this;
     };
-    SideBarComp.prototype.setupToolPanels = function (defs) {
-        var _this = this;
-        defs.forEach(function (def) {
-            if (def.id == null) {
-                console.warn("AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
-                return;
+    SideBarComp.prototype.createToolPanelsAndSideButtons = function (defs) {
+        var e_1, _a;
+        try {
+            for (var defs_1 = __values(defs), defs_1_1 = defs_1.next(); !defs_1_1.done; defs_1_1 = defs_1.next()) {
+                var def = defs_1_1.value;
+                this.createToolPanelAndSideButton(def);
             }
-            // helpers, in case user doesn't have the right module loaded
-            if (def.toolPanel === 'agColumnsToolPanel') {
-                var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (defs_1_1 && !defs_1_1.done && (_a = defs_1.return)) _a.call(defs_1);
             }
-            if (def.toolPanel === 'agFiltersToolPanel') {
-                var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    SideBarComp.prototype.validateDef = function (def) {
+        if (def.id == null) {
+            console.warn("AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
+            return false;
+        }
+        // helpers, in case user doesn't have the right module loaded
+        if (def.toolPanel === 'agColumnsToolPanel') {
+            var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
             }
-            var wrapper = new ToolPanelWrapper();
-            _this.getContext().createBean(wrapper);
-            wrapper.setToolPanelDef(def);
-            wrapper.setDisplayed(false);
-            _this.getGui().appendChild(wrapper.getGui());
-            _this.toolPanelWrappers.push(wrapper);
-        });
+        }
+        if (def.toolPanel === 'agFiltersToolPanel') {
+            var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
+            }
+        }
+        return true;
+    };
+    SideBarComp.prototype.createToolPanelAndSideButton = function (def) {
+        if (!this.validateDef(def)) {
+            return;
+        }
+        var button = this.sideBarButtonsComp.addButtonComp(def);
+        var wrapper = this.getContext().createBean(new ToolPanelWrapper());
+        wrapper.setToolPanelDef(def);
+        wrapper.setDisplayed(false);
+        var wrapperGui = wrapper.getGui();
+        this.appendChild(wrapperGui);
+        this.toolPanelWrappers.push(wrapper);
+        core._.setAriaControls(button.getButtonElement(), wrapperGui);
     };
     SideBarComp.prototype.refresh = function () {
         this.toolPanelWrappers.forEach(function (wrapper) { return wrapper.refresh(); });
@@ -636,27 +681,24 @@ var SideBarComp = /** @class */ (function (_super) {
         return toolPanelWrapper.getToolPanelInstance();
     };
     SideBarComp.prototype.raiseToolPanelVisibleEvent = function (key, previousKey, source) {
-        // To be removed in v30
-        var oldEvent = {
-            type: core.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-        };
-        this.eventService.dispatchEvent(oldEvent);
+        var switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
             var event_1 = {
-                type: core.Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: core.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source: source,
                 key: previousKey,
                 visible: false,
+                switchingToolPanel: switchingToolPanel,
             };
             this.eventService.dispatchEvent(event_1);
         }
         if (key) {
             var event_2 = {
-                type: core.Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: core.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source: source,
                 key: key,
                 visible: true,
+                switchingToolPanel: switchingToolPanel,
             };
             this.eventService.dispatchEvent(event_2);
         }
@@ -713,6 +755,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -907,7 +951,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var SideBarModule = {
     version: VERSION,

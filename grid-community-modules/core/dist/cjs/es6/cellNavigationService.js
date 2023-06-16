@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -178,7 +178,7 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
         return { rowIndex: index + 1, rowPinned: pinned };
     }
     getNextStickyPosition(rowNode, up) {
-        if (!this.gridOptionsService.is('groupRowsSticky') || !rowNode || !rowNode.sticky) {
+        if (!this.gridOptionsService.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
             return;
         }
         const stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort((a, b) => a.getRowNode().rowIndex - b.getRowNode().rowIndex);

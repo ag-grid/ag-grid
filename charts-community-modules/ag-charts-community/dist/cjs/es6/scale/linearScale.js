@@ -81,7 +81,7 @@ class LinearScale extends continuousScale_1.ContinuousScale {
         this.niceDomain = [start, stop];
     }
     tickFormat({ ticks, specifier }) {
-        return numberFormat_1.tickFormat(ticks || this.ticks(), specifier);
+        return numberFormat_1.tickFormat(ticks !== null && ticks !== void 0 ? ticks : this.ticks(), specifier);
     }
 }
 exports.LinearScale = LinearScale;

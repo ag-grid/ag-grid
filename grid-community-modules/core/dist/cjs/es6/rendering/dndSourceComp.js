@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -17,16 +17,15 @@ const component_1 = require("../widgets/component");
 const context_1 = require("../context/context");
 const icon_1 = require("../utils/icon");
 class DndSourceComp extends component_1.Component {
-    constructor(rowNode, column, beans, eCell) {
-        super(`<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
+    constructor(rowNode, column, eCell) {
+        super(/* html */ `<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
-        this.beans = beans;
         this.eCell = eCell;
     }
     postConstruct() {
         const eGui = this.getGui();
-        eGui.appendChild(icon_1.createIconNoSpan('rowDrag', this.beans.gridOptionsService, null));
+        eGui.appendChild(icon_1.createIconNoSpan('rowDrag', this.gridOptionsService, null));
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e) => {
             e.stopPropagation();

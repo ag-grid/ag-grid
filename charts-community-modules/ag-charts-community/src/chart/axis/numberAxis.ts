@@ -7,6 +7,13 @@ import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
 import { ModuleContext } from '../../module-support';
+import { BaseAxisTick } from '../../axis';
+
+class NumberAxisTick extends BaseAxisTick<LinearScale | LogScale, number> {
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    @Default(NaN)
+    maxSpacing: number = NaN;
+}
 
 export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
@@ -21,7 +28,7 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         const { min, max } = this;
 
         if (d.length > 2) {
-            d = extent(d) || [NaN, NaN];
+            d = extent(d) ?? [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];
@@ -53,6 +60,10 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
             );
             return String(datum);
         }
+    }
+
+    protected createTick() {
+        return new NumberAxisTick();
     }
 
     updateSecondaryAxisTicks(primaryTickCount: number | undefined): any[] {

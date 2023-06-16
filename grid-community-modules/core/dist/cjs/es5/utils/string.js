@@ -1,12 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.camelCaseToHumanText = exports.escapeString = exports.capitalise = exports.utf8_encode = void 0;
+exports.camelCaseToHyphenated = exports.camelCaseToHumanText = exports.escapeString = exports.capitalise = exports.utf8_encode = void 0;
 var reUnescapedHtml = /[&<>"']/g;
 /**
  * HTML Escapes.
@@ -143,3 +143,12 @@ function camelCaseToHumanText(camelCase) {
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
 exports.camelCaseToHumanText = camelCaseToHumanText;
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+function camelCaseToHyphenated(camelCase) {
+    return camelCase.replace(/[A-Z]/g, function (s) { return "-" + s.toLocaleLowerCase(); });
+}
+exports.camelCaseToHyphenated = camelCaseToHyphenated;

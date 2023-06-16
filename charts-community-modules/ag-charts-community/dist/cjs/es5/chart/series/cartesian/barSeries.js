@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -70,31 +72,35 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BarSeries = void 0;
+exports.ColumnSeries = exports.BarSeries = void 0;
 var rect_1 = require("../../../scene/shape/rect");
 var bandScale_1 = require("../../../scale/bandScale");
 var series_1 = require("../series");
 var label_1 = require("../../label");
 var node_1 = require("../../../scene/node");
 var cartesianSeries_1 = require("./cartesianSeries");
-var chartAxis_1 = require("../../chartAxis");
 var chartAxisDirection_1 = require("../../chartAxisDirection");
 var tooltip_1 = require("../../tooltip/tooltip");
 var array_1 = require("../../../util/array");
 var equal_1 = require("../../../util/equal");
+var logger_1 = require("../../../util/logger");
 var sanitize_1 = require("../../../util/sanitize");
-var value_1 = require("../../../util/value");
 var continuousScale_1 = require("../../../scale/continuousScale");
 var validation_1 = require("../../../util/validation");
 var categoryAxis_1 = require("../../axis/categoryAxis");
 var groupedCategoryAxis_1 = require("../../axis/groupedCategoryAxis");
 var logAxis_1 = require("../../axis/logAxis");
 var dataModel_1 = require("../../data/dataModel");
+var aggregateFunctions_1 = require("../../data/aggregateFunctions");
+var processors_1 = require("../../data/processors");
+var easing = require("../../../motion/easing");
+var barUtil_1 = require("./barUtil");
 var BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 var OPT_BAR_LABEL_PLACEMENT = function (v, ctx) {
     return validation_1.OPTIONAL(v, ctx, function (v) { return BAR_LABEL_PLACEMENTS.includes(v); });
@@ -137,19 +143,23 @@ function is2dArray(array) {
 }
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
-    function BarSeries() {
-        var _a;
+    function BarSeries(moduleCtx) {
+        var _a, _b;
         var _this = _super.call(this, {
+            moduleCtx: moduleCtx,
             pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             directionKeys: (_a = {},
                 _a[chartAxisDirection_1.ChartAxisDirection.X] = ['xKey'],
                 _a[chartAxisDirection_1.ChartAxisDirection.Y] = ['yKeys'],
                 _a),
+            directionNames: (_b = {},
+                _b[chartAxisDirection_1.ChartAxisDirection.X] = ['xName'],
+                _b[chartAxisDirection_1.ChartAxisDirection.Y] = ['yNames'],
+                _b),
         }) || this;
         _this.label = new BarSeriesLabel();
         _this.tooltip = new BarSeriesTooltip();
-        _this.flipXY = false;
         _this.fills = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
         _this.strokes = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
         _this.fillOpacity = 1;
@@ -161,21 +171,22 @@ var BarSeries = /** @class */ (function (_super) {
          * Used to get the position of bars within each group.
          */
         _this.groupScale = new bandScale_1.BandScale();
-        _this._xKey = '';
-        _this.xName = '';
+        _this.xKey = undefined;
+        _this.xName = undefined;
         _this.cumYKeyCount = [];
         _this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
         _this.hideInLegend = [];
         _this.yKeys = [];
         _this.yKeysCache = [];
         _this.visibles = [];
-        _this._grouped = false;
+        _this.grouped = false;
         _this.stackGroups = {};
         /**
          * A map of `yKeys` to their names (used in legends and tooltips).
          * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
          */
         _this.yNames = {};
+        _this.legendItemNames = {};
         _this.strokeWidth = 1;
         _this.shadow = undefined;
         _this.smallestDataInterval = undefined;
@@ -183,19 +194,14 @@ var BarSeries = /** @class */ (function (_super) {
         return _this;
     }
     BarSeries.prototype.resolveKeyDirection = function (direction) {
-        return this.flipXY ? chartAxis_1.flipChartAxisDirection(direction) : direction;
+        if (this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.X) {
+            if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
+                return chartAxisDirection_1.ChartAxisDirection.Y;
+            }
+            return chartAxisDirection_1.ChartAxisDirection.X;
+        }
+        return direction;
     };
-    Object.defineProperty(BarSeries.prototype, "xKey", {
-        get: function () {
-            return this._xKey;
-        },
-        set: function (value) {
-            this._xKey = value;
-            this.processedData = undefined;
-        },
-        enumerable: false,
-        configurable: true
-    });
     BarSeries.prototype.processYKeys = function () {
         var _this = this;
         var yKeys = this.yKeys;
@@ -256,7 +262,7 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.processSeriesItemEnabled = function () {
         var seriesItemEnabled = this.seriesItemEnabled;
-        var flattenFn = function (r, n) { return r.concat.apply(r, __spread((Array.isArray(n) ? n : [n]))); };
+        var flattenFn = function (r, n) { return r.concat.apply(r, __spreadArray([], __read((Array.isArray(n) ? n : [n])))); };
         var visibles = this.visibles.reduce(flattenFn, []);
         seriesItemEnabled.clear();
         var visiblesIdx = 0;
@@ -264,16 +270,6 @@ var BarSeries = /** @class */ (function (_super) {
             stack.forEach(function (yKey) { var _a; return seriesItemEnabled.set(yKey, (_a = visibles[visiblesIdx++]) !== null && _a !== void 0 ? _a : true); });
         });
     };
-    Object.defineProperty(BarSeries.prototype, "grouped", {
-        get: function () {
-            return this._grouped;
-        },
-        set: function (value) {
-            this._grouped = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
     BarSeries.prototype.getStackGroup = function (yKey) {
         var _a;
         var stackGroups = this.stackGroups;
@@ -292,28 +288,18 @@ var BarSeries = /** @class */ (function (_super) {
             this.yNames = map_1;
         }
     };
-    Object.defineProperty(BarSeries.prototype, "normalizedTo", {
-        get: function () {
-            return this._normalizedTo;
-        },
-        set: function (value) {
-            var absValue = value ? Math.abs(value) : undefined;
-            this._normalizedTo = absValue;
-        },
-        enumerable: false,
-        configurable: true
-    });
     BarSeries.prototype.processData = function () {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var _f, xKey, seriesItemEnabled, normalizedTo, _g, data, isContinuousX, isContinuousY, activeSeriesItems, activeStacks, normaliseTo;
+            var _f, xKey, seriesItemEnabled, normalizedTo, _g, data, normalizedToAbs, isContinuousX, isContinuousY, activeSeriesItems, activeStacks, normaliseTo, extraProps;
             return __generator(this, function (_h) {
                 this.processYKeys();
                 this.processYNames();
                 _f = this, xKey = _f.xKey, seriesItemEnabled = _f.seriesItemEnabled, normalizedTo = _f.normalizedTo, _g = _f.data, data = _g === void 0 ? [] : _g;
+                normalizedToAbs = Math.abs(normalizedTo !== null && normalizedTo !== void 0 ? normalizedTo : NaN);
                 isContinuousX = ((_a = this.getCategoryAxis()) === null || _a === void 0 ? void 0 : _a.scale) instanceof continuousScale_1.ContinuousScale;
                 isContinuousY = ((_b = this.getValueAxis()) === null || _b === void 0 ? void 0 : _b.scale) instanceof continuousScale_1.ContinuousScale;
-                activeSeriesItems = __spread(seriesItemEnabled.entries()).filter(function (_a) {
+                activeSeriesItems = __spreadArray([], __read(seriesItemEnabled.entries())).filter(function (_a) {
                     var _b = __read(_a, 2), enabled = _b[1];
                     return enabled;
                 })
@@ -324,20 +310,23 @@ var BarSeries = /** @class */ (function (_super) {
                 activeStacks = this.yKeys
                     .map(function (stack) { return stack.filter(function (key) { return seriesItemEnabled.get(key); }); })
                     .filter(function (stack) { return stack.length > 0; });
-                normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+                normaliseTo = normalizedToAbs && isFinite(normalizedToAbs) ? normalizedToAbs : undefined;
+                extraProps = [];
+                if (normaliseTo) {
+                    extraProps.push(processors_1.normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+                }
                 this.dataModel = new dataModel_1.DataModel({
-                    props: __spread([
+                    props: __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([
                         series_1.keyProperty(xKey, isContinuousX)
-                    ], activeSeriesItems.map(function (yKey) { return series_1.valueProperty(yKey, isContinuousY, { invalidValue: null }); }), activeStacks.map(function (stack) { return series_1.sumProperties(stack); }), (isContinuousX ? [dataModel_1.SMALLEST_KEY_INTERVAL] : []), [
-                        dataModel_1.SUM_VALUE_EXTENT,
-                    ]),
+                    ], __read(activeSeriesItems.map(function (yKey) { return series_1.valueProperty(yKey, isContinuousY, { invalidValue: null }); }))), __read(activeStacks.map(function (stack) { return aggregateFunctions_1.sum(stack); }))), __read((isContinuousX ? [processors_1.SMALLEST_KEY_INTERVAL] : []))), [
+                        processors_1.AGG_VALUES_EXTENT
+                    ]), __read(extraProps)),
                     groupByKeys: true,
                     dataVisible: this.visible && activeSeriesItems.length > 0,
-                    normaliseTo: normaliseTo,
                 });
                 this.processedData = this.dataModel.processData(data);
                 this.smallestDataInterval = {
-                    x: (_e = (_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.reduced) === null || _d === void 0 ? void 0 : _d[dataModel_1.SMALLEST_KEY_INTERVAL.property]) !== null && _e !== void 0 ? _e : Infinity,
+                    x: (_e = (_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.reduced) === null || _d === void 0 ? void 0 : _d[processors_1.SMALLEST_KEY_INTERVAL.property]) !== null && _e !== void 0 ? _e : Infinity,
                     y: Infinity,
                 };
                 return [2 /*return*/];
@@ -345,19 +334,17 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.getDomain = function (direction) {
-        var _a = this, flipXY = _a.flipXY, processedData = _a.processedData;
+        var _a;
+        var processedData = this.processedData;
         if (!processedData)
             return [];
-        if (flipXY) {
-            direction = chartAxis_1.flipChartAxisDirection(direction);
-        }
-        var _b = processedData, _c = __read(_b.defs.keys, 1), keyDef = _c[0], _d = _b.domain, _e = __read(_d.keys, 1), keys = _e[0], _f = __read(_d.values, 1), yExtent = _f[0], _g = _b.reduced, _h = _g === void 0 ? {} : _g, _j = dataModel_1.SMALLEST_KEY_INTERVAL.property, smallestX = _h[_j], _k = dataModel_1.SUM_VALUE_EXTENT.property, ySumExtent = _h[_k];
-        if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
+        var _b = processedData, _c = __read(_b.defs.keys, 1), keyDef = _c[0], _d = _b.domain, _e = __read(_d.keys, 1), keys = _e[0], _f = __read(_d.values, 1), yExtent = _f[0], _g = _b.reduced, _h = _g === void 0 ? {} : _g, _j = processors_1.SMALLEST_KEY_INTERVAL.property, smallestX = _h[_j], _k = processors_1.AGG_VALUES_EXTENT.property, ySumExtent = _h[_k];
+        if (direction === this.getCategoryDirection()) {
             if (keyDef.valueType === 'category') {
                 return keys;
             }
-            var keysExtent = array_1.extent(keys) || [NaN, NaN];
-            if (flipXY) {
+            var keysExtent = (_a = array_1.extent(keys)) !== null && _a !== void 0 ? _a : [NaN, NaN];
+            if (direction === chartAxisDirection_1.ChartAxisDirection.Y) {
                 return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
             return [keysExtent[0], keysExtent[1] + smallestX];
@@ -370,16 +357,18 @@ var BarSeries = /** @class */ (function (_super) {
         }
     };
     BarSeries.prototype.getNodeClickEvent = function (event, datum) {
-        return new cartesianSeries_1.CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+        var _a;
+        return new cartesianSeries_1.CartesianSeriesNodeClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', datum.yKey, event, datum, this);
     };
     BarSeries.prototype.getNodeDoubleClickEvent = function (event, datum) {
-        return new cartesianSeries_1.CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
+        var _a;
+        return new cartesianSeries_1.CartesianSeriesNodeDoubleClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', datum.yKey, event, datum, this);
     };
     BarSeries.prototype.getCategoryAxis = function () {
-        return this.flipXY ? this.yAxis : this.xAxis;
+        return this.getCategoryDirection() === chartAxisDirection_1.ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     };
     BarSeries.prototype.getValueAxis = function () {
-        return this.flipXY ? this.xAxis : this.yAxis;
+        return this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     };
     BarSeries.prototype.calculateStep = function (range) {
         var _a;
@@ -401,9 +390,9 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.createNodeData = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, data, visible, xAxis, yAxis, xScale, yScale, _b, groupScale, yKeys, xKey, cumYKeyCount, fills, strokes, strokeWidth, seriesItemEnabled, label, flipXY, seriesId, processedData, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor, labelFormatter, labelPlacement, xBandWidth, availableRange, step, barWidth, contexts;
+            var _a, data, visible, xAxis, yAxis, xScale, yScale, _b, groupScale, yKeys, _c, xKey, cumYKeyCount, fills, strokes, strokeWidth, seriesItemEnabled, label, seriesId, processedData, ctx, xBandWidth, availableRange, step, barWidth, contexts;
             var _this = this;
-            return __generator(this, function (_c) {
+            return __generator(this, function (_d) {
                 _a = this, data = _a.data, visible = _a.visible;
                 xAxis = this.getCategoryAxis();
                 yAxis = this.getValueAxis();
@@ -412,8 +401,7 @@ var BarSeries = /** @class */ (function (_super) {
                 }
                 xScale = xAxis.scale;
                 yScale = yAxis.scale;
-                _b = this, groupScale = _b.groupScale, yKeys = _b.yKeys, xKey = _b.xKey, cumYKeyCount = _b.cumYKeyCount, fills = _b.fills, strokes = _b.strokes, strokeWidth = _b.strokeWidth, seriesItemEnabled = _b.seriesItemEnabled, label = _b.label, flipXY = _b.flipXY, seriesId = _b.id, processedData = _b.processedData;
-                labelFontStyle = label.fontStyle, labelFontWeight = label.fontWeight, labelFontSize = label.fontSize, labelFontFamily = label.fontFamily, labelColor = label.color, labelFormatter = label.formatter, labelPlacement = label.placement;
+                _b = this, groupScale = _b.groupScale, yKeys = _b.yKeys, _c = _b.xKey, xKey = _c === void 0 ? '' : _c, cumYKeyCount = _b.cumYKeyCount, fills = _b.fills, strokes = _b.strokes, strokeWidth = _b.strokeWidth, seriesItemEnabled = _b.seriesItemEnabled, label = _b.label, seriesId = _b.id, processedData = _b.processedData, ctx = _b.ctx;
                 xBandWidth = xScale.bandwidth;
                 if (xScale instanceof continuousScale_1.ContinuousScale) {
                     availableRange = Math.max(xAxis.range[0], xAxis.range[1]);
@@ -478,57 +466,20 @@ var BarSeries = /** @class */ (function (_super) {
                             var prevY = currY < 0 ? prevMinY : prevMaxY;
                             var y = yScale.convert(prevY + currY, { strict: false });
                             var bottomY = yScale.convert(prevY, { strict: false });
-                            var labelText = void 0;
-                            if (labelFormatter) {
-                                labelText = labelFormatter({
-                                    value: value_1.isNumber(yValue) ? yValue : undefined,
-                                    seriesId: seriesId,
-                                });
-                            }
-                            else {
-                                labelText = value_1.isNumber(yValue) ? yValue.toFixed(2) : '';
-                            }
-                            var labelX = void 0;
-                            var labelY = void 0;
-                            if (flipXY) {
-                                labelY = barX + barWidth / 2;
-                                if (labelPlacement === 'inside') {
-                                    labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
-                                }
-                                else {
-                                    labelX = y + (yValue >= 0 ? 1 : -1) * 4;
-                                }
-                            }
-                            else {
-                                labelX = barX + barWidth / 2;
-                                if (labelPlacement === 'inside') {
-                                    labelY = y + ((yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y)) / 2;
-                                }
-                                else {
-                                    labelY = y + (yValue >= 0 ? -3 : 4);
-                                }
-                            }
-                            var labelTextAlign = void 0;
-                            var labelTextBaseline = void 0;
-                            if (labelPlacement === 'inside') {
-                                labelTextAlign = 'center';
-                                labelTextBaseline = 'middle';
-                            }
-                            else {
-                                labelTextAlign = flipXY ? (yValue >= 0 ? 'start' : 'end') : 'center';
-                                labelTextBaseline = flipXY ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
-                            }
-                            var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                            var barAlongX = _this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.X;
                             var rect = {
-                                x: flipXY ? Math.min(y, bottomY) : barX,
-                                y: flipXY ? barX : Math.min(y, bottomY),
-                                width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                                height: flipXY ? barWidth : Math.abs(bottomY - y),
+                                x: barAlongX ? Math.min(y, bottomY) : barX,
+                                y: barAlongX ? barX : Math.min(y, bottomY),
+                                width: barAlongX ? Math.abs(bottomY - y) : barWidth,
+                                height: barAlongX ? barWidth : Math.abs(bottomY - y),
                             };
                             var nodeMidPoint = {
                                 x: rect.x + rect.width / 2,
                                 y: rect.y + rect.height / 2,
                             };
+                            var labelFontStyle = label.fontStyle, labelFontWeight = label.fontWeight, labelFontSize = label.fontSize, labelFontFamily = label.fontFamily, labelColor = label.color, formatter = label.formatter, placement = label.placement;
+                            var _h = barUtil_1.createLabelData({ value: yValue, rect: rect, formatter: formatter, placement: placement, seriesId: seriesId, barAlongX: barAlongX, ctx: ctx }), labelText = _h.text, labelTextAlign = _h.textAlign, labelTextBaseline = _h.textBaseline, labelX = _h.x, labelY = _h.y;
+                            var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                             var nodeData = {
                                 index: dataIndex,
                                 series: _this,
@@ -573,7 +524,7 @@ var BarSeries = /** @class */ (function (_super) {
                         }
                     }
                 });
-                return [2 /*return*/, contexts.reduce(function (r, n) { return r.concat.apply(r, __spread(n)); }, [])];
+                return [2 /*return*/, contexts.reduce(function (r, n) { return r.concat.apply(r, __spreadArray([], __read(n))); }, [])];
             });
         });
     };
@@ -590,58 +541,41 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.updateDatumNodes = function (opts) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var datumSelection, isDatumHighlighted, _c, fills, strokes, seriesFillOpacity, strokeOpacity, shadow, formatter, xKey, flipXY, _d, highlightedFill, _e, highlightFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, seriesId, _f, visibleMin, visibleMax, isZoomed, crisp;
+            var datumSelection, isHighlight, _b, fills, strokes, fillOpacity, strokeOpacity, lineDash, lineDashOffset, shadow, formatter, seriesId, itemHighlightStyle, ctx, crisp, categoryAlongX;
             var _this = this;
-            return __generator(this, function (_g) {
-                datumSelection = opts.datumSelection, isDatumHighlighted = opts.isHighlight;
-                _c = this, fills = _c.fills, strokes = _c.strokes, seriesFillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity, shadow = _c.shadow, formatter = _c.formatter, xKey = _c.xKey, flipXY = _c.flipXY, _d = _c.highlightStyle.item, highlightedFill = _d.fill, _e = _d.fillOpacity, highlightFillOpacity = _e === void 0 ? seriesFillOpacity : _e, highlightedStroke = _d.stroke, highlightedDatumStrokeWidth = _d.strokeWidth, seriesId = _c.id;
-                _f = __read((_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange) !== null && _b !== void 0 ? _b : [], 2), visibleMin = _f[0], visibleMax = _f[1];
-                isZoomed = visibleMin !== 0 || visibleMax !== 1;
-                crisp = !isZoomed;
+            return __generator(this, function (_c) {
+                datumSelection = opts.datumSelection, isHighlight = opts.isHighlight;
+                _b = this, fills = _b.fills, strokes = _b.strokes, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, lineDash = _b.lineDash, lineDashOffset = _b.lineDashOffset, shadow = _b.shadow, formatter = _b.formatter, seriesId = _b.id, itemHighlightStyle = _b.highlightStyle.item, ctx = _b.ctx;
+                crisp = barUtil_1.checkCrisp((_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange);
+                categoryAlongX = this.getCategoryDirection() === chartAxisDirection_1.ChartAxisDirection.X;
                 datumSelection.each(function (rect, datum) {
                     var colorIndex = datum.colorIndex;
-                    var fill = isDatumHighlighted && highlightedFill !== undefined
-                        ? highlightedFill
-                        : fills[colorIndex % fills.length];
-                    var stroke = isDatumHighlighted && highlightedStroke !== undefined
-                        ? highlightedStroke
-                        : strokes[colorIndex % fills.length];
-                    var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                        ? highlightedDatumStrokeWidth
-                        : _this.getStrokeWidth(_this.strokeWidth, datum);
-                    var fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
-                    var stackGroup = _this.getStackGroup(datum.yKey);
-                    var format = undefined;
-                    if (formatter) {
-                        format = formatter({
-                            datum: datum.datum,
-                            fill: fill,
-                            stroke: stroke,
-                            strokeWidth: strokeWidth,
-                            highlighted: isDatumHighlighted,
-                            xKey: xKey,
-                            yKey: datum.yKey,
-                            seriesId: seriesId,
-                            stackGroup: stackGroup,
-                        });
-                    }
-                    rect.crisp = crisp;
-                    rect.x = datum.x;
-                    rect.y = datum.y;
-                    rect.width = datum.width;
-                    rect.height = datum.height;
-                    rect.fill = (format && format.fill) || fill;
-                    rect.stroke = (format && format.stroke) || stroke;
-                    rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-                    rect.fillOpacity = fillOpacity;
-                    rect.strokeOpacity = strokeOpacity;
-                    rect.lineDash = _this.lineDash;
-                    rect.lineDashOffset = _this.lineDashOffset;
-                    rect.fillShadow = shadow;
-                    // Prevent stroke from rendering for zero height columns and zero width bars.
-                    rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
+                    var style = {
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % fills.length],
+                        fillOpacity: fillOpacity,
+                        strokeOpacity: strokeOpacity,
+                        lineDash: lineDash,
+                        lineDashOffset: lineDashOffset,
+                        fillShadow: shadow,
+                        strokeWidth: _this.getStrokeWidth(_this.strokeWidth, datum),
+                    };
+                    var visible = categoryAlongX ? datum.width > 0 : datum.height > 0;
+                    var config = barUtil_1.getRectConfig({
+                        datum: datum,
+                        isHighlighted: isHighlight,
+                        style: style,
+                        highlightStyle: itemHighlightStyle,
+                        formatter: formatter,
+                        seriesId: seriesId,
+                        stackGroup: _this.getStackGroup(datum.yKey),
+                        ctx: ctx,
+                    });
+                    config.crisp = crisp;
+                    config.visible = visible;
+                    barUtil_1.updateRect({ rect: rect, config: config });
                 });
                 return [2 /*return*/];
             });
@@ -663,35 +597,21 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.updateLabelNodes = function (opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var labelSelection, _a, labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color;
-            return __generator(this, function (_b) {
+            var labelSelection;
+            var _this = this;
+            return __generator(this, function (_a) {
                 labelSelection = opts.labelSelection;
-                _a = this.label, labelEnabled = _a.enabled, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontSize = _a.fontSize, fontFamily = _a.fontFamily, color = _a.color;
                 labelSelection.each(function (text, datum) {
-                    var label = datum.label;
-                    if (label && labelEnabled) {
-                        text.fontStyle = fontStyle;
-                        text.fontWeight = fontWeight;
-                        text.fontSize = fontSize;
-                        text.fontFamily = fontFamily;
-                        text.textAlign = label.textAlign;
-                        text.textBaseline = label.textBaseline;
-                        text.text = label.text;
-                        text.x = label.x;
-                        text.y = label.y;
-                        text.fill = color;
-                        text.visible = true;
-                    }
-                    else {
-                        text.visible = false;
-                    }
+                    var labelDatum = datum.label;
+                    barUtil_1.updateLabel({ labelNode: text, labelDatum: labelDatum, config: _this.label, visible: true });
                 });
                 return [2 /*return*/];
             });
         });
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, processedData = _a.processedData;
+        var _a;
+        var _b = this, xKey = _b.xKey, yKeys = _b.yKeys, processedData = _b.processedData, callbackCache = _b.ctx.callbackCache;
         var xAxis = this.getCategoryAxis();
         var yAxis = this.getValueAxis();
         var yKey = nodeDatum.yKey;
@@ -710,7 +630,7 @@ var BarSeries = /** @class */ (function (_super) {
             }
             fillIndex += stack.length;
         }
-        var _b = this, xName = _b.xName, yNames = _b.yNames, fills = _b.fills, strokes = _b.strokes, tooltip = _b.tooltip, formatter = _b.formatter, seriesId = _b.id;
+        var _c = this, xName = _c.xName, yNames = _c.yNames, fills = _c.fills, strokes = _c.strokes, tooltip = _c.tooltip, formatter = _c.formatter, seriesId = _c.id;
         var tooltipRenderer = tooltip.renderer;
         var datum = nodeDatum.datum;
         var yName = yNames[yKey];
@@ -726,7 +646,7 @@ var BarSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var format = undefined;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: datum,
                 fill: fill,
                 stroke: stroke,
@@ -738,7 +658,7 @@ var BarSeries = /** @class */ (function (_super) {
                 stackGroup: stackGroup,
             });
         }
-        var color = (format && format.fill) || fill;
+        var color = (_a = format === null || format === void 0 ? void 0 : format.fill) !== null && _a !== void 0 ? _a : fill;
         var defaults = {
             title: title,
             backgroundColor: color,
@@ -762,30 +682,28 @@ var BarSeries = /** @class */ (function (_super) {
         return tooltip_1.toTooltipHtml(defaults);
     };
     BarSeries.prototype.getLegendData = function () {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, flipXY = _a.flipXY;
-        if (!data || !data.length || !xKey || !yKeys.length) {
+        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, legendItemNames = _a.legendItemNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        if (!(data === null || data === void 0 ? void 0 : data.length) || !xKey || !yKeys.length) {
             return [];
         }
         var legendData = [];
+        this.validateLegendData();
         this.yKeys.forEach(function (stack, stackIndex) {
-            // Column stacks should be listed in the legend in reverse order, for symmetry with the
-            // vertical stack display order. Bar stacks are already consistent left-to-right with
-            // the legend.
-            var startLevel = flipXY ? 0 : stack.length - 1;
-            var direction = flipXY ? 1 : -1;
-            for (var levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
+            var _a, _b, _c;
+            for (var levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 var yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;
                 }
                 var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                 legendData.push({
+                    legendType: 'category',
                     id: id,
                     itemId: yKey,
                     seriesId: id,
-                    enabled: seriesItemEnabled.get(yKey) || false,
+                    enabled: (_a = seriesItemEnabled.get(yKey)) !== null && _a !== void 0 ? _a : false,
                     label: {
-                        text: yNames[yKey] || yKey,
+                        text: (_c = (_b = legendItemNames[yKey]) !== null && _b !== void 0 ? _b : yNames[yKey]) !== null && _c !== void 0 ? _c : yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
@@ -798,8 +716,71 @@ var BarSeries = /** @class */ (function (_super) {
         });
         return legendData;
     };
-    BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+    BarSeries.prototype.validateLegendData = function () {
+        var _a = this, hideInLegend = _a.hideInLegend, legendItemNames = _a.legendItemNames;
+        var hasAnyLegendItemName = false;
+        this.yKeys.forEach(function (stack) {
+            stack.forEach(function (yKey) {
+                if (hideInLegend.indexOf(yKey) >= 0) {
+                    return;
+                }
+                var hasLegendItemName = legendItemNames[yKey] !== undefined;
+                if (hasAnyLegendItemName && !hasLegendItemName) {
+                    logger_1.Logger.warnOnce("a series is missing the legendItemName property, unexpected behaviour may occur.");
+                }
+                hasAnyLegendItemName = hasLegendItemName;
+            });
+        });
+    };
+    BarSeries.prototype.onLegendItemClick = function (event) {
+        var _this = this;
+        var itemId = event.itemId, enabled = event.enabled, series = event.series;
+        if (series.id !== this.id)
+            return;
         _super.prototype.toggleSeriesItem.call(this, itemId, enabled);
+        // Toggle items where the legendItemName matches the legendItemName of the clicked item
+        Object.keys(this.legendItemNames)
+            .filter(function (id) {
+            return _this.legendItemNames[id] !== undefined && _this.legendItemNames[id] === _this.legendItemNames[itemId];
+        })
+            .forEach(function (yKey) {
+            if (yKey !== itemId) {
+                _super.prototype.toggleSeriesItem.call(_this, yKey, enabled);
+            }
+        });
+        this.calculateVisibleDomain();
+    };
+    BarSeries.prototype.onLegendItemDoubleClick = function (event) {
+        var _this = this;
+        var enabled = event.enabled, itemId = event.itemId, numVisibleItems = event.numVisibleItems;
+        var totalVisibleItems = Object.values(numVisibleItems).reduce(function (p, v) { return p + v; }, 0);
+        var singleEnabledInEachSeries = Object.values(numVisibleItems).filter(function (v) { return v === 1; }).length === Object.keys(numVisibleItems).length;
+        var newEnableds = {};
+        this.yKeys.forEach(function (stack) {
+            stack.forEach(function (yKey) {
+                var _a;
+                var matches = yKey === itemId;
+                var singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+                var newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
+                newEnableds[yKey] = (_a = newEnableds[yKey]) !== null && _a !== void 0 ? _a : newEnabled;
+                // Toggle other items that have matching legendItemNames which have not already been processed.
+                Object.keys(_this.legendItemNames)
+                    .filter(function (id) {
+                    return _this.legendItemNames[id] !== undefined &&
+                        _this.legendItemNames[id] === _this.legendItemNames[yKey];
+                })
+                    .forEach(function (nameYKey) {
+                    var _a;
+                    newEnableds[nameYKey] = (_a = newEnableds[nameYKey]) !== null && _a !== void 0 ? _a : newEnabled;
+                });
+            });
+        });
+        Object.keys(newEnableds).forEach(function (yKey) {
+            _super.prototype.toggleSeriesItem.call(_this, yKey, newEnableds[yKey]);
+        });
+        this.calculateVisibleDomain();
+    };
+    BarSeries.prototype.calculateVisibleDomain = function () {
         var yKeys = this.yKeys.map(function (stack) { return stack.slice(); }); // deep clone
         this.seriesItemEnabled.forEach(function (enabled, yKey) {
             if (!enabled) {
@@ -820,17 +801,98 @@ var BarSeries = /** @class */ (function (_super) {
         this.groupScale.domain = visibleStacks;
         this.nodeDataRefresh = true;
     };
+    BarSeries.prototype.animateEmptyUpdateReady = function (_a) {
+        var _this = this;
+        var datumSelections = _a.datumSelections, labelSelections = _a.labelSelections;
+        var duration = 1000;
+        var labelDuration = 200;
+        var startingX = Infinity;
+        datumSelections.forEach(function (datumSelection) {
+            return datumSelection.each(function (_, datum) {
+                if (datum.yValue >= 0) {
+                    startingX = Math.min(startingX, datum.x);
+                }
+            });
+        });
+        datumSelections.forEach(function (datumSelection) {
+            datumSelection.each(function (rect, datum) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + rect.id, [
+                    { from: startingX, to: datum.x },
+                    { from: 0, to: datum.width },
+                ], {
+                    disableInteractions: true,
+                    duration: duration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate: function (_a) {
+                        var _b = __read(_a, 2), x = _b[0], width = _b[1];
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = datum.y;
+                        rect.height = datum.height;
+                    },
+                });
+            });
+        });
+        labelSelections.forEach(function (labelSelection) {
+            labelSelection.each(function (label) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                    from: 0,
+                    to: 1,
+                    delay: duration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: function (opacity) {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
+    };
+    BarSeries.prototype.animateReadyUpdate = function (_a) {
+        var _this = this;
+        var datumSelections = _a.datumSelections;
+        datumSelections.forEach(function (datumSelection) {
+            _this.resetSelectionRects(datumSelection);
+        });
+    };
+    BarSeries.prototype.animateReadyHighlight = function (highlightSelection) {
+        this.resetSelectionRects(highlightSelection);
+    };
+    BarSeries.prototype.animateReadyResize = function (_a) {
+        var _this = this;
+        var _b;
+        var datumSelections = _a.datumSelections;
+        (_b = this.animationManager) === null || _b === void 0 ? void 0 : _b.stop();
+        datumSelections.forEach(function (datumSelection) {
+            _this.resetSelectionRects(datumSelection);
+        });
+    };
+    BarSeries.prototype.resetSelectionRects = function (selection) {
+        selection.each(function (rect, datum) {
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+        });
+    };
     BarSeries.prototype.isLabelEnabled = function () {
         return this.label.enabled;
     };
     BarSeries.prototype.getBandScalePadding = function () {
         return { inner: 0.2, outer: 0.3 };
     };
+    BarSeries.prototype.getBarDirection = function () {
+        return chartAxisDirection_1.ChartAxisDirection.X;
+    };
+    BarSeries.prototype.getCategoryDirection = function () {
+        return chartAxisDirection_1.ChartAxisDirection.Y;
+    };
     BarSeries.className = 'BarSeries';
     BarSeries.type = 'bar';
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], BarSeries.prototype, "flipXY", void 0);
     __decorate([
         validation_1.Validate(validation_1.COLOR_STRING_ARRAY)
     ], BarSeries.prototype, "fills", void 0);
@@ -853,10 +915,10 @@ var BarSeries = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.OPT_FUNCTION)
     ], BarSeries.prototype, "formatter", void 0);
     __decorate([
-        validation_1.Validate(validation_1.STRING)
-    ], BarSeries.prototype, "_xKey", void 0);
+        validation_1.Validate(validation_1.OPT_STRING)
+    ], BarSeries.prototype, "xKey", void 0);
     __decorate([
-        validation_1.Validate(validation_1.STRING)
+        validation_1.Validate(validation_1.OPT_STRING)
     ], BarSeries.prototype, "xName", void 0);
     __decorate([
         validation_1.Validate(validation_1.STRING_ARRAY)
@@ -866,13 +928,80 @@ var BarSeries = /** @class */ (function (_super) {
     ], BarSeries.prototype, "visibles", void 0);
     __decorate([
         validation_1.Validate(validation_1.BOOLEAN)
-    ], BarSeries.prototype, "_grouped", void 0);
+    ], BarSeries.prototype, "grouped", void 0);
     __decorate([
         validation_1.Validate(validation_1.OPT_NUMBER())
-    ], BarSeries.prototype, "_normalizedTo", void 0);
+    ], BarSeries.prototype, "normalizedTo", void 0);
     __decorate([
         validation_1.Validate(validation_1.NUMBER(0))
     ], BarSeries.prototype, "strokeWidth", void 0);
     return BarSeries;
 }(cartesianSeries_1.CartesianSeries));
 exports.BarSeries = BarSeries;
+var ColumnSeries = /** @class */ (function (_super) {
+    __extends(ColumnSeries, _super);
+    function ColumnSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ColumnSeries.prototype.getBarDirection = function () {
+        return chartAxisDirection_1.ChartAxisDirection.Y;
+    };
+    ColumnSeries.prototype.getCategoryDirection = function () {
+        return chartAxisDirection_1.ChartAxisDirection.X;
+    };
+    ColumnSeries.prototype.animateEmptyUpdateReady = function (_a) {
+        var _this = this;
+        var datumSelections = _a.datumSelections, labelSelections = _a.labelSelections;
+        var duration = 1000;
+        var labelDuration = 200;
+        var startingY = 0;
+        datumSelections.forEach(function (datumSelection) {
+            return datumSelection.each(function (_, datum) {
+                if (datum.yValue >= 0) {
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            });
+        });
+        datumSelections.forEach(function (datumSelection) {
+            datumSelection.each(function (rect, datum) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + rect.id, [
+                    { from: startingY, to: datum.y },
+                    { from: 0, to: datum.height },
+                ], {
+                    disableInteractions: true,
+                    duration: duration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate: function (_a) {
+                        var _b = __read(_a, 2), y = _b[0], height = _b[1];
+                        rect.y = y;
+                        rect.height = height;
+                        rect.x = datum.x;
+                        rect.width = datum.width;
+                    },
+                });
+            });
+        });
+        labelSelections.forEach(function (labelSelection) {
+            labelSelection.each(function (label) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                    from: 0,
+                    to: 1,
+                    delay: duration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: function (opacity) {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
+    };
+    ColumnSeries.type = 'column';
+    ColumnSeries.className = 'ColumnSeries';
+    return ColumnSeries;
+}(BarSeries));
+exports.ColumnSeries = ColumnSeries;

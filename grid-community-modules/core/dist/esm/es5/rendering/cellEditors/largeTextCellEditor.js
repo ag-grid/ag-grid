@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -62,7 +64,11 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
         }
     };
     LargeTextCellEditor.prototype.getValue = function () {
-        return this.params.parseValue(this.eTextArea.getValue());
+        var value = this.eTextArea.getValue();
+        if (!exists(value) && !exists(this.params.value)) {
+            return this.params.value;
+        }
+        return this.params.parseValue(value);
     };
     LargeTextCellEditor.TEMPLATE = "<div class=\"ag-large-text\" tabindex=\"0\">\n            <ag-input-text-area ref=\"eTextArea\" class=\"ag-large-text-input\"></ag-input-text-area>\n        </div>";
     __decorate([

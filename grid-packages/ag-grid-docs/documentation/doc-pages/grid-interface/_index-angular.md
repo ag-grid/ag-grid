@@ -1,4 +1,5 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
+|
 | ## Properties, Events, Callbacks and APIs
 |
 | - **Properties**: properties are bound via @Inputs (e.g. `[columnDefs]="columnDefs"`).
@@ -7,8 +8,11 @@
 | - **Event Handlers**: event handlers are are bound via @Outputs (e.g. `(cellClicked)="onCellClicked($event)"`).
 | - **API**: the grid API and column API are accessible through the component.
 |
-| ```jsx
-| <ag-grid-angular
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+| &lt;ag-grid-angular
 |    #myGrid // assign an angular ID to the grid - optional
 |
 |    // these are boolean values, which if included without a value, default to true
@@ -29,9 +33,11 @@
 |    // register events
 |    (cellClicked)="onCellClicked($event)"
 |    (columnResized)="onColumnEvent($event)">
-| </ag-grid-angular>
-| ```
-|
+| &lt;/ag-grid-angular>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Access the Grid & Column API
 |
 | When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
@@ -41,8 +47,11 @@
 | You can then call these apis at a later stage to interact with the
 | grid (on top of the interaction that can be done by setting and changing the properties).
 |
-| ```jsx
-| <ag-grid-angular
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+| &lt;ag-grid-angular
 |    #myGrid // assign an angular ID to the grid - optional
 |
 |    // provide gridReady callback to the grid
@@ -55,20 +64,24 @@
 |     this.api = params.api;
 |     this.columnApi = params.columnApi;
 | }
-| ```
-|
-| ```ts
 | @ViewChild('myGrid') grid!: AgGridAngular;
 |
 | // Then later access api
 | this.grid.api.deselectRows();
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | The APIs are also accessible through the component. For example in the snippet above the Grid is give the ID of `'#myGrid'` which then allows the API to be accessed as follows:
-|
-| ```jsx
-| <button (click)="myGrid.api.deselectAll()">Clear Selection</button>
-| ```
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+| &lt;button (click)="myGrid.api.deselectAll()">Clear Selection&lt;/button>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Grid Options
 |
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid and can be used instead of, or in addition to, the component bindings. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence.
@@ -76,8 +89,10 @@
 | The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | const gridOptions : GridOptions = {
 |     // PROPERTIES
 |     // Objects like myRowData and myColDefs would be created in your application
@@ -95,19 +110,22 @@
 |     // CALLBACKS
 |     getRowHeight: (params) => 25
 | }
-| ```
 |
-| ```jsx
-| <ag-grid-angular
+| &lt;ag-grid-angular
 |     [gridOptions]="gridOptions"
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | // refresh the grid
 | this.gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
 | this.gridOptions.columnApi.sizeColumnsToFit();
-| ```
+</snippet>
+</framework-specific-section>

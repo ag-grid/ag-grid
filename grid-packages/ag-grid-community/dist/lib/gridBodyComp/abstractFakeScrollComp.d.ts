@@ -7,6 +7,7 @@ export declare abstract class AbstractFakeScrollComp extends Component {
     protected readonly eContainer: HTMLElement;
     protected readonly scrollVisibleService: ScrollVisibleService;
     protected readonly ctrlsService: CtrlsService;
+    private animationFrameService;
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null;
     protected abstract setScrollVisible(): void;

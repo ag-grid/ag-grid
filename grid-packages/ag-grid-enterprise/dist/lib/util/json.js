@@ -26,9 +26,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -66,10 +67,10 @@ function jsonDiff(source, target) {
     if (targetType === 'array') {
         var targetArray = target;
         if (sourceType !== 'array' || source.length !== targetArray.length) {
-            return __spread(targetArray);
+            return __spreadArray([], __read(targetArray));
         }
         if (targetArray.some(function (targetElement, i) { var _a; return jsonDiff((_a = source) === null || _a === void 0 ? void 0 : _a[i], targetElement) != null; })) {
-            return __spread(targetArray);
+            return __spreadArray([], __read(targetArray));
         }
         return null;
     }
@@ -84,7 +85,7 @@ function jsonDiff(source, target) {
     }
     var lhs = source || {};
     var rhs = target || {};
-    var allProps = new Set(__spread(Object.keys(lhs), Object.keys(rhs)));
+    var allProps = new Set(__spreadArray(__spreadArray([], __read(Object.keys(lhs))), __read(Object.keys(rhs))));
     var propsChangedCount = 0;
     var result = {};
     var _loop_1 = function (prop) {
@@ -163,7 +164,8 @@ var NOT_SPECIFIED = Symbol('<unspecified-property>');
  */
 function jsonMerge(json, opts) {
     var e_2, _a;
-    var avoidDeepClone = (opts === null || opts === void 0 ? void 0 : opts.avoidDeepClone) || [];
+    var _b;
+    var avoidDeepClone = (_b = opts === null || opts === void 0 ? void 0 : opts.avoidDeepClone) !== null && _b !== void 0 ? _b : [];
     var jsonTypes = json.map(function (v) { return classify(v); });
     if (jsonTypes.some(function (v) { return v === 'array'; })) {
         // Clone final array.
@@ -206,7 +208,7 @@ function jsonMerge(json, opts) {
         else if (type === 'array') {
             // Arrays need to be shallow copied to avoid external mutation and allow jsonDiff to
             // detect changes.
-            result[nextProp] = __spread(lastValue);
+            result[nextProp] = __spreadArray([], __read(lastValue));
         }
         else {
             // Just directly assign/overwrite.
@@ -243,11 +245,11 @@ exports.jsonMerge = jsonMerge;
  * @param params.allowedTypes overrides by path for allowed property types
  */
 function jsonApply(target, source, params) {
-    var _a;
+    var _a, _b;
     if (params === void 0) { params = {}; }
-    var _b = params.path, path = _b === void 0 ? undefined : _b, _c = params.matcherPath, matcherPath = _c === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _c, _d = params.skip, skip = _d === void 0 ? [] : _d, _e = params.constructors, constructors = _e === void 0 ? {} : _e, _f = params.allowedTypes, allowedTypes = _f === void 0 ? {} : _f, idx = params.idx;
+    var _c = params.path, path = _c === void 0 ? undefined : _c, _d = params.matcherPath, matcherPath = _d === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _d, _e = params.skip, skip = _e === void 0 ? [] : _e, _f = params.constructors, constructors = _f === void 0 ? {} : _f, _g = params.allowedTypes, allowedTypes = _g === void 0 ? {} : _g, idx = params.idx;
     if (target == null) {
-        throw new Error("AG Charts - target is uninitialised: " + (path || '<root>'));
+        throw new Error("AG Charts - target is uninitialised: " + (path !== null && path !== void 0 ? path : '<root>'));
     }
     if (source == null) {
         return target;
@@ -266,7 +268,7 @@ function jsonApply(target, source, params) {
         var propertyPath = "" + (path ? path + '.' : '') + property;
         var targetClass = targetAny.constructor;
         var currentValue = targetAny[property];
-        var ctr = (_a = constructors[property]) !== null && _a !== void 0 ? _a : constructors[propertyMatcherPath];
+        var ctr = (_a = constructors[propertyMatcherPath]) !== null && _a !== void 0 ? _a : constructors[property];
         try {
             var currentValueType = classify(currentValue);
             var newValueType = classify(newValue);
@@ -275,7 +277,7 @@ function jsonApply(target, source, params) {
                 logger_1.Logger.warn("unable to set [" + propertyPath + "] in " + (targetClass === null || targetClass === void 0 ? void 0 : targetClass.name) + " - property is unknown");
                 return "continue";
             }
-            var allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
+            var allowableTypes = (_b = allowedTypes[propertyMatcherPath]) !== null && _b !== void 0 ? _b : [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             }
@@ -336,22 +338,23 @@ exports.jsonApply = jsonApply;
  * @param jsons to traverse in parallel
  */
 function jsonWalk(json, visit, opts) {
+    var _a;
     var jsons = [];
     for (var _i = 3; _i < arguments.length; _i++) {
         jsons[_i - 3] = arguments[_i];
     }
     var jsonType = classify(json);
-    var skip = opts.skip || [];
+    var skip = (_a = opts.skip) !== null && _a !== void 0 ? _a : [];
     if (jsonType === 'array') {
         json.forEach(function (element, index) {
-            jsonWalk.apply(void 0, __spread([element, visit, opts], (jsons !== null && jsons !== void 0 ? jsons : []).map(function (o) { return o === null || o === void 0 ? void 0 : o[index]; })));
+            jsonWalk.apply(void 0, __spreadArray([element, visit, opts], __read((jsons !== null && jsons !== void 0 ? jsons : []).map(function (o) { return o === null || o === void 0 ? void 0 : o[index]; }))));
         });
         return;
     }
     else if (jsonType !== 'object') {
         return;
     }
-    visit.apply(void 0, __spread([jsonType, json], jsons));
+    visit.apply(void 0, __spreadArray([jsonType, json], __read(jsons)));
     var _loop_4 = function (property) {
         if (skip.indexOf(property) >= 0) {
             return "continue";
@@ -360,7 +363,7 @@ function jsonWalk(json, visit, opts) {
         var otherValues = jsons === null || jsons === void 0 ? void 0 : jsons.map(function (o) { return o === null || o === void 0 ? void 0 : o[property]; });
         var valueType = classify(value);
         if (valueType === 'object' || valueType === 'array') {
-            jsonWalk.apply(void 0, __spread([value, visit, opts], otherValues));
+            jsonWalk.apply(void 0, __spreadArray([value, visit, opts], __read(otherValues)));
         }
     };
     for (var property in json) {
@@ -368,6 +371,7 @@ function jsonWalk(json, visit, opts) {
     }
 }
 exports.jsonWalk = jsonWalk;
+var isBrowser = typeof window !== 'undefined';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
@@ -375,7 +379,7 @@ function classify(value) {
     if (value == null) {
         return null;
     }
-    else if (value instanceof HTMLElement) {
+    else if (isBrowser && value instanceof HTMLElement) {
         return 'primitive';
     }
     else if (value instanceof Array) {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -58,12 +58,9 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
-        if (this.gridOptionsService.is('groupRowsSticky')) {
+        if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
-            if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
-                function_1.doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            }
-            else {
+            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new stickyRowFeature_1.StickyRowFeature(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this)));
             }
         }
@@ -483,9 +480,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     }
     getCellRendererInstances(params) {
         var _a;
@@ -659,7 +654,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -743,8 +738,8 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         }
         this.updateAllRowCtrls();
     }
-    dispatchDisplayedRowsChanged() {
-        const event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    dispatchDisplayedRowsChanged(afterScroll = false) {
+        const event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
     onDisplayedColumnsChanged() {
@@ -789,21 +784,32 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         });
     }
     refreshFullWidthRow(rowNode) {
-        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    }
+    refreshFullWidthRows(rowNodes) {
+        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        let redraw = false;
+        const indicesToForce = [];
+        fullWidthCtrls.forEach(fullWidthCtrl => {
+            const refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            const node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        const refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {
         let rowNode;

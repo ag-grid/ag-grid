@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -135,4 +135,12 @@ export function camelCaseToHumanText(camelCase) {
         .replace(/\./g, ' ')
         .split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
+}
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+export function camelCaseToHyphenated(camelCase) {
+    return camelCase.replace(/[A-Z]/g, function (s) { return "-" + s.toLocaleLowerCase(); });
 }

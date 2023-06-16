@@ -4,6 +4,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { Autowired, BeanStub, PostConstruct, Events } from "@ag-grid-community/core";
 export class GroupSelectsChildrenStrategy extends BeanStub {
     constructor() {
@@ -98,11 +109,18 @@ export class GroupSelectsChildrenStrategy extends BeanStub {
         }
         return anyStateChanged;
     }
-    setNodeSelected(params) {
+    setNodesSelected(params) {
+        const { nodes } = params, other = __rest(params, ["nodes"]);
+        if (nodes.length === 0)
+            return 0;
         if (params.rangeSelect) {
-            const nodes = this.rowModel.getNodesInRangeForSelection(params.node, this.lastSelected);
+            if (nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
+            }
+            const node = nodes[0];
+            const rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
             // sort the routes by route length, high to low, this means we can do the lowest level children first
-            const routes = nodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
+            const routes = rangeOfNodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
             // skip routes if we've already done a descendent
             const completedRoutes = new Set();
             routes.forEach(route => {
@@ -111,16 +129,18 @@ export class GroupSelectsChildrenStrategy extends BeanStub {
                     return;
                 }
                 route.forEach(part => completedRoutes.add(part));
-                this.recursivelySelectNode(route, this.selectedState, params);
+                this.recursivelySelectNode(route, this.selectedState, Object.assign({ node }, other));
             });
             this.removeRedundantState();
-            this.lastSelected = params.node;
+            this.lastSelected = node;
             return 1;
         }
-        const idPathToNode = this.getRouteToNode(params.node);
-        this.recursivelySelectNode(idPathToNode, this.selectedState, params);
+        params.nodes.forEach(node => {
+            const idPathToNode = this.getRouteToNode(node);
+            this.recursivelySelectNode(idPathToNode, this.selectedState, Object.assign(Object.assign({}, other), { node }));
+        });
         this.removeRedundantState();
-        this.lastSelected = params.node;
+        this.lastSelected = params.nodes[params.nodes.length - 1];
         return 1;
     }
     isNodeSelected(node) {

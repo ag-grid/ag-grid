@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -38,53 +38,61 @@ let SelectionService = class SelectionService extends BeanStub {
     isMultiselect() {
         return this.rowSelection === 'multiple';
     }
-    setNodeSelected(params) {
+    setNodesSelected(params) {
         var _a;
-        const { newValue, clearSelection, suppressFinishActions, rangeSelect, event, node, source = 'api', } = params;
+        if (params.nodes.length === 0)
+            return 0;
+        const { newValue, clearSelection, suppressFinishActions, rangeSelect, event, source = 'api', } = params;
+        if (params.nodes.length > 1 && !this.isMultiselect()) {
+            console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
+            return 0;
+        }
         // groupSelectsFiltered only makes sense when group selects children
         const groupSelectsFiltered = this.groupSelectsChildren && (params.groupSelectsFiltered === true);
-        if (node.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
-            return 0;
-        }
-        if (node.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
-            return 0;
-        }
-        // if we are a footer, we don't do selection, just pass the info
+        // if node is a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
-        if (node.footer) {
-            return this.setNodeSelected(Object.assign(Object.assign({}, params), { node: node.sibling }));
-        }
-        const lastSelectedNode = this.getLastSelectedNode();
-        if (rangeSelect && lastSelectedNode) {
-            const newRowClicked = lastSelectedNode !== node;
-            if (newRowClicked && this.isMultiselect()) {
-                const nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
-                this.setLastSelectedNode(node);
-                return nodesChanged;
+        const nodes = params.nodes.map(node => node.footer ? node.sibling : node);
+        if (rangeSelect) {
+            if (params.nodes.length > 1) {
+                console.warn('AG Grid: cannot range select while selecting multiple rows');
+                return 0;
+            }
+            const lastSelectedNode = this.getLastSelectedNode();
+            if (lastSelectedNode) {
+                // if node is a footer, we don't do selection, just pass the info
+                // to the sibling (the parent of the group)
+                const node = nodes[0];
+                const newRowClicked = lastSelectedNode !== node;
+                if (newRowClicked && this.isMultiselect()) {
+                    const nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
+                    this.setLastSelectedNode(node);
+                    return nodesChanged;
+                }
             }
         }
-        // when groupSelectsFiltered, then this node may end up intermediate despite
-        // trying to set it to true / false. this group will be calculated further on
-        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
-        // here, otherwise the updatedCount would include it.
-        const skipThisNode = groupSelectsFiltered && node.group;
         let updatedCount = 0;
-        if (!skipThisNode) {
-            const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
-            if (thisNodeWasSelected) {
-                updatedCount++;
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            // when groupSelectsFiltered, then this node may end up intermediate despite
+            // trying to set it to true / false. this group will be calculated further on
+            // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+            // here, otherwise the updatedCount would include it.
+            const skipThisNode = groupSelectsFiltered && node.group;
+            if (!skipThisNode) {
+                const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
+                if (thisNodeWasSelected) {
+                    updatedCount++;
+                }
             }
-        }
-        if (this.groupSelectsChildren && ((_a = node.childrenAfterGroup) === null || _a === void 0 ? void 0 : _a.length)) {
-            updatedCount += this.selectChildren(node, newValue, groupSelectsFiltered, source);
+            if (this.groupSelectsChildren && ((_a = node.childrenAfterGroup) === null || _a === void 0 ? void 0 : _a.length)) {
+                updatedCount += this.selectChildren(node, newValue, groupSelectsFiltered, source);
+            }
         }
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(node, source);
+                updatedCount += this.clearOtherNodes(nodes[0], source);
             }
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
@@ -99,7 +107,7 @@ let SelectionService = class SelectionService extends BeanStub {
             }
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
-                this.setLastSelectedNode(node);
+                this.setLastSelectedNode(nodes[nodes.length - 1]);
             }
         }
         return updatedCount;
@@ -132,17 +140,14 @@ let SelectionService = class SelectionService extends BeanStub {
         if (_.missing(children)) {
             return 0;
         }
-        let updatedCount = 0;
-        for (let i = 0; i < children.length; i++) {
-            updatedCount += children[i].setSelectedParams({
-                newValue: newValue,
-                clearSelection: false,
-                suppressFinishActions: true,
-                groupSelectsFiltered,
-                source
-            });
-        }
-        return updatedCount;
+        return this.setNodesSelected({
+            newValue: newValue,
+            clearSelection: false,
+            suppressFinishActions: true,
+            groupSelectsFiltered,
+            source,
+            nodes: children,
+        });
     }
     setLastSelectedNode(rowNode) {
         this.lastSelectedNode = rowNode;
@@ -220,7 +225,7 @@ let SelectionService = class SelectionService extends BeanStub {
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true,
-                    source
+                    source,
                 });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;

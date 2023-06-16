@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -51,9 +53,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StickyRowFeature = void 0;
@@ -83,7 +86,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
     StickyRowFeature.prototype.checkStickyRows = function () {
         var _this = this;
         var height = 0;
-        if (!this.gridOptionsService.is('groupRowsSticky')) {
+        if (!this.gridOptionsService.isGroupRowsSticky()) {
             this.refreshNodesAndContainerHeight([], height);
             return;
         }
@@ -112,8 +115,13 @@ var StickyRowFeature = /** @class */ (function (_super) {
             }
             // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
             else {
-                var storeBounds = (_a = stickyRow.childStore) === null || _a === void 0 ? void 0 : _a.getStoreBounds();
-                lastChildBottom = ((_b = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.heightPx) !== null && _b !== void 0 ? _b : 0) + ((_c = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.topPx) !== null && _c !== void 0 ? _c : 0);
+                if (stickyRow.master) {
+                    lastChildBottom = stickyRow.detailNode.rowTop + stickyRow.detailNode.rowHeight;
+                }
+                else {
+                    var storeBounds = (_a = stickyRow.childStore) === null || _a === void 0 ? void 0 : _a.getStoreBounds();
+                    lastChildBottom = ((_b = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.heightPx) !== null && _b !== void 0 ? _b : 0) + ((_c = storeBounds === null || storeBounds === void 0 ? void 0 : storeBounds.topPx) !== null && _c !== void 0 ? _c : 0);
+                }
             }
             var stickRowBottom = firstPixel + height + stickyRow.rowHeight;
             if (lastChildBottom < stickRowBottom) {
@@ -201,7 +209,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
             rowNode.sticky = true;
             return _this.createRowCon(rowNode, false, false);
         });
-        (_b = this.stickyRowCtrls).push.apply(_b, __spread(newCtrls));
+        (_b = this.stickyRowCtrls).push.apply(_b, __spreadArray([], __read(newCtrls)));
         this.stickyRowCtrls.forEach(function (ctrl) { return ctrl.setRowTop(ctrl.getRowNode().stickyRowTop); });
         this.stickyRowCtrls.sort(function (a, b) { return b.getRowNode().rowIndex - a.getRowNode().rowIndex; });
         if (this.containerHeight !== height) {

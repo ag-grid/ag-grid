@@ -321,6 +321,15 @@ class Color {
     darker() {
         return this.derive(0, 1.0, 0.7, 1.0);
     }
+    static interpolate(color, other) {
+        const c0 = Color.tryParseFromString(color);
+        const c1 = Color.tryParseFromString(other);
+        return (t) => {
+            const i = (x, y) => x * (1 - t) + y * t;
+            const c = new Color(i(c0.r, c1.r), i(c0.g, c1.g), i(c0.b, c1.b), i(c0.a, c1.a));
+            return c.toString();
+        };
+    }
 }
 exports.Color = Color;
 /**

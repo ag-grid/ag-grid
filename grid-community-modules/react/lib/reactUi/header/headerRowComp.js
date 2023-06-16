@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -63,7 +63,11 @@ const HeaderRowComp = (props) => {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: ctrls => setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls)),
-            setWidth: width => eGui.current.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
         ctrl.setComp(compProxy);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -56,7 +58,6 @@ var FloatingFilterTextInputService = /** @class */ (function (_super) {
     FloatingFilterTextInputService.prototype.addValueChangedListener = function (listener) {
         var inputGui = this.eFloatingFilterTextInput.getGui();
         this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keypress', listener);
         this.addManagedListener(inputGui, 'keydown', listener);
     };
     return FloatingFilterTextInputService;
@@ -100,8 +101,8 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
-        var enterKeyPressed = e.key === KeyCode.ENTER;
-        if (this.applyActive && !enterKeyPressed) {
+        var isEnterKey = e.key === KeyCode.ENTER;
+        if (this.applyActive && !isEnterKey) {
             return;
         }
         var value = this.floatingFilterInputService.getValue();

@@ -16,8 +16,6 @@ class HierarchyChart extends chart_1.Chart {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
         super(document, overrideDevicePixelRatio, resources);
         this._data = {};
-        const root = this.scene.root;
-        this.legend.attachLegend(root);
     }
     performLayout() {
         const _super = Object.create(null, {
@@ -35,11 +33,11 @@ class HierarchyChart extends chart_1.Chart {
             const hoverRectPadding = 20;
             const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
             this.hoverRect = hoverRect;
-            this.series.forEach((series) => {
+            yield Promise.all(this.series.map((series) => __awaiter(this, void 0, void 0, function* () {
                 series.rootGroup.translationX = Math.floor(shrinkRect.x);
                 series.rootGroup.translationY = Math.floor(shrinkRect.y);
-                series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
-            });
+                yield series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
+            })));
             const { seriesRoot } = this;
             seriesRoot.setClipRectInGroupCoordinateSpace(new bbox_1.BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height));
             this.layoutService.dispatchLayoutComplete({

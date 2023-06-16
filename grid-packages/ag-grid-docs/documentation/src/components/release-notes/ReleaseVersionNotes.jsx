@@ -1,12 +1,20 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import Collapsible from './Collapsible';
+import styles from './ReleaseVersionNotes.module.scss';
 
-const ReleaseVersionNotes = ({ releaseNotes }) => {
-    return releaseNotes ? (
-        <Collapsible title="Release Notes">
-            <div dangerouslySetInnerHTML={{ __html: releaseNotes }}></div>
+const ReleaseVersionNotes = ({ title, releaseNotes, markdownContent }) => {
+    return (
+        <Collapsible title={'Release Notes ' + title}>
+            {!!markdownContent ? (
+                <div className={styles.markdown}>
+                    <ReactMarkdown>{markdownContent}</ReactMarkdown>
+                </div>
+            ) : releaseNotes ? (
+                <div dangerouslySetInnerHTML={{ __html: releaseNotes }}></div>
+            ) : null}
         </Collapsible>
-    ) : null;
+    );
 };
 
 export default ReleaseVersionNotes;

@@ -1,7 +1,9 @@
-[[only-angular]]
-|Below is a simple example of header component:
-|
-|```js
+<framework-specific-section frameworks="angular">
+|Below is an example of header component:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |import {Component, ElementRef, ViewChild} from '@angular/core';
 |import {IHeaderAngularComp} from 'ag-grid-angular'
 |import {IHeaderParams} from 'ag-grid-community'
@@ -9,24 +11,24 @@
 |@Component({
 |    selector: 'app-custom-header',
 |    template: `
-|      <div>
-|          <div *ngIf="params.enableMenu" #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)">
-|              <i class="fa {{params.menuIcon}}"></i>
-|          </div>
-|          <div class="customHeaderLabel">{{ params.displayName }}</div>
-|          <div *ngIf="params.enableSorting" (click)="onSortRequested('asc', $event)" [ngClass]="ascSort"
+|      &lt;div>
+|          &lt;div *ngIf="params.enableMenu" #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)">
+|              &lt;i class="fa {{params.menuIcon}}">&lt;/i>
+|          &lt;/div>
+|          &lt;div class="customHeaderLabel">{{ params.displayName }}&lt;/div>
+|          &lt;div *ngIf="params.enableSorting" (click)="onSortRequested('asc', $event)" [ngClass]="ascSort"
 |              class="customSortDownLabel">
-|              <i class="fa fa-long-arrow-alt-down"></i>
-|          </div>
-|          <div *ngIf="params.enableSorting" (click)="onSortRequested('desc', $event)" [ngClass]="descSort"
+|              &lt;i class="fa fa-long-arrow-alt-down">&lt;/i>
+|          &lt;/div>
+|          &lt;div *ngIf="params.enableSorting" (click)="onSortRequested('desc', $event)" [ngClass]="descSort"
 |              class="customSortUpLabel">
-|              <i class="fa fa-long-arrow-alt-up"></i>
-|          </div>
-|          <div *ngIf="params.enableSorting" (click)="onSortRequested('', $event)" [ngClass]="noSort"
+|              &lt;i class="fa fa-long-arrow-alt-up">&lt;/i>
+|          &lt;/div>
+|          &lt;div *ngIf="params.enableSorting" (click)="onSortRequested('', $event)" [ngClass]="noSort"
 |              class="customSortRemoveLabel">
-|              <i class="fa fa-times"></i>
-|          </div>
-|      </div>
+|              &lt;i class="fa fa-times">&lt;/i>
+|          &lt;/div>
+|      &lt;/div>
 |    `,
 |    styles: [
 |        `
@@ -89,4 +91,5 @@
 |        this.params.setSort(order, event.shiftKey);
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

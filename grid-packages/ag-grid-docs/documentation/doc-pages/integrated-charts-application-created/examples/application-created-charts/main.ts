@@ -3,8 +3,8 @@ import { AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } fr
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [
-  { field: 'product', chartDataType: 'category' },
-  { field: 'book', chartDataType: 'category' },
+  { field: 'product', chartDataType: 'category', minWidth: 90 },
+  { field: 'book', chartDataType: 'category', minWidth: 90 },
 
   { field: 'current', type: 'measure' },
   { field: 'previous', type: 'measure' },
@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
 
   { field: 'trade', type: 'measure' },
   { field: 'submitterID', type: 'measure' },
-  { field: 'submitterDealID', type: 'measure', minWidth: 170 },
+  { field: 'submitterDealID', type: 'measure' },
 
   { field: 'portfolio' },
   { field: 'dealType' },
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
     editable: true,
     sortable: true,
     flex: 1,
-    minWidth: 150,
+    minWidth: 115,
     filter: true,
     resizable: true,
   },
@@ -71,11 +71,6 @@ const gridOptions: GridOptions = {
   },
   chartThemes: ['ag-pastel-dark'],
   chartThemeOverrides: {
-    common: {
-      legend: {
-        position: 'bottom',
-      },
-    },
     column: {
       axes: {
         number: {
@@ -108,32 +103,8 @@ const gridOptions: GridOptions = {
   },
 }
 
-function createChart(type: ChartType) {
-  var oldChartRef = chartRef;
-  var params: CreateRangeChartParams = {
-    cellRange: {
-      columns: [
-        'product',
-        'current',
-        'previous',
-        'pl1',
-        'pl2',
-        'gainDx',
-        'sxPx',
-      ]
-    },
-    chartContainer: document.querySelector('#myChart') as any,
-    chartType: type,
-    suppressChartRanges: true,
-    aggFunc: 'sum',
-  }
-
-  chartRef = gridOptions.api!.createRangeChart(params)
-
-  // destroy existing chart
-  if (oldChartRef) {
-    oldChartRef.destroyChart()
-  }
+function updateChart(chartType: ChartType) {
+  gridOptions.api!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
 function numberCellFormatter(params: ValueFormatterParams) {

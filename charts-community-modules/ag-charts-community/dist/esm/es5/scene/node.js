@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -44,9 +46,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Matrix } from './matrix';
 import { createId } from '../util/id';
@@ -326,7 +329,9 @@ var Node = /** @class */ (function (_super) {
             // for more complex shapes, so discarding items based on this will save a lot of
             // processing when the point is nowhere near the child.
             for (var i = children.length - 1; i >= 0; i--) {
-                var hit = ((_a = children[i].computeBBox()) === null || _a === void 0 ? void 0 : _a.containsPoint(x, y)) ? children[i].pickNode(x, y) : undefined;
+                var child = children[i];
+                var containsPoint = (_a = child.computeTransformedBBox()) === null || _a === void 0 ? void 0 : _a.containsPoint(x, y);
+                var hit = containsPoint ? child.pickNode(x, y) : undefined;
                 if (hit) {
                     return hit;
                 }
@@ -355,7 +360,7 @@ var Node = /** @class */ (function (_super) {
                 var child = _c.value;
                 var childResult = child.findNodes(predicate);
                 if (childResult) {
-                    result.push.apply(result, __spread(childResult));
+                    result.push.apply(result, __spreadArray([], __read(childResult)));
                 }
             }
         }
@@ -443,7 +448,7 @@ var Node = /** @class */ (function (_super) {
     });
     Node.prototype.markClean = function (opts) {
         var e_4, _a;
-        var _b = opts || {}, _c = _b.force, force = _c === void 0 ? false : _c, _d = _b.recursive, recursive = _d === void 0 ? true : _d;
+        var _b = opts !== null && opts !== void 0 ? opts : {}, _c = _b.force, force = _c === void 0 ? false : _c, _d = _b.recursive, recursive = _d === void 0 ? true : _d;
         if (this._dirty === RedrawType.NONE && !force) {
             return;
         }

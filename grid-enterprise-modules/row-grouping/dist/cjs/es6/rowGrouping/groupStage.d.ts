@@ -17,7 +17,6 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private handleTransaction;
     private sortChildren;
     private orderGroups;
-    private getInitialGroupOrderComparator;
     private getExistingPathForNode;
     private moveNodesInWrongPath;
     private moveNode;

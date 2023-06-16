@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -237,17 +237,17 @@ export class CellCtrl extends BeanStub {
         return selectionChanged || rowDragChanged || dndSourceChanged;
     }
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    startEditing(key = null, charPress = null, cellStartedEdit = false, event = null) {
+    startEditing(key = null, cellStartedEdit = false, event = null) {
         if (!this.isCellEditable() || this.editing) {
             return;
         }
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, charPress, cellStartedEdit, event); });
+            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, cellStartedEdit, event); });
             return;
         }
-        const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
+        const editorParams = this.createCellEditorParams(key, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
@@ -346,11 +346,10 @@ export class CellCtrl extends BeanStub {
             valueChanged });
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
-    createCellEditorParams(key, charPress, cellStartedEdit) {
+    createCellEditorParams(key, cellStartedEdit) {
         return {
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
-            charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
             rowIndex: this.getCellPosition().rowIndex,
@@ -391,26 +390,7 @@ export class CellCtrl extends BeanStub {
         return res;
     }
     parseValue(newValue) {
-        const colDef = this.column.getColDef();
-        const params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            oldValue: this.getValue(),
-            newValue: newValue,
-            colDef: colDef,
-            column: this.column,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
-        const valueParser = colDef.valueParser;
-        if (exists(valueParser)) {
-            if (typeof valueParser === 'function') {
-                return valueParser(params);
-            }
-            return this.beans.expressionService.evaluate(valueParser, params);
-        }
-        return newValue;
+        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     }
     setFocusOutOnEditor() {
         if (!this.editing) {
@@ -502,21 +482,18 @@ export class CellCtrl extends BeanStub {
     }
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    stopEditingAndFocus(suppressNavigateAfterEdit = false) {
+    stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey = false) {
         this.stopRowOrCellEdit();
         this.focusCell(true);
         if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit();
+            this.navigateAfterEdit(shiftKey);
         }
     }
-    navigateAfterEdit() {
-        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
-        if (fullRowEdit) {
-            return;
-        }
-        const enterMovesDownAfterEdit = this.beans.gridOptionsService.is('enterMovesDownAfterEdit');
-        if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.getCellPosition(), false);
+    navigateAfterEdit(shiftKey) {
+        const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
+        if (enterNavigatesVerticallyAfterEdit) {
+            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            this.beans.navigationService.navigateToNextCell(null, key, this.getCellPosition(), false);
         }
     }
     // user can also call this via API
@@ -625,9 +602,9 @@ export class CellCtrl extends BeanStub {
         };
         return event;
     }
-    onKeyPress(event) {
+    processCharacter(event) {
         var _a;
-        (_a = this.cellKeyboardListenerFeature) === null || _a === void 0 ? void 0 : _a.onKeyPress(event);
+        (_a = this.cellKeyboardListenerFeature) === null || _a === void 0 ? void 0 : _a.processCharacter(event);
     }
     onKeyDown(event) {
         var _a;
@@ -698,15 +675,15 @@ export class CellCtrl extends BeanStub {
         return this.editing;
     }
     // called by rowRenderer when user navigates via tab key
-    startRowOrCellEdit(key, charPress, event = null) {
+    startRowOrCellEdit(key, event = null) {
         if (!this.cellComp) {
             return;
         }
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, charPress, this);
+            this.rowCtrl.startRowEditing(key, this);
         }
         else {
-            this.startEditing(key, charPress, true, event);
+            this.startEditing(key, true, event);
         }
     }
     getRowCtrl() {
@@ -854,7 +831,7 @@ export class CellCtrl extends BeanStub {
         return cbSelectionComponent;
     }
     createDndSource() {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.eGui);
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.eGui);
         this.beans.context.createBean(dndSourceComp);
         return dndSourceComp;
     }

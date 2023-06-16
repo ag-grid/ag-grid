@@ -60,13 +60,14 @@ const verticalAlignmentMap = {
     Distributed: 'distributed',
     JustifyDistributed: 'justify'
 };
-exports.convertLegacyPattern = (name) => {
+const convertLegacyPattern = (name) => {
     if (!name) {
         return 'none';
     }
     return colorMap[name] || name;
 };
-exports.convertLegacyColor = (color) => {
+exports.convertLegacyPattern = convertLegacyPattern;
+const convertLegacyColor = (color) => {
     if (color == undefined) {
         return color;
     }
@@ -75,7 +76,8 @@ exports.convertLegacyColor = (color) => {
     }
     return color.length === 6 ? 'FF' + color : color;
 };
-exports.convertLegacyBorder = (type, weight) => {
+exports.convertLegacyColor = convertLegacyColor;
+const convertLegacyBorder = (type, weight) => {
     if (!type) {
         return 'thin';
     }
@@ -93,9 +95,12 @@ exports.convertLegacyBorder = (type, weight) => {
     }
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
 };
-exports.convertLegacyHorizontalAlignment = (alignment) => {
+exports.convertLegacyBorder = convertLegacyBorder;
+const convertLegacyHorizontalAlignment = (alignment) => {
     return horizontalAlignmentMap[alignment] || 'general';
 };
-exports.convertLegacyVerticalAlignment = (alignment) => {
+exports.convertLegacyHorizontalAlignment = convertLegacyHorizontalAlignment;
+const convertLegacyVerticalAlignment = (alignment) => {
     return verticalAlignmentMap[alignment] || undefined;
 };
+exports.convertLegacyVerticalAlignment = convertLegacyVerticalAlignment;

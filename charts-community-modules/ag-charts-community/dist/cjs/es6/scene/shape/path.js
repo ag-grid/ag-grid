@@ -11,7 +11,7 @@ const shape_1 = require("./shape");
 const path2D_1 = require("../path2D");
 const node_1 = require("../node");
 function ScenePathChangeDetection(opts) {
-    const { redraw = node_1.RedrawType.MAJOR, changeCb, convertor } = opts || {};
+    const { redraw = node_1.RedrawType.MAJOR, changeCb, convertor } = opts !== null && opts !== void 0 ? opts : {};
     return node_1.SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
 exports.ScenePathChangeDetection = ScenePathChangeDetection;

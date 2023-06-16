@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -187,11 +187,6 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.getAllColumns = function () {
         gridOptionsValidator_1.logDeprecation('28.0', 'getAllColumns', 'getColumns');
         return this.getColumns();
-    };
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    ColumnApi.prototype.getOriginalColumnGroup = function (name) {
-        gridOptionsValidator_1.logDeprecation('27.0', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
-        return this.columnModel.getProvidedColumnGroup(name);
     };
     /** @deprecated v28 Use `getColumns` instead. */
     ColumnApi.prototype.getPrimaryColumns = function () {

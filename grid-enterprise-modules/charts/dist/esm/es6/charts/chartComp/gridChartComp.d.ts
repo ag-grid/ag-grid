@@ -1,5 +1,5 @@
-import { CellRange, ChartModel, ChartToolPanelName, ChartType, Component, IAggFunc, SeriesChartType } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
+import { CellRange, ChartModel, ChartToolPanelName, ChartType, Component, IAggFunc, SeriesChartType, UpdateChartParams } from "@ag-grid-community/core";
+import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { CrossFilteringContext } from "../chartService";
 export interface GridChartParams {
     chartId: string;
@@ -51,12 +51,11 @@ export declare class GridChartComp extends Component {
     private getBestDialogSize;
     private addMenu;
     private addTitleEditComp;
-    private update;
-    private shouldRecreateChart;
-    getCurrentChartType(): ChartType;
+    update(params?: UpdateChartParams): void;
+    private updateChart;
+    private chartTypeChanged;
     getChartModel(): ChartModel;
     getChartImageDataURL(fileFormat?: string): string;
-    updateChart(): void;
     private handleEmptyChart;
     downloadChart(dimensions?: {
         width: number;

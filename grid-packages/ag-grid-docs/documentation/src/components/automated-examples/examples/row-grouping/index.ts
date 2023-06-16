@@ -13,7 +13,7 @@ import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
-import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import { ScriptDebugger, ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
@@ -29,6 +29,8 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    getOverlay: () => HTMLElement;
+    getContainerScale?: () => number;
     additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
@@ -61,9 +63,22 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
     },
-    { field: 'previous', enableRowGroup: true },
-    { field: 'current', type: 'measure', enableRowGroup: true },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
+    {
+        field: 'previous',
+        enableRowGroup: true,
+        type: 'numericColumn',
+    },
+    {
+        field: 'current',
+        type: ['measure', 'numericColumn'],
+        enableRowGroup: true,
+    },
+    {
+        headerName: 'Gain-DX',
+        field: 'gainDx',
+        type: ['measure', 'numericColumn'],
+        enableRowGroup: true,
+    },
     { field: 'dealType', enableRowGroup: true },
     { field: 'portfolio', enableRowGroup: true },
 ];
@@ -84,11 +99,11 @@ const gridOptions: GridOptions = {
         measure: {
             aggFunc: 'sum',
             chartDataType: 'series',
-            cellClass: 'number',
             valueFormatter: numberCellFormatter,
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
     },
+    chartThemes: ['ag-default-dark'],
     animateRows: true,
     enableCharts: true,
     enableRangeSelection: true,
@@ -139,6 +154,8 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
+    getContainerScale,
+    getOverlay,
     additionalContextMenuItems,
     onStateChange,
     onGridReady,
@@ -150,6 +167,7 @@ export function createAutomatedRowGrouping({
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
+    let scriptDebugger: ScriptDebugger | undefined;
 
     const init = () => {
         gridDiv = document.querySelector(gridSelector) as HTMLElement;
@@ -173,7 +191,7 @@ export function createAutomatedRowGrouping({
             initWorker();
             startWorkerMessages();
 
-            const scriptDebugger = scriptDebuggerManager.add({
+            scriptDebugger = scriptDebuggerManager.add({
                 id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
             });
@@ -189,6 +207,8 @@ export function createAutomatedRowGrouping({
             scriptRunner = createScriptRunner({
                 id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
+                getContainerScale,
+                getOverlay,
                 mouse,
                 onStateChange(state) {
                     if (state === 'playing') {
@@ -235,10 +255,22 @@ export function createAutomatedRowGrouping({
         inactive: () => scriptRunner?.inactive(),
         currentState: () => scriptRunner?.currentState(),
         isInViewport: () => {
-            return isInViewport(gridDiv, visibilityThreshold);
+            return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
         setUpdateFrequency,
+        getDebugger: () => scriptDebugger,
     };
+}
+
+export function cleanUp() {
+    clearTimeout(restartScriptTimeout);
+    if (scriptRunner) {
+        scriptRunner.stop();
+    }
+
+    stopWorkerMessages();
+    dataWorker?.terminate();
+    gridOptions.api?.destroy();
 }
 
 /**
@@ -248,13 +280,6 @@ export function createAutomatedRowGrouping({
 if (import.meta.webpackHot) {
     // @ts-ignore
     import.meta.webpackHot.dispose(() => {
-        clearTimeout(restartScriptTimeout);
-        if (scriptRunner) {
-            scriptRunner.stop();
-        }
-
-        stopWorkerMessages();
-        dataWorker?.terminate();
-        gridOptions.api?.destroy();
+        cleanUp();
     });
 }

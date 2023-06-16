@@ -68,7 +68,7 @@ export declare class CellCtrl extends BeanStub {
     isForceWrapper(): boolean;
     private isIncludeControl;
     refreshShouldDestroy(): boolean;
-    startEditing(key?: string | null, charPress?: string | null, cellStartedEdit?: boolean, event?: KeyboardEvent | MouseEvent | null): void;
+    startEditing(key?: string | null, cellStartedEdit?: boolean, event?: KeyboardEvent | MouseEvent | null): void;
     private setEditing;
     stopRowOrCellEdit(cancel?: boolean): void;
     onPopupEditorClosed(): void;
@@ -95,7 +95,7 @@ export declare class CellCtrl extends BeanStub {
         newData?: boolean;
         forceRefresh?: boolean;
     }): void;
-    stopEditingAndFocus(suppressNavigateAfterEdit?: boolean): void;
+    stopEditingAndFocus(suppressNavigateAfterEdit?: boolean, shiftKey?: boolean): void;
     private navigateAfterEdit;
     flashCell(delays?: {
         flashDelay?: number | null;
@@ -114,7 +114,7 @@ export declare class CellCtrl extends BeanStub {
     getValueFormatted(): string;
     private addDomData;
     createEvent(domEvent: Event | null, eventType: string): CellEvent;
-    onKeyPress(event: KeyboardEvent): void;
+    processCharacter(event: KeyboardEvent): void;
     onKeyDown(event: KeyboardEvent): void;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     getGui(): HTMLElement;
@@ -133,7 +133,7 @@ export declare class CellCtrl extends BeanStub {
     refreshHandle(): void;
     getCellPosition(): CellPosition;
     isEditing(): boolean;
-    startRowOrCellEdit(key?: string | null, charPress?: string | null, event?: KeyboardEvent | MouseEvent | null): void;
+    startRowOrCellEdit(key?: string | null, event?: KeyboardEvent | MouseEvent | null): void;
     getRowCtrl(): RowCtrl;
     getRowPosition(): RowPosition;
     updateRangeBordersIfRangeCount(): void;

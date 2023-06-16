@@ -76,10 +76,12 @@ class CsvSerializingSession extends baseGridSerializingSession_1.BaseGridSeriali
         };
     }
     onNewBodyRowColumn(column, index, node) {
+        var _a;
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
+        const rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        this.result += this.putInQuotes((_a = rowCellValue.valueFormatted) !== null && _a !== void 0 ? _a : rowCellValue.value);
     }
     putInQuotes(value) {
         if (this.suppressQuotes) {

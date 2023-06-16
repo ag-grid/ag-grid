@@ -7,6 +7,7 @@ import {
     AgPieSeriesOptions,
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
+    AgColumnSeriesOptions,
 } from '../agChartOptions';
 
 type Transforms<
@@ -74,6 +75,31 @@ function yKeysMapping(p: string[] | string[][] | undefined, src: AgBarSeriesOpti
     return src.grouped ? p.map((v) => [v]) : [p];
 }
 
+function legendItemNamesMapping(
+    p: string[] | Record<string, string> | undefined,
+    src: AgBarSeriesOptions & { yKeys: string[] }
+): Record<string, string> {
+    if (p == null) {
+        return {};
+    }
+
+    if (!(p instanceof Array)) {
+        return p;
+    }
+
+    const yKeys = src.yKeys;
+    if (yKeys == null || is2dArray(yKeys)) {
+        throw new Error('AG Charts - legendItemNames and yKeys mismatching configuration.');
+    }
+
+    const result: Record<string, string> = {};
+    yKeys.forEach((k, i) => {
+        result[k] = p[i];
+    });
+
+    return result;
+}
+
 function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
     const result = {
         ...options,
@@ -84,6 +110,21 @@ function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
     return transform(result, {
         yNames: yNamesMapping,
         yKeys: yKeysMapping,
+        legendItemNames: legendItemNamesMapping,
+    }) as T;
+}
+
+function columnSeriesTransform<T extends AgColumnSeriesOptions>(options: T): T {
+    const result = {
+        ...options,
+    };
+    delete result['yKey'];
+    delete result['yName'];
+
+    return transform(result, {
+        yNames: yNamesMapping,
+        yKeys: yKeysMapping,
+        legendItemNames: legendItemNamesMapping,
     }) as T;
 }
 
@@ -93,7 +134,7 @@ type SeriesType<T extends SeriesTypes['type']> = T extends 'area'
     : T extends 'bar'
     ? AgBarSeriesOptions
     : T extends 'column'
-    ? AgBarSeriesOptions
+    ? AgColumnSeriesOptions
     : T extends 'histogram'
     ? AgHistogramSeriesOptions
     : T extends 'line'
@@ -114,7 +155,7 @@ const SERIES_TRANSFORMS: {
 } = {
     area: identityTransform,
     bar: barSeriesTransform,
-    column: barSeriesTransform,
+    column: columnSeriesTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,
@@ -123,7 +164,7 @@ const SERIES_TRANSFORMS: {
 };
 
 export function applySeriesTransform<S extends SeriesTypes>(options: S): S {
-    const type = options.type || 'line';
+    const type = options.type ?? 'line';
     const transform = SERIES_TRANSFORMS[type] as Function;
     return (transform ?? identityTransform)(options);
 }

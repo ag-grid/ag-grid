@@ -44,7 +44,12 @@ var TooltipManager = /** @class */ (function () {
         if (content == null) {
             content = (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.content;
         }
-        this.states[callerId] = { content: content, meta: meta };
+        if (!content) {
+            delete this.states[callerId];
+        }
+        else {
+            this.states[callerId] = { content: content, meta: meta };
+        }
         this.applyStates();
     };
     TooltipManager.prototype.updateExclusiveRect = function (callerId, area) {
@@ -112,9 +117,8 @@ var TooltipManager = /** @class */ (function () {
         var contentToApply = undefined;
         var metaToApply = undefined;
         // Last added entry wins.
-        ids.reverse()
-            .slice(0, 1)
-            .forEach(function (id) {
+        ids.reverse();
+        ids.slice(0, 1).forEach(function (id) {
             var _a;
             var _b = (_a = _this.states[id]) !== null && _a !== void 0 ? _a : {}, content = _b.content, meta = _b.meta;
             contentToApply = content;

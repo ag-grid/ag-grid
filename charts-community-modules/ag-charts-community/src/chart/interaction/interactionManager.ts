@@ -1,3 +1,4 @@
+import { Logger } from '../../util/logger';
 import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 
@@ -86,6 +87,9 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     private touchDown = false;
     private dragStartElement?: HTMLElement;
 
+    private enabled = true;
+    private pausers: string[] = [];
+
     public constructor(element: HTMLElement, doc = document) {
         super();
 
@@ -101,7 +105,11 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
 
         for (const type of WINDOW_EVENT_HANDLERS) {
-            window.addEventListener(type, this.eventHandler);
+            if (type === 'wheel') {
+                window.addEventListener(type, this.eventHandler, { passive: false });
+            } else {
+                window.addEventListener(type, this.eventHandler);
+            }
         }
 
         if (InteractionManager.interactionDocuments.indexOf(doc) < 0) {
@@ -122,12 +130,24 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
     }
 
+    resume(callerId: string) {
+        this.pausers = this.pausers.filter((id) => id !== callerId);
+        this.enabled = this.pausers.length <= 0;
+
+        return this.enabled;
+    }
+
+    pause(callerId: string) {
+        this.enabled = false;
+        this.pausers.push(callerId);
+    }
+
     private processEvent(event: SupportedEvent) {
         const types: InteractionTypes[] = this.decideInteractionEventTypes(event);
 
-        if (types.length > 0) {
+        if (types.length > 0 && this.enabled) {
             // Async dispatch to avoid blocking the event-processing thread.
-            this.dispatchEvent(event, types);
+            this.dispatchEvent(event, types).catch((e) => Logger.errorOnce(e));
         }
     }
 

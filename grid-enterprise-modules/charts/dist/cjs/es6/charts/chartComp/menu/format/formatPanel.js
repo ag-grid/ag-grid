@@ -46,14 +46,15 @@ class FormatPanel extends core_1.Component {
     }
     init() {
         this.createPanels();
-        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, () => this.createPanels(true));
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_API_UPDATE, () => this.createPanels(false));
     }
-    createPanels() {
+    createPanels(reuse) {
         var _a;
         const chartType = this.chartController.getChartType();
         const isGrouping = this.chartController.isGrouping();
         const seriesType = seriesTypeMapper_1.getSeriesType(chartType);
-        if (chartType === this.chartType && isGrouping === this.isGrouping) {
+        if (reuse && chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
             return;
         }

@@ -11,6 +11,17 @@ import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../uti
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
+import { BaseAxisTick } from '../../axis';
+class NumberAxisTick extends BaseAxisTick {
+    constructor() {
+        super(...arguments);
+        this.maxSpacing = NaN;
+    }
+}
+__decorate([
+    Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing'))),
+    Default(NaN)
+], NumberAxisTick.prototype, "maxSpacing", void 0);
 export class NumberAxis extends ChartAxis {
     constructor(moduleCtx, scale = new LinearScale()) {
         super(moduleCtx, scale);
@@ -19,9 +30,10 @@ export class NumberAxis extends ChartAxis {
         scale.strictClampByDefault = true;
     }
     normaliseDataDomain(d) {
+        var _a;
         const { min, max } = this;
         if (d.length > 2) {
-            d = extent(d) || [NaN, NaN];
+            d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];
@@ -42,6 +54,9 @@ export class NumberAxis extends ChartAxis {
             Logger.warnOnce('data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
             return String(datum);
         }
+    }
+    createTick() {
+        return new NumberAxisTick();
     }
     updateSecondaryAxisTicks(primaryTickCount) {
         if (this.dataDomain == null) {

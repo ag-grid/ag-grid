@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -56,16 +58,18 @@ var FormatPanel = /** @class */ (function (_super) {
         return _this;
     }
     FormatPanel.prototype.init = function () {
+        var _this = this;
         this.createPanels();
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, function () { return _this.createPanels(true); });
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, function () { return _this.createPanels(false); });
     };
-    FormatPanel.prototype.createPanels = function () {
+    FormatPanel.prototype.createPanels = function (reuse) {
         var _this = this;
         var _a;
         var chartType = this.chartController.getChartType();
         var isGrouping = this.chartController.isGrouping();
         var seriesType = getSeriesType(chartType);
-        if (chartType === this.chartType && isGrouping === this.isGrouping) {
+        if (reuse && chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
             return;
         }

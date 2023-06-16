@@ -91,8 +91,11 @@ class ClientSideNodeManager {
     updateSelection(nodesToUnselect, source) {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true, source);
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                source,
             });
         }
         // we do this regardless of nodes to unselect or not, as it's possible
@@ -192,7 +195,7 @@ class ClientSideNodeManager {
         });
     }
     lookupRowNode(data) {
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         let rowNode;
         if (getRowIdFunc) {
             // find rowNode using id

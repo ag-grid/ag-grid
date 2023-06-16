@@ -1,15 +1,18 @@
 import { Group } from '../../scene/group';
-import { LegendDatum } from '../legendDatum';
+import { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { AnimationManager } from '../interaction/animationManager';
+import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { DatumPropertyDefinition } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { ModuleContext } from '../../util/module';
 /**
  * Processed series datum used in node selections,
  * contains information used to render pie sectors, bars, markers, etc.
@@ -38,7 +41,12 @@ export declare type SeriesNodePickMatch = {
 };
 export declare function keyProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
 export declare function valueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
-export declare function sumProperties<K>(props: K[]): OutputPropertyDefinition<K>;
+export declare function rangedValueProperty<K>(propName: K, opts?: Partial<DatumPropertyDefinition<K>> & {
+    min?: number | undefined;
+    max?: number | undefined;
+}): DatumPropertyDefinition<K>;
+export declare function accumulativeValueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function trailingAccumulatedValueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
 export declare class SeriesNodeBaseClickEvent<Datum extends {
     datum: any;
 }> implements TypedEvent {
@@ -46,9 +54,6 @@ export declare class SeriesNodeBaseClickEvent<Datum extends {
     readonly datum: any;
     readonly event: Event;
     readonly seriesId: string;
-    private readonly _series;
-    /** @deprecated */
-    get series(): Series<SeriesNodeDataContext<SeriesNodeDatum, SeriesNodeDatum>>;
     constructor(nativeEvent: Event, datum: Datum, series: Series);
 }
 export declare class SeriesNodeClickEvent<Datum extends {
@@ -60,7 +65,7 @@ export declare class SeriesNodeDoubleClickEvent<Datum extends {
 }> extends SeriesNodeBaseClickEvent<Datum> {
     readonly type = "nodeDoubleClick";
 }
-declare class SeriesItemHighlightStyle {
+export declare class SeriesItemHighlightStyle {
     fill?: string;
     fillOpacity?: number;
     stroke?: string;
@@ -81,6 +86,7 @@ export declare class HighlightStyle {
 }
 export declare class SeriesTooltip {
     enabled: boolean;
+    showArrow?: boolean;
     interaction?: SeriesTooltipInteraction;
     readonly position: TooltipPosition;
 }
@@ -107,13 +113,14 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    animationManager?: AnimationManager;
+    chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
     directions: ChartAxisDirection[];
-    directionKeys: {
-        [key in ChartAxisDirection]?: string[];
-    };
+    private directionKeys;
+    private directionNames;
     protected nodeDataRefresh: boolean;
     abstract tooltip: SeriesTooltip;
     protected _data?: any[];
@@ -132,18 +139,24 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
         outer: number;
     };
     _declarationOrder: number;
-    constructor({ useSeriesGroupLayer, useLabelLayer, pickModes, directionKeys, }?: {
-        useSeriesGroupLayer?: boolean | undefined;
-        useLabelLayer?: boolean | undefined;
-        pickModes?: SeriesNodePickMode[] | undefined;
+    protected readonly ctx: ModuleContext;
+    constructor(opts: {
+        moduleCtx: ModuleContext;
+        useSeriesGroupLayer?: boolean;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
         directionKeys?: {
-            x?: string[] | undefined;
-            y?: string[] | undefined;
-        } | undefined;
+            [key in ChartAxisDirection]?: string[];
+        };
+        directionNames?: {
+            [key in ChartAxisDirection]?: string[];
+        };
     });
+    addChartEventListeners(): void;
     destroy(): void;
-    set grouped(g: boolean);
+    private getDirectionValues;
     getKeys(direction: ChartAxisDirection): string[];
+    getNames(direction: ChartAxisDirection): (string | undefined)[];
     protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection;
     abstract getDomain(direction: ChartAxisDirection): any[];
     abstract processData(): Promise<void>;
@@ -176,11 +189,11 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     fireNodeDoubleClickEvent(event: Event, _datum: C['nodeData'][number]): void;
     protected getNodeClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeClickEvent<any>;
     protected getNodeDoubleClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeDoubleClickEvent<any>;
-    abstract getLegendData(): LegendDatum[];
-    toggleSeriesItem(_itemId: any, enabled: boolean): void;
-    toggleOtherSeriesItems(_seriesToggled: Series<any>, _datumToggled: any, _enabled?: boolean, _suggestedEnabled?: boolean): void;
+    abstract getLegendData(): ChartLegendDatum[];
+    protected toggleSeriesItem(_itemId: any, enabled: boolean): void;
     isEnabled(): boolean;
     readonly highlightStyle: HighlightStyle;
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[];
 }
 export {};
+//# sourceMappingURL=series.d.ts.map

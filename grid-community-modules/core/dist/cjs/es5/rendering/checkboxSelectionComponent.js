@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -43,6 +45,7 @@ var events_1 = require("../events");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var rowNode_1 = require("../entities/rowNode");
 var event_1 = require("../utils/event");
+var aria_1 = require("../utils/aria");
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -50,6 +53,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
+        aria_1.setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;
@@ -65,24 +69,18 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var translate = this.localeService.getLocaleTextFunc();
         var state = this.rowNode.isSelected();
-        var stateName = state === undefined
-            ? translate('ariaIndeterminate', 'indeterminate')
-            : (state === true
-                ? translate('ariaChecked', 'checked')
-                : translate('ariaUnchecked', 'unchecked'));
+        var stateName = aria_1.getAriaCheckboxStateName(translate, state);
         var ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
         this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function (event) {
         var groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
-        return updatedCount;
+        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
     };
     CheckboxSelectionComponent.prototype.onUncheckedClicked = function (event) {
         var groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
-        return updatedCount;
+        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
         var _this = this;

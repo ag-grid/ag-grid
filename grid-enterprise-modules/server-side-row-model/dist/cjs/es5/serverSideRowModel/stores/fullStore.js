@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -67,9 +69,7 @@ var FullStore = /** @class */ (function (_super) {
         this.destroyRowNodes();
         for (var i = 0; i < loadingRowsCount; i++) {
             var loadingRowNode = this.blockUtils.createRowNode({
-                field: this.groupField,
-                group: this.groupLevel,
-                leafGroup: this.leafGroup,
+                field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
             });
             if (failedLoad) {
@@ -107,9 +107,7 @@ var FullStore = /** @class */ (function (_super) {
     };
     FullStore.prototype.createDataNode = function (data, index) {
         var rowNode = this.blockUtils.createRowNode({
-            field: this.groupField,
-            group: this.groupLevel,
-            leafGroup: this.leafGroup,
+            field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
             level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
         });
         if (index != null) {
@@ -172,7 +170,7 @@ var FullStore = /** @class */ (function (_super) {
             if (!nodesToRecycle) {
                 return undefined;
             }
-            var getRowIdFunc = _this.gridOptionsService.getRowIdFunc();
+            var getRowIdFunc = _this.gridOptionsService.getCallback('getRowId');
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -231,7 +229,7 @@ var FullStore = /** @class */ (function (_super) {
     };
     FullStore.prototype.filterRowNodes = function () {
         var _this = this;
-        var serverIsFiltering = this.storeUtils.isServerSideFilterAllLevels() || this.storeUtils.isServerSideFilterOnServer();
+        var serverIsFiltering = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups() || this.storeUtils.isServerSideFilterOnServer();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         var groupLevel = this.groupLevel;
@@ -384,7 +382,7 @@ var FullStore = /** @class */ (function (_super) {
     FullStore.prototype.refreshAfterFilter = function (params) {
         var serverIsFiltering = this.storeUtils.isServerSideFilterOnServer();
         var storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
-        var serverIsFilteringAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        var serverIsFilteringAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
             this.refreshStore(true);
             this.sortRowNodes();
@@ -447,8 +445,12 @@ var FullStore = /** @class */ (function (_super) {
     FullStore.prototype.updateSelection = function (nodesToUnselect) {
         var selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(function (rowNode) {
-                rowNode.setSelected(false, false, true, 'rowDataChanged');
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                clearSelection: false,
+                source: 'rowDataChanged',
             });
             var event_1 = {
                 type: core_1.Events.EVENT_SELECTION_CHANGED,
@@ -526,7 +528,7 @@ var FullStore = /** @class */ (function (_super) {
         });
     };
     FullStore.prototype.lookupRowNode = function (data) {
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         var rowNode;
         if (getRowIdFunc != null) {
             // find rowNode using id
@@ -644,6 +646,9 @@ var FullStore = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('sortController')
     ], FullStore.prototype, "sortController", void 0);
+    __decorate([
+        core_1.Autowired('selectionService')
+    ], FullStore.prototype, "selectionService", void 0);
     __decorate([
         core_1.Autowired('ssrmNodeManager')
     ], FullStore.prototype, "nodeManager", void 0);

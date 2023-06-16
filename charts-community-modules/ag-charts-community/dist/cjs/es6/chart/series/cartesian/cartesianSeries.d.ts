@@ -13,6 +13,8 @@ import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { DataModel, ProcessedData } from '../../data/dataModel';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { ModuleContext } from '../../../util/module';
 declare type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, ContextType['nodeData'][number]>;
 declare type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, ContextType['labelData'][number]>;
 export interface CartesianSeriesNodeDatum extends SeriesNodeDatum {
@@ -23,7 +25,6 @@ interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     hasMarkers: boolean;
-    renderLayerPerSubSeries: boolean;
 }
 export declare class CartesianSeriesNodeBaseClickEvent<Datum extends {
     datum: any;
@@ -51,6 +52,7 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     private subGroups;
     private subGroupId;
     private readonly opts;
+    private animationState;
     /**
      * The assumption is that the values will be reset (to `true`)
      * in the {@link yKeys} setter.
@@ -58,12 +60,17 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     protected readonly seriesItemEnabled: Map<string, boolean>;
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
-    protected constructor(opts?: Partial<SeriesOpts> & {
+    protected constructor(opts: Partial<SeriesOpts> & {
+        moduleCtx: ModuleContext;
         pickModes?: SeriesNodePickMode[];
         directionKeys?: {
             [key in ChartAxisDirection]?: string[];
         };
+        directionNames?: {
+            [key in ChartAxisDirection]?: string[];
+        };
     });
+    addChartEventListeners(): void;
     destroy(): void;
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will
@@ -102,25 +109,13 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
         datum: CartesianSeriesNodeDatum;
         distance: number;
     } | undefined;
-    toggleSeriesItem(itemId: string, enabled: boolean): void;
+    onLegendItemClick(event: LegendItemClickChartEvent): void;
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent): void;
+    protected toggleSeriesItem(itemId: string, enabled: boolean): void;
     isEnabled(): boolean;
     protected isPathOrSelectionDirty(): boolean;
     getLabelData(): PointLabelDatum[];
     protected isAnySeriesVisible(): boolean;
-    protected validateXYData(xKey: string, yKey: string, data: any[], xAxis: ChartAxis, yAxis: ChartAxis, xData: number[], yData: any[], yDepth?: number): boolean;
-    protected updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        contextData: C;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void>;
-    protected updatePathNodes(_opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void>;
     protected updateHighlightSelectionItem(opts: {
         item?: C['nodeData'][number];
         highlightSelection: NodeDataSelection<N, C>;
@@ -149,6 +144,29 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
         isHighlight: boolean;
         seriesIdx: number;
     }): Promise<void>;
+    protected animateEmptyUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+        labelSelections: Array<LabelDataSelection<Text, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }): void;
+    protected animateReadyUpdate(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }): void;
+    protected animateReadyHighlight(_data: NodeDataSelection<N, C>): void;
+    protected animateReadyHighlightMarkers(_data: NodeDataSelection<Marker, C>): void;
+    protected animateReadyResize(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+    }): void;
     protected abstract updateLabelSelection(opts: {
         labelData: C['labelData'];
         labelSelection: LabelDataSelection<Text, C>;
@@ -164,3 +182,4 @@ export declare class CartesianSeriesMarker extends SeriesMarker {
     formatter?: (params: AgCartesianSeriesMarkerFormatterParams<any>) => AgCartesianSeriesMarkerFormat;
 }
 export {};
+//# sourceMappingURL=cartesianSeries.d.ts.map

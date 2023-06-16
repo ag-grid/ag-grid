@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -68,10 +70,11 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
         }));
     };
     HeaderGroupCellCtrl.prototype.resizeLeafColumnsToFit = function (source) {
-        var _a, _b;
-        // AG-8205 Temp null check to avoid throwing when a component has not been setup yet (React 18)
-        (_a = this.groupResizeFeature) === null || _a === void 0 ? void 0 : _a.onResizeStart(false);
-        (_b = this.groupResizeFeature) === null || _b === void 0 ? void 0 : _b.resizeLeafColumnsToFit(source);
+        // check to avoid throwing when a component has not been setup yet (React 18)
+        if (!this.groupResizeFeature) {
+            return;
+        }
+        this.groupResizeFeature.resizeLeafColumnsToFit(source);
     };
     HeaderGroupCellCtrl.prototype.setupUserComp = function () {
         var _this = this;

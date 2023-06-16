@@ -19,10 +19,11 @@ export class SideBarButtonComp extends Component {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
     createTemplate() {
         const res = /* html */ `<div class="ag-side-button" role="presentation">
-                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" class="ag-side-button-button">
+                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
                     <span ref ="eLabel" class="ag-side-button-label"></span>
                 </button>
@@ -43,6 +44,10 @@ export class SideBarButtonComp extends Component {
     }
     setSelected(selected) {
         this.addOrRemoveCssClass('ag-selected', selected);
+        _.setAriaExpanded(this.eToggleButton, selected);
+    }
+    getButtonElement() {
+        return this.eToggleButton;
     }
 }
 SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';

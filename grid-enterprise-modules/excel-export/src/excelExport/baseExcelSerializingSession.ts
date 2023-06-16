@@ -44,6 +44,9 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     sheetName: string;
+    suppressColumnOutline?: boolean;
+    suppressRowOutline?: boolean;
+    rowGroupExpandState?:  'expanded' | 'collapsed' | 'match';
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
@@ -81,13 +84,18 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell?: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
-    protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
+    protected abstract createCell(styleId: string | null, type: T, value: string, valueFormatted?: string | null): ExcelCell;
     protected abstract addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelRow[]): void {
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
+            let outlineLevel: number | undefined;
+
+            if (!this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
 
             const rowObj: ExcelRow = {
                 height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
@@ -115,7 +123,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
                     return this.createCell(excelStyleId, type, value);
                 }),
-                outlineLevel: row.outlineLevel || undefined
+                outlineLevel
             };
 
             if (row.collapsed != null) { rowObj.collapsed = row.collapsed; }
@@ -146,8 +154,52 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     }
 
-    public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+    public onNewBodyRow(node?: RowNode): RowAccumulator {
+        const rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+
+        if (node) {
+            this.addRowOutlineIfNecessary(node);
+        }
+
+        return rowAccumulator;
+    }
+
+    private addRowOutlineIfNecessary(node: RowNode): void {
+        const { gridOptionsService, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
+        const isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
+
+        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) { return; }
+
+        const padding = node.footer ? 1 : 0;
+        const currentRow = _.last(this.rows);
+
+        currentRow.outlineLevel = node.level + padding;
+
+        if (rowGroupExpandState === 'expanded') { return; }
+
+        const collapseAll = rowGroupExpandState === 'collapsed';
+
+        if (node.isExpandable()) {
+            const isExpanded = !collapseAll && node.expanded;
+            currentRow.collapsed = !isExpanded;
+        }
+
+        currentRow.hidden = 
+            // always show the node if there is no parent to be expanded
+            !!node.parent &&
+            // or if it is a child of the root node
+            node.parent.level !== -1 &&
+            (collapseAll || this.isAnyParentCollapsed(node.parent));
+    }
+
+    private isAnyParentCollapsed(node?: RowNode | null): boolean {
+        while (node && node.level !== -1) {
+            if (!node.expanded) { return true; }
+
+            node = node.parent;
+        }
+
+        return false;
     }
 
     public prepare(columnsToExport: Column[]): void {
@@ -179,6 +231,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
     protected isNumerical(value: any): boolean {
+        if (typeof value === 'bigint') { return true; }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     }
 
@@ -224,16 +277,14 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         let skipCols = 0;
+
         return (column, index, node) => {
             if (skipCols > 0) {
                 skipCols -= 1;
                 return;
             }
-            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
-                const padding = node.footer ? 1 : 0;
-                _.last(this.rows).outlineLevel = node.level + padding;
-            }
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
@@ -245,7 +296,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             } else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -41,6 +43,7 @@ var GridCtrl = /** @class */ (function (_super) {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
+        this.eGui.setAttribute('grid-id', this.context.getGridId());
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
             getContainer: function () { return _this.eGui; },
@@ -66,16 +69,16 @@ var GridCtrl = /** @class */ (function (_super) {
         return ((_a = el === null || el === void 0 ? void 0 : el.getAttribute('row-id')) === null || _a === void 0 ? void 0 : _a.startsWith('detail')) || false;
     };
     GridCtrl.prototype.showDropZones = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
+        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
     };
     GridCtrl.prototype.showSideBar = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
     };
     GridCtrl.prototype.showStatusBar = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
     };
     GridCtrl.prototype.showWatermark = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     };
     GridCtrl.prototype.onGridSizeChanged = function () {
         var event = {

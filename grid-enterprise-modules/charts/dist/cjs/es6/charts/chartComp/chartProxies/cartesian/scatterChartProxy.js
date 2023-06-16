@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterChartProxy = void 0;
 const cartesianChartProxy_1 = require("./cartesianChartProxy");
-const chartDataModel_1 = require("../../chartDataModel");
+const chartDataModel_1 = require("../../model/chartDataModel");
 class ScatterChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     constructor(params) {
         super(params);

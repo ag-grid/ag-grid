@@ -4,6 +4,7 @@
 a {
     text-decoration: none;
     color: var(--link-color);
+    transition: color $default-transition-timing;
 
     &:hover {
         color: var(--link-hover-color);
@@ -20,7 +21,7 @@ a {
 }
 
 code {
-    font-size: 0.9rem;
+    font-size: 0.875em;
     padding: 0 0.2em;
     font-family: var(--monospace-font-family);
     white-space: normal;
@@ -31,15 +32,23 @@ code {
 }
 
 kbd {
-    color: var(--text-color); // Bootstrap conflict
-
     display: inline-block;
     margin: 0.1em 0.1em;
     padding: 0.1em 0.6em;
+    font-size: 0.875em;
     font-family: var(--font-family);
     border-radius: var(--border-radius);
-    background-color: var(--inline-element-background-color);
+    background-color: white;
     border: 1px solid #ccc;
     box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, 'white');
     text-shadow: 0 1px 0 map.get($abstract-colors, 'white');
+}
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+svg {
+    overflow: hidden;
 }

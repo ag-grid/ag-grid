@@ -4,42 +4,8 @@ var web = require('solid-js/web');
 var agGridCommunity = require('ag-grid-community');
 var solidJs = require('solid-js');
 
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-function _toPrimitive(input, hint) {
-  if (typeof input !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (typeof res !== "object") return res;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (hint === "string" ? String : Number)(input);
-}
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return typeof key === "symbol" ? key : String(key);
-}
-
 class SolidCompWrapper {
   constructor(SolidCompClass, portalManager) {
-    _defineProperty(this, "eGui", void 0);
-    _defineProperty(this, "SolidCompClass", void 0);
-    _defineProperty(this, "portalManager", void 0);
-    _defineProperty(this, "portalInfo", void 0);
-    _defineProperty(this, "instance", void 0);
     this.SolidCompClass = SolidCompClass;
     this.portalManager = portalManager;
   }
@@ -79,7 +45,6 @@ class SolidCompWrapper {
 class SolidCompWrapperFactory extends agGridCommunity.BaseComponentWrapper {
   constructor(portalManager) {
     super();
-    _defineProperty(this, "portalManager", void 0);
     this.portalManager = portalManager;
   }
   createWrapper(SolidComponentClass) {
@@ -94,8 +59,8 @@ const classesList = (...list) => {
   return filtered.join(' ');
 };
 class CssClasses {
+  classesMap = {};
   constructor(...initialClasses) {
-    _defineProperty(this, "classesMap", {});
     initialClasses.forEach(className => {
       this.classesMap[className] = true;
     });
@@ -408,12 +373,12 @@ const GroupCellRenderer = props => {
 class SolidFrameworkOverrides extends agGridCommunity.VanillaFrameworkOverrides {
   constructor() {
     super();
-    _defineProperty(this, "frameworkComponents", {
-      agGroupCellRenderer: GroupCellRenderer,
-      agGroupRowRenderer: GroupCellRenderer,
-      agDetailCellRenderer: DetailCellRenderer
-    });
   }
+  frameworkComponents = {
+    agGroupCellRenderer: GroupCellRenderer,
+    agGroupRowRenderer: GroupCellRenderer,
+    agDetailCellRenderer: DetailCellRenderer
+  };
   frameworkComponent(name) {
     return this.frameworkComponents[name];
   }
@@ -521,7 +486,7 @@ const HeaderCellComp = props => {
   })();
 };
 
-const _tmpl$$c = /*#__PURE__*/web.template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" tabindex="-1">`);
+const _tmpl$$c = /*#__PURE__*/web.template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
 const HeaderFilterCellComp = props => {
   const [getCssClasses, setCssClasses] = solidJs.createSignal(new CssClasses());
   const [getCssBodyClasses, setBodyCssClasses] = solidJs.createSignal(new CssClasses());
@@ -662,13 +627,7 @@ const HeaderGroupCellComp = props => {
     if (userCompDetails == null) {
       return;
     }
-    let userCompDomElement = undefined;
-    eGui.childNodes.forEach(node => {
-      if (node != null && node !== eResize) {
-        userCompDomElement = node;
-      }
-    });
-    userCompDomElement && ctrl.setDragSource(userCompDomElement);
+    ctrl.setDragSource(eGui);
   });
   const style = solidJs.createMemo(() => ({
     width: getWidth()
@@ -1810,7 +1769,7 @@ const GridBodyComp = () => {
       updateLayoutClasses: setLayoutClass,
       setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
       setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-      setCellSelectableCss: setCellSelectableCss,
+      setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
       setBodyViewportWidth: setBodyViewportWidth,
       registerBodyViewportResizeListener: listener => {
         const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport, listener);
@@ -1821,7 +1780,7 @@ const GridBodyComp = () => {
     solidJs.onCleanup(() => context.destroyBean(ctrl));
 
     // fixme - should not be in a timeout,
-    // was becusae we need GridHeaderComp to be created first
+    // was because we need GridHeaderComp to be created first
     setTimeout(() => ctrl.setComp(compProxy, eRoot, eBodyViewport, eTop, eBottom, eStickyTop), 0);
   });
   const getRootClasses = solidJs.createMemo(() => classesList('ag-root', 'ag-unselectable', getMovingCss(), getLayoutClass()));

@@ -25,11 +25,13 @@ export default {
         getInitialValue() {
             let startValue = this.params.value;
 
-            const isBackspace = this.params.eventKey === KEY_BACKSPACE;
+            const eventKey = this.params.eventKey;
+            const isBackspace = eventKey === KEY_BACKSPACE;
+
             if (isBackspace) {
                 startValue = '';
-            } else if (this.params.charPress) {
-                startValue = this.params.charPress;
+            } else if (eventKey && eventKey.length === 1) {
+                startValue = eventKey;
             }
 
             if (startValue !== null && startValue !== undefined) {

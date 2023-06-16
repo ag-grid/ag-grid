@@ -14,7 +14,7 @@ export declare class SelectAllFeature extends BeanStub {
     private currentPageOnly;
     private cbSelectAll;
     constructor(column: Column);
-    onSpaceKeyPressed(e: KeyboardEvent): void;
+    onSpaceKeyDown(e: KeyboardEvent): void;
     getCheckboxGui(): HTMLElement;
     setComp(ctrl: HeaderCellCtrl): void;
     private showOrHideSelectAll;

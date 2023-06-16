@@ -7,3 +7,4 @@ export declare const thursday: CountableTimeInterval;
 export declare const friday: CountableTimeInterval;
 export declare const saturday: CountableTimeInterval;
 export default sunday;
+//# sourceMappingURL=week.d.ts.map

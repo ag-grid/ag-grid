@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -16,6 +16,7 @@ import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
+import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria';
 export class CheckboxSelectionComponent extends Component {
     constructor() {
         super(/* html*/ `
@@ -25,6 +26,7 @@ export class CheckboxSelectionComponent extends Component {
     }
     postConstruct() {
         this.eCheckbox.setPassive(true);
+        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
     getCheckboxId() {
         return this.eCheckbox.getInputElement().id;
@@ -40,24 +42,18 @@ export class CheckboxSelectionComponent extends Component {
     onSelectionChanged() {
         const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = state === undefined
-            ? translate('ariaIndeterminate', 'indeterminate')
-            : (state === true
-                ? translate('ariaChecked', 'checked')
-                : translate('ariaUnchecked', 'unchecked'));
+        const stateName = getAriaCheckboxStateName(translate, state);
         const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
     onCheckedClicked(event) {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-        return updatedCount;
+        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
     onUncheckedClicked(event) {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-        return updatedCount;
+        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
     init(params) {
         this.rowNode = params.rowNode;

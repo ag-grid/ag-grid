@@ -150,10 +150,9 @@ class LogScale extends continuousScale_1.ContinuousScale {
         if (count === Infinity) {
             return specifier;
         }
-        if (count == null) {
-            count = 10;
+        if (ticks == null) {
+            this.ticks();
         }
-        ticks = ticks !== null && ticks !== void 0 ? ticks : this.ticks();
         return (d) => {
             return specifier(d);
         };

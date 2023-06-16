@@ -15,7 +15,9 @@ export declare class SideBarComp extends Component implements ISideBar {
     private setSideBarDef;
     getDef(): SideBarDef | undefined;
     setSideBarPosition(position?: 'left' | 'right'): this;
-    private setupToolPanels;
+    private createToolPanelsAndSideButtons;
+    private validateDef;
+    private createToolPanelAndSideButton;
     refresh(): void;
     openToolPanel(key: string | undefined, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     getToolPanelInstance(key: string): IToolPanel | undefined;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -26,9 +26,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
@@ -172,8 +173,7 @@ var Column = /** @class */ (function () {
     Column.prototype.initTooltip = function () {
         this.tooltipEnabled = exists(this.colDef.tooltipField) ||
             exists(this.colDef.tooltipValueGetter) ||
-            exists(this.colDef.tooltipComponent) ||
-            exists(this.colDef.tooltipComponentFramework);
+            exists(this.colDef.tooltipComponent);
     };
     Column.prototype.resetActualWidth = function (source) {
         if (source === void 0) { source = 'api'; }
@@ -199,7 +199,7 @@ var Column = /** @class */ (function () {
     Column.prototype.isFilterAllowed = function () {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        var filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
+        var filterDefined = !!this.colDef.filter;
         return filterDefined;
     };
     Column.prototype.isFieldContainsDots = function () {
@@ -224,15 +224,15 @@ var Column = /** @class */ (function () {
             }, key);
         }
         var usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
+        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             var itemsUsed = rowGroupingItems.filter(function (x) { return exists(colDefAny[x]); });
             if (itemsUsed.length > 0) {
-                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(function (i) { return 'colDef.' + i; }).join(', '));
+                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(function (i) { return 'colDef.' + i; }).join(', '), this.gridOptionsService.getGridId());
             }
         }
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor);
+            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
         if (this.gridOptionsService.isTreeData()) {
             var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
@@ -247,11 +247,11 @@ var Column = /** @class */ (function () {
                 var enterpriseMenuTabs_1 = ['columnsMenuTab', 'generalMenuTab'];
                 var itemsUsed = enterpriseMenuTabs_1.filter(function (x) { return colDefAny.menuTabs.includes(x); });
                 if (itemsUsed.length > 0) {
-                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, "menuTab(s): " + itemsUsed.map(function (t) { return "'" + t + "'"; }).join());
+                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, "menuTab(s): " + itemsUsed.map(function (t) { return "'" + t + "'"; }).join(), this.gridOptionsService.getGridId());
                 }
                 colDefAny.menuTabs.forEach(function (tab) {
                     if (!enterpriseMenuTabs_1.includes(tab) && !communityMenuTabs_1.includes(tab)) {
-                        warnOnce("AG Grid: '" + tab + "' is not valid for 'colDef.menuTabs'. Valid values are: " + __spread(communityMenuTabs_1, enterpriseMenuTabs_1).map(function (t) { return "'" + t + "'"; }).join() + ".", 'wrongValue_menuTabs_' + tab);
+                        warnOnce("AG Grid: '" + tab + "' is not valid for 'colDef.menuTabs'. Valid values are: " + __spreadArray(__spreadArray([], __read(communityMenuTabs_1)), __read(enterpriseMenuTabs_1)).map(function (t) { return "'" + t + "'"; }).join() + ".", 'wrongValue_menuTabs_' + tab);
                     }
                 });
             }
@@ -260,16 +260,13 @@ var Column = /** @class */ (function () {
             }
         }
         if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
+            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
+            ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
-        }
-        if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
-            warnOnce('AG Grid: pinnedRowCellRenderer[Params,Framework] no longer exist. Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
         if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
             warnOnce("AG Grid: '" + colDefAny.columnGroupShow + "' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null", 'columnGroupShow_invalid');
@@ -512,7 +509,8 @@ var Column = /** @class */ (function () {
         return this.visible;
     };
     Column.prototype.isSpanHeaderHeight = function () {
-        return !!this.getColDef().spanHeaderHeight;
+        var colDef = this.getColDef();
+        return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
     };
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults

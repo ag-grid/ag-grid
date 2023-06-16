@@ -8,10 +8,10 @@
         "altText": "AG Grid Enterprise License"
       },
       "keyPoints": [
-        "Community MIT License.",
-        "Single App License.",
-        "Multiple App License.",
-        "Deployment License."
+        "Community MIT License",
+        "Single App License",
+        "Multiple App License",
+        "Deployment License"
       ],
       "runningTime": "4:42"
     },
@@ -23,10 +23,10 @@
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns.",
-        "Simple Grid Properties.",
-        "Use Grid's API.",
-        "Listen to Grid Events."
+        "Set up Rows and Columns",
+        "Simple Grid Properties",
+        "Use Grid's API",
+        "Listen to Grid Events"
       ],
       "runningTime": "6:43"
     },
@@ -38,7 +38,7 @@
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
-        "Configure AG Grid Enterprise."
+        "Configure AG Grid Enterprise"
       ],
       "runningTime": "3:21"
     },
@@ -50,9 +50,9 @@
         "altText": "JavaScript Cell Renderers"
       },
       "keyPoints": [
-        "Cell Renderers.",
-        "Cell Renderer Params.",
-        "Cell Renderer Selector."
+        "Cell Renderers",
+        "Cell Renderer Params",
+        "Cell Renderer Selector"
       ],
       "runningTime": "7:53"
     },
@@ -108,10 +108,10 @@
         "altText": "AG Grid Enterprise License"
       },
       "keyPoints": [
-        "Community MIT License.",
-        "Single App License.",
-        "Multiple App License.",
-        "Deployment License."
+        "Community MIT License",
+        "Single App License",
+        "Multiple App License",
+        "Deployment License"
       ],
       "runningTime": "4:42"
     },
@@ -123,10 +123,10 @@
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns.",
-        "Simple Grid Properties.",
-        "Use Grid's API.",
-        "Listen to Grid Events."
+        "Set up Rows and Columns",
+        "Simple Grid Properties",
+        "Use Grid's API",
+        "Listen to Grid Events"
       ],
       "runningTime": "7:24"
     },
@@ -138,7 +138,7 @@
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
-        "Configure AG Grid Enterprise."
+        "Configure AG Grid Enterprise"
       ],
       "runningTime": "4:42"
     },
@@ -150,9 +150,9 @@
         "altText": "React Cell Renderers"
       },
       "keyPoints": [
-        "Cell Renderers.",
-        "Cell Renderer Params.",
-        "Cell Renderer Selector."
+        "Cell Renderers",
+        "Cell Renderer Params",
+        "Cell Renderer Selector"
       ],
       "runningTime": "7:53"
     },
@@ -164,9 +164,9 @@
         "altText": "React Rendering"
       },
       "keyPoints": [
-        "React Rendering.",
-        "React Developer Tools.",
-        "Grid Component Hierarchy."
+        "React Rendering",
+        "React Developer Tools",
+        "Grid Component Hierarchy"
       ],
       "runningTime": "4:09"
     },
@@ -293,10 +293,10 @@
         "altText": "AG Grid Enterprise License"
       },
       "keyPoints": [
-        "Community MIT License.",
-        "Single App License.",
-        "Multiple App License.",
-        "Deployment License."
+        "Community MIT License",
+        "Single App License",
+        "Multiple App License",
+        "Deployment License"
       ],
       "runningTime": "4:42"
     },
@@ -308,10 +308,10 @@
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns.",
-        "Simple Grid Properties.",
-        "Use Grid's API.",
-        "Listen to Grid Events."
+        "Set up Rows and Columns",
+        "Simple Grid Properties",
+        "Use Grid's API",
+        "Listen to Grid Events"
       ],
       "runningTime": "8:01"
     },
@@ -323,7 +323,7 @@
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
-        "Configure AG Grid Enterprise."
+        "Configure AG Grid Enterprise"
       ],
       "runningTime": "4:37"
     },
@@ -335,9 +335,9 @@
         "altText": "Angular Cell Renderers"
       },
       "keyPoints": [
-        "Cell Renderers.",
-        "Cell Renderer Params.",
-        "Cell Renderer Selector."
+        "Cell Renderers",
+        "Cell Renderer Params",
+        "Cell Renderer Selector"
       ],
       "runningTime": "8:35"
     },
@@ -380,10 +380,10 @@
         "altText": "AG Grid Enterprise License"
       },
       "keyPoints": [
-        "Community MIT License.",
-        "Single App License.",
-        "Multiple App License.",
-        "Deployment License."
+        "Community MIT License",
+        "Single App License",
+        "Multiple App License",
+        "Deployment License"
       ],
       "runningTime": "4:42"
     },
@@ -395,10 +395,10 @@
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns.",
-        "Simple Grid Properties.",
-        "Use Grid's API.",
-        "Listen to Grid Events."
+        "Set up Rows and Columns",
+        "Simple Grid Properties",
+        "Use Grid's API",
+        "Listen to Grid Events"
       ],
       "runningTime": "6:54"
     },
@@ -410,7 +410,7 @@
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
-        "Configure AG Grid Enterprise."
+        "Configure AG Grid Enterprise"
       ],
       "runningTime": "3:54"
     },
@@ -422,9 +422,9 @@
         "altText": "Customising Cells - Cell Renderer"
       },
       "keyPoints": [
-        "Cell Renderers.",
-        "Cell Renderer Params.",
-        "Cell Renderer Selector."
+        "Cell Renderers",
+        "Cell Renderer Params",
+        "Cell Renderer Selector"
       ],
       "runningTime": "6:00"
     },

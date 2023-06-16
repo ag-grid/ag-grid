@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -17,7 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.agFlushSync = exports.isComponentStateless = exports.CssClasses = exports.classesList = void 0;
 var react_dom_1 = __importDefault(require("react-dom"));
-exports.classesList = function () {
+var classesList = function () {
     var list = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         list[_i] = arguments[_i];
@@ -25,6 +25,7 @@ exports.classesList = function () {
     var filtered = list.filter(function (s) { return s != null && s !== ''; });
     return filtered.join(' ');
 };
+exports.classesList = classesList;
 var CssClasses = /** @class */ (function () {
     function CssClasses() {
         var _this = this;
@@ -57,22 +58,25 @@ var CssClasses = /** @class */ (function () {
     return CssClasses;
 }());
 exports.CssClasses = CssClasses;
-exports.isComponentStateless = function (Component) {
+var isComponentStateless = function (Component) {
     var hasSymbol = function () { return typeof Symbol === 'function' && Symbol.for; };
     var getMemoType = function () { return hasSymbol() ? Symbol.for('react.memo') : 0xead3; };
     return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
 };
+exports.isComponentStateless = isComponentStateless;
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 var createRootAndFlushSyncAvailable = react_dom_1.default.createRoot != null && react_dom_1.default.flushSync != null;
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
- * @param fn
+ * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
+ * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
-exports.agFlushSync = function (fn) {
-    if (createRootAndFlushSyncAvailable) {
+var agFlushSync = function (useFlushSync, fn) {
+    if (createRootAndFlushSyncAvailable && useFlushSync) {
         react_dom_1.default.flushSync(fn);
     }
     else {
         fn();
     }
 };
+exports.agFlushSync = agFlushSync;

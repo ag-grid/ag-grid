@@ -157,8 +157,6 @@ export declare class ColumnApi {
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
     /** @deprecated v28 Use `getColumns` instead */
     getAllColumns(): Column[] | null;
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    getOriginalColumnGroup(name: string): ProvidedColumnGroup | null;
     /** @deprecated v28 Use `getColumns` instead. */
     getPrimaryColumns(): Column[] | null;
     /** @deprecated v28 Use `getPivotResultColumns` instead. */

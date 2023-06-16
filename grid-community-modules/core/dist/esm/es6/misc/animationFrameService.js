@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -154,8 +154,10 @@ let AnimationFrameService = class AnimationFrameService extends BeanStub {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
-        const eDocument = this.gridOptionsService.getDocument();
-        const win = (eDocument.defaultView || window);
+        this.requestAnimationFrame(callback);
+    }
+    requestAnimationFrame(callback) {
+        const win = this.gridOptionsService.getWindow();
         if (win.requestAnimationFrame) {
             win.requestAnimationFrame(callback);
         }

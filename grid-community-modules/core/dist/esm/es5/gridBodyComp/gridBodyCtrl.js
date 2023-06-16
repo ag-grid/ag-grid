@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -37,9 +39,9 @@ export var RowAnimationCssClasses;
     RowAnimationCssClasses["ANIMATION_ON"] = "ag-row-animation";
     RowAnimationCssClasses["ANIMATION_OFF"] = "ag-row-no-animation";
 })(RowAnimationCssClasses || (RowAnimationCssClasses = {}));
-export var CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 export var CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
-export var CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+var CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
+var CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 var GridBodyCtrl = /** @class */ (function (_super) {
     __extends(GridBodyCtrl, _super);
     function GridBodyCtrl() {
@@ -116,17 +118,17 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     };
     GridBodyCtrl.prototype.setCellTextSelection = function (selectable) {
         if (selectable === void 0) { selectable = false; }
-        var cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
-        this.comp.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     };
     GridBodyCtrl.prototype.onScrollVisibilityChanged = function () {
+        var _this = this;
         var visible = this.scrollVisibleService.isVerticalScrollShowing();
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyTopWidth(visible);
         var scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         var pad = isInvisibleScrollbar() ? 16 : 0;
         var width = "calc(100% + " + (scrollbarWidth + pad) + "px)";
-        this.comp.setBodyViewportWidth(width);
+        this.animationFrameService.requestAnimationFrame(function () { return _this.comp.setBodyViewportWidth(width); });
     };
     GridBodyCtrl.prototype.onGridColumnsChanged = function () {
         var columns = this.columnModel.getAllGridColumns();
@@ -395,6 +397,9 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     GridBodyCtrl.prototype.removeScrollEventListener = function (listener) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
+    __decorate([
+        Autowired('animationFrameService')
+    ], GridBodyCtrl.prototype, "animationFrameService", void 0);
     __decorate([
         Autowired('rowContainerHeightService')
     ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);

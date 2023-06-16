@@ -18,9 +18,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chart = void 0;
 const scene_1 = require("../scene/scene");
 const group_1 = require("../scene/group");
+const text_1 = require("../scene/shape/text");
 const series_1 = require("./series/series");
 const padding_1 = require("../util/padding");
-const legend_1 = require("./legend");
 const bbox_1 = require("../scene/bbox");
 const sizeMonitor_1 = require("../util/sizeMonitor");
 const observable_1 = require("../util/observable");
@@ -33,19 +33,24 @@ const validation_1 = require("../util/validation");
 const async_1 = require("../util/async");
 const tooltip_1 = require("./tooltip/tooltip");
 const chartOverlays_1 = require("./overlay/chartOverlays");
-const interactionManager_1 = require("./interaction/interactionManager");
 const json_1 = require("../util/json");
 const layers_1 = require("./layers");
+const animationManager_1 = require("./interaction/animationManager");
 const cursorManager_1 = require("./interaction/cursorManager");
+const chartEventManager_1 = require("./interaction/chartEventManager");
 const highlightManager_1 = require("./interaction/highlightManager");
+const interactionManager_1 = require("./interaction/interactionManager");
 const tooltipManager_1 = require("./interaction/tooltipManager");
 const zoomManager_1 = require("./interaction/zoomManager");
 const layoutService_1 = require("./layout/layoutService");
+const dataService_1 = require("./dataService");
 const updateService_1 = require("./updateService");
 const chartUpdateType_1 = require("./chartUpdateType");
 const logger_1 = require("../util/logger");
 const proxy_1 = require("../util/proxy");
 const chartHighlight_1 = require("./chartHighlight");
+const legendTypes_1 = require("./factory/legendTypes");
+const callbackCache_1 = require("../util/callbackCache");
 class Chart extends observable_1.Observable {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
         var _a;
@@ -66,6 +71,7 @@ class Chart extends observable_1.Observable {
         this.mode = 'standalone';
         this._destroyed = false;
         this.modules = {};
+        this.legendModules = {};
         this._pendingFactoryUpdates = [];
         this._performUpdateNoRenderCount = 0;
         this._performUpdateType = chartUpdateType_1.ChartUpdateType.NONE;
@@ -83,6 +89,7 @@ class Chart extends observable_1.Observable {
         }));
         this._axes = [];
         this._series = [];
+        this.applyLegendOptions = undefined;
         this.lastInteractionEvent = undefined;
         this.pointerScheduler = render_1.debouncedAnimationFrame(() => {
             if (this.lastInteractionEvent) {
@@ -122,13 +129,25 @@ class Chart extends observable_1.Observable {
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
-        this.interactionManager = new interactionManager_1.InteractionManager(element);
+        this.chartEventManager = new chartEventManager_1.ChartEventManager();
         this.cursorManager = new cursorManager_1.CursorManager(element);
         this.highlightManager = new highlightManager_1.HighlightManager();
+        this.interactionManager = new interactionManager_1.InteractionManager(element);
         this.zoomManager = new zoomManager_1.ZoomManager();
+        this.dataService = new dataService_1.DataService(() => this.series);
         this.layoutService = new layoutService_1.LayoutService();
-        this.updateService = new updateService_1.UpdateService((type = chartUpdateType_1.ChartUpdateType.FULL) => this.update(type));
+        this.updateService = new updateService_1.UpdateService((type = chartUpdateType_1.ChartUpdateType.FULL, { forceNodeDataRefresh }) => this.update(type, { forceNodeDataRefresh }));
+        this.callbackCache = new callbackCache_1.CallbackCache();
+        this.animationManager = new animationManager_1.AnimationManager(this.interactionManager);
+        this.animationManager.skipAnimations = true;
+        this.animationManager.play();
+        this.tooltip = new tooltip_1.Tooltip(this.scene.canvas.element, document, document.body);
+        this.tooltipManager = new tooltipManager_1.TooltipManager(this.tooltip, this.interactionManager);
+        this.overlays = new chartOverlays_1.ChartOverlays(this.element);
+        this.highlight = new chartHighlight_1.ChartHighlight();
+        this.container = container;
         sizeMonitor_1.SizeMonitor.observe(this.element, (size) => {
+            var _a;
             const { width, height } = size;
             if (!this.autoSize) {
                 return;
@@ -136,20 +155,15 @@ class Chart extends observable_1.Observable {
             if (width === 0 && height === 0) {
                 return;
             }
-            if (width === this.width && height === this.height) {
+            const [autoWidth = 0, authHeight = 0] = (_a = this._lastAutoSize) !== null && _a !== void 0 ? _a : [];
+            if (autoWidth === width && authHeight === height) {
                 return;
             }
             this._lastAutoSize = [width, height];
-            this.resize(width, height);
+            this.resize();
         });
         this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
-        this.tooltip = new tooltip_1.Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new tooltipManager_1.TooltipManager(this.tooltip, this.interactionManager);
-        this.legend = new legend_1.Legend(this, this.interactionManager, this.cursorManager, this.highlightManager, this.tooltipManager, this.layoutService);
-        this.overlays = new chartOverlays_1.ChartOverlays(this.element);
-        this.highlight = new chartHighlight_1.ChartHighlight();
-        this.container = container;
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
@@ -157,8 +171,12 @@ class Chart extends observable_1.Observable {
         this.interactionManager.addListener('leave', (event) => this.onLeave(event));
         this.interactionManager.addListener('page-left', () => this.destroy());
         this.interactionManager.addListener('wheel', () => this.disablePointer());
-        this.zoomManager.addListener('zoom-change', (_) => this.update(chartUpdateType_1.ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true }));
+        this.animationManager.addListener('animation-frame', (_) => {
+            this.update(chartUpdateType_1.ChartUpdateType.SCENE_RENDER);
+        });
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
+        this.zoomManager.addListener('zoom-change', (_) => this.update(chartUpdateType_1.ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true }));
+        this.attachLegend('category');
     }
     getOptions() {
         var _a;
@@ -190,7 +208,7 @@ class Chart extends observable_1.Observable {
             if (!this._lastAutoSize) {
                 return;
             }
-            this.resize(this._lastAutoSize[0], this._lastAutoSize[1]);
+            this.resize();
         }
         else {
             style.display = 'inline-block';
@@ -208,9 +226,9 @@ class Chart extends observable_1.Observable {
         if (this.modules[module.optionsKey] != null) {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
-        const moduleMeta = module.initialiseModule(this.getModuleContext());
-        this.modules[module.optionsKey] = moduleMeta;
-        this[module.optionsKey] = moduleMeta.instance;
+        const moduleInstance = new module.instanceConstructor(this.getModuleContext());
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+        this[module.optionsKey] = moduleInstance;
     }
     removeModule(module) {
         var _a, _b;
@@ -222,19 +240,25 @@ class Chart extends observable_1.Observable {
         return this.modules[module.optionsKey] != null;
     }
     getModuleContext() {
-        const { scene, interactionManager, zoomManager, cursorManager, highlightManager, tooltipManager, layoutService, updateService, } = this;
+        const { scene, animationManager, chartEventManager, cursorManager, highlightManager, interactionManager, tooltipManager, zoomManager, dataService, layoutService, updateService, mode, callbackCache, } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
+            dataService,
             layoutService,
             updateService,
+            mode,
+            callbackCache,
         };
     }
     destroy(opts) {
+        var _a;
         if (this._destroyed) {
             return;
         }
@@ -244,7 +268,8 @@ class Chart extends observable_1.Observable {
         this._pendingFactoryUpdates.splice(0);
         this.tooltipManager.destroy();
         this.tooltip.destroy();
-        this.legend.destroy();
+        (_a = this.legend) === null || _a === void 0 ? void 0 : _a.destroy();
+        this.overlays.noData.hide();
         sizeMonitor_1.SizeMonitor.unobserve(this.element);
         for (const [key, module] of Object.entries(this.modules)) {
             module.instance.destroy();
@@ -264,6 +289,7 @@ class Chart extends observable_1.Observable {
         this.series = [];
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
+        this.callbackCache.invalidateCache();
         this._destroyed = true;
         return result;
     }
@@ -286,7 +312,7 @@ class Chart extends observable_1.Observable {
         const count = callbacks.length;
         if (count === 0) {
             callbacks.push(cb);
-            this._processCallbacks();
+            this._processCallbacks().catch((e) => logger_1.Logger.errorOnce(e));
         }
         else {
             // Factory callback process already running, the callback will be invoked asynchronously.
@@ -304,6 +330,7 @@ class Chart extends observable_1.Observable {
                 }
                 try {
                     yield callbacks[0]();
+                    this.callbackCache.invalidateCache();
                 }
                 catch (e) {
                     logger_1.Logger.error('update error', e);
@@ -327,7 +354,7 @@ class Chart extends observable_1.Observable {
         });
     }
     update(type = chartUpdateType_1.ChartUpdateType.FULL, opts) {
-        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts !== null && opts !== void 0 ? opts : {};
         if (forceNodeDataRefresh) {
             this.series.forEach((series) => series.markNodeDataDirty());
         }
@@ -444,10 +471,13 @@ class Chart extends observable_1.Observable {
     initSeries(series) {
         series.chart = this;
         series.highlightManager = this.highlightManager;
+        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
+        series.chartEventManager = this.chartEventManager;
+        series.addChartEventListeners();
     }
     freeSeries(series) {
         series.chart = undefined;
@@ -488,8 +518,9 @@ class Chart extends observable_1.Observable {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap = {};
         this.axes.forEach((axis) => {
+            var _a;
             const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            const directionAxes = ((_a = directionToAxesMap[direction]) !== null && _a !== void 0 ? _a : (directionToAxesMap[direction] = []));
             directionAxes.push(axis);
         });
         this.series.forEach((series) => {
@@ -535,6 +566,9 @@ class Chart extends observable_1.Observable {
         }
     }
     resize(width, height) {
+        var _a, _b, _c, _d;
+        width !== null && width !== void 0 ? width : (width = (_a = this.width) !== null && _a !== void 0 ? _a : (this.autoSize ? (_b = this._lastAutoSize) === null || _b === void 0 ? void 0 : _b[0] : this.scene.canvas.width));
+        height !== null && height !== void 0 ? height : (height = (_c = this.height) !== null && _c !== void 0 ? _c : (this.autoSize ? (_d = this._lastAutoSize) === null || _d === void 0 ? void 0 : _d[1] : this.scene.canvas.height));
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height))
             return;
         if (this.scene.resize(width, height)) {
@@ -572,27 +606,63 @@ class Chart extends observable_1.Observable {
             : [];
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
+    attachLegend(legendType) {
+        var _a;
+        if (this.legendType === legendType) {
+            return;
+        }
+        (_a = this.legend) === null || _a === void 0 ? void 0 : _a.destroy();
+        this.legend = undefined;
+        const ctx = this.getModuleContext();
+        this.legend = legendTypes_1.getLegend(legendType, ctx);
+        this.legend.attachLegend(this.scene.root);
+        this.legendType = legendType;
+    }
+    setLegendInit(initLegend) {
+        this.applyLegendOptions = initLegend;
+    }
     updateLegend() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const legendData = [];
             this.series
                 .filter((s) => s.showInLegend)
                 .forEach((series) => {
-                legendData.push(...series.getLegendData());
+                const data = series.getLegendData();
+                legendData.push(...data);
             });
-            const { formatter } = this.legend.item.label;
-            if (formatter) {
-                legendData.forEach((datum) => (datum.label.text = formatter({
-                    get id() {
-                        logger_1.Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
-                        return datum.seriesId;
-                    },
-                    itemId: datum.itemId,
-                    value: datum.label.text,
-                    seriesId: datum.seriesId,
-                })));
+            const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
+            this.attachLegend(legendType);
+            (_a = this.applyLegendOptions) === null || _a === void 0 ? void 0 : _a.call(this, this.legend);
+            if (legendType === 'category') {
+                this.validateLegendData(legendData);
             }
             this.legend.data = legendData;
+        });
+    }
+    validateLegendData(legendData) {
+        // Validate each series that shares a legend item label uses the same fill colour
+        const labelMarkerFills = {};
+        legendData.forEach((d) => {
+            var _a, _b, _c;
+            var _d, _e;
+            const seriesType = (_a = this.series.find((s) => s.id === d.seriesId)) === null || _a === void 0 ? void 0 : _a.type;
+            if (!seriesType)
+                return;
+            const dc = d;
+            (_b = labelMarkerFills[seriesType]) !== null && _b !== void 0 ? _b : (labelMarkerFills[seriesType] = { [dc.label.text]: new Set() });
+            (_c = (_d = labelMarkerFills[seriesType])[_e = dc.label.text]) !== null && _c !== void 0 ? _c : (_d[_e] = new Set());
+            if (dc.marker.fill != null) {
+                labelMarkerFills[seriesType][dc.label.text].add(dc.marker.fill);
+            }
+        });
+        Object.keys(labelMarkerFills).forEach((seriesType) => {
+            Object.keys(labelMarkerFills[seriesType]).forEach((name) => {
+                const fills = labelMarkerFills[seriesType][name];
+                if (fills.size > 1) {
+                    logger_1.Logger.warnOnce(`legend item '${name}' has multiple fill colors, this may cause unexpected behaviour.`);
+                }
+            });
         });
     }
     performLayout() {
@@ -614,14 +684,24 @@ class Chart extends observable_1.Observable {
         return { shrinkRect };
     }
     positionCaptions(shrinkRect) {
+        var _a;
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
+        const updateCaption = (caption) => {
+            var _a;
+            const defaultCaptionHeight = shrinkRect.height / 10;
+            const captionLineHeight = (_a = caption.lineHeight) !== null && _a !== void 0 ? _a : caption.fontSize * text_1.Text.defaultLineHeightRatio;
+            const maxWidth = shrinkRect.width;
+            const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            caption.computeTextWrap(maxWidth, maxHeight);
+        };
         const positionTopAndShrinkBBox = (caption) => {
             var _a;
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'top';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
             // As the bbox (x,y) ends up at a different location than specified above, we need to
             // take it into consideration when calculating how much space needs to be reserved to
@@ -635,6 +715,7 @@ class Chart extends observable_1.Observable {
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'bottom';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
             const bboxHeight = Math.ceil(baseY - bbox.y + ((_a = caption.spacing) !== null && _a !== void 0 ? _a : 0));
             newShrinkRect.shrink(bboxHeight, 'bottom');
@@ -646,7 +727,7 @@ class Chart extends observable_1.Observable {
             }
         }
         if (subtitle) {
-            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            subtitle.node.visible = (_a = ((title === null || title === void 0 ? void 0 : title.enabled) && subtitle.enabled)) !== null && _a !== void 0 ? _a : false;
             if (subtitle.node.visible) {
                 positionTopAndShrinkBBox(subtitle);
             }
@@ -757,7 +838,7 @@ class Chart extends observable_1.Observable {
             xOffset: pick.datum.series.tooltip.position.xOffset,
             yOffset: pick.datum.series.tooltip.position.yOffset,
         };
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position }, pick.datum);
         meta.enableInteraction = (_b = (_a = pick.series.tooltip.interaction) === null || _a === void 0 ? void 0 : _a.enabled) !== null && _b !== void 0 ? _b : false;
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
@@ -843,9 +924,10 @@ class Chart extends observable_1.Observable {
         return meta;
     }
     changeHighlightDatum(event) {
+        var _a, _b;
         const seriesToUpdate = new Set();
-        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
-        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = (_a = event.currentHighlight) !== null && _a !== void 0 ? _a : {};
+        const { series: lastSeries = undefined, datum: lastDatum } = (_b = event.previousHighlight) !== null && _b !== void 0 ? _b : {};
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -912,16 +994,14 @@ __decorate([
 __decorate([
     proxy_1.ActionOnSet({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(value, this.height);
+            this.resize(value);
         },
     })
 ], Chart.prototype, "width", void 0);
 __decorate([
     proxy_1.ActionOnSet({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(this.width, value);
+            this.resize(undefined, value);
         },
     })
 ], Chart.prototype, "height", void 0);

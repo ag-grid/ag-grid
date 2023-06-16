@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,7 +30,7 @@ import { LayoutCssClasses } from "../styling/layoutFeature";
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { CSS_CLASS_CELL_SELECTABLE, CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from "./gridBodyCtrl";
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from "./gridBodyCtrl";
 import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 var GRID_BODY_TEMPLATE = /* html */ "<div class=\"ag-root ag-unselectable\" role=\"treegrid\">\n        <ag-header-root ref=\"gridHeader\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <ag-row-container ref=\"topLeftContainer\" name=\"" + RowContainerName.TOP_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"topCenterContainer\" name=\"" + RowContainerName.TOP_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"topRightContainer\" name=\"" + RowContainerName.TOP_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"topFullWidthContainer\" name=\"" + RowContainerName.TOP_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-body-clipper\" ref=\"eBodyClipper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <ag-row-container ref=\"leftContainer\" name=\"" + RowContainerName.LEFT + "\"></ag-row-container>\n                    <ag-row-container ref=\"centerContainer\" name=\"" + RowContainerName.CENTER + "\"></ag-row-container>\n                    <ag-row-container ref=\"rightContainer\" name=\"" + RowContainerName.RIGHT + "\"></ag-row-container>\n                    <ag-row-container ref=\"fullWidthContainer\" name=\"" + RowContainerName.FULL_WIDTH + "\"></ag-row-container>\n                </div>\n            </div>\n            <ag-fake-vertical-scroll></ag-fake-vertical-scroll>\n        </div>\n        <div class=\"ag-sticky-top\" ref=\"eStickyTop\" role=\"presentation\">\n            <ag-row-container ref=\"stickyTopLeftContainer\" name=\"" + RowContainerName.STICKY_TOP_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopCenterContainer\" name=\"" + RowContainerName.STICKY_TOP_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopRightContainer\" name=\"" + RowContainerName.STICKY_TOP_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopFullWidthContainer\" name=\"" + RowContainerName.STICKY_TOP_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <ag-row-container ref=\"bottomLeftContainer\" name=\"" + RowContainerName.BOTTOM_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomCenterContainer\" name=\"" + RowContainerName.BOTTOM_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomRightContainer\" name=\"" + RowContainerName.BOTTOM_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomFullWidthContainer\" name=\"" + RowContainerName.BOTTOM_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>\n        <ag-overlay-wrapper></ag-overlay-wrapper>\n    </div>";
 var GridBodyComp = /** @class */ (function (_super) {
@@ -80,7 +82,7 @@ var GridBodyComp = /** @class */ (function (_super) {
             setPinnedTopBottomOverflowY: function (overflow) { return _this.eTop.style.overflowY = _this.eBottom.style.overflowY = overflow; },
             setCellSelectableCss: function (cssClass, selectable) {
                 [_this.eTop, _this.eBodyViewport, _this.eBottom]
-                    .forEach(function (ct) { return ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable); });
+                    .forEach(function (ct) { return ct.classList.toggle(cssClass, selectable); });
             },
             setBodyViewportWidth: function (width) { return _this.eBodyViewport.style.width = width; }
         };

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -54,8 +54,8 @@ const RowContainerComp = (params) => {
     reactComment_1.default(' AG Row Container ' + name + ' ', topLevelRef);
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered() {
-        utils_1.agFlushSync(() => {
+    function updateRowCtrlsOrdered(useFlushSync) {
+        utils_1.agFlushSync(useFlushSync, () => {
             setRowCtrlsOrdered(prev => {
                 const rowCtrls = rowCtrlsRef.current;
                 if (domOrderRef.current) {
@@ -72,20 +72,29 @@ const RowContainerComp = (params) => {
     useEffectOnce_1.useLayoutEffectOnce(() => {
         const beansToDestroy = [];
         const compProxy = {
-            setViewportHeight: (height) => eViewport.current.style.height = height,
-            setRowCtrls: rowCtrls => {
+            setViewportHeight: (height) => {
+                if (eViewport.current) {
+                    eViewport.current.style.height = height;
+                }
+            },
+            setRowCtrls: (rowCtrls, useFlushSync) => {
                 if (rowCtrlsRef.current !== rowCtrls) {
+                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: domOrder => {
                 if (domOrderRef.current != domOrder) {
                     domOrderRef.current = domOrder;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(false);
                 }
             },
-            setContainerWidth: width => eContainer.current.style.width = width
+            setContainerWidth: width => {
+                if (eContainer.current) {
+                    eContainer.current.style.width = width;
+                }
+            }
         };
         const ctrl = context.createBean(new core_1.RowContainerCtrl(name));
         beansToDestroy.push(ctrl);

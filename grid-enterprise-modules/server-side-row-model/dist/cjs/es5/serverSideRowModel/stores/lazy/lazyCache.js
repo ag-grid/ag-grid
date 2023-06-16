@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LazyCache = void 0;
@@ -67,7 +70,7 @@ var LazyCache = /** @class */ (function (_super) {
         this.nodesToRefresh = new Set();
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new lazyBlockLoader_1.LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
-        this.getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         this.isMasterDetail = this.gridOptionsService.isMasterDetail();
     };
     LazyCache.prototype.destroyRowNodes = function () {
@@ -128,15 +131,14 @@ var LazyCache = /** @class */ (function (_super) {
         }
         var previousNode = adjacentNodes.previousNode, nextNode = adjacentNodes.nextNode;
         // if the node before this node is expanded, this node might be a child of that node
-        if (previousNode && previousNode.expanded && ((_c = previousNode.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
-            return (_d = previousNode.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
+        if (previousNode && previousNode.node.expanded && ((_c = previousNode.node.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
+            return (_d = previousNode.node.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
         }
         // if we have the node after this node, we can calculate the store index of this node by the difference
         // in display indexes between the two nodes.
         if (nextNode) {
-            var nextSimpleRowStoreIndex = this.nodeMap.getBy('node', nextNode);
-            var displayIndexDiff = nextNode.rowIndex - displayIndex;
-            var newStoreIndex = nextSimpleRowStoreIndex.index - displayIndexDiff;
+            var displayIndexDiff = nextNode.node.rowIndex - displayIndex;
+            var newStoreIndex = nextNode.index - displayIndexDiff;
             return this.createStubNode(newStoreIndex, displayIndex);
         }
         // if no next node, calculate from end index of this store
@@ -177,11 +179,6 @@ var LazyCache = /** @class */ (function (_super) {
             return;
         }
         var defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        // these are recorded so that the previous node can be found more quickly when a node is missing
-        this.skippedDisplayIndexes.push({
-            from: displayIndexSeq.peek(),
-            to: displayIndexSeq.peek() + numberOfRowsToSkip
-        });
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     };
@@ -192,7 +189,6 @@ var LazyCache = /** @class */ (function (_super) {
     LazyCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
-        this.skippedDisplayIndexes = [];
         // create an object indexed by store index, as this will sort all of the nodes when we iterate
         // the object
         var orderedMap = {};
@@ -200,8 +196,7 @@ var LazyCache = /** @class */ (function (_super) {
             orderedMap[lazyNode.index] = lazyNode.node;
         });
         var lastIndex = -1;
-        // iterate over the nodes in order, setting the display index on each node. When display indexes
-        // are skipped, they're added to the skippedDisplayIndexes array
+        // iterate over the nodes in order, setting the display index on each node.
         for (var stringIndex in orderedMap) {
             var node = orderedMap[stringIndex];
             var numericIndex = Number(stringIndex);
@@ -211,13 +206,6 @@ var LazyCache = /** @class */ (function (_super) {
             // set this nodes index and row top
             this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
             this.nodeDisplayIndexMap.set(node.rowIndex, node);
-            var passedRows = displayIndexSeq.peek() - node.rowIndex;
-            if (passedRows > 1) {
-                this.skippedDisplayIndexes.push({
-                    from: node.rowIndex + 1,
-                    to: displayIndexSeq.peek()
-                });
-            }
             // store this index for skipping after this
             lastIndex = numericIndex;
         }
@@ -257,17 +245,27 @@ var LazyCache = /** @class */ (function (_super) {
      * @returns the previous and next loaded row nodes surrounding the given display index
      */
     LazyCache.prototype.getSurroundingNodesByDisplayIndex = function (displayIndex) {
-        // iterate over the skipped display indexes to find the bound this display index belongs to
-        for (var i in this.skippedDisplayIndexes) {
-            var skippedRowBound = this.skippedDisplayIndexes[i];
-            if (skippedRowBound.from <= displayIndex && skippedRowBound.to >= displayIndex) {
-                // take the node before and after the boundary and return those
-                var previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
-                var nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
-                return { previousNode: previousNode, nextNode: nextNode };
+        var nextNode;
+        var previousNode;
+        this.nodeMap.forEach(function (lazyNode) {
+            // previous node
+            if (displayIndex > lazyNode.node.rowIndex) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.node.rowIndex < lazyNode.node.rowIndex) {
+                    previousNode = lazyNode;
+                }
+                return;
             }
-        }
-        return null;
+            // next node
+            // get the smallest next node
+            if (nextNode == null || nextNode.node.rowIndex > lazyNode.node.rowIndex) {
+                nextNode = lazyNode;
+                return;
+            }
+        });
+        if (!previousNode && !nextNode)
+            return null;
+        return { previousNode: previousNode, nextNode: nextNode };
     };
     /**
      * Get or calculate the display index for a given store index
@@ -275,20 +273,38 @@ var LazyCache = /** @class */ (function (_super) {
      * @returns the rows visible display index relative to the grid
      */
     LazyCache.prototype.getDisplayIndexFromStoreIndex = function (storeIndex) {
-        var nodesAfterThis = this.nodeMap.filter(function (lazyNode) { return lazyNode.index > storeIndex; });
-        if (nodesAfterThis.length === 0) {
-            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
+        var _a, _b;
+        var nodeAtIndex = this.nodeMap.getBy('index', storeIndex);
+        if (nodeAtIndex) {
+            return nodeAtIndex.node.rowIndex;
         }
         var nextNode;
-        for (var i = 0; i < nodesAfterThis.length; i++) {
-            var lazyNode = nodesAfterThis[i];
+        var previousNode;
+        this.nodeMap.forEach(function (lazyNode) {
+            // previous node
+            if (storeIndex > lazyNode.index) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.index < lazyNode.index) {
+                    previousNode = lazyNode;
+                }
+                return;
+            }
+            // next node
+            // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
+                return;
             }
+        });
+        if (!nextNode) {
+            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
         }
-        var nextDisplayIndex = nextNode.node.rowIndex;
-        var storeIndexDiff = nextNode.index - storeIndex;
-        return nextDisplayIndex - storeIndexDiff;
+        if (!previousNode) {
+            return this.store.getDisplayIndexStart() + storeIndex;
+        }
+        var storeIndexDiff = storeIndex - previousNode.index;
+        var previousDisplayIndex = ((_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex);
+        return previousDisplayIndex + storeIndexDiff;
     };
     /**
      * Creates a new row and inserts it at the given index
@@ -359,7 +375,6 @@ var LazyCache = /** @class */ (function (_super) {
         var _this = this;
         var blockCounts = {};
         var blockStates = {};
-        var dirtyBlocks = new Set();
         this.nodeMap.forEach(function (_a) {
             var _b;
             var node = _a.node, index = _a.index;
@@ -374,11 +389,8 @@ var LazyCache = /** @class */ (function (_super) {
             else if (_this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
             }
-            else if (_this.nodesToRefresh.has(node)) {
+            else if (_this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
             if (!blockStates[blockStart]) {
                 blockStates[blockStart] = new Set();
@@ -396,7 +408,7 @@ var LazyCache = /** @class */ (function (_super) {
         Object.entries(blockStates).forEach(function (_a) {
             var _b;
             var _c = __read(_a, 2), blockStart = _c[0], uniqueStates = _c[1];
-            var sortedStates = __spread(uniqueStates).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
+            var sortedStates = __spreadArray([], __read(uniqueStates)).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
             var priorityState = sortedStates[0];
             var blockNumber = Number(blockStart) / _this.rowLoader.getBlockSize();
             var blockId = blockPrefix ? blockPrefix + "-" + blockNumber : String(blockNumber);
@@ -463,27 +475,14 @@ var LazyCache = /** @class */ (function (_super) {
         var firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         var _a = __read(this.rowLoader.getBlockBoundsForIndex(lastRow), 2), _ = _a[0], lastRowBlockEnd = _a[1];
         this.nodeMap.forEach(function (lazyNode) {
-            if (_this.rowLoader.isRowLoading(lazyNode.index)) {
+            // failed loads are still useful, so we don't purge them
+            if (_this.rowLoader.isRowLoading(lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
             }
             if (lazyNode.node.stub && (lazyNode.index < firstRowBlockStart || lazyNode.index > lastRowBlockEnd)) {
                 _this.destroyRowAtIndex(lazyNode.index);
             }
         });
-    };
-    /**
-     * Calculates the number of rows to cache based on either the viewport, or number of cached blocks
-     */
-    LazyCache.prototype.getNumberOfRowsToRetain = function (firstRow, lastRow) {
-        var numberOfCachedBlocks = this.storeParams.maxBlocksInCache;
-        if (numberOfCachedBlocks == null) {
-            return null;
-        }
-        var blockSize = this.rowLoader.getBlockSize();
-        var numberOfViewportBlocks = Math.ceil((lastRow - firstRow) / blockSize);
-        var numberOfBlocksToRetain = Math.max(numberOfCachedBlocks, numberOfViewportBlocks);
-        var numberOfRowsToRetain = numberOfBlocksToRetain * blockSize;
-        return numberOfRowsToRetain;
     };
     LazyCache.prototype.getBlocksDistanceFromRow = function (nodes, otherDisplayIndex) {
         var _this = this;
@@ -507,66 +506,64 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.purgeExcessRows = function () {
         var _this = this;
+        var _a;
         // Delete all stub nodes which aren't in the viewport or already loading
         this.purgeStubsOutsideOfViewport();
-        var firstRowInViewport = this.api.getFirstDisplayedRow();
-        var lastRowInViewport = this.api.getLastDisplayedRow();
-        var firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRowInViewport);
-        var _a = __read(this.rowLoader.getBlockBoundsForIndex(lastRowInViewport), 2), _ = _a[0], lastRowBlockEnd = _a[1];
-        // number of blocks to cache on top of the viewport blocks
-        var numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
-        if (this.store.getDisplayIndexEnd() == null || numberOfRowsToRetain == null) {
+        if (this.store.getDisplayIndexEnd() == null || this.storeParams.maxBlocksInCache == null) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
         }
-        // don't check the nodes that could have been cached out of necessity
-        var disposableNodes = this.nodeMap.filter(function (_a) {
-            var node = _a.node;
-            return !node.stub && !_this.isNodeCached(node);
+        var firstRowInViewport = this.api.getFirstDisplayedRow();
+        var lastRowInViewport = this.api.getLastDisplayedRow();
+        // the start storeIndex of every block in this store
+        var allLoadedBlocks = new Set();
+        // the start storeIndex of every displayed block in this store
+        var blocksInViewport = new Set();
+        this.nodeMap.forEach(function (_a) {
+            var index = _a.index, node = _a.node;
+            var blockStart = _this.rowLoader.getBlockStartIndexForIndex(index);
+            allLoadedBlocks.add(blockStart);
+            var isInViewport = node.rowIndex >= firstRowInViewport && node.rowIndex <= lastRowInViewport;
+            if (isInViewport) {
+                blocksInViewport.add(blockStart);
+            }
         });
-        if (disposableNodes.length <= numberOfRowsToRetain) {
-            // not enough rows to bother clearing any
+        // if the viewport is larger than the max blocks, then the viewport size is minimum cache size
+        var numberOfBlocksToRetain = Math.max(blocksInViewport.size, (_a = this.storeParams.maxBlocksInCache) !== null && _a !== void 0 ? _a : 0);
+        // ensure there is blocks that can be removed
+        var loadedBlockCount = allLoadedBlocks.size;
+        var blocksToRemove = loadedBlockCount - numberOfBlocksToRetain;
+        if (blocksToRemove <= 0) {
             return;
         }
-        var disposableNodesNotInViewport = disposableNodes.filter(function (_a) {
-            var node = _a.node;
-            var startRowNum = node.rowIndex;
-            if (startRowNum == null || startRowNum === -1) {
-                // row is not displayed and can be disposed
-                return true;
+        // the first and last block in the viewport
+        var firstRowBlockStart = Number.MAX_SAFE_INTEGER;
+        var lastRowBlockStart = Number.MIN_SAFE_INTEGER;
+        blocksInViewport.forEach(function (blockStart) {
+            if (firstRowBlockStart > blockStart) {
+                firstRowBlockStart = blockStart;
             }
-            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
-                // start row in viewport, block is in viewport
-                return false;
+            if (lastRowBlockStart < blockStart) {
+                lastRowBlockStart = blockStart;
             }
-            var lastRowNum = startRowNum + blockSize;
-            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
-                // end row in viewport, block is in viewport
-                return false;
-            }
-            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
-                // full block surrounds in viewport
-                return false;
-            }
-            // block does not appear in viewport and can be disposed
-            return true;
         });
-        // reduce the number of rows to retain by the number in viewport which were retained
-        numberOfRowsToRetain = numberOfRowsToRetain - (disposableNodes.length - disposableNodesNotInViewport.length);
-        if (!disposableNodesNotInViewport.length) {
+        // all nodes which aren't cached or in the viewport, and so can be removed
+        var disposableNodes = this.nodeMap.filter(function (_a) {
+            var node = _a.node, index = _a.index;
+            var rowBlockStart = _this.rowLoader.getBlockStartIndexForIndex(index);
+            var rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
+            return !rowBlockInViewport && !_this.isNodeCached(node);
+        });
+        if (disposableNodes.length === 0) {
             return;
         }
         var midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
+        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
         var blockSize = this.rowLoader.getBlockSize();
-        var numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
-        if (blockDistanceArray.length <= numberOfBlocksToRetain) {
-            return;
-        }
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort(function (a, b) { return Math.sign(b[1] - a[1]); });
-        var blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
-        for (var i = 0; i < blocksToRemove; i++) {
+        // remove excess blocks, starting from furthest from viewport
+        for (var i = 0; i < Math.min(blocksToRemove, blockDistanceArray.length); i++) {
             var blockStart = Number(blockDistanceArray[i][0]);
             for (var x = blockStart; x < blockStart + blockSize; x++) {
                 var lazyNode = this.nodeMap.getBy('index', x);
@@ -589,7 +586,7 @@ var LazyCache = /** @class */ (function (_super) {
         return hasFocus;
     };
     LazyCache.prototype.isNodeCached = function (node) {
-        return (!!node.group && node.expanded) || this.isNodeFocused(node);
+        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node);
     };
     LazyCache.prototype.extractDuplicateIds = function (rows) {
         var _this = this;
@@ -606,12 +603,15 @@ var LazyCache = /** @class */ (function (_super) {
             }
             newIds.add(id);
         });
-        return __spread(duplicates);
+        return __spreadArray([], __read(duplicates));
     };
     LazyCache.prototype.onLoadSuccess = function (firstRowIndex, numberOfRowsExpected, response) {
         var _this = this;
+        var _a;
         if (!this.live)
             return;
+        var info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             var duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
@@ -680,16 +680,36 @@ var LazyCache = /** @class */ (function (_super) {
         return this.isLastRowKnown;
     };
     LazyCache.prototype.onLoadFailed = function (firstRowIndex, numberOfRowsExpected) {
+        var _a;
         if (!this.live)
             return;
-        var failedNodes = this.nodeMap.filter(function (node) { return node.index >= firstRowIndex && node.index < firstRowIndex + numberOfRowsExpected; });
-        failedNodes.forEach(function (node) { return node.node.failedLoad = true; });
+        var wasRefreshing = this.nodesToRefresh.size > 0;
+        for (var i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
+            var node = ((_a = this.nodeMap.getBy('index', i)) !== null && _a !== void 0 ? _a : {}).node;
+            if (node) {
+                this.nodesToRefresh.delete(node);
+            }
+            if (!node || !node.stub) {
+                if (node && !node.stub) {
+                    // if node is not a stub, we destroy it and recreate as nodes can't go from data to stub
+                    this.destroyRowAtIndex(i);
+                }
+                node = this.createRowAtIndex(i);
+            }
+            // this node has been refreshed, even if it wasn't successful
+            node.__needsRefreshWhenVisible = false;
+            node.failedLoad = true;
+        }
+        var finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
         this.fireStoreUpdatedEvent();
     };
     LazyCache.prototype.markNodesForRefresh = function () {
         var _this = this;
         this.nodeMap.forEach(function (lazyNode) {
-            if (lazyNode.node.stub) {
+            if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
             }
             _this.nodesToRefresh.add(lazyNode.node);
@@ -800,7 +820,7 @@ var LazyCache = /** @class */ (function (_super) {
         var nodesToVerify = [];
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
         var deletedNodeCount = 0;
-        var remainingIdsToRemove = __spread(idsToRemove);
+        var remainingIdsToRemove = __spreadArray([], __read(idsToRemove));
         var allNodes = this.getOrderedNodeMap();
         var contiguousIndex = -1;
         var _loop_1 = function (stringIndex) {

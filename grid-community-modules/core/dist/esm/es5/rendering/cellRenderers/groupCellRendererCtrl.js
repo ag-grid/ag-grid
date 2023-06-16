@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -535,8 +537,8 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         this.comp.setCheckboxVisible(checkboxNeeded);
     };
     GroupCellRendererCtrl.prototype.onKeyDown = function (event) {
-        var enterKeyPressed = event.key === KeyCode.ENTER;
-        if (!enterKeyPressed || this.params.suppressEnterExpand) {
+        var isEnterKey = event.key === KeyCode.ENTER;
+        if (!isEnterKey || this.params.suppressEnterExpand) {
             return;
         }
         var cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);

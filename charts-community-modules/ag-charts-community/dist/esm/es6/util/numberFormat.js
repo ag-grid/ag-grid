@@ -35,11 +35,11 @@ const surroundedRegEx = (() => {
 function parseFormatter(formatter) {
     let prefix;
     let suffix;
-    const surrounded = formatter.match(surroundedRegEx);
+    const surrounded = surroundedRegEx.exec(formatter);
     if (surrounded) {
         [, prefix, formatter, suffix] = surrounded;
     }
-    const match = formatter.match(formatRegEx);
+    const match = formatRegEx.exec(formatter);
     if (!match) {
         throw new Error(`The number formatter is invalid: ${formatter}`);
     }
@@ -105,7 +105,7 @@ export function format(formatter) {
             result = `${result}%`;
         }
         if (!isNaN(width)) {
-            result = addPadding(result, width, fill || zero, align);
+            result = addPadding(result, width, fill !== null && fill !== void 0 ? fill : zero, align);
         }
         result = `${prefix}${result}${suffix}`;
         return result;
@@ -230,7 +230,7 @@ function addPadding(numString, width, fill = ' ', align = '>') {
     return result;
 }
 export function tickFormat(ticks, formatter) {
-    const options = parseFormatter(formatter || ',f');
+    const options = parseFormatter(formatter !== null && formatter !== void 0 ? formatter : ',f');
     if (isNaN(options.precision)) {
         if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max(...ticks.map((x) => {

@@ -1,4 +1,4 @@
-import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
@@ -26,7 +26,7 @@ export class TitleEdit extends Component {
 
     @PostConstruct
     public init(): void {
-        this.addManagedListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
+        this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             if (this.editing && e.key === 'Enter' && !e.shiftKey) {
                 this.handleEndEditing();
                 e.preventDefault();

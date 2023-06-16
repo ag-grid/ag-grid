@@ -8,6 +8,7 @@ import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
+import { AnimationFrameService } from "../../misc/animationFrameService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
@@ -19,6 +20,7 @@ import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { ColumnPinnedType } from "../../entities/column";
 import { isInvisibleScrollbar } from "../../utils/browser";
+import { DisplayedRowsChangedEvent } from "../../events";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -111,7 +113,7 @@ const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCtrls(rowCtrls: RowCtrl[]): void;
+    setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
 }
@@ -147,6 +149,7 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
@@ -285,7 +288,7 @@ export class RowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, () => this.onDisplayedRowsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
 
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
@@ -337,7 +340,8 @@ export class RowContainerCtrl extends BeanStub {
             const visible = this.scrollVisibleService.isHorizontalScrollShowing();
             const scrollbarWidth = visible ? scrollWidth : 0;
             const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-            this.comp.setViewportHeight(size);
+
+            this.animationFrameService.requestAnimationFrame(() => this.comp.setViewportHeight(size));
         }
 
         if (this.name === RowContainerName.FULL_WIDTH) {
@@ -435,9 +439,12 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    private onDisplayedRowsChanged(): void {
+    private onDisplayedRowsChanged(useFlushSync: boolean = false): void {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
             const doesRowMatch = (rowCtrl: RowCtrl) => {
                 const fullWidthRow = rowCtrl.isFullWidth();
                 const embedFW = this.embedFullWidthRows || printLayout;
@@ -451,9 +458,9 @@ export class RowContainerCtrl extends BeanStub {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         } else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }
     }
 

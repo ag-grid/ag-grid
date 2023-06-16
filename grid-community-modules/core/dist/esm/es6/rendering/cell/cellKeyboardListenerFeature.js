@@ -1,12 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
 import { BeanStub } from "../../context/beanStub";
 import { KeyCode } from "../../constants/keyCode";
-import { isDeleteKey, isEventFromPrintableCharacter } from "../../utils/keyboard";
+import { isDeleteKey } from "../../utils/keyboard";
 import { Events } from "../../eventKeys";
 export class CellKeyboardListenerFeature extends BeanStub {
     constructor(ctrl, beans, column, rowNode, rowCtrl) {
@@ -36,17 +36,17 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 break;
             case KeyCode.BACKSPACE:
             case KeyCode.DELETE:
-                this.onBackspaceOrDeleteKeyPressed(key, event);
+                this.onBackspaceOrDeleteKeyDown(key, event);
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
-                this.onNavigationKeyPressed(event, key);
+                this.onNavigationKeyDown(event, key);
                 break;
         }
     }
-    onNavigationKeyPressed(event, key) {
+    onNavigationKeyDown(event, key) {
         if (this.cellCtrl.isEditing()) {
             return;
         }
@@ -71,7 +71,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     onTabKeyDown(event) {
         this.beans.navigationService.onTabKeyDown(this.cellCtrl, event);
     }
-    onBackspaceOrDeleteKeyPressed(key, event) {
+    onBackspaceOrDeleteKeyDown(key, event) {
         const { cellCtrl, beans, rowNode } = this;
         const { gridOptionsService, rangeService, eventService } = beans;
         if (cellCtrl.isEditing()) {
@@ -80,27 +80,28 @@ export class CellKeyboardListenerFeature extends BeanStub {
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
             if (rangeService && gridOptionsService.isEnableRangeSelection()) {
-                rangeService.clearCellRangeCellValues();
+                rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             }
             else if (cellCtrl.isCellEditable()) {
                 rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
             }
         }
         else {
-            cellCtrl.startRowOrCellEdit(key, undefined, event);
+            cellCtrl.startRowOrCellEdit(key, event);
         }
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
     }
     onEnterKeyDown(e) {
         if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
-            this.cellCtrl.stopEditingAndFocus();
+            this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         }
         else {
-            if (this.beans.gridOptionsService.is('enterMovesDown')) {
-                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
+            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+                this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             }
             else {
-                this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, undefined, e);
+                this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, e);
                 if (this.cellCtrl.isEditing()) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
@@ -113,7 +114,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
     onF2KeyDown(event) {
         if (!this.cellCtrl.isEditing()) {
-            this.cellCtrl.startRowOrCellEdit(KeyCode.F2, undefined, event);
+            this.cellCtrl.startRowOrCellEdit(KeyCode.F2, event);
         }
     }
     onEscapeKeyDown(event) {
@@ -122,7 +123,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             this.cellCtrl.focusCell(true);
         }
     }
-    onKeyPress(event) {
+    processCharacter(event) {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
         const eventTarget = event.target;
@@ -130,13 +131,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (eventOnChildComponent || this.cellCtrl.isEditing()) {
             return;
         }
-        const pressedChar = String.fromCharCode(event.charCode);
-        if (pressedChar === ' ') {
-            this.onSpaceKeyPressed(event);
+        const key = event.key;
+        if (key === ' ') {
+            this.onSpaceKeyDown(event);
         }
-        else if (isEventFromPrintableCharacter(event)) {
-            this.cellCtrl.startRowOrCellEdit(null, pressedChar, event);
-            // if we don't prevent default, then the keypress also gets applied to the text field
+        else {
+            this.cellCtrl.startRowOrCellEdit(key, event);
+            // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes
             // up when the use is not doing editing, but using rendering with text fields in cellRenderer
@@ -144,7 +145,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             event.preventDefault();
         }
     }
-    onSpaceKeyPressed(event) {
+    onSpaceKeyDown(event) {
         const { gridOptionsService } = this.beans;
         if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
@@ -156,7 +157,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                     rangeSelect: event.shiftKey,
                     groupSelectsFiltered: groupSelectsFiltered,
                     event,
-                    source: 'spacePressed'
+                    source: 'spaceKey',
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
                     this.rowNode.setSelectedParams({
@@ -164,7 +165,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                         rangeSelect: event.shiftKey,
                         groupSelectsFiltered: groupSelectsFiltered,
                         event,
-                        source: 'spacePressed'
+                        source: 'spaceKey',
                     });
                 }
             }

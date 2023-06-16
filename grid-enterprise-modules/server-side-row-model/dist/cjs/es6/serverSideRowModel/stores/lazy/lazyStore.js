@@ -19,6 +19,7 @@ class LazyStore extends core_1.BeanStub {
         this.level = parentRowNode.level + 1;
         this.group = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : false;
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        this.info = {};
     }
     init() {
         let numberOfRows = 1;
@@ -46,7 +47,7 @@ class LazyStore extends core_1.BeanStub {
      */
     applyTransaction(transaction) {
         var _a, _b, _c;
-        const idFunc = this.gridOptionsService.getRowIdFunc();
+        const idFunc = this.gridOptionsService.getCallback('getRowId');
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -93,25 +94,24 @@ class LazyStore extends core_1.BeanStub {
         };
     }
     updateSelectionAfterTransaction(updatedNodes, removedNodes) {
-        let fireSelectionUpdatedEvent = false;
+        const nodesToDeselect = [];
         updatedNodes === null || updatedNodes === void 0 ? void 0 : updatedNodes.forEach(node => {
             if (node.isSelected() && !node.selectable) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
         removedNodes === null || removedNodes === void 0 ? void 0 : removedNodes.forEach(node => {
             if (node.isSelected()) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
-        if (fireSelectionUpdatedEvent) {
-            const event = {
-                type: core_1.Events.EVENT_SELECTION_CHANGED,
-                source: 'rowDataChanged'
-            };
-            this.eventService.dispatchEvent(event);
+        if (nodesToDeselect.length) {
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                clearSelection: false,
+                nodes: nodesToDeselect,
+                source: 'rowDataChanged',
+            });
         }
     }
     /**
@@ -121,6 +121,9 @@ class LazyStore extends core_1.BeanStub {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.cache.getNodes().forEach(lazyNode => this.blockUtils.clearDisplayIndex(lazyNode.node));
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
+        }
         this.cache.clearDisplayIndexes();
     }
     /**
@@ -139,6 +142,9 @@ class LazyStore extends core_1.BeanStub {
      * @returns the virtual size of this store
      */
     getRowCount() {
+        if (this.parentRowNode.sibling) {
+            return this.cache.getRowCount() + 1;
+        }
         return this.cache.getRowCount();
     }
     /**
@@ -171,6 +177,9 @@ class LazyStore extends core_1.BeanStub {
         this.topPx = nextRowTop.value;
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
     }
@@ -239,6 +248,9 @@ class LazyStore extends core_1.BeanStub {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     getRowUsingDisplayIndex(displayRowIndex) {
+        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+            return this.parentRowNode.sibling;
+        }
         return this.cache.getRowByDisplayIndex(displayRowIndex);
     }
     /**
@@ -262,7 +274,7 @@ class LazyStore extends core_1.BeanStub {
         const { previousNode, nextNode } = (_a = this.cache.getSurroundingNodesByDisplayIndex(displayIndex)) !== null && _a !== void 0 ? _a : {};
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
-            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode, displayIndex);
+            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode.node, displayIndex);
             if (boundsFromRow != null) {
                 return boundsFromRow;
             }
@@ -270,15 +282,15 @@ class LazyStore extends core_1.BeanStub {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            const numberOfRowDiff = Math.floor((nextNode.rowIndex - displayIndex) * defaultRowHeight);
+            const numberOfRowDiff = (nextNode.node.rowIndex - displayIndex) * defaultRowHeight;
             return {
-                rowTop: nextNode.rowTop - numberOfRowDiff,
+                rowTop: nextNode.node.rowTop - numberOfRowDiff,
                 rowHeight: defaultRowHeight,
             };
         }
         // otherwise calculate from end of store
         const lastTop = this.topPx + this.heightPx;
-        const numberOfRowDiff = Math.floor((this.getDisplayIndexEnd() - displayIndex) * defaultRowHeight);
+        const numberOfRowDiff = (this.getDisplayIndexEnd() - displayIndex) * defaultRowHeight;
         return {
             rowTop: lastTop - numberOfRowDiff,
             rowHeight: defaultRowHeight,
@@ -403,7 +415,7 @@ class LazyStore extends core_1.BeanStub {
      * @param params a set of properties pertaining to the filter changes
      */
     refreshAfterFilter(params) {
-        const serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        const serverFiltersAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.refreshStore(true);
             return;
@@ -499,7 +511,9 @@ class LazyStore extends core_1.BeanStub {
         return this.ssrmParams;
     }
     setStoreInfo(info) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     }
     // gets called 1) row count changed 2) cache purged
     fireStoreUpdatedEvent() {
@@ -537,6 +551,9 @@ __decorate([
 __decorate([
     core_1.Autowired('columnModel')
 ], LazyStore.prototype, "columnModel", void 0);
+__decorate([
+    core_1.Autowired('selectionService')
+], LazyStore.prototype, "selectionService", void 0);
 __decorate([
     core_1.PostConstruct
 ], LazyStore.prototype, "init", null);

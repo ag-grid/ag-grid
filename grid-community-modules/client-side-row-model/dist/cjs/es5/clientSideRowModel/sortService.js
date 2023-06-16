@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,7 +29,7 @@ var SortService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SortService.prototype.init = function () {
-        this.postSortFunc = this.getPostSortFunc();
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     };
     SortService.prototype.sort = function (sortOptions, sortActive, useDeltaSort, rowNodeTransactions, changedPath, sortContainsGroupColumns) {
         var _this = this;
@@ -81,17 +83,6 @@ var SortService = /** @class */ (function (_super) {
             changedPath.forEachChangedNodeDepthFirst(callback);
         }
         this.updateGroupDataForHideOpenParents(changedPath);
-    };
-    SortService.prototype.getPostSortFunc = function () {
-        var postSortRows = this.gridOptionsService.getCallback('postSortRows');
-        if (postSortRows) {
-            return postSortRows;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var postSort = this.gridOptionsService.get('postSort');
-        if (postSort) {
-            return function (params) { return postSort(params.nodes); };
-        }
     };
     SortService.prototype.calculateDirtyNodes = function (rowNodeTransactions) {
         var dirtyNodes = {};

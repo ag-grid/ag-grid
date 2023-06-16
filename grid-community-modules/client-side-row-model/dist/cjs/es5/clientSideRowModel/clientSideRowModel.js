@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientSideRowModel = void 0;
@@ -416,37 +419,39 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     };
     ClientSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
         // if lastSelectedNode is missing, we start at the first row
-        var firstRowHit = !lastInRange;
-        var lastRowHit = false;
-        var lastRow;
+        var started = !lastInRange;
+        var finished = false;
         var result = [];
         var groupsSelectChildren = this.gridOptionsService.is('groupSelectsChildren');
         this.forEachNodeAfterFilterAndSort(function (rowNode) {
-            var lookingForLastRow = firstRowHit && !lastRowHit;
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
-                    firstRowHit = true;
-                }
+            // range has been closed, skip till end
+            if (finished) {
+                return;
             }
-            var skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                var inRange = firstRowHit && !lastRowHit;
-                var childOfLastRow = rowNode.isParentOfNode(lastRow);
-                if (inRange || childOfLastRow) {
-                    result.push(rowNode);
-                }
-            }
-            if (lookingForLastRow) {
+            if (started) {
                 if (rowNode === lastInRange || rowNode === firstInRange) {
-                    lastRowHit = true;
-                    if (rowNode === lastInRange) {
-                        lastRow = lastInRange;
-                    }
-                    else {
-                        lastRow = firstInRange;
+                    // check if this is the last node we're going to be adding
+                    finished = true;
+                    // if the final node was a group node, and we're doing groupSelectsChildren
+                    // make the exception to select all of it's descendants too
+                    if (rowNode.group && groupsSelectChildren) {
+                        result.push.apply(result, __spreadArray([], __read(rowNode.allLeafChildren)));
+                        return;
                     }
                 }
+            }
+            if (!started) {
+                if (rowNode !== lastInRange && rowNode !== firstInRange) {
+                    // still haven't hit a boundary node, keep searching
+                    return;
+                }
+                started = true;
+            }
+            // only select leaf nodes if groupsSelectChildren
+            var includeThisNode = !rowNode.group || !groupsSelectChildren;
+            if (includeThisNode) {
+                result.push(rowNode);
+                return;
             }
         });
         return result;
@@ -523,7 +528,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNode = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterGroup || [])),
+            nodes: __spreadArray([], __read((this.rootNode.childrenAfterGroup || []))),
             callback: callback,
             recursionType: RecursionType.Normal,
             index: 0,
@@ -533,7 +538,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNodeAfterFilter = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterAggFilter || [])),
+            nodes: __spreadArray([], __read((this.rootNode.childrenAfterAggFilter || []))),
             callback: callback,
             recursionType: RecursionType.AfterFilter,
             index: 0,
@@ -543,7 +548,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterSort || [])),
+            nodes: __spreadArray([], __read((this.rootNode.childrenAfterSort || []))),
             callback: callback,
             recursionType: RecursionType.AfterFilterAndSort,
             index: 0,
@@ -597,7 +602,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                 }
                 if (nodeChildren) {
                     index = this.recursivelyWalkNodesAndCallback({
-                        nodes: __spread(nodeChildren),
+                        nodes: __spreadArray([], __read(nodeChildren)),
                         callback: callback,
                         recursionType: recursionType,
                         index: index,

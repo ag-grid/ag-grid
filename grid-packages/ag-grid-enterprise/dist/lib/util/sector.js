@@ -22,7 +22,7 @@ function isPointInSector(x, y, sector) {
     if (startAngle === (3 * Math.PI) / 2) {
         return angle > endAngle;
     }
-    return angle >= endAngle && angle <= startAngle;
+    return angle <= endAngle && angle >= startAngle;
 }
 exports.isPointInSector = isPointInSector;
 function lineCollidesSector(line, sector) {

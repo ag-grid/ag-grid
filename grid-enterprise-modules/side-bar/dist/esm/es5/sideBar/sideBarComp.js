@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -16,6 +18,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 import { _, Component, Events, ModuleNames, ModuleRegistry, PostConstruct, RefSelector, Autowired, ManagedFocusFeature, KeyCode } from "@ag-grid-community/core";
 import { SideBarButtonsComp } from "./sideBarButtonsComp";
@@ -134,8 +147,7 @@ var SideBarComp = /** @class */ (function (_super) {
             var shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
             var toolPanelDefs = this.sideBar.toolPanels;
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs);
             this.setSideBarPosition(this.sideBar.position);
             if (!this.sideBar.hiddenByDefault) {
                 this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
@@ -158,33 +170,54 @@ var SideBarComp = /** @class */ (function (_super) {
         });
         return this;
     };
-    SideBarComp.prototype.setupToolPanels = function (defs) {
-        var _this = this;
-        defs.forEach(function (def) {
-            if (def.id == null) {
-                console.warn("AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
-                return;
+    SideBarComp.prototype.createToolPanelsAndSideButtons = function (defs) {
+        var e_1, _a;
+        try {
+            for (var defs_1 = __values(defs), defs_1_1 = defs_1.next(); !defs_1_1.done; defs_1_1 = defs_1.next()) {
+                var def = defs_1_1.value;
+                this.createToolPanelAndSideButton(def);
             }
-            // helpers, in case user doesn't have the right module loaded
-            if (def.toolPanel === 'agColumnsToolPanel') {
-                var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (defs_1_1 && !defs_1_1.done && (_a = defs_1.return)) _a.call(defs_1);
             }
-            if (def.toolPanel === 'agFiltersToolPanel') {
-                var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    SideBarComp.prototype.validateDef = function (def) {
+        if (def.id == null) {
+            console.warn("AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
+            return false;
+        }
+        // helpers, in case user doesn't have the right module loaded
+        if (def.toolPanel === 'agColumnsToolPanel') {
+            var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
             }
-            var wrapper = new ToolPanelWrapper();
-            _this.getContext().createBean(wrapper);
-            wrapper.setToolPanelDef(def);
-            wrapper.setDisplayed(false);
-            _this.getGui().appendChild(wrapper.getGui());
-            _this.toolPanelWrappers.push(wrapper);
-        });
+        }
+        if (def.toolPanel === 'agFiltersToolPanel') {
+            var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
+            }
+        }
+        return true;
+    };
+    SideBarComp.prototype.createToolPanelAndSideButton = function (def) {
+        if (!this.validateDef(def)) {
+            return;
+        }
+        var button = this.sideBarButtonsComp.addButtonComp(def);
+        var wrapper = this.getContext().createBean(new ToolPanelWrapper());
+        wrapper.setToolPanelDef(def);
+        wrapper.setDisplayed(false);
+        var wrapperGui = wrapper.getGui();
+        this.appendChild(wrapperGui);
+        this.toolPanelWrappers.push(wrapper);
+        _.setAriaControls(button.getButtonElement(), wrapperGui);
     };
     SideBarComp.prototype.refresh = function () {
         this.toolPanelWrappers.forEach(function (wrapper) { return wrapper.refresh(); });
@@ -215,27 +248,24 @@ var SideBarComp = /** @class */ (function (_super) {
         return toolPanelWrapper.getToolPanelInstance();
     };
     SideBarComp.prototype.raiseToolPanelVisibleEvent = function (key, previousKey, source) {
-        // To be removed in v30
-        var oldEvent = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-        };
-        this.eventService.dispatchEvent(oldEvent);
+        var switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
             var event_1 = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source: source,
                 key: previousKey,
                 visible: false,
+                switchingToolPanel: switchingToolPanel,
             };
             this.eventService.dispatchEvent(event_1);
         }
         if (key) {
             var event_2 = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source: source,
                 key: key,
                 visible: true,
+                switchingToolPanel: switchingToolPanel,
             };
             this.eventService.dispatchEvent(event_2);
         }

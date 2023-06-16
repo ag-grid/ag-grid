@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -65,8 +67,8 @@ var CellMouseListenerFeature = /** @class */ (function (_super) {
             return;
         }
         var _a = this.beans, eventService = _a.eventService, rangeService = _a.rangeService, gridOptionsService = _a.gridOptionsService;
-        var multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        if (rangeService && multiKeyPressed) {
+        var isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        if (rangeService && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
             if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
@@ -109,7 +111,7 @@ var CellMouseListenerFeature = /** @class */ (function (_super) {
         var editOnDoubleClick = !this.beans.gridOptionsService.is('singleClickEdit')
             && !this.beans.gridOptionsService.is('suppressClickEdit');
         if (editOnDoubleClick) {
-            this.cellCtrl.startRowOrCellEdit(null, null, mouseEvent);
+            this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
     };
     CellMouseListenerFeature.prototype.onMouseDown = function (mouseEvent) {
@@ -145,8 +147,8 @@ var CellMouseListenerFeature = /** @class */ (function (_super) {
                 rangeService.extendLatestRangeToCell(thisCell);
             }
             else {
-                var ctrlKeyPressed = ctrlKey || metaKey;
-                rangeService.setRangeToCell(thisCell, ctrlKeyPressed);
+                var isMultiKey = ctrlKey || metaKey;
+                rangeService.setRangeToCell(thisCell, isMultiKey);
             }
         }
         eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN));

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -51,9 +53,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RowDragFeature = void 0;
@@ -137,7 +140,7 @@ var RowDragFeature = /** @class */ (function (_super) {
             return (draggingEvent.dragItem.rowNodes || []);
         }
         var isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
-        var selectedNodes = __spread(this.selectionService.getSelectedNodes()).sort(function (a, b) {
+        var selectedNodes = __spreadArray([], __read(this.selectionService.getSelectedNodes())).sort(function (a, b) {
             if (a.rowIndex == null || b.rowIndex == null) {
                 return 0;
             }
@@ -221,7 +224,7 @@ var RowDragFeature = /** @class */ (function (_super) {
             this.moveRows(rowNodes, pixel, increment);
         }
         else {
-            var getRowIdFunc_1 = this.gridOptionsService.getRowIdFunc();
+            var getRowIdFunc_1 = this.gridOptionsService.getCallback('getRowId');
             var addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
             if (this.clientSideRowModel.getHighlightPosition(pixel) === iRowNode_1.RowHighlightPosition.Above) {
                 addIndex--;

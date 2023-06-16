@@ -13,10 +13,10 @@ import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
 export class ExcelXlsxFactory {
-    static createExcel(styles, worksheet, margins, pageSetup, headerFooterConfig) {
+    static createExcel(styles, worksheet, config) {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
-        return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
+        return this.createWorksheet(worksheet, config);
     }
     static buildImageMap(image, rowIndex, col, columnsToExport, rowHeight) {
         const currentSheetIndex = this.sheetNames.length;
@@ -177,13 +177,11 @@ export class ExcelXlsxFactory {
             }]);
         return createXmlPart(rs);
     }
-    static createWorksheet(worksheet, margins, pageSetup, headerFooterConfig) {
+    static createWorksheet(worksheet, config) {
         return createXmlPart(worksheetFactory.getTemplate({
             worksheet,
             currentSheet: this.sheetNames.length - 1,
-            margins,
-            pageSetup,
-            headerFooterConfig
+            config
         }));
     }
 }

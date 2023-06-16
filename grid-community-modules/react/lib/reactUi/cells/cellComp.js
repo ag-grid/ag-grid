@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -208,9 +208,10 @@ const CellComp = (props) => {
         }
         const destroyFuncs = [];
         const addComp = (comp) => {
+            var _a;
             if (comp) {
                 const eGui = comp.getGui();
-                eCellWrapper.current.insertAdjacentElement('afterbegin', eGui);
+                (_a = eCellWrapper.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterbegin', eGui);
                 destroyFuncs.push(() => {
                     context.destroyBean(comp);
                     core_1._.removeFromParent(eGui);

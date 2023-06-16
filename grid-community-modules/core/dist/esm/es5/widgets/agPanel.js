@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -45,7 +47,14 @@ var AgPanel = /** @class */ (function (_super) {
         var _this = this;
         var _a = this.config, component = _a.component, closable = _a.closable, hideTitleBar = _a.hideTitleBar, title = _a.title, _b = _a.minWidth, minWidth = _b === void 0 ? 250 : _b, width = _a.width, _c = _a.minHeight, minHeight = _c === void 0 ? 250 : _c, height = _a.height, centered = _a.centered, popup = _a.popup, x = _a.x, y = _a.y;
         this.positionableFeature = new PositionableFeature(this.getGui(), {
-            minWidth: minWidth, width: width, minHeight: minHeight, height: height, centered: centered, x: x, y: y, popup: popup,
+            minWidth: minWidth,
+            width: width,
+            minHeight: minHeight,
+            height: height,
+            centered: centered,
+            x: x,
+            y: y,
+            popup: popup,
             calculateTopBuffer: function () { return _this.positionableFeature.getHeight() - _this.getBodyHeight(); }
         });
         this.createManagedBean(this.positionableFeature);

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -36,7 +38,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     }
     PieChartProxy.prototype.update = function (params) {
         var data = params.data, category = params.category;
-        var options = __assign(__assign({}, this.getCommonChartOptions()), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
+        var options = __assign(__assign({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
         ag_charts_community_1.AgChart.update(this.getChartRef(), options);
     };
     PieChartProxy.prototype.getSeries = function (params) {
@@ -63,8 +65,7 @@ var PieChartProxy = /** @class */ (function (_super) {
                     title: { text: f.displayName, showInLegend: numFields > 1 },
                 } : undefined;
                 // augment shared options with 'doughnut' specific options
-                return __assign(__assign(__assign(__assign({}, options), { outerRadiusOffset: outerRadiusOffset,
-                    innerRadiusOffset: innerRadiusOffset }), title), { calloutLine: {
+                return __assign(__assign(__assign(__assign({}, options), { outerRadiusOffset: outerRadiusOffset, innerRadiusOffset: innerRadiusOffset }), title), { calloutLine: {
                         colors: (_a = _this.getChartPalette()) === null || _a === void 0 ? void 0 : _a.strokes,
                     } });
             }

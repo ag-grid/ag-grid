@@ -79,7 +79,7 @@ class MultiFloatingFilterComp extends core_1.Component {
     }
     createFloatingFilter(filterDef, params) {
         var _a;
-        let defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef)) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
+        let defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () => this.filterManager.getDefaultFloatingFilter(this.params.column))) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
     }
@@ -95,4 +95,7 @@ class MultiFloatingFilterComp extends core_1.Component {
 __decorate([
     core_1.Autowired('userComponentFactory')
 ], MultiFloatingFilterComp.prototype, "userComponentFactory", void 0);
+__decorate([
+    core_1.Autowired('filterManager')
+], MultiFloatingFilterComp.prototype, "filterManager", void 0);
 exports.MultiFloatingFilterComp = MultiFloatingFilterComp;

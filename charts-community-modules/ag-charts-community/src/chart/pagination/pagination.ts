@@ -122,6 +122,8 @@ export class Pagination {
 
     totalPages: number = 0;
     currentPage: number = 0;
+    translationX: number = 0;
+    translationY: number = 0;
 
     private nextButtonDisabled = false;
     private previousButtonDisabled = false;
@@ -169,20 +171,6 @@ export class Pagination {
         return this._orientation;
     }
 
-    set translationX(value: number) {
-        this.group.translationX = value;
-    }
-    get translationX(): number {
-        return this.group.translationX;
-    }
-
-    set translationY(value: number) {
-        this.group.translationY = value;
-    }
-    get translationY(): number {
-        return this.group.translationY;
-    }
-
     private _nextButton: Marker = new Triangle();
     set nextButton(value: Marker) {
         if (this._nextButton !== value) {
@@ -214,6 +202,9 @@ export class Pagination {
     }
 
     private updatePositions() {
+        this.group.translationX = this.translationX;
+        this.group.translationY = this.translationY;
+
         this.updateLabelPosition();
         this.updateNextButtonPosition();
     }

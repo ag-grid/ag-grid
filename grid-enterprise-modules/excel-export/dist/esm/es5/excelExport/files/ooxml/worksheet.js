@@ -4,7 +4,7 @@ import rowFactory from './row';
 import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
-var getMergedCellsAndAddColumnGroups = function (rows, cols) {
+var getMergedCellsAndAddColumnGroups = function (rows, cols, suppressColumnOutline) {
     var mergedCells = [];
     var cellsWithCollapsibleGroups = [];
     rows.forEach(function (currentRow, rowIdx) {
@@ -57,7 +57,7 @@ var getMergedCellsAndAddColumnGroups = function (rows, cols) {
         cols.push({
             min: range[0],
             max: range[1],
-            outlineLevel: currentOutlineLevel || 1,
+            outlineLevel: suppressColumnOutline ? undefined : (currentOutlineLevel || 1),
             width: (refCol || { width: 100 }).width
         });
         outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
@@ -307,10 +307,11 @@ var addSheetFormatPr = function (rows) {
 };
 var worksheetFactory = {
     getTemplate: function (params) {
-        var worksheet = params.worksheet, currentSheet = params.currentSheet, _a = params.margins, margins = _a === void 0 ? {} : _a, pageSetup = params.pageSetup, headerFooterConfig = params.headerFooterConfig;
+        var worksheet = params.worksheet, currentSheet = params.currentSheet, config = params.config;
+        var _a = config.margins, margins = _a === void 0 ? {} : _a, pageSetup = config.pageSetup, headerFooterConfig = config.headerFooterConfig, suppressColumnOutline = config.suppressColumnOutline;
         var table = worksheet.table;
         var rows = table.rows, columns = table.columns;
-        var mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns) : [];
+        var mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
         var createWorksheetChildren = _.compose(addSheetPr(), addSheetFormatPr(rows), addColumns(columns), addSheetData(rows, currentSheet + 1), addMergeCells(mergedCells), addPageMargins(margins), addPageSetup(pageSetup), addHeaderFooter(headerFooterConfig), addDrawingRel(currentSheet));
         var children = createWorksheetChildren([]);
         return {

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -198,7 +200,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         }
     };
     ColumnToolPanel.prototype.isRowGroupingModuleLoaded = function () {
-        return core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping');
+        return core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
     };
     ColumnToolPanel.prototype.expandColumnGroups = function (groupIds) {
         this.primaryColsPanel.expandGroups(groupIds);

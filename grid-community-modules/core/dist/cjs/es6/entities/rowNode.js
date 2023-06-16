@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -139,13 +139,16 @@ class RowNode {
             const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
-                this.setSelectedParams({ newValue: selected !== null && selected !== void 0 ? selected : false, source: 'selectableChanged' });
+                this.setSelectedParams({
+                    newValue: selected !== null && selected !== void 0 ? selected : false,
+                    source: 'selectableChanged',
+                });
             }
         }
     }
     setId(id) {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.beans.gridOptionsService.getCallback('getRowId');
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
@@ -467,12 +470,12 @@ class RowNode {
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
+     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
      * @param eventSource The source of the event
-     * @returns `True` if the value was changed, otherwise `False`.
+     * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey, newValue, eventSource) {
         const getColumnFromKey = () => {
@@ -704,19 +707,21 @@ class RowNode {
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
-     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
      * @param source - Source property that will appear in the `selectionChanged` event.
      */
-    setSelected(newValue, clearSelection = false, suppressFinishActions = false, source = 'api') {
+    setSelected(newValue, clearSelection = false, source = 'api') {
+        if (typeof source === 'boolean') {
+            console.warn('AG Grid: since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.');
+            return;
+        }
         this.setSelectedParams({
             newValue,
             clearSelection,
-            suppressFinishActions,
             rangeSelect: false,
             source
         });
     }
-    // to make calling code more readable, this is the same method as setSelected except it takes names parameters
+    // this is for internal use only. To make calling code more readable, this is the same method as setSelected except it takes names parameters
     setSelectedParams(params) {
         if (this.rowPinned) {
             console.warn('AG Grid: cannot select pinned rows');
@@ -726,7 +731,7 @@ class RowNode {
             console.warn('AG Grid: cannot select node until id for node is known');
             return 0;
         }
-        return this.beans.selectionService.setNodeSelected(Object.assign(Object.assign({}, params), { node: this.footer ? this.sibling : this }));
+        return this.beans.selectionService.setNodesSelected(Object.assign(Object.assign({}, params), { nodes: [this.footer ? this.sibling : this] }));
     }
     /**
      * Returns:
@@ -798,19 +803,8 @@ class RowNode {
      * - `false` if the node is not a full width cell
      */
     isFullWidthCell() {
-        const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
-    }
-    getIsFullWidthCellFunc() {
-        const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
-        if (isFullWidthRow) {
-            return isFullWidthRow;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
-        if (isFullWidthCell) {
-            return (params) => isFullWidthCell(params.rowNode);
-        }
     }
     /**
      * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.

@@ -3,8 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.axisLabelsOverlap = exports.placeLabels = exports.isPointLabelDatum = void 0;
 function circleRectOverlap(c, x, y, w, h) {
     // Find closest horizontal and vertical edges.
-    const edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
-    const edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
+    let edgeX = c.x;
+    if (c.x < x) {
+        edgeX = x;
+    }
+    else if (c.x > x + w) {
+        edgeX = x + w;
+    }
+    let edgeY = c.y;
+    if (c.y < y) {
+        edgeY = y;
+    }
+    else if (c.y > y + h) {
+        edgeY = y + h;
+    }
     // Find distance to closest edges.
     const dx = c.x - edgeX;
     const dy = c.y - edgeY;
@@ -34,7 +46,7 @@ function placeLabels(data, bounds, padding = 5) {
     for (let j = 0; j < data.length; j++) {
         const labels = (result[j] = []);
         const datum = data[j];
-        if (!(datum && datum.length && datum[0].label)) {
+        if (!((datum === null || datum === void 0 ? void 0 : datum.length) && datum[0].label)) {
             continue;
         }
         for (let i = 0, ln = datum.length; i < ln; i++) {

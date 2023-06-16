@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -365,6 +365,24 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * Default: `false`
      */
     suppressTextAsCDATA?: boolean;
+    /**
+     * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressRowOutline?: boolean;
+    /**
+     * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressColumnOutline?: boolean;
+    /**
+     * The expand/collapse state of each row group in the Excel Document.
+     *  - expanded: All row groups will be expanded by default.
+     *  - collapsed: All row groups will be collapsed by default.
+     *  - match: The row groups will match their current state in the Grid.
+     * Default: `expanded`.
+     */
+    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     /**
      * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
      * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`

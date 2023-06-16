@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -303,7 +305,8 @@ var AreaSparkline = /** @class */ (function (_super) {
         fillPath.fill = fill;
     };
     AreaSparkline.prototype.updateXCrosshairLine = function () {
-        var _a = this, yScale = _a.yScale, xCrosshairLine = _a.xCrosshairLine, highlightedDatum = _a.highlightedDatum, xLine = _a.crosshairs.xLine;
+        var _a;
+        var _b = this, yScale = _b.yScale, xCrosshairLine = _b.xCrosshairLine, highlightedDatum = _b.highlightedDatum, xLine = _b.crosshairs.xLine;
         if (!xLine.enabled || highlightedDatum == undefined) {
             xCrosshairLine.strokeWidth = 0;
             return;
@@ -312,7 +315,7 @@ var AreaSparkline = /** @class */ (function (_super) {
         xCrosshairLine.y2 = yScale.range[1];
         xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
         xCrosshairLine.stroke = xLine.stroke;
-        xCrosshairLine.strokeWidth = xLine.strokeWidth || 1;
+        xCrosshairLine.strokeWidth = (_a = xLine.strokeWidth) !== null && _a !== void 0 ? _a : 1;
         xCrosshairLine.lineCap = xLine.lineCap === 'round' || xLine.lineCap === 'square' ? xLine.lineCap : undefined;
         var lineDash = xLine.lineDash;
         xCrosshairLine.lineDash = Array.isArray(lineDash)
@@ -321,7 +324,8 @@ var AreaSparkline = /** @class */ (function (_super) {
         xCrosshairLine.translationX = highlightedDatum.point.x;
     };
     AreaSparkline.prototype.updateYCrosshairLine = function () {
-        var _a = this, xScale = _a.xScale, yCrosshairLine = _a.yCrosshairLine, highlightedDatum = _a.highlightedDatum, yLine = _a.crosshairs.yLine;
+        var _a;
+        var _b = this, xScale = _b.xScale, yCrosshairLine = _b.yCrosshairLine, highlightedDatum = _b.highlightedDatum, yLine = _b.crosshairs.yLine;
         if (!yLine.enabled || highlightedDatum == undefined) {
             yCrosshairLine.strokeWidth = 0;
             return;
@@ -330,7 +334,7 @@ var AreaSparkline = /** @class */ (function (_super) {
         yCrosshairLine.x2 = xScale.range[1];
         yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
         yCrosshairLine.stroke = yLine.stroke;
-        yCrosshairLine.strokeWidth = yLine.strokeWidth || 1;
+        yCrosshairLine.strokeWidth = (_a = yLine.strokeWidth) !== null && _a !== void 0 ? _a : 1;
         yCrosshairLine.lineCap = yLine.lineCap === 'round' || yLine.lineCap === 'square' ? yLine.lineCap : undefined;
         var lineDash = yLine.lineDash;
         yCrosshairLine.lineDash = Array.isArray(lineDash)

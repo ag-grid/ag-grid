@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -20,8 +20,10 @@ let ValueService = class ValueService extends BeanStub {
     constructor() {
         super(...arguments);
         this.initialised = false;
+        this.isSsrm = false;
     }
     init() {
+        this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
         this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.isTreeData = this.gridOptionsService.is('treeData');
         this.initialised = true;
@@ -48,6 +50,9 @@ let ValueService = class ValueService extends BeanStub {
         // if there is a value getter, this gets precedence over a field
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        // SSRM agg data comes from the data attribute, so ignore that instead
+        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        const ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         }
@@ -69,7 +74,12 @@ let ValueService = class ValueService extends BeanStub {
         else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
-        else if (field && data) {
+        else if (ssrmFooterGroupCol) {
+            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
+            // the group value from the data using the row field
+            result = getValueUsingField(data, rowNode.field, column.isFieldContainsDots());
+        }
+        else if (field && data && !ignoreSsrmAggData) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -124,6 +134,10 @@ let ValueService = class ValueService extends BeanStub {
         const { field, valueSetter } = column.getColDef();
         if (missing(field) && missing(valueSetter)) {
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
+            return false;
+        }
+        if (!this.dataTypeService.checkType(column, newValue)) {
+            console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
             return false;
         }
         const params = {
@@ -325,6 +339,9 @@ __decorate([
 __decorate([
     Autowired('valueCache')
 ], ValueService.prototype, "valueCache", void 0);
+__decorate([
+    Autowired('dataTypeService')
+], ValueService.prototype, "dataTypeService", void 0);
 __decorate([
     PostConstruct
 ], ValueService.prototype, "init", null);

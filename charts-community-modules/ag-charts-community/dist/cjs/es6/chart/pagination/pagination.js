@@ -107,6 +107,8 @@ class Pagination {
         this.label = new PaginationLabel();
         this.totalPages = 0;
         this.currentPage = 0;
+        this.translationX = 0;
+        this.translationY = 0;
         this.nextButtonDisabled = false;
         this.previousButtonDisabled = false;
         this._visible = true;
@@ -162,18 +164,6 @@ class Pagination {
     get orientation() {
         return this._orientation;
     }
-    set translationX(value) {
-        this.group.translationX = value;
-    }
-    get translationX() {
-        return this.group.translationX;
-    }
-    set translationY(value) {
-        this.group.translationY = value;
-    }
-    get translationY() {
-        return this.group.translationY;
-    }
     set nextButton(value) {
         if (this._nextButton !== value) {
             this.group.removeChild(this._nextButton);
@@ -200,6 +190,8 @@ class Pagination {
         this.enableOrDisableButtons();
     }
     updatePositions() {
+        this.group.translationX = this.translationX;
+        this.group.translationY = this.translationY;
         this.updateLabelPosition();
         this.updateNextButtonPosition();
     }

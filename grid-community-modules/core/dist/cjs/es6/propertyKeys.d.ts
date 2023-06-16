@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
@@ -43,10 +43,5 @@ export declare class PropertyKeys {
     static CALLBACK_PROPERTIES: CallbackKeys[];
     static FUNCTION_PROPERTIES: GridOptionKey[];
     static ALL_PROPERTIES: GridOptionKey[];
-    /**
-     * Used when performing property checks. This avoids noise caused when using frameworks, which can add their own
-     * framework-specific properties to colDefs, gridOptions etc.
-     */
-    static FRAMEWORK_PROPERTIES: string[];
 }
 export {};

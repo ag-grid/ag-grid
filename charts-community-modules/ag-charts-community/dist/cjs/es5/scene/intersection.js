@@ -101,7 +101,7 @@ function bezierCoefficients(P1, P2, P3, P4) {
         -P1 + 3 * P2 - 3 * P3 + P4,
         3 * P1 - 6 * P2 + 3 * P3,
         -3 * P1 + 3 * P2,
-        P1,
+        P1, //                 | 1  0  0  0| |P4|
     ];
 }
 /**

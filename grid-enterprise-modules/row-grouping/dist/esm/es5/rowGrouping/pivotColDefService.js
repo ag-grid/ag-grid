@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -44,9 +46,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Autowired, Bean, BeanStub, _ } from "@ag-grid-community/core";
 var PivotColDefService = /** @class */ (function (_super) {
@@ -102,7 +105,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         if (measureColumns.length === 1 && this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             var leafCols_1 = [];
             _.iterateObject(uniqueValue, function (key) {
-                var newPivotKeys = __spread(pivotKeys, [key]);
+                var newPivotKeys = __spreadArray(__spreadArray([], __read(pivotKeys)), [key]);
                 leafCols_1.push(__assign(__assign({}, _this.createColDef(measureColumns[0], key, newPivotKeys)), { columnGroupShow: 'open' }));
             });
             leafCols_1.sort(comparator);
@@ -111,7 +114,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         // Recursive case
         var groups = [];
         _.iterateObject(uniqueValue, function (key, value) {
-            var newPivotKeys = __spread(pivotKeys, [key]);
+            var newPivotKeys = __spreadArray(__spreadArray([], __read(pivotKeys)), [key]);
             groups.push({
                 children: _this.recursiveBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
                 headerName: key,
@@ -359,7 +362,7 @@ var PivotColDefService = /** @class */ (function (_super) {
     PivotColDefService.prototype.merge = function (m1, m2) {
         m2.forEach(function (value, key, map) {
             var existingList = m1.has(key) ? m1.get(key) : [];
-            var updatedList = __spread(existingList, value);
+            var updatedList = __spreadArray(__spreadArray([], __read(existingList)), __read(value));
             m1.set(key, updatedList);
         });
     };

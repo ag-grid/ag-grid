@@ -36,6 +36,7 @@ export function convertTemplate(template: string) {
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=')
+        .replace(/ for=/g, ' htmlFor=')
         .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}')
 
     return convertStyles(template);

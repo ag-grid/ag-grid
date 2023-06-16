@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -12,7 +12,7 @@ export interface IClipboardCopyRowsParams extends IClipboardCopyParams {
 export interface IClipboardService {
     pasteFromClipboard(): void;
     copyToClipboard(params?: IClipboardCopyParams): void;
-    cutToClipboard(params?: IClipboardCopyParams): void;
+    cutToClipboard(params?: IClipboardCopyParams, source?: 'api' | 'ui' | 'contextMenu'): void;
     copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
     copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     copyRangeDown(): void;

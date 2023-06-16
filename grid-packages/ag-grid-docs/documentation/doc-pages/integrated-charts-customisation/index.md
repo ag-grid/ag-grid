@@ -51,7 +51,8 @@ The example below shows a custom chart theme being used with the grid. Note that
 
 ## Overriding Existing Themes
 
-Instead of providing a whole custom chart theme, you can instead supply just a set of theme overrides. These will be applied on top of every available theme. This can be useful for tweaking the style of your charts without having to provide a whole theme, or to make changes across multiple themes.
+Instead of providing a whole custom chart theme, you can simply use the `chartsThemeOverrides` grid option, which maps 
+to the `overrides` [Theme](/charts-api-themes/) property.
 
 <snippet>
 const gridOptions = {

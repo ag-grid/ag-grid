@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -138,7 +140,8 @@ var Rect = /** @class */ (function (_super) {
     };
     Rect.prototype.applyFillAlpha = function (ctx) {
         var _a = this, fillOpacity = _a.fillOpacity, microPixelEffectOpacity = _a.microPixelEffectOpacity, opacity = _a.opacity;
-        ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
+        var globalAlpha = ctx.globalAlpha;
+        ctx.globalAlpha = globalAlpha * opacity * fillOpacity * microPixelEffectOpacity;
     };
     Rect.prototype.renderStroke = function (ctx) {
         var _a = this, stroke = _a.stroke, effectiveStrokeWidth = _a.effectiveStrokeWidth, borderPath = _a.borderPath, borderClipPath = _a.borderClipPath, opacity = _a.opacity, microPixelEffectOpacity = _a.microPixelEffectOpacity;

@@ -12,7 +12,7 @@ The Tree List allows the user to display the values in the Filter List grouped i
 ## Enabling Tree Lists
 
 Tree List is enabled by setting `filterParams.treeList = true`. There are four different ways the tree structure can be created:
-- The column values are of type `Date`, in which case the tree will be year -> month -> day.
+- The column values are of type `Date`, in which case the tree will be year -> month -> day. Note that if the `Date` objects have a time defined, then a Key Creator must also be supplied to generate a unique key without the time.
 - Tree Data mode is enabled and the column is a group column. The Filter List will match the tree structure. A Key Creator must be supplied to convert the array of keys.
 - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied to convert the array of keys.
 - A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values. If the column values are [Complex Objects](/filter-set-filter-list/#complex-objects), a Key Creator will also be required.
@@ -49,6 +49,10 @@ The following example demonstrates enabling different types of Tree List in the 
 - The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
 
 <grid-example title='Filter Tree List' name='filter-tree-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+<note>
+If using [Cell Data Types](../cell-data-types/), Tree List is automatically enabled for columns containing date values.
+</note>
 
 ## Sorting Tree Lists
 

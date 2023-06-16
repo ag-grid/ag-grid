@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -23,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { PostConstruct } from '../../../context/context';
+import { PostConstruct, PreDestroy } from '../../../context/context';
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -48,25 +50,37 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
     };
     HeaderFilterCellComp.prototype.setCompDetails = function (compDetails) {
         var _this = this;
+        if (!compDetails) {
+            this.destroyFloatingFilterComp();
+            this.compPromise = null;
+            return;
+        }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
         this.compPromise.then(function (comp) { return _this.afterCompCreated(comp); });
     };
+    HeaderFilterCellComp.prototype.destroyFloatingFilterComp = function () {
+        if (this.floatingFilterComp) {
+            this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
+            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
+        }
+    };
     HeaderFilterCellComp.prototype.afterCompCreated = function (comp) {
-        var _this = this;
         if (!comp) {
             return;
         }
-        this.addDestroyFunc(function () { return _this.context.destroyBean(comp); });
         if (!this.isAlive()) {
+            this.destroyBean(comp);
             return;
         }
+        this.destroyFloatingFilterComp();
+        this.floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
         if (comp.afterGuiAttached) {
             comp.afterGuiAttached();
         }
     };
-    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" aria-label=\"Open Filter Menu\" class=\"ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
+    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-button ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
     __decorate([
         RefSelector('eFloatingFilterBody')
     ], HeaderFilterCellComp.prototype, "eFloatingFilterBody", void 0);
@@ -79,6 +93,9 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
     __decorate([
         PostConstruct
     ], HeaderFilterCellComp.prototype, "postConstruct", null);
+    __decorate([
+        PreDestroy
+    ], HeaderFilterCellComp.prototype, "destroyFloatingFilterComp", null);
     return HeaderFilterCellComp;
 }(AbstractHeaderCellComp));
 export { HeaderFilterCellComp };

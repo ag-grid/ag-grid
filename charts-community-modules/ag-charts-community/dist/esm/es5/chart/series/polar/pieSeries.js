@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -80,9 +82,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Group } from '../../../scene/group';
 import { Line } from '../../../scene/shape/line';
@@ -92,7 +95,7 @@ import { Selection } from '../../../scene/selection';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
+import { HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, valueProperty, rangedValueProperty, accumulativeValueProperty, } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
@@ -103,9 +106,11 @@ import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { isPointInSector, boxCollidesSector } from '../../../util/sector';
-import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import { BOOLEAN, NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_NUMBER, OPT_STRING, STRING, COLOR_STRING_ARRAY, OPT_COLOR_STRING_ARRAY, Validate, COLOR_STRING, } from '../../../util/validation';
-import { Logger } from '../../../util/logger';
+import { StateMachine } from '../../../motion/states';
+import * as easing from '../../../motion/easing';
+import { DataModel } from '../../data/dataModel';
+import { normalisePropertyTo } from '../../data/processors';
 var PieSeriesNodeBaseClickEvent = /** @class */ (function (_super) {
     __extends(PieSeriesNodeBaseClickEvent, _super);
     function PieSeriesNodeBaseClickEvent(angleKey, calloutLabelKey, sectorLabelKey, radiusKey, nativeEvent, datum, series) {
@@ -116,9 +121,6 @@ var PieSeriesNodeBaseClickEvent = /** @class */ (function (_super) {
         _this.radiusKey = radiusKey;
         return _this;
     }
-    __decorate([
-        DeprecatedAndRenamedTo('calloutLabelKey')
-    ], PieSeriesNodeBaseClickEvent.prototype, "labelKey", void 0);
     return PieSeriesNodeBaseClickEvent;
 }(SeriesNodeBaseClickEvent));
 var PieSeriesNodeClickEvent = /** @class */ (function (_super) {
@@ -266,33 +268,27 @@ var DoughnutInnerCircle = /** @class */ (function () {
     return DoughnutInnerCircle;
 }());
 export { DoughnutInnerCircle };
+var PieStateMachine = /** @class */ (function (_super) {
+    __extends(PieStateMachine, _super);
+    function PieStateMachine() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return PieStateMachine;
+}(StateMachine));
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
-    function PieSeries() {
-        var _this = _super.call(this, { useLabelLayer: true }) || this;
+    function PieSeries(moduleCtx) {
+        var _this = _super.call(this, { moduleCtx: moduleCtx, useLabelLayer: true }) || this;
         _this.radiusScale = new LinearScale();
         _this.groupSelection = Selection.select(_this.contentGroup, Group);
         _this.highlightSelection = Selection.select(_this.highlightGroup, Group);
-        /**
-         * The processed data that gets visualized.
-         */
-        _this.groupSelectionData = [];
-        _this.sectorFormatData = [];
-        _this.angleScale = (function () {
-            var scale = new LinearScale();
-            // Each sector is a ratio of the whole, where all ratios add up to 1.
-            scale.domain = [0, 1];
-            // Add 90 deg to start the first pie at 12 o'clock.
-            scale.range = [-Math.PI, Math.PI].map(function (angle) { return angle + Math.PI / 2; });
-            return scale;
-        })();
+        _this.nodeData = [];
         // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
         _this.seriesItemEnabled = [];
+        _this.title = undefined;
         _this.calloutLabel = new PieSeriesCalloutLabel();
-        _this.label = _this.calloutLabel;
         _this.sectorLabel = new PieSeriesSectorLabel();
         _this.calloutLine = new PieSeriesCalloutLine();
-        _this.callout = _this.calloutLine;
         _this.tooltip = new PieSeriesTooltip();
         /**
          * The key of the numeric field to use to determine the angle (for example,
@@ -301,6 +297,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.angleKey = '';
         _this.angleName = '';
         _this.innerLabels = [];
+        _this.innerCircle = undefined;
         /**
          * The key of the numeric field to use to determine the radii of pie sectors.
          * The largest value will correspond to the full radius and smaller values to
@@ -312,8 +309,6 @@ var PieSeries = /** @class */ (function (_super) {
         _this.radiusMax = undefined;
         _this.calloutLabelKey = undefined;
         _this.calloutLabelName = undefined;
-        _this.labelKey = undefined;
-        _this.labelName = undefined;
         _this.sectorLabelKey = undefined;
         _this.sectorLabelName = undefined;
         _this.legendItemKey = undefined;
@@ -335,7 +330,12 @@ var PieSeries = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         _this.shadow = undefined;
         _this.highlightStyle = new HighlightStyle();
-        _this.datumSectorRefs = new WeakMap();
+        _this.surroundingRadius = undefined;
+        _this.angleScale = new LinearScale();
+        // Each sector is a ratio of the whole, where all ratios add up to 1.
+        _this.angleScale.domain = [0, 1];
+        // Add 90 deg to start the first pie at 12 o'clock.
+        _this.angleScale.range = [-Math.PI, Math.PI].map(function (angle) { return angle + Math.PI / 2; });
         _this.backgroundGroup = _this.rootGroup.appendChild(new Group({
             name: _this.id + "-background",
             layer: true,
@@ -350,29 +350,26 @@ var PieSeries = /** @class */ (function (_super) {
         _this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
         _this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         _this.innerLabelsSelection = Selection.select(innerLabels, Text);
+        _this.animationState = new PieStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function () { return _this.animateEmptyUpdateReady(); },
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function () { return _this.animateReadyUpdateReady(); },
+                    },
+                },
+            },
+        });
         return _this;
     }
-    Object.defineProperty(PieSeries.prototype, "title", {
-        get: function () {
-            return this._title;
-        },
-        set: function (value) {
-            var _a, _b;
-            var oldTitle = this._title;
-            if (oldTitle !== value) {
-                if (oldTitle) {
-                    (_a = this.labelGroup) === null || _a === void 0 ? void 0 : _a.removeChild(oldTitle.node);
-                }
-                if (value) {
-                    value.node.textBaseline = 'bottom';
-                    (_b = this.labelGroup) === null || _b === void 0 ? void 0 : _b.appendChild(value.node);
-                }
-                this._title = value;
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(PieSeries.prototype, "data", {
         get: function () {
             return this._data;
@@ -384,38 +381,18 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(PieSeries.prototype, "innerCircle", {
-        get: function () {
-            return this._innerCircleConfig;
-        },
-        set: function (value) {
-            var _a;
-            var oldCircleCfg = this._innerCircleConfig;
-            if (oldCircleCfg !== value) {
-                var oldNode = this._innerCircleNode;
-                var circle = void 0;
-                if (oldNode) {
-                    this.backgroundGroup.removeChild(oldNode);
-                }
-                if (value) {
-                    circle = new Circle();
-                    circle.fill = value.fill;
-                    circle.fillOpacity = (_a = value.fillOpacity) !== null && _a !== void 0 ? _a : 1;
-                    this.backgroundGroup.appendChild(circle);
-                }
-                this._innerCircleConfig = value;
-                this._innerCircleNode = circle;
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
+    PieSeries.prototype.addChartEventListeners = function () {
+        var _this = this;
+        var _a;
+        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
+    };
     PieSeries.prototype.visibleChanged = function () {
         this.processSeriesItemEnabled();
     };
     PieSeries.prototype.processSeriesItemEnabled = function () {
-        var _a = this, data = _a.data, visible = _a.visible;
-        this.seriesItemEnabled = (data === null || data === void 0 ? void 0 : data.map(function () { return visible; })) || [];
+        var _a;
+        var _b = this, data = _b.data, visible = _b.visible;
+        this.seriesItemEnabled = (_a = data === null || data === void 0 ? void 0 : data.map(function () { return visible; })) !== null && _a !== void 0 ? _a : [];
     };
     PieSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -426,171 +403,174 @@ var PieSeries = /** @class */ (function (_super) {
         }
     };
     PieSeries.prototype.processData = function () {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, sectorFormatData, calloutLabel, sectorLabel, seriesId, data, angleData, angleDataTotal, angleDataRatios, labelFormatter, labelKey, sectorLabelKey, labelData, sectorLabelData, radiusData, getLabelFormatterParams, showValueDeprecationWarning_1, sectorLabelFormatter, _b, radiusMin, radiusMax, radii, min_1, max, delta_1, rotation, halfPi, datumIndex, quadrantTextOpts, end;
-            var _this = this;
-            return __generator(this, function (_c) {
-                _a = this, angleKey = _a.angleKey, radiusKey = _a.radiusKey, seriesItemEnabled = _a.seriesItemEnabled, angleScale = _a.angleScale, groupSelectionData = _a.groupSelectionData, sectorFormatData = _a.sectorFormatData, calloutLabel = _a.calloutLabel, sectorLabel = _a.sectorLabel, seriesId = _a.id;
-                data = angleKey && this.data ? this.data : [];
-                angleData = data.map(function (datum, index) { return (seriesItemEnabled[index] && Math.abs(+datum[angleKey])) || 0; });
-                angleDataTotal = angleData.reduce(function (a, b) { return a + b; }, 0);
-                angleDataRatios = (function () {
-                    var sum = 0;
-                    return angleData.map(function (datum) { return (sum += datum / angleDataTotal); });
-                })();
-                labelFormatter = calloutLabel.formatter;
-                labelKey = calloutLabel.enabled ? this.calloutLabelKey : undefined;
-                sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
-                labelData = [];
-                sectorLabelData = [];
-                radiusData = [];
-                getLabelFormatterParams = function (datum) {
-                    return {
-                        datum: datum,
-                        angleKey: angleKey,
-                        angleValue: datum[angleKey],
-                        angleName: _this.angleName,
-                        radiusKey: radiusKey,
-                        radiusValue: radiusKey ? datum[radiusKey] : undefined,
-                        radiusName: _this.radiusName,
-                        labelKey: labelKey,
-                        labelValue: labelKey ? datum[labelKey] : undefined,
-                        labelName: _this.calloutLabelName,
-                        calloutLabelKey: labelKey,
-                        calloutLabelValue: labelKey ? datum[labelKey] : undefined,
-                        calloutLabelName: _this.calloutLabelName,
-                        sectorLabelKey: sectorLabelKey,
-                        sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
-                        sectorLabelName: _this.sectorLabelName,
-                        seriesId: seriesId,
-                    };
-                };
-                if (labelKey) {
-                    if (labelFormatter) {
-                        showValueDeprecationWarning_1 = function () {
-                            return Logger.warnOnce('the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.');
-                        };
-                        labelData = data.map(function (datum) {
-                            var deprecatedValue = datum[labelKey];
-                            var formatterParams = __assign(__assign({}, getLabelFormatterParams(datum)), { get value() {
-                                    showValueDeprecationWarning_1();
-                                    return deprecatedValue;
-                                },
-                                set value(v) {
-                                    showValueDeprecationWarning_1();
-                                    deprecatedValue = v;
-                                } });
-                            return labelFormatter(formatterParams);
-                        });
-                    }
-                    else {
-                        labelData = data.map(function (datum) { return String(datum[labelKey]); });
-                    }
-                }
-                sectorLabelFormatter = sectorLabel.formatter;
-                if (sectorLabelKey) {
-                    if (sectorLabelFormatter) {
-                        sectorLabelData = data.map(function (datum) {
-                            var formatterParams = getLabelFormatterParams(datum);
-                            return sectorLabelFormatter(formatterParams);
-                        });
-                    }
-                    else {
-                        sectorLabelData = data.map(function (datum) { return String(datum[sectorLabelKey]); });
-                    }
-                }
+            var _c, data, _d, angleKey, radiusKey, seriesItemEnabled, extraProps;
+            return __generator(this, function (_e) {
+                _c = this.data, data = _c === void 0 ? [] : _c;
+                _d = this, angleKey = _d.angleKey, radiusKey = _d.radiusKey, seriesItemEnabled = _d.seriesItemEnabled;
+                if (!angleKey)
+                    return [2 /*return*/];
+                extraProps = [];
                 if (radiusKey) {
-                    _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
-                    radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
-                    min_1 = radiusMin !== null && radiusMin !== void 0 ? radiusMin : 0;
-                    max = radiusMax ? radiusMax : Math.max.apply(Math, __spread(radii));
-                    delta_1 = max - min_1;
-                    radiusData = radii.map(function (value) { return (delta_1 ? (value - min_1) / delta_1 : 1); });
+                    extraProps.push(rangedValueProperty(radiusKey, { id: 'radiusValue', min: (_a = this.radiusMin) !== null && _a !== void 0 ? _a : 0, max: this.radiusMax }), valueProperty(radiusKey, true, { id: "radiusRaw" }), // Raw value pass-through.
+                    normalisePropertyTo({ id: 'radiusValue' }, [0, 1], (_b = this.radiusMin) !== null && _b !== void 0 ? _b : 0, this.radiusMax));
+                    extraProps.push();
                 }
-                groupSelectionData.length = 0;
-                sectorFormatData.length = 0;
-                sectorFormatData.push.apply(sectorFormatData, __spread(data.map(function (datum, datumIdx) { return _this.getSectorFormat(datum, datumIdx, datumIdx, false); })));
-                rotation = toRadians(this.rotation);
-                halfPi = Math.PI / 2;
-                datumIndex = 0;
-                quadrantTextOpts = [
-                    { textAlign: 'center', textBaseline: 'bottom' },
-                    { textAlign: 'left', textBaseline: 'middle' },
-                    { textAlign: 'center', textBaseline: 'hanging' },
-                    { textAlign: 'right', textBaseline: 'middle' },
-                ];
-                end = 0;
-                angleDataRatios.forEach(function (start) {
-                    if (isNaN(start)) {
-                        return;
-                    } // No sectors displayed - nothing to do.
-                    var radius = radiusKey ? radiusData[datumIndex] : 1;
-                    var startAngle = angleScale.convert(start) + rotation;
-                    var endAngle = angleScale.convert(end) + rotation;
-                    var midAngle = (startAngle + endAngle) / 2;
-                    var span = Math.abs(endAngle - startAngle);
-                    var midCos = Math.cos(midAngle);
-                    var midSin = Math.sin(midAngle);
-                    var labelMinAngle = toRadians(calloutLabel.minAngle);
-                    var labelVisible = labelKey && span > labelMinAngle;
-                    var midAngle180 = normalizeAngle180(midAngle);
-                    // Split the circle into quadrants like so: ⊗
-                    var quadrantStart = (-3 * Math.PI) / 4; // same as `normalizeAngle180(toRadians(-135))`
-                    var quadrantOffset = midAngle180 - quadrantStart;
-                    var quadrant = Math.floor(quadrantOffset / halfPi);
-                    var quadrantIndex = mod(quadrant, quadrantTextOpts.length);
-                    var _a = quadrantTextOpts[quadrantIndex], textAlign = _a.textAlign, textBaseline = _a.textBaseline;
-                    var datum = data[datumIndex];
-                    var itemId = datumIndex;
-                    groupSelectionData.push({
-                        series: _this,
-                        datum: datum,
-                        itemId: itemId,
-                        index: datumIndex,
-                        radius: radius,
-                        startAngle: startAngle,
-                        endAngle: endAngle,
-                        midAngle: midAngle,
-                        midCos: midCos,
-                        midSin: midSin,
-                        calloutLabel: labelVisible
-                            ? {
-                                text: labelData[datumIndex],
-                                textAlign: textAlign,
-                                textBaseline: textBaseline,
-                                hidden: false,
-                                collisionTextAlign: undefined,
-                                collisionOffsetY: 0,
-                                box: undefined,
-                            }
-                            : undefined,
-                        sectorLabel: sectorLabelKey
-                            ? {
-                                text: sectorLabelData[datumIndex],
-                            }
-                            : undefined,
-                        sectorFormat: sectorFormatData[datumIndex],
-                    });
-                    datumIndex++;
-                    end = start; // Update for next iteration.
+                data = data.map(function (d, idx) {
+                    var _a;
+                    return (seriesItemEnabled[idx] ? d : __assign(__assign({}, d), (_a = {}, _a[angleKey] = 0, _a)));
                 });
+                this.dataModel = new DataModel({
+                    props: __spreadArray([
+                        accumulativeValueProperty(angleKey, true, { id: "angleValue" }),
+                        valueProperty(angleKey, true, { id: "angleRaw" }),
+                        normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0)
+                    ], __read(extraProps)),
+                });
+                this.processedData = this.dataModel.processData(data);
                 return [2 /*return*/];
             });
         });
     };
+    PieSeries.prototype.maybeRefreshNodeData = function () {
+        if (!this.nodeDataRefresh)
+            return;
+        var _a = __read(this._createNodeData(), 1), _b = _a[0], _c = _b === void 0 ? {} : _b, _d = _c.nodeData, nodeData = _d === void 0 ? [] : _d;
+        this.nodeData = nodeData;
+        this.nodeDataRefresh = false;
+    };
+    PieSeries.prototype.createNodeData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this._createNodeData()];
+            });
+        });
+    };
+    PieSeries.prototype._createNodeData = function () {
+        var _this = this;
+        var _a, _b, _c, _d;
+        var _e = this, seriesId = _e.id, processedData = _e.processedData, dataModel = _e.dataModel, rotation = _e.rotation, angleScale = _e.angleScale;
+        if (!processedData || !dataModel || processedData.type !== 'ungrouped')
+            return [];
+        var angleIdx = (_b = (_a = dataModel.resolveProcessedDataIndexById("angleValue")) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1;
+        var radiusIdx = (_d = (_c = dataModel.resolveProcessedDataIndexById("radiusValue")) === null || _c === void 0 ? void 0 : _c.index) !== null && _d !== void 0 ? _d : -1;
+        if (angleIdx < 0)
+            return [];
+        var currentStart = 0;
+        var nodeData = processedData.data.map(function (group, index) {
+            var _a;
+            var datum = group.datum, values = group.values;
+            var currentValue = values[angleIdx];
+            var startAngle = angleScale.convert(currentStart) + toRadians(rotation);
+            currentStart = currentValue;
+            var endAngle = angleScale.convert(currentStart) + toRadians(rotation);
+            var span = Math.abs(endAngle - startAngle);
+            var midAngle = startAngle + span / 2;
+            var angleValue = values[angleIdx + 1];
+            var radius = radiusIdx >= 0 ? (_a = values[radiusIdx]) !== null && _a !== void 0 ? _a : 1 : 1;
+            var radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
+            var labels = _this.getLabels(datum, midAngle, span, true);
+            var sectorFormat = _this.getSectorFormat(datum, index, index, false);
+            return __assign({ itemId: index, series: _this, datum: datum, index: index, angleValue: angleValue, midAngle: midAngle, midCos: Math.cos(midAngle), midSin: Math.sin(midAngle), startAngle: startAngle, endAngle: endAngle, sectorFormat: sectorFormat, radius: radius, radiusValue: radiusValue }, labels);
+        });
+        return [
+            {
+                itemId: seriesId,
+                nodeData: nodeData,
+                labelData: nodeData,
+            },
+        ];
+    };
+    PieSeries.prototype.getLabels = function (datum, midAngle, span, skipDisabled) {
+        var _a = this, calloutLabel = _a.calloutLabel, sectorLabel = _a.sectorLabel, legendItemKey = _a.legendItemKey, callbackCache = _a.ctx.callbackCache;
+        var calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
+        var sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
+        if (!calloutLabelKey && !sectorLabelKey && !legendItemKey)
+            return {};
+        var labelFormatterParams = this.getLabelFormatterParams(datum);
+        var calloutLabelText;
+        if (calloutLabelKey) {
+            var calloutLabelMinAngle = toRadians(calloutLabel.minAngle);
+            var calloutLabelVisible = span > calloutLabelMinAngle;
+            if (!calloutLabelVisible) {
+                calloutLabelText = undefined;
+            }
+            else if (calloutLabel.formatter) {
+                calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
+            }
+            else {
+                calloutLabelText = String(datum[calloutLabelKey]);
+            }
+        }
+        var sectorLabelText;
+        if (sectorLabelKey) {
+            if (sectorLabel.formatter) {
+                sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
+            }
+            else {
+                sectorLabelText = String(datum[sectorLabelKey]);
+            }
+        }
+        var legendItemText;
+        if (legendItemKey) {
+            legendItemText = String(datum[legendItemKey]);
+        }
+        return __assign(__assign(__assign({}, (calloutLabelText != null
+            ? {
+                calloutLabel: __assign(__assign({}, this.getTextAlignment(midAngle)), { text: calloutLabelText, hidden: false, collisionTextAlign: undefined, collisionOffsetY: 0, box: undefined }),
+            }
+            : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemText != null
+            ? { legendItem: { key: legendItemKey, text: legendItemText } }
+            : {}));
+    };
+    PieSeries.prototype.getLabelFormatterParams = function (datum) {
+        var _a = this, seriesId = _a.id, radiusKey = _a.radiusKey, radiusName = _a.radiusName, angleKey = _a.angleKey, angleName = _a.angleName, calloutLabelKey = _a.calloutLabelKey, calloutLabelName = _a.calloutLabelName, sectorLabelKey = _a.sectorLabelKey, sectorLabelName = _a.sectorLabelName;
+        return {
+            datum: datum,
+            angleKey: angleKey,
+            angleValue: datum[angleKey],
+            angleName: angleName,
+            radiusKey: radiusKey,
+            radiusValue: radiusKey ? datum[radiusKey] : undefined,
+            radiusName: radiusName,
+            calloutLabelKey: calloutLabelKey,
+            calloutLabelValue: calloutLabelKey ? datum[calloutLabelKey] : undefined,
+            calloutLabelName: calloutLabelName,
+            sectorLabelKey: sectorLabelKey,
+            sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+            sectorLabelName: sectorLabelName,
+            seriesId: seriesId,
+        };
+    };
+    PieSeries.prototype.getTextAlignment = function (midAngle) {
+        var quadrantTextOpts = [
+            { textAlign: 'center', textBaseline: 'bottom' },
+            { textAlign: 'left', textBaseline: 'middle' },
+            { textAlign: 'center', textBaseline: 'hanging' },
+            { textAlign: 'right', textBaseline: 'middle' },
+        ];
+        var midAngle180 = normalizeAngle180(midAngle);
+        // Split the circle into quadrants like so: ⊗
+        var quadrantStart = (-3 * Math.PI) / 4; // same as `normalizeAngle180(toRadians(-135))`
+        var quadrantOffset = midAngle180 - quadrantStart;
+        var quadrant = Math.floor(quadrantOffset / (Math.PI / 2));
+        var quadrantIndex = mod(quadrant, quadrantTextOpts.length);
+        return quadrantTextOpts[quadrantIndex];
+    };
     PieSeries.prototype.getSectorFormat = function (datum, itemId, index, highlight) {
-        var _a, _b, _c, _d, _e;
-        var _f = this, angleKey = _f.angleKey, radiusKey = _f.radiusKey, fills = _f.fills, strokes = _f.strokes, seriesFillOpacity = _f.fillOpacity, formatter = _f.formatter, seriesId = _f.id;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _k = this, angleKey = _k.angleKey, radiusKey = _k.radiusKey, fills = _k.fills, strokes = _k.strokes, seriesFillOpacity = _k.fillOpacity, formatter = _k.formatter, seriesId = _k.id, callbackCache = _k.ctx.callbackCache;
         var highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
         var isDatumHighlighted = highlight && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this && itemId === highlightedDatum.itemId;
         var highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
-        var fill = (highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) || fills[index % fills.length];
-        var fillOpacity = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _b !== void 0 ? _b : seriesFillOpacity;
-        var stroke = (highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) || strokes[index % strokes.length];
-        var strokeWidth = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _c !== void 0 ? _c : this.getStrokeWidth(this.strokeWidth);
+        var fill = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) !== null && _b !== void 0 ? _b : fills[index % fills.length];
+        var fillOpacity = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _c !== void 0 ? _c : seriesFillOpacity;
+        var stroke = (_d = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) !== null && _d !== void 0 ? _d : strokes[index % strokes.length];
+        var strokeWidth = (_e = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _e !== void 0 ? _e : this.getStrokeWidth(this.strokeWidth);
         var format;
         if (formatter) {
-            format = formatter({
+            format = callbackCache.call(formatter, {
                 datum: datum,
                 angleKey: angleKey,
                 radiusKey: radiusKey,
@@ -602,18 +582,11 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
         return {
-            fill: (format === null || format === void 0 ? void 0 : format.fill) || fill,
-            fillOpacity: (_d = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _d !== void 0 ? _d : fillOpacity,
-            stroke: (format === null || format === void 0 ? void 0 : format.stroke) || stroke,
-            strokeWidth: (_e = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _e !== void 0 ? _e : strokeWidth,
+            fill: (_f = format === null || format === void 0 ? void 0 : format.fill) !== null && _f !== void 0 ? _f : fill,
+            fillOpacity: (_g = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _g !== void 0 ? _g : fillOpacity,
+            stroke: (_h = format === null || format === void 0 ? void 0 : format.stroke) !== null && _h !== void 0 ? _h : stroke,
+            strokeWidth: (_j = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _j !== void 0 ? _j : strokeWidth,
         };
-    };
-    PieSeries.prototype.createNodeData = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, []];
-            });
-        });
     };
     PieSeries.prototype.getInnerRadius = function () {
         var _a = this, radius = _a.radius, innerRadiusRatio = _a.innerRadiusRatio, innerRadiusOffset = _a.innerRadiusOffset;
@@ -644,45 +617,77 @@ var PieSeries = /** @class */ (function (_super) {
         }
         var spacing = (_b = (_a = this.title) === null || _a === void 0 ? void 0 : _a.spacing) !== null && _b !== void 0 ? _b : 0;
         var titleOffset = 2 + spacing;
-        var minLabelY = Math.min.apply(Math, __spread([0], this.groupSelectionData.map(function (d) { var _a, _b; return ((_b = (_a = d.calloutLabel) === null || _a === void 0 ? void 0 : _a.box) === null || _b === void 0 ? void 0 : _b.y) || 0; })));
-        var dy = Math.max(0, -outerRadius - minLabelY);
+        var dy = Math.max(0, -outerRadius);
         return -outerRadius - titleOffset - dy;
     };
-    PieSeries.prototype.update = function () {
+    PieSeries.prototype.update = function (_a) {
+        var seriesRect = _a.seriesRect;
         return __awaiter(this, void 0, void 0, function () {
-            var title, dy;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var title, dy, titleBox;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         title = this.title;
+                        this.maybeRefreshNodeData();
+                        this.updateTitleNodes();
                         this.updateRadiusScale();
+                        this.updateInnerCircleNodes();
                         this.rootGroup.translationX = this.centerX;
                         this.rootGroup.translationY = this.centerY;
                         if (title) {
                             dy = this.getTitleTranslationY();
-                            if (isFinite(dy)) {
-                                title.node.visible = title.enabled;
-                                title.node.translationY = dy;
-                            }
-                            else {
-                                title.node.visible = false;
-                            }
+                            titleBox = title.node.computeBBox();
+                            title.node.visible =
+                                title.enabled && isFinite(dy) && !this.bboxIntersectsSurroundingSeries(titleBox, 0, dy);
+                            title.node.translationY = isFinite(dy) ? dy : 0;
                         }
                         this.updateNodeMidPoint();
                         return [4 /*yield*/, this.updateSelections()];
                     case 1:
-                        _a.sent();
-                        return [4 /*yield*/, this.updateNodes()];
+                        _b.sent();
+                        return [4 /*yield*/, this.updateNodes(seriesRect)];
                     case 2:
-                        _a.sent();
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
+    PieSeries.prototype.updateTitleNodes = function () {
+        var _a, _b;
+        var _c = this, title = _c.title, oldTitle = _c.oldTitle;
+        if (oldTitle !== title) {
+            if (oldTitle) {
+                (_a = this.labelGroup) === null || _a === void 0 ? void 0 : _a.removeChild(oldTitle.node);
+            }
+            if (title) {
+                title.node.textBaseline = 'bottom';
+                (_b = this.labelGroup) === null || _b === void 0 ? void 0 : _b.appendChild(title.node);
+            }
+            this.oldTitle = title;
+        }
+    };
+    PieSeries.prototype.updateInnerCircleNodes = function () {
+        var _a;
+        var _b = this, innerCircle = _b.innerCircle, oldInnerCircle = _b.oldInnerCircle, oldNode = _b.innerCircleNode;
+        if (oldInnerCircle !== innerCircle) {
+            var circle = void 0;
+            if (oldNode) {
+                this.backgroundGroup.removeChild(oldNode);
+            }
+            if (innerCircle) {
+                circle = new Circle();
+                circle.fill = innerCircle.fill;
+                circle.fillOpacity = (_a = innerCircle.fillOpacity) !== null && _a !== void 0 ? _a : 1;
+                this.backgroundGroup.appendChild(circle);
+            }
+            this.oldInnerCircle = innerCircle;
+            this.innerCircleNode = circle;
+        }
+    };
     PieSeries.prototype.updateNodeMidPoint = function () {
         var _this = this;
-        this.groupSelectionData.forEach(function (d) {
+        this.nodeData.forEach(function (d) {
             var radius = _this.radiusScale.convert(d.radius);
             d.nodeMidPoint = {
                 x: d.midCos * Math.max(0, radius / 2),
@@ -709,7 +714,7 @@ var PieSeries = /** @class */ (function (_super) {
             return __generator(this, function (_b) {
                 _a = this, groupSelection = _a.groupSelection, highlightSelection = _a.highlightSelection, calloutLabelSelection = _a.calloutLabelSelection, sectorLabelSelection = _a.sectorLabelSelection, innerLabelsSelection = _a.innerLabelsSelection;
                 update = function (selection) {
-                    return selection.update(_this.groupSelectionData, function (group) {
+                    return selection.update(_this.nodeData, function (group) {
                         var sector = new Sector();
                         sector.tag = PieNodeTag.Sector;
                         group.appendChild(sector);
@@ -717,7 +722,7 @@ var PieSeries = /** @class */ (function (_super) {
                 };
                 this.groupSelection = update(groupSelection);
                 this.highlightSelection = update(highlightSelection);
-                calloutLabelSelection.update(this.groupSelectionData, function (group) {
+                calloutLabelSelection.update(this.nodeData, function (group) {
                     var line = new Line();
                     line.tag = PieNodeTag.Callout;
                     line.pointerEvents = PointerEvents.None;
@@ -727,7 +732,7 @@ var PieSeries = /** @class */ (function (_super) {
                     text.pointerEvents = PointerEvents.None;
                     group.appendChild(text);
                 });
-                sectorLabelSelection.update(this.groupSelectionData, function (node) {
+                sectorLabelSelection.update(this.nodeData, function (node) {
                     node.pointerEvents = PointerEvents.None;
                 });
                 innerLabelsSelection.update(this.innerLabels, function (node) {
@@ -737,7 +742,7 @@ var PieSeries = /** @class */ (function (_super) {
             });
         });
     };
-    PieSeries.prototype.updateNodes = function () {
+    PieSeries.prototype.updateNodes = function (seriesRect) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
             var highlightedDatum, isVisible, radiusScale, innerRadius, updateSectorFn;
@@ -765,8 +770,10 @@ var PieSeries = /** @class */ (function (_super) {
                     }
                     sector.innerRadius = Math.max(0, innerRadius);
                     sector.outerRadius = Math.max(0, radius);
-                    sector.startAngle = datum.startAngle;
-                    sector.endAngle = datum.endAngle;
+                    if (isDatumHighlighted) {
+                        sector.startAngle = datum.startAngle;
+                        sector.endAngle = datum.endAngle;
+                    }
                     var format = _this.getSectorFormat(datum.datum, datum.itemId, index, isDatumHighlighted);
                     sector.fill = format.fill;
                     sector.stroke = format.stroke;
@@ -778,7 +785,6 @@ var PieSeries = /** @class */ (function (_super) {
                     sector.fillShadow = _this.shadow;
                     sector.lineJoin = 'round';
                     sector.visible = _this.seriesItemEnabled[index];
-                    _this.datumSectorRefs.set(datum, sector);
                 };
                 this.groupSelection
                     .selectByTag(PieNodeTag.Sector)
@@ -790,8 +796,9 @@ var PieSeries = /** @class */ (function (_super) {
                         updateSectorFn(node, node.datum, index, isDatumHighlighted);
                     }
                 });
+                this.animationState.transition('update');
                 this.updateCalloutLineNodes();
-                this.updateCalloutLabelNodes();
+                this.updateCalloutLabelNodes(seriesRect);
                 this.updateSectorLabelNodes();
                 this.updateInnerLabelNodes();
                 return [2 /*return*/];
@@ -799,17 +806,18 @@ var PieSeries = /** @class */ (function (_super) {
         });
     };
     PieSeries.prototype.updateCalloutLineNodes = function () {
-        var _a = this, radiusScale = _a.radiusScale, calloutLine = _a.calloutLine;
+        var _a;
+        var _b = this, radiusScale = _b.radiusScale, calloutLine = _b.calloutLine;
         var calloutLength = calloutLine.length;
         var calloutStrokeWidth = calloutLine.strokeWidth;
-        var calloutColors = calloutLine.colors || this.strokes;
+        var calloutColors = (_a = calloutLine.colors) !== null && _a !== void 0 ? _a : this.strokes;
         var offset = this.calloutLabel.offset;
         this.calloutLabelSelection.selectByTag(PieNodeTag.Callout).forEach(function (line, index) {
             var datum = line.datum;
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius);
             var label = datum.calloutLabel;
-            if (label && label.text && !label.hidden && outerRadius !== 0) {
+            if ((label === null || label === void 0 ? void 0 : label.text) && !label.hidden && outerRadius !== 0) {
                 line.visible = true;
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
@@ -821,8 +829,20 @@ var PieSeries = /** @class */ (function (_super) {
                 if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
                     // Get the closest point to the text bounding box
                     var box = label.box;
-                    var cx = x2 < box.x ? box.x : x2 > box.x + box.width ? box.x + box.width : x2;
-                    var cy = y2 < box.y ? box.y : y2 > box.y + box.height ? box.y + box.height : y2;
+                    var cx = x2;
+                    var cy = y2;
+                    if (x2 < box.x) {
+                        cx = box.x;
+                    }
+                    else if (x2 > box.x + box.width) {
+                        cx = box.x + box.width;
+                    }
+                    if (y2 < box.y) {
+                        cy = box.y;
+                    }
+                    else if (y2 > box.y + box.height) {
+                        cy = box.y + box.height;
+                    }
                     // Apply label offset
                     var dx = cx - x2;
                     var dy = cy - y2;
@@ -843,12 +863,11 @@ var PieSeries = /** @class */ (function (_super) {
             }
         });
     };
-    PieSeries.prototype.getLabelOverflow = function (text, box) {
-        var seriesBox = this.chart.getSeriesRect();
-        var seriesLeft = seriesBox.x - this.centerX;
-        var seriesRight = seriesBox.x + seriesBox.width - this.centerX;
-        var seriesTop = seriesBox.y - this.centerY;
-        var seriesBottom = seriesBox.y + seriesBox.height - this.centerY;
+    PieSeries.prototype.getLabelOverflow = function (text, box, seriesRect) {
+        var seriesLeft = seriesRect.x - this.centerX;
+        var seriesRight = seriesRect.x + seriesRect.width - this.centerX;
+        var seriesTop = seriesRect.y - this.centerY;
+        var seriesBottom = seriesRect.y + seriesRect.height - this.centerY;
         var errPx = 1; // Prevents errors related to floating point calculations
         var visibleTextPart = 1;
         if (box.x + errPx < seriesLeft) {
@@ -859,7 +878,24 @@ var PieSeries = /** @class */ (function (_super) {
         }
         var hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
         var textLength = Math.floor(text.length * visibleTextPart) - 1;
-        return { visibleTextPart: visibleTextPart, textLength: textLength, hasVerticalOverflow: hasVerticalOverflow };
+        var hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
+        return { visibleTextPart: visibleTextPart, textLength: textLength, hasVerticalOverflow: hasVerticalOverflow, hasSurroundingSeriesOverflow: hasSurroundingSeriesOverflow };
+    };
+    PieSeries.prototype.bboxIntersectsSurroundingSeries = function (box, dx, dy) {
+        if (dx === void 0) { dx = 0; }
+        if (dy === void 0) { dy = 0; }
+        var surroundingRadius = this.surroundingRadius;
+        if (surroundingRadius == null) {
+            return false;
+        }
+        var corners = [
+            { x: box.x + dx, y: box.y + dy },
+            { x: box.x + box.width + dx, y: box.y + dy },
+            { x: box.x + box.width + dx, y: box.y + box.height + dy },
+            { x: box.x + dx, y: box.y + box.height + dy },
+        ];
+        var sur2 = Math.pow(surroundingRadius, 2);
+        return corners.some(function (corner) { return Math.pow(corner.x, 2) + Math.pow(corner.y, 2) > sur2; });
     };
     PieSeries.prototype.computeCalloutLabelCollisionOffsets = function () {
         var _this = this;
@@ -872,8 +908,8 @@ var PieSeries = /** @class */ (function (_super) {
             var outerRadius = Math.max(0, radius);
             return !label || outerRadius === 0;
         };
-        var fullData = this.groupSelectionData;
-        var data = this.groupSelectionData.filter(function (text) { return !shouldSkip(text); });
+        var fullData = this.nodeData;
+        var data = this.nodeData.filter(function (text) { return !shouldSkip(text); });
         data.forEach(function (datum) {
             var label = datum.calloutLabel;
             label.hidden = false;
@@ -934,13 +970,13 @@ var PieSeries = /** @class */ (function (_super) {
             var boxes = labels.map(function (label) { return getTextBBox(label); });
             var paddedBoxes = boxes.map(function (box) { return box.clone().grow(minSpacing / 2); });
             var labelsCollideLabelsByX = false;
-            loop: for (var i = 0; i < paddedBoxes.length; i++) {
+            for (var i = 0; i < paddedBoxes.length && !labelsCollideLabelsByX; i++) {
                 var box = paddedBoxes[i];
                 for (var j = i + 1; j < labels.length; j++) {
                     var other = paddedBoxes[j];
                     if (box.collidesBBox(other)) {
                         labelsCollideLabelsByX = true;
-                        break loop;
+                        break;
                     }
                 }
             }
@@ -960,7 +996,15 @@ var PieSeries = /** @class */ (function (_super) {
                 .filter(function (datum) { return datum.calloutLabel.textAlign === 'center'; })
                 .forEach(function (datum) {
                 var label = datum.calloutLabel;
-                label.collisionTextAlign = datum.midCos < 0 ? 'right' : datum.midCos > 0 ? 'left' : 'center';
+                if (datum.midCos < 0) {
+                    label.collisionTextAlign = 'right';
+                }
+                else if (datum.midCos > 0) {
+                    label.collisionTextAlign = 'left';
+                }
+                else {
+                    label.collisionTextAlign = 'center';
+                }
             });
         };
         avoidYCollisions(leftLabels);
@@ -968,7 +1012,7 @@ var PieSeries = /** @class */ (function (_super) {
         avoidXCollisions(topLabels);
         avoidXCollisions(bottomLabels);
     };
-    PieSeries.prototype.updateCalloutLabelNodes = function () {
+    PieSeries.prototype.updateCalloutLabelNodes = function (seriesRect) {
         var _this = this;
         var _a = this, radiusScale = _a.radiusScale, calloutLabel = _a.calloutLabel, calloutLine = _a.calloutLine;
         var calloutLength = calloutLine.length;
@@ -979,7 +1023,7 @@ var PieSeries = /** @class */ (function (_super) {
             var label = datum.calloutLabel;
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius);
-            if (!label || !label.text || outerRadius === 0 || label.hidden) {
+            if (!(label === null || label === void 0 ? void 0 : label.text) || outerRadius === 0 || label.hidden) {
                 text.visible = false;
                 return;
             }
@@ -989,23 +1033,41 @@ var PieSeries = /** @class */ (function (_super) {
             // Detect text overflow
             _this.setTextDimensionalProps(tempTextNode, x, y, _this.calloutLabel, label);
             var box = tempTextNode.computeBBox();
-            var _a = _this.getLabelOverflow(label.text, box), visibleTextPart = _a.visibleTextPart, textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
+            var _a = _this.getLabelOverflow(label.text, box, seriesRect), visibleTextPart = _a.visibleTextPart, textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
             var displayText = visibleTextPart === 1 ? label.text : label.text.substring(0, textLength) + "\u2026";
             _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, __assign(__assign({}, label), { text: displayText }));
             text.fill = color;
             text.visible = !hasVerticalOverflow;
         });
     };
-    PieSeries.prototype.computeLabelsBBox = function (options) {
+    PieSeries.prototype.computeLabelsBBox = function (options, seriesRect) {
         var _this = this;
-        var _a = this, radiusScale = _a.radiusScale, calloutLabel = _a.calloutLabel, calloutLine = _a.calloutLine;
+        var _a;
+        var _b = this, radiusScale = _b.radiusScale, calloutLabel = _b.calloutLabel, calloutLine = _b.calloutLine;
         var calloutLength = calloutLine.length;
-        var offset = calloutLabel.offset, maxCollisionOffset = calloutLabel.maxCollisionOffset;
+        var offset = calloutLabel.offset, maxCollisionOffset = calloutLabel.maxCollisionOffset, minSpacing = calloutLabel.minSpacing;
+        this.maybeRefreshNodeData();
         this.updateRadiusScale();
         this.computeCalloutLabelCollisionOffsets();
+        var textBoxes = [];
         var text = new Text();
-        var textBoxes = this.groupSelectionData
-            .map(function (datum) {
+        var titleBox;
+        if (((_a = this.title) === null || _a === void 0 ? void 0 : _a.text) && this.title.enabled) {
+            var dy = this.getTitleTranslationY();
+            if (isFinite(dy)) {
+                this.setTextDimensionalProps(text, 0, dy, this.title, {
+                    text: this.title.text,
+                    textBaseline: 'bottom',
+                    textAlign: 'center',
+                    hidden: false,
+                    collisionTextAlign: undefined,
+                    collisionOffsetY: 0,
+                });
+                titleBox = text.computeBBox();
+                textBoxes.push(titleBox);
+            }
+        }
+        this.nodeData.forEach(function (datum) {
             var label = datum.calloutLabel;
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius);
@@ -1018,43 +1080,38 @@ var PieSeries = /** @class */ (function (_super) {
             _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, label);
             var box = text.computeBBox();
             label.box = box;
+            // Hide labels that where pushed to far by the collision avoidance algorithm
             if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
                 label.hidden = true;
-                return null;
+                return;
+            }
+            // Hide labels intersecting or above the title
+            if (titleBox) {
+                var seriesTop = seriesRect.y - _this.centerY;
+                var titleCleanArea = new BBox(titleBox.x - minSpacing, seriesTop, titleBox.width + 2 * minSpacing, titleBox.y + titleBox.height + minSpacing - seriesTop);
+                if (box.collidesBBox(titleCleanArea)) {
+                    label.hidden = true;
+                    return;
+                }
             }
             if (options.hideWhenNecessary) {
-                var _a = _this.getLabelOverflow(label.text, box), textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
+                var _a = _this.getLabelOverflow(label.text, box, seriesRect), textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow, hasSurroundingSeriesOverflow = _a.hasSurroundingSeriesOverflow;
                 var isTooShort = label.text.length > 2 && textLength < 2;
-                if (hasVerticalOverflow || isTooShort) {
+                if (hasVerticalOverflow || isTooShort || hasSurroundingSeriesOverflow) {
                     label.hidden = true;
-                    return null;
+                    return;
                 }
             }
             label.hidden = false;
-            return box;
-        })
-            .filter(function (box) { return box != null; });
-        if (this.title && this.title.text) {
-            var dy = this.getTitleTranslationY();
-            if (isFinite(dy)) {
-                this.setTextDimensionalProps(text, 0, dy, this.title, {
-                    text: this.title.text,
-                    textBaseline: 'bottom',
-                    textAlign: 'center',
-                    hidden: false,
-                    collisionTextAlign: undefined,
-                    collisionOffsetY: 0,
-                });
-                var box = text.computeBBox();
-                textBoxes.push(box);
-            }
-        }
+            textBoxes.push(box);
+        });
         if (textBoxes.length === 0) {
             return null;
         }
         return BBox.merge(textBoxes);
     };
     PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, style, label) {
+        var _a, _b;
         var fontStyle = style.fontStyle, fontWeight = style.fontWeight, fontSize = style.fontSize, fontFamily = style.fontFamily;
         textNode.fontStyle = fontStyle;
         textNode.fontWeight = fontWeight;
@@ -1063,11 +1120,10 @@ var PieSeries = /** @class */ (function (_super) {
         textNode.text = label.text;
         textNode.x = x;
         textNode.y = y;
-        textNode.textAlign = label.collisionTextAlign || label.textAlign;
+        textNode.textAlign = (_b = (_a = label === null || label === void 0 ? void 0 : label.collisionTextAlign) !== null && _a !== void 0 ? _a : label === null || label === void 0 ? void 0 : label.textAlign) !== null && _b !== void 0 ? _b : 'center';
         textNode.textBaseline = label.textBaseline;
     };
     PieSeries.prototype.updateSectorLabelNodes = function () {
-        var _this = this;
         var radiusScale = this.radiusScale;
         var innerRadius = radiusScale.convert(0);
         var _a = this.sectorLabel, fontSize = _a.fontSize, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontFamily = _a.fontFamily, positionOffset = _a.positionOffset, positionRatio = _a.positionRatio, color = _a.color;
@@ -1097,30 +1153,27 @@ var PieSeries = /** @class */ (function (_super) {
                 }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
-                var sector = _this.datumSectorRefs.get(datum);
-                if (sector) {
-                    var bbox = text.computeBBox();
-                    var corners = [
-                        [bbox.x, bbox.y],
-                        [bbox.x + bbox.width, bbox.y],
-                        [bbox.x + bbox.width, bbox.y + bbox.height],
-                        [bbox.x, bbox.y + bbox.height],
-                    ];
-                    var startAngle = datum.startAngle, endAngle = datum.endAngle;
-                    var sectorBounds_1 = { startAngle: startAngle, endAngle: endAngle, innerRadius: innerRadius, outerRadius: outerRadius };
-                    if (corners.every(function (_a) {
-                        var _b = __read(_a, 2), x = _b[0], y = _b[1];
-                        return isPointInSector(x, y, sectorBounds_1);
-                    })) {
-                        isTextVisible = true;
-                    }
+                var bbox = text.computeBBox();
+                var corners = [
+                    [bbox.x, bbox.y],
+                    [bbox.x + bbox.width, bbox.y],
+                    [bbox.x + bbox.width, bbox.y + bbox.height],
+                    [bbox.x, bbox.y + bbox.height],
+                ];
+                var startAngle = datum.startAngle, endAngle = datum.endAngle;
+                var sectorBounds_1 = { startAngle: startAngle, endAngle: endAngle, innerRadius: innerRadius, outerRadius: outerRadius };
+                if (corners.every(function (_a) {
+                    var _b = __read(_a, 2), x = _b[0], y = _b[1];
+                    return isPointInSector(x, y, sectorBounds_1);
+                })) {
+                    isTextVisible = true;
                 }
             }
             text.visible = isTextVisible;
         });
     };
     PieSeries.prototype.updateInnerCircle = function () {
-        var circle = this._innerCircleNode;
+        var circle = this.innerCircleNode;
         if (!circle) {
             return;
         }
@@ -1157,7 +1210,7 @@ var PieSeries = /** @class */ (function (_super) {
         var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
-        var totalWidth = Math.max.apply(Math, __spread(textBBoxes.map(function (bbox) { return bbox.width; })));
+        var totalWidth = Math.max.apply(Math, __spreadArray([], __read(textBBoxes.map(function (bbox) { return bbox.width; }))));
         var innerRadius = this.getInnerRadius();
         var labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
         var labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
@@ -1180,19 +1233,17 @@ var PieSeries = /** @class */ (function (_super) {
         return new PieSeriesNodeDoubleClickEvent(this.angleKey, this.calloutLabelKey, this.sectorLabelKey, this.radiusKey, event, datum, this);
     };
     PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
+        var _a;
         var angleKey = this.angleKey;
         if (!angleKey) {
             return '';
         }
-        var _a = this, tooltip = _a.tooltip, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, calloutLabelKey = _a.calloutLabelKey, sectorLabelKey = _a.sectorLabelKey, calloutLabelName = _a.calloutLabelName, sectorLabelName = _a.sectorLabelName, seriesId = _a.id;
+        var _b = this, tooltip = _b.tooltip, angleName = _b.angleName, radiusKey = _b.radiusKey, radiusName = _b.radiusName, calloutLabelKey = _b.calloutLabelKey, sectorLabelKey = _b.sectorLabelKey, calloutLabelName = _b.calloutLabelName, sectorLabelName = _b.sectorLabelName, seriesId = _b.id;
         var tooltipRenderer = tooltip.renderer;
-        var color = nodeDatum.sectorFormat.fill;
-        var datum = nodeDatum.datum;
-        var label = calloutLabelKey ? datum[calloutLabelKey] + ": " : '';
-        var angleValue = datum[angleKey];
-        var formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
-        var title = this.title ? this.title.text : undefined;
-        var content = label + formattedAngleValue;
+        var datum = nodeDatum.datum, angleValue = nodeDatum.angleValue, radiusValue = nodeDatum.radiusValue, color = nodeDatum.sectorFormat.fill, _c = nodeDatum.calloutLabel, _d = _c === void 0 ? {} : _c, _e = _d.text, label = _e === void 0 ? '' : _e;
+        var formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : String(angleValue);
+        var title = (_a = this.title) === null || _a === void 0 ? void 0 : _a.text;
+        var content = "" + (label ? label + ": " : '') + formattedAngleValue;
         var defaults = {
             title: title,
             backgroundColor: color,
@@ -1205,10 +1256,8 @@ var PieSeries = /** @class */ (function (_super) {
                 angleValue: angleValue,
                 angleName: angleName,
                 radiusKey: radiusKey,
-                radiusValue: radiusKey ? datum[radiusKey] : undefined,
+                radiusValue: radiusValue,
                 radiusName: radiusName,
-                labelKey: calloutLabelKey,
-                labelName: calloutLabelName,
                 calloutLabelKey: calloutLabelKey,
                 calloutLabelName: calloutLabelName,
                 sectorLabelKey: sectorLabelKey,
@@ -1221,72 +1270,136 @@ var PieSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     PieSeries.prototype.getLegendData = function () {
-        var _this = this;
-        var _a = this, calloutLabelKey = _a.calloutLabelKey, legendItemKey = _a.legendItemKey, data = _a.data, id = _a.id, sectorFormatData = _a.sectorFormatData;
-        if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey))
+        var _a, _b, _c;
+        var _d = this, calloutLabelKey = _d.calloutLabelKey, legendItemKey = _d.legendItemKey, id = _d.id, data = _d.data;
+        if (!data || data.length === 0)
             return [];
-        var titleText = this.title && this.title.showInLegend && this.title.text;
-        var legendData = data.map(function (datum, index) {
+        if (!legendItemKey && !calloutLabelKey)
+            return [];
+        var titleText = ((_a = this.title) === null || _a === void 0 ? void 0 : _a.showInLegend) && this.title.text;
+        var legendData = [];
+        for (var index = 0; index < data.length; index++) {
+            var datum = data[index];
             var labelParts = [];
-            titleText && labelParts.push(titleText);
-            if (legendItemKey) {
-                labelParts.push(String(datum[legendItemKey]));
+            if (titleText) {
+                labelParts.push(titleText);
             }
-            else if (calloutLabelKey) {
-                labelParts.push(String(datum[calloutLabelKey]));
+            var labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
+            if (legendItemKey && labels.legendItem !== undefined) {
+                labelParts.push(labels.legendItem.text);
             }
-            return {
+            else if (calloutLabelKey && ((_b = labels.calloutLabel) === null || _b === void 0 ? void 0 : _b.text) !== undefined) {
+                labelParts.push((_c = labels.calloutLabel) === null || _c === void 0 ? void 0 : _c.text);
+            }
+            if (labelParts.length === 0)
+                continue;
+            var sectorFormat = this.getSectorFormat(datum, index, index, false);
+            legendData.push({
+                legendType: 'category',
                 id: id,
                 itemId: index,
                 seriesId: id,
-                enabled: _this.seriesItemEnabled[index],
+                enabled: this.seriesItemEnabled[index],
                 label: {
                     text: labelParts.join(' - '),
                 },
                 marker: {
-                    fill: sectorFormatData[index].fill,
-                    stroke: sectorFormatData[index].stroke,
-                    fillOpacity: _this.fillOpacity,
-                    strokeOpacity: _this.strokeOpacity,
+                    fill: sectorFormat.fill,
+                    stroke: sectorFormat.stroke,
+                    fillOpacity: this.fillOpacity,
+                    strokeOpacity: this.strokeOpacity,
                 },
-            };
-        });
+            });
+        }
         return legendData;
+    };
+    PieSeries.prototype.onLegendItemClick = function (event) {
+        var enabled = event.enabled, itemId = event.itemId, series = event.series;
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
+        else if (series.type === 'pie') {
+            this.toggleOtherSeriesItems(series, itemId, enabled);
+        }
     };
     PieSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
     };
-    PieSeries.prototype.toggleOtherSeriesItems = function (seriesToggled, datumToggled, enabled, suggestedEnabled) {
+    PieSeries.prototype.toggleOtherSeriesItems = function (series, itemId, enabled) {
         var _this = this;
         var _a, _b;
         var legendItemKey = this.legendItemKey;
-        if (seriesToggled.type !== 'pie')
+        if (!legendItemKey)
             return;
-        if (legendItemKey === undefined)
-            return;
-        var pieSeriesToggled = seriesToggled;
-        var datumToggledLegendItemValue = datumToggled &&
-            pieSeriesToggled.legendItemKey && ((_a = pieSeriesToggled.data) === null || _a === void 0 ? void 0 : _a.find(function (_, index) { return index === datumToggled.itemId; })[pieSeriesToggled.legendItemKey]);
+        var datumToggledLegendItemValue = series.legendItemKey && ((_a = series.data) === null || _a === void 0 ? void 0 : _a.find(function (_, index) { return index === itemId; })[series.legendItemKey]);
         if (!datumToggledLegendItemValue)
             return;
-        (_b = this.data) === null || _b === void 0 ? void 0 : _b.forEach(function (d, itemId) {
-            if (enabled !== undefined && d[legendItemKey] === datumToggledLegendItemValue) {
-                _this.toggleSeriesItem(itemId, enabled);
+        (_b = this.data) === null || _b === void 0 ? void 0 : _b.forEach(function (datum, datumItemId) {
+            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+                _this.toggleSeriesItem(datumItemId, enabled);
             }
-            else if (suggestedEnabled !== undefined) {
-                _this.toggleSeriesItem(itemId, suggestedEnabled || d[legendItemKey] === datumToggledLegendItemValue);
-            }
+        });
+    };
+    PieSeries.prototype.animateEmptyUpdateReady = function () {
+        var _this = this;
+        var duration = 1000;
+        var labelDuration = 200;
+        var rotation = Math.PI / -2 + toRadians(this.rotation);
+        this.groupSelection.selectByTag(PieNodeTag.Sector).forEach(function (node) {
+            var _a;
+            var datum = node.datum;
+            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + node.id, [
+                { from: rotation, to: datum.startAngle },
+                { from: rotation, to: datum.endAngle },
+            ], {
+                disableInteractions: true,
+                duration: duration,
+                ease: easing.easeOut,
+                repeat: 0,
+                onUpdate: function (_a) {
+                    var _b = __read(_a, 2), startAngle = _b[0], endAngle = _b[1];
+                    node.startAngle = startAngle;
+                    node.endAngle = endAngle;
+                },
+            });
+        });
+        var labelAnimationOptions = {
+            from: 0,
+            to: 1,
+            delay: duration,
+            duration: labelDuration,
+            ease: easing.linear,
+            repeat: 0,
+        };
+        this.calloutLabelSelection.each(function (label) {
+            var _a;
+            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+                    label.opacity = opacity;
+                } }));
+        });
+        this.sectorLabelSelection.each(function (label) {
+            var _a;
+            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+                    label.opacity = opacity;
+                } }));
+        });
+        this.innerLabelsSelection.each(function (label) {
+            var _a;
+            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+                    label.opacity = opacity;
+                } }));
+        });
+    };
+    PieSeries.prototype.animateReadyUpdateReady = function () {
+        this.groupSelection.selectByTag(PieNodeTag.Sector).forEach(function (node) {
+            var datum = node.datum;
+            node.startAngle = datum.startAngle;
+            node.endAngle = datum.endAngle;
         });
     };
     PieSeries.className = 'PieSeries';
     PieSeries.type = 'pie';
-    __decorate([
-        DeprecatedAndRenamedTo('calloutLabel')
-    ], PieSeries.prototype, "label", void 0);
-    __decorate([
-        DeprecatedAndRenamedTo('calloutLine')
-    ], PieSeries.prototype, "callout", void 0);
     __decorate([
         Validate(STRING)
     ], PieSeries.prototype, "angleKey", void 0);
@@ -1311,12 +1424,6 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate([
         Validate(OPT_STRING)
     ], PieSeries.prototype, "calloutLabelName", void 0);
-    __decorate([
-        DeprecatedAndRenamedTo('calloutLabelKey')
-    ], PieSeries.prototype, "labelKey", void 0);
-    __decorate([
-        DeprecatedAndRenamedTo('calloutLabelName')
-    ], PieSeries.prototype, "labelName", void 0);
     __decorate([
         Validate(OPT_STRING)
     ], PieSeries.prototype, "sectorLabelKey", void 0);

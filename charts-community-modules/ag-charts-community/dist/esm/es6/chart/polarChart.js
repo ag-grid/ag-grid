@@ -11,12 +11,11 @@ import { Chart } from './chart';
 import { PolarSeries } from './series/polar/polarSeries';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
+import { PieSeries } from './series/polar/pieSeries';
 export class PolarChart extends Chart {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
         super(document, overrideDevicePixelRatio, resources);
         this.padding = new Padding(40);
-        const root = this.scene.root;
-        this.legend.attachLegend(root);
     }
     performLayout() {
         const _super = Object.create(null, {
@@ -58,6 +57,19 @@ export class PolarChart extends Chart {
                 series.centerY = cy;
                 series.radius = r;
             });
+            const pieSeries = polarSeries.filter((series) => series instanceof PieSeries);
+            if (pieSeries.length > 1) {
+                const innerRadii = pieSeries
+                    .map((series) => {
+                    const innerRadius = series.getInnerRadius();
+                    return { series, innerRadius };
+                })
+                    .sort((a, b) => a.innerRadius - b.innerRadius);
+                innerRadii[innerRadii.length - 1].series.surroundingRadius = undefined;
+                for (let i = 0; i < innerRadii.length - 1; i++) {
+                    innerRadii[i].series.surroundingRadius = innerRadii[i + 1].innerRadius;
+                }
+            }
         };
         const centerX = seriesBox.x + seriesBox.width / 2;
         const centerY = seriesBox.y + seriesBox.height / 2;
@@ -65,9 +77,13 @@ export class PolarChart extends Chart {
         let radius = initialRadius;
         setSeriesCircle(centerX, centerY, radius);
         const shake = ({ hideWhenNecessary = false } = {}) => {
-            const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
-                .filter((box) => box != null);
+            const labelBoxes = [];
+            for (const series of polarSeries) {
+                const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
+                if (box == null)
+                    continue;
+                labelBoxes.push(box);
+            }
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;

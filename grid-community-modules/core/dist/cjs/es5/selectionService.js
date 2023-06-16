@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,22 +13,13 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -86,53 +77,61 @@ var SelectionService = /** @class */ (function (_super) {
     SelectionService.prototype.isMultiselect = function () {
         return this.rowSelection === 'multiple';
     };
-    SelectionService.prototype.setNodeSelected = function (params) {
+    SelectionService.prototype.setNodesSelected = function (params) {
         var _a;
-        var newValue = params.newValue, clearSelection = params.clearSelection, suppressFinishActions = params.suppressFinishActions, rangeSelect = params.rangeSelect, event = params.event, node = params.node, _b = params.source, source = _b === void 0 ? 'api' : _b;
+        if (params.nodes.length === 0)
+            return 0;
+        var newValue = params.newValue, clearSelection = params.clearSelection, suppressFinishActions = params.suppressFinishActions, rangeSelect = params.rangeSelect, event = params.event, _b = params.source, source = _b === void 0 ? 'api' : _b;
+        if (params.nodes.length > 1 && !this.isMultiselect()) {
+            console.warn("AG Grid: cannot multi select while rowSelection='single'");
+            return 0;
+        }
         // groupSelectsFiltered only makes sense when group selects children
         var groupSelectsFiltered = this.groupSelectsChildren && (params.groupSelectsFiltered === true);
-        if (node.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
-            return 0;
-        }
-        if (node.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
-            return 0;
-        }
-        // if we are a footer, we don't do selection, just pass the info
+        // if node is a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
-        if (node.footer) {
-            return this.setNodeSelected(__assign(__assign({}, params), { node: node.sibling }));
-        }
-        var lastSelectedNode = this.getLastSelectedNode();
-        if (rangeSelect && lastSelectedNode) {
-            var newRowClicked = lastSelectedNode !== node;
-            if (newRowClicked && this.isMultiselect()) {
-                var nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
-                this.setLastSelectedNode(node);
-                return nodesChanged;
+        var nodes = params.nodes.map(function (node) { return node.footer ? node.sibling : node; });
+        if (rangeSelect) {
+            if (params.nodes.length > 1) {
+                console.warn('AG Grid: cannot range select while selecting multiple rows');
+                return 0;
+            }
+            var lastSelectedNode = this.getLastSelectedNode();
+            if (lastSelectedNode) {
+                // if node is a footer, we don't do selection, just pass the info
+                // to the sibling (the parent of the group)
+                var node = nodes[0];
+                var newRowClicked = lastSelectedNode !== node;
+                if (newRowClicked && this.isMultiselect()) {
+                    var nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
+                    this.setLastSelectedNode(node);
+                    return nodesChanged;
+                }
             }
         }
-        // when groupSelectsFiltered, then this node may end up intermediate despite
-        // trying to set it to true / false. this group will be calculated further on
-        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
-        // here, otherwise the updatedCount would include it.
-        var skipThisNode = groupSelectsFiltered && node.group;
         var updatedCount = 0;
-        if (!skipThisNode) {
-            var thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
-            if (thisNodeWasSelected) {
-                updatedCount++;
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            // when groupSelectsFiltered, then this node may end up intermediate despite
+            // trying to set it to true / false. this group will be calculated further on
+            // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+            // here, otherwise the updatedCount would include it.
+            var skipThisNode = groupSelectsFiltered && node.group;
+            if (!skipThisNode) {
+                var thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
+                if (thisNodeWasSelected) {
+                    updatedCount++;
+                }
             }
-        }
-        if (this.groupSelectsChildren && ((_a = node.childrenAfterGroup) === null || _a === void 0 ? void 0 : _a.length)) {
-            updatedCount += this.selectChildren(node, newValue, groupSelectsFiltered, source);
+            if (this.groupSelectsChildren && ((_a = node.childrenAfterGroup) === null || _a === void 0 ? void 0 : _a.length)) {
+                updatedCount += this.selectChildren(node, newValue, groupSelectsFiltered, source);
+            }
         }
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
             var clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(node, source);
+                updatedCount += this.clearOtherNodes(nodes[0], source);
             }
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
@@ -147,7 +146,7 @@ var SelectionService = /** @class */ (function (_super) {
             }
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
-                this.setLastSelectedNode(node);
+                this.setLastSelectedNode(nodes[nodes.length - 1]);
             }
         }
         return updatedCount;
@@ -182,17 +181,14 @@ var SelectionService = /** @class */ (function (_super) {
         if (utils_1._.missing(children)) {
             return 0;
         }
-        var updatedCount = 0;
-        for (var i = 0; i < children.length; i++) {
-            updatedCount += children[i].setSelectedParams({
-                newValue: newValue,
-                clearSelection: false,
-                suppressFinishActions: true,
-                groupSelectsFiltered: groupSelectsFiltered,
-                source: source
-            });
-        }
-        return updatedCount;
+        return this.setNodesSelected({
+            newValue: newValue,
+            clearSelection: false,
+            suppressFinishActions: true,
+            groupSelectsFiltered: groupSelectsFiltered,
+            source: source,
+            nodes: children,
+        });
     };
     SelectionService.prototype.setLastSelectedNode = function (rowNode) {
         this.lastSelectedNode = rowNode;
@@ -272,7 +268,7 @@ var SelectionService = /** @class */ (function (_super) {
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true,
-                    source: source
+                    source: source,
                 });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;

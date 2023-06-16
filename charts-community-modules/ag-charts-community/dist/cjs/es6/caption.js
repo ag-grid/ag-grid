@@ -15,21 +15,29 @@ class Caption {
     constructor() {
         this.node = new text_1.Text();
         this.enabled = false;
-        this.text = '';
+        this.text = undefined;
         this.fontSize = 10;
         this.fontFamily = 'sans-serif';
         this.spacing = Caption.PADDING;
-        this._lineHeight = undefined;
+        this.lineHeight = undefined;
+        this.maxWidth = undefined;
+        this.maxHeight = undefined;
+        this.wrapping = 'always';
         const node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = node_1.PointerEvents.None;
     }
-    get lineHeight() {
-        return this._lineHeight;
-    }
-    set lineHeight(value) {
-        this._lineHeight = value;
-        this.node.lineHeight = value;
+    computeTextWrap(containerWidth, containerHeight) {
+        var _a, _b;
+        const { text, wrapping } = this;
+        const maxWidth = Math.min((_a = this.maxWidth) !== null && _a !== void 0 ? _a : Infinity, containerWidth);
+        const maxHeight = (_b = this.maxHeight) !== null && _b !== void 0 ? _b : containerHeight;
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        const wrapped = text_1.Text.wrap(text !== null && text !== void 0 ? text : '', maxWidth, maxHeight, this, wrapping);
+        this.node.text = wrapped;
     }
 }
 Caption.PADDING = 10;
@@ -37,7 +45,7 @@ __decorate([
     validation_1.Validate(validation_1.BOOLEAN)
 ], Caption.prototype, "enabled", void 0);
 __decorate([
-    validation_1.Validate(validation_1.STRING),
+    validation_1.Validate(validation_1.OPT_STRING),
     proxy_1.ProxyPropertyOnWrite('node')
 ], Caption.prototype, "text", void 0);
 __decorate([
@@ -65,5 +73,14 @@ __decorate([
 ], Caption.prototype, "spacing", void 0);
 __decorate([
     validation_1.Validate(validation_1.OPT_NUMBER(0))
-], Caption.prototype, "_lineHeight", void 0);
+], Caption.prototype, "lineHeight", void 0);
+__decorate([
+    validation_1.Validate(validation_1.OPT_NUMBER(0))
+], Caption.prototype, "maxWidth", void 0);
+__decorate([
+    validation_1.Validate(validation_1.OPT_NUMBER(0))
+], Caption.prototype, "maxHeight", void 0);
+__decorate([
+    validation_1.Validate(validation_1.TEXT_WRAP)
+], Caption.prototype, "wrapping", void 0);
 exports.Caption = Caption;

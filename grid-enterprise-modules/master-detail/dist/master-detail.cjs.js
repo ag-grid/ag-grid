@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -210,6 +212,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -286,7 +290,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             return;
         }
         // AG-1715
-        // this is only needed when reactUi=false, once we remove the old way
+        // this is only needed when suppressReactUi=true, once we remove the old way
         // of doing react, and Master / Details is all native React, then we
         // can remove this code.
         var agGridReact = this.context.getBean('agGridReact');
@@ -324,7 +328,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var MasterDetailModule = {
     version: VERSION,

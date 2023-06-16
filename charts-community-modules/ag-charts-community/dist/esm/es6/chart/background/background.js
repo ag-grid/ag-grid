@@ -30,7 +30,6 @@ export class Background extends BaseModuleInstance {
         const layoutHandle = ctx.layoutService.addListener('layout-complete', this.onLayoutComplete);
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
     }
-    update() { }
 }
 __decorate([
     Validate(BOOLEAN),

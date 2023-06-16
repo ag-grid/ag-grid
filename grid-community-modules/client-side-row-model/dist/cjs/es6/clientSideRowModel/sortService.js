@@ -10,7 +10,7 @@ exports.SortService = void 0;
 const core_1 = require("@ag-grid-community/core");
 let SortService = class SortService extends core_1.BeanStub {
     init() {
-        this.postSortFunc = this.getPostSortFunc();
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     }
     sort(sortOptions, sortActive, useDeltaSort, rowNodeTransactions, changedPath, sortContainsGroupColumns) {
         const groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
@@ -63,17 +63,6 @@ let SortService = class SortService extends core_1.BeanStub {
             changedPath.forEachChangedNodeDepthFirst(callback);
         }
         this.updateGroupDataForHideOpenParents(changedPath);
-    }
-    getPostSortFunc() {
-        const postSortRows = this.gridOptionsService.getCallback('postSortRows');
-        if (postSortRows) {
-            return postSortRows;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const postSort = this.gridOptionsService.get('postSort');
-        if (postSort) {
-            return (params) => postSort(params.nodes);
-        }
     }
     calculateDirtyNodes(rowNodeTransactions) {
         const dirtyNodes = {};

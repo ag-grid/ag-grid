@@ -163,7 +163,11 @@ export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEdi
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
+export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
+export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
+export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
 // rendering / cellRenderers
@@ -201,6 +205,7 @@ export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshC
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
+export { CheckboxCellRenderer, ICheckboxCellRendererParams } from "./rendering/cellRenderers/checkboxCellRenderer";
 
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
@@ -235,6 +240,7 @@ export { AgToggleButton } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
@@ -259,7 +265,7 @@ export { AgPickerField } from "./widgets/agPickerField";
 // range
 export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService,
-    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory
+    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams
 } from "./interfaces/IRangeService";
 export {
     IChartService,
@@ -269,7 +275,8 @@ export {
     ChartModel,
     GetChartImageDataUrlParams,
     ChartModelType,
-    CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams
+    CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams,
+    UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams
 } from './interfaces/IChartService';
 
 // master detail
@@ -310,10 +317,11 @@ export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
+export { ValueParserService } from "./valueService/valueParserService";
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
-export { ISelectionService, ISetNodeSelectedParams } from "./interfaces/iSelectionService";
+export { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
@@ -377,10 +385,24 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
+    NestedFieldPaths,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
 } from "./entities/colDef";
+export {
+    DataTypeDefinition,
+    TextDataTypeDefinition,
+    NumberDataTypeDefinition,
+    BooleanDataTypeDefinition,
+    DateDataTypeDefinition,
+    DateStringDataTypeDefinition,
+    ObjectDataTypeDefinition,
+    ValueFormatterLiteFunc,
+    ValueFormatterLiteParams,
+    ValueParserLiteFunc,
+    ValueParserLiteParams,
+} from "./entities/dataType";
 export {
     GridOptions,
     IsApplyServerSideTransaction,

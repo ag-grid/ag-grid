@@ -1,105 +1,97 @@
+@use '../../design-system/' as *;
+
 $indent: 24px;
 
-.expandable-snippet {
+// Ignore padding & remove border if within tabbed container
+:global(.tabs-outer) .expandableSnippet pre:global(.code) {
+    margin: -$size-2;
+    border: none;
+}
 
-    .json-property {
-        position: relative;
+.expandableSnippet pre > code {
+    background-image: none;
 
-        &-type-nested-object {
-            > .json-property {
-                padding-left: $indent;
-            }
-        }
+    code {
+        color: var(--code-text-color);
     }
+}
 
-    .json-object-union, .json-object {
-        padding-left: $indent;
-    }
+.jsonProperty {
+    position: relative;
+    margin-top: $size-half;
+    margin-bottom: $size-half;
+}
 
-    .indent-level {
-        margin-left: $indent;
-    }
+.type-nested-object > .jsonProperty {
+    padding-left: $indent;
+}
 
-    .deprecated {
-        text-decoration: line-through;
-    }
+.jsonObjectUnion,
+.jsonObject {
+    padding-left: $indent;
+}
 
-    .expandable {
-        & > * {
-            cursor: pointer;
-        }
-    }
+.deprecated {
+    text-decoration: line-through;
+}
 
-    .documentation-expander {
-        color: #358ccb;
-        cursor: pointer;
-    }
+.expandable {
+    cursor: pointer;
+}
 
-    .unexpandable {
-        cursor: default;
+.unexpandable {
+    cursor: default;
+}
+
+.expander {
+    --icon-size: 1em;
+
+    transition: transform $default-transition-timing;
+
+    &.active {
+        transform: rotate(90deg);
     }
+}
+
+.expanderBar {
+    position: absolute;
+    width: 2px;
+    bottom: 1px;
+    left: -12px;
+    top: 17px;
+    background: var(--bright-blue-gray);
+}
+
+.propertyName {
+    position: relative;
+    color: var(--property-color);
 
     .expander {
-        height: 0.8rem;
-        width: 1rem;
-        color: #212529;
-    }
-
-    .expander-bar {
         position: absolute;
-        width: 3px;
-        bottom: 1px;
-        left: -12px;
-        top: 17px;
-        background: #e8e9ea;
+        left: -18px;
+        top: 3px;
     }
+}
 
-    .property-name {
-        position: relative;
-        font-weight: 800;
+.jsonUnionItem {
+    position: relative;
 
-        .expander {
-            position: absolute;
-            left: -18px;
-            top: 3px;
-            font-weight: normal;
-        }
+    .expander {
+        position: absolute;
+        left: -18px;
+        top: 3px;
+        font-weight: normal;
     }
+}
 
-    .json-union-item {
-        position: relative;
+.unionTypeProperty {
+    color: var(--property-color);
+}
 
-        .expander {
-            position: absolute;
-            left: -18px;
-            top: 3px;
-            font-weight: normal;
-        }
-    }
-
-    .union-type-property {
-        font-weight: 800;
-    }
-
-    .union-type-object {
-    }
-
-    .jsdoc-expandable {
-        background-color: #eeeeee;
-        color: #212529;
-        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.275rem;
-        margin: 0;
-        padding: .6375rem 10px;
-        text-align: left;
-        white-space: normal;
-        hyphens: initial;
-        cursor: text;
-
-        code {
-            line-height: calc(1.275rem - 2px);
-        }
-    }
+.jsdocExpandable {
+    font-size: var(--font-size-medium);
+    font-family: $font-family;
+    padding: $size-half 10px $size-half;
+    white-space: normal;
+    cursor: text;
 }

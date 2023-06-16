@@ -4,23 +4,16 @@ import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
-import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
+import { AgAxisCaptionFormatterParams, AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisContext, AxisModule, ModuleContext, ModuleInstanceMeta } from '../util/module';
-
-export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
-    if (direction === ChartAxisDirection.X) {
-        return ChartAxisDirection.Y;
-    } else {
-        return ChartAxisDirection.X;
-    }
-}
+import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 
 interface BoundSeries {
     type: string;
     getDomain(direction: ChartAxisDirection): any[];
     isEnabled(): boolean;
     getKeys(direction: ChartAxisDirection): string[];
+    getNames(direction: ChartAxisDirection): (string | undefined)[];
     visible: boolean;
     getBandScalePadding?(): { inner: number; outer: number };
 }
@@ -32,15 +25,18 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     @Validate(STRING_ARRAY)
     keys: string[] = [];
 
-    direction: ChartAxisDirection = ChartAxisDirection.Y;
     boundSeries: BoundSeries[] = [];
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 
-    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     get type(): AgCartesianAxisType {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
+    }
+
+    get direction() {
+        return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
     }
 
     protected useCalculatedTickCount() {
@@ -50,50 +46,47 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         return this.scale instanceof LinearScale;
     }
 
-    protected constructor(private readonly moduleCtx: ModuleContext, scale: S) {
-        super(scale);
+    protected constructor(moduleCtx: ModuleContext, scale: S) {
+        super(moduleCtx, scale);
     }
 
     @Validate(POSITION)
-    protected _position: AgCartesianAxisPosition = 'left';
-    set position(value: AgCartesianAxisPosition) {
-        if (this._position !== value) {
-            this._position = value;
-            switch (value) {
-                case 'top':
-                    this.direction = ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = true;
-                    this.label.parallel = true;
-                    break;
-                case 'right':
-                    this.direction = ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = true;
-                    this.label.parallel = false;
-                    break;
-                case 'bottom':
-                    this.direction = ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = false;
-                    this.label.parallel = true;
-                    break;
-                case 'left':
-                    this.direction = ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = false;
-                    this.label.parallel = false;
-                    break;
-            }
+    position: AgCartesianAxisPosition = 'left';
 
-            if (this.axisContext) {
-                this.axisContext.position = value;
-                this.axisContext.direction = this.direction;
-            }
-        }
+    public update(primaryTickCount?: number) {
+        this.updateDirection();
+
+        return super.update(primaryTickCount);
     }
-    get position(): AgCartesianAxisPosition {
-        return this._position;
+
+    protected updateDirection() {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
     }
 
     protected calculateDomain() {
@@ -103,11 +96,10 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             this.dataDomain = this.linkedTo.dataDomain;
         } else {
             const domains: any[][] = [];
-            boundSeries
-                .filter((s) => includeInvisibleDomains || s.isEnabled())
-                .forEach((series) => {
-                    domains.push(series.getDomain(direction));
-                });
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
+                domains.push(series.getDomain(direction));
+            }
 
             const domain = new Array<any>().concat(...domains);
             this.dataDomain = this.normaliseDataDomain(domain);
@@ -161,13 +153,13 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             };
         }
 
-        const moduleMeta = module.initialiseModule({
+        const moduleInstance = new module.instanceConstructor({
             ...this.moduleCtx,
             parent: this.axisContext,
         });
-        this.modules[module.optionsKey] = moduleMeta;
+        this.modules[module.optionsKey] = { instance: moduleInstance };
 
-        (this as any)[module.optionsKey] = moduleMeta.instance;
+        (this as any)[module.optionsKey] = moduleInstance;
     }
 
     removeModule(module: AxisModule) {
@@ -188,5 +180,24 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             delete this.modules[key];
             delete (this as any)[key];
         }
+    }
+
+    protected getTitleFormatterParams() {
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, [] as AgAxisCaptionFormatterParams['boundSeries']);
+        return {
+            direction: this.direction,
+            boundSeries,
+            defaultValue: this.title?.text,
+        };
     }
 }

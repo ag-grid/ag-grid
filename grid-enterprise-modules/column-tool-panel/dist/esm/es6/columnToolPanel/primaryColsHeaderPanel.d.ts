@@ -24,7 +24,7 @@ export declare class PrimaryColsHeaderPanel extends Component {
     private createExpandIcons;
     private showOrHideOptions;
     private onFilterTextChanged;
-    private onMiniFilterKeyPress;
+    private onMiniFilterKeyDown;
     private onSelectClicked;
     private onExpandClicked;
     setExpandState(state: ExpandState): void;

@@ -272,12 +272,6 @@ export class ColumnGroup implements IHeaderColumn {
         return this.providedColumnGroup;
     }
 
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    public getOriginalColumnGroup(): ProvidedColumnGroup {
-        logDeprecation<ColumnGroup>('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
-        return this.getProvidedColumnGroup();
-    }
-
     public getPaddingLevel(): number {
         const parent = this.getParent();
 

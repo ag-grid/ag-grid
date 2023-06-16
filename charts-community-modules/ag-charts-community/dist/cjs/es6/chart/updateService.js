@@ -6,8 +6,8 @@ class UpdateService {
     constructor(updateCallback) {
         this.updateCallback = updateCallback;
     }
-    update(type = chartUpdateType_1.ChartUpdateType.FULL) {
-        this.updateCallback(type);
+    update(type = chartUpdateType_1.ChartUpdateType.FULL, { forceNodeDataRefresh = false } = {}) {
+        this.updateCallback(type, { forceNodeDataRefresh });
     }
 }
 exports.UpdateService = UpdateService;

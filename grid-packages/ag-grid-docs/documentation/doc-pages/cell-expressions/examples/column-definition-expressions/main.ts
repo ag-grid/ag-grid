@@ -48,6 +48,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 200,
     resizable: true,
+    cellDataType: false,
   },
   rowData: getData(),
   onCellValueChanged: onCellValueChanged,

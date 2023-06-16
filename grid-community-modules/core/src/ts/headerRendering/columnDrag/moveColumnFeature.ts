@@ -222,7 +222,8 @@ export class MoveColumnFeature implements DropListener {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach((newCol) => {
+                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }

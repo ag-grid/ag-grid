@@ -26,20 +26,37 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChartTheme = void 0;
+exports.ChartTheme = exports.DEFAULT_FONT_FAMILY = exports.OVERRIDE_SERIES_LABEL_DEFAULTS = exports.EXTENDS_SERIES_DEFAULTS = void 0;
+var json_1 = require("../../util/json");
 var object_1 = require("../../util/object");
-var chartTypes_1 = require("../chartTypes");
+var chartAxesTypes_1 = require("../chartAxesTypes");
+var chartTypes_1 = require("../factory/chartTypes");
+var seriesTypes_1 = require("../factory/seriesTypes");
 var palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
     strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
+exports.EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
+exports.OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
+exports.DEFAULT_FONT_FAMILY = Symbol('default-font');
 var BOLD = 'bold';
 var INSIDE = 'inside';
-var RIGHT = 'right';
+var BOTTOM = 'bottom';
 var ChartTheme = /** @class */ (function () {
     function ChartTheme(options) {
-        options = object_1.deepMerge({}, options || {});
+        options = object_1.deepMerge({}, options !== null && options !== void 0 ? options : {});
         var _a = options.overrides, overrides = _a === void 0 ? null : _a, _b = options.palette, palette = _b === void 0 ? null : _b;
         var defaults = this.createChartConfigPerChartType(this.getDefaults());
         if (overrides) {
@@ -160,7 +177,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.getBarSeriesDefaults = function () {
-        return __assign(__assign({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
+        return __assign(__assign({}, this.getSeriesDefaults()), { fillOpacity: 1, strokeOpacity: 1, normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -205,6 +222,9 @@ var ChartTheme = /** @class */ (function () {
             formatter: undefined,
         };
     };
+    ChartTheme.getCaptionWrappingDefaults = function () {
+        return 'hyphenate';
+    };
     ChartTheme.getChartDefaults = function () {
         return {
             background: {
@@ -225,6 +245,7 @@ var ChartTheme = /** @class */ (function () {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -234,6 +255,7 @@ var ChartTheme = /** @class */ (function () {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -244,10 +266,10 @@ var ChartTheme = /** @class */ (function () {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
-                enabled: true,
-                position: RIGHT,
+                position: BOTTOM,
                 spacing: 20,
                 listeners: {},
                 item: {
@@ -296,6 +318,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.prototype.createChartConfigPerChartType = function (config) {
+        var _this = this;
         var typeToAliases = {
             cartesian: chartTypes_1.CHART_TYPES.cartesianTypes,
             polar: chartTypes_1.CHART_TYPES.polarTypes,
@@ -303,52 +326,106 @@ var ChartTheme = /** @class */ (function () {
             groupedCategory: [],
         };
         Object.entries(typeToAliases).forEach(function (_a) {
-            var _b = __read(_a, 2), type = _b[0], aliases = _b[1];
-            aliases.forEach(function (alias) {
+            var _b = __read(_a, 2), nextType = _b[0], aliases = _b[1];
+            var type = nextType;
+            var typeDefaults = _this.templateTheme(chartTypes_1.getChartDefaults(type));
+            aliases.forEach(function (next) {
+                var alias = next;
                 if (!config[alias]) {
                     config[alias] = object_1.deepMerge({}, config[type]);
+                    object_1.deepMerge(config[alias], typeDefaults);
                 }
             });
         });
         return config;
     };
-    /**
-     * Meant to be overridden in subclasses. For example:
-     * ```
-     *     getDefaults() {
-     *         const subclassDefaults = { ... };
-     *         return this.mergeWithParentDefaults(subclassDefaults);
-     *     }
-     * ```
-     */
     ChartTheme.prototype.getDefaults = function () {
+        var _this = this;
         var defaults = object_1.deepMerge({}, ChartTheme.defaults);
-        var getOverridesByType = function (seriesTypes) {
-            var result = {};
+        var getOverridesByType = function (chartType, seriesTypes) {
+            var result = _this.templateTheme(chartTypes_1.getChartDefaults(chartType));
             result.series = seriesTypes.reduce(function (obj, seriesType) {
-                if (Object.prototype.hasOwnProperty.call(ChartTheme.seriesThemeOverrides, seriesType)) {
-                    obj[seriesType] = ChartTheme.seriesThemeOverrides[seriesType]({
-                        seriesDefaults: ChartTheme.getSeriesDefaults(),
-                        defaultFontFamily: ChartTheme.fontFamily,
-                    });
+                var template = seriesTypes_1.getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = _this.templateTheme(template);
                 }
                 return obj;
             }, {});
+            if (chartType === 'cartesian') {
+                result.axes = chartAxesTypes_1.CHART_AXES_TYPES.axesTypes.reduce(function (obj, axisType) {
+                    var template = chartAxesTypes_1.getAxisThemeTemplate(axisType);
+                    if (template) {
+                        obj[axisType] = _this.templateTheme(template);
+                    }
+                    return obj;
+                }, {});
+            }
             return result;
         };
         var extension = {
-            cartesian: getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes),
-            groupedCategory: getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes),
-            polar: getOverridesByType(chartTypes_1.CHART_TYPES.polarTypes),
-            hierarchy: getOverridesByType(chartTypes_1.CHART_TYPES.hierarchyTypes),
+            cartesian: getOverridesByType('cartesian', chartTypes_1.CHART_TYPES.cartesianTypes),
+            groupedCategory: getOverridesByType('cartesian', chartTypes_1.CHART_TYPES.cartesianTypes),
+            polar: getOverridesByType('polar', chartTypes_1.CHART_TYPES.polarTypes),
+            hierarchy: getOverridesByType('hierarchy', chartTypes_1.CHART_TYPES.hierarchyTypes),
         };
         return object_1.deepMerge(defaults, extension);
+    };
+    ChartTheme.prototype.templateTheme = function (themeTemplate) {
+        var themeInstance = json_1.jsonMerge([themeTemplate]);
+        var _a = this.getTemplateParameters(), extensions = _a.extensions, properties = _a.properties;
+        json_1.jsonWalk(themeInstance, function (_, node) {
+            var e_1, _a;
+            if (node['__extends__']) {
+                var key = node['__extends__'];
+                var source = extensions.get(key);
+                if (source == null) {
+                    throw new Error('AG Charts - no template variable provided for: ' + key);
+                }
+                Object.assign(node, source, node);
+                delete node['__extends__'];
+            }
+            if (node['__overrides__']) {
+                var key = node['__overrides__'];
+                var source = extensions.get(key);
+                if (source == null) {
+                    throw new Error('AG Charts - no template variable provided for: ' + key);
+                }
+                Object.assign(node, source);
+                delete node['__overrides__'];
+            }
+            try {
+                for (var _b = __values(Object.entries(node)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var _d = __read(_c.value, 2), name_1 = _d[0], value = _d[1];
+                    if (properties.has(value)) {
+                        node[name_1] = properties.get(value);
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }, {});
+        return themeInstance;
+    };
+    ChartTheme.prototype.getTemplateParameters = function () {
+        var extensions = new Map();
+        extensions.set(exports.EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
+        extensions.set(exports.OVERRIDE_SERIES_LABEL_DEFAULTS, {});
+        var properties = new Map();
+        properties.set(exports.DEFAULT_FONT_FAMILY, ChartTheme.fontFamily);
+        return {
+            extensions: extensions,
+            properties: properties,
+        };
     };
     ChartTheme.prototype.mergeWithParentDefaults = function (parentDefaults, defaults) {
         return object_1.deepMerge(parentDefaults, defaults);
     };
     ChartTheme.fontFamily = 'Verdana, sans-serif';
-    ChartTheme.seriesThemeOverrides = {};
     ChartTheme.cartesianDefaults = __assign(__assign({}, ChartTheme.getChartDefaults()), { axes: {
             number: __assign({}, ChartTheme.getAxisDefaults()),
             log: __assign(__assign({}, ChartTheme.getAxisDefaults()), { base: 10 }),
@@ -356,9 +433,9 @@ var ChartTheme = /** @class */ (function () {
             groupedCategory: __assign({}, ChartTheme.getAxisDefaults()),
             time: __assign({}, ChartTheme.getAxisDefaults()),
         }, series: {
-            column: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
-            bar: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-            line: __assign(__assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign(__assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
+            column: __assign({}, ChartTheme.getBarSeriesDefaults()),
+            bar: __assign({}, ChartTheme.getBarSeriesDefaults()),
+            line: __assign(__assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign(__assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -367,7 +444,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            scatter: __assign(__assign({}, ChartTheme.getScatterSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+            scatter: __assign(__assign({}, ChartTheme.getScatterSeriesDefaults()), { sizeName: 'Size', labelName: 'Label', marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -375,7 +452,7 @@ var ChartTheme = /** @class */ (function () {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 } }),
-            area: __assign(__assign({}, ChartTheme.getAreaSeriesDefaults()), { xKey: '', xName: '', normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
+            area: __assign(__assign({}, ChartTheme.getAreaSeriesDefaults()), { normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
                     enabled: false,
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
@@ -390,7 +467,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
+            histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -405,44 +482,17 @@ var ChartTheme = /** @class */ (function () {
                     yOffset: 0,
                     blur: 5,
                 } }),
-        }, navigator: {
-            enabled: false,
-            height: 30,
-            mask: {
-                fill: '#999999',
-                stroke: '#999999',
-                strokeWidth: 1,
-                fillOpacity: 0.2,
-            },
-            minHandle: {
-                fill: '#f2f2f2',
-                stroke: '#999999',
-                strokeWidth: 1,
-                width: 8,
-                height: 16,
-                gripLineGap: 2,
-                gripLineLength: 8,
-            },
-            maxHandle: {
-                fill: '#f2f2f2',
-                stroke: '#999999',
-                strokeWidth: 1,
-                width: 8,
-                height: 16,
-                gripLineGap: 2,
-                gripLineLength: 8,
-            },
         } });
     ChartTheme.polarDefaults = __assign(__assign({}, ChartTheme.getChartDefaults()), { series: {
             pie: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: {
                     enabled: true,
-                    text: '',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
-                }, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, calloutLabelKey: undefined, calloutLabelName: undefined, sectorLabelKey: undefined, sectorLabelName: undefined, calloutLabel: {
+                    spacing: 0,
+                }, radiusKey: undefined, radiusName: undefined, calloutLabelKey: undefined, calloutLabelName: undefined, sectorLabelKey: undefined, sectorLabelName: undefined, calloutLabel: {
                     enabled: true,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -491,14 +541,14 @@ var ChartTheme = /** @class */ (function () {
                     xOffset: 1.5,
                     yOffset: 1.5,
                     blur: 5,
-                }, highlightGroups: true, nodePadding: 2, title: {
+                }, highlightGroups: true, nodePadding: 2, nodeGap: 0, title: {
                     enabled: true,
                     color: 'white',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 12,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 15,
+                    padding: 2,
                 }, subtitle: {
                     enabled: true,
                     color: 'white',
@@ -506,7 +556,7 @@ var ChartTheme = /** @class */ (function () {
                     fontWeight: undefined,
                     fontSize: 9,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 13,
+                    padding: 2,
                 }, labels: {
                     large: {
                         enabled: true,
@@ -515,6 +565,7 @@ var ChartTheme = /** @class */ (function () {
                         fontSize: 18,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     medium: {
                         enabled: true,
@@ -523,6 +574,7 @@ var ChartTheme = /** @class */ (function () {
                         fontSize: 14,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     small: {
                         enabled: true,
@@ -531,6 +583,7 @@ var ChartTheme = /** @class */ (function () {
                         fontSize: 10,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     value: {
                         style: {

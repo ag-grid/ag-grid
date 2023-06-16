@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgInputTextField = void 0;
 const agAbstractInputField_1 = require("./agAbstractInputField");
 const generic_1 = require("../utils/generic");
+const keyboard_1 = require("../utils/keyboard");
 class AgInputTextField extends agAbstractInputField_1.AgAbstractInputField {
     constructor(config, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
@@ -26,18 +27,21 @@ class AgInputTextField extends agAbstractInputField_1.AgAbstractInputField {
         }
         return ret;
     }
+    /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
+    setStartValue(value) {
+        this.setValue(value, true);
+    }
     preventDisallowedCharacters() {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
-        const preventDisallowedCharacters = (event) => {
-            if (event.ctrlKey || event.metaKey) {
-                // copy/paste can fall in here on certain browsers (e.g. Safari)
+        const preventCharacters = (event) => {
+            if (!keyboard_1.isEventFromPrintableCharacter(event)) {
                 return;
             }
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();
             }
         };
-        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
         this.addManagedListener(this.eInput, 'paste', (e) => {
             var _a;
             const text = (_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text');

@@ -5,6 +5,10 @@ export declare class AgGridVue extends Vue {
     private static kebabProperty;
     autoParamsRefresh: boolean;
     componentDependencies: string[];
+    /**
+     * Used to register AG Grid Modules directly with this instance of the grid.
+     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/vue-data-grid/modules/#providing-modules-to-individual-grids) for more information.
+     */
     modules: Module[];
     private gridCreated;
     private isDestroyed;

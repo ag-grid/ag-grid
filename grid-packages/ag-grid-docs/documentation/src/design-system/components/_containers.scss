@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-.ag-card {
+.card {
     --card-color: var(--border-color);
     --header-tint: 0.775;
     --content-tint: 0.95;
@@ -27,14 +27,117 @@
     }
 
     &.single-application {
-        --card-color: #0f5bce !important; // !important for .ag-styles specificity
-        --header-tint: 0.9 !important; // !important for .ag-styles specificity
-        --content-tint: 0.96 !important; // !important for .ag-styles specificity
+        --card-color: #0f5bce;
+        --header-tint: 0.9;
+        --content-tint: 0.96;
     }
 
     &.multiple-application {
-        --card-color: #2aaa33 !important; // !important for .ag-styles specificity
-        --header-tint: 0.91 !important; // !important for .ag-styles specificity
-        --content-tint: 0.97 !important; // !important for .ag-styles specificity
+        --card-color: #2aaa33;
+        --header-tint: 0.91;
+        --content-tint: 0.97;
+    }
+}
+
+.tabs-outer {
+    header,
+    .tabs-header {
+        display: flex;
+        gap: 0 $size-4;
+        width: 100%;
+        border-top-right-radius: var(--border-radius);
+        border-top-left-radius: var(--border-radius);
+        border-top: 2px solid var(--border-color);
+        border-right: 2px solid var(--border-color);
+        border-left: 2px solid var(--border-color);
+        box-shadow: inset 0 -2px 0 0 var(--bright-blue-gray);
+        overflow-x: auto;
+    }
+
+    .tabs-nav-list {
+        display: flex;
+        flex-shrink: 0;
+        margin: 0;
+        padding-left: $size-half;
+        list-style-type: none;
+        border-bottom: none;
+    }
+
+    .tabs-nav-item {
+        margin-bottom: 0;
+        padding-left: $size-1;
+        padding-right: $size-1;
+    }
+
+    .tabs-nav-link {
+        --button-text-color: var(--secondary-text-color);
+
+        position: relative;
+        display: inline-block;
+        padding: ($size-1 + $size-half) $size-half;
+        line-height: var(--line-height-tight);
+        transition: color $default-transition-timing;
+        cursor: pointer;
+
+        &:hover {
+            --button-text-color: var(--link-color);
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            opacity: 0;
+            background-color: var(--link-color);
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        &:hover::after {
+            opacity: 0.6666;
+        }
+
+        svg {
+            --icon-size: #{$size-3};
+
+            margin: -0.125em 0 0;
+            transition: fill $default-transition-timing;
+        }
+    }
+
+    .tabs-nav-link.active {
+        --button-text-color: var(--text-color);
+
+        pointer-events: none;
+
+        &::after {
+            opacity: 1;
+        }
+
+        svg {
+            transition: none;
+        }
+    }
+
+    .tabs-content {
+        position: relative;
+        border-bottom-right-radius: var(--border-radius);
+        border-bottom-left-radius: var(--border-radius);
+        border-right: 2px solid var(--border-color);
+        border-bottom: 2px solid var(--border-color);
+        border-left: 2px solid var(--border-color);
+        padding: $size-2;
+    }
+
+    pre.code {
+        margin-bottom: 0;
+    }
+
+    // If the only item in a tab is a code snippet ignore padding & remove border
+    div[tab-label] pre.code:only-child {
+        margin: -$size-2;
+        border: none;
     }
 }

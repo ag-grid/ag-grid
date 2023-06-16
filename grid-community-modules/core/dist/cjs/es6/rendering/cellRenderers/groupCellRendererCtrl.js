@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -507,8 +507,8 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.comp.setCheckboxVisible(checkboxNeeded);
     }
     onKeyDown(event) {
-        const enterKeyPressed = event.key === keyCode_1.KeyCode.ENTER;
-        if (!enterKeyPressed || this.params.suppressEnterExpand) {
+        const isEnterKey = event.key === keyCode_1.KeyCode.ENTER;
+        if (!isEnterKey || this.params.suppressEnterExpand) {
             return;
         }
         const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);

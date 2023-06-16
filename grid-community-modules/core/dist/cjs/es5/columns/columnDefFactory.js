@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ var ColumnDefFactory = /** @class */ (function () {
             var addToResult = true;
             var childDef = colDef;
             var pointer = col.getOriginalParent();
+            var lastPointer = null;
             while (pointer) {
                 var parentDef = null;
                 // we don't include padding groups, as the column groups provided
@@ -53,6 +54,12 @@ var ColumnDefFactory = /** @class */ (function () {
                     childDef = parentDef;
                     pointer = pointer.getOriginalParent();
                 }
+                if (lastPointer === pointer) {
+                    addToResult = false;
+                    break;
+                }
+                // Ensure we don't get stuck in an infinite loop
+                lastPointer = pointer;
             }
             if (addToResult) {
                 res.push(childDef);

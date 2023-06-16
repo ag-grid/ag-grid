@@ -26,7 +26,7 @@ declare type DeepPartial<T> = {
  *
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
-export declare function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null;
+export declare function jsonDiff<T extends unknown>(source: T, target: T): Partial<T> | null;
 /**
  * Special value used by `jsonMerge` to signal that a property should be removed from the merged
  * output.
@@ -52,6 +52,10 @@ export interface JsonMergeOptions {
  * @returns the combination of all of the json inputs
  */
 export declare function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T;
+export declare type JsonApplyParams = {
+    constructors?: Record<string, new () => any>;
+    allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+};
 /**
  * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
  * by property name.
@@ -69,10 +73,8 @@ export declare function jsonApply<Target, Source extends DeepPartial<Target>>(ta
     path?: string;
     matcherPath?: string;
     skip?: string[];
-    constructors?: Record<string, new () => any>;
-    allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
     idx?: number;
-}): Target;
+} & JsonApplyParams): Target;
 /**
  * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
  * Arrays are descended into without a callback, however their elements will have the visit()
@@ -92,3 +94,4 @@ declare type Classification = 'array' | 'object' | 'primitive';
  */
 declare function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null;
 export {};
+//# sourceMappingURL=json.d.ts.map

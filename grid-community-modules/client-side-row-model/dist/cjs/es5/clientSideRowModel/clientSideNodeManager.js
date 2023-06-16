@@ -15,9 +15,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientSideNodeManager = void 0;
@@ -112,8 +113,11 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.updateSelection = function (nodesToUnselect, source) {
         var selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(function (rowNode) {
-                rowNode.setSelected(false, false, true, source);
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                source: source,
             });
         }
         // we do this regardless of nodes to unselect or not, as it's possible
@@ -154,10 +158,10 @@ var ClientSideNodeManager = /** @class */ (function () {
             }
             var nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
             var nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
-            this.rootNode.allLeafChildren = __spread(nodesBeforeIndex, newNodes, nodesAfterIndex);
+            this.rootNode.allLeafChildren = __spreadArray(__spreadArray(__spreadArray([], __read(nodesBeforeIndex)), __read(newNodes)), __read(nodesAfterIndex));
         }
         else {
-            this.rootNode.allLeafChildren = __spread(this.rootNode.allLeafChildren, newNodes);
+            this.rootNode.allLeafChildren = __spreadArray(__spreadArray([], __read(this.rootNode.allLeafChildren)), __read(newNodes));
         }
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
@@ -216,7 +220,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         });
     };
     ClientSideNodeManager.prototype.lookupRowNode = function (data) {
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         var rowNode;
         if (getRowIdFunc) {
             // find rowNode using id

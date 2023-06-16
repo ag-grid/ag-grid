@@ -26,6 +26,7 @@ const gridOptions: GridOptions = {
     minWidth: 200,
     resizable: true,
     floatingFilter: true,
+    cellDataType: false,
   },
   autoGroupColumnDef: {
     field: 'athlete',

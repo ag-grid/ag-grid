@@ -15,11 +15,13 @@ To create a column chart, we need to use series type `'column'`. We also have to
 A minimal `'column'` series config would therefore look like this:
 
 ```js
-series: [{
-    type: 'column',
-    xKey: 'quarter',
-    yKey: 'iphone'
-}]
+series: [
+  {
+    type: "column",
+    xKey: "quarter",
+    yKey: "iphone",
+  },
+]
 ```
 
 In the snippet above we are using `'iphone'` as the `yKey`, to show revenue per quarter for this product. Using this simple series config produces the following chart:
@@ -33,15 +35,16 @@ by adding more `column`-type series.
 
 ```js
 series: [
-    { type: 'column', xKey: 'quarter', yKey: 'iphone', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'mac', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'ipad', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'wearables', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'services', stacked: true },
+  { type: "column", xKey: "quarter", yKey: "iphone", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "mac", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "ipad", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "wearables", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "services", stacked: true },
 ]
 ```
 
 This example demonstrates stacked columns using the `series` configuration above. Additionally:
+
 - We set `yName` on each series to configure the display names to provide tooltip headers and legend entries.
 
 <chart-example title='Stacked Column Series' name='stacked-column' type='generated'></chart-example>
@@ -60,6 +63,12 @@ Stacks can be displayed in separate groups. The IDs of such groups should be spe
 
 <chart-example title='Grouped Stack Series' name='grouped-stack' type='generated'></chart-example>
 
+### Grouped Stacks with a Shared Legend
+
+Providing a matching `legendItemName` allows us to create multiple bar series that have synchronised legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
+
+<chart-example title='Grouped Stacks with a Shared Legend' name='grouped-stack-shared' type='generated'></chart-example>
+
 ### Normalized Columns
 
 Going back to our [stacked column](#stacked-columns) example, if we wanted to normalize the totals so that each column's segments add up to a certain value, for example 100, we could add the following to our `series` config:
@@ -68,8 +77,9 @@ Going back to our [stacked column](#stacked-columns) example, if we wanted to no
 normalizedTo: 100
 ```
 
-[[note]]
-| It's possible to use any non-zero value to normalize to.
+<note>
+It's possible to use any non-zero value to normalize to.
+</note>
 
 <chart-example title='Normalized Column Series' name='normalized-column' type='generated'></chart-example>
 
@@ -97,14 +107,15 @@ The above formatter produces an attractive chart where the labels don't stick ou
 
 <chart-example title='Column Series with Labels' name='labeled-column' type='generated'></chart-example>
 
-[[note]]
-| It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
+<note>
+It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
+</note>
 
-To learn more about label configuration please refer to the [API reference](#reference-AgBarSeriesOptions-label) below.
+To learn more about label configuration please refer to the [API reference](#reference-AgColumnSeriesOptions-label) below.
 
 ## Bar Series
 
-`'bar'` series configuration is exactly the same as `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
+`'bar'` series configuration is similar to the `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
 
 To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 'column'` in the `series` options.
 
@@ -123,4 +134,8 @@ With this simple change we go from [stacked columns](#stacked-columns) to stacke
 
 ## API Reference
 
+### Column Series
+<interface-documentation interfaceName='AgColumnSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Bar Series
 <interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

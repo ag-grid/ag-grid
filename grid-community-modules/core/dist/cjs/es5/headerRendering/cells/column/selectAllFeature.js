@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -43,7 +45,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
         _this.currentPageOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionCurrentPageOnly);
         return _this;
     }
-    SelectAllFeature.prototype.onSpaceKeyPressed = function (e) {
+    SelectAllFeature.prototype.onSpaceKeyDown = function (e) {
         var checkbox = this.cbSelectAll;
         var eDocument = this.gridOptionsService.getDocument();
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(eDocument.activeElement)) {
@@ -104,18 +106,17 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.refreshSelectAllLabel = function () {
+        var translate = this.localeService.getLocaleTextFunc();
+        var checked = this.cbSelectAll.getValue();
+        var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
         if (!this.cbSelectAllVisible) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
-            this.cbSelectAll.setInputAriaLabel(null);
         }
         else {
-            var translate = this.localeService.getLocaleTextFunc();
-            var checked = this.cbSelectAll.getValue();
-            var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-            var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', ariaLabel + " (" + ariaStatus + ")");
-            this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
         }
+        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
         this.headerCellCtrl.refreshAriaDescription();
     };
     SelectAllFeature.prototype.checkRightRowModelType = function (feature) {

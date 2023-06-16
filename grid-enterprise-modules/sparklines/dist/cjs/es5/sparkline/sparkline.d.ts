@@ -155,6 +155,7 @@ export declare abstract class Sparkline {
      * cancel the previous layout using the non 0 integer (this.layoutId) returned from requestAnimationFrame.
      */
     protected scheduleLayout(): void;
+    private immediateLayout;
     private setSparklineDimensions;
     /**
      * Return the closest data point to x/y canvas coordinates.

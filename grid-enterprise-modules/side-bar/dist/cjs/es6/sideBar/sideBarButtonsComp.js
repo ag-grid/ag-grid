@@ -26,9 +26,6 @@ class SideBarButtonsComp extends core_1.Component {
             e.preventDefault();
         }
     }
-    setToolPanelDefs(toolPanelDefs) {
-        toolPanelDefs.forEach(this.addButtonComp.bind(this));
-    }
     setActiveButton(id) {
         this.buttonComps.forEach(comp => {
             comp.setSelected(id === comp.getToolPanelId());
@@ -44,6 +41,7 @@ class SideBarButtonsComp extends core_1.Component {
                 toolPanelId: def.id
             });
         });
+        return buttonComp;
     }
     clearButtons() {
         this.buttonComps = this.destroyBeans(this.buttonComps);

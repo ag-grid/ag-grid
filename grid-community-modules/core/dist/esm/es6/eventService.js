@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -116,11 +116,12 @@ let EventService = class EventService {
                 listener(event);
             }
         });
-        const listeners = this.getListeners(eventType, async, false);
+        // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
+        const listeners = new Set(this.getListeners(eventType, async, false));
         if (listeners) {
             processEventListeners(listeners);
         }
-        const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
         globalListeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(() => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true));

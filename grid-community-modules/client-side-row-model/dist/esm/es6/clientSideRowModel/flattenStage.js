@@ -53,7 +53,7 @@ let FlattenStage = class FlattenStage extends BeanStub {
                 rowNode.childrenAfterGroup.length === 1;
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
-            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
             const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
@@ -75,7 +75,7 @@ let FlattenStage = class FlattenStage extends BeanStub {
                     this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, skipLeafNodes, uiLevelForChildren);
                     // put a footer in if user is looking for it
                     if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
                     }
                 }
             }

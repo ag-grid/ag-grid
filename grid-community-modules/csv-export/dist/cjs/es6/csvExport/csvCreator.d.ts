@@ -1,4 +1,4 @@
-import { CsvCustomContent, CsvExportParams, GridOptionsService, ICsvCreator } from "@ag-grid-community/core";
+import { CsvCustomContent, CsvExportParams, GridOptionsService, ICsvCreator, ValueFormatterService, ValueParserService } from "@ag-grid-community/core";
 import { BaseCreator } from "./baseCreator";
 import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 export declare class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
@@ -6,6 +6,8 @@ export declare class CsvCreator extends BaseCreator<CsvCustomContent, CsvSeriali
     private valueService;
     private gridSerializer;
     gridOptionsService: GridOptionsService;
+    valueFormatterService: ValueFormatterService;
+    valueParserService: ValueParserService;
     postConstruct(): void;
     protected getMergedParams(params?: CsvExportParams): CsvExportParams;
     export(userParams?: CsvExportParams): string;

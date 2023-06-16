@@ -59,10 +59,6 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: any;
-    /**
-     * @deprecated as of v27, use innerRenderer for Framework components
-     * Same as `innerRenderer` but for a framework component. */
-    innerRendererFramework?: any;
     /** Additional params to customise to the `innerRenderer`. */
     innerRendererParams?: any;
     /** Callback to enable different innerRenderers to be used based of value of params. */
@@ -687,9 +683,9 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const enterKeyPressed = event.key === KeyCode.ENTER;
+        const isEnterKey = event.key === KeyCode.ENTER;
 
-        if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
+        if (!isEnterKey || this.params.suppressEnterExpand) { return; }
 
         const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
 

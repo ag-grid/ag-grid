@@ -52,4 +52,6 @@ export declare const LINE_JOIN: ValidatePredicate;
 export declare const OPT_LINE_JOIN: ValidatePredicate;
 export declare const POSITION: ValidatePredicate;
 export declare const INTERACTION_RANGE: ValidatePredicate;
+export declare const TEXT_WRAP: ValidatePredicate;
 export {};
+//# sourceMappingURL=validation.d.ts.map

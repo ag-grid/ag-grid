@@ -161,7 +161,7 @@ var Path2D = /** @class */ (function () {
         }
     };
     Path2D.prototype.clear = function (_a) {
-        var trackChanges = (_a === void 0 ? { trackChanges: false } : _a).trackChanges;
+        var _b = _a === void 0 ? { trackChanges: false } : _a, trackChanges = _b.trackChanges;
         if (trackChanges) {
             this.previousCommands = this.commands;
             this.previousParams = this.params;

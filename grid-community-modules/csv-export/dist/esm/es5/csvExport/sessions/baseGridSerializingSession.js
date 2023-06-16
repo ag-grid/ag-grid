@@ -1,10 +1,12 @@
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
         this.groupColumns = [];
-        var columnModel = config.columnModel, valueService = config.valueService, gridOptionsService = config.gridOptionsService, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
+        var columnModel = config.columnModel, valueService = config.valueService, gridOptionsService = config.gridOptionsService, valueFormatterService = config.valueFormatterService, valueParserService = config.valueParserService, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
         this.columnModel = columnModel;
         this.valueService = valueService;
         this.gridOptionsService = gridOptionsService;
+        this.valueFormatterService = valueFormatterService;
+        this.valueParserService = valueParserService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
@@ -31,7 +33,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
             processCellCallback: this.processCellCallback,
             type: type
         });
-        return processedValue != null ? processedValue : '';
+        return processedValue;
     };
     BaseGridSerializingSession.prototype.shouldRenderGroupSummaryCell = function (node, column, currentColumnIndex) {
         var _a;
@@ -87,20 +89,32 @@ var BaseGridSerializingSession = /** @class */ (function () {
         return isFooter ? "Total " + groupValue : groupValue;
     };
     BaseGridSerializingSession.prototype.processCell = function (params) {
+        var _this = this;
+        var _a;
         var accumulatedRowIndex = params.accumulatedRowIndex, rowNode = params.rowNode, column = params.column, value = params.value, processCellCallback = params.processCellCallback, type = params.type;
         if (processCellCallback) {
-            return processCellCallback({
-                accumulatedRowIndex: accumulatedRowIndex,
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-                type: type
-            });
+            return {
+                value: (_a = processCellCallback({
+                    accumulatedRowIndex: accumulatedRowIndex,
+                    column: column,
+                    node: rowNode,
+                    value: value,
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    type: type,
+                    parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode, valueToParse, _this.valueService.getValue(column, rowNode)); },
+                    formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
+                })) !== null && _a !== void 0 ? _a : ''
+            };
         }
-        return value != null ? value : '';
+        if (column.getColDef().useValueFormatterForExport) {
+            return {
+                value: value !== null && value !== void 0 ? value : '',
+                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+            };
+        }
+        return { value: value !== null && value !== void 0 ? value : '' };
     };
     return BaseGridSerializingSession;
 }());

@@ -127,8 +127,10 @@ class MultiFilter extends core_1.TabGuardComp {
         group.addItem(filter.getGui());
         group.toggleGroupExpand(false);
         if (filter.afterGuiAttached) {
-            const params = { container: this.lastOpenedInContainer, suppressFocus: true };
-            group.addManagedListener(group, core_1.AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached(params));
+            group.addManagedListener(group, core_1.AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached({
+                container: this.lastOpenedInContainer,
+                suppressFocus: true
+            }));
         }
         return group;
     }

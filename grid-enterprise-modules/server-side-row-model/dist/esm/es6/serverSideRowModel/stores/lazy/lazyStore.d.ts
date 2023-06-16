@@ -4,6 +4,7 @@ export declare class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils;
     private storeUtils;
     private columnModel;
+    private selectionService;
     private displayIndexStart;
     private displayIndexEnd;
     private topPx;
@@ -188,7 +189,7 @@ export declare class LazyStore extends BeanStub implements IServerSideStore {
         leafGroup: boolean;
         level: number;
         parent: RowNode<any>;
-        rowGroupColumn: Column;
+        rowGroupColumn: Column<any>;
     };
     getSsrmParams(): SSRMParams;
     setStoreInfo(info: any): void;

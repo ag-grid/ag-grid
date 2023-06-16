@@ -1,24 +1,30 @@
 import { Selection } from '../../../scene/selection';
 import { SeriesTooltip, SeriesNodeDataContext } from '../series';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
+import { ColorScale } from '../../../scale/colorScale';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent, CartesianSeriesNodeDatum } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { Label } from '../../label';
 import { Text } from '../../../scene/shape/text';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
-import { AgScatterSeriesTooltipRendererParams, AgTooltipRendererResult } from '../../agChartOptions';
+import { AgScatterSeriesLabelFormatterParams, AgScatterSeriesTooltipRendererParams, AgTooltipRendererResult, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import { ModuleContext } from '../../../util/module';
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
+    readonly fill: string | undefined;
+}
+declare class ScatterSeriesLabel extends Label {
+    formatter?: (params: AgScatterSeriesLabelFormatterParams<any>) => string;
 }
 declare class ScatterSeriesNodeBaseClickEvent extends CartesianSeriesNodeBaseClickEvent<any> {
     readonly sizeKey?: string;
     constructor(sizeKey: string | undefined, xKey: string, yKey: string, nativeEvent: MouseEvent, datum: ScatterNodeDatum, series: ScatterSeries);
 }
-export declare class ScatterSeriesNodeClickEvent extends ScatterSeriesNodeBaseClickEvent {
+declare class ScatterSeriesNodeClickEvent extends ScatterSeriesNodeBaseClickEvent {
     readonly type = "nodeClick";
 }
-export declare class ScatterSeriesNodeDoubleClickEvent extends ScatterSeriesNodeBaseClickEvent {
+declare class ScatterSeriesNodeDoubleClickEvent extends ScatterSeriesNodeBaseClickEvent {
     readonly type = "nodeDoubleClick";
 }
 declare class ScatterSeriesTooltip extends SeriesTooltip {
@@ -29,24 +35,23 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
     static type: "scatter";
     private sizeScale;
     readonly marker: CartesianSeriesMarker;
-    readonly label: Label;
+    readonly label: ScatterSeriesLabel;
     title?: string;
     labelKey?: string;
-    xName: string;
-    yName: string;
+    xName?: string;
+    yName?: string;
     sizeName?: string;
     labelName?: string;
-    protected _xKey: string;
-    set xKey(value: string);
-    get xKey(): string;
-    protected _yKey: string;
-    set yKey(value: string);
-    get yKey(): string;
-    protected _sizeKey?: string;
-    set sizeKey(value: string | undefined);
-    get sizeKey(): string | undefined;
+    xKey?: string;
+    yKey?: string;
+    sizeKey?: string;
+    colorKey?: string;
+    colorName?: string;
+    colorDomain: number[] | undefined;
+    colorRange: string[];
+    colorScale: ColorScale;
     readonly tooltip: ScatterSeriesTooltip;
-    constructor();
+    constructor(moduleCtx: ModuleContext);
     processData(): Promise<void>;
     getDomain(direction: ChartAxisDirection): any[];
     protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeClickEvent;
@@ -75,7 +80,18 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
         labelSelection: Selection<Text, ScatterNodeDatum>;
     }): Promise<void>;
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string;
-    getLegendData(): LegendDatum[];
+    getLegendData(): ChartLegendDatum[];
+    animateEmptyUpdateReady({ markerSelections, labelSelections, }: {
+        markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
+        labelSelections: Array<Selection<Text, ScatterNodeDatum>>;
+    }): void;
+    animateReadyUpdate({ markerSelections }: {
+        markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
+    }): void;
+    animateReadyHighlightMarkers(markerSelection: Selection<Marker, ScatterNodeDatum>): void;
+    resetMarkers(markerSelection: Selection<Marker, ScatterNodeDatum>): void;
+    animateFormatter(marker: Marker, datum: ScatterNodeDatum): AgCartesianSeriesMarkerFormat | undefined;
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=scatterSeries.d.ts.map

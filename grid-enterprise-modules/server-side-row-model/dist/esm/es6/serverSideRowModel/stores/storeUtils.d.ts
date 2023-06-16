@@ -21,7 +21,7 @@ export declare class StoreUtils extends BeanStub {
     private assertRowModelIsServerSide;
     private assertNotTreeData;
     isServerSideSortAllLevels(): boolean;
-    isServerSideFilterAllLevels(): boolean;
+    isServerSideOnlyRefreshFilteredGroups(): boolean;
     isServerSideSortOnServer(): boolean;
     isServerSideFilterOnServer(): boolean;
 }

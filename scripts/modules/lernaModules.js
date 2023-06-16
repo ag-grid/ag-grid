@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 const path = require('path');
 const {spawn} = require('child_process');
 const docsLock = require('./../docsLock');
@@ -39,10 +39,10 @@ const executeLernaCommand = (arguments) => {
 };
 
 
-const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../common', '../../grid-community']));
+const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community']));
 const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-enterprise']));
 const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community', '../../grid-enterprise']));
-const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules')).concat(getScopeForModules('../../charts-enterprise-modules'))
+const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules').concat(getScopeForModules('../../charts-enterprise-modules')))
 
 module.exports.cleanCommunityModules = () => executeLernaCommand(['clean', '--yes', getCommunityScopes()]);
 module.exports.cleanEnterpriseModules = () => executeLernaCommand(['clean', '--yes', getEnterpriseScopes()]);

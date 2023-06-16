@@ -16,8 +16,6 @@ export declare class GroupedCategoryAxis extends ChartAxis<BandScale<string | nu
     private labelSelection;
     private tickTreeLayout?;
     constructor(moduleCtx: ModuleContext);
-    set range(value: number[]);
-    get range(): number[];
     protected updateRange(): void;
     private resizeTickTree;
     readonly translation: Point;
@@ -52,3 +50,4 @@ export declare class GroupedCategoryAxis extends ChartAxis<BandScale<string | nu
     update(primaryTickCount?: number): number | undefined;
 }
 export {};
+//# sourceMappingURL=groupedCategoryAxis.d.ts.map

@@ -32,7 +32,7 @@ const ABSTRACT_COLOR_GROUPS = {
         'ghost-white',
         'white',
     ],
-    Other: ['cerise-pink'],
+    Other: ['cerise-pink', 'danger-red'],
 };
 
 /**
@@ -71,7 +71,7 @@ const AbstractColorSwatch = ({ id, hexColor }) => {
     return (
         <li id={getAbstractColorId(id)} className={styles.swatch}>
             <div
-                className={classnames(styles.color, isLight(hexColor) ? styles['color--light'] : '')}
+                className={classnames(styles.color, isLight(hexColor) ? styles.lightColor : '')}
                 style={{
                     backgroundColor: hexColor,
                 }}
@@ -95,7 +95,7 @@ const SemanticColorSwatch = ({ cssVarName }) => {
     return (
         <li className={styles.swatch}>
             <div
-                className={classnames(styles.color, isLight(hexColor) ? styles['color--light'] : '')}
+                className={classnames(styles.color, isLight(hexColor) ? styles.lightColor : '')}
                 style={{
                     backgroundColor: `var(--${cssVarName})`,
                 }}

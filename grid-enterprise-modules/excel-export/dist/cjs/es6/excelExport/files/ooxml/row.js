@@ -44,7 +44,7 @@ const rowFactory = {
             properties: {
                 rawMap: {
                     r: idx + 1,
-                    collapsed,
+                    collapsed: collapsed ? '1' : '0',
                     hidden: hidden ? '1' : '0',
                     ht: height,
                     customHeight: height != null ? '1' : '0',

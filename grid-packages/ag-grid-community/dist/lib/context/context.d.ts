@@ -4,6 +4,7 @@ export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
     debug: boolean;
+    gridId: string;
 }
 export interface ComponentMeta {
     componentClass: new () => Object;
@@ -36,6 +37,8 @@ export declare class Context {
     destroy(): void;
     destroyBean<T>(bean: T): undefined;
     destroyBeans<T>(beans: T[]): T[];
+    isDestroyed(): boolean;
+    getGridId(): string;
 }
 export declare function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;

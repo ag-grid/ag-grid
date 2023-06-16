@@ -1,11 +1,4 @@
-import {
-    _,
-    BeanStub,
-    ChartOptionsChanged,
-    ChartType,
-    Events,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
+import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-community";
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
@@ -52,7 +45,8 @@ export class ChartOptionsService extends BeanStub {
 
     public awaitChartOptionUpdate(func: () => void) {
         const chart = this.chartController.getChartProxy().getChart();
-        chart.waitForUpdate().then(() => func());
+        chart.waitForUpdate().then(() => func())
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
 
     public getAxisProperty<T = string>(expression: string): T {
@@ -178,10 +172,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        const mapTypeToImplType = (type: ChartSeriesType) => type === 'column' ? 'bar' : type;
-
-        return VALID_SERIES_TYPES.includes(seriesType) &&
-            series.type === mapTypeToImplType(seriesType);
+        return VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
     }
 
     protected destroy(): void {

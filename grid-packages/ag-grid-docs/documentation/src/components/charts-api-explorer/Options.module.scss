@@ -1,7 +1,7 @@
+@use "sass:map";
+@use "../../design-system/" as *;
+
 .options {
-    line-height: 1.6em;
-    color: #495057;
-    font-size: 0.9em;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -10,110 +10,183 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 5px;
+}
 
-    &__content {
-        overflow-y: auto;
-        border: 1px solid rgba(0, 0, 0, 0.125);
-        border-top: 0;
-        border-bottom: 0;
-        height: 100%;
-    }
+.noContent {
+    margin-top: $size-4;
+    text-align: center;
+}
 
-    &__no-content {
-        padding: 2em;
-        font-size: 1.2em;
-        text-align: center;
-        border-right: 1px solid rgba(0, 0, 0, 0.125);
+.content {
+    display: inline-block;
+    overflow-y: auto;
+    height: 100%;
+    margin-top: $size-2;
+
+    > .option:nth-child(even) {
+        background-color: var(--ghost-blue);
     }
 }
 
 .option {
-    padding: 10px;
-    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: $size-1 0 $size-2;
+    border-top: 1px solid var(--border-color);
+    gap: $size-1;
 
-    &--hidden {
+    &:last-child {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .option {
+        border-top: 1px dashed var(--border-color);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    > * {
+        padding-left: $size-1;
+        padding-right: $size-1;
+    }
+
+    &.hidden {
         display: none;
     }
 
-    &--expandable {
-        cursor: pointer;
+    h3 {
+        position: relative;
+        margin-top: 0;
+        margin-bottom: 0;
+
+        &.hasPrefix {
+            margin-top: $size-2;
+        }
+    }
+
+    .expandable {
+        --text-color: var(--link-color);
+
         outline: none;
+        cursor: pointer;
+
+        h3 {
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+            transition: color $default-transition-timing;
+        }
+
+        :global(.icon) {
+            --icon-size: 1em;
+
+            margin-left: auto;
+            transition: transform 0.3s ease-out, fill $default-transition-timing;
+        }
+
+        &:hover {
+            --text-color: var(--link-hover-color);
+        }
+
+        &.expanded {
+            :global(.icon) {
+                transform: rotate(90deg);
+            }
+        }
     }
 
-    &--alternate {
-        background-color: #f1f7ff;
-    }
+    .children {
+        padding-left: $size-1;
+        padding-right: $size-1;
+        margin-top: $size-1;
+        margin-bottom: -$size-2;
 
-    &__content {
-        margin-top: 10px;
-        border: 2px solid $primary;
-        border-radius: 10px;
-        overflow: hidden;
-
-        &--hidden {
+        &.hidden {
             display: none;
         }
-    }
 
-    &__expander {
-        float: right;
-        transition: transform 0.3s ease-out;
-
-        &--expanded {
-            transform: rotate(90deg);
+        .option > *:not(input),
+        .option > .metaList {
+            padding-left: 0 !important;
+            padding-right: 0;
         }
     }
 
-    &__name {
-        font-size: 1.1em;
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    &__required {
-        float: right;
-        font-weight: bold;
-        color: red;
-    }
-
-    &__type {
-        color: $primary;
-        user-select: none;
-    }
-
-    &__default {
-        float: right;
-        user-select: none;
-    }
-
-    code {
-        color: $primary;
-        font-size: 14px;
-        line-height: 1rem;
+    pre {
+        margin-top: $size-2;
+        margin-bottom: 0;
     }
 }
 
+.prefix {
+    color: var(--secondary-text-color);
+    font-weight: var(--font-weight-normal);
+}
+
+.metaList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1 $size-3;
+    padding-left: $size-1 !important;
+}
+
+body ul.metaList {
+    margin-bottom: 0;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+
+    code {
+        padding: 0;
+        background: transparent;
+        background-color: transparent;
+        border: none;
+    }
+}
+
+.metaLabel {
+    font-size: var(--font-size-extra-small);
+    color: var(--secondary-text-color);
+}
+
+.metaValue {
+    font-size: var(--font-size-small);
+    font-family: var(--monospace-font-family);
+    color: var(--code-text-color);
+    background-color: none;
+}
+
 .search {
-    color: white;
     width: 100%;
-    padding: 10px;
     display: flex;
     justify-content: space-between;
-    background-color: $primary;
+    gap: $size-2;
 
-    &__title {
-        h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
+    :global(.input-field.inline) {
+        width: 66%;
+        flex-wrap: nowrap;
     }
 
-    &__input {
-        border: none;
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-size: 0.8rem;
-        margin-left: 5px;
+    :global(.input-field.inline) input {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+.isSearching .expandable {
+    --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+
+    cursor: unset;
+
+    &:hover {
+        --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+    }
+
+    :global(.icon) {
+        display: none;
     }
 }

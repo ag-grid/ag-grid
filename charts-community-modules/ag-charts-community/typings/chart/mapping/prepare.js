@@ -37,9 +37,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prepareOptions = exports.noDataCloneMergeOptions = exports.isAgPolarChartOptions = exports.isAgHierarchyChartOptions = exports.isAgCartesianChartOptions = exports.optionsType = void 0;
@@ -49,8 +50,9 @@ var transforms_1 = require("./transforms");
 var themes_1 = require("./themes");
 var prepareSeries_1 = require("./prepareSeries");
 var logger_1 = require("../../util/logger");
-var chartTypes_1 = require("../chartTypes");
+var chartTypes_1 = require("../factory/chartTypes");
 var chartAxesTypes_1 = require("../chartAxesTypes");
+var seriesTypes_1 = require("../factory/seriesTypes");
 function optionsType(input) {
     var _a, _b, _c, _d;
     return (_d = (_a = input.type) !== null && _a !== void 0 ? _a : (_c = (_b = input.series) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.type) !== null && _d !== void 0 ? _d : 'line';
@@ -137,24 +139,24 @@ function takeColours(context, colours, maxCount) {
 exports.noDataCloneMergeOptions = {
     avoidDeepClone: ['data'],
 };
-function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
+function prepareOptions(newOptions, fallbackOptions) {
     var e_2, _a, e_3, _b;
-    var _c, _d, _e, _f;
+    var _c, _d, _e, _f, _g, _h;
     var options = json_1.jsonMerge([fallbackOptions, newOptions], exports.noDataCloneMergeOptions);
     sanityCheckOptions(options);
     // Determine type and ensure it's explicit in the options config.
     var userSuppliedOptionsType = options.type;
     var type = optionsType(options);
-    var globalTooltipPositionOptions = ((_c = options.tooltip) === null || _c === void 0 ? void 0 : _c.position) || {};
+    var globalTooltipPositionOptions = (_d = (_c = options.tooltip) === null || _c === void 0 ? void 0 : _c.position) !== null && _d !== void 0 ? _d : {};
     var checkSeriesType = function (type) {
-        if (type != null && !(isSeriesOptionType(type) || (seriesDefaults === null || seriesDefaults === void 0 ? void 0 : seriesDefaults[type]))) {
+        if (type != null && !(isSeriesOptionType(type) || seriesTypes_1.getSeriesDefaults(type))) {
             throw new Error("AG Charts - unknown series type: " + type + "; expected one of: " + chartTypes_1.CHART_TYPES.seriesTypes);
         }
     };
     checkSeriesType(type);
     try {
-        for (var _g = __values((_d = options.series) !== null && _d !== void 0 ? _d : []), _h = _g.next(); !_h.done; _h = _g.next()) {
-            var seriesType = _h.value.type;
+        for (var _j = __values((_e = options.series) !== null && _e !== void 0 ? _e : []), _k = _j.next(); !_k.done; _k = _j.next()) {
+            var seriesType = _k.value.type;
             if (seriesType == null)
                 continue;
             checkSeriesType(seriesType);
@@ -163,7 +165,7 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
     catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
-            if (_h && !_h.done && (_a = _g.return)) _a.call(_g);
+            if (_k && !_k.done && (_a = _j.return)) _a.call(_j);
         }
         finally { if (e_2) throw e_2.error; }
     }
@@ -179,8 +181,9 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
         defaultSeriesType = 'pie';
     }
     var defaultOverrides = {};
-    if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
-        defaultOverrides = seriesDefaults[type];
+    var seriesDefaults = seriesTypes_1.getSeriesDefaults(type);
+    if (seriesDefaults) {
+        defaultOverrides = seriesDefaults;
     }
     else if (type === 'bar') {
         defaultOverrides = defaults_1.DEFAULT_BAR_CHART_OVERRIDES;
@@ -191,11 +194,12 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
     else if (isAgCartesianChartOptions(options)) {
         defaultOverrides = defaults_1.DEFAULT_CARTESIAN_CHART_OVERRIDES;
     }
-    var _j = prepareMainOptions(defaultOverrides, options), context = _j.context, mergedOptions = _j.mergedOptions, axesThemes = _j.axesThemes, seriesThemes = _j.seriesThemes;
+    removeDisabledOptions(options);
+    var _l = prepareMainOptions(defaultOverrides, options), context = _l.context, mergedOptions = _l.mergedOptions, axesThemes = _l.axesThemes, seriesThemes = _l.seriesThemes;
     // Special cases where we have arrays of elements which need their own defaults.
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
-    mergedOptions.series = prepareSeries_1.processSeriesOptions((mergedOptions.series || []).map(function (s) {
+    mergedOptions.series = prepareSeries_1.processSeriesOptions(((_f = mergedOptions.series) !== null && _f !== void 0 ? _f : []).map(function (s) {
         var type = defaultSeriesType;
         if (s.type) {
             type = s.type;
@@ -219,8 +223,8 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
     if (isAgCartesianChartOptions(mergedOptions)) {
         var validAxesTypes = true;
         try {
-            for (var _k = __values((_e = mergedOptions.axes) !== null && _e !== void 0 ? _e : []), _l = _k.next(); !_l.done; _l = _k.next()) {
-                var axisType = _l.value.type;
+            for (var _m = __values((_g = mergedOptions.axes) !== null && _g !== void 0 ? _g : []), _o = _m.next(); !_o.done; _o = _m.next()) {
+                var axisType = _o.value.type;
                 if (!checkAxisType(axisType)) {
                     validAxesTypes = false;
                 }
@@ -229,7 +233,7 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
         catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
-                if (_l && !_l.done && (_b = _k.return)) _b.call(_k);
+                if (_o && !_o.done && (_b = _m.return)) _b.call(_m);
             }
             finally { if (e_3) throw e_3.error; }
         }
@@ -237,15 +241,17 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
             mergedOptions.axes = defaultOverrides.axes;
         }
         else {
-            mergedOptions.axes = (_f = mergedOptions.axes) === null || _f === void 0 ? void 0 : _f.map(function (axis) {
+            mergedOptions.axes = (_h = mergedOptions.axes) === null || _h === void 0 ? void 0 : _h.map(function (axis) {
+                var _a, _b;
                 var axisType = axis.type;
                 var axesTheme = json_1.jsonMerge([
                     axesThemes[axisType],
-                    axesThemes[axisType][axis.position || 'unknown'] || {},
+                    (_b = axesThemes[axisType][(_a = axis.position) !== null && _a !== void 0 ? _a : 'unknown']) !== null && _b !== void 0 ? _b : {},
                 ]);
                 return prepareAxis(axis, axesTheme);
             });
         }
+        prepareLegendEnabledOption(options, mergedOptions);
     }
     prepareEnabledOptions(options, mergedOptions);
     return mergedOptions;
@@ -265,10 +271,10 @@ function sanityCheckOptions(options) {
     });
 }
 function mergeSeriesOptions(series, type, seriesThemes, globalTooltipPositionOptions) {
-    var _a;
+    var _a, _b;
     var mergedTooltipPosition = json_1.jsonMerge([__assign({}, globalTooltipPositionOptions), (_a = series.tooltip) === null || _a === void 0 ? void 0 : _a.position], exports.noDataCloneMergeOptions);
     var mergedSeries = json_1.jsonMerge([
-        seriesThemes[type] || {},
+        (_b = seriesThemes[type]) !== null && _b !== void 0 ? _b : {},
         __assign(__assign({}, series), { type: type, tooltip: __assign(__assign({}, series.tooltip), { position: mergedTooltipPosition }) }),
     ], exports.noDataCloneMergeOptions);
     return mergedSeries;
@@ -280,8 +286,9 @@ function prepareMainOptions(defaultOverrides, options) {
     return { context: context, mergedOptions: mergedOptions, axesThemes: axesThemes, seriesThemes: seriesThemes };
 }
 function prepareTheme(options) {
+    var _a, _b;
     var theme = themes_1.getChartTheme(options.theme);
-    var themeConfig = theme.config[optionsType(options) || 'cartesian'];
+    var themeConfig = theme.config[(_a = optionsType(options)) !== null && _a !== void 0 ? _a : 'cartesian'];
     var seriesThemes = Object.entries(theme.config).reduce(function (result, _a) {
         var _b = __read(_a, 2), seriesType = _b[0], series = _b[1].series;
         result[seriesType] = series === null || series === void 0 ? void 0 : series[seriesType];
@@ -289,7 +296,7 @@ function prepareTheme(options) {
     }, {});
     return {
         theme: theme,
-        axesThemes: themeConfig['axes'] || {},
+        axesThemes: (_b = themeConfig['axes']) !== null && _b !== void 0 ? _b : {},
         seriesThemes: seriesThemes,
         cleanedTheme: json_1.jsonMerge([themeConfig, { axes: json_1.DELETE, series: json_1.DELETE }]),
     };
@@ -302,14 +309,15 @@ function prepareSeries(context, input) {
     var paletteOptions = calculateSeriesPalette(context, input);
     // Part of the options interface, but not directly consumed by the series implementations.
     var removeOptions = { stacked: json_1.DELETE };
-    var mergedResult = json_1.jsonMerge(__spread(defaults, [paletteOptions, input, removeOptions]), exports.noDataCloneMergeOptions);
+    var mergedResult = json_1.jsonMerge(__spreadArray(__spreadArray([], __read(defaults)), [paletteOptions, input, removeOptions]), exports.noDataCloneMergeOptions);
     return transforms_1.applySeriesTransform(mergedResult);
 }
 function calculateSeriesPalette(context, input) {
+    var _a;
     var paletteOptions = {};
-    var _a = context.palette, fills = _a.fills, strokes = _a.strokes;
+    var _b = context.palette, fills = _b.fills, strokes = _b.strokes;
     var inputAny = input;
-    var colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
+    var colourCount = countArrayElements((_a = inputAny['yKeys']) !== null && _a !== void 0 ? _a : []) || 1; // Defaults to 1 if no yKeys.
     switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
@@ -355,6 +363,34 @@ function prepareAxis(axis, axisTheme) {
     }
     var cleanTheme = { crossLines: json_1.DELETE };
     return json_1.jsonMerge([axisTheme, cleanTheme, axis, removeOptions], exports.noDataCloneMergeOptions);
+}
+function removeDisabledOptions(options) {
+    // Remove configurations from all option objects with a `false` value for the `enabled` property.
+    json_1.jsonWalk(options, function (_, visitingUserOpts) {
+        if (!('enabled' in visitingUserOpts))
+            return;
+        if (visitingUserOpts.enabled === false) {
+            Object.entries(visitingUserOpts).forEach(function (_a) {
+                var _b = __read(_a, 1), key = _b[0];
+                if (key === 'enabled')
+                    return;
+                delete visitingUserOpts[key];
+            });
+        }
+    }, { skip: ['data', 'theme'] });
+}
+function prepareLegendEnabledOption(options, mergedOptions) {
+    var _a, _b, _c, _d;
+    // Disable legend by default for single series cartesian charts
+    if (((_a = options.legend) === null || _a === void 0 ? void 0 : _a.enabled) !== undefined || ((_b = mergedOptions.legend) === null || _b === void 0 ? void 0 : _b.enabled) !== undefined) {
+        return;
+    }
+    (_c = mergedOptions.legend) !== null && _c !== void 0 ? _c : (mergedOptions.legend = {});
+    if (((_d = options.series) !== null && _d !== void 0 ? _d : []).length > 1) {
+        mergedOptions.legend.enabled = true;
+        return;
+    }
+    mergedOptions.legend.enabled = false;
 }
 function prepareEnabledOptions(options, mergedOptions) {
     // Set `enabled: true` for all option objects where the user has provided values.

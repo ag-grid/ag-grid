@@ -11,7 +11,7 @@ import { SetValueModel } from './setValueModel';
 export class SetFloatingFilterComp extends Component {
     constructor() {
         super(/* html */ `
-            <div class="ag-floating-filter-input" role="presentation">
+            <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
             </div>`);
         this.availableValuesListenerAdded = false;

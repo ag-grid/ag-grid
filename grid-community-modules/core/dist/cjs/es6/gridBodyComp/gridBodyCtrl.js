@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GridBodyCtrl = exports.CSS_CLASS_COLUMN_MOVING = exports.CSS_CLASS_FORCE_VERTICAL_SCROLL = exports.CSS_CLASS_CELL_SELECTABLE = exports.RowAnimationCssClasses = void 0;
+exports.GridBodyCtrl = exports.CSS_CLASS_FORCE_VERTICAL_SCROLL = exports.RowAnimationCssClasses = void 0;
 const beanStub_1 = require("../context/beanStub");
 const context_1 = require("../context/context");
 const layoutFeature_1 = require("../styling/layoutFeature");
@@ -27,9 +27,9 @@ var RowAnimationCssClasses;
     RowAnimationCssClasses["ANIMATION_ON"] = "ag-row-animation";
     RowAnimationCssClasses["ANIMATION_OFF"] = "ag-row-no-animation";
 })(RowAnimationCssClasses = exports.RowAnimationCssClasses || (exports.RowAnimationCssClasses = {}));
-exports.CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 exports.CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
-exports.CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
+const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 class GridBodyCtrl extends beanStub_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -99,11 +99,10 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
     }
     // used by ColumnAnimationService
     setColumnMovingCss(moving) {
-        this.comp.setColumnMovingCss(exports.CSS_CLASS_COLUMN_MOVING, moving);
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
     }
     setCellTextSelection(selectable = false) {
-        const cssClass = selectable ? exports.CSS_CLASS_CELL_SELECTABLE : null;
-        this.comp.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     }
     onScrollVisibilityChanged() {
         const visible = this.scrollVisibleService.isVerticalScrollShowing();
@@ -112,7 +111,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = browser_1.isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
     onGridColumnsChanged() {
         const columns = this.columnModel.getAllGridColumns();
@@ -377,6 +376,9 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }
+__decorate([
+    context_1.Autowired('animationFrameService')
+], GridBodyCtrl.prototype, "animationFrameService", void 0);
 __decorate([
     context_1.Autowired('rowContainerHeightService')
 ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);

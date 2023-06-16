@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -38,7 +40,6 @@ import { HoverFeature } from "../hoverFeature";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
-import { doOnce } from "../../../utils/function";
 var HeaderCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderCellCtrl, _super);
     function HeaderCellCtrl(column, parentRowCtrl) {
@@ -133,13 +134,13 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     HeaderCellCtrl.prototype.handleKeyDown = function (e) {
         _super.prototype.handleKeyDown.call(this, e);
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyPressed(e);
+            this.selectAllFeature.onSpaceKeyDown(e);
         }
         if (e.key === KeyCode.ENTER) {
-            this.onEnterKeyPressed(e);
+            this.onEnterKeyDown(e);
         }
     };
-    HeaderCellCtrl.prototype.onEnterKeyPressed = function (e) {
+    HeaderCellCtrl.prototype.onEnterKeyDown = function (e) {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         var headerComp = this.comp.getUserCompInstance();
         if (!headerComp) {
@@ -446,16 +447,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         var isMeasuring = false;
         var stopResizeObserver;
         var checkMeasuring = function () {
-            var isSpanHeaderHeight = _this.column.isSpanHeaderHeight();
             var newValue = _this.column.isAutoHeaderHeight();
-            if (isSpanHeaderHeight) {
-                stopMeasuring();
-                if (newValue) {
-                    var message_1 = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
-                    doOnce(function () { return console.warn(message_1); }, 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
-                }
-                return;
-            }
             if (newValue && !isMeasuring) {
                 startMeasuring();
             }

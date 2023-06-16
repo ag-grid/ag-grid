@@ -12,11 +12,11 @@ export class ChartSettingsPanel extends Component {
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
                 <div ref="ePrevBtn" class="ag-chart-settings-prev">
-                    <button type="button" class="ag-chart-settings-prev-button"></button>
+                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
                 </div>
                 <div ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
                 <div ref="eNextBtn" class="ag-chart-settings-next">
-                    <button type="button" class="ag-chart-settings-next-button"></button>
+                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
                 </div>
             </div>
         </div>`;
@@ -57,6 +57,7 @@ export class ChartSettingsPanel extends Component {
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.resetPalettes(true));
         this.scrollSelectedIntoView();
     }
 

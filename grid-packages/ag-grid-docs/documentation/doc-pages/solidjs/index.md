@@ -16,7 +16,7 @@ AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid i
 
 ## Show Me
 
-Below is a simple example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
+Below is an example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
 
 <iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-gvftye?embed=1&file=src/App.tsx"></iframe>
 
@@ -30,8 +30,8 @@ The NPM dependency for AG Grid Solid is `ag-grid-solid`. When adding this to you
 
 ```jsx
 "dependencies": {
-   "ag-grid-community": "28.2.0",
-   "ag-grid-solid": "28.2.0",
+   "ag-grid-community": "~@AG_GRID_VERSION@",
+   "ag-grid-solid": "~@AG_GRID_VERSION@",
    ...
 ```
 
@@ -167,12 +167,10 @@ const MySolidApp = ()=> {
 The example below demonstrates using [Cell Renderer](/component-cell-renderer/) to customise the cells in the Age Column. Note that the Cell Renderer is a standard Solid Component and is set onto the grid using the Column Definitions.
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/renderer.png" alt="Simple Renderer" style="width: 30%;" />
+    <image-caption src="solidjs/resources/renderer.png" alt="Simple Renderer" constrained="true" centered="true"></image-caption>
     <div>Fig 1. Simple Cell Renderer Component</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-z3ncqk?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-z3ncqk?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>
@@ -194,12 +192,10 @@ props.ref(api);
 ```
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/editor.png" alt="Simple Editor" style="width: 30%;" />
+    <image-caption src="solidjs/resources/editor.png" alt="Simple Editor" constrained="true" centered="true"></image-caption>
     <div>Fig 2. Simple Cell Editor Component</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-bhhxsm?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-bhhxsm?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>
@@ -211,12 +207,10 @@ See [Cell Editors](/component-cell-editor/) for full details on creating React C
 This example demonstrates custom [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) using Solid components.
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/header.png" alt="Simple Header" style="width: 30%;" />
+    <image-caption src="solidjs/resources/header.png" alt="Simple Header" constrained="true" centered="true"></image-caption>
     <div>Fig 3. Simple Header Component</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-wnpr7s?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-wnpr7s?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>
@@ -229,12 +223,10 @@ See [Column Headers](/component-header/) and [Column Group Headers](/component-h
 Below is an example of AG Grid Solid showing more advanced features such as [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Integrated Charting](/integrated-charts/).
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/advanced.png" alt="Advanced Grid" style="width: 30%;" />
+    <image-caption src="solidjs/resources/advanced.png" alt="Advanced Grid" constrained="true" centered="true"></image-caption>
     <div>Fig 4. Advanced Grid</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-qsmpa3?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-qsmpa3?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>
@@ -244,12 +236,10 @@ Below is an example of AG Grid Solid showing more advanced features such as [Row
 When the master grid is AG Grid Solid, then the detail grids also use AG Grid Solid. In the example both Master and Detail grids are using Solid Cell Renderers.
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/master-detail.png" alt="Master Detail Grid" style="width: 30%;" />
+    <image-caption src="solidjs/resources/master-detail.png" alt="Master Detail Grid" constrained="true" centered="true"></image-caption>
     <div>Fig 5. Master Detail Grid</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-vt3cco?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-vt3cco?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>
@@ -260,9 +250,9 @@ If using [AG Grid Modules](/modules/), the dependencies will be different.
 
 ```jsx
 "dependencies": {
-    "@ag-grid-community/core": "28.2.0",
-    "@ag-grid-community/client-side-row-model": "28.2.0",
-    "@ag-grid-community/solid": "28.2.0",
+    "@ag-grid-community/core": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/solid": "~@AG_GRID_VERSION@",
    ...
 ```
 
@@ -275,12 +265,10 @@ import AgGridSolid from '@ag-grid-community/solid';
 The example below shows an AG Grid Solid example using modules.
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <img src="resources/simple.png" alt="Module Imports" style="width: 30%;" />
+    <image-caption src="solidjs/resources/simple.png" alt="Module Imports" constrained="true" centered="true"></image-caption>
     <div>Fig 6. Simple Grid using Modules</div>
-    <div>
-        <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/solidjs-template-skz4ot?embed=1&file=src/App.tsx" target="_blank" style="display: block; float: right">
-                Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-        </a>
+    <div class="text-right" style="margin-top: 8px">
+        <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-skz4ot?embed=1&file=src/App.tsx" />
     </div>
     <div style="clear:both"></div>
 </div>

@@ -5,7 +5,7 @@ import { IRowNode } from "../../interfaces/iRowNode";
 import { IComponent } from "../../interfaces/iComponent";
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value to be rendered. */
-    value: TValue;
+    value: TValue | null | undefined;
     /** Formatted value to be rendered. */
     valueFormatted: string | null | undefined;
     /** True if this is a full width row. */
@@ -19,19 +19,19 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     /** The current index of the row (this changes after filter and sort). */
     rowIndex: number;
     /** The cell's column definition. */
-    colDef?: ColDef;
+    colDef?: ColDef<TData, TValue>;
     /** The cell's column. */
-    column?: Column;
+    column?: Column<TValue>;
     /** The grid's cell, a DOM div element. */
     eGridCell: HTMLElement;
     /** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */
     eParentOfValue: HTMLElement;
     /** Convenience function to get most recent up to date value. */
-    getValue?: () => any;
+    getValue?: () => TValue | null | undefined;
     /** Convenience function to set the value. */
-    setValue?: (value: any) => void;
+    setValue?: (value: TValue | null | undefined) => void;
     /** Convenience function to format a value using the column's formatter. */
-    formatValue?: (value: any) => any;
+    formatValue?: (value: TValue | null | undefined) => string;
     /** Convenience function to refresh the cell. */
     refreshCell?: () => void;
     /**

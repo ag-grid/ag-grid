@@ -118,8 +118,7 @@ export class SideBarComp extends Component {
             const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
             const toolPanelDefs = this.sideBar.toolPanels;
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs);
             this.setSideBarPosition(this.sideBar.position);
             if (!this.sideBar.hiddenByDefault) {
                 this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
@@ -142,32 +141,43 @@ export class SideBarComp extends Component {
         });
         return this;
     }
-    setupToolPanels(defs) {
-        defs.forEach(def => {
-            if (def.id == null) {
-                console.warn(`AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
-                return;
+    createToolPanelsAndSideButtons(defs) {
+        for (const def of defs) {
+            this.createToolPanelAndSideButton(def);
+        }
+    }
+    validateDef(def) {
+        if (def.id == null) {
+            console.warn(`AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
+            return false;
+        }
+        // helpers, in case user doesn't have the right module loaded
+        if (def.toolPanel === 'agColumnsToolPanel') {
+            const moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
             }
-            // helpers, in case user doesn't have the right module loaded
-            if (def.toolPanel === 'agColumnsToolPanel') {
-                const moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
+        }
+        if (def.toolPanel === 'agFiltersToolPanel') {
+            const moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            if (moduleMissing) {
+                return false;
             }
-            if (def.toolPanel === 'agFiltersToolPanel') {
-                const moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
-                if (moduleMissing) {
-                    return;
-                }
-            }
-            const wrapper = new ToolPanelWrapper();
-            this.getContext().createBean(wrapper);
-            wrapper.setToolPanelDef(def);
-            wrapper.setDisplayed(false);
-            this.getGui().appendChild(wrapper.getGui());
-            this.toolPanelWrappers.push(wrapper);
-        });
+        }
+        return true;
+    }
+    createToolPanelAndSideButton(def) {
+        if (!this.validateDef(def)) {
+            return;
+        }
+        const button = this.sideBarButtonsComp.addButtonComp(def);
+        const wrapper = this.getContext().createBean(new ToolPanelWrapper());
+        wrapper.setToolPanelDef(def);
+        wrapper.setDisplayed(false);
+        const wrapperGui = wrapper.getGui();
+        this.appendChild(wrapperGui);
+        this.toolPanelWrappers.push(wrapper);
+        _.setAriaControls(button.getButtonElement(), wrapperGui);
     }
     refresh() {
         this.toolPanelWrappers.forEach(wrapper => wrapper.refresh());
@@ -197,27 +207,24 @@ export class SideBarComp extends Component {
         return toolPanelWrapper.getToolPanelInstance();
     }
     raiseToolPanelVisibleEvent(key, previousKey, source) {
-        // To be removed in v30
-        const oldEvent = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-        };
-        this.eventService.dispatchEvent(oldEvent);
+        const switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
             const event = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source,
                 key: previousKey,
                 visible: false,
+                switchingToolPanel,
             };
             this.eventService.dispatchEvent(event);
         }
         if (key) {
             const event = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source,
                 key,
                 visible: true,
+                switchingToolPanel,
             };
             this.eventService.dispatchEvent(event);
         }

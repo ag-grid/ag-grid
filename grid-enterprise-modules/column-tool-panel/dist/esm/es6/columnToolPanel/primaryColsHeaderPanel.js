@@ -26,7 +26,7 @@ export class PrimaryColsHeaderPanel extends Component {
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
         this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
-        this.addManagedListener(this.eFilterTextField.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
+        this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         const translate = this.localeService.getLocaleTextFunc();
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
@@ -65,7 +65,7 @@ export class PrimaryColsHeaderPanel extends Component {
         }
         this.onFilterTextChangedDebounced();
     }
-    onMiniFilterKeyPress(e) {
+    onMiniFilterKeyDown(e) {
         if (e.key === KeyCode.ENTER) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure
             // the text filtering has happened, otherwise all columns will be deselected

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
@@ -160,8 +160,6 @@ export declare class ColumnApi {
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
     /** @deprecated v28 Use `getColumns` instead */
     getAllColumns(): Column[] | null;
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    getOriginalColumnGroup(name: string): ProvidedColumnGroup | null;
     /** @deprecated v28 Use `getColumns` instead. */
     getPrimaryColumns(): Column[] | null;
     /** @deprecated v28 Use `getPivotResultColumns` instead. */

@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -219,9 +219,10 @@ var CellComp = function (props) {
         }
         var destroyFuncs = [];
         var addComp = function (comp) {
+            var _a;
             if (comp) {
                 var eGui_1 = comp.getGui();
-                eCellWrapper.current.insertAdjacentElement('afterbegin', eGui_1);
+                (_a = eCellWrapper.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterbegin', eGui_1);
                 destroyFuncs.push(function () {
                     context.destroyBean(comp);
                     ag_grid_community_1._.removeFromParent(eGui_1);

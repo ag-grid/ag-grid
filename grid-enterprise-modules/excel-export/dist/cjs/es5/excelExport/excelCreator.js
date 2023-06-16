@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -37,7 +39,7 @@ var excelXlsxSerializingSession_1 = require("./excelXlsxSerializingSession");
 var excelXlsxFactory_1 = require("./excelXlsxFactory");
 var csv_export_1 = require("@ag-grid-community/csv-export");
 var excelXmlFactory_1 = require("./excelXmlFactory");
-exports.getMultipleSheetsAsExcel = function (params) {
+var getMultipleSheetsAsExcel = function (params) {
     var data = params.data, _a = params.fontSize, fontSize = _a === void 0 ? 11 : _a, _b = params.author, author = _b === void 0 ? 'AG Grid' : _b;
     var hasImages = excelXlsxFactory_1.ExcelXlsxFactory.images.size > 0;
     csv_export_1.ZipContainer.addFolders([
@@ -87,13 +89,15 @@ exports.getMultipleSheetsAsExcel = function (params) {
     var mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     return csv_export_1.ZipContainer.getContent(mimeType);
 };
-exports.exportMultipleSheetsAsExcel = function (params) {
+exports.getMultipleSheetsAsExcel = getMultipleSheetsAsExcel;
+var exportMultipleSheetsAsExcel = function (params) {
     var _a = params.fileName, fileName = _a === void 0 ? 'export.xlsx' : _a;
     var contents = exports.getMultipleSheetsAsExcel(params);
     if (contents) {
         csv_export_1.Downloader.download(fileName, contents);
     }
 };
+exports.exportMultipleSheetsAsExcel = exportMultipleSheetsAsExcel;
 var createImageRelationsForSheet = function (sheetIndex, currentRelationIndex) {
     var drawingFolder = 'xl/drawings';
     var drawingFileName = drawingFolder + "/drawing" + (currentRelationIndex + 1) + ".xml";
@@ -187,16 +191,13 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.getExportMode();
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
-        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService;
+        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
         var isXlsx = this.getExportMode() === 'xlsx';
         var sheetName = 'ag-grid';
         if (params.sheetName != null) {
             sheetName = core_1._.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
-        var config = __assign(__assign({}, params), { sheetName: sheetName,
-            columnModel: columnModel,
-            valueService: valueService,
-            gridOptionsService: gridOptionsService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
         return new (isXlsx ? excelXlsxSerializingSession_1.ExcelXlsxSerializingSession : excelXmlSerializingSession_1.ExcelXmlSerializingSession)(config);
     };
     ExcelCreator.prototype.styleLinker = function (params) {
@@ -273,6 +274,12 @@ var ExcelCreator = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsService')
     ], ExcelCreator.prototype, "gridOptionsService", void 0);
+    __decorate([
+        core_1.Autowired('valueFormatterService')
+    ], ExcelCreator.prototype, "valueFormatterService", void 0);
+    __decorate([
+        core_1.Autowired('valueParserService')
+    ], ExcelCreator.prototype, "valueParserService", void 0);
     __decorate([
         core_1.PostConstruct
     ], ExcelCreator.prototype, "postConstruct", null);

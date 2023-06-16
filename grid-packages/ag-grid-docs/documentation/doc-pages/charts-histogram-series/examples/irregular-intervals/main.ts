@@ -24,9 +24,6 @@ const options: AgChartOptions = {
       ],
     },
   ],
-  legend: {
-    enabled: false,
-  },
   axes: [
     {
       type: 'number',

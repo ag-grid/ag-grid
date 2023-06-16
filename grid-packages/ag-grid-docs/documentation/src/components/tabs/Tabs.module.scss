@@ -1,0 +1,27 @@
+@use '../../design-system/' as *;
+
+.tabsOuter {
+    margin-top: $size-2;
+    margin-bottom: $size-2;
+}
+
+.hasHeading {
+    padding-top: $size-1;
+}
+
+.heading {
+    margin-top: 0;
+}
+
+.externalLinks {
+    display: flex;
+    align-items: center;
+    gap: $size-2;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-right: $size-2;
+
+    li {
+        margin-bottom: 0.125em;
+    }
+}

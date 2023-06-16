@@ -167,7 +167,7 @@ export class ColumnToolPanel extends Component {
         }
     }
     isRowGroupingModuleLoaded() {
-        return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping');
+        return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
     }
     expandColumnGroups(groupIds) {
         this.primaryColsPanel.expandGroups(groupIds);

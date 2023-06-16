@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,7 @@ import { KeyCode } from '../constants/keyCode';
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
+import { stopPropagationForAgGrid } from '../utils/event';
 export class VirtualList extends TabGuardComp {
     constructor(cssIdentifier = 'default', ariaRole = 'listbox', listName) {
         super(VirtualList.getTemplate(cssIdentifier));
@@ -87,6 +88,7 @@ export class VirtualList extends TabGuardComp {
             e.preventDefault();
         }
         else {
+            stopPropagationForAgGrid(e);
             this.forceFocusOutOfContainer(e.shiftKey);
         }
     }

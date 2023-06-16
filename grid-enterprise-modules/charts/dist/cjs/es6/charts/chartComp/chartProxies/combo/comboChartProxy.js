@@ -23,12 +23,6 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(key => {
-                        const field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
         if (secondaryYKeys.length > 0) {
@@ -42,9 +36,6 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName : secondaryYKey,
-                    },
                 };
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));
                 const lastSecondaryAxis = i === secondaryYKeys.length - 1;
@@ -65,14 +56,9 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType = seriesChartType.chartType;
-                return {
-                    type: seriesTypeMapper_1.getSeriesType(chartType),
-                    xKey: category.id,
-                    yKey: field.colId,
-                    yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
-                };
+                const grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
+                const groupedOpts = grouped ? { grouped: true } : {};
+                return Object.assign({ type: seriesTypeMapper_1.getSeriesType(chartType), xKey: category.id, yKey: field.colId, yName: field.displayName, stacked: ['stackedArea', 'stackedColumn'].includes(chartType) }, groupedOpts);
             }
         });
     }

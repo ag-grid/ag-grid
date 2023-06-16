@@ -1,5 +1,5 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { PostConstruct } from '../../../context/context';
+import { PostConstruct, PreDestroy } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { AgPromise } from '../../../utils';
 import { setDisplayed } from "../../../utils/dom";
@@ -13,7 +13,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
-                <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+                <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 
@@ -21,6 +21,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     @RefSelector('eButtonWrapper') private readonly eButtonWrapper: HTMLElement;
     @RefSelector('eButtonShowMainFilter') private readonly eButtonShowMainFilter: HTMLElement;
 
+    private floatingFilterComp: IFloatingFilterComp | undefined;
     private compPromise: AgPromise<IFloatingFilterComp> | null;
 
     constructor(ctrl: HeaderFilterCellCtrl) {
@@ -45,18 +46,36 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
     }
 
-    private setCompDetails(compDetails: UserCompDetails): void {
+    private setCompDetails(compDetails?: UserCompDetails | null): void {
+        if (!compDetails) {
+            this.destroyFloatingFilterComp();
+            this.compPromise = null;
+            return;
+        }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
         this.compPromise.then(comp => this.afterCompCreated(comp));
     }
 
+    @PreDestroy
+    private destroyFloatingFilterComp(): void {
+        if (this.floatingFilterComp) {
+            this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
+            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
+        }
+    }
+
     private afterCompCreated(comp: IFloatingFilterComp | null): void {
         if (!comp) { return; }
 
-        this.addDestroyFunc(() => this.context.destroyBean(comp));
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            this.destroyBean(comp);
+            return;
+        }
 
+        this.destroyFloatingFilterComp();
+
+        this.floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
 
         if (comp.afterGuiAttached) {

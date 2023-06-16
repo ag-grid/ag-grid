@@ -156,6 +156,6 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             this.getRefElement('agLabel').innerHTML = displayNameSanitised!;
         }
 
-        this.addOrRemoveCssClass('ag-sticky-label', !!columnGroup.getColGroupDef()?.stickyLabel);
+        this.addOrRemoveCssClass('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
     }
 }

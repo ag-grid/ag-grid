@@ -177,7 +177,11 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
         });
     } else if (node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
-        node.internal.content = await loadNodeContent(node);
+        await createNodeField({
+            node,
+            name: 'content',
+            value: await loadNodeContent(node)
+        });
     }
 };
 
@@ -193,9 +197,15 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'style-guide',
 ];
 
-const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => {
+    const regex = new RegExp(page, 'g');
+    return path.match(regex)
+});
 
-const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => {
+    const regex = new RegExp(page, 'g');
+    return path.match(regex)
+});
 
 
 /**
@@ -210,7 +220,7 @@ exports.onCreatePage = ({page, actions: {createPage}}) => {
     } else if (isFullScreenPage(page.path)) {
         page.context.layout = 'fullScreenPage';
         createPage(page);
-    } else if(isFullScreenPageWithFooter(page.path)) {
+    } else if (isFullScreenPageWithFooter(page.path)) {
         page.context.layout = 'fullScreenPageWithFooter';
         createPage(page);
     }
@@ -323,7 +333,15 @@ const createChartGalleryPages = createPage => {
             createPage({
                 path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
-                context: {frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview'}
+                context: {
+                    frameworks: supportedFrameworks,
+                    framework,
+                    name,
+                    description,
+                    previous,
+                    next,
+                    pageName: 'charts-overview'
+                }
             });
         });
     });
@@ -351,35 +369,36 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     const frameworkRequest = request => {
         return frameworks.some(framework => request.includes(framework))
     }
-    class AgEs5CjsResolver {
-        constructor(source, target) {
-            this.source = source || 'resolve';
-            this.target = target || 'resolve';
-        }
 
-        apply(resolver) {
-            var target = resolver.ensureHook(this.target);
-            resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
-                const req = request.request;
-                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
-                    !req.includes('css') &&
-                    !frameworkRequest(req)) {
-
-                    // point the request to the commonjs es5 dir - this is what gets updated on local build changes
-                    const newRequest = `${__dirname}/node_modules/${req}/dist/cjs/es5/main.js`;
-
-                    const obj = {
-                        path: request.path,
-                        request: newRequest,
-                        query: request.query,
-                        directory: request.directory
-                    };
-                    return resolver.doResolve(target, obj, null, resolveContext, callback);
-                }
-                callback();
-            });
-        }
-    }
+    // class AgEs5CjsResolver {
+    //     constructor(source, target) {
+    //         this.source = source || 'resolve';
+    //         this.target = target || 'resolve';
+    //     }
+    //
+    //     apply(resolver) {
+    //         var target = resolver.ensureHook(this.target);
+    //         resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
+    //             const req = request.request;
+    //             if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+    //                 !req.includes('css') &&
+    //                 !frameworkRequest(req)) {
+    //
+    //                 // point the request to the commonjs es5 dir - this is what gets updated on local build changes
+    //                 const newRequest = `${__dirname}/node_modules/${req}/dist/esm/es6/main.js`;
+    //
+    //                 const obj = {
+    //                     path: request.path,
+    //                     request: newRequest,
+    //                     query: request.query,
+    //                     directory: request.directory
+    //                 };
+    //                 return resolver.doResolve(target, obj, null, resolveContext, callback);
+    //             }
+    //             callback();
+    //         });
+    //     }
+    // }
 
     const newConfig = {
         /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
@@ -392,14 +411,22 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     };
-    if(isDevelopment()) {
-        // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
-        newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
-    }
+    // if (isDevelopment()) {
+    //     // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
+    //     newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
+    // }
     actions.setWebpackConfig(newConfig);
 
     const config = getConfig();
     const {rules} = config.module;
+
+    const miniCssExtractPlugin = config.plugins.find(
+        plugin => plugin.constructor.name === 'MiniCssExtractPlugin'
+    )
+
+    if (miniCssExtractPlugin) {
+        miniCssExtractPlugin.options.ignoreOrder = true
+    }
 
     rules.forEach(rule => {
         const urlLoaders = Array.isArray(rule.use) ? rule.use.filter(use => use.loader.indexOf('/url-loader/') >= 0) : [];

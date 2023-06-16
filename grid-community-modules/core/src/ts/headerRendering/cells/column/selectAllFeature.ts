@@ -38,7 +38,7 @@ export class SelectAllFeature extends BeanStub {
         this.currentPageOnly = !!colDef?.headerCheckboxSelectionCurrentPageOnly;
     }
 
-    public onSpaceKeyPressed(e: KeyboardEvent): void {
+    public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
         const eDocument = this.gridOptionsService.getDocument();
 
@@ -107,19 +107,19 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const checked = this.cbSelectAll.getValue();
+        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+
+
         if (!this.cbSelectAllVisible) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
-            this.cbSelectAll.setInputAriaLabel(null);
         } else {
-            const translate = this.localeService.getLocaleTextFunc();
-            const checked = this.cbSelectAll.getValue();
-            const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-            const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
-
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
-            this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         }
 
+        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         this.headerCellCtrl.refreshAriaDescription();
     }
 

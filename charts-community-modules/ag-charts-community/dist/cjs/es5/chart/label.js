@@ -6,10 +6,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateLabelRotation = exports.Label = void 0;
+exports.calculateLabelBBox = exports.getTextAlign = exports.getTextBaseline = exports.getLabelSpacing = exports.calculateLabelRotation = exports.Label = void 0;
 var validation_1 = require("../util/validation");
 var text_1 = require("../scene/shape/text");
 var angle_1 = require("../util/angle");
+var bbox_1 = require("../scene/bbox");
 var Label = /** @class */ (function () {
     function Label() {
         this.enabled = true;
@@ -20,7 +21,7 @@ var Label = /** @class */ (function () {
         this.color = 'rgba(70, 70, 70, 1)';
     }
     Label.prototype.getFont = function () {
-        return text_1.getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+        return text_1.getFont(this);
     };
     __decorate([
         validation_1.Validate(validation_1.BOOLEAN)
@@ -45,17 +46,81 @@ var Label = /** @class */ (function () {
 exports.Label = Label;
 function calculateLabelRotation(opts) {
     var _a = opts.parallelFlipRotation, parallelFlipRotation = _a === void 0 ? 0 : _a, _b = opts.regularFlipRotation, regularFlipRotation = _b === void 0 ? 0 : _b;
-    var labelRotation = opts.rotation ? angle_1.normalizeAngle360(angle_1.toRadians(opts.rotation)) : 0;
-    var parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
+    var configuredRotation = opts.rotation ? angle_1.normalizeAngle360(angle_1.toRadians(opts.rotation)) : 0;
+    var parallelFlipFlag = !configuredRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
     // Flip if the axis rotation angle is in the top hemisphere.
-    var regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
-    var autoRotation = 0;
+    var regularFlipFlag = !configuredRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
+    var defaultRotation = 0;
     if (opts.parallel) {
-        autoRotation = (parallelFlipFlag * Math.PI) / 2;
+        defaultRotation = (parallelFlipFlag * Math.PI) / 2;
     }
     else if (regularFlipFlag === -1) {
-        autoRotation = Math.PI;
+        defaultRotation = Math.PI;
     }
-    return { labelRotation: labelRotation, autoRotation: autoRotation, parallelFlipFlag: parallelFlipFlag, regularFlipFlag: regularFlipFlag };
+    return { configuredRotation: configuredRotation, defaultRotation: defaultRotation, parallelFlipFlag: parallelFlipFlag, regularFlipFlag: regularFlipFlag };
 }
 exports.calculateLabelRotation = calculateLabelRotation;
+function getLabelSpacing(minSpacing, rotated) {
+    if (!isNaN(minSpacing)) {
+        return minSpacing;
+    }
+    return rotated ? 0 : 10;
+}
+exports.getLabelSpacing = getLabelSpacing;
+function getTextBaseline(parallel, labelRotation, sideFlag, parallelFlipFlag) {
+    if (parallel && !labelRotation) {
+        if (sideFlag * parallelFlipFlag === -1) {
+            return 'hanging';
+        }
+        else {
+            return 'bottom';
+        }
+    }
+    return 'middle';
+}
+exports.getTextBaseline = getTextBaseline;
+function getTextAlign(parallel, labelRotation, labelAutoRotation, sideFlag, regularFlipFlag) {
+    var labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
+    var labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
+    var alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
+    if (parallel) {
+        if (labelRotation || labelAutoRotation) {
+            if (sideFlag * alignFlag === -1) {
+                return 'end';
+            }
+        }
+        else {
+            return 'center';
+        }
+    }
+    else if (sideFlag * regularFlipFlag === -1) {
+        return 'end';
+    }
+    return 'start';
+}
+exports.getTextAlign = getTextAlign;
+function calculateLabelBBox(text, bbox, labelX, labelY, labelMatrix) {
+    // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
+    // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
+    // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
+    // this makes label collision detection a lot simpler
+    var width = bbox.width, height = bbox.height;
+    var translatedBBox = new bbox_1.BBox(labelX, labelY, 0, 0);
+    labelMatrix.transformBBox(translatedBBox, bbox);
+    var _a = bbox.x, x = _a === void 0 ? 0 : _a, _b = bbox.y, y = _b === void 0 ? 0 : _b;
+    bbox.width = width;
+    bbox.height = height;
+    return {
+        point: {
+            x: x,
+            y: y,
+            size: 0,
+        },
+        label: {
+            width: width,
+            height: height,
+            text: text,
+        },
+    };
+}
+exports.calculateLabelBBox = calculateLabelBBox;

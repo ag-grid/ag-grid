@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSyncJsComp = exports.showJsComp = void 0;
@@ -6,8 +6,8 @@ exports.createSyncJsComp = exports.showJsComp = void 0;
  * Show a JS Component
  * @returns Effect Cleanup function
  */
-exports.showJsComp = function (compDetails, context, eParent, ref) {
-    var doNothing = !compDetails || compDetails.componentFromFramework;
+var showJsComp = function (compDetails, context, eParent, ref) {
+    var doNothing = !compDetails || compDetails.componentFromFramework || context.isDestroyed();
     if (doNothing) {
         return;
     }
@@ -44,6 +44,7 @@ exports.showJsComp = function (compDetails, context, eParent, ref) {
         }
     };
 };
+exports.showJsComp = showJsComp;
 var setRef = function (ref, value) {
     if (!ref) {
         return;
@@ -57,10 +58,11 @@ var setRef = function (ref, value) {
         refObj.current = value;
     }
 };
-exports.createSyncJsComp = function (compDetails) {
+var createSyncJsComp = function (compDetails) {
     var promise = compDetails.newAgStackInstance();
     if (!promise) {
         return;
     }
     return promise.resolveNow(null, function (x) { return x; }); // js comps are never async
 };
+exports.createSyncJsComp = createSyncJsComp;

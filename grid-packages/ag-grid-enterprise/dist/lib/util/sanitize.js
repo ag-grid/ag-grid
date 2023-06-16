@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sanitizeHtml = void 0;
 var element = null;
 function sanitizeHtml(text) {
-    element = element || document.createElement('div');
+    element = element !== null && element !== void 0 ? element : document.createElement('div');
     if (!text) {
         return '';
     }

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -74,12 +74,16 @@ const GridBodyComp = () => {
             beansToDestroy.push(comp);
             return comp;
         };
-        eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-        eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
-        eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-        eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-        eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
-        eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+        if (eRoot.current) {
+            eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
+            eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+            eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
+            eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
+        }
+        if (eBody.current) {
+            eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
+            eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+        }
         const compProxy = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: count => core_1._.setAriaColCount(eRoot.current, count),
@@ -95,8 +99,12 @@ const GridBodyComp = () => {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
-            setBodyViewportWidth: (width) => eBodyViewport.current.style.width = width,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
+            setBodyViewportWidth: (width) => {
+                if (eBodyViewport.current) {
+                    eBodyViewport.current.style.width = width;
+                }
+            },
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());

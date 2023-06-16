@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -36,10 +38,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
 import { isIOSUserAgent } from "../utils/browser";
+import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 var GridBodyScrollFeature = /** @class */ (function (_super) {
     __extends(GridBodyScrollFeature, _super);
     function GridBodyScrollFeature(eBodyViewport) {
@@ -289,6 +291,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
     };
     // called by scrollHorizontally method and alignedGridsService
     GridBodyScrollFeature.prototype.setHorizontalScrollPosition = function (hScrollPosition) {
+        var fakeHScrollGui = this.ctrlsService.getFakeHScrollComp().getGui();
         var minScrollLeft = 0;
         var maxScrollLeft = this.centerRowContainerCtrl.getViewportElement().scrollWidth - this.centerRowContainerCtrl.getCenterWidth();
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
@@ -424,7 +427,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
                 newScrollPosition = pxBottom;
             }
             if (newScrollPosition !== null) {
-                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.setVerticalScrollPosition(newScrollPosition);
                 this.rowRenderer.redrawAfterScroll();
             }
             // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),

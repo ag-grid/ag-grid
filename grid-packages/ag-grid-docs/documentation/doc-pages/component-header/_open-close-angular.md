@@ -1,30 +1,47 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 |### Opening / Closing Groups
 |
 |Not all column groups can open and close, so you should display open / close features accordingly. To check if a column group should have open / close functionality, check the `isExpandable()` method on the column group.
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |const showExpandableIcons = this.params.columnGroup.isExpandable()
-|```
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |
 |To check if a column group is open or closed, check the `isExpanded()` method on the column group.
 |
-|```js
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |const groupIsOpen = this.params.columnGroup.isExpanded();
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |To open / close a column group, use the `this.params.setExpanded(boolean)` method.
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// this code toggles the expanded state
 |const oldValue = this.params.columnGroup.isExpanded();
 |const newValue = !oldValue;
 |this.params.setExpanded(newValue);
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |To know if a group is expanded or collapsed, listen for the `expandedChanged` event on the column group.
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// get a reference to the provided column group
 |const columnGroup = this.params.columnGroup.getProvidedColumnGroup();
 |// create listener
@@ -34,4 +51,5 @@
 |
 |// don't forget to remove the listener in your destroy method
 |columnGroup.removeEventListener('expandedChanged', listener);
-|```
+</snippet>
+</framework-specific-section>

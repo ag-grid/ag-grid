@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,7 @@ import { LayoutCssClasses } from "../styling/layoutFeature";
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { CSS_CLASS_CELL_SELECTABLE, CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from "./gridBodyCtrl";
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from "./gridBodyCtrl";
 import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 const GRID_BODY_TEMPLATE = /* html */ `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root ref="gridHeader"></ag-header-root>
@@ -96,7 +96,7 @@ export class GridBodyComp extends Component {
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
             setCellSelectableCss: (cssClass, selectable) => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable));
+                    .forEach(ct => ct.classList.toggle(cssClass, selectable));
             },
             setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };

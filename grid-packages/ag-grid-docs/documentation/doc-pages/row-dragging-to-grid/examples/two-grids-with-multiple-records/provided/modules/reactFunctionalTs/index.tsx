@@ -143,9 +143,7 @@ const GridExample = () => {
                 remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
-            nodes.forEach(function (node) {
-                node.setSelected(false);
-            });
+            leftApi!.setNodesSelected({ nodes, newValue: false });
         }
     }, [leftApi, radioChecked]);
 
@@ -171,19 +169,19 @@ const GridExample = () => {
     const getTopToolBar = () => (
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
-                <div style={{ display: 'inline-flex' }} onChange={onRadioChange} >
-                    <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />
+                <div onChange={onRadioChange} >
+                    <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />{' '}
                     <label htmlFor="move">Remove Source Rows</label>
-                    <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />
+                    <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />{' '}
                     <label htmlFor="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />
+                    <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />{' '}
                     <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
                 <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
@@ -193,7 +191,7 @@ const GridExample = () => {
     const getGridWrapper = (id: number) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body" style={{ height: '100%;' }}>
+            <div className="panel-body" style={{ height: '100%' }}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}

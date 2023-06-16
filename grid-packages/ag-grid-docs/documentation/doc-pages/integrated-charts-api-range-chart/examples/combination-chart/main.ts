@@ -1,10 +1,6 @@
-import {
-  FirstDataRenderedEvent,
-  Grid,
-  GridOptions, ValueParserParams
-} from '@ag-grid-community/core';
+import { FirstDataRenderedEvent, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
+import { AgAxisCaptionFormatterParams } from 'ag-charts-community';
 import { getData } from "./data";
-
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -31,13 +27,13 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   chartThemeOverrides: {
     common: {
-      legend: {
-        position: 'bottom',
-      },
       axes: {
         number: {
           title: {
-            enabled: true
+            enabled: true,
+            formatter: (params: AgAxisCaptionFormatterParams)  => {
+              return params.boundSeries.map(s => s.name).join(' / ');
+            }
           }
         }
       }
@@ -81,7 +77,6 @@ function numberParser(params: ValueParserParams) {
   }
   return parseFloat(value);
 }
-
 
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

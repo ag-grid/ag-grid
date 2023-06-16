@@ -12,31 +12,36 @@ export class NumericCellEditor implements ICellEditorComp {
         this.eInput = document.createElement('input');
         this.eInput.className = 'simple-input-editor';
 
-        if (params.eventKey === KEY_BACKSPACE) {
+        const eventKey = params.eventKey;
+
+        if (eventKey === KEY_BACKSPACE) {
             this.eInput.value = '';
-        } else if (this.isCharNumeric(params.charPress)) {
-            this.eInput.value = params.charPress!;
+        } else if (this.isCharNumeric(eventKey)) {
+            this.eInput.value = eventKey!;
         } else {
             if (params.value !== undefined && params.value !== null) {
                 this.eInput.value = params.value;
             }
         }
 
-        this.eInput.addEventListener('keypress', (event) => {
-            if (!this.isKeyPressedNumeric(event)) {
+        this.eInput.addEventListener('keydown', (event) => {
+            if (!event.key || event.key.length !== 1) { return; }
+
+            if (!this.isNumericKey(event)) {
                 this.eInput.focus();
                 if (event.preventDefault) event.preventDefault();
-            } else if (this.isKeyPressedNavigation(event) || this.isBackspace(event)) {
+            } else if (this.isNavigationKey(event) || this.isBackspace(event)) {
                 event.stopPropagation();
             }
         });
 
         // only start edit if key pressed is a number, not a letter
-        var charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
-        this.cancelBeforeStart = !!charPressIsNotANumber;
+        const isCharacter = eventKey && eventKey.length === 1;
+        var isNotANumber = isCharacter && ('1234567890'.indexOf(eventKey!) < 0);
+        this.cancelBeforeStart = !!isNotANumber;
     }
 
-    isKeyPressedNumeric(event: any) {
+    isNumericKey(event: any) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
@@ -45,7 +50,7 @@ export class NumericCellEditor implements ICellEditorComp {
         return event.key === KEY_BACKSPACE;
     }
 
-    isKeyPressedNavigation(event: any) {
+    isNavigationKey(event: any) {
         return event.key === 'ArrowLeft'
             || event.key === 'ArrowRight';
     }

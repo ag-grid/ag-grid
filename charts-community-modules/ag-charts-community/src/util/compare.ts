@@ -1,4 +1,4 @@
-export type Comparator<T> = (a: T, b: T) => number;
+type Comparator<T> = (a: T, b: T) => number;
 export type LiteralOrFn<T> = T | (() => T);
 
 export function ascendingStringNumberUndefined(

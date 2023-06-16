@@ -15,33 +15,34 @@ export class NumericEditor implements ICellEditorComp {
 
         if (params.eventKey === KEY_BACKSPACE) {
             this.eInput.value = '';
-        } else if (this.isCharNumeric(params.charPress)) {
-            this.eInput.value = params.charPress!;
+        } else if (this.isCharNumeric(params.eventKey)) {
+            this.eInput.value = params.eventKey!;
         } else {
             if (params.value !== undefined && params.value !== null) {
                 this.eInput.value = params.value;
             }
         }
 
-        this.eInput.addEventListener('keypress', event => {
-            if (!this.isKeyPressedNumeric(event)) {
+        this.eInput.addEventListener('keydown', event => {
+            if (!event.key || event.key.length !== 1) { return; }
+            if (!this.isNumericKey(event)) {
                 this.eInput.focus();
                 if (event.preventDefault) event.preventDefault();
-            } else if (this.isKeyPressedNavigation(event) || this.isBackspace(event)) {
+            } else if (this.isNavigationKey(event) || this.isBackspace(event)) {
                 event.stopPropagation();
             }
         });
 
         // only start edit if key pressed is a number, not a letter
-        const charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
-        this.cancelBeforeStart = !!charPressIsNotANumber;
+        const isNotANumber = params.eventKey && params.eventKey.length === 1 && ('1234567890'.indexOf(params.eventKey) < 0);
+        this.cancelBeforeStart = !!isNotANumber;
     }
 
     isBackspace(event: any) {
         return event.key === KEY_BACKSPACE;
     }
 
-    isKeyPressedNavigation(event: any) {
+    isNavigationKey(event: any) {
         return event.key === 'ArrowLeft'
             || event.key === 'ArrowRight';
     }
@@ -61,16 +62,17 @@ export class NumericEditor implements ICellEditorComp {
         return this.cancelBeforeStart;
     }
 
-    // example - will reject the number if it contains the value 007
+    // example - will reject the number if it greater than 1,000,000
     // - not very practical, but demonstrates the method.
     isCancelAfterEnd() {
         const value = this.getValue();
-        return value.indexOf('007') >= 0;
+        return value != null && value > 1000000;
     }
 
     // returns the new value after editing
     getValue() {
-        return this.eInput.value;
+        const value = this.eInput.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     // any cleanup we need to be done here
@@ -88,7 +90,7 @@ export class NumericEditor implements ICellEditorComp {
         return charStr && !!/\d/.test(charStr);
     }
 
-    isKeyPressedNumeric(event: any) {
+    isNumericKey(event: any) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

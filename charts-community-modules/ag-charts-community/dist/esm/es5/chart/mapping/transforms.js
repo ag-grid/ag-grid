@@ -46,6 +46,23 @@ function yKeysMapping(p, src) {
     }
     return src.grouped ? p.map(function (v) { return [v]; }) : [p];
 }
+function legendItemNamesMapping(p, src) {
+    if (p == null) {
+        return {};
+    }
+    if (!(p instanceof Array)) {
+        return p;
+    }
+    var yKeys = src.yKeys;
+    if (yKeys == null || is2dArray(yKeys)) {
+        throw new Error('AG Charts - legendItemNames and yKeys mismatching configuration.');
+    }
+    var result = {};
+    yKeys.forEach(function (k, i) {
+        result[k] = p[i];
+    });
+    return result;
+}
 function barSeriesTransform(options) {
     var result = __assign({}, options);
     delete result['yKey'];
@@ -53,6 +70,17 @@ function barSeriesTransform(options) {
     return transform(result, {
         yNames: yNamesMapping,
         yKeys: yKeysMapping,
+        legendItemNames: legendItemNamesMapping,
+    });
+}
+function columnSeriesTransform(options) {
+    var result = __assign({}, options);
+    delete result['yKey'];
+    delete result['yName'];
+    return transform(result, {
+        yNames: yNamesMapping,
+        yKeys: yKeysMapping,
+        legendItemNames: legendItemNamesMapping,
     });
 }
 function identityTransform(input) {
@@ -61,7 +89,7 @@ function identityTransform(input) {
 var SERIES_TRANSFORMS = {
     area: identityTransform,
     bar: barSeriesTransform,
-    column: barSeriesTransform,
+    column: columnSeriesTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,
@@ -69,7 +97,8 @@ var SERIES_TRANSFORMS = {
     treemap: identityTransform,
 };
 export function applySeriesTransform(options) {
-    var type = options.type || 'line';
+    var _a;
+    var type = (_a = options.type) !== null && _a !== void 0 ? _a : 'line';
     var transform = SERIES_TRANSFORMS[type];
     return (transform !== null && transform !== void 0 ? transform : identityTransform)(options);
 }

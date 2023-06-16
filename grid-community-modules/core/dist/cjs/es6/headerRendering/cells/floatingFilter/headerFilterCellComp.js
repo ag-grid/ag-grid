@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -35,18 +35,31 @@ class HeaderFilterCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCo
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
     }
     setCompDetails(compDetails) {
+        if (!compDetails) {
+            this.destroyFloatingFilterComp();
+            this.compPromise = null;
+            return;
+        }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
         this.compPromise.then(comp => this.afterCompCreated(comp));
+    }
+    destroyFloatingFilterComp() {
+        if (this.floatingFilterComp) {
+            this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
+            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
+        }
     }
     afterCompCreated(comp) {
         if (!comp) {
             return;
         }
-        this.addDestroyFunc(() => this.context.destroyBean(comp));
         if (!this.isAlive()) {
+            this.destroyBean(comp);
             return;
         }
+        this.destroyFloatingFilterComp();
+        this.floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
         if (comp.afterGuiAttached) {
             comp.afterGuiAttached();
@@ -56,7 +69,7 @@ class HeaderFilterCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCo
 HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
-                <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+                <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 __decorate([
@@ -71,4 +84,7 @@ __decorate([
 __decorate([
     context_1.PostConstruct
 ], HeaderFilterCellComp.prototype, "postConstruct", null);
+__decorate([
+    context_1.PreDestroy
+], HeaderFilterCellComp.prototype, "destroyFloatingFilterComp", null);
 exports.HeaderFilterCellComp = HeaderFilterCellComp;

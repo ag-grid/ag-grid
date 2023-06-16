@@ -38,6 +38,7 @@ export class Navigator extends BaseModuleInstance {
         ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
         ctx.scene.root.appendChild(this.rs);
         this.destroyFns.push(() => { var _a; return (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.removeChild(this.rs); });
+        this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
         this.updateGroupVisibility();
     }
     set enabled(value) {
@@ -79,7 +80,14 @@ export class Navigator extends BaseModuleInstance {
         return this._visible;
     }
     updateGroupVisibility() {
-        this.rs.visible = this.enabled && this.visible;
+        const visible = this.enabled && this.visible;
+        this.rs.visible = visible;
+        if (visible) {
+            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+        }
+        else {
+            this.ctx.zoomManager.updateZoom('navigator');
+        }
     }
     layout({ shrinkRect }) {
         if (this.enabled) {
@@ -95,9 +103,6 @@ export class Navigator extends BaseModuleInstance {
             this.rs.width = rect.width;
         }
         this.visible = visible;
-    }
-    update() {
-        // Nothing to do!
     }
     onDragStart(offset) {
         if (!this.enabled) {

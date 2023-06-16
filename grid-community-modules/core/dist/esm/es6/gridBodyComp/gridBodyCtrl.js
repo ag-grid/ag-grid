@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -24,9 +24,9 @@ export var RowAnimationCssClasses;
     RowAnimationCssClasses["ANIMATION_ON"] = "ag-row-animation";
     RowAnimationCssClasses["ANIMATION_OFF"] = "ag-row-no-animation";
 })(RowAnimationCssClasses || (RowAnimationCssClasses = {}));
-export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
-export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
+const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 export class GridBodyCtrl extends BeanStub {
     constructor() {
         super(...arguments);
@@ -99,8 +99,7 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
     }
     setCellTextSelection(selectable = false) {
-        const cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
-        this.comp.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     }
     onScrollVisibilityChanged() {
         const visible = this.scrollVisibleService.isVerticalScrollShowing();
@@ -109,7 +108,7 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
     onGridColumnsChanged() {
         const columns = this.columnModel.getAllGridColumns();
@@ -374,6 +373,9 @@ export class GridBodyCtrl extends BeanStub {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }
+__decorate([
+    Autowired('animationFrameService')
+], GridBodyCtrl.prototype, "animationFrameService", void 0);
 __decorate([
     Autowired('rowContainerHeightService')
 ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);

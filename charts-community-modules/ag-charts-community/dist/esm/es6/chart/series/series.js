@@ -4,15 +4,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { Group } from '../../scene/group';
 import { Observable } from '../../util/observable';
 import { createId } from '../../util/id';
-import { checkDatum, isNumber } from '../../util/value';
-import { createDeprecationWarning } from '../../util/deprecation';
+import { checkDatum } from '../../util/value';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, INTERACTION_RANGE, STRING, Validate, } from '../../util/validation';
 import { Layers } from '../layers';
 import { ChartAxisDirection } from '../chartAxisDirection';
+import { fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
 export var SeriesNodePickMode;
 (function (SeriesNodePickMode) {
@@ -25,21 +37,30 @@ export var SeriesNodePickMode;
     /** Pick matches based upon distance to ideal position */
     SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
 })(SeriesNodePickMode || (SeriesNodePickMode = {}));
-const warnDeprecated = createDeprecationWarning();
-const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
 export function keyProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, opts), { property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: (v) => checkDatum(v, continuous) != null });
+    const result = Object.assign({ property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: (v) => checkDatum(v, continuous) != null }, opts);
     return result;
 }
 export function valueProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, opts), { property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: (v) => checkDatum(v, continuous) != null });
+    const result = Object.assign({ property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: (v) => checkDatum(v, continuous) != null }, opts);
     return result;
 }
-export function sumProperties(props) {
-    const result = {
-        properties: props,
-        type: 'sum',
-    };
+export function rangedValueProperty(propName, opts = {}) {
+    const { min = -Infinity, max = Infinity } = opts, defOpts = __rest(opts, ["min", "max"]);
+    return Object.assign({ type: 'value', property: propName, valueType: 'range', validation: (v) => checkDatum(v, true) != null, processor: () => (datum) => {
+            if (typeof datum !== 'number')
+                return datum;
+            if (isNaN(datum))
+                return datum;
+            return Math.min(Math.max(datum, min), max);
+        } }, defOpts);
+}
+export function accumulativeValueProperty(propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: accumulatedValue() });
+    return result;
+}
+export function trailingAccumulatedValueProperty(propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: trailingAccumulatedValue() });
     return result;
 }
 export class SeriesNodeBaseClickEvent {
@@ -48,12 +69,6 @@ export class SeriesNodeBaseClickEvent {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
-    }
-    /** @deprecated */
-    get series() {
-        warnSeriesDeprecated();
-        return this._series;
     }
 }
 export class SeriesNodeClickEvent extends SeriesNodeBaseClickEvent {
@@ -64,7 +79,7 @@ export class SeriesNodeDoubleClickEvent extends SeriesNodeBaseClickEvent {
         this.type = 'nodeDoubleClick';
     }
 }
-class SeriesItemHighlightStyle {
+export class SeriesItemHighlightStyle {
     constructor() {
         this.fill = 'yellow';
         this.fillOpacity = undefined;
@@ -118,6 +133,7 @@ export class HighlightStyle {
 export class SeriesTooltip {
     constructor() {
         this.enabled = true;
+        this.showArrow = undefined;
         this.interaction = new SeriesTooltipInteraction();
         this.position = new TooltipPosition();
     }
@@ -125,6 +141,9 @@ export class SeriesTooltip {
 __decorate([
     Validate(BOOLEAN)
 ], SeriesTooltip.prototype, "enabled", void 0);
+__decorate([
+    Validate(OPT_BOOLEAN)
+], SeriesTooltip.prototype, "showArrow", void 0);
 export class SeriesTooltipInteraction {
     constructor() {
         this.enabled = false;
@@ -134,7 +153,7 @@ __decorate([
     Validate(BOOLEAN)
 ], SeriesTooltipInteraction.prototype, "enabled", void 0);
 export class Series extends Observable {
-    constructor({ useSeriesGroupLayer = true, useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, } = {}) {
+    constructor(opts) {
         super();
         this.id = createId(this);
         // The group node that contains all the nodes used to render this series.
@@ -149,8 +168,11 @@ export class Series extends Observable {
         this.nodeClickRange = 'exact';
         this._declarationOrder = -1;
         this.highlightStyle = new HighlightStyle();
+        this.ctx = opts.moduleCtx;
+        const { useSeriesGroupLayer = true, useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, directionNames = {}, } = opts;
         const { rootGroup } = this;
         this.directionKeys = directionKeys;
+        this.directionNames = directionNames;
         this.contentGroup = rootGroup.appendChild(new Group({
             name: `${this.id}-content`,
             layer: useSeriesGroupLayer,
@@ -177,7 +199,8 @@ export class Series extends Observable {
         }
     }
     get type() {
-        return this.constructor.type || '';
+        var _a;
+        return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
     }
     set data(input) {
         this._data = input;
@@ -200,19 +223,15 @@ export class Series extends Observable {
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
     }
+    addChartEventListeners() {
+        return;
+    }
     destroy() {
         // Override point for sub-classes.
     }
-    set grouped(g) {
-        if (g === true) {
-            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
-        }
-    }
-    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-    getKeys(direction) {
-        const { directionKeys } = this;
+    getDirectionValues(direction, properties) {
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = properties === null || properties === void 0 ? void 0 : properties[resolvedDirection];
         const values = [];
         const flatten = (...array) => {
             for (const value of array) {
@@ -223,6 +242,9 @@ export class Series extends Observable {
             if (Array.isArray(value)) {
                 flatten(...value);
             }
+            else if (typeof value === 'object') {
+                flatten(Object.values(value));
+            }
             else {
                 values.push(value);
             }
@@ -231,11 +253,15 @@ export class Series extends Observable {
             return values;
         keys.forEach((key) => {
             const value = this[key];
-            if (!value)
-                return;
             addValue(value);
         });
         return values;
+    }
+    getKeys(direction) {
+        return this.getDirectionValues(direction, this.directionKeys);
+    }
+    getNames(direction) {
+        return this.getDirectionValues(direction, this.directionNames);
     }
     resolveKeyDirection(direction) {
         return direction;
@@ -365,43 +391,21 @@ export class Series extends Observable {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }
-    toggleOtherSeriesItems(_seriesToggled, _datumToggled, _enabled, _suggestedEnabled) {
-        return;
-    }
     isEnabled() {
         return this.visible;
     }
     fixNumericExtent(extent, axis) {
         var _a;
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = fixNumericExtent(extent);
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
             const padding = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : 1;
             min -= padding;
             max += padding;
-        }
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
         }
         return [min, max];
     }

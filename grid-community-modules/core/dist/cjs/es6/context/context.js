@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -10,6 +10,7 @@ exports.Qualifier = exports.Optional = exports.Autowired = exports.Bean = export
 const generic_1 = require("../utils/generic");
 const object_1 = require("../utils/object");
 const function_1 = require("../utils/function");
+const moduleRegistry_1 = require("../modules/moduleRegistry");
 class Context {
     constructor(params, logger) {
         this.beanWrappers = {};
@@ -143,6 +144,10 @@ class Context {
         return beansList;
     }
     lookupBeanInstance(wiringBean, beanName, optional = false) {
+        if (this.destroyed) {
+            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            return null;
+        }
         if (beanName === "context") {
             return this;
         }
@@ -189,6 +194,7 @@ class Context {
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
         this.contextParams.providedBeanInstances = null;
+        moduleRegistry_1.ModuleRegistry.unRegisterGridModules(this.contextParams.gridId);
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
@@ -211,6 +217,12 @@ class Context {
             }
         });
         return [];
+    }
+    isDestroyed() {
+        return this.destroyed;
+    }
+    getGridId() {
+        return this.contextParams.gridId;
     }
 }
 exports.Context = Context;

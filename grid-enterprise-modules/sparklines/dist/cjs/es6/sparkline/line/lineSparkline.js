@@ -210,6 +210,7 @@ class LineSparkline extends sparkline_1.Sparkline {
         linePath.strokeWidth = line.strokeWidth;
     }
     updateXCrosshairLine() {
+        var _a;
         const { yScale, xCrosshairLine, highlightedDatum, crosshairs: { xLine }, } = this;
         if (!xLine.enabled || highlightedDatum == undefined) {
             xCrosshairLine.strokeWidth = 0;
@@ -219,7 +220,7 @@ class LineSparkline extends sparkline_1.Sparkline {
         xCrosshairLine.y2 = yScale.range[1];
         xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
         xCrosshairLine.stroke = xLine.stroke;
-        xCrosshairLine.strokeWidth = xLine.strokeWidth || 1;
+        xCrosshairLine.strokeWidth = (_a = xLine.strokeWidth) !== null && _a !== void 0 ? _a : 1;
         xCrosshairLine.lineCap = xLine.lineCap === 'round' || xLine.lineCap === 'square' ? xLine.lineCap : undefined;
         const { lineDash } = xLine;
         xCrosshairLine.lineDash = Array.isArray(lineDash)
@@ -228,6 +229,7 @@ class LineSparkline extends sparkline_1.Sparkline {
         xCrosshairLine.translationX = highlightedDatum.point.x;
     }
     updateYCrosshairLine() {
+        var _a;
         const { xScale, yCrosshairLine, highlightedDatum, crosshairs: { yLine }, } = this;
         if (!yLine.enabled || highlightedDatum == undefined) {
             yCrosshairLine.strokeWidth = 0;
@@ -237,7 +239,7 @@ class LineSparkline extends sparkline_1.Sparkline {
         yCrosshairLine.x2 = xScale.range[1];
         yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
         yCrosshairLine.stroke = yLine.stroke;
-        yCrosshairLine.strokeWidth = yLine.strokeWidth || 1;
+        yCrosshairLine.strokeWidth = (_a = yLine.strokeWidth) !== null && _a !== void 0 ? _a : 1;
         yCrosshairLine.lineCap = yLine.lineCap === 'round' || yLine.lineCap === 'square' ? yLine.lineCap : undefined;
         const { lineDash } = yLine;
         yCrosshairLine.lineDash = Array.isArray(lineDash)

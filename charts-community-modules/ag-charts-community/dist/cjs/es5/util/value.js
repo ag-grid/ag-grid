@@ -1,11 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isNumber = exports.checkDatum = exports.isContinuous = exports.isDiscrete = exports.isDate = exports.isStringObject = exports.isString = void 0;
-exports.isString = function (v) { return typeof v === 'string'; };
-exports.isStringObject = function (v) {
+var isString = function (v) { return typeof v === 'string'; };
+exports.isString = isString;
+var isStringObject = function (v) {
     return !!v && Object.prototype.hasOwnProperty.call(v, 'toString') && exports.isString(v.toString());
 };
-exports.isDate = function (v) { return v instanceof Date && !isNaN(+v); };
+exports.isStringObject = isStringObject;
+var isDate = function (v) { return v instanceof Date && !isNaN(+v); };
+exports.isDate = isDate;
 function isDiscrete(value) {
     return exports.isString(value) || exports.isStringObject(value);
 }
@@ -31,4 +34,5 @@ function checkDatum(value, isContinuousScale) {
     return undefined;
 }
 exports.checkDatum = checkDatum;
-exports.isNumber = function (v) { return typeof v === 'number' && Number.isFinite(v); };
+var isNumber = function (v) { return typeof v === 'number' && Number.isFinite(v); };
+exports.isNumber = isNumber;

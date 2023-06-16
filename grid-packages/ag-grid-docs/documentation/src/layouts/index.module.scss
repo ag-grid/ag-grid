@@ -1,12 +1,6 @@
-@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
-
-@import '~bootstrap/scss/type';
-@import '~bootstrap/scss/alert';
+@use '../design-system' as *;
 
 html {
-    @include media-breakpoint-up(lg) {
-        scroll-padding-top: 72px;
-    }
     overflow-x: hidden;
 }
 
@@ -15,101 +9,20 @@ main {
     min-width: 0px;
 }
 
-.main-container {
-    composes: container-fluid p-0 d-flex flex-column from global;
-
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+.mainContainer {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    padding: 0;
+    width: 100%;
 }
 
-.content-viewport {
-    composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
-}
+.contentViewport {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 
-.content {
-    width: 100vw;
-    max-width: 100%;
-}
-
-@include media-breakpoint-up(lg) {
-    .content {
-        max-width: calc(100% - 300px);
-    }
-}
-
-:global(.custom-block) {
-    &:global(.note) {
-        @extend .alert, .alert-primary;
-
-        background-image: url('../images/info.svg');
-        background-size: 3rem;
-        background-repeat: no-repeat;
-        background-position: 1rem 1rem;
-        padding-left: 5rem;
-        min-height: 5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-
-        :global(code.language-text) {
-            background-color: $pink;
-            color: $light;
-        }
-
-        a {
-            color: $pink;
-
-            &:hover {
-                color: $red;
-            }
-        }
-
-        &:global(.warning) {
-            @extend .alert-warning;
-            background-image: url('../images/warning.svg');
-        }
-    }
-
-    &:global(-heading) {
-        @extend .alert-heading, .h5;
-    }
-
-    &:global(-body) {
-        p:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-:global {
-    .event-hierarchy {
-        font-size: 0.8rem;
-        font-weight: bold;
-        white-space: pre-wrap;
-        width: 100%;
-
-        &__property {
-            color: darkgreen;
-            font-weight: normal;
-        }
-
-        &__attribute {
-            color: darkorchid;
-            font-weight: bold;
-        }
-    }
-
-    .anchor {
-        color: black;
-        font-size: 1.3rem;
-
-        &.before {
-            height: 100%;
-            width: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
+    @media (min-width: $breakpoint-docs-nav-medium) {
+        flex-direction: row;
     }
 }

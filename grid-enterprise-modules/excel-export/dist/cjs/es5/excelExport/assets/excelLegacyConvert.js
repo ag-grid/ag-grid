@@ -60,13 +60,14 @@ var verticalAlignmentMap = {
     Distributed: 'distributed',
     JustifyDistributed: 'justify'
 };
-exports.convertLegacyPattern = function (name) {
+var convertLegacyPattern = function (name) {
     if (!name) {
         return 'none';
     }
     return colorMap[name] || name;
 };
-exports.convertLegacyColor = function (color) {
+exports.convertLegacyPattern = convertLegacyPattern;
+var convertLegacyColor = function (color) {
     if (color == undefined) {
         return color;
     }
@@ -75,7 +76,8 @@ exports.convertLegacyColor = function (color) {
     }
     return color.length === 6 ? 'FF' + color : color;
 };
-exports.convertLegacyBorder = function (type, weight) {
+exports.convertLegacyColor = convertLegacyColor;
+var convertLegacyBorder = function (type, weight) {
     if (!type) {
         return 'thin';
     }
@@ -93,9 +95,12 @@ exports.convertLegacyBorder = function (type, weight) {
     }
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
 };
-exports.convertLegacyHorizontalAlignment = function (alignment) {
+exports.convertLegacyBorder = convertLegacyBorder;
+var convertLegacyHorizontalAlignment = function (alignment) {
     return horizontalAlignmentMap[alignment] || 'general';
 };
-exports.convertLegacyVerticalAlignment = function (alignment) {
+exports.convertLegacyHorizontalAlignment = convertLegacyHorizontalAlignment;
+var convertLegacyVerticalAlignment = function (alignment) {
     return verticalAlignmentMap[alignment] || undefined;
 };
+exports.convertLegacyVerticalAlignment = convertLegacyVerticalAlignment;

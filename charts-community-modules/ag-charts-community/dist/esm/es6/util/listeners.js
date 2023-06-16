@@ -1,3 +1,4 @@
+import { Logger } from './logger';
 export class Listeners {
     constructor() {
         this.registeredListeners = {};
@@ -14,7 +15,17 @@ export class Listeners {
     dispatch(type, ...params) {
         var _a;
         const listeners = (_a = this.registeredListeners[type]) !== null && _a !== void 0 ? _a : [];
-        return listeners.map((l) => l.handler(...params));
+        const results = [];
+        for (const listener of listeners) {
+            try {
+                results.push(listener.handler(...params));
+            }
+            catch (e) {
+                Logger.errorOnce(e);
+                results.push(undefined);
+            }
+        }
+        return results;
     }
     cancellableDispatch(type, cancelled, ...params) {
         var _a;

@@ -69,6 +69,7 @@ const columnDefs: ColDef[] = [
             ],
         },
         editable: true,
+        cellDataType: false,
     },
     {
         field: 'address',

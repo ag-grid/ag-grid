@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -47,7 +49,7 @@ var AgPickerField = /** @class */ (function (_super) {
     AgPickerField.prototype.postConstruct = function () {
         var _this = this;
         _super.prototype.postConstruct.call(this);
-        var displayId = this.getCompId() + "-display";
+        var displayId = "ag-" + this.getCompId() + "-display";
         this.eDisplayField.setAttribute('id', displayId);
         aria_1.setAriaDescribedBy(this.eWrapper, displayId);
         var clickHandler = function () {

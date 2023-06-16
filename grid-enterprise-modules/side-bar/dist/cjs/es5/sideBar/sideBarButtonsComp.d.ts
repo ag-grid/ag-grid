@@ -1,4 +1,5 @@
 import { AgEvent, Component, ToolPanelDef } from "@ag-grid-community/core";
+import { SideBarButtonComp } from "./sideBarButtonComp";
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
 }
@@ -11,8 +12,7 @@ export declare class SideBarButtonsComp extends Component {
     constructor();
     private postConstruct;
     private handleKeyDown;
-    setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void;
     setActiveButton(id: string | undefined): void;
-    private addButtonComp;
+    addButtonComp(def: ToolPanelDef): SideBarButtonComp;
     clearButtons(): void;
 }

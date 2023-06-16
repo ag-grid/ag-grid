@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SparklineTooltip = exports.toTooltipHtml = void 0;
 function toTooltipHtml(input, defaults) {
+    var _a, _b, _c;
     if (typeof input === 'string') {
         return input;
     }
-    defaults = defaults || {};
-    const { content = defaults.content || '', title = defaults.title || undefined, color = defaults.color, backgroundColor = defaults.backgroundColor, opacity = defaults.opacity || 1, } = input;
+    defaults = defaults !== null && defaults !== void 0 ? defaults : {};
+    const { content = (_a = defaults.content) !== null && _a !== void 0 ? _a : '', title = (_b = defaults.title) !== null && _b !== void 0 ? _b : undefined, color = defaults.color, backgroundColor = defaults.backgroundColor, opacity = (_c = defaults.opacity) !== null && _c !== void 0 ? _c : 1, } = input;
     let titleHtml;
     let contentHtml;
     if (color) {

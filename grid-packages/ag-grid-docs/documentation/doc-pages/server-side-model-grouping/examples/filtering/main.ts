@@ -20,6 +20,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 280,
     field: 'athlete',
   },
+  serverSideOnlyRefreshFilteredGroups: true,
 
   // use the server-side row model
   rowModelType: 'serverSide',

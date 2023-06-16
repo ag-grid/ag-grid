@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -154,6 +154,9 @@ let GridOptionsService = class GridOptionsService {
     }
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
+    getGridId() {
+        return this.api.getGridId();
+    }
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
@@ -277,19 +280,12 @@ let GridOptionsService = class GridOptionsService {
         }
         return document;
     }
+    getWindow() {
+        const eDocument = this.getDocument();
+        return eDocument.defaultView || window;
+    }
     getRootNode() {
         return this.eGridDiv.getRootNode();
-    }
-    getRowIdFunc() {
-        const getRowId = this.getCallback('getRowId');
-        if (getRowId) {
-            return getRowId;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.gridOptions.getRowNodeId;
-        if (getRowNodeId) {
-            return (params) => getRowNodeId(params.data);
-        }
     }
     getAsyncTransactionWaitMillis() {
         return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
@@ -301,19 +297,27 @@ let GridOptionsService = class GridOptionsService {
         }
         return this.is('animateRows');
     }
+    isGroupRowsSticky() {
+        if (this.is('suppressGroupRowsSticky') ||
+            this.is('paginateChildRows') ||
+            this.is('groupHideOpenParents')) {
+            return false;
+        }
+        return true;
+    }
     isTreeData() {
-        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
     }
     isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
     }
     isEnableRangeSelection() {
-        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule);
+        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
     }
     isColumnsSortingCoupledToGroup() {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator);
+        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.isTreeData();
     }
     getGroupAggFiltering() {
         const userValue = this.gridOptions.groupAggFiltering;
@@ -353,7 +357,8 @@ __decorate([
     Autowired('eGridDiv')
 ], GridOptionsService.prototype, "eGridDiv", void 0);
 __decorate([
-    __param(0, Qualifier('gridApi')), __param(1, Qualifier('columnApi'))
+    __param(0, Qualifier('gridApi')),
+    __param(1, Qualifier('columnApi'))
 ], GridOptionsService.prototype, "agWire", null);
 __decorate([
     PostConstruct

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,9 +35,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Selection } from '../../scene/selection';
 import { Line } from '../../scene/shape/line';
@@ -83,7 +86,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var _a = _this, tickLineGroup = _a.tickLineGroup, tickLabelGroup = _a.tickLabelGroup, gridLineGroup = _a.gridLineGroup, tickScale = _a.tickScale, scale = _a.scale;
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
-        _this.requestedRange = scale.range.slice();
+        _this.range = scale.range.slice();
         _this.refreshScale();
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
@@ -93,19 +96,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         _this.labelSelection = Selection.select(tickLabelGroup, Text);
         return _this;
     }
-    Object.defineProperty(GroupedCategoryAxis.prototype, "range", {
-        get: function () {
-            return this.requestedRange.slice();
-        },
-        set: function (value) {
-            this.requestedRange = value.slice();
-            this.updateRange();
-        },
-        enumerable: false,
-        configurable: true
-    });
     GroupedCategoryAxis.prototype.updateRange = function () {
-        var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
+        var _a = this, rr = _a.range, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
         var shift = span * vr[0];
         var start = rr[0] - shift;
@@ -113,12 +105,13 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         this.resizeTickTree();
     };
     GroupedCategoryAxis.prototype.resizeTickTree = function () {
+        var _a;
         var s = this.scale;
         var range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         var layout = this.tickTreeLayout;
         var lineHeight = this.lineHeight;
         if (layout) {
-            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2, -layout.depth * lineHeight, range[1] - range[0] < 0);
+            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, (Math.min(range[0], range[1]) || 0) + ((_a = s.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2, -layout.depth * lineHeight, range[1] - range[0] < 0);
         }
     };
     Object.defineProperty(GroupedCategoryAxis.prototype, "lineHeight", {
@@ -148,7 +141,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     });
     GroupedCategoryAxis.prototype.calculateDomain = function () {
         var _a;
-        var _b = this, direction = _b.direction, boundSeries = _b.boundSeries;
+        var _b;
+        var _c = this, direction = _c.direction, boundSeries = _c.boundSeries;
         var domains = [];
         var isNumericX = undefined;
         boundSeries
@@ -170,9 +164,10 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 domains.push(series.getDomain(direction));
             }
         });
-        var domain = (_a = new Array()).concat.apply(_a, __spread(domains));
-        var values = extent(domain) || domain;
+        var domain = (_a = new Array()).concat.apply(_a, __spreadArray([], __read(domains)));
+        var values = (_b = extent(domain)) !== null && _b !== void 0 ? _b : domain;
         this.dataDomain = this.normaliseDataDomain(values);
+        this.scale.domain = this.dataDomain;
     };
     GroupedCategoryAxis.prototype.normaliseDataDomain = function (d) {
         // Prevent duplicate categories.
@@ -200,22 +195,21 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
      */
     GroupedCategoryAxis.prototype.update = function (primaryTickCount) {
         var _this = this;
+        this.updateDirection();
         this.calculateDomain();
-        var _a = this, scale = _a.scale, label = _a.label, parallel = _a.label.parallel, tickScale = _a.tickScale, requestedRange = _a.requestedRange;
-        scale.domain = this.dataDomain;
+        this.updateRange();
+        var _a = this, scale = _a.scale, label = _a.label, parallel = _a.label.parallel, callbackCache = _a.moduleCtx.callbackCache, tickScale = _a.tickScale, requestedRange = _a.range, title = _a.title, _b = _a.title, _c = _b === void 0 ? {} : _b, _d = _c.formatter, formatter = _d === void 0 ? function (p) { return p.defaultValue; } : _d, _titleCaption = _a._titleCaption;
         var rangeStart = scale.range[0];
         var rangeEnd = scale.range[1];
         var rangeLength = Math.abs(rangeEnd - rangeStart);
         var bandwidth = rangeLength / scale.domain.length || 0;
         var rotation = toRadians(this.rotation);
         var isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        this.updatePosition();
-        var title = this.title;
+        var sideFlag = label.getSideFlag();
+        this.updatePosition({ rotation: rotation, sideFlag: sideFlag });
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        if (title) {
-            title.node.visible = false;
-        }
+        _titleCaption.node.visible = false;
         var lineHeight = this.lineHeight;
         // Render ticks and labels.
         var tickTreeLayout = this.tickTreeLayout;
@@ -223,10 +217,6 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
         var isLabelTree = tickTreeLayout ? tickTreeLayout.depth > 1 : false;
         var ticks = tickScale.ticks();
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        var sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -236,18 +226,19 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         // and then rotated, zero rotation means 12 (not 3) o-clock.
         // -1 = flip
         //  1 = don't flip (default)
-        var _b = calculateLabelRotation({
+        var _e = calculateLabelRotation({
             rotation: label.rotation,
             parallel: parallel,
             regularFlipRotation: normalizeAngle360(rotation - Math.PI / 2),
             parallelFlipRotation: normalizeAngle360(rotation),
-        }), autoRotation = _b.autoRotation, labelRotation = _b.labelRotation, parallelFlipFlag = _b.parallelFlipFlag;
+        }), defaultRotation = _e.defaultRotation, configuredRotation = _e.configuredRotation, parallelFlipFlag = _e.parallelFlipFlag;
         var gridLineSelection = this.gridLineSelection.update(this.gridLength ? ticks : []);
         var labelSelection = this.labelSelection.update(treeLabels);
         var labelFormatter = label.formatter;
         var labelBBoxes = new Map();
         var maxLeafLabelWidth = 0;
         labelSelection.each(function (node, datum, index) {
+            var _a;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
@@ -259,9 +250,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             node.translationY = datum.screenX;
             if (index === 0) {
                 // use the phantom root as the axis title
-                if (title && title.enabled && labels.length > 0) {
+                if ((title === null || title === void 0 ? void 0 : title.enabled) && labels.length > 0) {
                     node.visible = true;
-                    node.text = title.text;
+                    node.text = callbackCache.call(formatter, _this.getTitleFormatterParams());
                     node.fontSize = title.fontSize;
                     node.fontStyle = title.fontStyle;
                     node.fontWeight = title.fontWeight;
@@ -272,13 +263,16 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                     node.visible = false;
                 }
             }
-            else {
-                node.text = labelFormatter
-                    ? labelFormatter({
+            else if (labelFormatter) {
+                node.text =
+                    (_a = callbackCache.call(labelFormatter, {
                         value: String(datum.label),
                         index: index,
-                    })
-                    : String(datum.label);
+                    })) !== null && _a !== void 0 ? _a : String(datum.label);
+                node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
+            }
+            else {
+                node.text = String(datum.label);
                 node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
             }
             var bbox = node.computeBBox();
@@ -294,7 +288,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             label.x = labelX;
             label.rotationCenterX = labelX;
             if (!datum.children.length) {
-                label.rotation = labelRotation;
+                label.rotation = configuredRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
                 var bbox = labelBBoxes.get(label.id);
@@ -310,7 +304,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                     label.visible = false;
                 }
                 else if (isHorizontal) {
-                    label.rotation = autoRotation;
+                    label.rotation = defaultRotation;
                 }
                 else {
                     label.rotation = -Math.PI / 2;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -140,6 +142,7 @@ var NavigationService = /** @class */ (function (_super) {
             this.rangeService.setRangeToCell(cellPosition);
         }
     };
+    // this method is throttled, see the `constructor`
     NavigationService.prototype.onPageDown = function (gridCell) {
         var gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         var scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -154,6 +157,7 @@ var NavigationService = /** @class */ (function (_super) {
             this.navigateToNextPage(gridCell, currentPageBottomRow);
         }
     };
+    // this method is throttled, see the `constructor`
     NavigationService.prototype.onPageUp = function (gridCell) {
         var gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         var scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -410,7 +414,7 @@ var NavigationService = /** @class */ (function (_super) {
         }
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        nextCell.startEditing(null, null, true, event);
+        nextCell.startEditing(null, true, event);
         nextCell.focusCell(false);
         return true;
     };
@@ -433,7 +437,7 @@ var NavigationService = /** @class */ (function (_super) {
             var pRow = previousCell.getRowCtrl();
             pRow.stopEditing();
             var nRow = nextCell.getRowCtrl();
-            nRow.startRowEditing(undefined, undefined, undefined, event);
+            nRow.startRowEditing(undefined, undefined, event);
         }
         if (nextEditable) {
             nextCell.setFocusInOnEditor();
@@ -732,7 +736,7 @@ var NavigationService = /** @class */ (function (_super) {
         };
     };
     NavigationService.prototype.ensureCellVisible = function (gridCell) {
-        var isGroupStickyEnabled = this.gridOptionsService.is('groupRowsSticky');
+        var isGroupStickyEnabled = this.gridOptionsService.isGroupRowsSticky();
         var rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         var skipScrollToRow = isGroupStickyEnabled && (rowNode === null || rowNode === void 0 ? void 0 : rowNode.sticky);

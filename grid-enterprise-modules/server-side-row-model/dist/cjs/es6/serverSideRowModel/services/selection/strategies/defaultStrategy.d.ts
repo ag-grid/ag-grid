@@ -1,4 +1,4 @@
-import { BeanStub, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, IServerSideSelectionState } from "@ag-grid-community/core";
+import { BeanStub, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, IServerSideSelectionState } from "@ag-grid-community/core";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 export declare class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel;
@@ -11,7 +11,7 @@ export declare class DefaultStrategy extends BeanStub implements ISelectionStrat
     getSelectedState(): IServerSideSelectionState;
     setSelectedState(state: any): void;
     deleteSelectionStateFromParent(parentPath: string[], removedNodeIds: string[]): boolean;
-    setNodeSelected(params: ISetNodeSelectedParams): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     processNewRow(node: RowNode<any>): void;
     isNodeSelected(node: RowNode): boolean | undefined;
     getSelectedNodes(): RowNode<any>[];

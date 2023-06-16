@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -114,7 +114,7 @@ class HeaderGroupComp extends component_1.Component {
             const displayNameSanitised = string_1.escapeString(displayName);
             this.getRefElement('agLabel').innerHTML = displayNameSanitised;
         }
-        this.addOrRemoveCssClass('ag-sticky-label', !!((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.stickyLabel));
+        this.addOrRemoveCssClass('ag-sticky-label', !((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.suppressStickyLabel));
     }
 }
 HeaderGroupComp.TEMPLATE = `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">

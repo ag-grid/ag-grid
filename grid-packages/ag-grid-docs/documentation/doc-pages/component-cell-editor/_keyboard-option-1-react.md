@@ -1,6 +1,5 @@
-[[only-react]]
-|
-|```jsx
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -41,9 +40,10 @@
 |    }
 |
 |    return (
-|        <input value={value}
+|        &lt;input value={value}
 |               onKeyDown={event => onKeyDown(event)}
 |        />
 |    );
 |});
-|```
+</snippet>
+</framework-specific-section>

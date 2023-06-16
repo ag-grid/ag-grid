@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/multi-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/multi-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -166,8 +168,10 @@ var MultiFilter = /** @class */ (function (_super) {
         group.addItem(filter.getGui());
         group.toggleGroupExpand(false);
         if (filter.afterGuiAttached) {
-            var params_1 = { container: this.lastOpenedInContainer, suppressFocus: true };
-            group.addManagedListener(group, core.AgGroupComponent.EVENT_EXPANDED, function () { return filter.afterGuiAttached(params_1); });
+            group.addManagedListener(group, core.AgGroupComponent.EVENT_EXPANDED, function () { return filter.afterGuiAttached({
+                container: _this.lastOpenedInContainer,
+                suppressFocus: true
+            }); });
         }
         return group;
     };
@@ -394,6 +398,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -489,8 +495,9 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     MultiFloatingFilterComp.prototype.createFloatingFilter = function (filterDef, params) {
+        var _this = this;
         var _a;
-        var defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef)) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
+        var defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef, function () { return _this.filterManager.getDefaultFloatingFilter(_this.params.column); })) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
         var compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
     };
@@ -505,11 +512,14 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
     __decorate([
         core.Autowired('userComponentFactory')
     ], MultiFloatingFilterComp.prototype, "userComponentFactory", void 0);
+    __decorate([
+        core.Autowired('filterManager')
+    ], MultiFloatingFilterComp.prototype, "filterManager", void 0);
     return MultiFloatingFilterComp;
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var MultiFilterModule = {
     version: VERSION,

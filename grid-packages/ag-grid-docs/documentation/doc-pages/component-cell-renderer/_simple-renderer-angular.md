@@ -1,7 +1,6 @@
-[[only-angular]]
-|Below is a simple example of cell renderer class:
-|
-|```js
+<framework-specific-section frameworks="angular">
+Below is an example of cell renderer class:
+<snippet transform={false} language="ts">
 |import {Component} from "@angular/core";
 |import {ICellRendererAngularComp} from 'ag-grid-angular';
 |import {ICellRendererParams} from "ag-grid-community";
@@ -9,10 +8,10 @@
 |@Component({
 |    selector: 'total-value-component',
 |    template: `
-|          <span>
-|              <span>{{cellValue}}</span>&nbsp;
-|              <button (click)="buttonClicked()">Push For Total</button>
-|          </span>
+|          &lt;span>
+|              &lt;span>{{cellValue}}&lt;/span>&nbsp;
+|              &lt;button (click)="buttonClicked()">Push For Total&lt;/button>
+|          &lt;/span>
 |    `
 |})
 |export class TotalValueRenderer implements ICellRendererAngularComp {
@@ -38,4 +37,5 @@
 |        return params.valueFormatted ? params.valueFormatted : params.value;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

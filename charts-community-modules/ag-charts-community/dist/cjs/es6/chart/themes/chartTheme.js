@@ -1,18 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChartTheme = void 0;
+exports.ChartTheme = exports.DEFAULT_FONT_FAMILY = exports.OVERRIDE_SERIES_LABEL_DEFAULTS = exports.EXTENDS_SERIES_DEFAULTS = void 0;
+const json_1 = require("../../util/json");
 const object_1 = require("../../util/object");
-const chartTypes_1 = require("../chartTypes");
+const chartAxesTypes_1 = require("../chartAxesTypes");
+const chartTypes_1 = require("../factory/chartTypes");
+const seriesTypes_1 = require("../factory/seriesTypes");
 const palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
     strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
+exports.EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
+exports.OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
+exports.DEFAULT_FONT_FAMILY = Symbol('default-font');
 const BOLD = 'bold';
 const INSIDE = 'inside';
-const RIGHT = 'right';
+const BOTTOM = 'bottom';
 class ChartTheme {
     constructor(options) {
-        options = object_1.deepMerge({}, options || {});
+        options = object_1.deepMerge({}, options !== null && options !== void 0 ? options : {});
         const { overrides = null, palette = null } = options;
         const defaults = this.createChartConfigPerChartType(this.getDefaults());
         if (overrides) {
@@ -132,7 +138,7 @@ class ChartTheme {
         };
     }
     static getBarSeriesDefaults() {
-        return Object.assign(Object.assign({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
+        return Object.assign(Object.assign({}, this.getSeriesDefaults()), { fillOpacity: 1, strokeOpacity: 1, normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -177,6 +183,9 @@ class ChartTheme {
             formatter: undefined,
         };
     }
+    static getCaptionWrappingDefaults() {
+        return 'hyphenate';
+    }
     static getChartDefaults() {
         return {
             background: {
@@ -197,6 +206,7 @@ class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -206,6 +216,7 @@ class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -216,10 +227,10 @@ class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
-                enabled: true,
-                position: RIGHT,
+                position: BOTTOM,
                 spacing: 20,
                 listeners: {},
                 item: {
@@ -274,46 +285,89 @@ class ChartTheme {
             hierarchy: chartTypes_1.CHART_TYPES.hierarchyTypes,
             groupedCategory: [],
         };
-        Object.entries(typeToAliases).forEach(([type, aliases]) => {
-            aliases.forEach((alias) => {
+        Object.entries(typeToAliases).forEach(([nextType, aliases]) => {
+            const type = nextType;
+            const typeDefaults = this.templateTheme(chartTypes_1.getChartDefaults(type));
+            aliases.forEach((next) => {
+                const alias = next;
                 if (!config[alias]) {
                     config[alias] = object_1.deepMerge({}, config[type]);
+                    object_1.deepMerge(config[alias], typeDefaults);
                 }
             });
         });
         return config;
     }
-    /**
-     * Meant to be overridden in subclasses. For example:
-     * ```
-     *     getDefaults() {
-     *         const subclassDefaults = { ... };
-     *         return this.mergeWithParentDefaults(subclassDefaults);
-     *     }
-     * ```
-     */
     getDefaults() {
         const defaults = object_1.deepMerge({}, ChartTheme.defaults);
-        const getOverridesByType = (seriesTypes) => {
-            const result = {};
+        const getOverridesByType = (chartType, seriesTypes) => {
+            const result = this.templateTheme(chartTypes_1.getChartDefaults(chartType));
             result.series = seriesTypes.reduce((obj, seriesType) => {
-                if (Object.prototype.hasOwnProperty.call(ChartTheme.seriesThemeOverrides, seriesType)) {
-                    obj[seriesType] = ChartTheme.seriesThemeOverrides[seriesType]({
-                        seriesDefaults: ChartTheme.getSeriesDefaults(),
-                        defaultFontFamily: ChartTheme.fontFamily,
-                    });
+                const template = seriesTypes_1.getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateTheme(template);
                 }
                 return obj;
             }, {});
+            if (chartType === 'cartesian') {
+                result.axes = chartAxesTypes_1.CHART_AXES_TYPES.axesTypes.reduce((obj, axisType) => {
+                    const template = chartAxesTypes_1.getAxisThemeTemplate(axisType);
+                    if (template) {
+                        obj[axisType] = this.templateTheme(template);
+                    }
+                    return obj;
+                }, {});
+            }
             return result;
         };
         const extension = {
-            cartesian: getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes),
-            groupedCategory: getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes),
-            polar: getOverridesByType(chartTypes_1.CHART_TYPES.polarTypes),
-            hierarchy: getOverridesByType(chartTypes_1.CHART_TYPES.hierarchyTypes),
+            cartesian: getOverridesByType('cartesian', chartTypes_1.CHART_TYPES.cartesianTypes),
+            groupedCategory: getOverridesByType('cartesian', chartTypes_1.CHART_TYPES.cartesianTypes),
+            polar: getOverridesByType('polar', chartTypes_1.CHART_TYPES.polarTypes),
+            hierarchy: getOverridesByType('hierarchy', chartTypes_1.CHART_TYPES.hierarchyTypes),
         };
         return object_1.deepMerge(defaults, extension);
+    }
+    templateTheme(themeTemplate) {
+        const themeInstance = json_1.jsonMerge([themeTemplate]);
+        const { extensions, properties } = this.getTemplateParameters();
+        json_1.jsonWalk(themeInstance, (_, node) => {
+            if (node['__extends__']) {
+                const key = node['__extends__'];
+                const source = extensions.get(key);
+                if (source == null) {
+                    throw new Error('AG Charts - no template variable provided for: ' + key);
+                }
+                Object.assign(node, source, node);
+                delete node['__extends__'];
+            }
+            if (node['__overrides__']) {
+                const key = node['__overrides__'];
+                const source = extensions.get(key);
+                if (source == null) {
+                    throw new Error('AG Charts - no template variable provided for: ' + key);
+                }
+                Object.assign(node, source);
+                delete node['__overrides__'];
+            }
+            for (const [name, value] of Object.entries(node)) {
+                if (properties.has(value)) {
+                    node[name] = properties.get(value);
+                }
+            }
+        }, {});
+        return themeInstance;
+    }
+    getTemplateParameters() {
+        const extensions = new Map();
+        extensions.set(exports.EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
+        extensions.set(exports.OVERRIDE_SERIES_LABEL_DEFAULTS, {});
+        const properties = new Map();
+        properties.set(exports.DEFAULT_FONT_FAMILY, ChartTheme.fontFamily);
+        return {
+            extensions,
+            properties,
+        };
     }
     mergeWithParentDefaults(parentDefaults, defaults) {
         return object_1.deepMerge(parentDefaults, defaults);
@@ -321,7 +375,6 @@ class ChartTheme {
 }
 exports.ChartTheme = ChartTheme;
 ChartTheme.fontFamily = 'Verdana, sans-serif';
-ChartTheme.seriesThemeOverrides = {};
 ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getChartDefaults()), { axes: {
         number: Object.assign({}, ChartTheme.getAxisDefaults()),
         log: Object.assign(Object.assign({}, ChartTheme.getAxisDefaults()), { base: 10 }),
@@ -329,9 +382,9 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
         groupedCategory: Object.assign({}, ChartTheme.getAxisDefaults()),
         time: Object.assign({}, ChartTheme.getAxisDefaults()),
     }, series: {
-        column: Object.assign(Object.assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
-        bar: Object.assign(Object.assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-        line: Object.assign(Object.assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
+        column: Object.assign({}, ChartTheme.getBarSeriesDefaults()),
+        bar: Object.assign({}, ChartTheme.getBarSeriesDefaults()),
+        line: Object.assign(Object.assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -340,7 +393,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 color: 'rgb(70, 70, 70)',
                 formatter: undefined,
             } }),
-        scatter: Object.assign(Object.assign({}, ChartTheme.getScatterSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', marker: Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+        scatter: Object.assign(Object.assign({}, ChartTheme.getScatterSeriesDefaults()), { sizeName: 'Size', labelName: 'Label', marker: Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -348,7 +401,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 fontFamily: ChartTheme.fontFamily,
                 color: 'rgb(70, 70, 70)',
             } }),
-        area: Object.assign(Object.assign({}, ChartTheme.getAreaSeriesDefaults()), { xKey: '', xName: '', normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
+        area: Object.assign(Object.assign({}, ChartTheme.getAreaSeriesDefaults()), { normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
                 enabled: false,
                 color: 'rgba(0, 0, 0, 0.5)',
                 xOffset: 3,
@@ -363,7 +416,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 color: 'rgb(70, 70, 70)',
                 formatter: undefined,
             } }),
-        histogram: Object.assign(Object.assign({}, ChartTheme.getSeriesDefaults()), { xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
+        histogram: Object.assign(Object.assign({}, ChartTheme.getSeriesDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -378,44 +431,17 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 yOffset: 0,
                 blur: 5,
             } }),
-    }, navigator: {
-        enabled: false,
-        height: 30,
-        mask: {
-            fill: '#999999',
-            stroke: '#999999',
-            strokeWidth: 1,
-            fillOpacity: 0.2,
-        },
-        minHandle: {
-            fill: '#f2f2f2',
-            stroke: '#999999',
-            strokeWidth: 1,
-            width: 8,
-            height: 16,
-            gripLineGap: 2,
-            gripLineLength: 8,
-        },
-        maxHandle: {
-            fill: '#f2f2f2',
-            stroke: '#999999',
-            strokeWidth: 1,
-            width: 8,
-            height: 16,
-            gripLineGap: 2,
-            gripLineLength: 8,
-        },
     } });
 ChartTheme.polarDefaults = Object.assign(Object.assign({}, ChartTheme.getChartDefaults()), { series: {
         pie: Object.assign(Object.assign({}, ChartTheme.getSeriesDefaults()), { title: {
                 enabled: true,
-                text: '',
                 fontStyle: undefined,
                 fontWeight: 'bold',
                 fontSize: 14,
                 fontFamily: ChartTheme.fontFamily,
                 color: 'rgb(70, 70, 70)',
-            }, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, calloutLabelKey: undefined, calloutLabelName: undefined, sectorLabelKey: undefined, sectorLabelName: undefined, calloutLabel: {
+                spacing: 0,
+            }, radiusKey: undefined, radiusName: undefined, calloutLabelKey: undefined, calloutLabelName: undefined, sectorLabelKey: undefined, sectorLabelName: undefined, calloutLabel: {
                 enabled: true,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -464,14 +490,14 @@ ChartTheme.hierarchyDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 xOffset: 1.5,
                 yOffset: 1.5,
                 blur: 5,
-            }, highlightGroups: true, nodePadding: 2, title: {
+            }, highlightGroups: true, nodePadding: 2, nodeGap: 0, title: {
                 enabled: true,
                 color: 'white',
                 fontStyle: undefined,
                 fontWeight: 'bold',
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                padding: 15,
+                padding: 2,
             }, subtitle: {
                 enabled: true,
                 color: 'white',
@@ -479,7 +505,7 @@ ChartTheme.hierarchyDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 fontWeight: undefined,
                 fontSize: 9,
                 fontFamily: 'Verdana, sans-serif',
-                padding: 13,
+                padding: 2,
             }, labels: {
                 large: {
                     enabled: true,
@@ -488,6 +514,7 @@ ChartTheme.hierarchyDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                     fontSize: 18,
                     fontFamily: 'Verdana, sans-serif',
                     color: 'white',
+                    wrapping: 'on-space',
                 },
                 medium: {
                     enabled: true,
@@ -496,6 +523,7 @@ ChartTheme.hierarchyDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                     fontSize: 14,
                     fontFamily: 'Verdana, sans-serif',
                     color: 'white',
+                    wrapping: 'on-space',
                 },
                 small: {
                     enabled: true,
@@ -504,6 +532,7 @@ ChartTheme.hierarchyDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                     fontSize: 10,
                     fontFamily: 'Verdana, sans-serif',
                     color: 'white',
+                    wrapping: 'on-space',
                 },
                 value: {
                     style: {

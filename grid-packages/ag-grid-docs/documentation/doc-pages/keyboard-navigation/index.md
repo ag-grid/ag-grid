@@ -12,8 +12,9 @@ If a cell on the first grid row is focused and you press <kbd>↑</kbd>, the foc
 
 Use <kbd>Page Up</kbd> and <kbd>Page Down</kbd> to move the scroll up and down by one page. Use <kbd>Home</kbd> and <kbd>End</kbd> to go to the first and last rows.
 
-[[note]]
-| When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
+<note disableMarkdown='true'>
+When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
+</note>
 
 ## Groups
 
@@ -103,11 +104,12 @@ Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is 
 
 You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for <kbd>Tab</kbd> to happen. This is useful for tabbing outside of the grid from the last cell or <kbd>Shift</kbd> tabbing out of the grid from the first cell.
 
-[[note]]
-| The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
-| `navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers.
-| If you need to navigate from one container to another, pass `rowIndex: -1` in `CellPosition`
-| or `headerRowIndex: -1` in `HeaderPosition`.
+<note>
+The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
+`navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers.
+If you need to navigate from one container to another, pass `rowIndex: -1` in `CellPosition`
+or `headerRowIndex: -1` in `HeaderPosition`.
+</note>
 
 ## Example Custom Cell Navigation
 
@@ -174,19 +176,20 @@ In the following example there is an input box provided to test tabbing into the
 
 ## Keyboard Events
 
-It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyPress` (gets called when a DOM `keyPress` event fires on a cell) and `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).
+It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).
 
-[[note]]
-| These keyboard events are monitored by the grid panel, so they will not be fired
-| when the `keydown` or `keypress` happen inside of a popup editor, as popup elements are
-| rendered in a different DOM tree.
+<note>
+These keyboard events are monitored by the grid panel, so they will not be fired
+when the `keydown` happens inside of a popup editor, as popup elements are
+rendered in a different DOM tree.
+</note>
 
 The grid events wrap the DOM events and provides additional information such as row and column details.
 
 The example below shows processing grid cell keyboard events. The following can be noted:
 
-- Each time a `cellKeyPress` or `cellKeyDown` is fired, the details of the event are logged to the console.
-- When the user hits <kbd>S</kbd> on a row, the row selection is toggled. This is achieved through the `cellKeyPress` listener.
+- Each time a `cellKeyDown` is fired, the details of the event are logged to the console.
+- When the user hits <kbd>S</kbd> on a row, the row selection is toggled.
 
 <grid-example title='Keyboard Events' name='keyboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 

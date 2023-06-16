@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import * as AriaUtils from './aria';
@@ -7,6 +7,7 @@ export declare const _: {
     capitalise(str: string): string;
     escapeString(toEscape?: string | null | undefined, skipEscapingHtmlChars?: boolean | undefined): string | null;
     camelCaseToHumanText(camelCase: string | undefined): string | null;
+    camelCaseToHyphenated(camelCase: string): string;
     convertToSet<T>(list: T[]): Set<T>;
     sortRowNodesByOrder(rowNodes: import("../main").RowNode<any>[], rowNodeOrder: {
         [id: string]: number;
@@ -40,17 +41,17 @@ export declare const _: {
     sum(values: number[] | null): number | null;
     zeroOrGreater(value: any, defaultValue: number): number;
     oneOrGreater(value: any, defaultValue?: number | undefined): number | undefined;
-    areEventsNear(e1: Touch | MouseEvent, e2: Touch | MouseEvent, pixelCount: number): boolean;
+    areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     convertToMap<K_4, V>(arr: [K_4, V][]): Map<K_4, V>;
     mapById<V_1>(arr: V_1[], callback: (obj: V_1) => string): Map<string, V_1>;
     keys<T_10>(map: Map<T_10, any>): T_10[];
     isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
-    isUserSuppressingKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, rowNode: import("../main").IRowNode<any>, column: import("../main").Column, editing: boolean): boolean;
-    isUserSuppressingHeaderKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: import("../main").Column | import("../main").ColumnGroup): boolean;
+    isUserSuppressingKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, rowNode: import("../main").IRowNode<any>, column: import("../main").Column<any>, editing: boolean): boolean;
+    isUserSuppressingHeaderKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: import("../main").Column<any> | import("../main").ColumnGroup): boolean;
     normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string;
     isDeleteKey(key: string, alwaysReturnFalseOnBackspace?: boolean): boolean;
-    createIcon(iconName: string, gridOptionsService: import("../gridOptionsService").GridOptionsService, column: import("../main").Column | null): Element;
-    createIconNoSpan(iconName: string, gridOptionsService: import("../gridOptionsService").GridOptionsService, column?: import("../main").Column | null | undefined, forceCreate?: boolean | undefined): Element | undefined;
+    createIcon(iconName: string, gridOptionsService: import("../gridOptionsService").GridOptionsService, column: import("../main").Column<any> | null): Element;
+    createIconNoSpan(iconName: string, gridOptionsService: import("../gridOptionsService").GridOptionsService, column?: import("../main").Column<any> | null | undefined, forceCreate?: boolean | undefined): Element | undefined;
     iconNameClassMap: {
         [key: string]: string;
     };
@@ -194,7 +195,7 @@ export declare const _: {
     toStrings<T_31>(array: T_31[]): (string | null)[] | null;
     forEachReverse<T_32>(list: T_32[], action: (value: T_32, index: number) => void): void;
     setAriaRole(element: Element, role?: string | null | undefined): void;
-    getAriaSortState(sortDirection: "desc" | "asc" | "mixed" | null): AriaUtils.ColumnSortState;
+    getAriaSortState(sortDirection: import("../main").SortDirection | "mixed"): AriaUtils.ColumnSortState;
     getAriaLevel(element: Element): number;
     getAriaPosInSet(element: Element): number;
     getAriaDescribedBy(element: Element): string;
@@ -220,4 +221,6 @@ export declare const _: {
     removeAriaSort(element: Element): void;
     setAriaSelected(element: Element, selected?: boolean | undefined): void;
     setAriaChecked(element: Element, checked?: boolean | undefined): void;
+    setAriaControls(controllerElement: Element, controlledElement: Element): void;
+    getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string, state?: boolean | undefined): string;
 };

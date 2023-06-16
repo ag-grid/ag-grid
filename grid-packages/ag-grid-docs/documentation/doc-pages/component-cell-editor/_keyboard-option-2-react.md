@@ -1,6 +1,5 @@
-[[only-react]]
-|
-|```jsx
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
@@ -23,17 +22,18 @@
 |    ];
 |
 |    return (
-|        <div
+|        &lt;div
 |            style={{
 |                height: '100%',
 |                width: '100%'
 |            }}
 |            className="ag-theme-alpine test-grid">
-|            <AgGridReact ...rest of the definition...>
+|            &lt;AgGridReact ...rest of the definition...>
 |                columnDefs={columnDefs}
 |                />
-|            </AgGridReact>
-|        </div>
+|            &lt;/AgGridReact>
+|        &lt;/div>
 |    );
 |};
-||```
+</snippet>
+</framework-specific-section>

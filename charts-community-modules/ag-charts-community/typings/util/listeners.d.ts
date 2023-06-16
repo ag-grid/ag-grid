@@ -1,4 +1,4 @@
-export declare type Listener<H extends Function> = {
+declare type Listener<H extends Function> = {
     symbol?: Symbol;
     handler: H;
 };
@@ -12,3 +12,5 @@ export declare class Listeners<Types extends string, Handler extends (...any: an
     reduceDispatch(type: Types, reduceFn: (output: ReturnType<Handler>, ...params: Parameters<Handler>) => Parameters<Handler>, ...params: Parameters<Handler>): ReturnType<Handler> | undefined;
     removeListener(listenerSymbol: Symbol): void;
 }
+export {};
+//# sourceMappingURL=listeners.d.ts.map

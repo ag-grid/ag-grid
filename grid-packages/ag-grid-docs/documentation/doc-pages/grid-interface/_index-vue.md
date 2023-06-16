@@ -1,4 +1,4 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |
 | ## Properties, Events, Callbacks and APIs
 |
@@ -10,8 +10,11 @@
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
 |
-| ```jsx
-| <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+| &lt;ag-grid-vue
 |    // these are attributes, not bound, give explicit values here
 |    rowSelection="multiple"
 |
@@ -30,9 +33,11 @@
 |    // these are registering event callbacks
 |    @model-updated="onModelUpdated"
 |    @cell-clicked="onCellClicked">
-| </ag-grid-vue>
-| ```
-|
+| &lt;/ag-grid-vue>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Access the Grid & Column API
 |
 | When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
@@ -40,8 +45,11 @@
 | from the params. You can then call these apis at a later stage to interact with the
 | grid (on top of the interaction that can be done by setting and changing the properties).
 |
-| ```jsx
-| <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+| &lt;ag-grid-vue
 |     // provide gridReady callback to the grid
 |     @grid-ready="onGridReady"
 |     // ...
@@ -52,14 +60,20 @@
 |     this.api = params.api;
 |     this.columnApi = params.columnApi;
 | }
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | The APIs are then accessible through the component:
-|
-| ```html
-| <button @click="this.api.deselectAll()">Clear Selection</button>
-| ```
-|
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="html">
+| &lt;button @click="this.api.deselectAll()">Clear Selection&lt;/button>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Grid Options
 |
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
@@ -67,7 +81,10 @@
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 | const gridOptions = {
 |     // PROPERTIES
 |     // Objects like myRowData and myColDefs would be created in your application
@@ -85,19 +102,21 @@
 |     // CALLBACKS
 |     getRowHeight: (params) => 25
 | }
-| ```
-|
-| ```jsx
-| <ag-grid-vue
+| &lt;ag-grid-vue
 |     :gridOptions="gridOptions"
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 | // refresh the grid
 | this.gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
 | this.gridOptions.columnApi.sizeColumnsToFit();
-| ```
+</snippet>
+</framework-specific-section>

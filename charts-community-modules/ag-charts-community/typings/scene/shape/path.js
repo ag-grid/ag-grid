@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -24,7 +26,7 @@ var shape_1 = require("./shape");
 var path2D_1 = require("../path2D");
 var node_1 = require("../node");
 function ScenePathChangeDetection(opts) {
-    var _a = opts || {}, _b = _a.redraw, redraw = _b === void 0 ? node_1.RedrawType.MAJOR : _b, changeCb = _a.changeCb, convertor = _a.convertor;
+    var _a = opts !== null && opts !== void 0 ? opts : {}, _b = _a.redraw, redraw = _b === void 0 ? node_1.RedrawType.MAJOR : _b, changeCb = _a.changeCb, convertor = _a.convertor;
     return node_1.SceneChangeDetection({ redraw: redraw, type: 'path', convertor: convertor, changeCb: changeCb });
 }
 exports.ScenePathChangeDetection = ScenePathChangeDetection;

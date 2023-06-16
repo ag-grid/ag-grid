@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -127,9 +129,14 @@ var AggregationComp = /** @class */ (function (_super) {
                         if (core_1._.missing(value) || value === '') {
                             return;
                         }
+                        count++;
                         // see if value is wrapped, can happen when doing count() or avg() functions
                         if (typeof value === 'object' && 'value' in value) {
                             value = value.value;
+                            // ensure that the new value wouldn't have been skipped by the previous check
+                            if (value === '') {
+                                return;
+                            }
                         }
                         if (typeof value === 'string') {
                             value = Number(value);
@@ -144,7 +151,6 @@ var AggregationComp = /** @class */ (function (_super) {
                             }
                             numberCount++;
                         }
-                        count++;
                     });
                     currentRow = _this.cellNavigationService.getRowBelow(currentRow);
                 }

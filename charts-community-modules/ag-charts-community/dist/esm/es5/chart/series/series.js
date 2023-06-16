@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,6 +29,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -55,19 +68,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Group } from '../../scene/group';
 import { Observable } from '../../util/observable';
 import { createId } from '../../util/id';
-import { checkDatum, isNumber } from '../../util/value';
-import { createDeprecationWarning } from '../../util/deprecation';
+import { checkDatum } from '../../util/value';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, INTERACTION_RANGE, STRING, Validate, } from '../../util/validation';
 import { Layers } from '../layers';
 import { ChartAxisDirection } from '../chartAxisDirection';
+import { fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
 export var SeriesNodePickMode;
 (function (SeriesNodePickMode) {
@@ -80,23 +95,35 @@ export var SeriesNodePickMode;
     /** Pick matches based upon distance to ideal position */
     SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
 })(SeriesNodePickMode || (SeriesNodePickMode = {}));
-var warnDeprecated = createDeprecationWarning();
-var warnSeriesDeprecated = function () { return warnDeprecated('series', 'Use seriesId to get the series ID'); };
 export function keyProperty(propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign(__assign({}, opts), { property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } });
+    var result = __assign({ property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } }, opts);
     return result;
 }
 export function valueProperty(propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign(__assign({}, opts), { property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } });
+    var result = __assign({ property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } }, opts);
     return result;
 }
-export function sumProperties(props) {
-    var result = {
-        properties: props,
-        type: 'sum',
-    };
+export function rangedValueProperty(propName, opts) {
+    if (opts === void 0) { opts = {}; }
+    var _a = opts.min, min = _a === void 0 ? -Infinity : _a, _b = opts.max, max = _b === void 0 ? Infinity : _b, defOpts = __rest(opts, ["min", "max"]);
+    return __assign({ type: 'value', property: propName, valueType: 'range', validation: function (v) { return checkDatum(v, true) != null; }, processor: function () { return function (datum) {
+            if (typeof datum !== 'number')
+                return datum;
+            if (isNaN(datum))
+                return datum;
+            return Math.min(Math.max(datum, min), max);
+        }; } }, defOpts);
+}
+export function accumulativeValueProperty(propName, continuous, opts) {
+    if (opts === void 0) { opts = {}; }
+    var result = __assign(__assign({}, valueProperty(propName, continuous, opts)), { processor: accumulatedValue() });
+    return result;
+}
+export function trailingAccumulatedValueProperty(propName, continuous, opts) {
+    if (opts === void 0) { opts = {}; }
+    var result = __assign(__assign({}, valueProperty(propName, continuous, opts)), { processor: trailingAccumulatedValue() });
     return result;
 }
 var SeriesNodeBaseClickEvent = /** @class */ (function () {
@@ -105,17 +132,7 @@ var SeriesNodeBaseClickEvent = /** @class */ (function () {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
     }
-    Object.defineProperty(SeriesNodeBaseClickEvent.prototype, "series", {
-        /** @deprecated */
-        get: function () {
-            warnSeriesDeprecated();
-            return this._series;
-        },
-        enumerable: false,
-        configurable: true
-    });
     return SeriesNodeBaseClickEvent;
 }());
 export { SeriesNodeBaseClickEvent };
@@ -158,6 +175,7 @@ var SeriesItemHighlightStyle = /** @class */ (function () {
     ], SeriesItemHighlightStyle.prototype, "strokeWidth", void 0);
     return SeriesItemHighlightStyle;
 }());
+export { SeriesItemHighlightStyle };
 var SeriesHighlightStyle = /** @class */ (function () {
     function SeriesHighlightStyle() {
         this.strokeWidth = undefined;
@@ -196,12 +214,16 @@ export { HighlightStyle };
 var SeriesTooltip = /** @class */ (function () {
     function SeriesTooltip() {
         this.enabled = true;
+        this.showArrow = undefined;
         this.interaction = new SeriesTooltipInteraction();
         this.position = new TooltipPosition();
     }
     __decorate([
         Validate(BOOLEAN)
     ], SeriesTooltip.prototype, "enabled", void 0);
+    __decorate([
+        Validate(OPT_BOOLEAN)
+    ], SeriesTooltip.prototype, "showArrow", void 0);
     return SeriesTooltip;
 }());
 export { SeriesTooltip };
@@ -217,8 +239,7 @@ var SeriesTooltipInteraction = /** @class */ (function () {
 export { SeriesTooltipInteraction };
 var Series = /** @class */ (function (_super) {
     __extends(Series, _super);
-    function Series(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.useSeriesGroupLayer, useSeriesGroupLayer = _c === void 0 ? true : _c, _d = _b.useLabelLayer, useLabelLayer = _d === void 0 ? false : _d, _e = _b.pickModes, pickModes = _e === void 0 ? [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] : _e, _f = _b.directionKeys, directionKeys = _f === void 0 ? {} : _f;
+    function Series(opts) {
         var _this = _super.call(this) || this;
         _this.id = createId(_this);
         // The group node that contains all the nodes used to render this series.
@@ -233,8 +254,11 @@ var Series = /** @class */ (function (_super) {
         _this.nodeClickRange = 'exact';
         _this._declarationOrder = -1;
         _this.highlightStyle = new HighlightStyle();
+        _this.ctx = opts.moduleCtx;
+        var _a = opts.useSeriesGroupLayer, useSeriesGroupLayer = _a === void 0 ? true : _a, _b = opts.useLabelLayer, useLabelLayer = _b === void 0 ? false : _b, _c = opts.pickModes, pickModes = _c === void 0 ? [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] : _c, _d = opts.directionKeys, directionKeys = _d === void 0 ? {} : _d, _e = opts.directionNames, directionNames = _e === void 0 ? {} : _e;
         var rootGroup = _this.rootGroup;
         _this.directionKeys = directionKeys;
+        _this.directionNames = directionNames;
         _this.contentGroup = rootGroup.appendChild(new Group({
             name: _this.id + "-content",
             layer: useSeriesGroupLayer,
@@ -263,7 +287,8 @@ var Series = /** @class */ (function (_super) {
     }
     Object.defineProperty(Series.prototype, "type", {
         get: function () {
-            return this.constructor.type || '';
+            var _a;
+            return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
         },
         enumerable: false,
         configurable: true
@@ -297,24 +322,16 @@ var Series = /** @class */ (function (_super) {
     Series.prototype.getBandScalePadding = function () {
         return { inner: 1, outer: 0 };
     };
+    Series.prototype.addChartEventListeners = function () {
+        return;
+    };
     Series.prototype.destroy = function () {
         // Override point for sub-classes.
     };
-    Object.defineProperty(Series.prototype, "grouped", {
-        set: function (g) {
-            if (g === true) {
-                throw new Error("AG Charts - grouped: true is unsupported for series of type: " + this.type);
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
-    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-    Series.prototype.getKeys = function (direction) {
+    Series.prototype.getDirectionValues = function (direction, properties) {
         var _this = this;
-        var directionKeys = this.directionKeys;
         var resolvedDirection = this.resolveKeyDirection(direction);
-        var keys = directionKeys && directionKeys[resolvedDirection];
+        var keys = properties === null || properties === void 0 ? void 0 : properties[resolvedDirection];
         var values = [];
         var flatten = function () {
             var e_1, _a;
@@ -338,7 +355,10 @@ var Series = /** @class */ (function (_super) {
         };
         var addValue = function (value) {
             if (Array.isArray(value)) {
-                flatten.apply(void 0, __spread(value));
+                flatten.apply(void 0, __spreadArray([], __read(value)));
+            }
+            else if (typeof value === 'object') {
+                flatten(Object.values(value));
             }
             else {
                 values.push(value);
@@ -348,11 +368,15 @@ var Series = /** @class */ (function (_super) {
             return values;
         keys.forEach(function (key) {
             var value = _this[key];
-            if (!value)
-                return;
             addValue(value);
         });
         return values;
+    };
+    Series.prototype.getKeys = function (direction) {
+        return this.getDirectionValues(direction, this.directionKeys);
+    };
+    Series.prototype.getNames = function (direction) {
+        return this.getDirectionValues(direction, this.directionNames);
     };
     Series.prototype.resolveKeyDirection = function (direction) {
         return direction;
@@ -493,43 +517,21 @@ var Series = /** @class */ (function (_super) {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     };
-    Series.prototype.toggleOtherSeriesItems = function (_seriesToggled, _datumToggled, _enabled, _suggestedEnabled) {
-        return;
-    };
     Series.prototype.isEnabled = function () {
         return this.visible;
     };
     Series.prototype.fixNumericExtent = function (extent, axis) {
         var _a;
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        var fixedExtent = fixNumericExtent(extent);
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
-        var _b = __read(extent, 2), min = _b[0], max = _b[1];
-        min = +min;
-        max = +max;
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
+        var _b = __read(fixedExtent, 2), min = _b[0], max = _b[1];
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
             var padding = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : 1;
             min -= padding;
             max += padding;
-        }
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
         }
         return [min, max];
     };

@@ -15,9 +15,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var excelUtils_1 = require("../../assets/excelUtils");
@@ -48,7 +49,7 @@ var addEmptyCells = function (cells, rowIdx) {
                 });
             }
             if (mergedCells.length) {
-                cells.splice.apply(cells, __spread([mergeMap[i].pos + 1, 0], mergedCells));
+                cells.splice.apply(cells, __spreadArray([mergeMap[i].pos + 1, 0], __read(mergedCells)));
             }
         }
     }
@@ -64,7 +65,7 @@ var rowFactory = {
             properties: {
                 rawMap: {
                     r: idx + 1,
-                    collapsed: collapsed,
+                    collapsed: collapsed ? '1' : '0',
                     hidden: hidden ? '1' : '0',
                     ht: height,
                     customHeight: height != null ? '1' : '0',

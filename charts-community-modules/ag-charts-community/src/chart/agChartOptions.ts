@@ -45,6 +45,8 @@ export type Ratio = number;
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
+export type TextWrap = 'never' | 'always' | 'hyphenate' | 'on-space';
+
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.
  * - `'exact'` triggers when the event occurs directly over a point.
@@ -80,7 +82,7 @@ export interface AgChartThemeOverrides {
     /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
     cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
     /** Specifies defaults for column charts. */
-    column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
+    column?: AgCartesianThemeOptions<AgColumnSeriesOptions>;
     /** Specifies defaults for bar charts. */
     bar?: AgCartesianThemeOptions<AgBarSeriesOptions>;
     /** Specifies defaults for line charts. */
@@ -124,6 +126,8 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
     axes?: AgCartesianAxesTheme;
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -131,11 +135,15 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
 export interface AgPolarThemeOptions<S = AgPolarSeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
 export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
@@ -183,7 +191,7 @@ export interface AgCartesianSeriesTheme {
     scatter?: AgScatterSeriesOptions;
     area?: AgAreaSeriesOptions;
     bar?: AgBarSeriesOptions;
-    column?: AgBarSeriesOptions;
+    column?: AgColumnSeriesOptions;
     histogram?: AgHistogramSeriesOptions;
 }
 
@@ -278,9 +286,37 @@ export interface AgChartCaptionOptions {
     color?: CssColor;
     /** Spacing added to help position the text. */
     spacing?: number;
+    /** Used to constrain the width of the title. */
+    maxWidth?: PixelSize;
+    /** Used to constrain the height of the title. */
+    maxHeight?: PixelSize;
+    /**
+     * Text wrapping strategy for long text.
+     * `'always'` will always wrap text to fit within the `maxWidth`.
+     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.
+     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.
+     * `'never'` disables text wrapping.
+     */
+    wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
+
+export interface AgAxisBoundSeries {
+    /** Key used by the series for values on the related axis. */
+    key: string;
+    /** Optional name used by the series for values on the related axis. */
+    name?: string;
+}
+
+export interface AgAxisCaptionFormatterParams {
+    /** Default value to be used for the axis title (as specified in chart options or theme). */
+    defaultValue?: string;
+    /** Direction of the axis the title belongs to. */
+    direction: 'x' | 'y';
+    /** Metadata about series bound to the axis the title belongs to. */
+    boundSeries: AgAxisBoundSeries[];
+}
 
 export interface AgAxisCaptionOptions {
     /** Whether or not the title should be shown. */
@@ -297,6 +333,8 @@ export interface AgAxisCaptionOptions {
     fontFamily?: FontFamily;
     /** The colour to use for the title. */
     color?: CssColor;
+    /** Formatter to allow dynamic axis title calculation. */
+    formatter?: (params: AgAxisCaptionFormatterParams) => string;
 }
 
 export interface AgNavigatorMaskOptions {
@@ -361,8 +399,6 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelFormatterParams {
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */
-    id: string;
     seriesId: string;
     itemId: any;
     value: string;
@@ -421,9 +457,7 @@ export interface AgChartLegendListeners {
     legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void;
 }
 
-export interface AgChartLegendOptions {
-    /** Whether or not to show the legend. */
-    enabled?: boolean;
+export interface AgChartBaseLegendOptions {
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
     /** How the legend items should be arranged. */
@@ -441,6 +475,21 @@ export interface AgChartLegendOptions {
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
     pagination?: AgChartLegendPaginationOptions;
+}
+
+export interface AgCartesianChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgHierarchyChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgPolarChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. The legend is shown by default. */
+    enabled?: boolean;
 }
 
 export interface AgChartLegendPaginationOptions {
@@ -494,13 +543,15 @@ export interface AgPaginationLabelOptions {
 export interface AgChartTooltipOptions {
     /** Set to false to disable tooltips for all series in the chart. */
     enabled?: boolean;
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
+    showArrow?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
     /** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
@@ -510,7 +561,7 @@ export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
-    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    /** The type of positioning for the tooltip. By default, the tooltip follows the mouse pointer for series without markers, and it is anchored to the highlighted marker node for series with markers. */
     type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
@@ -533,8 +584,6 @@ interface AgChartEvent<T extends string> {
 export interface AgNodeBaseClickEvent<T extends string> extends AgChartEvent<T> {
     /** Event type. */
     type: T;
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
-    series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
     /** Datum from the chart or series data array. */
@@ -589,11 +638,11 @@ export interface AgBaseChartOptions {
     data?: any[];
     /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */
     container?: HTMLElement | null;
-    /** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
+    /** The width of the chart in pixels. */
     width?: PixelSize;
-    /** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
+    /** The height of the chart in pixels. */
     height?: PixelSize;
-    /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
+    /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If `width` or `height` are specified, auto-sizing will be active for the other unspecified dimension.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
@@ -609,8 +658,6 @@ export interface AgBaseChartOptions {
     footnote?: AgChartFooterOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
-    /** Configuration for the chart legend. */
-    legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
     /** Configuration for the chart highlighting. */
@@ -637,6 +684,8 @@ export interface AgAxisLineOptions {
 }
 
 export interface AgAxisBaseTickOptions {
+    /** Set to false to hide the axis tick lines. */
+    enabled?: boolean;
     /** The width in pixels of the axis ticks (and corresponding grid line). */
     width?: PixelSize;
     /** The length in pixels of the axis ticks. */
@@ -647,17 +696,15 @@ export interface AgAxisBaseTickOptions {
      * The values in this array must be compatible with the axis type.
      */
     values?: any[];
-    /** Minimum gap in pixels between tick lines.
-     */
+    /** Minimum gap in pixels between tick lines. */
     minSpacing?: number;
-    /** Maximum gap in pixels between tick lines.
-     */
-    maxSpacing?: number;
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
 
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
+    /** Maximum gap in pixels between tick lines. */
+    maxSpacing?: number;
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
      * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.
@@ -669,6 +716,8 @@ export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
 }
 
 export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
+    /** Maximum gap in pixels between tick lines. */
+    maxSpacing?: number;
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
      * The following intervals from the `agCharts.time` namespace can be used:
@@ -687,6 +736,8 @@ export interface AgAxisLabelFormatterParams {
 }
 
 export interface AgAxisLabelOptions {
+    /** Set to false to hide the axis labels. */
+    enabled?: boolean;
     /** The font style to use for the labels. */
     fontStyle?: FontStyle;
     /** The font weight to use for the labels. */
@@ -907,8 +958,6 @@ export interface AgSeriesHighlightStyle {
 export interface AgSeriesNodeClickParams<DatumType> {
     /** Event type. */
     type: 'nodeClick';
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
-    series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
     /** Datum from the series data array. */
@@ -1088,7 +1137,9 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
+    showArrow?: boolean;
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */
     interaction?: AgSeriesTooltipInteraction;
@@ -1153,7 +1204,15 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
+export interface AgScatterSeriesLabelFormatterParams<DatumType> extends AgCartesianSeriesLabelFormatterParams {
+    /** Datum from the series data array. */
+    datum: DatumType;
+}
+
+export interface AgScatterSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
+    /** Function to modify the text displayed by the label. By default the values are simply stringified. */
+    formatter?: (params: AgScatterSeriesLabelFormatterParams<DatumType>) => string;
+}
 
 export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarker<DatumType> {
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
@@ -1167,7 +1226,7 @@ export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** Configuration for the markers used in the series.  */
     marker?: AgScatterSeriesMarker<DatumType>;
     /** Configuration for the labels shown on top of data points.  */
-    label?: AgScatterSeriesLabelOptions;
+    label?: AgScatterSeriesLabelOptions<DatumType>;
     /** The key to use to retrieve x-values from the data.  */
     xKey?: string;
     /** The key to use to retrieve y-values from the data.  */
@@ -1269,12 +1328,12 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-/** Configuration for bar/column series. */
+/** Configuration for bar series. */
 export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
-    type?: 'bar' | 'column';
+    type?: 'bar';
     /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
     grouped?: boolean;
-    /** An option indicating if the bars/columns should be stacked. */
+    /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
     /** An ID to be used to group stacked items. */
     stackGroup?: string;
@@ -1282,13 +1341,14 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
-    /** The keys to use to retrieve y-values from the data. */
+    /** The key to use to retrieve y-values from the data. */
     yKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    flipXY?: boolean;
+    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
+    legendItemName?: string;
     /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */
@@ -1299,7 +1359,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     fillOpacity?: Opacity;
     /** The opacity of the stroke for the bars. */
     strokeOpacity?: Opacity;
-    /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    /** Defines how the bar strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
@@ -1309,8 +1369,89 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     label?: AgBarSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgBarSeriesTooltip;
-    /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    /** Function used to return formatting for individual bars, based on the given parameters. If the current bar is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: (params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat;
+    /** A map of event names to event listeners. */
+    listeners?: AgSeriesListeners<DatumType>;
+}
+
+export type AgColumnSeriesLabelPlacement = 'inside' | 'outside';
+
+export interface AgColumnSeriesLabelOptions extends AgCartesianSeriesLabelOptions {
+    /** Where to render series labels relative to the segments. */
+    placement?: AgColumnSeriesLabelPlacement;
+}
+
+export interface AgColumnSeriesFormatterParams<DatumType> {
+    readonly datum: DatumType;
+    readonly fill?: CssColor;
+    readonly stroke?: CssColor;
+    readonly strokeWidth: PixelSize;
+    readonly highlighted: boolean;
+    readonly xKey: string;
+    readonly yKey: string;
+    readonly seriesId: string;
+    readonly stackGroup?: string;
+}
+
+export interface AgColumnSeriesFormat {
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth?: PixelSize;
+}
+
+export interface AgColumnSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+    readonly stackGroup?: string;
+}
+
+export interface AgColumnSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
+    renderer?: (params: AgColumnSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+}
+
+/** Configuration for column series. */
+export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
+    type?: 'column';
+    /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
+    grouped?: boolean;
+    /** An option indicating if the columns should be stacked. */
+    stacked?: boolean;
+    /** An ID to be used to group stacked items. */
+    stackGroup?: string;
+    /** The number to normalise the column stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the column stacks will all be scaled proportionally so that each of their totals is 100. */
+    normalizedTo?: number;
+    /** The key to use to retrieve x-values from the data. */
+    xKey?: string;
+    /** The key to use to retrieve y-values from the data. */
+    yKey?: string;
+    /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
+    xName?: string;
+    /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
+    yName?: string;
+    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
+    legendItemName?: string;
+    /** The colour to use for the fill of the columns. */
+    fill?: CssColor;
+    /** The colours to use for the stroke of the columns. */
+    stroke?: CssColor;
+    /** The width in pixels of the stroke for the columns. */
+    strokeWidth?: PixelSize;
+    /** The opacity of the fill for the columns. */
+    fillOpacity?: Opacity;
+    /** The opacity of the stroke for the columns. */
+    strokeOpacity?: Opacity;
+    /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    lineDash?: PixelSize[];
+    /** The initial offset of the dashed line in pixels. */
+    lineDashOffset?: PixelSize;
+    /** Configuration for the shadow used behind the chart series. */
+    shadow?: AgDropShadowOptions;
+    /** Configuration for the labels shown on columns. */
+    label?: AgColumnSeriesLabelOptions;
+    /** Series-specific tooltip configuration. */
+    tooltip?: AgColumnSeriesTooltip;
+    /** Function used to return formatting for individual columns, based on the given parameters. If the current column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    formatter?: (params: AgColumnSeriesFormatterParams<DatumType>) => AgColumnSeriesFormat;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
 }
@@ -1418,7 +1559,24 @@ export interface AgPieSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgPieTitleOptions extends AgChartCaptionOptions {
+export interface AgPieTitleOptions {
+    /** Whether or not the text should be shown. */
+    enabled?: boolean;
+    /** The text to display. */
+    text?: string;
+    /** The font style to use for the text. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the text. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the text. */
+    fontSize?: FontSize;
+    /** The font family to use for the text. */
+    fontFamily?: FontFamily;
+    /** The colour to use for the text. */
+    color?: CssColor;
+    /** Spacing added to help position the text. */
+    spacing?: number;
+    /** Whether or not the title text should be shown in the legend. */
     showInLegend?: boolean;
 }
 
@@ -1462,22 +1620,10 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     type?: 'pie';
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
-    /**
-     * Configuration for the labels used outside of the sectors.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.
-     */
-    label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used outside of the sectors. */
     calloutLabel?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used inside the sectors. */
     sectorLabel?: AgPieSeriesSectorLabelOptions<DatumType>;
-    /**
-     * Configuration for the callout lines used with the labels for the sectors.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.
-     */
-    callout?: AgPieSeriesCalloutOptions;
     /** Configuration for the callout lines used with the labels for the sectors. */
     calloutLine?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
@@ -1488,18 +1634,6 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     radiusKey?: string;
     /** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     radiusName?: string;
-    /**
-     * The key to use to retrieve label values from the data.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
-     */
-    labelKey?: string;
-    /**
-     * A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
-     */
-    labelName?: string;
     /** The key to use to retrieve label values from the data. */
     calloutLabelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -1508,6 +1642,8 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
+    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */
+    legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
     /** The colours to cycle through for the strokes of the sectors. */
@@ -1551,18 +1687,6 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
-    /**
-     * labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
-     */
-    labelKey?: string;
-    /**
-     * labelName as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
-     */
-    labelName?: string;
     /** calloutLabelKey as specified on series options. */
     calloutLabelKey?: string;
     /** calloutLabelName as specified on series options. */
@@ -1576,25 +1700,6 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
 export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /** Datum from the series data array that the label is being rendered for. */
     readonly datum: DatumType;
-
-    /**
-     * labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.
-     */
-    readonly labelKey?: string;
-    /**
-     * labelValue as read from series data via the labelKey property.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.
-     */
-    readonly labelValue?: string;
-    /**
-     * labelName as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.
-     */
-    readonly labelName?: string;
 
     /** calloutLabelKey as specified on series options. */
     readonly calloutLabelKey?: string;
@@ -1623,13 +1728,6 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     readonly radiusValue?: any;
     /** radiusName as specified on series options. */
     readonly radiusName?: string;
-
-    /**
-     * The value of labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.
-     */
-    readonly value?: any;
 
     /** The ID of the series. */
     readonly seriesId: string;
@@ -1666,24 +1764,44 @@ export interface AgTreemapSeriesTooltip<DatumType> extends AgSeriesTooltip {
     renderer?: (params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult;
 }
 
-export interface AgTreemapSeriesLabelsOptions {
+export interface AgTreemapSeriesLabelFormatterParams<DatumType> {
+    datum: DatumType;
+}
+
+export interface AgTreemapSeriesTileLabelOptions extends AgChartLabelOptions {
+    /**
+     * Text wrapping strategy for treemap labels.
+     * `'always'` will always wrap text to fit within the tile.
+     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.
+     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy the tile dimensions, the text will be truncated.
+     * `'never'` disables text wrapping.
+     * Default: `'on-space'`
+     */
+    wrapping?: TextWrap;
+}
+
+export interface AgTreemapSeriesValueLabelOptions<DatumType> {
+    /** A property to be used as a key to retrieve a value from datum. */
+    key?: string;
+    /** A name of a datum value. */
+    name?: string;
+    /** A function to generate a value label from datum. */
+    formatter?: (params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string;
+    /** The label's font and color style. */
+    style?: AgChartLabelOptions;
+}
+
+export interface AgTreemapSeriesLabelsOptions<DatumType> {
     /** The label configuration for the large leaf tiles. */
-    large?: AgChartLabelOptions;
+    large?: AgTreemapSeriesTileLabelOptions;
     /** The label configuration for the medium-sized leaf tiles. */
-    medium?: AgChartLabelOptions;
+    medium?: AgTreemapSeriesTileLabelOptions;
     /** The label configuration for the small leaf tiles. */
-    small?: AgChartLabelOptions;
+    small?: AgTreemapSeriesTileLabelOptions;
+    /** A function to generate a label/title for the cell. */
+    formatter?: (params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string;
     /** The configuration for the cell value label. */
-    value?: {
-        /** A property to be used as a key to retrieve a value from datum. */
-        key?: string;
-        /** A name of a datum value. */
-        name?: string;
-        /** A function to generate a value label from datum. */
-        formatter?: (params: { datum: any }) => string | undefined;
-        /** The label's font and color style. */
-        style?: AgChartLabelOptions;
-    };
+    value?: AgTreemapSeriesValueLabelOptions<DatumType>;
 }
 
 export interface AgTreemapSeriesHighlightTextStyle {
@@ -1704,7 +1822,7 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** The label configuration for the children of the top-level parent tiles. */
     subtitle?: AgTreemapSeriesLabelOptions;
     /** Configuration for the tile labels. */
-    labels?: AgTreemapSeriesLabelsOptions;
+    labels?: AgTreemapSeriesLabelsOptions<DatumType>;
     /** The name of the node key containing the label. */
     labelKey?: string;
     /** The name of the node key containing the size value. */
@@ -1727,8 +1845,16 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     tileStrokeWidth?: number;
     /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip<DatumType>;
-    /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
+    /**
+     * The amount of padding in pixels inside of each treemap tile.
+     * Default: `20`
+     */
     nodePadding?: PixelSize;
+    /**
+     * The amount of gap in pixels between treemap tiles.
+     * Default: `0`
+     */
+    nodeGap?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
     /** Configuration for the shadow used behind the treemap tiles. */
@@ -1798,10 +1924,11 @@ export type AgCartesianSeriesOptions<TAddon = never> =
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
+    | AgColumnSeriesOptions
     | AgHistogramSeriesOptions
     | TAddon;
 
-export type AgPolarSeriesOptions = AgPieSeriesOptions;
+export type AgPolarSeriesOptions<TAddon = never> = AgPieSeriesOptions | TAddon;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
@@ -1812,15 +1939,19 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
     series?: AgCartesianSeriesOptions<TAddonSeries>[];
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarChartOptions extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
-    type?: 'pie';
+    type?: 'pie' | TAddonType;
     /** Series configurations. */
-    series?: AgPolarSeriesOptions[];
+    series?: AgPolarSeriesOptions<TAddonSeries>[];
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
@@ -1829,11 +1960,18 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
-export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
-    | AgCartesianChartOptions<TAddonType, TAddonSeries>
-    | AgPolarChartOptions
+export type AgChartOptions<
+    CartesianAddonType = never,
+    CartesianAddonSeries = never,
+    PolarAddonType = never,
+    PolarAddonSeries = never
+> =
+    | AgCartesianChartOptions<CartesianAddonType, CartesianAddonSeries>
+    | AgPolarChartOptions<PolarAddonType, PolarAddonSeries>
     | AgHierarchyChartOptions;
 
 export interface AgChartInstance {

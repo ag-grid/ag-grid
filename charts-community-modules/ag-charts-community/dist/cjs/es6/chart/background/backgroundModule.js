@@ -8,10 +8,6 @@ exports.CHART_BACKGROUND_MODULE = {
     optionsKey: 'background',
     packageType: 'community',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
-    initialiseModule(ctx) {
-        return {
-            instance: new background_1.Background(ctx),
-        };
-    },
+    instanceConstructor: background_1.Background,
 };
 module_1.registerModule(exports.CHART_BACKGROUND_MODULE);

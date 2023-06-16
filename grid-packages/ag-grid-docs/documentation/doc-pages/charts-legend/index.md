@@ -6,7 +6,7 @@ A legend makes it easier to tell at a glance which series or series items corres
 
 ## Position
 
-A legend is shown by default but can be hidden using the `enabled` config:
+By default, a legend is displayed for all charts with more than one series present. However, it can be hidden by using the `enabled` configuration option:
 
 ```js
 legend: {
@@ -216,6 +216,10 @@ If a callback function is configured via [`legend.listeners.legendItemClick`](/c
 
 The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
 
+<note>
+NOTE: Pie series sectors do not toggle when a legend item is double clicked.
+</note>
+
 ### Example: Series Visibility Toggling
 
 This example demonstrates toggling the visiblity of series via clicks and double clicks, and logs a message to the browser console when the legend is clicked.
@@ -224,4 +228,11 @@ This example demonstrates toggling the visiblity of series via clicks and double
 
 ## API Reference
 
-<interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+### Cartesian Chart Legend Options
+<interface-documentation interfaceName='AgCartesianChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Polar Chart Legend Options
+<interface-documentation interfaceName='AgPolarChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Hierarchy Chart Legend Options
+<interface-documentation interfaceName='AgHierarchyChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

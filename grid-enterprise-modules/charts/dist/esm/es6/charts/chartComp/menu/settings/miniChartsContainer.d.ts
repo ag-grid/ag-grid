@@ -1,4 +1,4 @@
-import { Component, ChartGroupsDef } from "@ag-grid-community/core";
+import { ChartGroupsDef, Component } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 export declare class MiniChartsContainer extends Component {
     static TEMPLATE: string;

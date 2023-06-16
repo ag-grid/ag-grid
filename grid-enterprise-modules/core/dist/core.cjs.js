@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -211,7 +211,7 @@ var LicenseManager = /** @class */ (function () {
     }
     LicenseManager.prototype.validateLicense = function () {
         if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl()) {
+            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
         }
@@ -277,7 +277,7 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
         return this.watermarkMessage || '';
@@ -287,6 +287,12 @@ var LicenseManager = /** @class */ (function () {
         var loc = win.location;
         var _a = loc.hostname, hostname = _a === void 0 ? '' : _a;
         return hostname;
+    };
+    LicenseManager.prototype.isForceWatermark = function () {
+        var win = (this.document.defaultView || window);
+        var loc = win.location;
+        var pathname = loc.pathname;
+        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     };
     LicenseManager.prototype.isWebsiteUrl = function () {
         var hostname = this.getHostname();
@@ -469,7 +475,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTY4MjA3MjY1MjY5MA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY4NjkxNjU0OTQyOQ==';
     return LicenseManager;
 }());
 
@@ -481,6 +487,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -530,6 +538,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -544,7 +554,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
+        return _super.call(this, /* html*/ "<div class=\"ag-watermark\">\n                <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n            </div>") || this;
     }
     WatermarkComp.prototype.postConstruct = function () {
         var _this = this;
@@ -557,13 +567,7 @@ var WatermarkComp = /** @class */ (function (_super) {
         }
     };
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
-        var eDocument = this.gridOptionsService.getDocument();
-        var win = (eDocument.defaultView || window);
-        var loc = win.location;
-        var pathname = loc.pathname;
-        var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        var isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     };
     __decorate([
         core.Autowired('licenseManager')
@@ -578,7 +582,7 @@ var WatermarkComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var EnterpriseCoreModule = {
     version: VERSION,

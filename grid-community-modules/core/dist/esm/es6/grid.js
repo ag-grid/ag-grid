@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -95,6 +95,9 @@ import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
+import { DataTypeService } from "./columns/dataTypeService";
+import { AgInputDateField } from "./widgets/agInputDateField";
+import { ValueParserService } from "./valueService/valueParserService";
 // creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
 // be wrapped by the framework wrappers
 export class Grid {
@@ -115,13 +118,16 @@ export class Grid {
         }
     }
 }
+let nextGridId = 1;
 // created services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 export class GridCoreCreator {
     create(eGridDiv, gridOptions, createUi, acceptChanges, params) {
+        var _a;
         const debug = !!gridOptions.debug;
-        const registeredModules = this.getRegisteredModules(params);
-        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules);
+        const gridId = (_a = gridOptions.gridId) !== null && _a !== void 0 ? _a : String(nextGridId++);
+        const registeredModules = this.getRegisteredModules(params, gridId);
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
         if (!beanClasses) {
             return;
@@ -129,7 +135,8 @@ export class GridCoreCreator {
         const contextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            debug: debug
+            debug: debug,
+            gridId: gridId,
         };
         const logger = new Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
@@ -143,7 +150,7 @@ export class GridCoreCreator {
         beans.ctrlsService.whenReady(() => {
             this.setColumnsAndData(beans);
             this.dispatchGridReadyEvent(beans);
-            const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+            const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
         if (acceptChanges) {
@@ -161,30 +168,30 @@ export class GridCoreCreator {
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
         beans.agStackComponentsRegistry.setupComponents(agStackComponents);
     }
-    getRegisteredModules(params) {
+    getRegisteredModules(params, gridId) {
         const passedViaConstructor = params ? params.modules : null;
-        const registered = ModuleRegistry.getRegisteredModules();
+        const registered = ModuleRegistry.getRegisteredModules(gridId);
         const allModules = [];
         const mapNames = {};
         // adds to list and removes duplicates
-        function addModule(moduleBased, mod) {
-            function addIndividualModule(currentModule) {
+        const addModule = (moduleBased, mod, gridId) => {
+            const addIndividualModule = (currentModule) => {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    ModuleRegistry.register(currentModule, moduleBased);
+                    ModuleRegistry.register(currentModule, moduleBased, gridId);
                 }
-            }
+            };
             addIndividualModule(mod);
             if (mod.dependantModules) {
-                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
+                mod.dependantModules.forEach(m => addModule(moduleBased, m, gridId));
             }
-        }
+        };
         if (passedViaConstructor) {
-            passedViaConstructor.forEach(addModule.bind(null, true));
+            passedViaConstructor.forEach(m => addModule(true, m, gridId));
         }
         if (registered) {
-            registered.forEach(addModule.bind(null, !ModuleRegistry.isPackageBased()));
+            registered.forEach(m => addModule(!ModuleRegistry.isPackageBased(), m, undefined));
         }
         return allModules;
     }
@@ -218,6 +225,7 @@ export class GridCoreCreator {
             { componentName: 'AgInputTextField', componentClass: AgInputTextField },
             { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
@@ -237,7 +245,7 @@ export class GridCoreCreator {
         components = components.concat(moduleAgStackComps);
         return components;
     }
-    createBeansList(rowModelType = 'clientSide', registeredModules) {
+    createBeansList(rowModelType = 'clientSide', registeredModules, gridId) {
         // only load beans matching the required row model
         const rowModelModules = registeredModules.filter(module => !module.rowModel || module.rowModel === rowModelType);
         // assert that the relevant module has been loaded
@@ -251,7 +259,7 @@ export class GridCoreCreator {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
             return;
         }
-        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`)) {
+        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
             return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
@@ -270,7 +278,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService
         ];
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);

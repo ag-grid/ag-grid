@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -75,7 +77,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.verifyProps();
     };
     ServerSideRowModel.prototype.verifyProps = function () {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
             var message_1 = "AG Grid: initialGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Infinite Scroll, then sorting is done on the server side, nothing to do with the client.";
             _.doOnce(function () { return console.warn(message_1); }, 'SSRM.InitialGroupOrderComparator');
         }

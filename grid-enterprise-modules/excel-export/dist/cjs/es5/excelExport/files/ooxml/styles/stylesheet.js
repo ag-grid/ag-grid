@@ -286,14 +286,16 @@ var stylesheetFactory = {
         };
     }
 };
-exports.getStyleId = function (name, currentSheet) {
+var getStyleId = function (name, currentSheet) {
     return stylesMap[getStyleName(name, currentSheet)] || 0;
 };
-exports.registerStyles = function (styles, _currentSheet) {
+exports.getStyleId = getStyleId;
+var registerStyles = function (styles, _currentSheet) {
     currentSheet = _currentSheet;
     if (currentSheet === 1) {
         resetStylesheetValues();
     }
     styles.forEach(registerStyle);
 };
+exports.registerStyles = registerStyles;
 exports.default = stylesheetFactory;

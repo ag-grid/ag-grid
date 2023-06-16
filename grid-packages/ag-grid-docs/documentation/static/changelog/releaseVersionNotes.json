@@ -1,5 +1,9 @@
 [
     {
+        "release version": "30.0.0",
+        "markdown": "/releases/30_0_0.md"
+    },
+    {
         "release version": "<p><b>20th Apr 2023 - Grid v29.3.0 (Charts v7.3.0)</b></p>",
         "feature highlights": "<p><strong>Feature Highlights:</strong></p><ul><li>Grid<ul><li>AG-2720 - Allow horizontal sticky column group header labels (see: <a href=\"https://www.ag-grid.com/archive/29.3.0/javascript-data-grid/column-groups/#sticky-label\">Sticky Column Group Labels</a>)</li><li>AG-7013 - Add support for sticky group rows in the server-side row model (see: <a href=\"https://www.ag-grid.com/archive/29.3.0/react-data-grid/server-side-model-grouping/#sticky-groups\">SSRM - Sticky Groups</a>)</li><li>AG-6880 - Add support for sticky group rows in tree data</li><li>AG-7080 - Add support for sticky rows with master rows in master / detail</li><li>AG-4989 - Allow AG Grid to work from inside a shadow DOM</li></ul></li><li>Charts<ul><li>AG-3890 - Improve layout of pie chart callout labels to avoid label collisions (see: <a href=\"https://www.ag-grid.com/archive/29.3.0/javascript-charts/pie-series/#labels\">Pie Series Labels</a>)</li><li>AG-6181 - Allow custom tooltips to remain visible to allow interacting with tooltip content for accessibility users (see: <a href=\"https://www.ag-grid.com/archive/29.3.0/javascript-charts/tooltips/#interaction-with-tooltips\">Interaction with Tooltips</a>)</li><li>AG-7368 - Add node / pointer tooltip position types (see: <a href=\"https://www.ag-grid.com/archive/29.3.0/javascript-charts/tooltips/#tooltip-position\">Tooltip Position</a>)</li><li>AG-3227 - Allow configuring tooltip position offset&nbsp;(see: <a href=\"https://www.ag-grid.com/archive/29.3.0/javascript-charts/tooltips/#tooltip-position\">Tooltip Position</a>)</li><li>AG-6716 - Allow per-column sparkline tooltip instances</li></ul></li></ul>",
         "breaking changes": "",

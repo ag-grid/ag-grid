@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -38,9 +40,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { _ } from "@ag-grid-community/core";
 import { BaseGridSerializingSession, RowType } from "@ag-grid-community/csv-export";
@@ -57,13 +60,17 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
         _this.config.baseExcelStyles.forEach(function (style) {
             _this.stylesByIds[style.id] = style;
         });
-        _this.excelStyles = __spread(_this.config.baseExcelStyles);
+        _this.excelStyles = __spreadArray([], __read(_this.config.baseExcelStyles));
         return _this;
     }
     BaseExcelSerializingSession.prototype.addCustomContent = function (customContent) {
         var _this = this;
         customContent.forEach(function (row) {
             var rowLen = _this.rows.length + 1;
+            var outlineLevel;
+            if (!_this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
             var rowObj = {
                 height: getHeightFromProperty(rowLen, row.height || _this.config.rowHeight),
                 cells: (row.cells || []).map(function (cell, idx) {
@@ -84,7 +91,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                     }
                     return _this.createCell(excelStyleId, type, value);
                 }),
-                outlineLevel: row.outlineLevel || undefined
+                outlineLevel: outlineLevel
             };
             if (row.collapsed != null) {
                 rowObj.collapsed = row.collapsed;
@@ -112,13 +119,50 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
     BaseExcelSerializingSession.prototype.onNewHeaderRow = function () {
         return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     };
-    BaseExcelSerializingSession.prototype.onNewBodyRow = function () {
-        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+    BaseExcelSerializingSession.prototype.onNewBodyRow = function (node) {
+        var rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+        if (node) {
+            this.addRowOutlineIfNecessary(node);
+        }
+        return rowAccumulator;
+    };
+    BaseExcelSerializingSession.prototype.addRowOutlineIfNecessary = function (node) {
+        var _a = this.config, gridOptionsService = _a.gridOptionsService, suppressRowOutline = _a.suppressRowOutline, _b = _a.rowGroupExpandState, rowGroupExpandState = _b === void 0 ? 'expanded' : _b;
+        var isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
+        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) {
+            return;
+        }
+        var padding = node.footer ? 1 : 0;
+        var currentRow = _.last(this.rows);
+        currentRow.outlineLevel = node.level + padding;
+        if (rowGroupExpandState === 'expanded') {
+            return;
+        }
+        var collapseAll = rowGroupExpandState === 'collapsed';
+        if (node.isExpandable()) {
+            var isExpanded = !collapseAll && node.expanded;
+            currentRow.collapsed = !isExpanded;
+        }
+        currentRow.hidden =
+            // always show the node if there is no parent to be expanded
+            !!node.parent &&
+                // or if it is a child of the root node
+                node.parent.level !== -1 &&
+                (collapseAll || this.isAnyParentCollapsed(node.parent));
+    };
+    BaseExcelSerializingSession.prototype.isAnyParentCollapsed = function (node) {
+        while (node && node.level !== -1) {
+            if (!node.expanded) {
+                return true;
+            }
+            node = node.parent;
+        }
+        return false;
     };
     BaseExcelSerializingSession.prototype.prepare = function (columnsToExport) {
         var _this = this;
         _super.prototype.prepare.call(this, columnsToExport);
-        this.columnsToExport = __spread(columnsToExport);
+        this.columnsToExport = __spreadArray([], __read(columnsToExport));
         this.cols = columnsToExport.map(function (col, i) { return _this.convertColumnToExcel(col, i); });
     };
     BaseExcelSerializingSession.prototype.parse = function () {
@@ -143,6 +187,9 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
         return this.config.autoConvertFormulas && value.toString().startsWith('=');
     };
     BaseExcelSerializingSession.prototype.isNumerical = function (value) {
+        if (typeof value === 'bigint') {
+            return true;
+        }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     };
     BaseExcelSerializingSession.prototype.getStyleById = function (styleId) {
@@ -191,11 +238,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 skipCols -= 1;
                 return;
             }
-            if (!_this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
-                var padding = node.footer ? 1 : 0;
-                _.last(_this.rows).outlineLevel = node.level + padding;
-            }
-            var valueForCell = _this.extractRowCellValue(column, index, rowIndex, 'excel', node);
+            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
             var styleIds = _this.config.styleLinker({ rowType: RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
             var excelStyleId = _this.getStyleId(styleIds);
             var colSpan = column.getColSpan(node);
@@ -208,7 +251,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             }
             else {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell));
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     };

@@ -34,21 +34,17 @@ import {
     OPTIONAL,
 } from '../util/validation';
 import { Layers } from './layers';
-import { Series } from './series/series';
 import { ChartUpdateType } from './chartUpdateType';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
-import { CursorManager } from './interaction/cursorManager';
-import { HighlightManager } from './interaction/highlightManager';
+import { InteractionEvent } from './interaction/interactionManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
-import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
-import { LegendDatum } from './legendDatum';
+import { CategoryLegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
-import { LayoutService } from './layout/layoutService';
+import { ModuleContext } from '../util/module';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
-export const OPT_ORIENTATION = predicateWithMessage(
+const OPT_ORIENTATION = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
     `expecting an orientation keyword such as 'horizontal' or 'vertical'`
 );
@@ -74,10 +70,6 @@ class LegendLabel {
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
-
-    getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    }
 }
 
 class LegendMarker {
@@ -144,8 +136,6 @@ export class Legend {
 
     readonly id = createId(this);
 
-    onLayoutChange?: () => void;
-
     private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
     private itemSelection: Selection<MarkerLabel, any> = Selection.select(this.group, MarkerLabel);
@@ -162,22 +152,8 @@ export class Legend {
 
     private readonly truncatedItems: Set<string> = new Set();
 
-    set translationX(value: number) {
-        this.group.translationX = value;
-    }
-    get translationX(): number {
-        return this.group.translationX;
-    }
-
-    set translationY(value: number) {
-        this.group.translationY = value;
-    }
-    get translationY(): number {
-        return this.group.translationY;
-    }
-
-    private _data: LegendDatum[] = [];
-    set data(value: LegendDatum[]) {
+    private _data: CategoryLegendDatum[] = [];
+    set data(value: CategoryLegendDatum[]) {
         this._data = value;
         this.updateGroupVisibility();
     }
@@ -196,9 +172,9 @@ export class Legend {
     }
 
     @Validate(POSITION)
-    position: AgChartLegendPosition = 'right';
+    position: AgChartLegendPosition = 'bottom';
 
-    getOrientation(): AgChartOrientation {
+    private getOrientation(): AgChartOrientation {
         if (this.orientation !== undefined) {
             return this.orientation;
         }
@@ -229,45 +205,31 @@ export class Legend {
 
     private destroyFns: Function[] = [];
 
-    constructor(
-        private readonly chart: {
-            readonly series: Series<any>[];
-            readonly element: HTMLElement;
-            readonly mode: 'standalone' | 'integrated';
-            update(
-                type: ChartUpdateType,
-                opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
-            ): void;
-        },
-        private readonly interactionManager: InteractionManager,
-        private readonly cursorManager: CursorManager,
-        private readonly highlightManager: HighlightManager,
-        private readonly tooltipManager: TooltipManager,
-        private readonly layoutService: LayoutService
-    ) {
+    constructor(private readonly ctx: ModuleContext) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
-            (type: ChartUpdateType) => this.chart.update(type),
+            (type: ChartUpdateType) => ctx.updateService.update(type),
             (page) => this.updatePageNumber(page),
-            this.interactionManager,
-            this.cursorManager
+            ctx.interactionManager,
+            ctx.cursorManager
         );
         this.pagination.attachPagination(this.group);
 
         this.item.marker.parent = this;
 
         const interactionListeners = [
-            this.interactionManager.addListener('click', (e) => this.checkLegendClick(e)),
-            this.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e)),
-            this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e)),
+            ctx.interactionManager.addListener('click', (e) => this.checkLegendClick(e)),
+            ctx.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e)),
+            ctx.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e)),
         ];
         const layoutListeners = [
-            this.layoutService.addListener('start-layout', (e) => this.positionLegend(e.shrinkRect)),
+            ctx.layoutService.addListener('start-layout', (e) => this.positionLegend(e.shrinkRect)),
         ];
 
         this.destroyFns.push(
-            ...interactionListeners.map((s) => () => this.interactionManager.removeListener(s)),
-            ...layoutListeners.map((s) => () => this.layoutService.removeListener(s))
+            ...interactionListeners.map((s) => () => ctx.interactionManager.removeListener(s)),
+            ...layoutListeners.map((s) => () => ctx.layoutService.removeListener(s)),
+            () => this.detachLegend()
         );
     }
 
@@ -321,6 +283,25 @@ export class Legend {
         node.append(this.group);
     }
 
+    detachLegend() {
+        this.group.parent?.removeChild(this.group);
+    }
+
+    private getItemLabel(datum: CategoryLegendDatum) {
+        const {
+            ctx: { callbackCache },
+        } = this;
+        const { formatter } = this.item.label;
+        if (formatter) {
+            return callbackCache.call(formatter, {
+                itemId: datum.itemId,
+                value: datum.label.text,
+                seriesId: datum.seriesId,
+            });
+        }
+        return datum.label.text;
+    }
+
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will
@@ -351,14 +332,14 @@ export class Legend {
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
 
-        const font = label.getFont();
+        const font = getFont(label);
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         this.itemSelection.each((markerLabel, datum) => {
-            const Marker = getMarker(markerShape || datum.marker.shape);
+            const Marker = getMarker(markerShape ?? datum.marker.shape);
 
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
@@ -371,8 +352,9 @@ export class Legend {
             markerLabel.fontSize = fontSize;
             markerLabel.fontFamily = fontFamily;
 
-            const id = datum.itemId || datum.id;
-            const text = (datum.label.text ?? '<unknown>').replace(/\r?\n/g, ' ');
+            const id = datum.itemId ?? datum.id;
+            const labelText = this.getItemLabel(datum);
+            const text = (labelText ?? '<unknown>').replace(/\r?\n/g, ' ');
             markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
             bboxes.push(markerLabel.computeBBox());
@@ -417,7 +399,7 @@ export class Legend {
         this.update();
     }
 
-    truncate(
+    private truncate(
         text: string,
         maxCharLength: number,
         maxItemWidth: number,
@@ -469,7 +451,7 @@ export class Legend {
         return text;
     }
 
-    updatePagination(
+    private updatePagination(
         bboxes: BBox[],
         width: number,
         height: number
@@ -521,7 +503,7 @@ export class Legend {
         };
     }
 
-    calculatePagination(bboxes: BBox[], width: number, height: number) {
+    private calculatePagination(bboxes: BBox[], width: number, height: number) {
         const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
 
         const orientation = this.getOrientation();
@@ -580,7 +562,7 @@ export class Legend {
         return { maxPageWidth, maxPageHeight, pages, paginationBBox, paginationVertical };
     }
 
-    updatePositions(pageNumber: number = 0) {
+    private updatePositions(pageNumber: number = 0) {
         const {
             item: { paddingY },
             itemSelection,
@@ -640,7 +622,7 @@ export class Legend {
         });
     }
 
-    updatePageNumber(pageNumber: number) {
+    private updatePageNumber(pageNumber: number) {
         const { pages } = this;
 
         // Track an item on the page in re-pagination cases (e.g. resize).
@@ -660,7 +642,7 @@ export class Legend {
         this.pagination.updateMarkers();
 
         this.updatePositions(pageNumber);
-        this.chart.update(ChartUpdateType.SCENE_RENDER);
+        this.ctx.updateService.update(ChartUpdateType.SCENE_RENDER);
     }
 
     update() {
@@ -680,7 +662,7 @@ export class Legend {
         });
     }
 
-    getDatumForPoint(x: number, y: number): LegendDatum | undefined {
+    private getDatumForPoint(x: number, y: number): CategoryLegendDatum | undefined {
         const visibleChildBBoxes: BBox[] = [];
         const closestLeftTop = { dist: Infinity, datum: undefined as any };
         for (const child of this.group.children) {
@@ -720,7 +702,7 @@ export class Legend {
         return this.group.computeBBox();
     }
 
-    computePagedBBox(): BBox {
+    private computePagedBBox(): BBox {
         const actualBBox = this.group.computeBBox();
         if (this.pages.length <= 1) {
             return actualBBox;
@@ -736,17 +718,22 @@ export class Legend {
     private checkLegendClick(event: InteractionEvent<'click'>) {
         const {
             listeners: { legendItemClick },
-            chart,
-            highlightManager,
+            ctx: { dataService, highlightManager },
             item: { toggleSeriesVisible },
         } = this;
-        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        const { offsetX, offsetY } = event;
+
+        const legendBBox = this.computeBBox();
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        const datum = this.getDatumForPoint(offsetX, offsetY);
+
+        if (!pointerInsideLegend || !datum) {
             return;
         }
 
         const { id, itemId, enabled } = datum;
-        const series = chart.series.find((s) => s.id === id);
+        const chartSeries = dataService.getSeries();
+        const series = chartSeries.find((s) => s.id === id);
         if (!series) {
             return;
         }
@@ -755,14 +742,7 @@ export class Legend {
         let newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-
-            chart.series.forEach((s) => {
-                if (s.id === series.id) {
-                    s.toggleSeriesItem(itemId, newEnabled);
-                } else {
-                    s.toggleOtherSeriesItems(series, datum, newEnabled);
-                }
-            });
+            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled);
         }
 
         if (!newEnabled) {
@@ -775,7 +755,7 @@ export class Legend {
             });
         }
 
-        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+        this.ctx.updateService.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
         legendItemClick?.({ type: 'click', enabled: newEnabled, itemId, seriesId: series.id });
     }
@@ -783,75 +763,58 @@ export class Legend {
     private checkLegendDoubleClick(event: InteractionEvent<'dblclick'>) {
         const {
             listeners: { legendItemDoubleClick },
-            chart,
+            ctx: { dataService },
             item: { toggleSeriesVisible },
         } = this;
+        const { offsetX, offsetY } = event;
 
         // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
         // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
-        if (chart.mode === 'integrated') {
+        if (this.ctx.mode === 'integrated') {
             return;
         }
 
-        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
+        const legendBBox = this.computeBBox();
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
+        const datum = this.getDatumForPoint(offsetX, offsetY);
+
+        if (!pointerInsideLegend || !datum) {
             return;
         }
 
         const { id, itemId, seriesId } = datum;
-        const series = chart.series.find((s) => s.id === id);
+        const chartSeries = dataService.getSeries();
+        const series = chartSeries.find((s) => s.id === id);
         if (!series) {
             return;
         }
         event.consume();
 
         if (toggleSeriesVisible) {
-            const legendData: Array<LegendDatum> = chart.series.reduce(
-                (ls, s) => [...ls, ...s.getLegendData()],
-                [] as Array<LegendDatum>
+            const legendData: CategoryLegendDatum[] = chartSeries.reduce(
+                (ls, s) => [
+                    ...ls,
+                    ...s.getLegendData().filter((d): d is CategoryLegendDatum => d.legendType === 'category'),
+                ],
+                [] as CategoryLegendDatum[]
             );
 
-            const visibleItemsCount = legendData.filter((d) => d.enabled).length;
+            const numVisibleItems: any = {};
+            legendData.forEach((d) => {
+                numVisibleItems[d.seriesId] ??= 0;
+                if (d.enabled) numVisibleItems[d.seriesId]++;
+            });
             const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
 
-            const seriesItemCounts = legendData.reduce((acc, d) => {
-                acc[d.seriesId] ??= 0;
-                acc[d.seriesId]++;
-                return acc;
-            }, {} as any);
-            const seriesItemEnabledCounts = legendData.reduce((acc, d) => {
-                if (!d.enabled) return acc;
-                acc[d.seriesId] ??= 0;
-                acc[d.seriesId]++;
-                return acc;
-            }, {} as any);
-
-            const eachSeriesHasSingleItem = Object.values(seriesItemCounts).filter((c: any) => c > 1).length === 0;
-            const singleEnabledInEachSeries =
-                Object.values(seriesItemEnabledCounts).filter((count: any) => count > 1).length === 0;
-
-            const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
-            const singleEnabledInEachSeriesWasNotClicked = singleEnabledInEachSeries && (clickedItem?.enabled ?? false);
-
-            chart.series.forEach((s) => {
-                const legendData = s.getLegendData();
-
-                legendData.forEach((d) => {
-                    const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
-                    const newEnabled =
-                        wasClicked ||
-                        (eachSeriesHasSingleItem && singleSelectedWasNotClicked) ||
-                        (!eachSeriesHasSingleItem && singleEnabledInEachSeriesWasNotClicked);
-                    s.toggleSeriesItem(d.itemId, newEnabled);
-                });
-
-                if (s.id !== series.id) {
-                    s.toggleOtherSeriesItems(series, datum, undefined, singleEnabledInEachSeriesWasNotClicked);
-                }
-            });
+            this.ctx.chartEventManager.legendItemDoubleClick(
+                series,
+                itemId,
+                clickedItem?.enabled ?? false,
+                numVisibleItems
+            );
         }
 
-        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+        this.ctx.updateService.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
         legendItemDoubleClick?.({ type: 'dblclick', enabled: true, itemId, seriesId: series.id });
     }
@@ -871,9 +834,9 @@ export class Legend {
         const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
-            this.cursorManager.updateCursor(this.id);
-            this.highlightManager.updateHighlight(this.id);
-            this.tooltipManager.removeTooltip(this.id);
+            this.ctx.cursorManager.updateCursor(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
+            this.ctx.tooltipManager.removeTooltip(this.id);
             return;
         }
 
@@ -884,34 +847,35 @@ export class Legend {
         const datum = this.getDatumForPoint(offsetX, offsetY);
         const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerOverLegendDatum) {
-            this.cursorManager.updateCursor(this.id);
-            this.highlightManager.updateHighlight(this.id);
+            this.ctx.cursorManager.updateCursor(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
             return;
         }
 
-        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
-        if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
-            this.tooltipManager.updateTooltip(
+        const series = datum ? this.ctx.dataService.getSeries().find((series) => series.id === datum?.id) : undefined;
+        if (datum && this.truncatedItems.has(datum.itemId ?? datum.id)) {
+            const labelText = this.getItemLabel(datum);
+            this.ctx.tooltipManager.updateTooltip(
                 this.id,
-                { pageX, pageY, offsetX, offsetY, event },
-                toTooltipHtml({ content: datum.label.text })
+                { pageX, pageY, offsetX, offsetY, event, showArrow: false },
+                toTooltipHtml({ content: labelText })
             );
         } else {
-            this.tooltipManager.removeTooltip(this.id);
+            this.ctx.tooltipManager.removeTooltip(this.id);
         }
 
-        if (toggleSeriesVisible || listeners.legendItemClick != null) {
-            this.cursorManager.updateCursor(this.id, 'pointer');
+        if (toggleSeriesVisible || listeners.legendItemClick != null || listeners.legendItemDoubleClick != null) {
+            this.ctx.cursorManager.updateCursor(this.id, 'pointer');
         }
 
         if (datum?.enabled && series) {
-            this.highlightManager.updateHighlight(this.id, {
+            this.ctx.highlightManager.updateHighlight(this.id, {
                 series,
                 itemId: datum?.itemId,
                 datum: undefined,
             });
         } else {
-            this.highlightManager.updateHighlight(this.id);
+            this.ctx.highlightManager.updateHighlight(this.id);
         }
     }
 
@@ -924,11 +888,8 @@ export class Legend {
 
         const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
 
-        let translationX = 0;
-        let translationY = 0;
-
-        this.translationX = 0;
-        this.translationY = 0;
+        this.group.translationX = 0;
+        this.group.translationY = 0;
         this.performLayout(legendWidth, legendHeight);
         const legendBBox = this.computePagedBBox();
 
@@ -946,6 +907,9 @@ export class Legend {
             }
         };
         if (this.visible) {
+            let translationX;
+            let translationY;
+
             switch (this.position) {
                 case 'top':
                 case 'bottom':
@@ -963,8 +927,8 @@ export class Legend {
             }
 
             // Round off for pixel grid alignment to work properly.
-            this.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
-            this.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
+            this.group.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
+            this.group.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
         }
 
         if (this.visible && this.enabled && this.data.length) {
@@ -972,11 +936,11 @@ export class Legend {
             newShrinkRect.shrink(legendPadding, this.position);
 
             const legendPositionedBBox = legendBBox.clone();
-            legendPositionedBBox.x += this.translationX;
-            legendPositionedBBox.y += this.translationY;
-            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+            legendPositionedBBox.x += this.group.translationX;
+            legendPositionedBBox.y += this.group.translationY;
+            this.ctx.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
         } else {
-            this.tooltipManager.updateExclusiveRect(this.id);
+            this.ctx.tooltipManager.updateExclusiveRect(this.id);
         }
 
         return { shrinkRect: newShrinkRect };

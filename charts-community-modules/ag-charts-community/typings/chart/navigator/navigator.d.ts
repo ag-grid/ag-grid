@@ -29,9 +29,9 @@ export declare class Navigator extends BaseModuleInstance implements ModuleInsta
     constructor(ctx: ModuleContext);
     private layout;
     private layoutComplete;
-    update(): void;
     private onDragStart;
     private onDrag;
     private onDragStop;
     private stopHandleDragging;
 }
+//# sourceMappingURL=navigator.d.ts.map

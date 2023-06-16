@@ -63,9 +63,9 @@ The tooltip position can be modified using the `tooltip.position.type` property.
 - `node` - Anchors the tooltip to the highlighted node
 - `pointer` - Anchors the tooltip to the mouse pointer
 
-For series with markers, such as `line`, `area`, `scatter` and `bubble`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
+For series with markers, such as `line`, `area`, and `scatter`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
 
-For series without markers, such as `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
+For series without markers, such as `bar`,`column`, `histogram`, `treemap` and `pie`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
 
 The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
 
@@ -87,6 +87,26 @@ In this example we show how to change the tooltip's default position. Note that:
 - By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the tooltip arrow is removed.
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
+
+## Tooltip Arrow
+
+The chart tooltip shows an arrow below it to indicate its exact point of origin when it's unconstrained by the container and has no [position offset](#tooltip-position) supplied.
+
+Set `tooltip.showArrow` to `true` to always show the arrow, and set it to `false` to remove the arrow.
+
+```js
+tooltip: {
+  showArrow: false
+}
+```
+
+This can be useful if the tooltip's [position](#tooltip-position) has been modified and the arrow is no longer needed.
+
+### Example: Removing the Tooltip Arrow
+
+In this example, the button above the chart can be used to show or hide the tooltip arrow.
+
+<chart-example title='Removing the Tooltip Arrow' name='default-tooltip-arrow' type='generated'></chart-example>
 
 ## Styling the Default Tooltip
 
@@ -178,8 +198,9 @@ series: [
 
 The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the `chart.data` or `series.data` array. You can then process the raw values however you like before using them as a part of the returned HTML string.
 
-[[note]]
-| Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+<note>
+Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+</note>
 
 The effect of applying the tooltip renderer from the snippet above can be seen in the example below.
 

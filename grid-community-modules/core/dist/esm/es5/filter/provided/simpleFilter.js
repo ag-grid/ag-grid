@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,9 +35,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
@@ -271,7 +274,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         var models = [];
         if (operator) {
             var combinedModel = model;
-            models.push.apply(models, __spread(((_a = combinedModel.conditions) !== null && _a !== void 0 ? _a : [])));
+            models.push.apply(models, __spreadArray([], __read(((_a = combinedModel.conditions) !== null && _a !== void 0 ? _a : []))));
         }
         else {
             models.push(model);
@@ -286,6 +289,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.filterPlaceholder = params.filterPlaceholder;
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
+        this.createFilterListOptions();
         this.createOption();
         this.createMissingConditionsAndOperators();
     };
@@ -354,18 +358,22 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.getDefaultJoinOperator = function (defaultJoinOperator) {
         return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
     };
-    SimpleFilter.prototype.putOptionsIntoDropdown = function (eType) {
+    SimpleFilter.prototype.createFilterListOptions = function () {
         var _this = this;
         var filterOptions = this.optionsFactory.getFilterOptions();
-        // Add specified options to all condition drop-downs.
-        filterOptions.forEach(function (option) {
-            var listOption = typeof option === 'string' ?
+        this.filterListOptions = filterOptions.map(function (option) {
+            return typeof option === 'string' ?
                 _this.createBoilerplateListOption(option) :
                 _this.createCustomListOption(option);
+        });
+    };
+    SimpleFilter.prototype.putOptionsIntoDropdown = function (eType) {
+        // Add specified options to condition drop-down.
+        this.filterListOptions.forEach(function (listOption) {
             eType.addOption(listOption);
         });
         // Make drop-downs read-only if there is only one option.
-        eType.setDisabled(filterOptions.length <= 1);
+        eType.setDisabled(this.filterListOptions.length <= 1);
     };
     SimpleFilter.prototype.createBoilerplateListOption = function (option) {
         return { value: option, text: this.translate(option) };
@@ -435,15 +443,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         var _this = this;
         this.eTypes.forEach(function (eType, position) {
             var disabled = _this.isConditionDisabled(position, lastUiCompletePosition);
-            var group = position === 1 ? [eType, _this.eJoinOperatorPanels[0], _this.eJoinOperatorsAnd[0], _this.eJoinOperatorsOr[0]] : [eType];
-            group.forEach(function (element) {
-                if (element instanceof AgAbstractInputField || element instanceof AgSelect) {
-                    element.setDisabled(disabled);
-                }
-                else {
-                    setDisabled(element, disabled);
-                }
-            });
+            eType.setDisabled(disabled || _this.filterListOptions.length <= 1);
+            if (position === 1) {
+                setDisabled(_this.eJoinOperatorPanels[0], disabled);
+                _this.eJoinOperatorsAnd[0].setDisabled(disabled);
+                _this.eJoinOperatorsOr[0].setDisabled(disabled);
+            }
         });
         this.eConditionBodies.forEach(function (element, index) {
             setDisplayed(element, _this.isConditionBodyVisible(index));
@@ -507,7 +512,7 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.afterGuiDetached = function () {
         _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
+        if (!this.areModelsEqual(appliedModel, this.getModelFromUi()) || this.hasInvalidInputs()) {
             this.resetUiToActiveModel(appliedModel);
         }
         // remove incomplete positions
@@ -703,7 +708,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)
             .setAriaLabel(filteringLabel)
-            .setDisabled(this.isReadOnly());
+            .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     };
     SimpleFilter.prototype.resetJoinOperatorAnd = function (eJoinOperatorAnd, index, uniqueGroupId) {
         this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'), uniqueGroupId);
@@ -790,6 +795,9 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.isBlank = function (cellValue) {
         return cellValue == null ||
             (typeof cellValue === 'string' && cellValue.trim().length === 0);
+    };
+    SimpleFilter.prototype.hasInvalidInputs = function () {
+        return false;
     };
     SimpleFilter.EMPTY = 'empty';
     SimpleFilter.BLANK = 'blank';

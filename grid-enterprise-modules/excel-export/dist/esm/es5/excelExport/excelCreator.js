@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,7 +30,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, PostConstruct, CssClassApplier, } from '@ag-grid-community/core';
+import { _, Autowired, Bean, PostConstruct, CssClassApplier } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -184,16 +186,13 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.getExportMode();
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
-        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService;
+        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
         var isXlsx = this.getExportMode() === 'xlsx';
         var sheetName = 'ag-grid';
         if (params.sheetName != null) {
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
-        var config = __assign(__assign({}, params), { sheetName: sheetName,
-            columnModel: columnModel,
-            valueService: valueService,
-            gridOptionsService: gridOptionsService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
         return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
     };
     ExcelCreator.prototype.styleLinker = function (params) {
@@ -270,6 +269,12 @@ var ExcelCreator = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsService')
     ], ExcelCreator.prototype, "gridOptionsService", void 0);
+    __decorate([
+        Autowired('valueFormatterService')
+    ], ExcelCreator.prototype, "valueFormatterService", void 0);
+    __decorate([
+        Autowired('valueParserService')
+    ], ExcelCreator.prototype, "valueParserService", void 0);
     __decorate([
         PostConstruct
     ], ExcelCreator.prototype, "postConstruct", null);

@@ -98,7 +98,7 @@ let ChartCrossFilterService = ChartCrossFilterService_1 = class ChartCrossFilter
         let gridColumn = this.getColumnById(colId);
         if (gridColumn) {
             const colDef = gridColumn.getColDef();
-            return colDef.filter != null ? colDef.filter : colDef.filterFramework;
+            return colDef.filter;
         }
     }
     getColumnById(colId) {

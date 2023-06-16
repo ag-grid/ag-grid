@@ -15,32 +15,36 @@ var Caption = /** @class */ (function () {
     function Caption() {
         this.node = new text_1.Text();
         this.enabled = false;
-        this.text = '';
+        this.text = undefined;
         this.fontSize = 10;
         this.fontFamily = 'sans-serif';
         this.spacing = Caption.PADDING;
-        this._lineHeight = undefined;
+        this.lineHeight = undefined;
+        this.maxWidth = undefined;
+        this.maxHeight = undefined;
+        this.wrapping = 'always';
         var node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = node_1.PointerEvents.None;
     }
-    Object.defineProperty(Caption.prototype, "lineHeight", {
-        get: function () {
-            return this._lineHeight;
-        },
-        set: function (value) {
-            this._lineHeight = value;
-            this.node.lineHeight = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
+    Caption.prototype.computeTextWrap = function (containerWidth, containerHeight) {
+        var _a, _b;
+        var _c = this, text = _c.text, wrapping = _c.wrapping;
+        var maxWidth = Math.min((_a = this.maxWidth) !== null && _a !== void 0 ? _a : Infinity, containerWidth);
+        var maxHeight = (_b = this.maxHeight) !== null && _b !== void 0 ? _b : containerHeight;
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        var wrapped = text_1.Text.wrap(text !== null && text !== void 0 ? text : '', maxWidth, maxHeight, this, wrapping);
+        this.node.text = wrapped;
+    };
     Caption.PADDING = 10;
     __decorate([
         validation_1.Validate(validation_1.BOOLEAN)
     ], Caption.prototype, "enabled", void 0);
     __decorate([
-        validation_1.Validate(validation_1.STRING),
+        validation_1.Validate(validation_1.OPT_STRING),
         proxy_1.ProxyPropertyOnWrite('node')
     ], Caption.prototype, "text", void 0);
     __decorate([
@@ -68,7 +72,16 @@ var Caption = /** @class */ (function () {
     ], Caption.prototype, "spacing", void 0);
     __decorate([
         validation_1.Validate(validation_1.OPT_NUMBER(0))
-    ], Caption.prototype, "_lineHeight", void 0);
+    ], Caption.prototype, "lineHeight", void 0);
+    __decorate([
+        validation_1.Validate(validation_1.OPT_NUMBER(0))
+    ], Caption.prototype, "maxWidth", void 0);
+    __decorate([
+        validation_1.Validate(validation_1.OPT_NUMBER(0))
+    ], Caption.prototype, "maxHeight", void 0);
+    __decorate([
+        validation_1.Validate(validation_1.TEXT_WRAP)
+    ], Caption.prototype, "wrapping", void 0);
     return Caption;
 }());
 exports.Caption = Caption;

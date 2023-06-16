@@ -1,6 +1,8 @@
-import { Series, SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { BBox } from '../../../scene/bbox';
 import { PointLabelDatum } from '../../../util/labelPlacement';
+import { DataModel, ProcessedData } from '../../data/dataModel';
+import { ModuleContext } from '../../../util/module';
 export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**
      * The center of the polar series (for example, the center of a pie).
@@ -16,11 +18,16 @@ export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Ser
      * and is not supposed to be set by the user.
      */
     radius: number;
-    constructor({ useLabelLayer }: {
-        useLabelLayer?: boolean | undefined;
+    protected dataModel?: DataModel<any, any, any>;
+    protected processedData?: ProcessedData<any>;
+    constructor({ moduleCtx, useLabelLayer, pickModes, }: {
+        moduleCtx: ModuleContext;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
     });
     getLabelData(): PointLabelDatum[];
     computeLabelsBBox(_options: {
         hideWhenNecessary: boolean;
-    }): BBox | null;
+    }, _seriesRect: BBox): BBox | null;
 }
+//# sourceMappingURL=polarSeries.d.ts.map

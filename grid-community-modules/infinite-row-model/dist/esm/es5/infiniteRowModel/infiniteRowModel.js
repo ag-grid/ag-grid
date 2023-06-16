@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -45,7 +47,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         this.verifyProps();
     };
     InfiniteRowModel.prototype.verifyProps = function () {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
             var message_1 = "AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.";
             _.doOnce(function () { return console.warn(message_1); }, 'IRM.InitialGroupOrderComparator');
         }
@@ -120,7 +122,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         var userGeneratingIds = getRowIdFunc != null;
         if (!userGeneratingIds) {
             this.selectionService.reset();

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -29,6 +31,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartService = void 0;
 var core_1 = require("@ag-grid-community/core");
@@ -50,6 +73,18 @@ var ChartService = /** @class */ (function (_super) {
         };
         return _this;
     }
+    ChartService.prototype.updateChart = function (params) {
+        if (this.activeChartComps.size === 0) {
+            console.warn("AG Grid - No active charts to update.");
+            return;
+        }
+        var chartComp = __spreadArray([], __read(this.activeChartComps)).find(function (chartComp) { return chartComp.getChartId() === params.chartId; });
+        if (!chartComp) {
+            console.warn("AG Grid - Unable to update chart. No active chart found with ID: " + params.chartId + ".");
+            return;
+        }
+        chartComp.update(params);
+    };
     ChartService.prototype.getChartModels = function () {
         var models = [];
         var versionedModel = function (c) {
@@ -66,6 +101,15 @@ var ChartService = /** @class */ (function (_super) {
             }
         });
         return chartRef;
+    };
+    ChartService.prototype.getChartComp = function (chartId) {
+        var chartComp;
+        this.activeChartComps.forEach(function (comp) {
+            if (comp.getChartId() === chartId) {
+                chartComp = comp;
+            }
+        });
+        return chartComp;
     };
     ChartService.prototype.getChartImageDataURL = function (params) {
         var url;
@@ -146,9 +190,8 @@ var ChartService = /** @class */ (function (_super) {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, undefined, params.unlinkChart, false, model.chartOptions, model.chartPalette, params.seriesChartTypes);
     };
     ChartService.prototype.createRangeChart = function (params) {
-        var cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
-            : undefined;
+        var _a;
+        var cellRange = (_a = this.rangeService) === null || _a === void 0 ? void 0 : _a.createCellRangeFromCellRangeParams(params.cellRange);
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
             return;
@@ -178,9 +221,8 @@ var ChartService = /** @class */ (function (_super) {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart);
     };
     ChartService.prototype.createCrossFilterChart = function (params) {
-        var cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
-            : undefined;
+        var _a;
+        var cellRange = (_a = this.rangeService) === null || _a === void 0 ? void 0 : _a.createCellRangeFromCellRangeParams(params.cellRange);
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
             return;
@@ -221,7 +263,7 @@ var ChartService = /** @class */ (function (_super) {
         if (container) {
             // if container exists, means developer initiated chart create via API, so place in provided container
             container.appendChild(chartComp.getGui());
-            // if the chart container was placed outside of an element that
+            // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             var theme = this.environment.getTheme();
@@ -230,7 +272,7 @@ var ChartService = /** @class */ (function (_super) {
             }
         }
         else if (createChartContainerFunc) {
-            // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
+            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
             // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         }
@@ -266,7 +308,7 @@ var ChartService = /** @class */ (function (_super) {
         return ranges.length > 0 ? ranges[0] : {};
     };
     ChartService.prototype.generateId = function () {
-        return 'id-' + Math.random().toString(36).substr(2, 16);
+        return "id-" + Math.random().toString(36).substring(2, 18);
     };
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });

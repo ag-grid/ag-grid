@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -39,7 +39,11 @@ const HeaderGroupCellComp = (props) => {
     const { ctrl } = props;
     useEffectOnce_1.useLayoutEffectOnce(() => {
         const compProxy = {
-            setWidth: width => eGui.current.style.width = width,
+            setWidth: width => {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -56,13 +60,9 @@ const HeaderGroupCellComp = (props) => {
     react_1.useLayoutEffect(() => jsComp_1.showJsComp(userCompDetails, context, eGui.current), [userCompDetails]);
     // add drag handling, must be done after component is added to the dom
     react_1.useEffect(() => {
-        let userCompDomElement = undefined;
-        eGui.current.childNodes.forEach(node => {
-            if (node != null && node !== eResize.current) {
-                userCompDomElement = node;
-            }
-        });
-        userCompDomElement && ctrl.setDragSource(userCompDomElement);
+        if (eGui.current) {
+            ctrl.setDragSource(eGui.current);
+        }
     }, [userCompDetails]);
     const className = react_1.useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
     const resizableClassName = react_1.useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);

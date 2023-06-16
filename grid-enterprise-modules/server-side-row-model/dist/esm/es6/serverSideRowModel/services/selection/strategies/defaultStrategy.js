@@ -71,14 +71,20 @@ export class DefaultStrategy extends BeanStub {
         });
         return anyNodesToggled;
     }
-    setNodeSelected(params) {
+    setNodesSelected(params) {
+        if (params.nodes.length === 0)
+            return 0;
         const onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
+            if (params.nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when rowSelection is set to \'single\'');
+            }
+            const node = params.nodes[0];
             if (params.newValue) {
-                this.selectedNodes = { [params.node.id]: params.node };
+                this.selectedNodes = { [node.id]: node };
                 this.selectedState = {
                     selectAll: false,
-                    toggledNodes: new Set([params.node.id]),
+                    toggledNodes: new Set([node.id]),
                 };
             }
             else {
@@ -88,7 +94,7 @@ export class DefaultStrategy extends BeanStub {
                     toggledNodes: new Set(),
                 };
             }
-            this.lastSelected = params.node.id;
+            this.lastSelected = node.id;
             return 1;
         }
         const updateNodeState = (node) => {
@@ -106,13 +112,17 @@ export class DefaultStrategy extends BeanStub {
             this.selectedState.toggledNodes.add(node.id);
         };
         if (params.rangeSelect && this.lastSelected) {
+            if (params.nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
+            }
+            const node = params.nodes[0];
             const lastSelectedNode = this.rowModel.getRowNode(this.lastSelected);
-            this.rowModel.getNodesInRangeForSelection(params.node, lastSelectedNode !== null && lastSelectedNode !== void 0 ? lastSelectedNode : null).forEach(updateNodeState);
-            this.lastSelected = params.node.id;
+            this.rowModel.getNodesInRangeForSelection(node, lastSelectedNode !== null && lastSelectedNode !== void 0 ? lastSelectedNode : null).forEach(updateNodeState);
+            this.lastSelected = node.id;
             return 1;
         }
-        updateNodeState(params.node);
-        this.lastSelected = params.node.id;
+        params.nodes.forEach(updateNodeState);
+        this.lastSelected = params.nodes[params.nodes.length - 1].id;
         return 1;
     }
     processNewRow(node) {

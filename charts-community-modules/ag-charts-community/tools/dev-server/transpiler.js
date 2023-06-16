@@ -21,7 +21,7 @@ function transpileTSAndWatch(options) {
         // Substitute for writing into disc
         writeFile(file, content) {
             emit(file, content);
-            onWriteEnd && onWriteEnd();
+            onWriteEnd?.();
         },
 
         // Prevent clearing the console after rebuilds

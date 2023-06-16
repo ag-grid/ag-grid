@@ -15,9 +15,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = void 0;
@@ -29,34 +30,39 @@ exports.Logger = {
         for (var _i = 0; _i < arguments.length; _i++) {
             logContent[_i] = arguments[_i];
         }
-        console.log.apply(console, __spread(logContent));
+        console.log.apply(console, __spreadArray([], __read(logContent)));
     },
     warn: function (message) {
         var logContent = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             logContent[_i - 1] = arguments[_i];
         }
-        console.warn.apply(console, __spread(["AG Charts - " + message], logContent));
+        console.warn.apply(console, __spreadArray(["AG Charts - " + message], __read(logContent)));
     },
     error: function (message) {
         var logContent = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             logContent[_i - 1] = arguments[_i];
         }
-        console.error.apply(console, __spread(["AG Charts - " + message], logContent));
+        if (typeof message === 'object') {
+            console.error.apply(console, __spreadArray(["AG Charts error", message], __read(logContent)));
+        }
+        else {
+            console.error.apply(console, __spreadArray(["AG Charts - " + message], __read(logContent)));
+        }
     },
     warnOnce: function (message) {
         var logContent = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             logContent[_i - 1] = arguments[_i];
         }
-        function_1.doOnce(function () { return exports.Logger.warn.apply(exports.Logger, __spread([message], logContent)); }, "Logger.warn: " + message);
+        function_1.doOnce(function () { return exports.Logger.warn.apply(exports.Logger, __spreadArray([message], __read(logContent))); }, "Logger.warn: " + message);
     },
     errorOnce: function (message) {
         var logContent = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             logContent[_i - 1] = arguments[_i];
         }
-        function_1.doOnce(function () { return exports.Logger.error.apply(exports.Logger, __spread([message], logContent)); }, "Logger.warn: " + message);
+        function_1.doOnce(function () { return exports.Logger.error.apply(exports.Logger, __spreadArray([message], __read(logContent))); }, "Logger.warn: " + message);
     },
 };

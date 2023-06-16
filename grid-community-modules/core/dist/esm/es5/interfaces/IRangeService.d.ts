@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -31,7 +31,7 @@ export interface IRangeService {
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
-    clearCellRangeCellValues(cellRanges?: CellRange[], source?: string): void;
+    clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
 export interface ISelectionHandle {
     getGui(): HTMLElement;
@@ -91,4 +91,13 @@ export interface AddRangeSelectionParams {
     floatingEnd: string;
     columnStart: string | Column;
     columnEnd: string | Column;
+}
+export interface ClearCellRangeParams {
+    cellRanges?: CellRange[];
+    /** Source passed to `cellValueChanged` event */
+    cellEventSource?: string;
+    /** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */
+    dispatchWrapperEvents?: boolean;
+    /** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */
+    wrapperEventSource?: 'deleteKey';
 }

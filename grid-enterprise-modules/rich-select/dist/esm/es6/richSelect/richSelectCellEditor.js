@@ -14,6 +14,7 @@ export class RichSelectCellEditor extends PopupComponent {
         this.searchString = '';
     }
     init(params) {
+        var _a;
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
@@ -43,8 +44,8 @@ export class RichSelectCellEditor extends PopupComponent {
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         const debounceDelay = _.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
         this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
-        if (_.exists(params.charPress)) {
-            this.searchText(params.charPress);
+        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
+            this.searchText(params.eventKey);
         }
     }
     onKeyDown(event) {
@@ -59,7 +60,7 @@ export class RichSelectCellEditor extends PopupComponent {
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onNavigationKeyPressed(event, key);
+                this.onNavigationKeyDown(event, key);
                 break;
             default:
                 this.searchText(event);
@@ -72,7 +73,7 @@ export class RichSelectCellEditor extends PopupComponent {
         this.confirmSelection();
         this.params.stopEditing();
     }
-    onNavigationKeyPressed(event, key) {
+    onNavigationKeyDown(event, key) {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);

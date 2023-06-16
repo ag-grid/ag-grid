@@ -15,7 +15,7 @@ export declare class RowDragComp extends Component {
     private readonly suppressVisibilityChange?;
     private dragSource;
     private readonly beans;
-    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column | undefined, customGui?: HTMLElement | undefined, dragStartPixels?: number | undefined, suppressVisibilityChange?: boolean | undefined);
+    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column<any> | undefined, customGui?: HTMLElement | undefined, dragStartPixels?: number | undefined, suppressVisibilityChange?: boolean | undefined);
     isCustomGui(): boolean;
     private postConstruct;
     setDragElement(dragElement: HTMLElement, dragStartPixels?: number): void;

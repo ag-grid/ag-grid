@@ -4,10 +4,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
+import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
+import { Default } from '../../util/default';
+import { BaseAxisTick } from '../../axis';
+class TimeAxisTick extends BaseAxisTick {
+    constructor() {
+        super(...arguments);
+        this.maxSpacing = NaN;
+    }
+}
+__decorate([
+    Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing'))),
+    Default(NaN)
+], TimeAxisTick.prototype, "maxSpacing", void 0);
 export class TimeAxis extends ChartAxis {
     constructor(moduleCtx) {
         super(moduleCtx, new TimeScale());
@@ -22,6 +34,7 @@ export class TimeAxis extends ChartAxis {
         });
     }
     normaliseDataDomain(d) {
+        var _a;
         let { min, max } = this;
         if (typeof min === 'number') {
             min = new Date(min);
@@ -30,7 +43,7 @@ export class TimeAxis extends ChartAxis {
             max = new Date(max);
         }
         if (d.length > 2) {
-            d = (extent(d) || [0, 1000]).map((x) => new Date(x));
+            d = ((_a = extent(d)) !== null && _a !== void 0 ? _a : [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];
@@ -43,6 +56,9 @@ export class TimeAxis extends ChartAxis {
         }
         return d;
     }
+    createTick() {
+        return new TimeAxisTick();
+    }
     onLabelFormatChange(ticks, format) {
         if (format) {
             super.onLabelFormatChange(ticks, format);
@@ -53,7 +69,8 @@ export class TimeAxis extends ChartAxis {
         }
     }
     formatDatum(datum) {
-        return this.datumFormatter(datum);
+        var _a;
+        return (_a = this.moduleCtx.callbackCache.call(this.datumFormatter, datum)) !== null && _a !== void 0 ? _a : String(datum);
     }
     calculatePadding(_min, _max) {
         // numbers in domain correspond to Unix timestamps

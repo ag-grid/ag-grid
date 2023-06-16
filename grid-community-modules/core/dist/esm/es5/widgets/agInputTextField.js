@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -19,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { AgAbstractInputField } from './agAbstractInputField';
 import { exists } from '../utils/generic';
+import { isEventFromPrintableCharacter } from '../utils/keyboard';
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
     function AgInputTextField(config, className, inputType) {
@@ -39,18 +42,21 @@ var AgInputTextField = /** @class */ (function (_super) {
         }
         return ret;
     };
+    /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
+    AgInputTextField.prototype.setStartValue = function (value) {
+        this.setValue(value, true);
+    };
     AgInputTextField.prototype.preventDisallowedCharacters = function () {
         var pattern = new RegExp("[" + this.config.allowedCharPattern + "]");
-        var preventDisallowedCharacters = function (event) {
-            if (event.ctrlKey || event.metaKey) {
-                // copy/paste can fall in here on certain browsers (e.g. Safari)
+        var preventCharacters = function (event) {
+            if (!isEventFromPrintableCharacter(event)) {
                 return;
             }
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();
             }
         };
-        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
         this.addManagedListener(this.eInput, 'paste', function (e) {
             var _a;
             var text = (_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text');

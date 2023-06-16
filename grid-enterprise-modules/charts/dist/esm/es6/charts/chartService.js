@@ -21,6 +21,18 @@ let ChartService = class ChartService extends BeanStub {
             lastSelectedChartId: '',
         };
     }
+    updateChart(params) {
+        if (this.activeChartComps.size === 0) {
+            console.warn(`AG Grid - No active charts to update.`);
+            return;
+        }
+        const chartComp = [...this.activeChartComps].find(chartComp => chartComp.getChartId() === params.chartId);
+        if (!chartComp) {
+            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            return;
+        }
+        chartComp.update(params);
+    }
     getChartModels() {
         const models = [];
         const versionedModel = (c) => {
@@ -37,6 +49,15 @@ let ChartService = class ChartService extends BeanStub {
             }
         });
         return chartRef;
+    }
+    getChartComp(chartId) {
+        let chartComp;
+        this.activeChartComps.forEach(comp => {
+            if (comp.getChartId() === chartId) {
+                chartComp = comp;
+            }
+        });
+        return chartComp;
     }
     getChartImageDataURL(params) {
         let url;
@@ -115,9 +136,8 @@ let ChartService = class ChartService extends BeanStub {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, undefined, params.unlinkChart, false, model.chartOptions, model.chartPalette, params.seriesChartTypes);
     }
     createRangeChart(params) {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
-            : undefined;
+        var _a;
+        const cellRange = (_a = this.rangeService) === null || _a === void 0 ? void 0 : _a.createCellRangeFromCellRangeParams(params.cellRange);
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
             return;
@@ -147,9 +167,8 @@ let ChartService = class ChartService extends BeanStub {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart);
     }
     createCrossFilterChart(params) {
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
-            : undefined;
+        var _a;
+        const cellRange = (_a = this.rangeService) === null || _a === void 0 ? void 0 : _a.createCellRangeFromCellRangeParams(params.cellRange);
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
             return;
@@ -185,7 +204,7 @@ let ChartService = class ChartService extends BeanStub {
         if (container) {
             // if container exists, means developer initiated chart create via API, so place in provided container
             container.appendChild(chartComp.getGui());
-            // if the chart container was placed outside of an element that
+            // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             const theme = this.environment.getTheme();
@@ -194,7 +213,7 @@ let ChartService = class ChartService extends BeanStub {
             }
         }
         else if (createChartContainerFunc) {
-            // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
+            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
             // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         }
@@ -229,7 +248,7 @@ let ChartService = class ChartService extends BeanStub {
         return ranges.length > 0 ? ranges[0] : {};
     }
     generateId() {
-        return 'id-' + Math.random().toString(36).substr(2, 16);
+        return `id-${Math.random().toString(36).substring(2, 18)}`;
     }
     destroyAllActiveCharts() {
         this.activeCharts.forEach(chart => chart.destroyChart());

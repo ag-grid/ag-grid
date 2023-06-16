@@ -23,9 +23,10 @@ export class LogAxis extends NumberAxis {
         this.scale.strictClampByDefault = true;
     }
     normaliseDataDomain(d) {
+        var _a;
         const { min, max } = this;
         if (d.length > 2) {
-            d = extent(d) || [NaN, NaN];
+            d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];

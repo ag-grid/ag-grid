@@ -1,5 +1,6 @@
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { exists } from '../utils/generic';
+import { isEventFromPrintableCharacter } from '../utils/keyboard';
 
 export interface ITextInputField extends IInputField {
     allowedCharPattern?: string;
@@ -28,20 +29,23 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         return ret;
     }
 
+    /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
+    public setStartValue(value?: string | null): void {
+        this.setValue(value, true);
+    }
+
     private preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
-        const preventDisallowedCharacters = (event: KeyboardEvent) => {
-            if (event.ctrlKey || event.metaKey) {
-                // copy/paste can fall in here on certain browsers (e.g. Safari)
-                return;
-            }
+        const preventCharacters = (event: KeyboardEvent) => {
+            if (!isEventFromPrintableCharacter(event)) { return; }
+
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();
             }
         };
 
-        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
 
         this.addManagedListener(this.eInput, 'paste', (e: ClipboardEvent) => {
             const text = e.clipboardData?.getData('text');

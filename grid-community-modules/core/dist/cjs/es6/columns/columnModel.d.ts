@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from '../entities/columnGroup';
@@ -150,6 +150,7 @@ export declare class ColumnModel extends BeanStub {
     private onAutoGroupColumnDefChanged;
     private onSharedColDefChanged;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    recreateColumnDefs(source?: ColumnEventType): void;
     private destroyOldColumns;
     private destroyColumns;
     private createColumnsFromColumnDefs;

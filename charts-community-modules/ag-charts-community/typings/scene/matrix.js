@@ -15,6 +15,11 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Matrix = void 0;
 var bbox_1 = require("./bbox");
@@ -36,6 +41,13 @@ var Matrix = /** @class */ (function () {
         if (elements === void 0) { elements = [1, 0, 0, 1, 0, 0]; }
         this.elements = elements;
     }
+    Object.defineProperty(Matrix.prototype, "e", {
+        get: function () {
+            return __spreadArray([], __read(this.elements));
+        },
+        enumerable: false,
+        configurable: true
+    });
     Matrix.prototype.setElements = function (elements) {
         var e = this.elements;
         // `this.elements = elements.slice()` is 4-5 times slower
@@ -66,73 +78,13 @@ var Matrix = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Matrix.prototype, "a", {
-        get: function () {
-            return this.elements[0];
-        },
-        set: function (value) {
-            this.elements[0] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Matrix.prototype, "b", {
-        get: function () {
-            return this.elements[1];
-        },
-        set: function (value) {
-            this.elements[1] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Matrix.prototype, "c", {
-        get: function () {
-            return this.elements[2];
-        },
-        set: function (value) {
-            this.elements[2] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Matrix.prototype, "d", {
-        get: function () {
-            return this.elements[3];
-        },
-        set: function (value) {
-            this.elements[3] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Matrix.prototype, "e", {
-        get: function () {
-            return this.elements[4];
-        },
-        set: function (value) {
-            this.elements[4] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Matrix.prototype, "f", {
-        get: function () {
-            return this.elements[5];
-        },
-        set: function (value) {
-            this.elements[5] = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
     /**
      * Performs the AxB matrix multiplication and saves the result
      * to `C`, if given, or to `A` otherwise.
      */
     Matrix.prototype.AxB = function (A, B, C) {
         var a = A[0] * B[0] + A[2] * B[1], b = A[1] * B[0] + A[3] * B[1], c = A[0] * B[2] + A[2] * B[3], d = A[1] * B[2] + A[3] * B[3], e = A[0] * B[4] + A[2] * B[5] + A[4], f = A[1] * B[4] + A[3] * B[5] + A[5];
-        C = C || A;
+        C = C !== null && C !== void 0 ? C : A;
         C[0] = a;
         C[1] = b;
         C[2] = c;

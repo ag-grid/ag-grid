@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -196,7 +196,6 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
         return colGroupDefMerged;
     }
     createColumn(primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
-        const colDefMerged = this.mergeColDefs(colDef);
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
@@ -206,11 +205,13 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
         }
         if (!column) {
             // no existing column, need to create one
-            const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
+            const colDefMerged = this.mergeColDefs(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         }
         else {
+            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -295,18 +296,13 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
             return false;
         });
     }
-    mergeColDefs(colDef) {
+    mergeColDefs(colDef, colId) {
         // start with empty merged definition
         const colDefMerged = {};
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
-        // merge properties from column type properties
-        let columnType = colDef.type;
-        if (!columnType) {
-            columnType = defaultColDef && defaultColDef.type;
-        }
-        // if type of both colDef and defaultColDef, then colDef gets preference
+        const columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
         if (columnType) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
@@ -318,24 +314,11 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
             // override the sort for row group columns where the autoGroupColDef defines these values.
             mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
+        this.dataTypeService.validateColDef(colDefMerged);
         return colDefMerged;
     }
-    assignColumnTypes(type, colDefMerged) {
-        let typeKeys = [];
-        if (type instanceof Array) {
-            const invalidArray = type.some(a => typeof a !== 'string');
-            if (invalidArray) {
-                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
-            }
-            else {
-                typeKeys = type;
-            }
-        }
-        else if (typeof type === 'string') {
-            typeKeys = type.split(',');
-        }
-        else {
-            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
+    assignColumnTypes(typeKeys, colDefMerged) {
+        if (!typeKeys.length) {
             return;
         }
         // merge user defined with default column types
@@ -367,6 +350,9 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
 __decorate([
     Autowired('columnUtils')
 ], ColumnFactory.prototype, "columnUtils", void 0);
+__decorate([
+    Autowired('dataTypeService')
+], ColumnFactory.prototype, "dataTypeService", void 0);
 __decorate([
     __param(0, Qualifier('loggerFactory'))
 ], ColumnFactory.prototype, "setBeans", null);

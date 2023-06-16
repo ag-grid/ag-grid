@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/rich-select - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/rich-select - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -38,6 +38,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -119,6 +121,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -139,6 +143,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         return _this;
     }
     RichSelectCellEditor.prototype.init = function (params) {
+        var _a;
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
@@ -168,8 +173,8 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         var debounceDelay = core._.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
         this.clearSearchString = core._.debounce(this.clearSearchString, debounceDelay);
-        if (core._.exists(params.charPress)) {
-            this.searchText(params.charPress);
+        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
+            this.searchText(params.eventKey);
         }
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
@@ -184,7 +189,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
                 break;
             case core.KeyCode.DOWN:
             case core.KeyCode.UP:
-                this.onNavigationKeyPressed(event, key);
+                this.onNavigationKeyDown(event, key);
                 break;
             default:
                 this.searchText(event);
@@ -197,7 +202,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.confirmSelection();
         this.params.stopEditing();
     };
-    RichSelectCellEditor.prototype.onNavigationKeyPressed = function (event, key) {
+    RichSelectCellEditor.prototype.onNavigationKeyDown = function (event, key) {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
@@ -366,7 +371,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
 }(core.PopupComponent));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var RichSelectModule = {
     version: VERSION,

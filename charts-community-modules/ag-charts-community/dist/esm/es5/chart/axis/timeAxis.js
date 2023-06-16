@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -17,10 +19,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
+import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
+import { Default } from '../../util/default';
+import { BaseAxisTick } from '../../axis';
+var TimeAxisTick = /** @class */ (function (_super) {
+    __extends(TimeAxisTick, _super);
+    function TimeAxisTick() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.maxSpacing = NaN;
+        return _this;
+    }
+    __decorate([
+        Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing'))),
+        Default(NaN)
+    ], TimeAxisTick.prototype, "maxSpacing", void 0);
+    return TimeAxisTick;
+}(BaseAxisTick));
 var TimeAxis = /** @class */ (function (_super) {
     __extends(TimeAxis, _super);
     function TimeAxis(moduleCtx) {
@@ -37,7 +54,8 @@ var TimeAxis = /** @class */ (function (_super) {
         return _this;
     }
     TimeAxis.prototype.normaliseDataDomain = function (d) {
-        var _a = this, min = _a.min, max = _a.max;
+        var _a;
+        var _b = this, min = _b.min, max = _b.max;
         if (typeof min === 'number') {
             min = new Date(min);
         }
@@ -45,7 +63,7 @@ var TimeAxis = /** @class */ (function (_super) {
             max = new Date(max);
         }
         if (d.length > 2) {
-            d = (extent(d) || [0, 1000]).map(function (x) { return new Date(x); });
+            d = ((_a = extent(d)) !== null && _a !== void 0 ? _a : [0, 1000]).map(function (x) { return new Date(x); });
         }
         if (min instanceof Date) {
             d = [min, d[1]];
@@ -58,6 +76,9 @@ var TimeAxis = /** @class */ (function (_super) {
         }
         return d;
     };
+    TimeAxis.prototype.createTick = function () {
+        return new TimeAxisTick();
+    };
     TimeAxis.prototype.onLabelFormatChange = function (ticks, format) {
         if (format) {
             _super.prototype.onLabelFormatChange.call(this, ticks, format);
@@ -68,7 +89,8 @@ var TimeAxis = /** @class */ (function (_super) {
         }
     };
     TimeAxis.prototype.formatDatum = function (datum) {
-        return this.datumFormatter(datum);
+        var _a;
+        return (_a = this.moduleCtx.callbackCache.call(this.datumFormatter, datum)) !== null && _a !== void 0 ? _a : String(datum);
     };
     TimeAxis.prototype.calculatePadding = function (_min, _max) {
         // numbers in domain correspond to Unix timestamps

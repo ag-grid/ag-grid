@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -25,9 +25,10 @@ var __read$2 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$1 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$2(arguments[i]));
-    return ar;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsService, eventService, columnModel, selectionService, beans) {
@@ -119,8 +120,11 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.updateSelection = function (nodesToUnselect, source) {
         var selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(function (rowNode) {
-                rowNode.setSelected(false, false, true, source);
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                source: source,
             });
         }
         // we do this regardless of nodes to unselect or not, as it's possible
@@ -161,10 +165,10 @@ var ClientSideNodeManager = /** @class */ (function () {
             }
             var nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
             var nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
-            this.rootNode.allLeafChildren = __spread$1(nodesBeforeIndex, newNodes, nodesAfterIndex);
+            this.rootNode.allLeafChildren = __spreadArray$1(__spreadArray$1(__spreadArray$1([], __read$2(nodesBeforeIndex)), __read$2(newNodes)), __read$2(nodesAfterIndex));
         }
         else {
-            this.rootNode.allLeafChildren = __spread$1(this.rootNode.allLeafChildren, newNodes);
+            this.rootNode.allLeafChildren = __spreadArray$1(__spreadArray$1([], __read$2(this.rootNode.allLeafChildren)), __read$2(newNodes));
         }
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
@@ -223,7 +227,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         });
     };
     ClientSideNodeManager.prototype.lookupRowNode = function (data) {
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         var rowNode;
         if (getRowIdFunc) {
             // find rowNode using id
@@ -312,6 +316,8 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -339,9 +345,10 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1(arguments[i]));
-    return ar;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var RecursionType;
 (function (RecursionType) {
@@ -717,37 +724,39 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     };
     ClientSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
         // if lastSelectedNode is missing, we start at the first row
-        var firstRowHit = !lastInRange;
-        var lastRowHit = false;
-        var lastRow;
+        var started = !lastInRange;
+        var finished = false;
         var result = [];
         var groupsSelectChildren = this.gridOptionsService.is('groupSelectsChildren');
         this.forEachNodeAfterFilterAndSort(function (rowNode) {
-            var lookingForLastRow = firstRowHit && !lastRowHit;
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
-                    firstRowHit = true;
-                }
+            // range has been closed, skip till end
+            if (finished) {
+                return;
             }
-            var skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                var inRange = firstRowHit && !lastRowHit;
-                var childOfLastRow = rowNode.isParentOfNode(lastRow);
-                if (inRange || childOfLastRow) {
-                    result.push(rowNode);
-                }
-            }
-            if (lookingForLastRow) {
+            if (started) {
                 if (rowNode === lastInRange || rowNode === firstInRange) {
-                    lastRowHit = true;
-                    if (rowNode === lastInRange) {
-                        lastRow = lastInRange;
-                    }
-                    else {
-                        lastRow = firstInRange;
+                    // check if this is the last node we're going to be adding
+                    finished = true;
+                    // if the final node was a group node, and we're doing groupSelectsChildren
+                    // make the exception to select all of it's descendants too
+                    if (rowNode.group && groupsSelectChildren) {
+                        result.push.apply(result, __spreadArray([], __read$1(rowNode.allLeafChildren)));
+                        return;
                     }
                 }
+            }
+            if (!started) {
+                if (rowNode !== lastInRange && rowNode !== firstInRange) {
+                    // still haven't hit a boundary node, keep searching
+                    return;
+                }
+                started = true;
+            }
+            // only select leaf nodes if groupsSelectChildren
+            var includeThisNode = !rowNode.group || !groupsSelectChildren;
+            if (includeThisNode) {
+                result.push(rowNode);
+                return;
             }
         });
         return result;
@@ -824,7 +833,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNode = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterGroup || [])),
+            nodes: __spreadArray([], __read$1((this.rootNode.childrenAfterGroup || []))),
             callback: callback,
             recursionType: RecursionType.Normal,
             index: 0,
@@ -834,7 +843,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNodeAfterFilter = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterAggFilter || [])),
+            nodes: __spreadArray([], __read$1((this.rootNode.childrenAfterAggFilter || []))),
             callback: callback,
             recursionType: RecursionType.AfterFilter,
             index: 0,
@@ -844,7 +853,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback, includeFooterNodes) {
         if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.recursivelyWalkNodesAndCallback({
-            nodes: __spread((this.rootNode.childrenAfterSort || [])),
+            nodes: __spreadArray([], __read$1((this.rootNode.childrenAfterSort || []))),
             callback: callback,
             recursionType: RecursionType.AfterFilterAndSort,
             index: 0,
@@ -898,7 +907,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                 }
                 if (nodeChildren) {
                     index = this.recursivelyWalkNodesAndCallback({
-                        nodes: __spread(nodeChildren),
+                        nodes: __spreadArray([], __read$1(nodeChildren)),
                         callback: callback,
                         recursionType: recursionType,
                         index: index,
@@ -1285,6 +1294,8 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1322,6 +1333,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1375,6 +1388,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1438,7 +1453,7 @@ var FlattenStage = /** @class */ (function (_super) {
                 rowNode.childrenAfterGroup.length === 1;
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
-            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             var isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
@@ -1460,7 +1475,7 @@ var FlattenStage = /** @class */ (function (_super) {
                     this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, skipLeafNodes, uiLevelForChildren);
                     // put a footer in if user is looking for it
                     if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
                     }
                 }
             }
@@ -1512,6 +1527,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1529,7 +1546,7 @@ var SortService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SortService.prototype.init = function () {
-        this.postSortFunc = this.getPostSortFunc();
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     };
     SortService.prototype.sort = function (sortOptions, sortActive, useDeltaSort, rowNodeTransactions, changedPath, sortContainsGroupColumns) {
         var _this = this;
@@ -1583,17 +1600,6 @@ var SortService = /** @class */ (function (_super) {
             changedPath.forEachChangedNodeDepthFirst(callback);
         }
         this.updateGroupDataForHideOpenParents(changedPath);
-    };
-    SortService.prototype.getPostSortFunc = function () {
-        var postSortRows = this.gridOptionsService.getCallback('postSortRows');
-        if (postSortRows) {
-            return postSortRows;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var postSort = this.gridOptionsService.get('postSort');
-        if (postSort) {
-            return function (params) { return postSort(params.nodes); };
-        }
     };
     SortService.prototype.calculateDirtyNodes = function (rowNodeTransactions) {
         var dirtyNodes = {};
@@ -1762,6 +1768,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1863,6 +1871,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1901,17 +1911,14 @@ var ImmutableService = /** @class */ (function (_super) {
         }
     };
     ImmutableService.prototype.isActive = function () {
-        // we used to have a property immutableData for this. however this was deprecated
-        // in favour of having Immutable Data on by default when getRowId is provided
         var getRowIdProvided = this.gridOptionsService.exists('getRowId');
-        var immutableData = this.gridOptionsService.is('immutableData');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
         var resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
         if (resetRowDataOnUpdate) {
             return false;
         }
-        return getRowIdProvided || immutableData;
+        return getRowIdProvided;
     };
     ImmutableService.prototype.setRowData = function (rowData) {
         var transactionAndMap = this.createTransactionForRowData(rowData);
@@ -1927,7 +1934,7 @@ var ImmutableService = /** @class */ (function (_super) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
-        var getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;
@@ -1990,7 +1997,7 @@ var ImmutableService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var ClientSideRowModelModule = {
     version: VERSION,

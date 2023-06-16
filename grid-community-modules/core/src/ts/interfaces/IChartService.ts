@@ -80,6 +80,7 @@ export interface IChartService {
     downloadChart(params: ChartDownloadParams): void;
     openChartToolPanel(params: OpenChartToolPanelParams): void;
     closeChartToolPanel(chartId: string): void;
+    updateChart(params: UpdateChartParams): void;
 }
 
 interface CreateChartParams {
@@ -87,7 +88,7 @@ interface CreateChartParams {
     chartType: ChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
-    /** Provide to display the chart outside of the grid in your own container. */
+    /** Provide to display the chart outside the grid in your own container. */
     chartContainer?: HTMLElement;
     /** Allows specific chart options in the current theme to be overridden. */
     chartThemeOverrides?: AgChartThemeOverrides;
@@ -118,3 +119,61 @@ export interface CreateCrossFilterChartParams extends CreateChartParams {
 }
 
 export interface CreatePivotChartParams extends CreateChartParams { }
+
+export type UpdateChartParams = UpdateRangeChartParams | UpdatePivotChartParams | UpdateCrossFilterChartParams;
+
+export interface UpdateRangeChartParams {
+    type: 'rangeChartUpdate',
+    /** The id of the chart to update. */
+    chartId: string;
+    /** The type of chart to update. */
+    chartType?: ChartType;
+    /** The default theme to use, either a default option or your own custom theme. */
+    chartThemeName?: string;
+    /** Allows specific chart options in the current theme to be overridden. */
+    chartThemeOverrides?: AgChartThemeOverrides;
+    /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
+    unlinkChart?: boolean;
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange?: ChartParamsCellRange;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
+    /** The series chart type configurations used in combination charts */
+    seriesChartTypes?: SeriesChartType[];
+}
+
+export interface UpdatePivotChartParams {
+    type: 'pivotChartUpdate',
+    /** The id of the chart to update. */
+    chartId: string;
+    /** The type of chart to update. */
+    chartType?: ChartType;
+    /** The default theme to use, either a default option or your own custom theme. */
+    chartThemeName?: string;
+    /** Allows specific chart options in the current theme to be overridden. */
+    chartThemeOverrides?: AgChartThemeOverrides;
+    /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
+    unlinkChart?: boolean;
+}
+
+export interface UpdateCrossFilterChartParams {
+    type: 'crossFilterChartUpdate',
+    /** The id of the chart to update. */
+    chartId: string;
+    /** The type of chart to update. */
+    chartType?: ChartType;
+    /** The default theme to use, either a default option or your own custom theme. */
+    chartThemeName?: string;
+    /** Allows specific chart options in the current theme to be overridden. */
+    chartThemeOverrides?: AgChartThemeOverrides;
+    /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
+    unlinkChart?: boolean;
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange?: ChartParamsCellRange;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
+}

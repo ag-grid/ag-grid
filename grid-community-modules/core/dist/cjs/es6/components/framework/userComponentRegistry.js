@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,11 @@ const tooltipComponent_1 = require("../../rendering/tooltipComponent");
 const function_1 = require("../../utils/function");
 const object_1 = require("../../utils/object");
 const fuzzyMatch_1 = require("../../utils/fuzzyMatch");
+const numberCellEditor_1 = require("../../rendering/cellEditors/numberCellEditor");
+const dateCellEditor_1 = require("../../rendering/cellEditors/dateCellEditor");
+const dateStringCellEditor_1 = require("../../rendering/cellEditors/dateStringCellEditor");
+const checkboxCellRenderer_1 = require("../../rendering/cellRenderers/checkboxCellRenderer");
+const checkboxCellEditor_1 = require("../../rendering/cellEditors/checkboxCellEditor");
 let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -62,11 +67,16 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
             agGroupCellRenderer: groupCellRenderer_1.GroupCellRenderer,
             agGroupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
             agLoadingCellRenderer: loadingCellRenderer_1.LoadingCellRenderer,
+            agCheckboxCellRenderer: checkboxCellRenderer_1.CheckboxCellRenderer,
             //editors
             agCellEditor: textCellEditor_1.TextCellEditor,
             agTextCellEditor: textCellEditor_1.TextCellEditor,
+            agNumberCellEditor: numberCellEditor_1.NumberCellEditor,
+            agDateCellEditor: dateCellEditor_1.DateCellEditor,
+            agDateStringCellEditor: dateStringCellEditor_1.DateStringCellEditor,
             agSelectCellEditor: selectCellEditor_1.SelectCellEditor,
             agLargeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
+            agCheckboxCellEditor: checkboxCellEditor_1.CheckboxCellEditor,
             //filter
             agTextColumnFilter: textFilter_1.TextFilter,
             agNumberColumnFilter: numberFilter_1.NumberFilter,
@@ -90,19 +100,11 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
             agDetailCellRenderer: moduleNames_1.ModuleNames.MasterDetailModule,
             agSparklineCellRenderer: moduleNames_1.ModuleNames.SparklinesModule
         };
-        this.deprecatedAgGridDefaults = {
-            agPopupTextCellEditor: 'AG Grid: Since v27.1 The agPopupTextCellEditor is deprecated. Instead use { cellEditor: "agTextCellEditor", cellEditorPopup: true }',
-            agPopupSelectCellEditor: 'AG Grid: Since v27.1 the agPopupSelectCellEditor is deprecated. Instead use { cellEditor: "agSelectCellEditor", cellEditorPopup: true }',
-        };
         this.jsComps = {};
-        this.fwComps = {};
     }
     init() {
         if (this.gridOptions.components != null) {
             object_1.iterateObject(this.gridOptions.components, (key, component) => this.registerJsComponent(key, component));
-        }
-        if (this.gridOptions.frameworkComponents != null) {
-            object_1.iterateObject(this.gridOptions.frameworkComponents, (key, component) => this.registerFwComponent(key, component));
         }
     }
     registerDefaultComponent(name, component) {
@@ -113,20 +115,7 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
         this.agGridDefaults[name] = component;
     }
     registerJsComponent(name, component) {
-        if (this.fwComps[name]) {
-            console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
-            return;
-        }
         this.jsComps[name] = component;
-    }
-    /**
-     * B the business interface (ie IHeader)
-     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
-     */
-    registerFwComponent(name, component) {
-        const warningMessage = `AG Grid: As of v27, registering components via grid property frameworkComponents is deprecated. Instead register both JavaScript AND Framework Components via the components property.`;
-        function_1.doOnce(() => console.warn(warningMessage), `UserComponentRegistry.frameworkComponentsDeprecated`);
-        this.fwComps[name] = component;
     }
     retrieve(propertyName, name) {
         const createResult = (component, componentFromFramework) => ({ componentFromFramework, component });
@@ -136,10 +125,6 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
         const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.gridOptions.components);
         if (registeredViaFrameworkComp != null) {
             return createResult(registeredViaFrameworkComp, true);
-        }
-        const frameworkComponent = this.fwComps[name];
-        if (frameworkComponent) {
-            return createResult(frameworkComponent, true);
         }
         const jsComponent = this.jsComps[name];
         if (jsComponent) {
@@ -152,10 +137,7 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
         }
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
-        }
-        else if (this.deprecatedAgGridDefaults[name]) {
-            function_1.doOnce(() => console.warn(this.deprecatedAgGridDefaults[name]), name);
+            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         }
         else {
             function_1.doOnce(() => { this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);
@@ -166,8 +148,7 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
-            ...Object.keys(this.jsComps),
-            ...Object.keys(this.fwComps)
+            ...Object.keys(this.jsComps)
         ];
         const suggestions = fuzzyMatch_1.fuzzySuggestions(componentName, validComponents, true, 0.8);
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);

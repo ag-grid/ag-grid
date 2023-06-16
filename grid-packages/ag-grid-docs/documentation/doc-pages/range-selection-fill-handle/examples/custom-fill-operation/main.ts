@@ -11,7 +11,7 @@ var daysList = [
 ]
 
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
     { headerName: 'Day of the Week', field: 'dayOfTheWeek', minWidth: 180 },
@@ -28,6 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     editable: true,
+    cellDataType: false,
   },
   enableRangeSelection: true,
   enableFillHandle: true,

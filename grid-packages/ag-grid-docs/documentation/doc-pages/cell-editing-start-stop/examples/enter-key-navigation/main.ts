@@ -18,8 +18,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 100,
     editable: true,
   },
-  enterMovesDown: true,
-  enterMovesDownAfterEdit: true,
+  enterNavigatesVertically: true,
+  enterNavigatesVerticallyAfterEdit: true,
 }
 
 // setup the grid after the page has finished loading

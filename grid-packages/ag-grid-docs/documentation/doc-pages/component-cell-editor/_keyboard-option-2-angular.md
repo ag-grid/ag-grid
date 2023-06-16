@@ -1,17 +1,16 @@
-[[only-angular]]
-|
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
 |@Component({
 |    selector: 'my-grid',
 |    template: `
-|        <ag-grid-angular
+|        &lt;ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
 |                ...rest of the component...>
-|        </ag-grid-angular>
+|        &lt;/ag-grid-angular>
 |    `
 |})
 |export class AppComponent {
@@ -33,4 +32,5 @@
 |   
 |    ...rest of the component...
 |}
-|```
+</snippet>
+</framework-specific-section>

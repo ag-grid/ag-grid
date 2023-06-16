@@ -1,5 +1,5 @@
-import { ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType } from "ag-grid-community";
-import { AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
+import { AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "ag-grid-community";
+import { AgChartInstance, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType } from "../utils/seriesTypeMapper";
 export interface ChartProxyParams {
@@ -28,7 +28,7 @@ export interface FieldDefinition {
     colId: string;
     displayName: string | null;
 }
-export interface UpdateChartParams {
+export interface UpdateParams {
     data: any[];
     grouping: boolean;
     category: {
@@ -40,6 +40,7 @@ export interface UpdateChartParams {
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext;
     seriesChartTypes: SeriesChartType[];
+    updatedOverrides?: AgChartThemeOverrides;
 }
 export declare abstract class ChartProxy {
     protected readonly chartProxyParams: ChartProxyParams;
@@ -51,7 +52,7 @@ export declare abstract class ChartProxy {
     protected clearThemeOverrides: boolean;
     protected constructor(chartProxyParams: ChartProxyParams);
     abstract crossFilteringReset(): void;
-    abstract update(params: UpdateChartParams): void;
+    abstract update(params: UpdateParams): void;
     getChart(): import("../utils/integration").AgChartActual;
     getChartRef(): AgChartInstance;
     downloadChart(dimensions?: {
@@ -66,7 +67,7 @@ export declare abstract class ChartProxy {
     isPaired(): boolean;
     lookupCustomChartTheme(themeName: string): AgChartTheme;
     protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[];
-    protected getCommonChartOptions(): any;
+    protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides): any;
     private getActiveFormattingPanelOverrides;
     destroy({ keepChartInstance }?: {
         keepChartInstance?: boolean | undefined;

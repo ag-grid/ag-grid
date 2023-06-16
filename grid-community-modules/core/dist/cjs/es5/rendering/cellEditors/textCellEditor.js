@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,118 +13,59 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextCellEditor = void 0;
-var popupComponent_1 = require("../../widgets/popupComponent");
-var componentAnnotations_1 = require("../../widgets/componentAnnotations");
+var simpleCellEditor_1 = require("./simpleCellEditor");
 var generic_1 = require("../../utils/generic");
-var browser_1 = require("../../utils/browser");
-var keyCode_1 = require("../../constants/keyCode");
-var TextCellEditor = /** @class */ (function (_super) {
-    __extends(TextCellEditor, _super);
-    function TextCellEditor() {
-        return _super.call(this, TextCellEditor.TEMPLATE) || this;
+var TextCellEditorInput = /** @class */ (function () {
+    function TextCellEditorInput() {
     }
-    TextCellEditor.prototype.init = function (params) {
+    TextCellEditorInput.prototype.getTemplate = function () {
+        return /* html */ "<ag-input-text-field class=\"ag-cell-editor\" ref=\"eInput\"></ag-input-text-field>";
+    };
+    TextCellEditorInput.prototype.init = function (eInput, params) {
+        this.eInput = eInput;
         this.params = params;
-        var eInput = this.eInput;
-        var startValue;
-        // cellStartedEdit is only false if we are doing fullRow editing
-        if (params.cellStartedEdit) {
-            this.focusAfterAttached = true;
-            if (params.eventKey === keyCode_1.KeyCode.BACKSPACE || params.eventKey === keyCode_1.KeyCode.DELETE) {
-                startValue = '';
-            }
-            else if (params.charPress) {
-                startValue = params.charPress;
-            }
-            else {
-                startValue = this.getStartValue(params);
-                if (params.eventKey !== keyCode_1.KeyCode.F2) {
-                    this.highlightAllOnFocus = true;
-                }
-            }
-        }
-        else {
-            this.focusAfterAttached = false;
-            startValue = this.getStartValue(params);
-        }
-        if (startValue != null) {
-            eInput.setValue(startValue, true);
-        }
         if (params.maxLength != null) {
             eInput.setMaxLength(params.maxLength);
         }
-        this.addManagedListener(eInput.getGui(), 'keydown', function (event) {
-            var key = event.key;
-            if (key === keyCode_1.KeyCode.PAGE_UP || key === keyCode_1.KeyCode.PAGE_DOWN) {
-                event.preventDefault();
-            }
-        });
     };
-    TextCellEditor.prototype.afterGuiAttached = function () {
-        var translate = this.localeService.getLocaleTextFunc();
-        var eInput = this.eInput;
-        eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
-        if (!this.focusAfterAttached) {
-            return;
+    TextCellEditorInput.prototype.getValue = function () {
+        var value = this.eInput.getValue();
+        if (!generic_1.exists(value) && !generic_1.exists(this.params.value)) {
+            return this.params.value;
         }
-        // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
-        // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
-        // explicitly focusing then blurring an empty field will cause the parent container to scroll.
-        if (!browser_1.isBrowserSafari()) {
-            eInput.getFocusableElement().focus();
-        }
-        var inputEl = eInput.getInputElement();
-        if (this.highlightAllOnFocus) {
-            inputEl.select();
-        }
-        else {
-            // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios:
-            //   a) when user hits F2
-            //   b) when user hits a printable character
-            var value = eInput.getValue();
-            var len = (generic_1.exists(value) && value.length) || 0;
-            if (len) {
-                inputEl.setSelectionRange(len, len);
-            }
+        return this.params.parseValue(value);
+    };
+    TextCellEditorInput.prototype.getStartValue = function () {
+        var formatValue = this.params.useFormatter || this.params.column.getColDef().refData;
+        return formatValue ? this.params.formatValue(this.params.value) : this.params.value;
+    };
+    TextCellEditorInput.prototype.setCaret = function () {
+        // when we started editing, we want the caret at the end, not the start.
+        // this comes into play in two scenarios:
+        //   a) when user hits F2
+        //   b) when user hits a printable character
+        var value = this.eInput.getValue();
+        var len = (generic_1.exists(value) && value.length) || 0;
+        if (len) {
+            this.eInput.getInputElement().setSelectionRange(len, len);
         }
     };
-    // gets called when tabbing trough cells and in full row edit mode
-    TextCellEditor.prototype.focusIn = function () {
-        var eInput = this.eInput;
-        var focusEl = eInput.getFocusableElement();
-        var inputEl = eInput.getInputElement();
-        focusEl.focus();
-        inputEl.select();
-    };
-    TextCellEditor.prototype.getValue = function () {
-        var eInput = this.eInput;
-        return this.params.parseValue(eInput.getValue());
-    };
-    TextCellEditor.prototype.getStartValue = function (params) {
-        var formatValue = params.useFormatter || params.column.getColDef().refData;
-        return formatValue ? params.formatValue(params.value) : params.value;
-    };
-    TextCellEditor.prototype.isPopup = function () {
-        return false;
-    };
-    TextCellEditor.TEMPLATE = "<div class=\"ag-cell-edit-wrapper\">\n            <ag-input-text-field class=\"ag-cell-editor\" ref=\"eInput\"></ag-input-text-field>\n        </div>";
-    __decorate([
-        componentAnnotations_1.RefSelector('eInput')
-    ], TextCellEditor.prototype, "eInput", void 0);
+    return TextCellEditorInput;
+}());
+var TextCellEditor = /** @class */ (function (_super) {
+    __extends(TextCellEditor, _super);
+    function TextCellEditor() {
+        return _super.call(this, new TextCellEditorInput()) || this;
+    }
     return TextCellEditor;
-}(popupComponent_1.PopupComponent));
+}(simpleCellEditor_1.SimpleCellEditor));
 exports.TextCellEditor = TextCellEditor;

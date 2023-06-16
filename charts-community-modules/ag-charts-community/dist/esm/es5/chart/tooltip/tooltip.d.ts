@@ -1,16 +1,11 @@
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
-declare global {
-    interface EventTarget {
-        readonly classList: DOMTokenList;
-    }
-}
-export declare const DEFAULT_TOOLTIP_CLASS = "ag-chart-tooltip";
 export interface TooltipMeta {
     pageX: number;
     pageY: number;
     offsetX: number;
     offsetY: number;
+    showArrow?: boolean;
     position?: {
         xOffset?: number;
         yOffset?: number;
@@ -19,8 +14,7 @@ export interface TooltipMeta {
     event: Event | InteractionEvent<any>;
 }
 export declare function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string;
-export declare const POSITION_TYPE: import("../../util/validation").ValidatePredicate;
-export declare type TooltipPositionType = 'pointer' | 'node';
+declare type TooltipPositionType = 'pointer' | 'node';
 export declare class TooltipPosition {
     /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
     type: TooltipPositionType;
@@ -37,6 +31,7 @@ export declare class Tooltip {
     private readonly tooltipRoot;
     private enableInteraction;
     enabled: boolean;
+    showArrow?: boolean;
     class?: string;
     lastClass?: string;
     delay: number;
@@ -48,7 +43,7 @@ export declare class Tooltip {
     isVisible(): boolean;
     private updateClass;
     private showTimeout;
-    private showArrow;
+    private _showArrow;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -57,4 +52,7 @@ export declare class Tooltip {
     private getWindowBoundingBox;
     toggle(visible?: boolean): void;
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean;
+    private updateShowArrow;
 }
+export {};
+//# sourceMappingURL=tooltip.d.ts.map

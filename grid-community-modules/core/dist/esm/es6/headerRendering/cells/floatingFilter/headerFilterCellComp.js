@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -10,7 +10,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { PostConstruct } from '../../../context/context';
+import { PostConstruct, PreDestroy } from '../../../context/context';
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -32,18 +32,31 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
     }
     setCompDetails(compDetails) {
+        if (!compDetails) {
+            this.destroyFloatingFilterComp();
+            this.compPromise = null;
+            return;
+        }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
         this.compPromise.then(comp => this.afterCompCreated(comp));
+    }
+    destroyFloatingFilterComp() {
+        if (this.floatingFilterComp) {
+            this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
+            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
+        }
     }
     afterCompCreated(comp) {
         if (!comp) {
             return;
         }
-        this.addDestroyFunc(() => this.context.destroyBean(comp));
         if (!this.isAlive()) {
+            this.destroyBean(comp);
             return;
         }
+        this.destroyFloatingFilterComp();
+        this.floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
         if (comp.afterGuiAttached) {
             comp.afterGuiAttached();
@@ -53,7 +66,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
-                <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+                <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 __decorate([
@@ -68,3 +81,6 @@ __decorate([
 __decorate([
     PostConstruct
 ], HeaderFilterCellComp.prototype, "postConstruct", null);
+__decorate([
+    PreDestroy
+], HeaderFilterCellComp.prototype, "destroyFloatingFilterComp", null);

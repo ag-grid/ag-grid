@@ -11,10 +11,9 @@ declare type ChartThemeDefaults = {
 } & {
     [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions;
 };
-export interface ChartThemeParams {
-    seriesDefaults: any;
-    defaultFontFamily: string;
-}
+export declare const EXTENDS_SERIES_DEFAULTS: unique symbol;
+export declare const OVERRIDE_SERIES_LABEL_DEFAULTS: unique symbol;
+export declare const DEFAULT_FONT_FAMILY: unique symbol;
 export declare class ChartTheme {
     readonly palette: AgChartThemePalette;
     protected getPalette(): AgChartThemePalette;
@@ -47,24 +46,21 @@ export declare class ChartTheme {
     private static getAreaSeriesDefaults;
     private static getScatterSeriesDefaults;
     private static getCartesianSeriesMarkerDefaults;
+    private static getCaptionWrappingDefaults;
     private static getChartDefaults;
-    static seriesThemeOverrides: Record<string, (params: ChartThemeParams) => any>;
     private static readonly cartesianDefaults;
     private static readonly polarDefaults;
     private static readonly hierarchyDefaults;
     private static readonly defaults;
     constructor(options?: AgChartThemeOptions);
     private createChartConfigPerChartType;
-    /**
-     * Meant to be overridden in subclasses. For example:
-     * ```
-     *     getDefaults() {
-     *         const subclassDefaults = { ... };
-     *         return this.mergeWithParentDefaults(subclassDefaults);
-     *     }
-     * ```
-     */
     protected getDefaults(): ChartThemeDefaults;
+    protected templateTheme(themeTemplate: {}): {};
+    protected getTemplateParameters(): {
+        extensions: Map<any, any>;
+        properties: Map<any, any>;
+    };
     protected mergeWithParentDefaults(parentDefaults: ChartThemeDefaults, defaults: ChartThemeDefaults): ChartThemeDefaults;
 }
 export {};
+//# sourceMappingURL=chartTheme.d.ts.map

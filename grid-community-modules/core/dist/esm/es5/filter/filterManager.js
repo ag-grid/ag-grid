@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -35,6 +37,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { AgPromise, _ } from '../utils';
+import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { Events } from '../events';
 import { ModuleNames } from '../modules/moduleNames';
@@ -51,6 +54,7 @@ var FilterManager = /** @class */ (function (_super) {
     function FilterManager() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.allColumnFilters = new Map();
+        _this.allColumnListeners = new Map();
         _this.activeAggregateFilters = [];
         _this.activeColumnFilters = [];
         _this.quickFilter = null;
@@ -76,16 +80,18 @@ var FilterManager = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.resetQuickFilterCache(); });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.resetQuickFilterCache(); });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, function () {
-            if (_this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')) {
+            if (!_this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')) {
                 _this.resetQuickFilterCache();
             }
         });
         this.addManagedPropertyListener('quickFilterText', function (e) { return _this.setQuickFilter(e.currentValue); });
-        this.addManagedPropertyListener('excludeHiddenColumnsFromQuickFilter', function () { return _this.onExcludeHiddenColumnsFromQuickFilterChanged(); });
+        this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', function () { return _this.onIncludeHiddenColumnsInQuickFilterChanged(); });
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.setQuickFilterParts();
         this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
+        this.updateAggFiltering();
+        this.addManagedPropertyListener('groupAggFiltering', function () { return _this.updateAggFiltering(); });
     };
     FilterManager.prototype.isExternalFilterPresentCallback = function () {
         var isFilterPresent = this.gridOptionsService.getCallback('isExternalFilterPresent');
@@ -302,7 +308,7 @@ var FilterManager = /** @class */ (function (_super) {
     FilterManager.prototype.resetQuickFilterCache = function () {
         this.rowModel.forEachNode(function (node) { return node.quickFilterAggregateText = null; });
     };
-    FilterManager.prototype.onExcludeHiddenColumnsFromQuickFilterChanged = function () {
+    FilterManager.prototype.onIncludeHiddenColumnsInQuickFilterChanged = function () {
         this.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
@@ -370,6 +376,15 @@ var FilterManager = /** @class */ (function (_super) {
     FilterManager.prototype.isQuickFilterPresent = function () {
         return this.quickFilter !== null;
     };
+    FilterManager.prototype.updateAggFiltering = function () {
+        this.aggFiltering = !!this.gridOptionsService.getGroupAggFiltering();
+    };
+    FilterManager.prototype.isAggregateQuickFilterPresent = function () {
+        return this.isQuickFilterPresent() && (this.aggFiltering || this.columnModel.isPivotMode());
+    };
+    FilterManager.prototype.isNonAggregateQuickFilterPresent = function () {
+        return this.isQuickFilterPresent() && !(this.aggFiltering || this.columnModel.isPivotMode());
+    };
     FilterManager.prototype.doesRowPassOtherFilters = function (filterToSkip, node) {
         return this.doesRowPassFilter({ rowNode: node, filterInstanceToSkip: filterToSkip });
     };
@@ -396,6 +411,10 @@ var FilterManager = /** @class */ (function (_super) {
         });
     };
     FilterManager.prototype.doesRowPassAggregateFilters = function (params) {
+        // check quick filter
+        if (this.isAggregateQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
+            return false;
+        }
         if (this.isAggregateFilterPresent() && !this.doAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
@@ -407,7 +426,7 @@ var FilterManager = /** @class */ (function (_super) {
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
         // first up, check quick filter
-        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
+        if (this.isNonAggregateQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
         // secondly, give the client a chance to reject this row
@@ -483,13 +502,16 @@ var FilterManager = /** @class */ (function (_super) {
         return !!filterWrapper && filterWrapper.filterPromise.resolveNow(false, function (filter) { return filter.isFilterActive(); });
     };
     FilterManager.prototype.getOrCreateFilterWrapper = function (column, source) {
+        var _this = this;
         if (!column.isFilterAllowed()) {
             return null;
         }
         var filterWrapper = this.cachedFilter(column);
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
-            this.allColumnFilters.set(column.getColId(), filterWrapper);
+            var colId_1 = column.getColId();
+            this.allColumnFilters.set(colId_1, filterWrapper);
+            this.allColumnListeners.set(colId_1, this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, function () { return _this.checkDestroyFilter(colId_1); }));
         }
         else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
@@ -499,9 +521,47 @@ var FilterManager = /** @class */ (function (_super) {
     FilterManager.prototype.cachedFilter = function (column) {
         return this.allColumnFilters.get(column.getColId());
     };
+    FilterManager.prototype.getDefaultFilter = function (column) {
+        var defaultFilter;
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
+            defaultFilter = 'agSetColumnFilter';
+        }
+        else {
+            var cellDataType = column.getColDef().cellDataType;
+            if (cellDataType === 'number') {
+                defaultFilter = 'agNumberColumnFilter';
+            }
+            else if (cellDataType === 'date' || cellDataType === 'dateString') {
+                defaultFilter = 'agDateColumnFilter';
+            }
+            else {
+                defaultFilter = 'agTextColumnFilter';
+            }
+        }
+        return defaultFilter;
+    };
+    FilterManager.prototype.getDefaultFloatingFilter = function (column) {
+        var defaultFloatingFilterType;
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
+            defaultFloatingFilterType = 'agSetColumnFloatingFilter';
+        }
+        else {
+            var cellDataType = column.getColDef().cellDataType;
+            if (cellDataType === 'number') {
+                defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
+            }
+            else if (cellDataType === 'date' || cellDataType === 'dateString') {
+                defaultFloatingFilterType = 'agDateColumnFloatingFilter';
+            }
+            else {
+                defaultFloatingFilterType = 'agTextColumnFloatingFilter';
+            }
+        }
+        return defaultFloatingFilterType;
+    };
     FilterManager.prototype.createFilterInstance = function (column) {
         var _this = this;
-        var defaultFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
+        var defaultFilter = this.getDefaultFilter(column);
         var colDef = column.getColDef();
         var filterInstance;
         var params = __assign(__assign({}, this.createFilterParams(column, colDef)), { filterModifiedCallback: function () {
@@ -517,13 +577,18 @@ var FilterManager = /** @class */ (function (_super) {
             }, doesRowPassOtherFilter: function (node) { return _this.doesRowPassOtherFilters(filterInstance, node); } });
         var compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
         if (!compDetails) {
-            return null;
+            return { filterPromise: null, compDetails: null };
         }
-        var componentPromise = compDetails.newAgStackInstance();
-        if (componentPromise) {
-            componentPromise.then(function (r) { return filterInstance = r; });
-        }
-        return componentPromise;
+        return {
+            filterPromise: function () {
+                var filterPromise = compDetails.newAgStackInstance();
+                if (filterPromise) {
+                    filterPromise.then(function (r) { return filterInstance = r; });
+                }
+                return filterPromise;
+            },
+            compDetails: compDetails
+        };
     };
     FilterManager.prototype.createFilterParams = function (column, colDef) {
         var params = {
@@ -541,14 +606,18 @@ var FilterManager = /** @class */ (function (_super) {
         return params;
     };
     FilterManager.prototype.createFilterWrapper = function (column, source) {
+        var _a;
         var filterWrapper = {
             column: column,
             filterPromise: null,
             compiledElement: null,
-            guiPromise: AgPromise.resolve(null)
+            guiPromise: AgPromise.resolve(null),
+            compDetails: null
         };
-        filterWrapper.filterPromise = this.createFilterInstance(column);
-        if (filterWrapper.filterPromise) {
+        var _b = this.createFilterInstance(column), filterPromise = _b.filterPromise, compDetails = _b.compDetails;
+        filterWrapper.filterPromise = (_a = filterPromise === null || filterPromise === void 0 ? void 0 : filterPromise()) !== null && _a !== void 0 ? _a : null;
+        filterWrapper.compDetails = compDetails;
+        if (filterPromise) {
             this.putIntoGui(filterWrapper, source);
         }
         return filterWrapper;
@@ -598,6 +667,7 @@ var FilterManager = /** @class */ (function (_super) {
             }
             columns.push(wrapper.column);
             _this.disposeFilterWrapper(wrapper, 'columnChanged');
+            _this.disposeColumnListener(colId);
         });
         if (columns.length > 0) {
             this.onFilterChanged({ columns: columns });
@@ -631,7 +701,8 @@ var FilterManager = /** @class */ (function (_super) {
         function (filter) {
             var _a, _b;
             return (typeof ((_a = filter) === null || _a === void 0 ? void 0 : _a.isFilterAllowed) === 'function')
-                ? (_b = filter) === null || _b === void 0 ? void 0 : _b.isFilterAllowed() : true;
+                ? (_b = filter) === null || _b === void 0 ? void 0 : _b.isFilterAllowed()
+                : true;
         })) !== null && _b !== void 0 ? _b : true;
     };
     FilterManager.prototype.getFloatingFilterCompDetails = function (column, showParentFilter) {
@@ -639,7 +710,7 @@ var FilterManager = /** @class */ (function (_super) {
         var colDef = column.getColDef();
         var filterParams = this.createFilterParams(column, colDef);
         var finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
-        var defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
+        var defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, function () { return _this.getDefaultFloatingFilter(column); });
         if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
         }
@@ -667,15 +738,21 @@ var FilterManager = /** @class */ (function (_super) {
         return filterComponent ? filterComponent.resolveNow(null, function (filter) { return filter && filter.getModel(); }) : null;
     };
     // destroys the filter, so it no longer takes part
-    /**
-     * @param source if not calling this from the API, will need to add a new value
-     */
     FilterManager.prototype.destroyFilter = function (column, source) {
         if (source === void 0) { source = 'api'; }
-        var filterWrapper = this.allColumnFilters.get(column.getColId());
+        var colId = column.getColId();
+        var filterWrapper = this.allColumnFilters.get(colId);
+        this.disposeColumnListener(colId);
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
             this.onFilterChanged({ columns: [column] });
+        }
+    };
+    FilterManager.prototype.disposeColumnListener = function (colId) {
+        var columnListener = this.allColumnListeners.get(colId);
+        if (columnListener) {
+            this.allColumnListeners.delete(colId);
+            columnListener();
         }
     };
     FilterManager.prototype.disposeFilterWrapper = function (filterWrapper, source) {
@@ -694,10 +771,26 @@ var FilterManager = /** @class */ (function (_super) {
             });
         });
     };
+    FilterManager.prototype.checkDestroyFilter = function (colId) {
+        var _a;
+        var filterWrapper = this.allColumnFilters.get(colId);
+        if (!filterWrapper) {
+            return;
+        }
+        var column = filterWrapper.column;
+        var compDetails = (column.isFilterAllowed()
+            ? this.createFilterInstance(column)
+            : { compDetails: null }).compDetails;
+        if (!compDetails || ((_a = filterWrapper.compDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== compDetails.componentClass) {
+            this.destroyFilter(column, 'columnChanged');
+        }
+    };
     FilterManager.prototype.destroy = function () {
         var _this = this;
         _super.prototype.destroy.call(this);
         this.allColumnFilters.forEach(function (filterWrapper) { return _this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'); });
+        // don't need to destroy the listeners as they are managed listeners
+        this.allColumnListeners.clear();
     };
     var FilterManager_1;
     FilterManager.QUICK_FILTER_SEPARATOR = '\n';

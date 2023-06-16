@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -63,6 +65,9 @@ var BlockUtils = /** @class */ (function (_super) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
+        if (rowNode.sibling) {
+            this.destroyRowNode(rowNode.sibling, false);
+        }
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
@@ -94,6 +99,12 @@ var BlockUtils = /** @class */ (function (_super) {
                 console.warn("data is ", rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
+        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+            rowNode.createFooter();
+            if (rowNode.sibling) {
+                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
+            }
+        }
     };
     BlockUtils.prototype.setMasterDetailInfo = function (rowNode) {
         var isMasterFunc = this.gridOptionsService.get('isRowMaster');
@@ -123,6 +134,7 @@ var BlockUtils = /** @class */ (function (_super) {
         }
     };
     BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId, cachedRowHeight) {
+        var _a;
         rowNode.stub = false;
         if (core_1._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -148,6 +160,7 @@ var BlockUtils = /** @class */ (function (_super) {
         // getting set, if it's a group node and colDef.autoHeight=true
         if (core_1._.exists(data)) {
             rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            (_a = rowNode.sibling) === null || _a === void 0 ? void 0 : _a.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
     };
     BlockUtils.prototype.setChildCountIntoRowNode = function (rowNode) {

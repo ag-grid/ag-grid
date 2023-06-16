@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -37,10 +39,12 @@ var ValueService = /** @class */ (function (_super) {
     function ValueService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.initialised = false;
+        _this.isSsrm = false;
         return _this;
     }
     ValueService.prototype.init = function () {
         var _this = this;
+        this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
         this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.isTreeData = this.gridOptionsService.is('treeData');
         this.initialised = true;
@@ -69,6 +73,9 @@ var ValueService = /** @class */ (function (_super) {
         // if there is a value getter, this gets precedence over a field
         var groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        // SSRM agg data comes from the data attribute, so ignore that instead
+        var ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        var ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         }
@@ -90,7 +97,12 @@ var ValueService = /** @class */ (function (_super) {
         else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
-        else if (field && data) {
+        else if (ssrmFooterGroupCol) {
+            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
+            // the group value from the data using the row field
+            result = object_1.getValueUsingField(data, rowNode.field, column.isFieldContainsDots());
+        }
+        else if (field && data && !ignoreSsrmAggData) {
             result = object_1.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -145,6 +157,10 @@ var ValueService = /** @class */ (function (_super) {
         var _a = column.getColDef(), field = _a.field, valueSetter = _a.valueSetter;
         if (generic_1.missing(field) && generic_1.missing(valueSetter)) {
             console.warn("AG Grid: you need either field or valueSetter set on colDef for editing to work");
+            return false;
+        }
+        if (!this.dataTypeService.checkType(column, newValue)) {
+            console.warn("AG Grid: Data type of the new value does not match the cell data type of the column");
             return false;
         }
         var params = {
@@ -345,6 +361,9 @@ var ValueService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('valueCache')
     ], ValueService.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('dataTypeService')
+    ], ValueService.prototype, "dataTypeService", void 0);
     __decorate([
         context_1.PostConstruct
     ], ValueService.prototype, "init", null);

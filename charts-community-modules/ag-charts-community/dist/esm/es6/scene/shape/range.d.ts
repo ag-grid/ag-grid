@@ -26,3 +26,4 @@ export declare class Range extends Shape {
     isPointInPath(_x: number, _y: number): boolean;
     render(renderCtx: RenderContext): void;
 }
+//# sourceMappingURL=range.d.ts.map

@@ -25,7 +25,8 @@ class MiniChart extends core_1.Component {
     init() {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
         // necessary to force scene graph render as we are not using the standalone factory!
-        this.scene.render();
+        this.scene.render()
+            .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
 }
 __decorate([

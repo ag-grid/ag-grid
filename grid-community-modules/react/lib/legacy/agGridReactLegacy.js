@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -38,7 +38,7 @@ class AgGridReactLegacy extends react_1.Component {
         this.api = null;
         this.destroyed = false;
         this.SYNCHRONOUS_CHANGE_PROPERTIES = ['context'];
-        this.portalManager = new portalManager_1.PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
+        this.portalManager = new portalManager_1.LegacyPortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
     }
     render() {
         return react_1.default.createElement('div', {

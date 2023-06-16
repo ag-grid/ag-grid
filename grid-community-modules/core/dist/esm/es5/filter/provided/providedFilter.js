@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -139,7 +141,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             var buttonType = type === 'apply' ? 'submit' : 'button';
             var button = loadTemplate(
             /* html */
-            "<button\n                    type=\"" + buttonType + "\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-standard-button ag-filter-apply-panel-button\"\n                >" + text + "\n                </button>");
+            "<button\n                    type=\"" + buttonType + "\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-button ag-standard-button ag-filter-apply-panel-button\"\n                >" + text + "\n                </button>");
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };

@@ -2,21 +2,22 @@
 title: "Components"
 ---
 
-[[only-javascript]]
+<framework-specific-section frameworks="javascript,vue">
 |You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+</framework-specific-section>
 
-[[only-vue]]
-|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 
-[[only-react]]
-|<video-section id="eglfpHRpcu0" title="React Custom Components" header="true">
-|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
-|</video-section>
+<framework-specific-section frameworks="react">
+<video-section id="eglfpHRpcu0" title="React Custom Components" header="true">
+You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+</video-section>
+</framework-specific-section>
 
-[[only-angular]]
-|<video-section id="A5-Li_9oPSE" title="Angular Custom Components" header="true">
-|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
-|</video-section>
+<framework-specific-section frameworks="angular">
+<video-section id="A5-Li_9oPSE" title="Angular Custom Components" header="true">
+You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+</video-section>
+</framework-specific-section>
 
 
 The full list of component types you can provide in AG Grid are as follows:
@@ -38,17 +39,16 @@ The remainder of this page gives information that is common across all the compo
 md-include:declare-vue.md
 
 md-include:register-javascript.md
-md-include:register-angular.md
+
+md-include:register-angular.md 
 md-include:register-react.md 
 md-include:register-vue.md
- 
+  
 <grid-example title='Registering Components' name='register' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
-
-md-include:declare-angular.md
 
 md-include:advantages-vue.md
 
-## Providing Additional Parameters
+## Providing Additional Parameters  
 
 Each Custom Component gets a set of parameters from the grid. For example, for Cell Renderer the grid provides, among other things, the value to be rendered. You can provide additional properties to the Custom Component (e.g. what currency symbol to use) by providing additional parameters specific to your application.
 
@@ -73,11 +73,13 @@ md-include:js-fw-react.md
 md-include:js-fw-vue.md
 md-include:js-fw-common-end.md
 
-[[only-react]]
+<framework-specific-section frameworks="react">
 |## JavaScript Functional Components
 |
 |Function Components are not supported by AG Grid React. This is because the grid has no way to distinguish JavaScript Functional Components from React Functional Components. The grid identifies a JavaScript Class Component by looking for the `getGui()` method. If this method is missing, it assumes a React Component. Thus all functions will be treated as React Components / Hooks.
 |
+</framework-specific-section>
+
 ## Component Usage
 
 The below table gives a summary of the components, where they are configured and using what attribute.
@@ -148,6 +150,14 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Date filter.</td>
         </tr>
         <tr>
+            <td>agMultiColumnFilter<enterprise-icon></enterprise-icon></td>
+            <td>Multi filter.</td>
+        </tr>
+        <tr>
+            <td>agGroupColumnFilter<enterprise-icon></enterprise-icon></td>
+            <td>Group column filter.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Floating Filters</h3></td>
         </tr>
         <tr>
@@ -167,6 +177,14 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Floating date filter.</td>
         </tr>
         <tr>
+            <td>agMultiColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
+            <td>Floating multi filter.</td>
+        </tr>
+        <tr>
+            <td>agGroupColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
+            <td>Floating group column filter.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Cell Renderers</h3></td>
         </tr>
         <tr>
@@ -184,6 +202,10 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agLoadingCellRenderer<enterprise-icon></enterprise-icon></td>
             <td>Cell renderer for loading row when using Enterprise row model.</td>
+        </tr>
+        <tr>
+            <td>agCheckboxCellRenderer</td>
+            <td>Cell renderer that displays a checkbox for boolean values.</td>
         </tr>
         <tr>
             <td colspan="2"><h3>Overlays</h3></td>
@@ -216,6 +238,22 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Large text cell editor.</td>
         </tr>
         <tr>
+            <td>agNumberCellEditor</td>
+            <td>Number cell editor.</td>
+        </tr>
+        <tr>
+            <td>agDateCellEditor</td>
+            <td>Date cell editor.</td>
+        </tr>
+        <tr>
+            <td>agDateStringCellEditor</td>
+            <td>Date represented as string cell editor.</td>
+        </tr>
+        <tr>
+            <td>agCheckboxCellEditor</td>
+            <td>Checkbox cell editor.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Master Detail</h3></td>
         </tr>
         <tr>
@@ -240,8 +278,8 @@ It is also possible to override components. Where the grid uses a default value,
 
 To override the default component, register the custom component in the GridOptions `components` property under the above name.
 
-[[only-javascript]]
-|```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |const gridOptions = {
 |    // Here is where we specify the components to be used instead of the default
 |    components: {
@@ -249,17 +287,19 @@ To override the default component, register the custom component in the GridOpti
 |        agColumnHeader: CustomHeaderComponent
 |    }
 |};
-|```
-[[only-angular]]
-|```ts
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 |@Component({
 |    selector: 'my-app',
 |    template: `
-|      <ag-grid-angular
+|      &lt;ag-grid-angular
 |          class="ag-theme-alpine"
 |          [components]="components"
 |          ...other properties...  
-|      ></ag-grid-angular>
+|      >&lt;/ag-grid-angular>
 |    `
 |})
 |export class AppComponent {
@@ -268,16 +308,20 @@ To override the default component, register the custom component in the GridOpti
 |        agDateInput: CustomDateComponent,
 |        agColumnHeader: CustomHeaderComponent
 |    };
-|```
-[[only-react]]
-|```jsx
-|<AgGridReact
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
+|&lt;AgGridReact
 |    components={{ agDateInput: CustomDateComponent, agColumnHeader: CustomHeaderComponent }}
 |    ...other properties...
 |/>
-|```
-[[only-vue]]
-|```js
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
 |const MyApp = {
 |    // Here is where we specify the components to be used instead of the default
 |    components: {
@@ -285,12 +329,15 @@ To override the default component, register the custom component in the GridOpti
 |        agDateInput: CustomDateComponent,
 |        agColumnHeader: CustomHeaderComponent
 |    },
-|```
+</snippet>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="vue">
+<note>
+|Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the 
+|actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 |
- 
-[[only-vue]]
-|[[note]]
-||Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the 
-||actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
-||
-||For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
+|For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
+</note>
+</framework-specific-section>

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -57,6 +59,7 @@ var Navigator = /** @class */ (function (_super) {
         ].forEach(function (s) { return _this.destroyFns.push(function () { return ctx.layoutService.removeListener(s); }); });
         ctx.scene.root.appendChild(_this.rs);
         _this.destroyFns.push(function () { var _a; return (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.removeChild(_this.rs); });
+        _this.destroyFns.push(function () { return _this.ctx.zoomManager.updateZoom('navigator'); });
         _this.updateGroupVisibility();
         return _this;
     }
@@ -123,7 +126,14 @@ var Navigator = /** @class */ (function (_super) {
         configurable: true
     });
     Navigator.prototype.updateGroupVisibility = function () {
-        this.rs.visible = this.enabled && this.visible;
+        var visible = this.enabled && this.visible;
+        this.rs.visible = visible;
+        if (visible) {
+            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+        }
+        else {
+            this.ctx.zoomManager.updateZoom('navigator');
+        }
     };
     Navigator.prototype.layout = function (_a) {
         var shrinkRect = _a.shrinkRect;
@@ -141,9 +151,6 @@ var Navigator = /** @class */ (function (_super) {
             this.rs.width = rect.width;
         }
         this.visible = visible;
-    };
-    Navigator.prototype.update = function () {
-        // Nothing to do!
     };
     Navigator.prototype.onDragStart = function (offset) {
         if (!this.enabled) {

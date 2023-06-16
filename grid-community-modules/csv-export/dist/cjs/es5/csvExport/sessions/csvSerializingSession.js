@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -92,10 +94,12 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         };
     };
     CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
+        var _a;
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
+        var rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        this.result += this.putInQuotes((_a = rowCellValue.valueFormatted) !== null && _a !== void 0 ? _a : rowCellValue.value);
     };
     CsvSerializingSession.prototype.putInQuotes = function (value) {
         if (this.suppressQuotes) {

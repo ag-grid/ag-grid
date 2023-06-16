@@ -11,12 +11,14 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     const createInitialState = () => {
         let startValue;
 
-        if (props.eventKey === KEY_BACKSPACE) {
+        const eventKey = props.eventKey;
+
+        if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
-        } else if (props.charPress) {
+        } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = props.charPress;
+            startValue = eventKey;
         } else {
             // otherwise we start with the current value
             startValue = props.value;
@@ -41,7 +43,8 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     }, []);
 
     /* Utility Methods */
-    const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
+    const isCharacter = props.eventKey && props.eventKey.length === 1;
+    const cancelBeforeStart = isCharacter && ('1234567890'.indexOf(props.eventKey!) < 0);
 
     const isLeftOrRight = (event: any) => {
         return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
@@ -51,7 +54,7 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         return !!/\d/.test(charStr);
     };
 
-    const isKeyPressedNumeric = (event: any) => {
+    const isNumericKey = (event: any) => {
         const charStr = event.key;
         return isCharNumeric(charStr);
     };
@@ -71,7 +74,7 @@ export default forwardRef((props: ICellEditorParams, ref) => {
             return;
         }
 
-        if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
+        if (!finishedEditingPressed(event) && !isNumericKey(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     };

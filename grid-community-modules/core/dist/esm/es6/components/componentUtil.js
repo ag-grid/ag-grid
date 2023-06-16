@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -172,7 +172,6 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
     Events.EVENT_HEADER_HEIGHT_CHANGED,
     Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
-    Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
     Events.EVENT_CELL_FOCUS_CLEARED,
     Events.EVENT_GRID_STYLES_CHANGED,
     Events.EVENT_FILTER_DESTROYED

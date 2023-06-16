@@ -12,9 +12,13 @@ export declare class Selection<TChild extends Node = Node, TDatum = any> {
     each(iterate: (node: TChild, datum: TDatum, index: number) => void): this;
     update(data: TDatum[], init?: (node: TChild) => void): this;
     clear(): this;
+    static selectAll<T extends Node = Node>(parent: Node, predicate: (node: Node) => boolean): T[];
+    static selectByClass<T extends Node = Node>(node: Node, Class: new () => T): T[];
+    static selectByTag<T extends Node = Node>(node: Node, tag: number): T[];
     select<T extends Node = Node>(predicate: (node: Node) => boolean): T[];
     selectByClass<T extends Node = Node>(Class: new () => T): T[];
     selectByTag<T extends Node = Node>(tag: number): T[];
     nodes(): TChild[];
 }
 export {};
+//# sourceMappingURL=selection.d.ts.map

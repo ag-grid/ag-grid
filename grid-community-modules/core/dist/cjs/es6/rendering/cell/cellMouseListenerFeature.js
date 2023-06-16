@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50,8 +50,8 @@ class CellMouseListenerFeature extends beans_1.Beans {
             return;
         }
         const { eventService, rangeService, gridOptionsService } = this.beans;
-        const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        if (rangeService && multiKeyPressed) {
+        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        if (rangeService && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
             if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
@@ -94,7 +94,7 @@ class CellMouseListenerFeature extends beans_1.Beans {
         const editOnDoubleClick = !this.beans.gridOptionsService.is('singleClickEdit')
             && !this.beans.gridOptionsService.is('suppressClickEdit');
         if (editOnDoubleClick) {
-            this.cellCtrl.startRowOrCellEdit(null, null, mouseEvent);
+            this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
     }
     onMouseDown(mouseEvent) {
@@ -130,8 +130,8 @@ class CellMouseListenerFeature extends beans_1.Beans {
                 rangeService.extendLatestRangeToCell(thisCell);
             }
             else {
-                const ctrlKeyPressed = ctrlKey || metaKey;
-                rangeService.setRangeToCell(thisCell, ctrlKeyPressed);
+                const isMultiKey = ctrlKey || metaKey;
+                rangeService.setRangeToCell(thisCell, isMultiKey);
             }
         }
         eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN));

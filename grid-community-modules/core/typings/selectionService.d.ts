@@ -2,8 +2,7 @@ import { RowNode } from "./entities/rowNode";
 import { BeanStub } from "./context/beanStub";
 import { SelectionEventSourceType } from "./events";
 import { ChangedPath } from "./utils/changedPath";
-import { ISelectionService } from "./interfaces/iSelectionService";
-import { SetSelectedParams } from "./interfaces/iRowNode";
+import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 export declare class SelectionService extends BeanStub implements ISelectionService {
     private rowModel;
     private paginationProxy;
@@ -15,10 +14,7 @@ export declare class SelectionService extends BeanStub implements ISelectionServ
     private setBeans;
     private init;
     private isMultiselect;
-    setNodeSelected(params: SetSelectedParams & {
-        event?: Event;
-        node: RowNode;
-    }): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     private selectRange;
     private selectChildren;
     private setLastSelectedNode;

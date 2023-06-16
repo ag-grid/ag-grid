@@ -136,7 +136,7 @@ var ContinuousScale = /** @class */ (function () {
         var step = typeof interval === 'number' ? interval : 1;
         count !== null && count !== void 0 ? count : (count = domain / step);
         if (count >= availableRange) {
-            logger_1.Logger.warn("the configured tick interval, " + JSON.stringify(interval) + ", results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.");
+            logger_1.Logger.warn("the configured tick interval results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.");
             return true;
         }
         return false;

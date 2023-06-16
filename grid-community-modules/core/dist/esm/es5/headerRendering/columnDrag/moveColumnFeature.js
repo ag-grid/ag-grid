@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -193,7 +193,8 @@ var MoveColumnFeature = /** @class */ (function () {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    movingGroup.getLeafColumns().forEach(function (newCol) {
+                    var providedColumnGroup = movingGroup.getProvidedColumnGroup();
+                    providedColumnGroup.getLeafColumns().forEach(function (newCol) {
                         if (!newCols_1.includes(newCol)) {
                             newCols_1.push(newCol);
                         }

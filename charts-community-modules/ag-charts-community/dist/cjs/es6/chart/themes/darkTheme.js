@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DarkTheme = void 0;
 const chartTheme_1 = require("./chartTheme");
-const chartTypes_1 = require("../chartTypes");
+const chartTypes_1 = require("../factory/chartTypes");
+const seriesTypes_1 = require("../factory/seriesTypes");
 class DarkTheme extends chartTheme_1.ChartTheme {
     constructor(options) {
         super(options);
@@ -70,16 +71,15 @@ class DarkTheme extends chartTheme_1.ChartTheme {
         };
         const getOverridesByType = (seriesTypes) => {
             return seriesTypes.reduce((obj, seriesType) => {
-                if (Object.prototype.hasOwnProperty.call(DarkTheme.seriesDarkThemeOverrides, seriesType)) {
-                    obj[seriesType] = DarkTheme.seriesDarkThemeOverrides[seriesType]({
-                        seriesLabelDefaults: DarkTheme.seriesLabelDefaults,
-                    });
+                const template = seriesTypes_1.getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateTheme(template);
                 }
                 return obj;
             }, {});
         };
         return this.mergeWithParentDefaults(super.getDefaults(), {
-            cartesian: Object.assign(Object.assign(Object.assign({}, chartDefaults), chartAxesDefaults), { series: Object.assign({ bar: Object.assign({}, seriesLabelDefaults), column: Object.assign({}, seriesLabelDefaults), histogram: Object.assign({}, seriesLabelDefaults) }, getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes)) }),
+            cartesian: Object.assign(Object.assign(Object.assign({}, chartDefaults), chartAxesDefaults), { series: Object.assign({ line: Object.assign({}, seriesLabelDefaults), bar: Object.assign({}, seriesLabelDefaults), column: Object.assign({}, seriesLabelDefaults), histogram: Object.assign({}, seriesLabelDefaults) }, getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes)) }),
             groupedCategory: Object.assign(Object.assign(Object.assign({}, chartDefaults), chartAxesDefaults), { series: Object.assign({ bar: Object.assign({}, seriesLabelDefaults), column: Object.assign({}, seriesLabelDefaults), histogram: Object.assign({}, seriesLabelDefaults) }, getOverridesByType(chartTypes_1.CHART_TYPES.cartesianTypes)) }),
             polar: Object.assign(Object.assign({}, chartDefaults), { series: Object.assign({ pie: {
                         calloutLabel: {
@@ -123,6 +123,11 @@ class DarkTheme extends chartTheme_1.ChartTheme {
                     } }, getOverridesByType(chartTypes_1.CHART_TYPES.hierarchyTypes)) }),
         });
     }
+    getTemplateParameters() {
+        const result = super.getTemplateParameters();
+        result.extensions.set(chartTheme_1.OVERRIDE_SERIES_LABEL_DEFAULTS, DarkTheme.seriesLabelDefaults.label);
+        return result;
+    }
 }
 exports.DarkTheme = DarkTheme;
 DarkTheme.fontColor = 'rgb(200, 200, 200)';
@@ -132,4 +137,3 @@ DarkTheme.seriesLabelDefaults = {
         color: DarkTheme.fontColor,
     },
 };
-DarkTheme.seriesDarkThemeOverrides = {};

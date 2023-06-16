@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../../context/beanStub";
@@ -17,7 +17,7 @@ export declare class SelectAllFeature extends BeanStub {
     private currentPageOnly;
     private cbSelectAll;
     constructor(column: Column);
-    onSpaceKeyPressed(e: KeyboardEvent): void;
+    onSpaceKeyDown(e: KeyboardEvent): void;
     getCheckboxGui(): HTMLElement;
     setComp(ctrl: HeaderCellCtrl): void;
     private showOrHideSelectAll;

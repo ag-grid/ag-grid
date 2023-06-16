@@ -10,7 +10,7 @@ describe('Date/Time Formatting', () => {
     // Falls on a Sunday.
     const FIRST_DAY_OF_2017 = new Date(Date.UTC(2017, 0, 1, 11, 12, 13, 100));
 
-    const cases = [
+    const cases: ([string, string, string] | [string, string, string, Date])[] = [
         ['short text', '%a %-d %b, %y', 'Tue 3 Sep, 19'],
         ['long text', '%A %d %B, %Y', 'Tuesday 03 September, 2019'],
         ['locale date + time', '%c', '9/3/2019, 3:50:17 PM'],

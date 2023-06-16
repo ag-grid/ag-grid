@@ -46,9 +46,7 @@ export class FullStore extends RowNodeBlock {
         this.destroyRowNodes();
         for (let i = 0; i < loadingRowsCount; i++) {
             const loadingRowNode = this.blockUtils.createRowNode({
-                field: this.groupField,
-                group: this.groupLevel,
-                leafGroup: this.leafGroup,
+                field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
             });
             if (failedLoad) {
@@ -86,9 +84,7 @@ export class FullStore extends RowNodeBlock {
     }
     createDataNode(data, index) {
         const rowNode = this.blockUtils.createRowNode({
-            field: this.groupField,
-            group: this.groupLevel,
-            leafGroup: this.leafGroup,
+            field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
             level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
         });
         if (index != null) {
@@ -150,7 +146,7 @@ export class FullStore extends RowNodeBlock {
             if (!nodesToRecycle) {
                 return undefined;
             }
-            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -207,7 +203,7 @@ export class FullStore extends RowNodeBlock {
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
     }
     filterRowNodes() {
-        const serverIsFiltering = this.storeUtils.isServerSideFilterAllLevels() || this.storeUtils.isServerSideFilterOnServer();
+        const serverIsFiltering = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups() || this.storeUtils.isServerSideFilterOnServer();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         const groupLevel = this.groupLevel;
@@ -353,7 +349,7 @@ export class FullStore extends RowNodeBlock {
     refreshAfterFilter(params) {
         const serverIsFiltering = this.storeUtils.isServerSideFilterOnServer();
         const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
-        const serverIsFilteringAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        const serverIsFilteringAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
             this.refreshStore(true);
             this.sortRowNodes();
@@ -416,8 +412,12 @@ export class FullStore extends RowNodeBlock {
     updateSelection(nodesToUnselect) {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true, 'rowDataChanged');
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                clearSelection: false,
+                source: 'rowDataChanged',
             });
             const event = {
                 type: Events.EVENT_SELECTION_CHANGED,
@@ -492,7 +492,7 @@ export class FullStore extends RowNodeBlock {
         });
     }
     lookupRowNode(data) {
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         let rowNode;
         if (getRowIdFunc != null) {
             // find rowNode using id
@@ -611,6 +611,9 @@ __decorate([
 __decorate([
     Autowired('sortController')
 ], FullStore.prototype, "sortController", void 0);
+__decorate([
+    Autowired('selectionService')
+], FullStore.prototype, "selectionService", void 0);
 __decorate([
     Autowired('ssrmNodeManager')
 ], FullStore.prototype, "nodeManager", void 0);

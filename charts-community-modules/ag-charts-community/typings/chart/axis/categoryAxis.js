@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryAxis = void 0;
@@ -77,15 +80,15 @@ var CategoryAxis = /** @class */ (function (_super) {
     CategoryAxis.prototype.normaliseDataDomain = function (d) {
         // Prevent duplicate categories.
         var valuesSet = new Set(d);
-        return new (Array.bind.apply(Array, __spread([void 0], valuesSet.values())))();
+        return new (Array.bind.apply(Array, __spreadArray([void 0], __read(valuesSet.values()))))();
     };
     CategoryAxis.prototype.calculateDomain = function () {
         if (!this._paddingOverrideEnabled) {
             var boundSeries = this.boundSeries;
             var paddings = boundSeries.map(function (s) { var _a; return (_a = s.getBandScalePadding) === null || _a === void 0 ? void 0 : _a.call(s); }).filter(function (p) { return p != null; });
             if (paddings.length > 0) {
-                this.scale.paddingInner = Math.min.apply(Math, __spread(paddings.map(function (p) { return p.inner; })));
-                this.scale.paddingOuter = Math.max.apply(Math, __spread(paddings.map(function (p) { return p.outer; })));
+                this.scale.paddingInner = Math.min.apply(Math, __spreadArray([], __read(paddings.map(function (p) { return p.inner; }))));
+                this.scale.paddingOuter = Math.max.apply(Math, __spreadArray([], __read(paddings.map(function (p) { return p.outer; }))));
             }
         }
         return _super.prototype.calculateDomain.call(this);

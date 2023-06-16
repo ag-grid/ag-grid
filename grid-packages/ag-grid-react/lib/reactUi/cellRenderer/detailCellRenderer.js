@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -48,7 +48,7 @@ var DetailCellRenderer = function (props, ref) {
     var gridClassName = react_1.useMemo(function () { return gridCssClasses.toString() + ' ag-details-grid'; }, [gridCssClasses]);
     if (ref) {
         react_1.useImperativeHandle(ref, function () { return ({
-            refresh: function () { return ctrlRef.current.refresh(); }
+            refresh: function () { var _a, _b; return (_b = (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.refresh()) !== null && _b !== void 0 ? _b : false; }
         }); });
     }
     useEffectOnce_1.useLayoutEffectOnce(function () {
@@ -110,7 +110,8 @@ var DetailCellRenderer = function (props, ref) {
         };
     });
     var setGridApi = react_1.useCallback(function (api, columnApi) {
-        ctrlRef.current.registerDetailWithMaster(api, columnApi);
+        var _a;
+        (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.registerDetailWithMaster(api, columnApi);
     }, []);
     return (react_1.default.createElement("div", { className: topClassName, ref: eGuiRef }, detailGridOptions &&
         react_1.default.createElement(agGridReactUi_1.AgGridReactUi, __assign({ className: gridClassName }, detailGridOptions, { rowData: detailRowData, setGridApi: setGridApi }))));

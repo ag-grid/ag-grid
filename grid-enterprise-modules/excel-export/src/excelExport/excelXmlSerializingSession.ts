@@ -46,8 +46,11 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return;
     }
 
-    protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {
+    protected createCell(styleId: string | null, type: ExcelDataType, value: string, valueFormatted?: string | null): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
+        if (!actualStyle?.dataType && type === 'String' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = (this.getType(type, actualStyle, value) || type);
 
         return {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgInputTextField, ITextInputField } from "./agInputTextField";
@@ -17,4 +17,8 @@ export declare class AgInputNumberField extends AgInputTextField {
     setPrecision(precision: number): this;
     setStep(step?: number): this;
     setValue(value?: string | null, silent?: boolean): this;
+    setStartValue(value?: string | null): void;
+    private setValueOrInputValue;
+    getValue(): string | null | undefined;
+    private isScientificNotation;
 }

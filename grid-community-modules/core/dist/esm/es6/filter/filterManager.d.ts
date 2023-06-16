@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgPromise } from '../utils';
@@ -18,6 +18,7 @@ export declare class FilterManager extends BeanStub {
     private rowRenderer;
     static QUICK_FILTER_SEPARATOR: string;
     private allColumnFilters;
+    private allColumnListeners;
     private activeAggregateFilters;
     private activeColumnFilters;
     private quickFilter;
@@ -25,6 +26,7 @@ export declare class FilterManager extends BeanStub {
     private processingFilterChange;
     private allowShowChangeAfterFilter;
     private externalFilterPresent;
+    private aggFiltering;
     init(): void;
     private isExternalFilterPresentCallback;
     private doesExternalFilterPass;
@@ -47,7 +49,7 @@ export declare class FilterManager extends BeanStub {
     private parseQuickFilter;
     private setQuickFilter;
     resetQuickFilterCache(): void;
-    private onExcludeHiddenColumnsFromQuickFilterChanged;
+    private onIncludeHiddenColumnsInQuickFilterChanged;
     refreshFiltersForAggregations(): void;
     callOnFilterChangedOutsideRenderCycle(params?: {
         filterInstance?: IFilterComp;
@@ -61,6 +63,9 @@ export declare class FilterManager extends BeanStub {
     }): void;
     isSuppressFlashingCellsBecauseFiltering(): boolean;
     isQuickFilterPresent(): boolean;
+    private updateAggFiltering;
+    isAggregateQuickFilterPresent(): boolean;
+    private isNonAggregateQuickFilterPresent;
     doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean;
     private doesRowPassQuickFilterNoCache;
     private doesRowPassQuickFilterCache;
@@ -81,6 +86,8 @@ export declare class FilterManager extends BeanStub {
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper | null;
     cachedFilter(column: Column): FilterWrapper | undefined;
+    private getDefaultFilter;
+    getDefaultFloatingFilter(column: Column): string;
     private createFilterInstance;
     createFilterParams(column: Column, colDef: ColDef): IFilterParams;
     private createFilterWrapper;
@@ -90,11 +97,10 @@ export declare class FilterManager extends BeanStub {
     isFilterAllowed(column: Column): boolean;
     getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined;
     getCurrentFloatingFilterParentModel(column: Column): any;
-    /**
-     * @param source if not calling this from the API, will need to add a new value
-     */
-    destroyFilter(column: Column, source?: 'api'): void;
+    destroyFilter(column: Column, source?: 'api' | 'columnChanged'): void;
+    private disposeColumnListener;
     private disposeFilterWrapper;
+    private checkDestroyFilter;
     protected destroy(): void;
 }
 export interface FilterWrapper {
@@ -102,4 +108,5 @@ export interface FilterWrapper {
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
     guiPromise: AgPromise<HTMLElement | null>;
+    compDetails: UserCompDetails | null;
 }

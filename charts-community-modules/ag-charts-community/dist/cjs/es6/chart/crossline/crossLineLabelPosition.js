@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.labeldDirectionHandling = exports.POSITION_TOP_COORDINATES = exports.calculateLabelTranslation = void 0;
+exports.labeldDirectionHandling = exports.POSITION_TOP_COORDINATES = exports.calculateLabelChartPadding = exports.calculateLabelTranslation = void 0;
 const horizontalCrosslineTranslationDirections = {
     top: { xTranslationDirection: 0, yTranslationDirection: -1 },
     bottom: { xTranslationDirection: 0, yTranslationDirection: 1 },
@@ -39,22 +39,42 @@ const verticalCrossLineTranslationDirections = {
     insideTopRight: { xTranslationDirection: -1, yTranslationDirection: -1 },
     insideBottomRight: { xTranslationDirection: 1, yTranslationDirection: -1 },
 };
-exports.calculateLabelTranslation = ({ yDirection, padding = 0, position, bbox, }) => {
-    var _a;
+function calculateLabelTranslation({ yDirection, padding = 0, position = 'top', bbox, }) {
     const crossLineTranslationDirections = yDirection
         ? horizontalCrosslineTranslationDirections
         : verticalCrossLineTranslationDirections;
-    const { xTranslationDirection, yTranslationDirection } = (_a = crossLineTranslationDirections[position]) !== null && _a !== void 0 ? _a : crossLineTranslationDirections['top'];
+    const { xTranslationDirection, yTranslationDirection } = crossLineTranslationDirections[position];
     const w = yDirection ? bbox.width : bbox.height;
     const h = yDirection ? bbox.height : bbox.width;
     const xTranslation = xTranslationDirection * (padding + w / 2);
     const yTranslation = yTranslationDirection * (padding + h / 2);
-    return {
+    const result = {
         xTranslation,
         yTranslation,
     };
-};
-exports.POSITION_TOP_COORDINATES = ({ yDirection, xEnd, yStart, yEnd }) => {
+    return result;
+}
+exports.calculateLabelTranslation = calculateLabelTranslation;
+function calculateLabelChartPadding({ yDirection, bbox, padding = 0, position = 'top', }) {
+    const chartPadding = {};
+    if (position.startsWith('inside'))
+        return chartPadding;
+    if (position === 'top' && !yDirection) {
+        chartPadding.top = padding + bbox.height;
+    }
+    else if (position === 'bottom' && !yDirection) {
+        chartPadding.bottom = padding + bbox.height;
+    }
+    else if (position === 'left' && yDirection) {
+        chartPadding.left = padding + bbox.width;
+    }
+    else if (position === 'right' && yDirection) {
+        chartPadding.right = padding + bbox.width;
+    }
+    return chartPadding;
+}
+exports.calculateLabelChartPadding = calculateLabelChartPadding;
+const POSITION_TOP_COORDINATES = ({ yDirection, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd / 2, y: yStart };
     }
@@ -62,6 +82,7 @@ exports.POSITION_TOP_COORDINATES = ({ yDirection, xEnd, yStart, yEnd }) => {
         return { x: xEnd, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };
     }
 };
+exports.POSITION_TOP_COORDINATES = POSITION_TOP_COORDINATES;
 const POSITION_LEFT_COORDINATES = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xStart, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };

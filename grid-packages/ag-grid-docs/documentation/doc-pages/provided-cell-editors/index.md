@@ -11,6 +11,15 @@ The grid comes with some cell editors provided out of the box. These cell editor
 
 <grid-example title='Editors' name='editors' type='generated' options='{ "enterprise": true, "modules": ["clientside","richselect"] }'></grid-example>
 
+There are also some additional cell editors that are generally used with [Cell Data Types](/cell-data-types/):
+
+- [Number Cell Editor](#number-cell-editor)
+- [Date Cell Editor](#date-cell-editor)
+- [Date as String Cell Editor](#date-as-string-cell-editor)
+- [Checkbox Cell Editor](#checkbox-cell-editor)
+
+<grid-example title='Cell Data Type Editors' name='cell-data-type-editors' type='generated'></grid-example>
+
 ## Text Cell Editor
 
 Simple text editor that uses the standard HTML `input`. This editor is the default if none other specified.
@@ -64,7 +73,7 @@ Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`
 
 <interface-documentation interfaceName='ISelectCellEditorParams' names='["values"]'></interface-documentation>
 
-```js
+<snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agSelectCellEditor',
@@ -74,25 +83,26 @@ columnDefs: [
         // ...other props
     }
 ]
-```
+</snippet>
 
 Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 
-[[note]]
-| We have found the standard HTML Select doesn't have an API that's rich enough to play
-| properly with the grid. When a cell is double clicked to start editing, it is desired that
-| the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
-| Select. For this reason to edit there are two interactions needed 1) double click to start
-| editing and 2) single click to open the Select.
+<note>
+|We have found the standard HTML Select doesn't have an API that's rich enough to play
+|properly with the grid. When a cell is double clicked to start editing, it is desired that
+|the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
+|Select. For this reason to edit there are two interactions needed 1) double click to start
+|editing and 2) single click to open the Select.
 |
-| We also observed different results while using keyboard navigation to control editing, e.g.
-| while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
-| This is down to the browser implementation and given there is no API for opening the
-| Select, there is nothing the grid can do.
+|We also observed different results while using keyboard navigation to control editing, e.g.
+|while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
+|This is down to the browser implementation and given there is no API for opening the
+|Select, there is nothing the grid can do.
 |
-| If you are unhappy with the additional click required, we advise you don't depend on the
-| browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
-| create your own using a [Cell Editor Component](/component-cell-editor/).
+|If you are unhappy with the additional click required, we advise you don't depend on the
+|browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
+|create your own using a [Cell Editor Component](../component-cell-editor/).
+</note>
 
 ## Rich Select Cell Editor
 
@@ -105,14 +115,15 @@ Benefits over browser's `select` are as follows:
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 - FuzzySearch of values: You can type within the Editor to select a specific record.
 
-[[only-react]]
+<framework-specific-section frameworks="react">
 |Should always set `cellEditorPopup=true`. Otherwise the editor will be clipped to the cell contents.
+</framework-specific-section>
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
 <interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
-```js
+<snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -124,6 +135,89 @@ columnDefs: [
             cellRenderer: MyCellRenderer,
             searchDebounceDelay: 500
         }
+        // ...other props
+    }
+]
+</snippet>
+
+## Number Cell Editor
+
+Simple number editor that uses the standard HTML number `input`.
+
+Specified with `agNumberCellEditor` and configured with `INumberCellEditorParams`.
+
+<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step","showStepperButtons"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agNumberCellEditor',
+        cellEditorParams: {
+            min: 1,
+            max: 100,
+            precision: 0,
+        }
+        // ...other props
+    }
+]
+```
+
+## Date Cell Editor
+
+Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type `Date`.
+
+Specified with `agDateCellEditor` and configured with `IDateCellEditorParams`.
+
+<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agDateCellEditor',
+        cellEditorParams: {
+            min: '2000-01-01',
+            min: '2019-12-31',
+        }
+        // ...other props
+    }
+]
+```
+
+## Date as String Cell Editor
+
+Simple date editor that uses the standard HTML date `input`. Similar to the [Date Cell Editor](#date-cell-editor), but works off of cell values with `string` type.
+
+The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
+
+Specified with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
+
+<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agDateStringCellEditor',
+        cellEditorParams: {
+            min: '2000-01-01',
+            min: '2019-12-31',
+        }
+        // ...other props
+    }
+]
+```
+
+## Checkbox Cell Editor
+
+Simple boolean editor that uses the standard HTML checkbox `input`.
+
+Specified with `agCheckboxCellEditor`.
+
+Generally used in conjunction with the [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer).
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agCheckboxCellEditor',
         // ...other props
     }
 ]

@@ -3,8 +3,7 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession {
     createExcel(data) {
         const { excelStyles, config } = this;
-        const { margins, pageSetup, headerFooterConfig } = config;
-        return ExcelXlsxFactory.createExcel(excelStyles, data, margins, pageSetup, headerFooterConfig);
+        return ExcelXlsxFactory.createExcel(excelStyles, data, config);
     }
     getDataTypeForValue(valueForCell) {
         if (valueForCell === undefined) {
@@ -47,8 +46,11 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession {
         ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     }
-    createCell(styleId, type, value) {
+    createCell(styleId, type, value, valueFormatted) {
         const actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         const typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

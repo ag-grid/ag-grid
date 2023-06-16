@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.INTERACTION_RANGE = exports.POSITION = exports.OPT_LINE_JOIN = exports.LINE_JOIN = exports.OPT_LINE_CAP = exports.LINE_CAP = exports.OPT_LINE_DASH = exports.LINE_DASH = exports.OPT_FONT_WEIGHT = exports.FONT_WEIGHT = exports.OPT_FONT_STYLE = exports.FONT_STYLE = exports.OPT_BOOLEAN_ARRAY = exports.BOOLEAN_ARRAY = exports.STRING_UNION = exports.OPT_STRING_ARRAY = exports.STRING_ARRAY = exports.OPT_NUMBER_ARRAY = exports.NUMBER_ARRAY = exports.NUMBER_OR_NAN = exports.OPT_NUMBER = exports.NUMBER = exports.OPT_COLOR_STRING_ARRAY = exports.COLOR_STRING_ARRAY = exports.OPT_COLOR_STRING = exports.COLOR_STRING = exports.OPT_DATE_OR_DATETIME_MS = exports.OPT_DATETIME_MS = exports.DATETIME_MS = exports.DATE_ARRAY = exports.OPT_DATE = exports.DATE = exports.OPT_STRING = exports.STRING = exports.OPT_BOOLEAN = exports.BOOLEAN = exports.OPT_FUNCTION = exports.FUNCTION = exports.GREATER_THAN = exports.LESS_THAN = exports.OR = exports.AND = exports.OPT_ARRAY = exports.ARRAY = exports.OPTIONAL = exports.predicateWithMessage = exports.Validate = void 0;
+exports.TEXT_WRAP = exports.INTERACTION_RANGE = exports.POSITION = exports.OPT_LINE_JOIN = exports.LINE_JOIN = exports.OPT_LINE_CAP = exports.LINE_CAP = exports.OPT_LINE_DASH = exports.LINE_DASH = exports.OPT_FONT_WEIGHT = exports.FONT_WEIGHT = exports.OPT_FONT_STYLE = exports.FONT_STYLE = exports.OPT_BOOLEAN_ARRAY = exports.BOOLEAN_ARRAY = exports.STRING_UNION = exports.OPT_STRING_ARRAY = exports.STRING_ARRAY = exports.OPT_NUMBER_ARRAY = exports.NUMBER_ARRAY = exports.NUMBER_OR_NAN = exports.OPT_NUMBER = exports.NUMBER = exports.OPT_COLOR_STRING_ARRAY = exports.COLOR_STRING_ARRAY = exports.OPT_COLOR_STRING = exports.COLOR_STRING = exports.OPT_DATE_OR_DATETIME_MS = exports.OPT_DATETIME_MS = exports.DATETIME_MS = exports.DATE_ARRAY = exports.OPT_DATE = exports.DATE = exports.OPT_STRING = exports.STRING = exports.OPT_BOOLEAN = exports.BOOLEAN = exports.OPT_FUNCTION = exports.FUNCTION = exports.GREATER_THAN = exports.LESS_THAN = exports.OR = exports.AND = exports.OPT_ARRAY = exports.ARRAY = exports.OPTIONAL = exports.predicateWithMessage = exports.Validate = void 0;
 const color_1 = require("./color");
 const decorator_1 = require("./decorator");
 const logger_1 = require("./logger");
@@ -31,32 +31,39 @@ function predicateWithMessage(predicate, message) {
     return predicate;
 }
 exports.predicateWithMessage = predicateWithMessage;
-exports.OPTIONAL = (v, ctx, predicate) => v === undefined || predicate(v, ctx);
-exports.ARRAY = (length, predicate) => {
+const OPTIONAL = (v, ctx, predicate) => v === undefined || predicate(v, ctx);
+exports.OPTIONAL = OPTIONAL;
+const ARRAY = (length, predicate) => {
     return predicateWithMessage((v, ctx) => Array.isArray(v) &&
         (length ? v.length === length : true) &&
         (predicate ? v.every((e) => predicate(e, ctx)) : true), `expecting an Array`);
 };
-exports.OPT_ARRAY = (length) => {
+exports.ARRAY = ARRAY;
+const OPT_ARRAY = (length) => {
     return predicateWithMessage((v, ctx) => exports.OPTIONAL(v, ctx, exports.ARRAY(length)), 'expecting an optional Array');
 };
-exports.AND = (...predicates) => {
+exports.OPT_ARRAY = OPT_ARRAY;
+const AND = (...predicates) => {
     return predicateWithMessage((v, ctx) => predicates.every((p) => p(v, ctx)), predicates
         .map((p) => p.message)
         .filter((m) => m != null)
         .join(' AND '));
 };
-exports.OR = (...predicates) => {
+exports.AND = AND;
+const OR = (...predicates) => {
     return predicateWithMessage((v, ctx) => predicates.some((p) => p(v, ctx)), predicates
         .map((p) => p.message)
         .filter((m) => m != null)
         .join(' OR '));
 };
+exports.OR = OR;
 const isComparable = (v) => {
     return v != null && !isNaN(v);
 };
-exports.LESS_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v < ctx.target[otherField], `expected to be less than ${otherField}`);
-exports.GREATER_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v > ctx.target[otherField], `expected to be greater than ${otherField}`);
+const LESS_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v < ctx.target[otherField], `expected to be less than ${otherField}`);
+exports.LESS_THAN = LESS_THAN;
+const GREATER_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v > ctx.target[otherField], `expected to be greater than ${otherField}`);
+exports.GREATER_THAN = GREATER_THAN;
 exports.FUNCTION = predicateWithMessage((v) => typeof v === 'function', 'expecting a Function');
 exports.OPT_FUNCTION = predicateWithMessage((v, ctx) => exports.OPTIONAL(v, ctx, exports.FUNCTION), `expecting an optional Function`);
 exports.BOOLEAN = predicateWithMessage((v) => v === true || v === false, 'expecting a Boolean');
@@ -145,3 +152,5 @@ const POSITIONS = ['top', 'right', 'bottom', 'left'];
 exports.POSITION = predicateWithMessage((v) => POSITIONS.includes(v), `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`);
 const INTERACTION_RANGES = ['exact', 'nearest'];
 exports.INTERACTION_RANGE = predicateWithMessage((v) => (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v), `expecting an interaction range of 'exact', 'nearest' or a number`);
+const TEXT_WRAPS = ['never', 'always', 'hyphenate', 'on-space'];
+exports.TEXT_WRAP = predicateWithMessage((v) => TEXT_WRAPS.includes(v), `expecting a text wrap strategy keyword such as 'never', 'always', 'hyphenate', 'on-space'`);

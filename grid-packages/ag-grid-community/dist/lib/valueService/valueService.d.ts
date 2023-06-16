@@ -5,9 +5,11 @@ export declare class ValueService extends BeanStub {
     private expressionService;
     private columnModel;
     private valueCache;
+    private dataTypeService;
     private cellExpressions;
     private isTreeData;
     private initialised;
+    private isSsrm;
     init(): void;
     getValue(column: Column, rowNode?: IRowNode | null, forFilter?: boolean, ignoreAggData?: boolean): any;
     private getOpenedGroup;

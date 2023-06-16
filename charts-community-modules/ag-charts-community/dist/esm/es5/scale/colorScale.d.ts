@@ -1,9 +1,9 @@
 import { Scale } from './scale';
 export declare class ColorScale implements Scale<number, string, number> {
     domain: number[];
-    private _range;
+    range: string[];
     private parsedRange;
-    get range(): string[];
-    set range(values: string[]);
+    update(): void;
     convert(x: number): string;
 }
+//# sourceMappingURL=colorScale.d.ts.map

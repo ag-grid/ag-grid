@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ export class SelectAllFeature extends BeanStub {
         this.filteredOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionFilteredOnly);
         this.currentPageOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionCurrentPageOnly);
     }
-    onSpaceKeyPressed(e) {
+    onSpaceKeyDown(e) {
         const checkbox = this.cbSelectAll;
         const eDocument = this.gridOptionsService.getDocument();
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(eDocument.activeElement)) {
@@ -86,18 +86,17 @@ export class SelectAllFeature extends BeanStub {
         this.processingEventFromCheckbox = false;
     }
     refreshSelectAllLabel() {
+        const translate = this.localeService.getLocaleTextFunc();
+        const checked = this.cbSelectAll.getValue();
+        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
         if (!this.cbSelectAllVisible) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
-            this.cbSelectAll.setInputAriaLabel(null);
         }
         else {
-            const translate = this.localeService.getLocaleTextFunc();
-            const checked = this.cbSelectAll.getValue();
-            const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-            const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
-            this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         }
+        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         this.headerCellCtrl.refreshAriaDescription();
     }
     checkRightRowModelType(feature) {

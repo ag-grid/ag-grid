@@ -6,6 +6,7 @@ import { ChartAxisDirection } from './chartAxisDirection';
 import { BBox } from '../scene/bbox';
 import { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
+import { toRadians } from '../util/angle';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
 const directions: AgCartesianAxisPosition[] = ['top', 'right', 'bottom', 'left'];
@@ -19,9 +20,6 @@ export class CartesianChart extends Chart {
 
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
-
-        const root = this.scene.root!;
-        this.legend.attachLegend(root);
     }
 
     async performLayout() {
@@ -201,7 +199,7 @@ export class CartesianChart extends Chart {
         const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const paddedBounds = this.applySeriesPadding(bounds);
-        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
+        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(axisWidths) : {};
         const axisBound = this.buildAxisBound(paddedBounds, axisWidths, crossLinePadding, visibility);
 
         const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
@@ -218,6 +216,7 @@ export class CartesianChart extends Chart {
             } = this.calculateAxisDimensions({
                 axis,
                 seriesRect,
+                paddedBounds,
                 axisWidths,
                 newAxisWidths,
                 primaryTickCounts,
@@ -242,16 +241,13 @@ export class CartesianChart extends Chart {
         return { clipSeries, seriesRect, axisWidths: newAxisWidths, visibility };
     }
 
-    private buildCrossLinePadding(
-        lastPassSeriesRect: BBox,
-        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>
-    ) {
+    private buildCrossLinePadding(axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
         const crossLinePadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
 
         this.axes.forEach((axis) => {
             if (axis.crossLines) {
                 axis.crossLines.forEach((crossLine) => {
-                    crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
+                    crossLine.calculatePadding(crossLinePadding);
                 });
             }
         });
@@ -332,13 +328,15 @@ export class CartesianChart extends Chart {
     private calculateAxisDimensions(opts: {
         axis: ChartAxis;
         seriesRect: BBox;
+        paddedBounds: BBox;
         axisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         newAxisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
         clipSeries: boolean;
         addInterAxisPadding: boolean;
     }) {
-        const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
+        const { axis, seriesRect, paddedBounds, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } =
+            opts;
         let { clipSeries } = opts;
         const { position, direction } = axis;
 
@@ -348,8 +346,6 @@ export class CartesianChart extends Chart {
             }
             return [seriesRect.height, 0];
         };
-
-        axis.label.mirrored = ['top', 'right'].includes(position);
 
         const axisOffset = newAxisWidths[position] ?? 0;
         switch (position) {
@@ -374,6 +370,16 @@ export class CartesianChart extends Chart {
         }
 
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
+        const paddedBoundsCoefficient = 0.3;
+
+        if (axis.thickness > 0) {
+            axis.maxThickness = axis.thickness;
+        } else if (direction === ChartAxisDirection.Y) {
+            axis.maxThickness = paddedBounds.width * paddedBoundsCoefficient;
+        } else {
+            axis.maxThickness = paddedBounds.height * paddedBoundsCoefficient;
+        }
+
         primaryTickCount = axis.update(primaryTickCount);
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
@@ -449,6 +455,6 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        axis.updatePosition();
+        axis.updatePosition({ rotation: toRadians(axis.rotation), sideFlag: axis.label.getSideFlag() });
     }
 }

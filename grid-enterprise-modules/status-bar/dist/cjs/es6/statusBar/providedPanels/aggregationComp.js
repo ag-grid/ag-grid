@@ -112,9 +112,14 @@ class AggregationComp extends core_1.Component {
                         if (core_1._.missing(value) || value === '') {
                             return;
                         }
+                        count++;
                         // see if value is wrapped, can happen when doing count() or avg() functions
                         if (typeof value === 'object' && 'value' in value) {
                             value = value.value;
+                            // ensure that the new value wouldn't have been skipped by the previous check
+                            if (value === '') {
+                                return;
+                            }
                         }
                         if (typeof value === 'string') {
                             value = Number(value);
@@ -129,7 +134,6 @@ class AggregationComp extends core_1.Component {
                             }
                             numberCount++;
                         }
-                        count++;
                     });
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
                 }

@@ -164,15 +164,15 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                         // exit quoted field
                         insideQuotedField = false;
                     }
-                    continue;
+                    // continue;
                 }
                 else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
                     // enter quoted field
                     insideQuotedField = true;
-                    continue;
+                    // continue;
                 }
             }
-            if (!insideQuotedField) {
+            if (!insideQuotedField && currentChar !== '"') {
                 if (currentChar === delimiter) {
                     // move to next column
                     column++;
@@ -259,7 +259,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                 if (idx >= currentRowData.length) {
                     idx = idx % currentRowData.length;
                 }
-                const newValue = this.processCell(rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                const newValue = this.processCell(rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
@@ -316,7 +316,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                     // two reasons for looping through columns
                     columns.forEach(column => {
                         // get the initial values to copy down
-                        const value = this.processCell(rowNode, column, this.valueService.getValue(column, rowNode), EXPORT_TYPE_DRAG_COPY, processCellForClipboardFunc);
+                        const value = this.processCell(rowNode, column, this.valueService.getValue(column, rowNode), EXPORT_TYPE_DRAG_COPY, processCellForClipboardFunc, false, true);
                         firstRowValues.push(value);
                     });
                 }
@@ -327,7 +327,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                             return;
                         }
-                        const firstRowValue = this.processCell(rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                        const firstRowValue = this.processCell(rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
@@ -373,7 +373,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         let rowPointer = currentRow;
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
         const getNextGoodRowNode = () => {
             while (true) {
                 if (!rowPointer) {
@@ -411,7 +411,11 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
             column.isSuppressPaste(rowNode)) {
             return;
         }
-        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
+        // if the cell is a group and the col is an aggregation, skip the cell.
+        if (rowNode.group && column.isValueActive()) {
+            return;
+        }
+        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         const { rowIndex, rowPinned } = rowNode;
         const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex, column, rowPinned });
@@ -423,11 +427,21 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
     copyToClipboard(params = {}) {
         this.copyOrCutToClipboard(params);
     }
-    cutToClipboard(params = {}) {
+    cutToClipboard(params = {}, source = 'api') {
         if (this.gridOptionsService.is('suppressCutToClipboard')) {
             return;
         }
+        const startEvent = {
+            type: core_1.Events.EVENT_CUT_START,
+            source
+        };
+        this.eventService.dispatchEvent(startEvent);
         this.copyOrCutToClipboard(params, true);
+        const endEvent = {
+            type: core_1.Events.EVENT_CUT_END,
+            source
+        };
+        this.eventService.dispatchEvent(endEvent);
     }
     copyOrCutToClipboard(params, cut) {
         let { includeHeaders, includeGroupHeaders } = params;
@@ -462,7 +476,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
     clearCellsAfterCopy(type) {
         this.eventService.dispatchEvent({ type: core_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
+            this.rangeService.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         }
         else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
@@ -671,7 +685,9 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                 value,
                 node,
                 column,
-                type: 'clipboard'
+                type: 'clipboard',
+                formatValue: (valueToFormat) => { var _a; return (_a = this.valueFormatterService.formatValue(column, node, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; },
+                parseValue: (valueToParse) => this.valueParserService.parseValue(column, node, valueToParse, this.valueService.getValue(column, node))
             });
         }
         return value;
@@ -685,15 +701,24 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
             this.eventService.dispatchEvent(event);
         }, 0);
     }
-    processCell(rowNode, column, value, type, func) {
+    processCell(rowNode, column, value, type, func, canParse, canFormat) {
+        var _a;
         if (func) {
             const params = {
                 column,
                 node: rowNode,
                 value,
                 type,
+                formatValue: (valueToFormat) => { var _a; return (_a = this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; },
+                parseValue: (valueToParse) => this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, valueToParse, this.valueService.getValue(column, rowNode))
             };
             return func(params);
+        }
+        if (canParse && column.getColDef().useValueParserForImport) {
+            return this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value, this.valueService.getValue(column, rowNode));
+        }
+        else if (canFormat && column.getColDef().useValueFormatterForExport) {
+            return (_a = this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value)) !== null && _a !== void 0 ? _a : value;
         }
         return value;
     }
@@ -822,6 +847,12 @@ __decorate([
 __decorate([
     core_1.Autowired('rowPositionUtils')
 ], ClipboardService.prototype, "rowPositionUtils", void 0);
+__decorate([
+    core_1.Autowired('valueFormatterService')
+], ClipboardService.prototype, "valueFormatterService", void 0);
+__decorate([
+    core_1.Autowired('valueParserService')
+], ClipboardService.prototype, "valueParserService", void 0);
 __decorate([
     core_1.PostConstruct
 ], ClipboardService.prototype, "init", null);

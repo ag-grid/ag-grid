@@ -3,6 +3,7 @@ import { Component } from "../widgets/component";
 import { exists, values } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { getFunctionName } from "../utils/function";
+import { ModuleRegistry } from "../modules/moduleRegistry";
 
 // steps in booting up:
 // 1. create all beans
@@ -17,6 +18,7 @@ export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
     debug: boolean;
+    gridId: string;
 }
 
 export interface ComponentMeta {
@@ -203,6 +205,11 @@ export class Context {
     }
 
     private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
+        if (this.destroyed) {
+            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            return null;
+        }
+
         if (beanName === "context") {
             return this;
         }
@@ -261,6 +268,9 @@ export class Context {
         this.destroyBeans(beanInstances);
 
         this.contextParams.providedBeanInstances = null;
+
+        ModuleRegistry.unRegisterGridModules(this.contextParams.gridId);
+
         this.destroyed = true;
 
         this.logger.log(">> ag-Application Context shut down - component is dead");
@@ -287,6 +297,14 @@ export class Context {
         });
 
         return [];
+    }
+
+    public isDestroyed(): boolean {
+        return this.destroyed;
+    }
+
+    public getGridId(): string {
+        return this.contextParams.gridId;
     }
 }
 

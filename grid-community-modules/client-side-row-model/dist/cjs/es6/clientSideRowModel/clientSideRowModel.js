@@ -377,37 +377,39 @@ let ClientSideRowModel = class ClientSideRowModel extends core_1.BeanStub {
     }
     getNodesInRangeForSelection(firstInRange, lastInRange) {
         // if lastSelectedNode is missing, we start at the first row
-        let firstRowHit = !lastInRange;
-        let lastRowHit = false;
-        let lastRow;
+        let started = !lastInRange;
+        let finished = false;
         const result = [];
         const groupsSelectChildren = this.gridOptionsService.is('groupSelectsChildren');
         this.forEachNodeAfterFilterAndSort(rowNode => {
-            const lookingForLastRow = firstRowHit && !lastRowHit;
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
-                    firstRowHit = true;
-                }
+            // range has been closed, skip till end
+            if (finished) {
+                return;
             }
-            const skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                const inRange = firstRowHit && !lastRowHit;
-                const childOfLastRow = rowNode.isParentOfNode(lastRow);
-                if (inRange || childOfLastRow) {
-                    result.push(rowNode);
-                }
-            }
-            if (lookingForLastRow) {
+            if (started) {
                 if (rowNode === lastInRange || rowNode === firstInRange) {
-                    lastRowHit = true;
-                    if (rowNode === lastInRange) {
-                        lastRow = lastInRange;
-                    }
-                    else {
-                        lastRow = firstInRange;
+                    // check if this is the last node we're going to be adding
+                    finished = true;
+                    // if the final node was a group node, and we're doing groupSelectsChildren
+                    // make the exception to select all of it's descendants too
+                    if (rowNode.group && groupsSelectChildren) {
+                        result.push(...rowNode.allLeafChildren);
+                        return;
                     }
                 }
+            }
+            if (!started) {
+                if (rowNode !== lastInRange && rowNode !== firstInRange) {
+                    // still haven't hit a boundary node, keep searching
+                    return;
+                }
+                started = true;
+            }
+            // only select leaf nodes if groupsSelectChildren
+            const includeThisNode = !rowNode.group || !groupsSelectChildren;
+            if (includeThisNode) {
+                result.push(rowNode);
+                return;
             }
         });
         return result;

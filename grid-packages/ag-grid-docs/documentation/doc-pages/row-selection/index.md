@@ -283,21 +283,22 @@ The `isSelected()` method returns `true` if the node is selected, or `false` if 
 
 The grid API has the following methods for selection:
 
-<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows", "setNodesSelected"]'></api-documentation>
 
-If you want to select only filtered-out row nodes, you could do this using the following:
+If you want to select only the filtered rows, you could do this using the following:
 
-<snippet>
-| // loop through each node when it is filtered out
-| gridOptions.api.forEachNodeAfterFilter(node => {
-|     // select the node
-|     node.setSelected(true);
-| });
+<snippet transform={false}>
+|// loop through each node after filter
+|const nodes = [];
+|gridOptions.api.forEachNodeAfterFilter(node => {
+|    nodes.push(node);
+|});
+|gridOptions.api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
 ### Example: Using forEachNode
 
-There is an API function `forEachNode`. This is useful for doing group selections on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
+The Grid API function `forEachNode` can be used to select grid rows based on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
 
 <grid-example title='Using forEachNode' name='using-foreachnode' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
@@ -318,8 +319,8 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 |         const KEY_UP = 'ArrowUp';
 |         const KEY_DOWN = 'ArrowDown';
 | 
-|         const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
-|         if (noUpOrDownKeyPressed) {
+|         const noUpOrDownKey = params.key !== KEY_DOWN && params.key !== KEY_UP;
+|         if (noUpOrDownKey) {
 |             return suggestedNextCell;
 |         }
 | 

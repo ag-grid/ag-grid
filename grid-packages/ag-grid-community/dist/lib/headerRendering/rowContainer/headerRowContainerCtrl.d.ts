@@ -23,6 +23,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private pinned;
     private comp;
     private hidden;
+    private includeFloatingFilter;
     private filtersRowCtrl;
     private columnsRowCtrl;
     private groupsRowCtrls;
@@ -34,6 +35,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private restoreFocusOnHeader;
     private getAllCtrls;
     private onGridColumnsChanged;
+    private onDisplayedColumnsChanged;
     private setupCenterWidth;
     setHorizontalScroll(offset: number): void;
     private setupPinnedWidth;

@@ -3,7 +3,7 @@
 
 // Configuration
 // =============
-$css-variables-root: '.ag-styles' !default; // The root level where CSS variables are applied
+$css-variables-root: ':root' !default; // The root level where CSS variables are applied
 
 // Size constants
 // ==============
@@ -100,7 +100,9 @@ $abstract-colors: (
     'white': #ffffff,
     // Other
     'cerise-pink': #e83e8c,
-    'danger-red': #dc3545
+    'danger-red': #dc3545,
+    'papaya-whip': #ffeed9,
+    'pineapple': #5c3508
 );
 
 // Semantic colors based on abstract colors
@@ -137,5 +139,8 @@ $semantic-colors: (
     'site-header-background': medium-electric-blue,
     'site-nav-background': ag-grid-dark-blue,
     // Toolbar
-    'toolbar-background': bright-blue-gray
+    'toolbar-background': bright-blue-gray,
+    // Warnings
+    'warning-background': papaya-whip,
+    'warning-text': pineapple
 );

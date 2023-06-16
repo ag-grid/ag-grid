@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -18,6 +18,8 @@ var __extends$d = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,6 +36,13 @@ var AggregationStage = /** @class */ (function (_super) {
     function AggregationStage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AggregationStage.prototype.init = function () {
+        var _this = this;
+        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
+        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', function (propChange) { return _this.alwaysAggregateAtRootLevel = propChange.currentValue; });
+        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
+        this.addManagedPropertyListener('groupIncludeTotalFooter', function (propChange) { return _this.groupIncludeTotalFooter = propChange.currentValue; });
+    };
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     AggregationStage.prototype.execute = function (params) {
@@ -43,24 +52,13 @@ var AggregationStage = /** @class */ (function (_super) {
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
         var noValueColumns = core._.missingOrEmpty(this.columnModel.getValueColumns());
-        var noUserAgg = !this.getGroupRowAggFunc();
+        var noUserAgg = !this.gridOptionsService.getCallback('getGroupRowAgg');
         var changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
             return;
         }
         var aggDetails = this.createAggDetails(params);
         this.recursivelyCreateAggData(aggDetails);
-    };
-    AggregationStage.prototype.getGroupRowAggFunc = function () {
-        var getGroupRowAgg = this.gridOptionsService.getCallback('getGroupRowAgg');
-        if (getGroupRowAgg) {
-            return getGroupRowAgg;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var groupRowAggNodes = this.gridOptionsService.get('groupRowAggNodes');
-        if (groupRowAggNodes) {
-            return function (params) { return groupRowAggNodes(params.nodes); };
-        }
     };
     AggregationStage.prototype.createAggDetails = function (params) {
         var pivotActive = this.columnModel.isPivotActive();
@@ -92,13 +90,12 @@ var AggregationStage = /** @class */ (function (_super) {
                 // never agg data for leaf nodes
                 return;
             }
-            //Optionally prevent the aggregation at the root Node
-            //https://ag-grid.atlassian.net/browse/AG-388
+            //Optionally enable the aggregation at the root Node
             var isRootNode = rowNode.level === -1;
-            if (isRootNode) {
+            // if total footer is displayed, the value is in use
+            if (isRootNode && !_this.groupIncludeTotalFooter) {
                 var notPivoting = !_this.columnModel.isPivotMode();
-                var suppressAggAtRootLevel = _this.gridOptionsService.is('suppressAggAtRootLevel');
-                if (suppressAggAtRootLevel && notPivoting) {
+                if (!_this.alwaysAggregateAtRootLevel && notPivoting) {
                     return;
                 }
             }
@@ -109,7 +106,7 @@ var AggregationStage = /** @class */ (function (_super) {
     AggregationStage.prototype.aggregateRowNode = function (rowNode, aggDetails) {
         var measureColumnsMissing = aggDetails.valueColumns.length === 0;
         var pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        var userFunc = this.getGroupRowAggFunc();
+        var userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
         var aggResult;
         if (userFunc) {
             var params = { nodes: rowNode.childrenAfterFilter };
@@ -269,6 +266,9 @@ var AggregationStage = /** @class */ (function (_super) {
     __decorate$d([
         core.Autowired('columnApi')
     ], AggregationStage.prototype, "columnApi", void 0);
+    __decorate$d([
+        core.PostConstruct
+    ], AggregationStage.prototype, "init", null);
     AggregationStage = __decorate$d([
         core.Bean('aggregationStage')
     ], AggregationStage);
@@ -335,6 +335,8 @@ var __extends$c = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -362,9 +364,10 @@ var __read$2 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$2 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$2(arguments[i]));
-    return ar;
+var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var GroupStage = /** @class */ (function (_super) {
     __extends$c(GroupStage, _super);
@@ -422,7 +425,7 @@ var GroupStage = /** @class */ (function (_super) {
                 if (unbalancedNode_1) {
                     groupNodes_1.push(unbalancedNode_1);
                 }
-                group.childrenAfterGroup = __spread$2(leafNodes_1, groupNodes_1);
+                group.childrenAfterGroup = __spreadArray$2(__spreadArray$2([], __read$2(leafNodes_1)), __read$2(groupNodes_1));
             }
         }, false);
     };
@@ -496,7 +499,7 @@ var GroupStage = /** @class */ (function (_super) {
         if (this.usingTreeData) {
             return;
         }
-        var comparator = this.getInitialGroupOrderComparator();
+        var comparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
         if (core._.exists(comparator)) {
             recursiveSort(rootNode);
         }
@@ -508,17 +511,6 @@ var GroupStage = /** @class */ (function (_super) {
                 rowNode.childrenAfterGroup.sort(function (nodeA, nodeB) { return comparator({ nodeA: nodeA, nodeB: nodeB }); });
                 rowNode.childrenAfterGroup.forEach(function (childNode) { return recursiveSort(childNode); });
             }
-        }
-    };
-    GroupStage.prototype.getInitialGroupOrderComparator = function () {
-        var initialGroupOrderComparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
-        if (initialGroupOrderComparator) {
-            return initialGroupOrderComparator;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var defaultGroupOrderComparator = this.gridOptionsService.get('defaultGroupOrderComparator');
-        if (defaultGroupOrderComparator) {
-            return function (params) { return defaultGroupOrderComparator(params.nodeA, params.nodeB); };
         }
     };
     GroupStage.prototype.getExistingPathForNode = function (node, details) {
@@ -1002,6 +994,8 @@ var __extends$b = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1040,9 +1034,10 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$1 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1(arguments[i]));
-    return ar;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var PivotColDefService = /** @class */ (function (_super) {
     __extends$b(PivotColDefService, _super);
@@ -1097,7 +1092,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         if (measureColumns.length === 1 && this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             var leafCols_1 = [];
             core._.iterateObject(uniqueValue, function (key) {
-                var newPivotKeys = __spread$1(pivotKeys, [key]);
+                var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys)), [key]);
                 leafCols_1.push(__assign(__assign({}, _this.createColDef(measureColumns[0], key, newPivotKeys)), { columnGroupShow: 'open' }));
             });
             leafCols_1.sort(comparator);
@@ -1106,7 +1101,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         // Recursive case
         var groups = [];
         core._.iterateObject(uniqueValue, function (key, value) {
-            var newPivotKeys = __spread$1(pivotKeys, [key]);
+            var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys)), [key]);
             groups.push({
                 children: _this.recursiveBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
                 headerName: key,
@@ -1353,7 +1348,7 @@ var PivotColDefService = /** @class */ (function (_super) {
     PivotColDefService.prototype.merge = function (m1, m2) {
         m2.forEach(function (value, key, map) {
             var existingList = m1.has(key) ? m1.get(key) : [];
-            var updatedList = __spread$1(existingList, value);
+            var updatedList = __spreadArray$1(__spreadArray$1([], __read$1(existingList)), __read$1(value));
             m1.set(key, updatedList);
         });
     };
@@ -1384,6 +1379,8 @@ var __extends$a = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1549,6 +1546,8 @@ var __extends$9 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1789,6 +1788,8 @@ var __extends$8 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2124,6 +2125,8 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2151,9 +2154,10 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends$7(BaseDropZonePanel, _super);
@@ -2469,10 +2473,10 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         if (this.isPotentialDndColumns()) {
             var dndColumns = this.potentialDndColumns.map(function (column) { return (_this.createColumnComponent(column, true)); });
             if (this.insertIndex >= itemsToAddToGui.length) {
-                itemsToAddToGui.push.apply(itemsToAddToGui, __spread(dndColumns));
+                itemsToAddToGui.push.apply(itemsToAddToGui, __spreadArray([], __read(dndColumns)));
             }
             else {
-                itemsToAddToGui.splice.apply(itemsToAddToGui, __spread([this.insertIndex, 0], dndColumns));
+                itemsToAddToGui.splice.apply(itemsToAddToGui, __spreadArray([this.insertIndex, 0], __read(dndColumns)));
             }
         }
         this.appendChild(this.eColumnDropList);
@@ -2561,6 +2565,8 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2654,6 +2660,8 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2778,6 +2786,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2855,6 +2865,8 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2874,7 +2886,8 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
     FilterAggregatesStage.prototype.execute = function (params) {
         var _this = this;
         var isPivotMode = this.columnModel.isPivotMode();
-        var isAggFilterActive = this.filterManager.isAggregateFilterPresent();
+        var isAggFilterActive = this.filterManager.isAggregateFilterPresent()
+            || this.filterManager.isAggregateQuickFilterPresent();
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
         var defaultPrimaryColumnPredicate = function (params) { return !params.node.group; };
@@ -2970,7 +2983,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var __extends$2 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -2980,6 +2993,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -3242,6 +3257,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -3399,6 +3416,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());

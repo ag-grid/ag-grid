@@ -10,6 +10,7 @@ import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { GridOptionsService } from "../../gridOptionsService";
 declare enum RowType {
     Normal = "Normal",
     FullWidth = "FullWidth",
@@ -20,7 +21,7 @@ declare enum RowType {
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[]): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -37,6 +38,7 @@ export declare class RowCtrl extends BeanStub {
     private instanceId;
     private readonly rowNode;
     private readonly beans;
+    protected readonly gridOptionsService: GridOptionsService;
     private rowType;
     private leftGui;
     private centerGui;
@@ -61,8 +63,10 @@ export declare class RowCtrl extends BeanStub {
     private readonly printLayout;
     private updateColumnListsPending;
     private businessKeySanitised;
+    private businessKeyForNodeFunc;
     constructor(rowNode: RowNode, beans: Beans, animateIn: boolean, useAnimationFrameForCreate: boolean, printLayout: boolean);
     private initRowBusinessKey;
+    private updateRowBusinessKey;
     isSticky(): boolean;
     getBeans(): Beans;
     getInstanceId(): string;
@@ -71,6 +75,8 @@ export declare class RowCtrl extends BeanStub {
     isCacheable(): boolean;
     setCached(cached: boolean): void;
     private initialiseRowComp;
+    private setRowCompRowBusinessKey;
+    private setRowCompRowId;
     private executeSlideAndFadeAnimations;
     private addRowDraggerToRow;
     private setupFullWidth;
@@ -84,6 +90,7 @@ export declare class RowCtrl extends BeanStub {
     private createCellCtrls;
     private updateColumnListsImpl;
     private isCellEligibleToBeRemoved;
+    private listenOnDomOrder;
     private setAnimateFlags;
     isEditing(): boolean;
     stopRowEditing(cancel: boolean): void;
@@ -125,7 +132,7 @@ export declare class RowCtrl extends BeanStub {
     stopEditing(cancel?: boolean): void;
     setInlineEditingCss(editing: boolean): void;
     private setEditingRow;
-    startRowEditing(key?: string | null, charPress?: string | null, sourceRenderedCell?: CellCtrl | null, event?: KeyboardEvent | null): void;
+    startRowEditing(key?: string | null, sourceRenderedCell?: CellCtrl | null, event?: KeyboardEvent | null): void;
     getAllCellCtrls(): CellCtrl[];
     private postProcessClassesFromGridOptions;
     private postProcessRowClassRules;

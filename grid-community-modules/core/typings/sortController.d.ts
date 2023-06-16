@@ -25,7 +25,7 @@ export declare class SortController extends BeanStub {
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     private getIndexedSortMap;
-    getColumnsWithSortingOrdered(includeRedundantColumns?: boolean): Column[];
+    getColumnsWithSortingOrdered(): Column[];
     getSortModel(): SortModelItem[];
     getSortOptions(): SortOption[];
     canColumnDisplayMixedSort(column: Column): boolean;

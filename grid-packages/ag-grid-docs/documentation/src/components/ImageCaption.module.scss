@@ -1,38 +1,38 @@
-.image-caption {
-    composes: card mx-3 my-3 from global;
-    border: none;
+@use '../design-system' as *;
 
-    &--centered {
-        composes: mx-auto from global;
+.imageCaption {
+    display: flex;
+    flex-direction: column;
+    margin: $size-2 $size-3 $size-1;
+}
+
+.imageCaption.centered {
+    margin-right: auto;
+    margin-left: auto;
+
+    .image {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
     }
+}
 
-    &--constrained {
+.imageCaption.constrained {
+    max-width: 100%;
+
+    .image {
         max-width: 100%;
     }
+}
 
-    &__image {
-        composes: p-2 from global;
+.body {
+    padding: $size-2;
 
-        &--constrained {
-            max-width: 100%;
-        }
-
-        &--centered {
-            composes: mx-auto d-block from global;
-        }
+    &.top {
+        padding: $size-half;
     }
+}
 
-    &__body {
-        composes: card-body from global;
-
-        &--description-top {
-            composes: p-1 text-center from global;
-        }
-    }
-
-    &__body-text {
-        composes: card-text from global;
-
-        white-space: nowrap;
-    }
+.bodyText {
+    white-space: nowrap;
 }

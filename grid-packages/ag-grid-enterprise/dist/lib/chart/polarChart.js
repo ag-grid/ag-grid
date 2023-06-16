@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -48,20 +50,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PolarChart = void 0;
 var chart_1 = require("./chart");
 var polarSeries_1 = require("./series/polar/polarSeries");
 var padding_1 = require("../util/padding");
 var bbox_1 = require("../scene/bbox");
+var pieSeries_1 = require("./series/polar/pieSeries");
 var PolarChart = /** @class */ (function (_super) {
     __extends(PolarChart, _super);
     function PolarChart(document, overrideDevicePixelRatio, resources) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document, overrideDevicePixelRatio, resources) || this;
         _this.padding = new padding_1.Padding(40);
-        var root = _this.scene.root;
-        _this.legend.attachLegend(root);
         return _this;
     }
     PolarChart.prototype.performLayout = function () {
@@ -109,6 +121,19 @@ var PolarChart = /** @class */ (function (_super) {
                 series.centerY = cy;
                 series.radius = r;
             });
+            var pieSeries = polarSeries.filter(function (series) { return series instanceof pieSeries_1.PieSeries; });
+            if (pieSeries.length > 1) {
+                var innerRadii = pieSeries
+                    .map(function (series) {
+                    var innerRadius = series.getInnerRadius();
+                    return { series: series, innerRadius: innerRadius };
+                })
+                    .sort(function (a, b) { return a.innerRadius - b.innerRadius; });
+                innerRadii[innerRadii.length - 1].series.surroundingRadius = undefined;
+                for (var i = 0; i < innerRadii.length - 1; i++) {
+                    innerRadii[i].series.surroundingRadius = innerRadii[i + 1].innerRadius;
+                }
+            }
         };
         var centerX = seriesBox.x + seriesBox.width / 2;
         var centerY = seriesBox.y + seriesBox.height / 2;
@@ -116,10 +141,25 @@ var PolarChart = /** @class */ (function (_super) {
         var radius = initialRadius;
         setSeriesCircle(centerX, centerY, radius);
         var shake = function (_a) {
-            var _b = (_a === void 0 ? {} : _a).hideWhenNecessary, hideWhenNecessary = _b === void 0 ? false : _b;
-            var labelBoxes = polarSeries
-                .map(function (series) { return series.computeLabelsBBox({ hideWhenNecessary: hideWhenNecessary }); })
-                .filter(function (box) { return box != null; });
+            var e_1, _b;
+            var _c = _a === void 0 ? {} : _a, _d = _c.hideWhenNecessary, hideWhenNecessary = _d === void 0 ? false : _d;
+            var labelBoxes = [];
+            try {
+                for (var polarSeries_2 = __values(polarSeries), polarSeries_2_1 = polarSeries_2.next(); !polarSeries_2_1.done; polarSeries_2_1 = polarSeries_2.next()) {
+                    var series = polarSeries_2_1.value;
+                    var box = series.computeLabelsBBox({ hideWhenNecessary: hideWhenNecessary }, seriesBox);
+                    if (box == null)
+                        continue;
+                    labelBoxes.push(box);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (polarSeries_2_1 && !polarSeries_2_1.done && (_b = polarSeries_2.return)) _b.call(polarSeries_2);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;

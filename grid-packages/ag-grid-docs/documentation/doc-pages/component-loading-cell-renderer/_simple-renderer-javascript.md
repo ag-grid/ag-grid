@@ -1,15 +1,17 @@
-[[only-javascript]]
-|Below is a simple example of cell renderer class:
-|
-|```js
+<framework-specific-section frameworks="javascript">
+|Below is an example of cell renderer class:
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |class CustomLoadingCellRenderer {
 |    init(params) {
 |        this.eGui = document.createElement('div');
 |        this.eGui.innerHTML = `
-|            <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
-|                <i class="fas fa-spinner fa-pulse"></i> 
-|                <span>${params.loadingMessage} </span>
-|            </div>
+|            &lt;div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
+|                &lt;i class="fas fa-spinner fa-pulse">&lt;/i> 
+|                &lt;span>${params.loadingMessage} &lt;/span>
+|            &lt;/div>
 |        `;
 |    }
 |
@@ -17,4 +19,5 @@
 |        return this.eGui;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

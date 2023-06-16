@@ -27,7 +27,7 @@ var Selection = /** @class */ (function () {
             data.slice(old.length).forEach(function (datum) {
                 var node = factory(datum);
                 node.datum = datum;
-                init && init(node);
+                init === null || init === void 0 ? void 0 : init(node);
                 parent.appendChild(node);
                 _this._nodes.push(node);
             });
@@ -47,7 +47,7 @@ var Selection = /** @class */ (function () {
         this.update([]);
         return this;
     };
-    Selection.prototype.select = function (predicate) {
+    Selection.selectAll = function (parent, predicate) {
         var results = [];
         var traverse = function (node) {
             if (predicate(node)) {
@@ -55,8 +55,17 @@ var Selection = /** @class */ (function () {
             }
             node.children.forEach(traverse);
         };
-        traverse(this._parent);
+        traverse(parent);
         return results;
+    };
+    Selection.selectByClass = function (node, Class) {
+        return Selection.selectAll(node, function (node) { return node instanceof Class; });
+    };
+    Selection.selectByTag = function (node, tag) {
+        return Selection.selectAll(node, function (node) { return node.tag === tag; });
+    };
+    Selection.prototype.select = function (predicate) {
+        return Selection.selectAll(this._parent, predicate);
     };
     Selection.prototype.selectByClass = function (Class) {
         return this.select(function (node) { return node instanceof Class; });

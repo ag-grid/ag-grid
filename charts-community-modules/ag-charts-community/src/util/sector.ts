@@ -1,14 +1,14 @@
 import { BBox } from '../scene/bbox';
 import { segmentIntersection, arcIntersections } from '../scene/intersection';
 
-export interface SectorBoundaries {
+interface SectorBoundaries {
     startAngle: number;
     endAngle: number;
     innerRadius: number;
     outerRadius: number;
 }
 
-export interface LineCoordinates {
+interface LineCoordinates {
     start: { x: number; y: number };
     end: { x: number; y: number };
 }
@@ -33,7 +33,7 @@ export function isPointInSector(x: number, y: number, sector: SectorBoundaries) 
     if (startAngle === (3 * Math.PI) / 2) {
         return angle > endAngle;
     }
-    return angle >= endAngle && angle <= startAngle;
+    return angle <= endAngle && angle >= startAngle;
 }
 
 function lineCollidesSector(line: LineCoordinates, sector: SectorBoundaries) {

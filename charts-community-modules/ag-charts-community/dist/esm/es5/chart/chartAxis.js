@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,6 +30,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -44,50 +57,38 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Axis } from '../axis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
-export function flipChartAxisDirection(direction) {
-    if (direction === ChartAxisDirection.X) {
-        return ChartAxisDirection.Y;
-    }
-    else {
-        return ChartAxisDirection.X;
-    }
-}
 var ChartAxis = /** @class */ (function (_super) {
     __extends(ChartAxis, _super);
     function ChartAxis(moduleCtx, scale) {
-        var _this = _super.call(this, scale) || this;
-        _this.moduleCtx = moduleCtx;
+        var _this = _super.call(this, moduleCtx, scale) || this;
         _this.keys = [];
-        _this.direction = ChartAxisDirection.Y;
         _this.boundSeries = [];
         _this.includeInvisibleDomains = false;
         _this.modules = {};
-        _this._position = 'left';
+        _this.position = 'left';
         return _this;
     }
     Object.defineProperty(ChartAxis.prototype, "type", {
         get: function () {
-            return this.constructor.type || '';
+            var _a;
+            return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ChartAxis.prototype, "direction", {
+        get: function () {
+            return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
         },
         enumerable: false,
         configurable: true
@@ -98,62 +99,61 @@ var ChartAxis = /** @class */ (function (_super) {
         // the time-range involved.
         return this.scale instanceof LinearScale;
     };
-    Object.defineProperty(ChartAxis.prototype, "position", {
-        get: function () {
-            return this._position;
-        },
-        set: function (value) {
-            if (this._position !== value) {
-                this._position = value;
-                switch (value) {
-                    case 'top':
-                        this.direction = ChartAxisDirection.X;
-                        this.rotation = -90;
-                        this.label.mirrored = true;
-                        this.label.parallel = true;
-                        break;
-                    case 'right':
-                        this.direction = ChartAxisDirection.Y;
-                        this.rotation = 0;
-                        this.label.mirrored = true;
-                        this.label.parallel = false;
-                        break;
-                    case 'bottom':
-                        this.direction = ChartAxisDirection.X;
-                        this.rotation = -90;
-                        this.label.mirrored = false;
-                        this.label.parallel = true;
-                        break;
-                    case 'left':
-                        this.direction = ChartAxisDirection.Y;
-                        this.rotation = 0;
-                        this.label.mirrored = false;
-                        this.label.parallel = false;
-                        break;
-                }
-                if (this.axisContext) {
-                    this.axisContext.position = value;
-                    this.axisContext.direction = this.direction;
-                }
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
+    ChartAxis.prototype.update = function (primaryTickCount) {
+        this.updateDirection();
+        return _super.prototype.update.call(this, primaryTickCount);
+    };
+    ChartAxis.prototype.updateDirection = function () {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
+    };
     ChartAxis.prototype.calculateDomain = function () {
-        var _a;
-        var _b = this, direction = _b.direction, boundSeries = _b.boundSeries, includeInvisibleDomains = _b.includeInvisibleDomains;
+        var e_1, _a, _b;
+        var _c = this, direction = _c.direction, boundSeries = _c.boundSeries, includeInvisibleDomains = _c.includeInvisibleDomains;
         if (this.linkedTo) {
             this.dataDomain = this.linkedTo.dataDomain;
         }
         else {
-            var domains_1 = [];
-            boundSeries
-                .filter(function (s) { return includeInvisibleDomains || s.isEnabled(); })
-                .forEach(function (series) {
-                domains_1.push(series.getDomain(direction));
-            });
-            var domain = (_a = new Array()).concat.apply(_a, __spread(domains_1));
+            var domains = [];
+            var visibleSeries = boundSeries.filter(function (s) { return includeInvisibleDomains || s.isEnabled(); });
+            try {
+                for (var visibleSeries_1 = __values(visibleSeries), visibleSeries_1_1 = visibleSeries_1.next(); !visibleSeries_1_1.done; visibleSeries_1_1 = visibleSeries_1.next()) {
+                    var series = visibleSeries_1_1.value;
+                    domains.push(series.getDomain(direction));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (visibleSeries_1_1 && !visibleSeries_1_1.done && (_a = visibleSeries_1.return)) _a.call(visibleSeries_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            var domain = (_b = new Array()).concat.apply(_b, __spreadArray([], __read(domains)));
             this.dataDomain = this.normaliseDataDomain(domain);
         }
     };
@@ -177,7 +177,7 @@ var ChartAxis = /** @class */ (function (_super) {
                 return _this.boundSeries
                     .map(function (s) { return s.getKeys(_this.direction); })
                     .reduce(function (keys, seriesKeys) {
-                    keys.push.apply(keys, __spread(seriesKeys));
+                    keys.push.apply(keys, __spreadArray([], __read(seriesKeys)));
                     return keys;
                 }, []);
             };
@@ -193,9 +193,9 @@ var ChartAxis = /** @class */ (function (_super) {
                 scaleInvert: function (val) { var _a, _b, _c; return (_c = (_b = (_a = _this.scale).invert) === null || _b === void 0 ? void 0 : _b.call(_a, val)) !== null && _c !== void 0 ? _c : undefined; },
             };
         }
-        var moduleMeta = module.initialiseModule(__assign(__assign({}, this.moduleCtx), { parent: this.axisContext }));
-        this.modules[module.optionsKey] = moduleMeta;
-        this[module.optionsKey] = moduleMeta.instance;
+        var moduleInstance = new module.instanceConstructor(__assign(__assign({}, this.moduleCtx), { parent: this.axisContext }));
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+        this[module.optionsKey] = moduleInstance;
     };
     ChartAxis.prototype.removeModule = function (module) {
         var _a, _b;
@@ -207,30 +207,50 @@ var ChartAxis = /** @class */ (function (_super) {
         return this.modules[module.optionsKey] != null;
     };
     ChartAxis.prototype.destroy = function () {
-        var e_1, _a;
+        var e_2, _a;
         _super.prototype.destroy.call(this);
         try {
             for (var _b = __values(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), key = _d[0], module_1 = _d[1];
-                module_1.instance.destroy();
+                var _d = __read(_c.value, 2), key = _d[0], module = _d[1];
+                module.instance.destroy();
                 delete this.modules[key];
                 delete this[key];
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
+    };
+    ChartAxis.prototype.getTitleFormatterParams = function () {
+        var _this = this;
+        var _a;
+        var boundSeries = this.boundSeries.reduce(function (acc, next) {
+            var keys = next.getKeys(_this.direction);
+            var names = next.getNames(_this.direction);
+            for (var idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, []);
+        return {
+            direction: this.direction,
+            boundSeries: boundSeries,
+            defaultValue: (_a = this.title) === null || _a === void 0 ? void 0 : _a.text,
+        };
     };
     __decorate([
         Validate(STRING_ARRAY)
     ], ChartAxis.prototype, "keys", void 0);
     __decorate([
         Validate(POSITION)
-    ], ChartAxis.prototype, "_position", void 0);
+    ], ChartAxis.prototype, "position", void 0);
     return ChartAxis;
 }(Axis));
 export { ChartAxis };

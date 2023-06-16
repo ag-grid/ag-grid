@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -19,9 +19,6 @@ const utils_1 = require("../../utils");
 const object_1 = require("../../utils/object");
 const componentTypes_1 = require("./componentTypes");
 const floatingFilterMapper_1 = require("../../filter/floating/floatingFilterMapper");
-const moduleNames_1 = require("../../modules/moduleNames");
-const moduleRegistry_1 = require("../../modules/moduleRegistry");
-const function_1 = require("../../utils/function");
 let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStub {
     getHeaderCompDetails(colDef, params) {
         return this.getCompDetails(colDef, componentTypes_1.HeaderComponent, 'agColumnHeader', params);
@@ -145,18 +142,9 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
             // if selector, use this
             const selectorFunc = defObjectAny[propertyName + 'Selector'];
             const selectorRes = selectorFunc ? selectorFunc(params) : null;
-            const assignComp = (providedJsComp, providedFwComp) => {
-                const xxxFrameworkDeprecatedWarn = () => {
-                    const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
-                    function_1.doOnce(() => console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
-                };
+            const assignComp = (providedJsComp) => {
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp;
-                }
-                else if (typeof providedFwComp === 'string') {
-                    xxxFrameworkDeprecatedWarn();
-                    compName = providedFwComp;
-                    // comp===true for filters, which means use the default comp
                 }
                 else if (providedJsComp != null && providedJsComp !== true) {
                     const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
@@ -167,27 +155,16 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
                         jsComp = providedJsComp;
                     }
                 }
-                else if (providedFwComp != null) {
-                    xxxFrameworkDeprecatedWarn();
-                    fwComp = providedFwComp;
-                }
             };
             if (selectorRes) {
-                if (selectorRes.frameworkComponent != null) {
-                    const warningMessage = `AG Grid: As of v27, the return for ${propertyName}Selector has attributes [component, params] only. The attribute frameworkComponent is deprecated. You should now return back Framework Components using the 'component' attribute and the grid works out if it's a framework component or not.`;
-                    function_1.doOnce(() => console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkSelectorDeprecated`);
-                    assignComp(selectorRes.frameworkComponent, undefined);
-                }
-                else {
-                    assignComp(selectorRes.component, undefined);
-                }
+                assignComp(selectorRes.component);
                 paramsFromSelector = selectorRes.params;
                 popupFromSelector = selectorRes.popup;
                 popupPositionFromSelector = selectorRes.popupPosition;
             }
             else {
                 // if no selector, or result of selector is empty, take from defObject
-                assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
+                assignComp(defObjectAny[propertyName]);
             }
         }
         return { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector };
@@ -240,7 +217,7 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
         }
         return component.init(params);
     }
-    getDefaultFloatingFilterType(def) {
+    getDefaultFloatingFilterType(def, getFromDefault) {
         if (def == null) {
             return null;
         }
@@ -253,8 +230,7 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
         else {
             const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
-                const setFilterModuleLoaded = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule);
-                defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+                defaultFloatingFilterType = getFromDefault();
             }
         }
         return defaultFloatingFilterType;

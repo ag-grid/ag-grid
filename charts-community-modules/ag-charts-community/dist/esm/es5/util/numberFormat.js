@@ -14,9 +14,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var _a;
 var group = function (content) { return "(" + content + ")"; };
@@ -57,11 +58,11 @@ function parseFormatter(formatter) {
     var _a;
     var prefix;
     var suffix;
-    var surrounded = formatter.match(surroundedRegEx);
+    var surrounded = surroundedRegEx.exec(formatter);
     if (surrounded) {
         _a = __read(surrounded, 4), prefix = _a[1], formatter = _a[2], suffix = _a[3];
     }
-    var match = formatter.match(formatRegEx);
+    var match = formatRegEx.exec(formatter);
     if (!match) {
         throw new Error("The number formatter is invalid: " + formatter);
     }
@@ -127,7 +128,7 @@ export function format(formatter) {
             result = result + "%";
         }
         if (!isNaN(width)) {
-            result = addPadding(result, width, fill || zero, align);
+            result = addPadding(result, width, fill !== null && fill !== void 0 ? fill : zero, align);
         }
         result = "" + prefix + result + suffix;
         return result;
@@ -255,10 +256,10 @@ function addPadding(numString, width, fill, align) {
     return result;
 }
 export function tickFormat(ticks, formatter) {
-    var options = parseFormatter(formatter || ',f');
+    var options = parseFormatter(formatter !== null && formatter !== void 0 ? formatter : ',f');
     if (isNaN(options.precision)) {
         if (options.type === 'f' || options.type === '%') {
-            options.precision = Math.max.apply(Math, __spread(ticks.map(function (x) {
+            options.precision = Math.max.apply(Math, __spreadArray([], __read(ticks.map(function (x) {
                 if (typeof x !== 'number' || x === 0) {
                     return 0;
                 }
@@ -271,16 +272,16 @@ export function tickFormat(ticks, formatter) {
                 }
                 var s = exp.indexOf('e') - dotIndex;
                 return Math.max(0, s - l - 1);
-            })));
+            }))));
         }
         else if (!options.type || options.type in decimalTypes) {
-            options.precision = Math.max.apply(Math, __spread(ticks.map(function (x) {
+            options.precision = Math.max.apply(Math, __spreadArray([], __read(ticks.map(function (x) {
                 if (typeof x !== 'number') {
                     return 0;
                 }
                 var exp = x.toExponential((options.type ? 6 : 12) - 1).replace(/\.?0+e/, 'e');
                 return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
-            })));
+            }))));
         }
     }
     var f = format(options);

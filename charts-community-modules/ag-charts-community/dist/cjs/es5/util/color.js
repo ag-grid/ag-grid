@@ -246,16 +246,16 @@ var Color = /** @class */ (function () {
         if (min !== max) {
             var delta = max - min;
             var rc = (max - r) / delta;
-            var gc_1 = (max - g) / delta;
+            var gc = (max - g) / delta;
             var bc = (max - b) / delta;
             if (r === max) {
-                H = bc - gc_1;
+                H = bc - gc;
             }
             else if (g === max) {
                 H = 2.0 + rc - bc;
             }
             else {
-                H = 4.0 + gc_1 - rc;
+                H = 4.0 + gc - rc;
             }
             H /= 6.0;
             if (H < 0) {
@@ -339,6 +339,15 @@ var Color = /** @class */ (function () {
     };
     Color.prototype.darker = function () {
         return this.derive(0, 1.0, 0.7, 1.0);
+    };
+    Color.interpolate = function (color, other) {
+        var c0 = Color.tryParseFromString(color);
+        var c1 = Color.tryParseFromString(other);
+        return function (t) {
+            var i = function (x, y) { return x * (1 - t) + y * t; };
+            var c = new Color(i(c0.r, c1.r), i(c0.g, c1.g), i(c0.b, c1.b), i(c0.a, c1.a));
+            return c.toString();
+        };
     };
     /**
      * CSS Color Module Level 4:

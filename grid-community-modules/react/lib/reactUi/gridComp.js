@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -29,7 +29,6 @@ const beansContext_1 = require("./beansContext");
 const gridBodyComp_1 = __importDefault(require("./gridBodyComp"));
 const reactComment_1 = __importDefault(require("./reactComment"));
 const tabGuardComp_1 = __importDefault(require("./tabGuardComp"));
-const useEffectOnce_1 = require("./useEffectOnce");
 const utils_1 = require("./utils");
 const GridComp = ({ context }) => {
     const [rtlClass, setRtlClass] = react_1.useState('');
@@ -45,18 +44,19 @@ const GridComp = ({ context }) => {
     const eGridBodyParentRef = react_1.useRef(null);
     const focusInnerElementRef = react_1.useRef(() => undefined);
     const onTabKeyDown = react_1.useCallback(() => undefined, []);
-    const beans = react_1.useMemo(() => context.getBean('beans'), []);
+    const beans = react_1.useMemo(() => {
+        if (context.isDestroyed()) {
+            return null;
+        }
+        return context.getBean('beans');
+    }, [context]);
     reactComment_1.default(' AG Grid ', eRootWrapperRef);
     // create shared controller.
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    react_1.useLayoutEffect(() => {
+        if (context.isDestroyed()) {
+            return;
+        }
         const currentController = gridCtrlRef.current = context.createBean(new core_1.GridCtrl());
-        return () => {
-            context.destroyBean(currentController);
-            gridCtrlRef.current = null;
-        };
-    });
-    // initialise the UI
-    useEffectOnce_1.useLayoutEffectOnce(() => {
         const gridCtrl = gridCtrlRef.current;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
         const compProxy = {
@@ -64,13 +64,15 @@ const GridComp = ({ context }) => {
             setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass: (addOrRemove) => setKeyboardFocusClass(addOrRemove ? core_1.FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
-                tabGuardRef.current.forceFocusOutOfContainer();
+                var _a;
+                (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
+                var _a, _b;
                 const els = [];
-                const gridBodyCompEl = eRootWrapperRef.current.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current.querySelector('.ag-side-bar:not(.ag-hidden)');
+                const gridBodyCompEl = (_a = eRootWrapperRef.current) === null || _a === void 0 ? void 0 : _a.querySelector('.ag-root');
+                const sideBarEl = (_b = eRootWrapperRef.current) === null || _b === void 0 ? void 0 : _b.querySelector('.ag-side-bar:not(.ag-hidden)');
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl);
                 }
@@ -84,10 +86,14 @@ const GridComp = ({ context }) => {
         };
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
         setInitialised(true);
-    });
+        return () => {
+            context.destroyBean(currentController);
+            gridCtrlRef.current = null;
+        };
+    }, [context]);
     // initialise the extra components
     react_1.useEffect(() => {
-        if (!tabGuardReady) {
+        if (!tabGuardReady || !beans || !gridCtrlRef.current) {
             return;
         }
         const gridCtrl = gridCtrlRef.current;
@@ -158,10 +164,10 @@ const GridComp = ({ context }) => {
     const eGridBodyParent = eGridBodyParentRef.current;
     const setTabGuardCompRef = react_1.useCallback((ref) => {
         tabGuardRef.current = ref;
-        setTabGuardReady(true);
+        setTabGuardReady(ref !== null);
     }, []);
     return (react_1.default.createElement("div", { ref: eRootWrapperRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
-        react_1.default.createElement("div", { className: rootWrapperBodyClasses, ref: eGridBodyParentRef, role: "presentation" }, initialised && eGridBodyParent &&
+        react_1.default.createElement("div", { className: rootWrapperBodyClasses, ref: eGridBodyParentRef, role: "presentation" }, initialised && eGridBodyParent && beans &&
             react_1.default.createElement(beansContext_1.BeansContext.Provider, { value: beans },
                 react_1.default.createElement(tabGuardComp_1.default, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
                 // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,

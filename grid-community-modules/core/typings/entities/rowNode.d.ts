@@ -219,12 +219,12 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
+     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
      * @param eventSource The source of the event
-     * @returns `True` if the value was changed, otherwise `False`.
+     * @returns `true` if the value was changed, otherwise `false`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
     getValueFromValueService(column: Column): any;
@@ -261,10 +261,9 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
-     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
      * @param source - Source property that will appear in the `selectionChanged` event.
      */
-    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType): void;
     setSelectedParams(params: SetSelectedParams & {
         event?: Event;
     }): number;
@@ -288,7 +287,6 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
      * - `false` if the node is not a full width cell
      */
     isFullWidthCell(): boolean;
-    private getIsFullWidthCellFunc;
     /**
      * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.
      * If the Row Node is not a group, it returns `undefined`.

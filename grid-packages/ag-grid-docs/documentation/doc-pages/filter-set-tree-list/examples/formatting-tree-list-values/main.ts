@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
     floatingFilter: true,
+    cellDataType: false,
   },
   autoGroupColumnDef: {
     field: 'athlete',

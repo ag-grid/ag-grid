@@ -1,7 +1,9 @@
-[[only-angular]]
-|Below is a simple example of filter component class:
-|
-|```js
+<framework-specific-section frameworks="angular">
+|Below is an example of a date component class:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |import {Component, ElementRef, ViewChild} from '@angular/core';
 |
 |import {IDateParams} from 'ag-grid-community';
@@ -13,12 +15,12 @@
 |@Component({
 |    selector: 'app-custom-date',
 |    template: `
-|      <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
-|      <input type="text" #eInput data-input style="width: 100%;"/>
-|      <a class='input-button' title='clear' data-clear>
-|        <i class='fa fa-times'></i>
-|      </a>
-|      </div>
+|      &lt;div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
+|      &lt;input type="text" #eInput data-input style="width: 100%;"/>
+|      &lt;a class='input-button' title='clear' data-clear>
+|        &lt;i class='fa fa-times'>&lt;/i>
+|      &lt;/a>
+|      &lt;/div>
 |    `,
 |    styles: [        `
 |            .custom-date-filter a {
@@ -87,4 +89,5 @@
 |        this.eInput.nativeElement.setAttribute('aria-label', label);
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

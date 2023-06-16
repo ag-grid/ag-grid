@@ -33,7 +33,7 @@ class FiltersToolPanelListPanel extends core_1.Component {
             this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
         }
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.key === 'filters') {

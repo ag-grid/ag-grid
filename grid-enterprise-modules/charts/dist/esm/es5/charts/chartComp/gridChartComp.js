@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -17,11 +19,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgDialog, Autowired, Component, Events, PostConstruct, RefSelector, CHART_TOOL_PANEL_MENU_OPTIONS, } from "@ag-grid-community/core";
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+import { _, AgDialog, Autowired, CHART_TOOL_PANEL_MENU_OPTIONS, Component, Events, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";
-import { ChartDataModel } from "./chartDataModel";
+import { ChartDataModel } from "./model/chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
 import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
@@ -237,25 +255,28 @@ var GridChartComp = /** @class */ (function (_super) {
             this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
         }
     };
-    GridChartComp.prototype.update = function () {
-        if (this.shouldRecreateChart()) {
-            this.createChart();
+    GridChartComp.prototype.update = function (params) {
+        var _this = this;
+        // update chart model for api.updateChart()
+        if (params === null || params === void 0 ? void 0 : params.chartId) {
+            var validUpdate = this.chartController.update(params);
+            if (!validUpdate) {
+                return; // warning already logged!
+            }
         }
-        this.updateChart();
+        var chartTypeChanged = this.chartTypeChanged(params);
+        // recreate chart if chart type has changed
+        if (chartTypeChanged)
+            this.createChart();
+        // update chart options if chart type hasn't changed or if overrides are supplied
+        this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
+        if (params === null || params === void 0 ? void 0 : params.chartId) {
+            this.chartProxy.getChart().waitForUpdate().then(function () {
+                _this.chartController.raiseChartApiUpdateEvent();
+            });
+        }
     };
-    GridChartComp.prototype.shouldRecreateChart = function () {
-        return this.chartType !== this.chartController.getChartType() || this.chartThemeName !== this.chartController.getChartThemeName();
-    };
-    GridChartComp.prototype.getCurrentChartType = function () {
-        return this.chartType;
-    };
-    GridChartComp.prototype.getChartModel = function () {
-        return this.chartController.getChartModel();
-    };
-    GridChartComp.prototype.getChartImageDataURL = function (fileFormat) {
-        return this.chartProxy.getChartImageDataURL(fileFormat);
-    };
-    GridChartComp.prototype.updateChart = function () {
+    GridChartComp.prototype.updateChart = function (updatedOverrides) {
         var _this = this;
         var chartProxy = this.chartProxy;
         var selectedCols = this.chartController.getSelectedValueColState();
@@ -265,12 +286,22 @@ var GridChartComp = /** @class */ (function (_super) {
         if (chartEmpty) {
             return;
         }
-        var chartUpdateParams = this.chartController.getChartUpdateParams();
+        var chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
         this.chartProxy.getChart().waitForUpdate().then(function () {
             _this.chartController.raiseChartUpdatedEvent();
         });
         this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+    };
+    GridChartComp.prototype.chartTypeChanged = function (updateParams) {
+        var _a = __read([this.chartController.getChartType(), updateParams === null || updateParams === void 0 ? void 0 : updateParams.chartType], 2), currentType = _a[0], updatedChartType = _a[1];
+        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== updatedChartType);
+    };
+    GridChartComp.prototype.getChartModel = function () {
+        return this.chartController.getChartModel();
+    };
+    GridChartComp.prototype.getChartImageDataURL = function (fileFormat) {
+        return this.chartProxy.getChartImageDataURL(fileFormat);
     };
     GridChartComp.prototype.handleEmptyChart = function (data, fields) {
         var pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();

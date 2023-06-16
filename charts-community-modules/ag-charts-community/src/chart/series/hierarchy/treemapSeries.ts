@@ -1,5 +1,4 @@
 import { Selection } from '../../../scene/selection';
-import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
 import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
@@ -10,9 +9,8 @@ import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { LegendDatum } from '../../legendDatum';
-import { toFixed } from '../../../util/number';
-import { Path2D } from '../../../scene/path2D';
+import { ChartLegendDatum } from '../../legendDatum';
+import { toFixed, isEqual } from '../../../util/number';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
 import {
@@ -27,12 +25,15 @@ import {
     STRING,
     COLOR_STRING_ARRAY,
     Validate,
+    TEXT_WRAP,
 } from '../../../util/validation';
 import {
+    AgTreemapSeriesLabelsOptions,
     AgTreemapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgTreemapSeriesFormatterParams,
     AgTreemapSeriesFormat,
+    TextWrap,
 } from '../../agChartOptions';
 import { Logger } from '../../../util/logger';
 
@@ -40,6 +41,8 @@ type TreeDatum = {
     [prop: string]: any;
     children?: TreeDatum[];
 };
+
+type Side = 'left' | 'right' | 'top' | 'bottom';
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     datum: TreeDatum;
@@ -90,6 +93,11 @@ class TreemapSeriesLabel extends Label {
     padding = 10;
 }
 
+class TreemapSeriesTileLabel extends Label {
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'on-space';
+}
+
 class TreemapValueLabel {
     @Validate(OPT_STRING)
     key?: string;
@@ -112,8 +120,21 @@ enum TextNodeTag {
     Value,
 }
 
-function getTextSize(text: string, style: Label) {
-    return HdpiCanvas.getTextSize(text, [style.fontWeight, `${style.fontSize}px`, style.fontFamily].join(' '));
+const tempText = new Text();
+
+function getTextSize(text: string, style: Label): { width: number; height: number } {
+    const { fontStyle, fontWeight, fontSize, fontFamily } = style;
+    tempText.fontStyle = fontStyle;
+    tempText.fontWeight = fontWeight;
+    tempText.fontSize = fontSize;
+    tempText.fontFamily = fontFamily;
+    tempText.text = text;
+    tempText.x = 0;
+    tempText.y = 0;
+    tempText.textAlign = 'left';
+    tempText.textBaseline = 'top';
+    const { width, height } = tempText.computeBBox();
+    return { width, height };
 }
 
 function validateColor(color?: string): string | undefined {
@@ -133,7 +154,7 @@ class TreemapTextHighlightStyle {
     color?: string = 'black';
 }
 
-export class TreemapHighlightStyle extends HighlightStyle {
+class TreemapHighlightStyle extends HighlightStyle {
     readonly text = new TreemapTextHighlightStyle();
 }
 
@@ -167,31 +188,35 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     readonly labels = {
         large: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 18;
             return label;
         })(),
         medium: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 14;
             return label;
         })(),
         small: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 10;
             return label;
         })(),
+        formatter: undefined as AgTreemapSeriesLabelsOptions<any>['formatter'],
         value: new TreemapValueLabel(),
     };
 
     @Validate(NUMBER(0))
     nodePadding = 2;
+
+    @Validate(NUMBER(0))
+    nodeGap = 0;
 
     @Validate(STRING)
     labelKey: string = 'label';
@@ -264,7 +289,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return nodePadding;
         }
 
-        return textSize.height + nodePadding * 2;
+        return textSize.height + nodePadding + (font.padding ?? 0);
     }
 
     private getNodePadding(nodeDatum: TreemapNodeDatum, bbox: BBox) {
@@ -286,12 +311,15 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         nodeDatum: TreemapNodeDatum,
         bbox: BBox,
         outputNodesBoxes: Map<TreemapNodeDatum, BBox> = new Map()
-    ) {
-        const targetTileAspectRatio = 1; // The width and height will tend to this ratio
+    ): typeof outputNodesBoxes {
+        if (bbox.width <= 0 || bbox.height <= 0) {
+            return outputNodesBoxes;
+        }
 
-        const padding = this.getNodePadding(nodeDatum, bbox);
         outputNodesBoxes.set(nodeDatum, bbox);
 
+        const targetTileAspectRatio = 1; // The width and height will tend to this ratio
+        const padding = this.getNodePadding(nodeDatum, bbox);
         const width = bbox.width - padding.left - padding.right;
         const height = bbox.height - padding.top - padding.bottom;
         if (width <= 0 || height <= 0 || nodeDatum.value <= 0) {
@@ -303,7 +331,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         let minRatioDiff = Infinity;
         let partitionSum = nodeDatum.value;
         const children = nodeDatum.children;
-        const partition = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        const innerBox = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        const partition = innerBox.clone();
 
         for (let i = 0; i < children.length; i++) {
             const value = children[i].value;
@@ -337,6 +366,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 const height = isVertical ? stackThickness : length;
 
                 const childBox = new BBox(x, y, width, height);
+                this.applyGap(innerBox, childBox);
                 this.squarify(child, childBox, outputNodesBoxes);
 
                 partitionSum -= child.value;
@@ -366,11 +396,32 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const width = partition.width * (isVertical ? part : 1);
             const height = partition.height * (isVertical ? 1 : part);
             const childBox = new BBox(x, y, width, height);
+            this.applyGap(innerBox, childBox);
             this.squarify(children[i], childBox, outputNodesBoxes);
             start += isVertical ? width : height;
         }
 
         return outputNodesBoxes;
+    }
+
+    private applyGap(innerBox: BBox, childBox: BBox) {
+        const gap = this.nodeGap / 2;
+        const getBounds = (box: BBox): Record<Side, number> => {
+            return {
+                left: box.x,
+                top: box.y,
+                right: box.x + box.width,
+                bottom: box.y + box.height,
+            };
+        };
+        const innerBounds = getBounds(innerBox);
+        const childBounds = getBounds(childBox);
+        const sides = Object.keys(innerBounds) as Side[];
+        sides.forEach((side) => {
+            if (!isEqual(innerBounds[side], childBounds[side])) {
+                childBox.shrink(gap, side);
+            }
+        });
     }
 
     async processData() {
@@ -379,22 +430,34 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         }
 
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill } = this;
+        const labelFormatter = this.labels.formatter;
 
         const colorScale = new ColorScale();
         colorScale.domain = colorDomain;
         colorScale.range = colorRange;
+        colorScale.update();
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
-            const label = (labelKey && (datum[labelKey] as string)) || '';
+            let label;
+            if (labelFormatter) {
+                label = this.ctx.callbackCache.call(labelFormatter, { datum });
+            }
+            if (label !== undefined) {
+                // Label retrieved from formatter successfully.
+            } else if (labelKey) {
+                label = datum[labelKey] ?? '';
+            } else {
+                label = '';
+            }
             let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
             colorScaleValue = validateColor(colorScaleValue);
             const isLeaf = !datum.children;
-            const fill =
-                typeof colorScaleValue === 'string'
-                    ? colorScaleValue
-                    : isLeaf || !groupFill
-                    ? colorScale.convert(colorScaleValue)
-                    : groupFill;
+            let fill = groupFill;
+            if (typeof colorScaleValue === 'string') {
+                fill = colorScaleValue;
+            } else if (isLeaf || !groupFill) {
+                fill = colorScale.convert(colorScaleValue);
+            }
             const nodeDatum: TreemapNodeDatum = {
                 datum,
                 depth,
@@ -486,7 +549,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     private getTileFormat(datum: TreemapNodeDatum, isHighlighted: boolean): AgTreemapSeriesFormat {
-        const { formatter } = this;
+        const {
+            formatter,
+            ctx: { callbackCache },
+        } = this;
         if (!formatter) {
             return {};
         }
@@ -497,7 +563,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const stroke = datum.isLeaf ? tileStroke : groupStroke;
         const strokeWidth = datum.isLeaf ? tileStrokeWidth : groupStrokeWidth;
 
-        return formatter({
+        const result = callbackCache.call(formatter, {
             seriesId: this.id,
             datum: datum.datum,
             depth: datum.depth,
@@ -511,6 +577,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             gradient,
             highlighted: isHighlighted,
         });
+
+        return result ?? {};
     }
 
     async updateNodes() {
@@ -540,6 +608,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const seriesRect = this.chart.getSeriesRect()!;
         const boxes = this.squarify(this.dataRoot!, new BBox(0, 0, seriesRect.width, seriesRect.height));
         const labelMeta = this.buildLabelMeta(boxes);
+        const highlightedSubtree = this.getHighlightedSubtree();
 
         this.updateNodeMidPoint(boxes);
 
@@ -552,19 +621,18 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const fillOpacity = (isDatumHighlighted ? highlightedFillOpacity : 1) ?? 1;
-            const stroke =
-                isDatumHighlighted && highlightedStroke !== undefined
-                    ? highlightedStroke
-                    : datum.isLeaf
-                    ? tileStroke
-                    : groupStroke;
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : datum.isLeaf
-                    ? tileStrokeWidth
-                    : groupStrokeWidth;
-
+            let stroke = groupStroke;
+            if (isDatumHighlighted && highlightedStroke !== undefined) {
+                stroke = highlightedStroke;
+            } else if (datum.isLeaf) {
+                stroke = tileStroke;
+            }
+            let strokeWidth = groupStrokeWidth;
+            if (isDatumHighlighted && highlightedDatumStrokeWidth !== undefined) {
+                strokeWidth = highlightedDatumStrokeWidth;
+            } else if (datum.isLeaf) {
+                strokeWidth = tileStrokeWidth;
+            }
             const format = this.getTileFormat(datum, isDatumHighlighted);
 
             const fillColor = validateColor(format?.fill ?? fill);
@@ -586,33 +654,12 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             rect.width = box.width;
             rect.height = box.height;
             rect.visible = true;
-
-            if (isDatumHighlighted && !datum.isLeaf) {
-                const padding = this.getNodePadding(datum, box);
-                const x0 = box.x + padding.left;
-                const x1 = box.x + box.width - padding.right;
-                const y0 = box.y + padding.top;
-                const y1 = box.y + box.height - padding.bottom;
-
-                if (rect.clipPath) {
-                    rect.clipPath.clear();
-                } else {
-                    rect.clipPath = new Path2D();
-                }
-                rect.clipMode = 'punch-out';
-                rect.clipPath.moveTo(x0, y0);
-                rect.clipPath.lineTo(x1, y0);
-                rect.clipPath.lineTo(x1, y1);
-                rect.clipPath.lineTo(x0, y1);
-                rect.clipPath.lineTo(x0, y0);
-                rect.clipPath.closePath();
-            }
         };
         this.groupSelection.selectByClass(Rect).forEach((rect) => updateRectFn(rect, rect.datum, false));
         this.highlightSelection.selectByClass(Rect).forEach((rect) => {
             const isDatumHighlighted = this.isDatumHighlighted(rect.datum);
 
-            rect.visible = isDatumHighlighted;
+            rect.visible = isDatumHighlighted || highlightedSubtree.has(rect.datum);
             if (rect.visible) {
                 updateRectFn(rect, rect.datum, isDatumHighlighted);
             }
@@ -645,7 +692,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).forEach((text) => {
             const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
-            text.visible = isDatumHighlighted;
+            text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
             if (text.visible) {
                 updateLabelFn(text, text.datum, isDatumHighlighted, 'label');
             }
@@ -657,7 +704,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).forEach((text) => {
             const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
-            text.visible = isDatumHighlighted;
+            text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
             if (text.visible) {
                 updateLabelFn(text, text.datum, isDatumHighlighted, 'value');
             }
@@ -673,8 +720,28 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         });
     }
 
+    private getHighlightedSubtree(): Set<TreemapNodeDatum> {
+        const items = new Set<TreemapNodeDatum>();
+        const traverse = (datum: TreemapNodeDatum) => {
+            if (this.isDatumHighlighted(datum) || (datum.parent && items.has(datum.parent))) {
+                items.add(datum);
+            }
+            datum.children?.forEach(traverse);
+        };
+        traverse(this.dataRoot!);
+        return items;
+    }
+
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>) {
-        const { labels, title, subtitle, nodePadding, labelKey } = this;
+        const {
+            labels,
+            title,
+            subtitle,
+            nodePadding,
+            labelKey,
+            ctx: { callbackCache },
+        } = this;
+        const wrappedRegExp = /-$/m;
 
         type TextMeta = {
             text: string;
@@ -693,27 +760,82 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 return;
             }
 
+            const availTextWidth = box.width - 2 * nodePadding;
+            const availTextHeight = box.height - 2 * nodePadding;
+            const isBoxTooSmall = (labelStyle: Label) => {
+                const minSizeRatio = 3;
+                return (
+                    labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio
+                );
+            };
+
             let labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
 
-            let labelStyle: Label;
+            let valueText = '';
+            const valueConfig = labels.value;
+            const valueStyle = valueConfig.style;
+            const valueMargin = Math.ceil(valueStyle.fontSize * 2 * (Text.defaultLineHeightRatio - 1));
             if (datum.isLeaf) {
-                // Choose the font size that fits
-                labelStyle =
-                    [labels.large, labels.medium, labels.small].find((s) => {
-                        const { width, height } = getTextSize(labelText, s);
-                        return width < box.width && height < box.height;
-                    }) || labels.small;
+                if (valueConfig.formatter) {
+                    valueText = callbackCache.call(valueConfig.formatter, { datum: datum.datum }) ?? '';
+                } else if (valueConfig.key) {
+                    valueText = datum.datum[valueConfig.key];
+                }
+            }
+            let valueSize = getTextSize(valueText, valueStyle);
+            if (valueText && valueSize.width > availTextWidth) {
+                valueText = '';
+            }
+
+            let labelStyle: Label;
+            let wrappedText = '';
+            if (datum.isLeaf) {
+                labelStyle = labels.small;
+
+                const pickStyle = () => {
+                    const availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
+                    const labelStyles = [labels.large, labels.medium, labels.small];
+                    for (const style of labelStyles) {
+                        const { width, height } = getTextSize(labelText, style);
+                        if (height > availHeight || isBoxTooSmall(style)) {
+                            continue;
+                        }
+                        if (width <= availTextWidth) {
+                            return { style, wrappedText: undefined };
+                        }
+                        // Avoid hyphens and ellipsis for large and medium label styles
+                        const wrapped = Text.wrap(labelText, availTextWidth, availHeight, style, style.wrapping);
+                        if (
+                            wrapped &&
+                            wrapped !== '\u2026' &&
+                            (style === labels.small || !(wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))
+                        ) {
+                            return { style, wrappedText: wrapped };
+                        }
+                    }
+                    // Check if small font fits by height
+                    const smallSize = getTextSize(labelText, labels.small);
+                    if (smallSize.height <= availHeight && !isBoxTooSmall(labels.small)) {
+                        return { style: labels.small, wrappedText: undefined };
+                    }
+                    return { style: undefined, wrappedText: undefined };
+                };
+
+                let result = pickStyle();
+                if (!result.style && valueText) {
+                    valueText = '';
+                    result = pickStyle();
+                }
+                labelStyle = result.style ?? labels.small;
+                wrappedText = result.wrappedText ?? '';
             } else if (datum.depth === 1) {
                 labelStyle = title;
             } else {
                 labelStyle = subtitle;
             }
 
-            const labelSize = getTextSize(labelText, labelStyle);
-            const availTextWidth = box.width - 2 * nodePadding;
-            const availTextHeight = box.height - 2 * nodePadding;
-            const minSizeRatio = 3;
-            if (labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio) {
+            const labelSize = getTextSize(wrappedText || labelText, labelStyle);
+            if (isBoxTooSmall(labelStyle)) {
                 // Avoid labels on too small tiles
                 return;
             }
@@ -721,22 +843,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             // Crop text if not enough space
             if (labelSize.width > availTextWidth) {
                 const textLength = Math.floor((labelText.length * availTextWidth) / labelSize.width) - 1;
-                labelText = `${labelText.substring(0, textLength)}…`;
+                labelText = `${labelText.substring(0, textLength).trim()}…`;
             }
 
-            const valueConfig = labels.value;
-            const valueStyle = valueConfig.style;
-            const valueMargin = (labelStyle.fontSize + valueStyle.fontSize) / 8;
-            const valueText = String(
-                datum.isLeaf
-                    ? valueConfig.formatter
-                        ? valueConfig.formatter({ datum: datum.datum })
-                        : valueConfig.key
-                        ? datum.datum[valueConfig.key]
-                        : ''
-                    : ''
-            );
-            const valueSize = getTextSize(valueText, valueStyle);
+            valueSize = getTextSize(valueText, valueStyle);
             const hasValueText =
                 valueText &&
                 valueSize.width < availTextWidth &&
@@ -744,7 +854,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             labelMeta.set(datum, {
                 label: {
-                    text: labelText,
+                    text: wrappedText || labelText,
                     style: labelStyle,
                     ...(datum.isLeaf
                         ? {
@@ -793,21 +903,30 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return '';
         }
 
-        const { tooltip, sizeKey, labelKey, colorKey, rootName, id: seriesId, labels } = this;
+        const {
+            tooltip,
+            sizeKey,
+            labelKey,
+            colorKey,
+            rootName,
+            id: seriesId,
+            labels,
+            ctx: { callbackCache },
+        } = this;
         const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
-        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : rootName || datum[labelKey];
+        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : datum[labelKey] ?? rootName;
         let content = '';
         const format = this.getTileFormat(nodeDatum, false);
-        const color = format?.fill || nodeDatum.fill || 'gray';
+        const color = format?.fill ?? nodeDatum.fill ?? 'gray';
 
         const valueKey = labels.value.key;
         const valueFormatter = labels.value.formatter;
         if (valueKey || valueFormatter) {
             let valueText: string | undefined = '';
             if (valueFormatter) {
-                valueText = valueFormatter({ datum });
+                valueText = callbackCache.call(valueFormatter, { datum });
             } else {
                 const value = datum[valueKey!];
                 if (typeof value === 'number' && isFinite(value)) {
@@ -852,7 +971,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         // Override point for subclasses.
         return [];
     }

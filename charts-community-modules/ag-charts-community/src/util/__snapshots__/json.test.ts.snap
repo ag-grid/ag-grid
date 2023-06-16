@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`json module #jsonDiff for non-trivial cases should correctly diff complex object structures 1`] = `
-Object {
+{
   "changing": "123",
-  "foo": Object {
+  "foo": {
     "bar1": 2,
   },
-  "hello1": Object {
-    "nested": Object {
-      "nestedX2": Object {
+  "hello1": {
+    "nested": {
+      "nestedX2": {
         "added": 123,
       },
     },
-    "nestedAdd": Object {
+    "nestedAdd": {
       "primitive": 123,
     },
   },
@@ -22,9 +22,9 @@ Object {
 `;
 
 exports[`json module #jsonDiff for non-trivial cases should correctly diff function changes in arrays 1`] = `
-Object {
-  "foo": Array [
-    Object {
+{
+  "foo": [
+    {
       "fn": [Function],
     },
   ],
@@ -32,7 +32,7 @@ Object {
 `;
 
 exports[`json module #jsonDiff for trivial cases should correctly diff primitives 1`] = `
-Object {
+{
   "alice": 2022-01-27T00:00:00.000Z,
   "foo": "bar",
   "func": [Function],
@@ -41,9 +41,9 @@ Object {
 `;
 
 exports[`json module #jsonMerge for objects and arrays should create deep clones for arrays 1`] = `
-Object {
-  "a": Array [
-    Object {
+{
+  "a": [
+    {
       "y": 1,
     },
   ],
@@ -51,8 +51,8 @@ Object {
 `;
 
 exports[`json module #jsonMerge for objects and arrays should create deep clones for objects 1`] = `
-Object {
-  "a": Object {
+{
+  "a": {
     "x": 1,
     "y": 2,
     "z": 3,
@@ -61,14 +61,14 @@ Object {
 `;
 
 exports[`json module #jsonMerge for objects and arrays should honour \`avoidDeepClone 1`] = `
-Object {
-  "a": Array [
-    Object {
+{
+  "a": [
+    {
       "x": 1,
     },
   ],
-  "b": Array [
-    Object {
+  "b": [
+    {
       "y": 2,
     },
   ],
@@ -76,10 +76,10 @@ Object {
 `;
 
 exports[`json module #jsonMerge for trivial cases should honour DELETE value 1`] = `
-Object {
+{
   "a": 1,
   "b": "b",
-  "d": Object {
+  "d": {
     "1": 1,
     "3": 3,
   },
@@ -87,25 +87,25 @@ Object {
 `;
 
 exports[`json module #jsonMerge for trivial cases should merge array properties correctly 1`] = `
-Object {
-  "a": Array [
-    Array [
-      Object {
+{
+  "a": [
+    [
+      {
         "x2": 1,
       },
-      Object {
+      {
         "y2": 1,
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "m2": 2,
         "n2": 2,
       },
     ],
   ],
-  "b": Array [],
-  "c": Array [
+  "b": [],
+  "c": [
     10,
     9,
     8,
@@ -116,17 +116,17 @@ Object {
 `;
 
 exports[`json module #jsonMerge for trivial cases should merge arrays correctly 1`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "x2": 1,
     },
-    Object {
+    {
       "y2": 1,
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "m2": 2,
       "n2": 2,
     },
@@ -135,7 +135,7 @@ Array [
 `;
 
 exports[`json module #jsonMerge for trivial cases should merge primitives correctly 1`] = `
-Object {
+{
   "date": 2022-01-27T00:00:00.000Z,
   "date2": 2022-01-27T00:00:00.000Z,
   "date3": 2022-01-27T00:00:00.000Z,
@@ -150,8 +150,8 @@ Object {
 `;
 
 exports[`json module #jsonMerge for trivial cases should take highest precedent value when types conflict 1`] = `
-Object {
+{
   "a": "a",
-  "b": Object {},
+  "b": {},
 }
 `;

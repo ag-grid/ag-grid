@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -60,13 +62,14 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
         deactivateEvents.forEach(function (eventName) { return _this.addManagedListener(eGui, eventName, function () { return _this.addOrRemoveCssClass('ag-scrollbar-active', false); }); });
     };
     AbstractFakeScrollComp.prototype.onScrollVisibilityChanged = function () {
+        var _this = this;
         // initialiseInvisibleScrollbar should only be called once, but the reason
         // this can't be inside `setComp` or `PostConstruct` is the DOM might not
         // be ready, so we call it until eventually, it gets calculated.
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();
         }
-        this.setScrollVisible();
+        this.animationFrameService.requestAnimationFrame(function () { return _this.setScrollVisible(); });
     };
     AbstractFakeScrollComp.prototype.hideAndShowInvisibleScrollAsNeeded = function () {
         var _this = this;
@@ -104,6 +107,9 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('ctrlsService')
     ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
+    __decorate([
+        Autowired('animationFrameService')
+    ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
     return AbstractFakeScrollComp;
 }(Component));
 export { AbstractFakeScrollComp };

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -55,13 +57,12 @@ var HierarchyChart = /** @class */ (function (_super) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document, overrideDevicePixelRatio, resources) || this;
         _this._data = {};
-        var root = _this.scene.root;
-        _this.legend.attachLegend(root);
         return _this;
     }
     HierarchyChart.prototype.performLayout = function () {
         return __awaiter(this, void 0, void 0, function () {
             var shrinkRect, seriesAreaPadding, fullSeriesRect, hoverRectPadding, hoverRect, seriesRoot;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, _super.prototype.performLayout.call(this)];
@@ -77,11 +78,21 @@ var HierarchyChart = /** @class */ (function (_super) {
                         hoverRectPadding = 20;
                         hoverRect = shrinkRect.clone().grow(hoverRectPadding);
                         this.hoverRect = hoverRect;
-                        this.series.forEach(function (series) {
-                            series.rootGroup.translationX = Math.floor(shrinkRect.x);
-                            series.rootGroup.translationY = Math.floor(shrinkRect.y);
-                            series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
-                        });
+                        return [4 /*yield*/, Promise.all(this.series.map(function (series) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            series.rootGroup.translationX = Math.floor(shrinkRect.x);
+                                            series.rootGroup.translationY = Math.floor(shrinkRect.y);
+                                            return [4 /*yield*/, series.update({ seriesRect: shrinkRect })];
+                                        case 1:
+                                            _a.sent(); // this has to happen after the `updateAxes` call
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 2:
+                        _a.sent();
                         seriesRoot = this.seriesRoot;
                         seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height));
                         this.layoutService.dispatchLayoutComplete({

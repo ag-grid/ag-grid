@@ -7,6 +7,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     private rowNodeBlockLoader;
     private rowNodeSorter;
     private sortController;
+    private selectionService;
     private nodeManager;
     private filterManager;
     private transactionManager;

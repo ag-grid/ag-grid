@@ -94,7 +94,7 @@ class Shape extends node_1.Node {
     updateGradient() {
         const { fill } = this;
         let linearGradientMatch;
-        if ((fill === null || fill === void 0 ? void 0 : fill.startsWith('linear-gradient')) && (linearGradientMatch = fill.match(LINEAR_GRADIENT_REGEXP))) {
+        if ((fill === null || fill === void 0 ? void 0 : fill.startsWith('linear-gradient')) && (linearGradientMatch = LINEAR_GRADIENT_REGEXP.exec(fill))) {
             const angle = parseFloat(linearGradientMatch[1]);
             const colors = [];
             const colorsPart = linearGradientMatch[2];
@@ -172,7 +172,7 @@ class Shape extends node_1.Node {
         // manually here.
         const pixelRatio = (_b = (_a = this.layerManager) === null || _a === void 0 ? void 0 : _a.canvas.pixelRatio) !== null && _b !== void 0 ? _b : 1;
         const fillShadow = this.fillShadow;
-        if (fillShadow && fillShadow.enabled) {
+        if (fillShadow === null || fillShadow === void 0 ? void 0 : fillShadow.enabled) {
             ctx.shadowColor = fillShadow.color;
             ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
             ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;

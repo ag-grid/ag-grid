@@ -16,6 +16,9 @@ export class Matrix {
     constructor(elements = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
     }
+    get e() {
+        return [...this.elements];
+    }
     setElements(elements) {
         const e = this.elements;
         // `this.elements = elements.slice()` is 4-5 times slower
@@ -42,49 +45,13 @@ export class Matrix {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 && e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
-    set a(value) {
-        this.elements[0] = value;
-    }
-    get a() {
-        return this.elements[0];
-    }
-    set b(value) {
-        this.elements[1] = value;
-    }
-    get b() {
-        return this.elements[1];
-    }
-    set c(value) {
-        this.elements[2] = value;
-    }
-    get c() {
-        return this.elements[2];
-    }
-    set d(value) {
-        this.elements[3] = value;
-    }
-    get d() {
-        return this.elements[3];
-    }
-    set e(value) {
-        this.elements[4] = value;
-    }
-    get e() {
-        return this.elements[4];
-    }
-    set f(value) {
-        this.elements[5] = value;
-    }
-    get f() {
-        return this.elements[5];
-    }
     /**
      * Performs the AxB matrix multiplication and saves the result
      * to `C`, if given, or to `A` otherwise.
      */
     AxB(A, B, C) {
         const a = A[0] * B[0] + A[2] * B[1], b = A[1] * B[0] + A[3] * B[1], c = A[0] * B[2] + A[2] * B[3], d = A[1] * B[2] + A[3] * B[3], e = A[0] * B[4] + A[2] * B[5] + A[4], f = A[1] * B[4] + A[3] * B[5] + A[5];
-        C = C || A;
+        C = C !== null && C !== void 0 ? C : A;
         C[0] = a;
         C[1] = b;
         C[2] = c;

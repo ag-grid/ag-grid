@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -40,9 +42,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -105,12 +108,9 @@ var RowRenderer = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
-        if (this.gridOptionsService.is('groupRowsSticky')) {
+        if (this.gridOptionsService.isGroupRowsSticky()) {
             var rowModelType = this.rowModel.getType();
-            if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
-                function_1.doOnce(function () { return console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'); }, 'rowRenderer.stickyWorksWithCsrmOnly');
-            }
-            else {
+            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new stickyRowFeature_1.StickyRowFeature(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this)));
             }
         }
@@ -152,7 +152,7 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         var zombieList = object_1.getAllValuesInObject(this.zombieRowCtrls);
         var cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = __spread(liveList, zombieList, cachedList);
+        this.allRowCtrls = __spreadArray(__spreadArray(__spreadArray([], __read(liveList)), __read(zombieList)), __read(cachedList));
     };
     RowRenderer.prototype.onCellFocusChanged = function (event) {
         this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.onCellFocused(event); });
@@ -501,7 +501,7 @@ var RowRenderer = /** @class */ (function (_super) {
     RowRenderer.prototype.getAllRowCtrls = function () {
         var e_1, _a;
         var stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
-        var res = __spread(this.topRowCtrls, this.bottomRowCtrls, stickyRowCtrls);
+        var res = __spreadArray(__spreadArray(__spreadArray([], __read(this.topRowCtrls)), __read(this.bottomRowCtrls)), __read(stickyRowCtrls));
         try {
             for (var _b = __values(Object.keys(this.rowCtrlsByRowIndex)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var key = _c.value;
@@ -548,9 +548,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach(function (fullWidthRowCtrl) {
-            fullWidthRowCtrl.refreshFullWidth();
-        });
+        this.refreshFullWidthRows(params.rowNodes);
     };
     RowRenderer.prototype.getCellRendererInstances = function (params) {
         var _this = this;
@@ -575,7 +573,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 fullWidthRenderers.push(fullWidthRenderer);
             }
         });
-        return __spread(fullWidthRenderers, cellRenderers);
+        return __spreadArray(__spreadArray([], __read(fullWidthRenderers)), __read(cellRenderers));
     };
     RowRenderer.prototype.getCellEditorInstances = function (params) {
         var res = [];
@@ -727,7 +725,7 @@ var RowRenderer = /** @class */ (function (_super) {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
         if (cellFocused != null) {
             var newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -815,8 +813,9 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         this.updateAllRowCtrls();
     };
-    RowRenderer.prototype.dispatchDisplayedRowsChanged = function () {
-        var event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    RowRenderer.prototype.dispatchDisplayedRowsChanged = function (afterScroll) {
+        if (afterScroll === void 0) { afterScroll = false; }
+        var event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll: afterScroll };
         this.eventService.dispatchEvent(event);
     };
     RowRenderer.prototype.onDisplayedColumnsChanged = function () {
@@ -862,21 +861,33 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.refreshFullWidthRow = function (rowNode) {
-        var fullWidthCtrl = this.getFullWidthRowCtrls().find(function (rowCtrl) { return rowCtrl.getRowNode() === rowNode; });
-        if (!fullWidthCtrl) {
-            return;
+        this.refreshFullWidthRows([rowNode]);
+    };
+    RowRenderer.prototype.refreshFullWidthRows = function (rowNodes) {
+        var _this = this;
+        var fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
+        var redraw = false;
+        var indicesToForce = [];
+        fullWidthCtrls.forEach(function (fullWidthCtrl) {
+            var refreshed = fullWidthCtrl.refreshFullWidth();
+            if (refreshed) {
+                return;
+            }
+            var node = fullWidthCtrl.getRowNode();
+            if (node.sticky) {
+                _this.stickyRowFeature.refreshStickyNode(node);
+            }
+            else {
+                indicesToForce.push(node.rowIndex);
+            }
+            redraw = true;
+        });
+        if (indicesToForce.length > 0) {
+            this.removeRowCtrls(indicesToForce);
         }
-        var refreshed = fullWidthCtrl.refreshFullWidth();
-        if (refreshed) {
-            return;
+        if (redraw) {
+            this.redrawAfterScroll();
         }
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        }
-        else {
-            this.removeRowCtrls([rowNode.rowIndex]);
-        }
-        this.redrawAfterScroll();
     };
     RowRenderer.prototype.createOrUpdateRowCtrl = function (rowIndex, rowsToRecycle, animate, afterScroll) {
         var rowNode;

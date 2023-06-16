@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -54,7 +56,7 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     ChartMenuItemMapper.prototype.getChartItems = function (key) {
         var _a, _b;
         if (!this.chartService) {
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"");
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
             return undefined;
         }
         var builder = key === 'pivotChart'

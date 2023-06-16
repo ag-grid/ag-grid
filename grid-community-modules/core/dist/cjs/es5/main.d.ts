@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columns/columnFactory";
@@ -75,7 +75,11 @@ export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEdi
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
+export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
+export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
+export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 export { Beans } from "./rendering/beans";
 export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
@@ -100,6 +104,7 @@ export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshC
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
+export { CheckboxCellRenderer, ICheckboxCellRendererParams } from "./rendering/cellRenderers/checkboxCellRenderer";
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
@@ -125,6 +130,7 @@ export { AgToggleButton } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
@@ -145,8 +151,8 @@ export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 export { AgAbstractLabel, IAgLabel } from "./widgets/agAbstractLabel";
 export { AgPickerField } from "./widgets/agPickerField";
-export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService, ISelectionHandle, SelectionHandleType, ISelectionHandleFactory } from "./interfaces/IRangeService";
-export { IChartService, ChartDownloadParams, OpenChartToolPanelParams, CloseChartToolPanelParams, ChartModel, GetChartImageDataUrlParams, ChartModelType, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from './interfaces/IChartService';
+export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService, ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams } from "./interfaces/IRangeService";
+export { IChartService, ChartDownloadParams, OpenChartToolPanelParams, CloseChartToolPanelParams, ChartModel, GetChartImageDataUrlParams, ChartModelType, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams, UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams } from './interfaces/IChartService';
 export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from './interfaces/masterDetail';
 export { CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams } from "./interfaces/exportParams";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory";
@@ -176,8 +182,9 @@ export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
+export { ValueParserService } from "./valueService/valueParserService";
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
-export { ISelectionService, ISetNodeSelectedParams } from "./interfaces/iSelectionService";
+export { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
@@ -186,7 +193,8 @@ export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
-export { IAggFunc, IAggFuncParams, ColGroupDef, ColDef, AbstractColDef, ValueSetterParams, ValueParserParams, ValueFormatterParams, ValueFormatterFunc, ValueParserFunc, ValueGetterFunc, ValueSetterFunc, HeaderValueGetterFunc, HeaderValueGetterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, SuppressHeaderKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams, CellClassFunc, CellStyleFunc, CellStyle, CellClassRules, CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, CellRendererSelectorResult, GetQuickFilterTextParams, ColumnFunctionCallbackParams, CheckboxSelectionCallbackParams, CheckboxSelectionCallback, RowDragCallback, RowDragCallbackParams, DndSourceCallback, DndSourceCallbackParams, DndSourceOnRowDragParams, EditableCallbackParams, EditableCallback, SuppressPasteCallback, SuppressPasteCallbackParams, SuppressNavigableCallback, SuppressNavigableCallbackParams, HeaderCheckboxSelectionCallbackParams, HeaderCheckboxSelectionCallback, ColumnsMenuParams, ColumnMenuTab, HeaderClassParams, HeaderClass, ToolPanelClassParams, ToolPanelClass, KeyCreatorParams, SortDirection, IsColumnFunc, IsColumnFuncParams } from "./entities/colDef";
+export { IAggFunc, IAggFuncParams, ColGroupDef, ColDef, AbstractColDef, ValueSetterParams, ValueParserParams, ValueFormatterParams, ValueFormatterFunc, ValueParserFunc, ValueGetterFunc, ValueSetterFunc, HeaderValueGetterFunc, HeaderValueGetterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, SuppressHeaderKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams, CellClassFunc, CellStyleFunc, CellStyle, CellClassRules, CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, CellRendererSelectorResult, GetQuickFilterTextParams, ColumnFunctionCallbackParams, CheckboxSelectionCallbackParams, CheckboxSelectionCallback, RowDragCallback, RowDragCallbackParams, DndSourceCallback, DndSourceCallbackParams, DndSourceOnRowDragParams, EditableCallbackParams, EditableCallback, SuppressPasteCallback, SuppressPasteCallbackParams, SuppressNavigableCallback, SuppressNavigableCallbackParams, HeaderCheckboxSelectionCallbackParams, HeaderCheckboxSelectionCallback, ColumnsMenuParams, ColumnMenuTab, HeaderClassParams, HeaderClass, ToolPanelClassParams, ToolPanelClass, KeyCreatorParams, SortDirection, NestedFieldPaths, IsColumnFunc, IsColumnFuncParams } from "./entities/colDef";
+export { DataTypeDefinition, TextDataTypeDefinition, NumberDataTypeDefinition, BooleanDataTypeDefinition, DateDataTypeDefinition, DateStringDataTypeDefinition, ObjectDataTypeDefinition, ValueFormatterLiteFunc, ValueFormatterLiteParams, ValueParserLiteFunc, ValueParserLiteParams, } from "./entities/dataType";
 export { GridOptions, IsApplyServerSideTransaction, GetContextMenuItems, GetDataPath, IsRowMaster, IsRowSelectable, IsRowFilterable, MenuItemLeafDef, MenuItemDef, GetMainMenuItems, GetRowNodeIdFunc, GetRowIdFunc, ChartRef, ChartRefParams, RowClassRules, RowStyle, RowClassParams, ServerSideStoreType, ServerSideGroupLevelParams, ServerSideStoreParams, GetServerSideGroupKey, IsServerSideGroup, GetChartToolbarItems, RowGroupingDisplayType, TreeDataDisplayType, LoadingCellRendererSelectorFunc, LoadingCellRendererSelectorResult, DomLayoutType } from "./entities/gridOptions";
 export { FillOperationParams, RowHeightParams, GetRowIdParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, GetServerSideGroupLevelParamsParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, ProcessDataFromClipboardParams, SendToClipboardParams, GetChartToolbarItemsParams, NavigateToNextHeaderParams, TabToNextHeaderParams, NavigateToNextCellParams, TabToNextCellParams, GetContextMenuItemsParams, GetMainMenuItemsParams, PostProcessPopupParams, IsExternalFilterPresentParams, InitialGroupOrderComparatorParams, GetGroupRowAggParams, IsFullWidthRowParams, PostSortRowsParams, GetLocaleTextParams, GetGroupAggFilteringParams, } from "./interfaces/iCallbackParams";
 export { WithoutGridCommon } from "./interfaces/iCommon";

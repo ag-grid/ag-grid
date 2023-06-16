@@ -2,7 +2,6 @@ import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum } from './series/series';
 import { Padding } from '../util/padding';
-import { Legend } from './legend';
 import { BBox } from '../scene/bbox';
 import { Caption } from '../caption';
 import { Observable } from '../util/observable';
@@ -11,35 +10,36 @@ import { PlacedLabel } from '../util/labelPlacement';
 import { AgChartOptions, AgChartInstance } from './agChartOptions';
 import { Tooltip } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleContext, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
+import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
+import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
+import { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { ChartHighlight } from './chartHighlight';
+import { CallbackCache } from '../util/callbackCache';
 declare type OptionalHTMLElement = HTMLElement | undefined | null;
 export declare type TransferableResources = {
     container?: OptionalHTMLElement;
     scene: Scene;
     element: HTMLElement;
 };
-export declare type ChartUpdateOptions = {
-    forceNodeDataRefresh?: boolean;
-    seriesToUpdate?: Iterable<Series>;
-};
 export declare abstract class Chart extends Observable implements AgChartInstance {
     readonly id: string;
     processedOptions: AgChartOptions;
     userOptions: AgChartOptions;
     queuedUserOptions: AgChartOptions[];
-    getOptions(): AgChartOptions<never, never>;
+    getOptions(): AgChartOptions<never, never, never, never>;
     readonly scene: Scene;
     readonly seriesRoot: Group;
-    readonly legend: Legend;
+    legend: ChartLegend | undefined;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
     readonly highlight: ChartHighlight;
@@ -63,18 +63,28 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     mode: 'standalone' | 'integrated';
     private _destroyed;
     get destroyed(): boolean;
-    protected readonly interactionManager: InteractionManager;
+    protected readonly animationManager: AnimationManager;
+    protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
     protected readonly updateService: UpdateService;
+    protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
-    protected readonly modules: Record<string, ModuleInstanceMeta>;
+    protected readonly callbackCache: CallbackCache;
+    protected readonly modules: Record<string, {
+        instance: ModuleInstance;
+    }>;
+    protected readonly legendModules: Record<string, {
+        instance: ModuleInstance;
+    }>;
+    private legendType;
     protected constructor(document?: Document, overrideDevicePixelRatio?: number, resources?: TransferableResources);
     addModule(module: RootModule): void;
-    removeModule(module: Module): void;
+    removeModule(module: RootModule): void;
     isModuleEnabled(module: Module): boolean;
     getModuleContext(): ModuleContext;
     destroy(opts?: {
@@ -118,7 +128,11 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     private resize;
     processData(): Promise<void>;
     placeLabels(): Map<Series<any>, PlacedLabel[]>;
+    private attachLegend;
+    private applyLegendOptions?;
+    setLegendInit(initLegend: (legend: ChartLegend) => void): void;
     private updateLegend;
+    protected validateLegendData(legendData: ChartLegendDatum[]): void;
     protected performLayout(): Promise<BBox>;
     private positionPadding;
     private positionCaptions;
@@ -151,3 +165,4 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected handleNoDataOverlay(): void;
 }
 export {};
+//# sourceMappingURL=chart.d.ts.map

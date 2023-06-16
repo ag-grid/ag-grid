@@ -17,9 +17,6 @@ const options: AgChartOptions = {
       yKey: 'visitors',
     },
   ],
-  legend: {
-    enabled: false,
-  },
 }
 
 AgChart.create(options)

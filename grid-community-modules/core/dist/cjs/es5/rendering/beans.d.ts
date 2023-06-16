@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -46,6 +46,7 @@ import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
 import { GridOptionsService } from "../gridOptionsService";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
+import { ValueParserService } from "../valueService/valueParserService";
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -96,6 +97,7 @@ export declare class Beans {
     valueCache: ValueCache;
     rowNodeEventThrottle: RowNodeEventThrottle;
     localeService: LocaleService;
+    valueParserService: ValueParserService;
     doingMasterDetail: boolean;
     clientSideRowModel: IClientSideRowModel;
     serverSideRowModel: IServerSideRowModel;

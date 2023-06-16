@@ -7,9 +7,11 @@ export class WatermarkComp extends Component {
     @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 
     constructor() {
-        super(`<div class="ag-watermark">
-                    <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
-               </div>`);
+        super(/* html*/
+            `<div class="ag-watermark">
+                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+            </div>`
+        );
     }
 
     @PostConstruct
@@ -26,15 +28,6 @@ export class WatermarkComp extends Component {
     }
 
     private shouldDisplayWatermark(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const win = (eDocument.defaultView || window);
-        const loc = win.location;
-        const { pathname } = loc;
-
-        const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-
-        const isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-
-        return isForceWatermark || isDisplayWatermark;
+        return this.licenseManager.isDisplayWatermark();
     }
 }

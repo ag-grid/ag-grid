@@ -113,7 +113,7 @@ export class ContinuousScale {
         const step = typeof interval === 'number' ? interval : 1;
         count !== null && count !== void 0 ? count : (count = domain / step);
         if (count >= availableRange) {
-            Logger.warn(`the configured tick interval, ${JSON.stringify(interval)}, results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.`);
+            Logger.warn(`the configured tick interval results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.`);
             return true;
         }
         return false;

@@ -8,7 +8,7 @@ import styles from './SideMenu.module.scss';
  * It will initially load with the headings from the Markdown, but then re-calculate headings after loading to ensure
  * that it picks up e.g. headings from API documentation.
  */
-const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
+const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
     const menuRef = useRef(null);
 
@@ -52,39 +52,39 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     }, [hideMenu]);
 
     useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
+        // Init scrollspy & refresh at the same time as there's no way to detect if it's already been initialised
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-    }, [menuRef.current]);
+        $('body').scrollspy('refresh');
+    }, [allHeadings]);
 
     return (
-        allHeadings.length > 0 && (
-            <nav
-                id="side-menu"
-                ref={menuRef}
-                className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}
-            >
-                <div>
+        <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
+            <div>
+                {allHeadings.length > 0 && (
                     <ul className="list-style-none">
-                        <li className={styles['level-1']}>
+                        <li className={styles.level1}>
                             <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
                                 {pageTitle}
                             </a>
                         </li>
 
                         {allHeadings.map((heading) => (
-                            <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
-                                <a className="nav-link" href={`#${heading.id}`}>
+                            <li key={`${pageName}_${heading.id}`} className={styles[`level${heading.depth}`]}>
+                                <a
+                                    className="nav-link"
+                                    href={`#${heading.id}`}
+                                    onClick={() =>
+                                        tracking && tracking({ type: 'sideMenuClick', pageName, headingId: heading.id })
+                                    }
+                                >
                                     {addNonBreakingSpaceBetweenLastWords(heading.value)}
                                 </a>
                             </li>
                         ))}
                     </ul>
-                </div>
-            </nav>
-        )
+                )}
+            </div>
+        </nav>
     );
 };
 

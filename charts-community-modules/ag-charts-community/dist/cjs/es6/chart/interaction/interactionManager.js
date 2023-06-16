@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InteractionManager = void 0;
+const logger_1 = require("../../util/logger");
 const value_1 = require("../../util/value");
 const baseManager_1 = require("./baseManager");
 const WINDOW_EVENT_HANDLERS = ['pagehide', 'mousemove', 'mouseup', 'wheel'];
@@ -40,6 +41,8 @@ class InteractionManager extends baseManager_1.BaseManager {
         this.eventHandler = (event) => this.processEvent(event);
         this.mouseDown = false;
         this.touchDown = false;
+        this.enabled = true;
+        this.pausers = [];
         this.rootElement = doc.body;
         this.element = element;
         for (const type of EVENT_HANDLERS) {
@@ -51,7 +54,12 @@ class InteractionManager extends baseManager_1.BaseManager {
             }
         }
         for (const type of WINDOW_EVENT_HANDLERS) {
-            window.addEventListener(type, this.eventHandler);
+            if (type === 'wheel') {
+                window.addEventListener(type, this.eventHandler, { passive: false });
+            }
+            else {
+                window.addEventListener(type, this.eventHandler);
+            }
         }
         if (InteractionManager.interactionDocuments.indexOf(doc) < 0) {
             const styleElement = document.createElement('style');
@@ -68,11 +76,20 @@ class InteractionManager extends baseManager_1.BaseManager {
             this.element.removeEventListener(type, this.eventHandler);
         }
     }
+    resume(callerId) {
+        this.pausers = this.pausers.filter((id) => id !== callerId);
+        this.enabled = this.pausers.length <= 0;
+        return this.enabled;
+    }
+    pause(callerId) {
+        this.enabled = false;
+        this.pausers.push(callerId);
+    }
     processEvent(event) {
         const types = this.decideInteractionEventTypes(event);
-        if (types.length > 0) {
+        if (types.length > 0 && this.enabled) {
             // Async dispatch to avoid blocking the event-processing thread.
-            this.dispatchEvent(event, types);
+            this.dispatchEvent(event, types).catch((e) => logger_1.Logger.errorOnce(e));
         }
     }
     dispatchEvent(event, types) {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ const hoverFeature_1 = require("../hoverFeature");
 const resizeFeature_1 = require("./resizeFeature");
 const selectAllFeature_1 = require("./selectAllFeature");
 const dom_1 = require("../../../utils/dom");
-const function_1 = require("../../../utils/function");
 class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
     constructor(column, parentRowCtrl) {
         super(column, parentRowCtrl);
@@ -119,13 +118,13 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
     handleKeyDown(e) {
         super.handleKeyDown(e);
         if (e.key === keyCode_1.KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyPressed(e);
+            this.selectAllFeature.onSpaceKeyDown(e);
         }
         if (e.key === keyCode_1.KeyCode.ENTER) {
-            this.onEnterKeyPressed(e);
+            this.onEnterKeyDown(e);
         }
     }
-    onEnterKeyPressed(e) {
+    onEnterKeyDown(e) {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.getUserCompInstance();
         if (!headerComp) {
@@ -423,16 +422,7 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
         let isMeasuring = false;
         let stopResizeObserver;
         const checkMeasuring = () => {
-            const isSpanHeaderHeight = this.column.isSpanHeaderHeight();
             const newValue = this.column.isAutoHeaderHeight();
-            if (isSpanHeaderHeight) {
-                stopMeasuring();
-                if (newValue) {
-                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
-                    function_1.doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
-                }
-                return;
-            }
             if (newValue && !isMeasuring) {
                 startMeasuring();
             }

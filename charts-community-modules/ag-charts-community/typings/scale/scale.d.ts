@@ -1,11 +1,11 @@
-export interface ScaleClampParams {
+interface ScaleClampParams {
     /**
      * If `true` the values outside of the domain will become `NaN`.
      * If `false` such values will be clamped to the domain edges.
      */
     strict: boolean;
 }
-export interface ScaleTickFormatParams {
+interface ScaleTickFormatParams {
     ticks?: any[];
     specifier?: any;
 }
@@ -21,3 +21,5 @@ export interface Scale<D, R, I = number> {
     tickFormat?(params: ScaleTickFormatParams): (x: any) => string;
     bandwidth?: number;
 }
+export {};
+//# sourceMappingURL=scale.d.ts.map

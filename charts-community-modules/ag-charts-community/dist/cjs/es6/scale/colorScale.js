@@ -2,19 +2,47 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorScale = void 0;
 const color_1 = require("../util/color");
+const logger_1 = require("../util/logger");
 const color_2 = require("../interpolate/color");
 class ColorScale {
     constructor() {
         this.domain = [0, 1];
-        this._range = ['red', 'green'];
-        this.parsedRange = this._range.map((v) => color_1.Color.fromString(v));
+        this.range = ['red', 'blue'];
+        this.parsedRange = this.range.map((v) => color_1.Color.fromString(v));
     }
-    get range() {
-        return this._range;
-    }
-    set range(values) {
-        this._range = values;
-        this.parsedRange = values.map((v) => color_1.Color.fromString(v));
+    update() {
+        const { domain, range } = this;
+        if (domain.length < 2) {
+            logger_1.Logger.warnOnce('`colorDomain` should have at least 2 values.');
+            if (domain.length === 0) {
+                domain.push(0, 1);
+            }
+            else if (domain.length === 1) {
+                domain.push(domain[0] + 1);
+            }
+        }
+        for (let i = 1; i < domain.length; i++) {
+            const a = domain[i - 1];
+            const b = domain[i];
+            if (a >= b) {
+                logger_1.Logger.warnOnce('`colorDomain` values should be supplied in ascending order.');
+                domain.sort((a, b) => a - b);
+                break;
+            }
+        }
+        const isSmallRange = range.length < domain.length;
+        if (isSmallRange || (domain.length > 2 && range.length > domain.length)) {
+            logger_1.Logger.warnOnce('Number of elements in `colorRange` needs to match the number of elements in `colorDomain`.');
+            if (isSmallRange) {
+                for (let i = range.length; i < domain.length; i++) {
+                    range.push('black');
+                }
+            }
+            else {
+                range.splice(domain.length);
+            }
+        }
+        this.parsedRange = this.range.map((v) => color_1.Color.fromString(v));
     }
     convert(x) {
         const { domain, range, parsedRange } = this;

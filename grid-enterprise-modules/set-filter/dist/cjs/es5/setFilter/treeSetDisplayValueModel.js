@@ -15,9 +15,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -111,7 +112,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
                     children.push(item);
                 }
                 children = item.children;
-                parentTreeKeys = __spread(parentTreeKeys, [treeKey]);
+                parentTreeKeys = __spreadArray(__spreadArray([], __read(parentTreeKeys)), [treeKey]);
             });
         };
         var this_1 = this;

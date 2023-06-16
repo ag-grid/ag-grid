@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -213,11 +215,13 @@ var PositionableFeature = /** @class */ (function (_super) {
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         }
-        else if (this.positioned) {
+        else {
             height = Math.max(this.minHeight, height);
-            var availableHeight = this.getAvailableHeight();
-            if (availableHeight && height > availableHeight) {
-                height = availableHeight;
+            if (this.positioned) {
+                var availableHeight = this.getAvailableHeight();
+                if (availableHeight && height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
         if (this.getHeight() === height) {

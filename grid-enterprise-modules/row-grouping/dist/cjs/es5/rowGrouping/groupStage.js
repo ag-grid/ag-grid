@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupStage = void 0;
@@ -98,7 +101,7 @@ var GroupStage = /** @class */ (function (_super) {
                 if (unbalancedNode_1) {
                     groupNodes_1.push(unbalancedNode_1);
                 }
-                group.childrenAfterGroup = __spread(leafNodes_1, groupNodes_1);
+                group.childrenAfterGroup = __spreadArray(__spreadArray([], __read(leafNodes_1)), __read(groupNodes_1));
             }
         }, false);
     };
@@ -172,7 +175,7 @@ var GroupStage = /** @class */ (function (_super) {
         if (this.usingTreeData) {
             return;
         }
-        var comparator = this.getInitialGroupOrderComparator();
+        var comparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
         if (core_1._.exists(comparator)) {
             recursiveSort(rootNode);
         }
@@ -184,17 +187,6 @@ var GroupStage = /** @class */ (function (_super) {
                 rowNode.childrenAfterGroup.sort(function (nodeA, nodeB) { return comparator({ nodeA: nodeA, nodeB: nodeB }); });
                 rowNode.childrenAfterGroup.forEach(function (childNode) { return recursiveSort(childNode); });
             }
-        }
-    };
-    GroupStage.prototype.getInitialGroupOrderComparator = function () {
-        var initialGroupOrderComparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
-        if (initialGroupOrderComparator) {
-            return initialGroupOrderComparator;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var defaultGroupOrderComparator = this.gridOptionsService.get('defaultGroupOrderComparator');
-        if (defaultGroupOrderComparator) {
-            return function (params) { return defaultGroupOrderComparator(params.nodeA, params.nodeB); };
         }
     };
     GroupStage.prototype.getExistingPathForNode = function (node, details) {

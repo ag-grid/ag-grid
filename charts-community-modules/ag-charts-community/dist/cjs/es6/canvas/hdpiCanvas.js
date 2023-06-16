@@ -98,7 +98,7 @@ class HdpiCanvas {
      * @param fileFormat The file format, the default is `image/png`
      */
     download(fileName, fileFormat = 'image/png') {
-        fileName = (fileName || '').trim() || 'image';
+        fileName = (fileName !== null && fileName !== void 0 ? fileName : '').trim() || 'image';
         const dataUrl = this.getDataURL(fileFormat);
         const document = this.document;
         const a = document.createElement('a');

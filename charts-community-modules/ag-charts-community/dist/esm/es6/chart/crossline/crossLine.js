@@ -10,7 +10,7 @@ import { Text } from '../../scene/shape/text';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation, } from './crossLineLabelPosition';
+import { labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation, calculateLabelChartPadding, } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
 import { Range } from '../../scene/shape/range';
@@ -230,13 +230,13 @@ export class CrossLine {
         if (x === undefined || y === undefined) {
             return;
         }
-        const { autoRotation, labelRotation } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation } = calculateLabelRotation({
             rotation,
             parallel,
             regularFlipRotation,
             parallelFlipRotation,
         });
-        crossLineLabel.rotation = autoRotation + labelRotation;
+        crossLineLabel.rotation = defaultRotation + configuredRotation;
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';
         const bbox = this.computeLabelBBox();
@@ -261,7 +261,8 @@ export class CrossLine {
         if (!isContinuous && end === undefined) {
             end = start;
         }
-        [start, end] = [checkDatum(start, isContinuous), checkDatum(end, isContinuous)];
+        start = checkDatum(start, isContinuous) != null ? start : undefined;
+        end = checkDatum(end, isContinuous) != null ? end : undefined;
         if (isContinuous && start === end) {
             end = undefined;
         }
@@ -274,41 +275,28 @@ export class CrossLine {
     computeLabelBBox() {
         return this.crossLineLabel.computeTransformedBBox();
     }
-    calculatePadding(padding, seriesRect) {
-        var _a, _b, _c, _d, _e, _f;
-        const { isRange, startLine, endLine } = this;
+    calculatePadding(padding) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        const { isRange, startLine, endLine, direction, label: { padding: labelPadding = 0, position = 'top' }, } = this;
         if (!isRange && !startLine && !endLine) {
             return;
         }
         const crossLineLabelBBox = this.computeLabelBBox();
         const labelX = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.x;
         const labelY = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.y;
-        if (labelX == undefined || labelY == undefined) {
+        if (!crossLineLabelBBox || labelX == undefined || labelY == undefined) {
             return;
         }
-        const labelWidth = (_a = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.width) !== null && _a !== void 0 ? _a : 0;
-        const labelHeight = (_b = crossLineLabelBBox === null || crossLineLabelBBox === void 0 ? void 0 : crossLineLabelBBox.height) !== null && _b !== void 0 ? _b : 0;
-        if (labelWidth > seriesRect.width || labelHeight > seriesRect.height) {
-            // If label is bigger than seriesRect, trying to pad is just going to cause
-            // layout instability.
-            return;
-        }
-        if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
-            const paddingRight = labelX + labelWidth - (seriesRect.x + seriesRect.width);
-            padding.right = ((_c = padding.right) !== null && _c !== void 0 ? _c : 0) >= paddingRight ? padding.right : paddingRight;
-        }
-        else if (labelX <= seriesRect.x) {
-            const paddingLeft = seriesRect.x - labelX;
-            padding.left = ((_d = padding.left) !== null && _d !== void 0 ? _d : 0) >= paddingLeft ? padding.left : paddingLeft;
-        }
-        if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
-            const paddingBottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
-            padding.bottom = ((_e = padding.bottom) !== null && _e !== void 0 ? _e : 0) >= paddingBottom ? padding.bottom : paddingBottom;
-        }
-        else if (labelY <= seriesRect.y) {
-            const paddingTop = seriesRect.y - labelY;
-            padding.top = ((_f = padding.top) !== null && _f !== void 0 ? _f : 0) >= paddingTop ? padding.top : paddingTop;
-        }
+        const chartPadding = calculateLabelChartPadding({
+            yDirection: direction === ChartAxisDirection.Y,
+            padding: labelPadding,
+            position,
+            bbox: crossLineLabelBBox,
+        });
+        padding.left = Math.max((_a = padding.left) !== null && _a !== void 0 ? _a : 0, (_b = chartPadding.left) !== null && _b !== void 0 ? _b : 0);
+        padding.right = Math.max((_c = padding.right) !== null && _c !== void 0 ? _c : 0, (_d = chartPadding.right) !== null && _d !== void 0 ? _d : 0);
+        padding.top = Math.max((_e = padding.top) !== null && _e !== void 0 ? _e : 0, (_f = chartPadding.top) !== null && _f !== void 0 ? _f : 0);
+        padding.bottom = Math.max((_g = padding.bottom) !== null && _g !== void 0 ? _g : 0, (_h = chartPadding.bottom) !== null && _h !== void 0 ? _h : 0);
     }
 }
 CrossLine.LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;

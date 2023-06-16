@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -8,7 +8,6 @@ import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 import { ScalarFilter } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { isBrowserChrome } from '../../../utils/browser';
 import { setAriaRole } from '../../../utils/aria';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
@@ -27,15 +26,7 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
 }
 export function getAllowedCharPattern(filterParams) {
     const { allowedCharPattern } = filterParams !== null && filterParams !== void 0 ? filterParams : {};
-    if (allowedCharPattern) {
-        return allowedCharPattern;
-    }
-    if (!isBrowserChrome()) {
-        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
-        // constraint instead
-        return '\\d\\-\\.';
-    }
-    return null;
+    return allowedCharPattern !== null && allowedCharPattern !== void 0 ? allowedCharPattern : null;
 }
 export class NumberFilter extends ScalarFilter {
     constructor() {
@@ -149,6 +140,16 @@ export class NumberFilter extends ScalarFilter {
     getModelAsString(model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
+    }
+    hasInvalidInputs() {
+        let invalidInputs = false;
+        this.forEachInput(element => {
+            if (!element.getInputElement().validity.valid) {
+                invalidInputs = true;
+                return;
+            }
+        });
+        return invalidInputs;
     }
 }
 NumberFilter.DEFAULT_FILTER_OPTIONS = [

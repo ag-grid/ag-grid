@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultStrategy = void 0;
@@ -62,7 +65,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
     DefaultStrategy.prototype.getSelectedState = function () {
         return {
             selectAll: this.selectedState.selectAll,
-            toggledNodes: __spread(this.selectedState.toggledNodes),
+            toggledNodes: __spreadArray([], __read(this.selectedState.toggledNodes)),
         };
     };
     DefaultStrategy.prototype.setSelectedState = function (state) {
@@ -111,16 +114,22 @@ var DefaultStrategy = /** @class */ (function (_super) {
         });
         return anyNodesToggled;
     };
-    DefaultStrategy.prototype.setNodeSelected = function (params) {
+    DefaultStrategy.prototype.setNodesSelected = function (params) {
         var _a;
         var _this = this;
+        if (params.nodes.length === 0)
+            return 0;
         var onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
+            if (params.nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when rowSelection is set to \'single\'');
+            }
+            var node = params.nodes[0];
             if (params.newValue) {
-                this.selectedNodes = (_a = {}, _a[params.node.id] = params.node, _a);
+                this.selectedNodes = (_a = {}, _a[node.id] = node, _a);
                 this.selectedState = {
                     selectAll: false,
-                    toggledNodes: new Set([params.node.id]),
+                    toggledNodes: new Set([node.id]),
                 };
             }
             else {
@@ -130,7 +139,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
                     toggledNodes: new Set(),
                 };
             }
-            this.lastSelected = params.node.id;
+            this.lastSelected = node.id;
             return 1;
         }
         var updateNodeState = function (node) {
@@ -148,13 +157,17 @@ var DefaultStrategy = /** @class */ (function (_super) {
             _this.selectedState.toggledNodes.add(node.id);
         };
         if (params.rangeSelect && this.lastSelected) {
+            if (params.nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
+            }
+            var node = params.nodes[0];
             var lastSelectedNode = this.rowModel.getRowNode(this.lastSelected);
-            this.rowModel.getNodesInRangeForSelection(params.node, lastSelectedNode !== null && lastSelectedNode !== void 0 ? lastSelectedNode : null).forEach(updateNodeState);
-            this.lastSelected = params.node.id;
+            this.rowModel.getNodesInRangeForSelection(node, lastSelectedNode !== null && lastSelectedNode !== void 0 ? lastSelectedNode : null).forEach(updateNodeState);
+            this.lastSelected = node.id;
             return 1;
         }
-        updateNodeState(params.node);
-        this.lastSelected = params.node.id;
+        params.nodes.forEach(updateNodeState);
+        this.lastSelected = params.nodes[params.nodes.length - 1].id;
         return 1;
     };
     DefaultStrategy.prototype.processNewRow = function (node) {

@@ -8,7 +8,7 @@ import { Shape } from './shape';
 import { Path2D } from '../path2D';
 import { RedrawType, SceneChangeDetection } from '../node';
 export function ScenePathChangeDetection(opts) {
-    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts !== null && opts !== void 0 ? opts : {};
     return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
 export class Path extends Shape {

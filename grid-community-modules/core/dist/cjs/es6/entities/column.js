@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -156,8 +156,7 @@ class Column {
     initTooltip() {
         this.tooltipEnabled = generic_1.exists(this.colDef.tooltipField) ||
             generic_1.exists(this.colDef.tooltipValueGetter) ||
-            generic_1.exists(this.colDef.tooltipComponent) ||
-            generic_1.exists(this.colDef.tooltipComponentFramework);
+            generic_1.exists(this.colDef.tooltipComponent);
     }
     resetActualWidth(source = 'api') {
         const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
@@ -182,7 +181,7 @@ class Column {
     isFilterAllowed() {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
+        const filterDefined = !!this.colDef.filter;
         return filterDefined;
     }
     isFieldContainsDots() {
@@ -207,15 +206,15 @@ class Column {
             }, key);
         }
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule)) {
+        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             const rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             const itemsUsed = rowGroupingItems.filter(x => generic_1.exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
-                moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '));
+                moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
             }
         }
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor);
+            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
         if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
@@ -230,7 +229,7 @@ class Column {
                 const enterpriseMenuTabs = ['columnsMenuTab', 'generalMenuTab'];
                 const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
                 if (itemsUsed.length > 0) {
-                    moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`);
+                    moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
                 }
                 colDefAny.menuTabs.forEach((tab) => {
                     if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
@@ -243,16 +242,13 @@ class Column {
             }
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams');
+            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
+            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
-        }
-        if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
-            warnOnce('AG Grid: pinnedRowCellRenderer[Params,Framework] no longer exist. Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
         if (generic_1.exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
             warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`, 'columnGroupShow_invalid');
@@ -487,7 +483,8 @@ class Column {
         return this.visible;
     }
     isSpanHeaderHeight() {
-        return !!this.getColDef().spanHeaderHeight;
+        const colDef = this.getColDef();
+        return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
     }
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults

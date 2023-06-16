@@ -136,3 +136,5 @@ const POSITIONS = ['top', 'right', 'bottom', 'left'];
 export const POSITION = predicateWithMessage((v) => POSITIONS.includes(v), `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`);
 const INTERACTION_RANGES = ['exact', 'nearest'];
 export const INTERACTION_RANGE = predicateWithMessage((v) => (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v), `expecting an interaction range of 'exact', 'nearest' or a number`);
+const TEXT_WRAPS = ['never', 'always', 'hyphenate', 'on-space'];
+export const TEXT_WRAP = predicateWithMessage((v) => TEXT_WRAPS.includes(v), `expecting a text wrap strategy keyword such as 'never', 'always', 'hyphenate', 'on-space'`);

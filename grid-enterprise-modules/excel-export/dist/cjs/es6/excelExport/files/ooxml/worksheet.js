@@ -6,7 +6,7 @@ const row_1 = require("./row");
 const mergeCell_1 = require("./mergeCell");
 const excelXlsxFactory_1 = require("../../excelXlsxFactory");
 const excelUtils_1 = require("../../assets/excelUtils");
-const getMergedCellsAndAddColumnGroups = (rows, cols) => {
+const getMergedCellsAndAddColumnGroups = (rows, cols, suppressColumnOutline) => {
     const mergedCells = [];
     const cellsWithCollapsibleGroups = [];
     rows.forEach((currentRow, rowIdx) => {
@@ -59,7 +59,7 @@ const getMergedCellsAndAddColumnGroups = (rows, cols) => {
         cols.push({
             min: range[0],
             max: range[1],
-            outlineLevel: currentOutlineLevel || 1,
+            outlineLevel: suppressColumnOutline ? undefined : (currentOutlineLevel || 1),
             width: (refCol || { width: 100 }).width
         });
         outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
@@ -307,10 +307,11 @@ const addSheetFormatPr = (rows) => {
 };
 const worksheetFactory = {
     getTemplate(params) {
-        const { worksheet, currentSheet, margins = {}, pageSetup, headerFooterConfig } = params;
+        const { worksheet, currentSheet, config } = params;
+        const { margins = {}, pageSetup, headerFooterConfig, suppressColumnOutline } = config;
         const { table } = worksheet;
         const { rows, columns } = table;
-        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns) : [];
+        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
         const createWorksheetChildren = core_1._.compose(addSheetPr(), addSheetFormatPr(rows), addColumns(columns), addSheetData(rows, currentSheet + 1), addMergeCells(mergedCells), addPageMargins(margins), addPageSetup(pageSetup), addHeaderFooter(headerFooterConfig), addDrawingRel(currentSheet));
         const children = createWorksheetChildren([]);
         return {

@@ -93,8 +93,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
 
-        if (_.exists(params.charPress)) {
-            this.searchText(params.charPress);
+        if (params.eventKey?.length === 1) {
+            this.searchText(params.eventKey);
         }
     }
 
@@ -111,7 +111,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onNavigationKeyPressed(event, key);
+                this.onNavigationKeyDown(event, key);
                 break;
             default:
                 this.searchText(event);
@@ -127,7 +127,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.params.stopEditing();
     }
 
-    private onNavigationKeyPressed(event: any, key: string): void {
+    private onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);

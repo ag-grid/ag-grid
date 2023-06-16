@@ -12,17 +12,6 @@ export class OptionsFactory {
         this.filterOptions = params.filterOptions || defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);
-
-        this.checkForDeprecatedParams();
-    }
-
-    private checkForDeprecatedParams(): void {
-        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.test != null)) {
-            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, test() has been replaced with predicate().`);
-        }
-        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.hideFilterInput != null)) {
-            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, useOfHideFilterInput has been replaced with numberOfInputs.`);
-        }
     }
 
     public getFilterOptions(): (IFilterOptionDef | string)[] {
@@ -50,18 +39,7 @@ export class OptionsFactory {
                 return;
             }
 
-            const { test } = filterOption;
-            const mutatedFilterOptions = { ...filterOption };
-            if (test != null && filterOption.predicate == null) {
-                mutatedFilterOptions.predicate = (v: any[], cv: any) => test(v[0], cv);
-                delete mutatedFilterOptions.test;
-            }
-            if (mutatedFilterOptions.hideFilterInput && mutatedFilterOptions.numberOfInputs == null) {
-                mutatedFilterOptions.numberOfInputs = 0;
-                delete mutatedFilterOptions.hideFilterInput;
-            }
-
-            this.customFilterOptions[filterOption.displayKey] = mutatedFilterOptions;
+            this.customFilterOptions[filterOption.displayKey] = filterOption;
         });
     }
 

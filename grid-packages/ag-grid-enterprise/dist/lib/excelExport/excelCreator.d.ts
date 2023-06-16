@@ -11,6 +11,8 @@ export declare class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSes
     private stylingService;
     private gridSerializer;
     gridOptionsService: GridOptionsService;
+    private valueFormatterService;
+    private valueParserService;
     private exportMode;
     postConstruct(): void;
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams;

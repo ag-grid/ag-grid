@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -19,12 +19,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -62,7 +60,7 @@ var HeaderRowComp = function (props) {
         var nextMap = ag_grid_community_1._.mapById(next, function (c) { return c.getInstanceId(); });
         var oldCtrlsWeAreKeeping = prev.filter(function (c) { return nextMap.has(c.getInstanceId()); });
         var newCtrls = next.filter(function (c) { return !prevMap.has(c.getInstanceId()); });
-        return __spreadArrays(oldCtrlsWeAreKeeping, newCtrls);
+        return __spreadArray(__spreadArray([], oldCtrlsWeAreKeeping), newCtrls);
     }, []);
     useEffectOnce_1.useLayoutEffectOnce(function () {
         var compProxy = {
@@ -70,7 +68,11 @@ var HeaderRowComp = function (props) {
             setHeight: function (height) { return setHeight(height); },
             setTop: function (top) { return setTop(top); },
             setHeaderCtrls: function (ctrls) { return setCellCtrls(function (prev) { return setCellCtrlsMaintainOrder(prev, ctrls); }); },
-            setWidth: function (width) { return eGui.current.style.width = width; },
+            setWidth: function (width) {
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                }
+            },
             setAriaRowIndex: function (rowIndex) { return setAriaRowIndex(rowIndex); }
         };
         ctrl.setComp(compProxy);

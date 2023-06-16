@@ -1,17 +1,18 @@
 import { BBox } from '../../scene/bbox';
 import { DeprecatedAndRenamedTo } from '../../util/deprecation';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWithMessage } from '../../util/validation';
+import {
+    Validate,
+    BOOLEAN,
+    NUMBER,
+    OPT_STRING,
+    INTERACTION_RANGE,
+    predicateWithMessage,
+    OPT_BOOLEAN,
+} from '../../util/validation';
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
-// Extend EventTarget to to provide `classList` for `relatedTarget`
-declare global {
-    interface EventTarget {
-        readonly classList: DOMTokenList;
-    }
-}
-
-export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
+const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
 .${DEFAULT_TOOLTIP_CLASS} {
@@ -119,6 +120,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
+    showArrow?: boolean;
     position?: {
         xOffset?: number;
         yOffset?: number;
@@ -132,13 +134,13 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
         return input;
     }
 
-    defaults = defaults || {};
+    defaults = defaults ?? {};
 
     const {
-        content = defaults.content || '',
-        title = defaults.title || undefined,
-        color = defaults.color || 'white',
-        backgroundColor = defaults.backgroundColor || '#888',
+        content = defaults.content ?? '',
+        title = defaults.title ?? undefined,
+        color = defaults.color ?? 'white',
+        backgroundColor = defaults.backgroundColor ?? '#888',
     } = input;
 
     const titleHtml = title
@@ -150,12 +152,12 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
 }
 
 const POSITION_TYPES = ['pointer', 'node'];
-export const POSITION_TYPE = predicateWithMessage(
+const POSITION_TYPE = predicateWithMessage(
     (v: any) => POSITION_TYPES.includes(v),
     `expecting a position type keyword such as 'pointer' or 'node'`
 );
 
-export type TooltipPositionType = 'pointer' | 'node';
+type TooltipPositionType = 'pointer' | 'node';
 
 export class TooltipPosition {
     @Validate(POSITION_TYPE)
@@ -184,6 +186,9 @@ export class Tooltip {
 
     @Validate(BOOLEAN)
     enabled: boolean = true;
+
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     @Validate(OPT_STRING)
     class?: string = undefined;
@@ -280,7 +285,7 @@ export class Tooltip {
     }
 
     private showTimeout: number = 0;
-    private showArrow = true;
+    private _showArrow = true;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -311,9 +316,10 @@ export class Tooltip {
         const left = limit(windowBounds.x, naiveLeft, maxLeft);
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
-        const offsetApplied = xOffset !== 0 || yOffset !== 0;
         const constrained = left !== naiveLeft || top !== naiveTop;
-        this.showArrow = !constrained && !offsetApplied;
+        const defaultShowArrow = !constrained && !xOffset && !yOffset;
+        const showArrow = meta.showArrow ?? this.showArrow ?? defaultShowArrow;
+        this.updateShowArrow(showArrow);
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
         this.enableInteraction = meta.enableInteraction ?? false;
@@ -337,16 +343,20 @@ export class Tooltip {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
         }
-        this.updateClass(visible, this.showArrow);
+        this.updateClass(visible, this._showArrow);
     }
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
         if (!this.enableInteraction) return false;
 
-        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
+        const classList = ((event.sourceEvent as MouseEvent).relatedTarget as any)?.classList as DOMTokenList;
         const classes = ['', '-title', '-content'];
         const classListContains = Boolean(classes.filter((c) => classList?.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
 
         return classList !== undefined && classListContains;
+    }
+
+    private updateShowArrow(show: boolean) {
+        this._showArrow = show;
     }
 }

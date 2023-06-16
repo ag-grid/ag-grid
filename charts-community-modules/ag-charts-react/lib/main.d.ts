@@ -1,2 +1,2 @@
-// ag-charts-react v7.3.0
+// ag-charts-react v8.0.0
 export * from './agChartsReact';

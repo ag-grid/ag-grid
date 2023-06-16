@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,11 @@ export class LargeTextCellEditor extends PopupComponent {
         }
     }
     getValue() {
-        return this.params.parseValue(this.eTextArea.getValue());
+        const value = this.eTextArea.getValue();
+        if (!exists(value) && !exists(this.params.value)) {
+            return this.params.value;
+        }
+        return this.params.parseValue(value);
     }
 }
 LargeTextCellEditor.TEMPLATE = `<div class="ag-large-text" tabindex="0">

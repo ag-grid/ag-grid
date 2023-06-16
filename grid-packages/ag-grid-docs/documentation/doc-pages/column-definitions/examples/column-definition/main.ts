@@ -37,7 +37,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         // enable floating filters by default
         floatingFilter: true,
         // make columns resizable
-        resizable: true
+        resizable: true,
+        // disable cell data types
+        cellDataType: false,
     },
 
     // default ColGroupDef, get applied to every column group

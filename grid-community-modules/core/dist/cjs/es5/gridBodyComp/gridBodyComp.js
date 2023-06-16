@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -83,7 +85,7 @@ var GridBodyComp = /** @class */ (function (_super) {
             setPinnedTopBottomOverflowY: function (overflow) { return _this.eTop.style.overflowY = _this.eBottom.style.overflowY = overflow; },
             setCellSelectableCss: function (cssClass, selectable) {
                 [_this.eTop, _this.eBodyViewport, _this.eBottom]
-                    .forEach(function (ct) { return ct.classList.toggle(gridBodyCtrl_1.CSS_CLASS_CELL_SELECTABLE, selectable); });
+                    .forEach(function (ct) { return ct.classList.toggle(cssClass, selectable); });
             },
             setBodyViewportWidth: function (width) { return _this.eBodyViewport.style.width = width; }
         };

@@ -26,20 +26,3 @@ export function extent(values) {
     }
     return extent;
 }
-/**
- * finds the min and max using a process appropriate for stacked values. Ie,
- * summing up the positive and negative numbers, and returning the totals of each
- */
-export function findMinMax(values) {
-    let min = undefined;
-    let max = undefined;
-    for (const value of values) {
-        if (value < 0) {
-            min = (min !== null && min !== void 0 ? min : 0) + value;
-        }
-        else if (value >= 0) {
-            max = (max !== null && max !== void 0 ? max : 0) + value;
-        }
-    }
-    return { min, max };
-}

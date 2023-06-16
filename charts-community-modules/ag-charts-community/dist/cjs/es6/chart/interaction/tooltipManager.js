@@ -19,7 +19,12 @@ class TooltipManager {
         if (content == null) {
             content = (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.content;
         }
-        this.states[callerId] = { content, meta };
+        if (!content) {
+            delete this.states[callerId];
+        }
+        else {
+            this.states[callerId] = { content, meta };
+        }
         this.applyStates();
     }
     updateExclusiveRect(callerId, area) {
@@ -64,9 +69,8 @@ class TooltipManager {
         let contentToApply = undefined;
         let metaToApply = undefined;
         // Last added entry wins.
-        ids.reverse()
-            .slice(0, 1)
-            .forEach((id) => {
+        ids.reverse();
+        ids.slice(0, 1).forEach((id) => {
             var _a;
             const { content, meta } = (_a = this.states[id]) !== null && _a !== void 0 ? _a : {};
             contentToApply = content;

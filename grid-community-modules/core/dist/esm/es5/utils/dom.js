@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var __read = (this && this.__read) || function (o, n) {
 import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { setAriaHidden } from './aria';
+import { camelCaseToHyphenated } from './string';
 var rtlNegativeScroll;
 /**
  * This method adds a class to an element and remove that class from all siblings.
@@ -327,11 +328,11 @@ export function addStylesToElement(eElement, styles) {
                 continue;
             }
             // changes the key from camelCase into a hyphenated-string
-            var parsedKey = key.replace(/[A-Z]/g, function (s) { return "-" + s.toLocaleLowerCase(); });
+            var parsedKey = camelCaseToHyphenated(key);
             var valueAsString = value.toString();
             var parsedValue = valueAsString.replace(/\s*!important/g, '');
             var priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
-            eElement.style.setProperty(parsedKey, value, priority);
+            eElement.style.setProperty(parsedKey, parsedValue, priority);
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }

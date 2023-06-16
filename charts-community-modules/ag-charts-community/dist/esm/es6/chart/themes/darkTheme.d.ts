@@ -1,8 +1,5 @@
 import { AgChartThemeOptions } from '../agChartOptions';
 import { ChartTheme } from './chartTheme';
-export interface DarkThemeParams {
-    seriesLabelDefaults: any;
-}
 export declare class DarkTheme extends ChartTheme {
     static fontColor: string;
     static mutedFontColor: string;
@@ -11,7 +8,11 @@ export declare class DarkTheme extends ChartTheme {
             color: string;
         };
     };
-    static seriesDarkThemeOverrides: Record<string, (params: DarkThemeParams) => any>;
     protected getDefaults(): (typeof ChartTheme)['defaults'];
+    protected getTemplateParameters(): {
+        extensions: Map<any, any>;
+        properties: Map<any, any>;
+    };
     constructor(options?: AgChartThemeOptions);
 }
+//# sourceMappingURL=darkTheme.d.ts.map

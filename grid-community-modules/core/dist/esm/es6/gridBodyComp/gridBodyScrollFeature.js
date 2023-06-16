@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,10 +12,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
 import { isIOSUserAgent } from "../utils/browser";
+import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 export class GridBodyScrollFeature extends BeanStub {
     constructor(eBodyViewport) {
         super();
@@ -260,6 +260,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
     // called by scrollHorizontally method and alignedGridsService
     setHorizontalScrollPosition(hScrollPosition) {
+        const fakeHScrollGui = this.ctrlsService.getFakeHScrollComp().getGui();
         const minScrollLeft = 0;
         const maxScrollLeft = this.centerRowContainerCtrl.getViewportElement().scrollWidth - this.centerRowContainerCtrl.getCenterWidth();
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
@@ -394,7 +395,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 newScrollPosition = pxBottom;
             }
             if (newScrollPosition !== null) {
-                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.setVerticalScrollPosition(newScrollPosition);
                 this.rowRenderer.redrawAfterScroll();
             }
             // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),

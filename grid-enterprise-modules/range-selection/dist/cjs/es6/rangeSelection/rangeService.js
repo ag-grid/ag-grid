@@ -245,7 +245,16 @@ let RangeService = class RangeService extends core_1.BeanStub {
     setNewestRangeStartCell(position) {
         this.newestRangeStartCell = position;
     }
-    clearCellRangeCellValues(cellRanges, source = 'rangeService') {
+    clearCellRangeCellValues(params) {
+        let { cellRanges } = params;
+        const { cellEventSource = 'rangeService', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
+        if (dispatchWrapperEvents) {
+            const startEvent = {
+                type: core_1.Events.EVENT_RANGE_DELETE_START,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(startEvent);
+        }
         if (!cellRanges) {
             cellRanges = this.cellRanges;
         }
@@ -260,10 +269,17 @@ let RangeService = class RangeService extends core_1.BeanStub {
                     if (!column || !column.isCellEditable(rowNode)) {
                         return;
                     }
-                    rowNode.setDataValue(column, null, source);
+                    rowNode.setDataValue(column, null, cellEventSource);
                 }
             });
         });
+        if (dispatchWrapperEvents) {
+            const endEvent = {
+                type: core_1.Events.EVENT_RANGE_DELETE_END,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(endEvent);
+        }
     }
     createCellRangeFromCellRangeParams(params) {
         let columns;
@@ -458,11 +474,11 @@ let RangeService = class RangeService extends core_1.BeanStub {
         }
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         // ctrlKey for windows, metaKey for Apple
-        const multiKeyPressed = ctrlKey || metaKey;
+        const isMultiKey = ctrlKey || metaKey;
         const allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
-        const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+        const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && core_1._.existsAndNotEmpty(this.cellRanges);
-        if (!multiSelectKeyPressed && (!extendRange || core_1._.exists(core_1._.last(this.cellRanges).type))) {
+        if (!isMultiSelect && (!extendRange || core_1._.exists(core_1._.last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
         // The browser changes the Event target of cached events when working with the ShadowDOM
@@ -476,7 +492,7 @@ let RangeService = class RangeService extends core_1.BeanStub {
         }
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
+        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
         }

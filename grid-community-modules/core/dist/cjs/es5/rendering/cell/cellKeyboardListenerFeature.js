@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -54,17 +56,17 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
                 break;
             case keyCode_1.KeyCode.BACKSPACE:
             case keyCode_1.KeyCode.DELETE:
-                this.onBackspaceOrDeleteKeyPressed(key, event);
+                this.onBackspaceOrDeleteKeyDown(key, event);
                 break;
             case keyCode_1.KeyCode.DOWN:
             case keyCode_1.KeyCode.UP:
             case keyCode_1.KeyCode.RIGHT:
             case keyCode_1.KeyCode.LEFT:
-                this.onNavigationKeyPressed(event, key);
+                this.onNavigationKeyDown(event, key);
                 break;
         }
     };
-    CellKeyboardListenerFeature.prototype.onNavigationKeyPressed = function (event, key) {
+    CellKeyboardListenerFeature.prototype.onNavigationKeyDown = function (event, key) {
         if (this.cellCtrl.isEditing()) {
             return;
         }
@@ -89,7 +91,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
     CellKeyboardListenerFeature.prototype.onTabKeyDown = function (event) {
         this.beans.navigationService.onTabKeyDown(this.cellCtrl, event);
     };
-    CellKeyboardListenerFeature.prototype.onBackspaceOrDeleteKeyPressed = function (key, event) {
+    CellKeyboardListenerFeature.prototype.onBackspaceOrDeleteKeyDown = function (key, event) {
         var _a = this, cellCtrl = _a.cellCtrl, beans = _a.beans, rowNode = _a.rowNode;
         var gridOptionsService = beans.gridOptionsService, rangeService = beans.rangeService, eventService = beans.eventService;
         if (cellCtrl.isEditing()) {
@@ -98,27 +100,28 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
         eventService.dispatchEvent({ type: eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (keyboard_1.isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
             if (rangeService && gridOptionsService.isEnableRangeSelection()) {
-                rangeService.clearCellRangeCellValues();
+                rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             }
             else if (cellCtrl.isCellEditable()) {
                 rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
             }
         }
         else {
-            cellCtrl.startRowOrCellEdit(key, undefined, event);
+            cellCtrl.startRowOrCellEdit(key, event);
         }
         eventService.dispatchEvent({ type: eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
     };
     CellKeyboardListenerFeature.prototype.onEnterKeyDown = function (e) {
         if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
-            this.cellCtrl.stopEditingAndFocus();
+            this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         }
         else {
-            if (this.beans.gridOptionsService.is('enterMovesDown')) {
-                this.beans.navigationService.navigateToNextCell(null, keyCode_1.KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
+            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+                var key = e.shiftKey ? keyCode_1.KeyCode.UP : keyCode_1.KeyCode.DOWN;
+                this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             }
             else {
-                this.cellCtrl.startRowOrCellEdit(keyCode_1.KeyCode.ENTER, undefined, e);
+                this.cellCtrl.startRowOrCellEdit(keyCode_1.KeyCode.ENTER, e);
                 if (this.cellCtrl.isEditing()) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
@@ -131,7 +134,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
     };
     CellKeyboardListenerFeature.prototype.onF2KeyDown = function (event) {
         if (!this.cellCtrl.isEditing()) {
-            this.cellCtrl.startRowOrCellEdit(keyCode_1.KeyCode.F2, undefined, event);
+            this.cellCtrl.startRowOrCellEdit(keyCode_1.KeyCode.F2, event);
         }
     };
     CellKeyboardListenerFeature.prototype.onEscapeKeyDown = function (event) {
@@ -140,7 +143,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             this.cellCtrl.focusCell(true);
         }
     };
-    CellKeyboardListenerFeature.prototype.onKeyPress = function (event) {
+    CellKeyboardListenerFeature.prototype.processCharacter = function (event) {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
         var eventTarget = event.target;
@@ -148,13 +151,13 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
         if (eventOnChildComponent || this.cellCtrl.isEditing()) {
             return;
         }
-        var pressedChar = String.fromCharCode(event.charCode);
-        if (pressedChar === ' ') {
-            this.onSpaceKeyPressed(event);
+        var key = event.key;
+        if (key === ' ') {
+            this.onSpaceKeyDown(event);
         }
-        else if (keyboard_1.isEventFromPrintableCharacter(event)) {
-            this.cellCtrl.startRowOrCellEdit(null, pressedChar, event);
-            // if we don't prevent default, then the keypress also gets applied to the text field
+        else {
+            this.cellCtrl.startRowOrCellEdit(key, event);
+            // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes
             // up when the use is not doing editing, but using rendering with text fields in cellRenderer
@@ -162,7 +165,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             event.preventDefault();
         }
     };
-    CellKeyboardListenerFeature.prototype.onSpaceKeyPressed = function (event) {
+    CellKeyboardListenerFeature.prototype.onSpaceKeyDown = function (event) {
         var gridOptionsService = this.beans.gridOptionsService;
         if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
             var currentSelection = this.rowNode.isSelected();
@@ -174,7 +177,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
                     rangeSelect: event.shiftKey,
                     groupSelectsFiltered: groupSelectsFiltered,
                     event: event,
-                    source: 'spacePressed'
+                    source: 'spaceKey',
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
                     this.rowNode.setSelectedParams({
@@ -182,7 +185,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
                         rangeSelect: event.shiftKey,
                         groupSelectsFiltered: groupSelectsFiltered,
                         event: event,
-                        source: 'spacePressed'
+                        source: 'spaceKey',
                     });
                 }
             }

@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -19,12 +19,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -61,8 +59,8 @@ var RowContainerComp = function (params) {
     reactComment_1.default(' AG Row Container ' + name + ' ', topLevelRef);
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered() {
-        utils_1.agFlushSync(function () {
+    function updateRowCtrlsOrdered(useFlushSync) {
+        utils_1.agFlushSync(useFlushSync, function () {
             setRowCtrlsOrdered(function (prev) {
                 var rowCtrls = rowCtrlsRef.current;
                 if (domOrderRef.current) {
@@ -72,27 +70,36 @@ var RowContainerComp = function (params) {
                 // of the elements in the dom, as this would break transition styles
                 var oldRows = prev.filter(function (r) { return rowCtrls.indexOf(r) >= 0; });
                 var newRows = rowCtrls.filter(function (r) { return oldRows.indexOf(r) < 0; });
-                return __spreadArrays(oldRows, newRows);
+                return __spreadArray(__spreadArray([], oldRows), newRows);
             });
         });
     }
     useEffectOnce_1.useLayoutEffectOnce(function () {
         var beansToDestroy = [];
         var compProxy = {
-            setViewportHeight: function (height) { return eViewport.current.style.height = height; },
-            setRowCtrls: function (rowCtrls) {
+            setViewportHeight: function (height) {
+                if (eViewport.current) {
+                    eViewport.current.style.height = height;
+                }
+            },
+            setRowCtrls: function (rowCtrls, useFlushSync) {
                 if (rowCtrlsRef.current !== rowCtrls) {
+                    var useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: function (domOrder) {
                 if (domOrderRef.current != domOrder) {
                     domOrderRef.current = domOrder;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(false);
                 }
             },
-            setContainerWidth: function (width) { return eContainer.current.style.width = width; }
+            setContainerWidth: function (width) {
+                if (eContainer.current) {
+                    eContainer.current.style.width = width;
+                }
+            }
         };
         var ctrl = context.createBean(new ag_grid_community_1.RowContainerCtrl(name));
         beansToDestroy.push(ctrl);

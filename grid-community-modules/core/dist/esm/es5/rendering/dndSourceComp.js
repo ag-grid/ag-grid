@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -28,17 +30,16 @@ import { PostConstruct } from "../context/context";
 import { createIconNoSpan } from "../utils/icon";
 var DndSourceComp = /** @class */ (function (_super) {
     __extends(DndSourceComp, _super);
-    function DndSourceComp(rowNode, column, beans, eCell) {
-        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" draggable=\"true\"></div>") || this;
+    function DndSourceComp(rowNode, column, eCell) {
+        var _this = _super.call(this, /* html */ "<div class=\"ag-drag-handle ag-row-drag\" draggable=\"true\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
-        _this.beans = beans;
         _this.eCell = eCell;
         return _this;
     }
     DndSourceComp.prototype.postConstruct = function () {
         var eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsService, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.gridOptionsService, null));
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', function (e) {
             e.stopPropagation();

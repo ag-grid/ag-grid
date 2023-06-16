@@ -8,7 +8,7 @@ export class CartesianChartProxy extends ChartProxy {
     }
     update(params) {
         const axes = this.getAxes(params);
-        const options = Object.assign(Object.assign({}, this.getCommonChartOptions()), { data: this.getData(params, axes), axes, series: this.getSeries(params) });
+        const options = Object.assign(Object.assign({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.getData(params, axes), axes, series: this.getSeries(params) });
         AgChart.update(this.getChartRef(), options);
     }
     getData(params, axes) {

@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -19,15 +21,20 @@ var chartAxisDirection_1 = require("../../chartAxisDirection");
 var PolarSeries = /** @class */ (function (_super) {
     __extends(PolarSeries, _super);
     function PolarSeries(_a) {
-        var _b;
-        var _c = _a.useLabelLayer, useLabelLayer = _c === void 0 ? false : _c;
+        var _b, _c;
+        var moduleCtx = _a.moduleCtx, _d = _a.useLabelLayer, useLabelLayer = _d === void 0 ? false : _d, _e = _a.pickModes, pickModes = _e === void 0 ? [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH] : _e;
         var _this = _super.call(this, {
+            moduleCtx: moduleCtx,
             useLabelLayer: useLabelLayer,
-            pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            pickModes: pickModes,
             directionKeys: (_b = {},
                 _b[chartAxisDirection_1.ChartAxisDirection.X] = ['angleKey'],
                 _b[chartAxisDirection_1.ChartAxisDirection.Y] = ['radiusKey'],
                 _b),
+            directionNames: (_c = {},
+                _c[chartAxisDirection_1.ChartAxisDirection.X] = ['angleName'],
+                _c[chartAxisDirection_1.ChartAxisDirection.Y] = ['radiusName'],
+                _c),
         }) || this;
         /**
          * The center of the polar series (for example, the center of a pie).
@@ -48,7 +55,7 @@ var PolarSeries = /** @class */ (function (_super) {
     PolarSeries.prototype.getLabelData = function () {
         return [];
     };
-    PolarSeries.prototype.computeLabelsBBox = function (_options) {
+    PolarSeries.prototype.computeLabelsBBox = function (_options, _seriesRect) {
         return null;
     };
     return PolarSeries;

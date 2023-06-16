@@ -1,6 +1,7 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
+import { removeDragAndDropHandles } from '../../lib/scriptActions/removeDragAndDropHandles';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { createScriptRunner as createScriptRunnerCore, RunScriptState } from '../../lib/scriptRunner';
 import { EasingFunction } from '../../lib/tween';
@@ -10,6 +11,8 @@ interface Params {
     id: string;
     mouse: Mouse;
     containerEl: HTMLElement;
+    getContainerScale?: () => number;
+    getOverlay: () => HTMLElement;
     onStateChange?: (state: RunScriptState) => void;
     tweenGroup: Group;
     gridOptions: GridOptions;
@@ -21,6 +24,8 @@ interface Params {
 export function createScriptRunner({
     id,
     containerEl,
+    getContainerScale,
+    getOverlay,
     mouse,
     onStateChange,
     tweenGroup,
@@ -31,6 +36,7 @@ export function createScriptRunner({
 }: Params) {
     const script = createScript({
         containerEl,
+        getContainerScale,
         mouse,
         tweenGroup,
         scriptDebugger,
@@ -39,6 +45,7 @@ export function createScriptRunner({
     const scriptRunner = createScriptRunnerCore({
         id,
         containerEl,
+        getOverlay,
         mouse,
         script,
         gridOptions,
@@ -49,6 +56,7 @@ export function createScriptRunner({
 
             if (state === 'stopping' || state === 'inactive' || state === 'errored') {
                 mouse.hide();
+                removeDragAndDropHandles();
             }
 
             onStateChange && onStateChange(state);

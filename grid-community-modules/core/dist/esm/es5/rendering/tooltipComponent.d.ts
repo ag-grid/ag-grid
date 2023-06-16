@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PopupComponent } from '../widgets/popupComponent';
@@ -12,13 +12,13 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
     /** The value to be rendered by the tooltip. */
-    value?: TValue;
+    value?: TValue | null;
     /** The formatted value to be rendered by the tooltip. */
     valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */
-    colDef?: ColDef<TData> | ColGroupDef<TData> | null;
+    colDef?: ColDef<TData, TValue> | ColGroupDef<TData> | null;
     /** Column / ColumnGroup */
-    column?: Column | ColumnGroup;
+    column?: Column<TValue> | ColumnGroup;
     /** The index of the row containing the cell rendering the tooltip. */
     rowIndex?: number;
     /** The row node. */

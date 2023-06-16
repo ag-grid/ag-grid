@@ -1,4 +1,4 @@
-import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 
 const gridOptions: GridOptions<IOlympicData> = {

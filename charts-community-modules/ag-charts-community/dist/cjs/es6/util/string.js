@@ -24,7 +24,7 @@ function interpolate(input, values, formats) {
             }
             return value.toDateString();
         }
-        if (typeof value === 'string' || (value && value.toString)) {
+        if (typeof value === 'string' || (value === null || value === void 0 ? void 0 : value.toString)) {
             return String(value);
         }
         return '';

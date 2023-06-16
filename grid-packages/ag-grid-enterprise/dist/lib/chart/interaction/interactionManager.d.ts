@@ -22,8 +22,12 @@ export declare class InteractionManager extends BaseManager<InteractionTypes, In
     private mouseDown;
     private touchDown;
     private dragStartElement?;
+    private enabled;
+    private pausers;
     constructor(element: HTMLElement, doc?: Document);
     destroy(): void;
+    resume(callerId: string): boolean;
+    pause(callerId: string): void;
     private processEvent;
     private dispatchEvent;
     private decideInteractionEventTypes;
@@ -34,3 +38,4 @@ export declare class InteractionManager extends BaseManager<InteractionTypes, In
     private buildEvent;
 }
 export {};
+//# sourceMappingURL=interactionManager.d.ts.map

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -103,8 +105,9 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     MultiFloatingFilterComp.prototype.createFloatingFilter = function (filterDef, params) {
+        var _this = this;
         var _a;
-        var defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef)) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
+        var defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef, function () { return _this.filterManager.getDefaultFloatingFilter(_this.params.column); })) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
         var compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
     };
@@ -119,6 +122,9 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('userComponentFactory')
     ], MultiFloatingFilterComp.prototype, "userComponentFactory", void 0);
+    __decorate([
+        Autowired('filterManager')
+    ], MultiFloatingFilterComp.prototype, "filterManager", void 0);
     return MultiFloatingFilterComp;
 }(Component));
 export { MultiFloatingFilterComp };

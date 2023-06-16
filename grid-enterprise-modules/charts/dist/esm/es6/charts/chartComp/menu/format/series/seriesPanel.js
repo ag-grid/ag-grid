@@ -65,7 +65,8 @@ export class SeriesPanel extends Component {
                 this.initSeriesSelect();
             }
             this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
-        });
+        })
+            .catch(e => console.error(`AG Grid - chart rendering failed`, e));
     }
     initSeriesSelect() {
         const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
@@ -204,7 +205,8 @@ export class SeriesPanel extends Component {
         this.addWidget(markersPanelComp);
     }
     initBins() {
-        const currentValue = this.getSeriesOption("bins").length;
+        var _a;
+        const currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins")).length;
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
@@ -226,11 +228,14 @@ export class SeriesPanel extends Component {
         this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     }
     getChartSeriesType() {
-        if (this.chartController.getSeriesChartTypes().length === 0) {
+        if (this.chartController.getSeriesChartTypes().length === 0)
             return 'column';
-        }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
-        return (ct === 'columnLineCombo') ? 'column' : (ct === 'areaColumnCombo') ? 'area' : getSeriesType(ct);
+        if (ct === 'columnLineCombo')
+            return 'column';
+        if (ct === 'areaColumnCombo')
+            return 'area';
+        return getSeriesType(ct);
     }
     getSeriesSelectOptions() {
         if (!this.seriesSelectOptions) {

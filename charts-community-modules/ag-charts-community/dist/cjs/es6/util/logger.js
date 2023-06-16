@@ -11,7 +11,12 @@ exports.Logger = {
         console.warn(`AG Charts - ${message}`, ...logContent);
     },
     error(message, ...logContent) {
-        console.error(`AG Charts - ${message}`, ...logContent);
+        if (typeof message === 'object') {
+            console.error(`AG Charts error`, message, ...logContent);
+        }
+        else {
+            console.error(`AG Charts - ${message}`, ...logContent);
+        }
     },
     warnOnce(message, ...logContent) {
         function_1.doOnce(() => exports.Logger.warn(message, ...logContent), `Logger.warn: ${message}`);

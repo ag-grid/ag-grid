@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -33,10 +35,12 @@ import { isElementChildOfClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
+import { setAriaLabel } from "../../../utils/aria";
 var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderFilterCellCtrl, _super);
     function HeaderFilterCellCtrl(column, parentRowCtrl) {
         var _this = _super.call(this, column, parentRowCtrl) || this;
+        _this.iconCreated = false;
         _this.column = column;
         return _this;
     }
@@ -45,31 +49,36 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
-        var colDef = this.column.getColDef();
-        var filterExists = !!colDef.filter || !!colDef.filterFramework;
-        var floatingFilterExists = !!colDef.floatingFilter;
-        this.active = filterExists && floatingFilterExists;
+        this.setupActive();
         this.setupWidth();
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupAria();
+        this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
         this.setupUi();
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
-        if (this.active) {
-            this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
-        }
+        this.setupFilterChangedListener();
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+    };
+    HeaderFilterCellCtrl.prototype.setupActive = function () {
+        var colDef = this.column.getColDef();
+        var filterExists = !!colDef.filter;
+        var floatingFilterExists = !!colDef.floatingFilter;
+        this.active = filterExists && floatingFilterExists;
     };
     HeaderFilterCellCtrl.prototype.setupUi = function () {
         this.comp.setButtonWrapperDisplayed(!this.suppressFilterButton && this.active);
-        if (!this.active) {
-            return;
-        }
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
+        if (!this.active || this.iconCreated) {
+            return;
+        }
         var eMenuIcon = createIconNoSpan('filter', this.gridOptionsService, this.column);
         if (eMenuIcon) {
+            this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
         }
     };
@@ -80,6 +89,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             handleKeyDown: this.handleKeyDown.bind(this),
             onFocusIn: this.onFocusIn.bind(this)
         }));
+    };
+    HeaderFilterCellCtrl.prototype.setupAria = function () {
+        var localeTextFunc = this.localeService.getLocaleTextFunc();
+        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     };
     HeaderFilterCellCtrl.prototype.onTabKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();
@@ -187,19 +200,25 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         var setLeftFeature = new SetLeftFeature(this.column, this.eGui, this.beans);
         this.createManagedBean(setLeftFeature);
     };
+    HeaderFilterCellCtrl.prototype.setupFilterButton = function () {
+        var colDef = this.column.getColDef();
+        // this is unusual - we need a params value OUTSIDE the component the params are for.
+        // the params are for the floating filter component, but this property is actually for the wrapper.
+        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
+    };
     HeaderFilterCellCtrl.prototype.setupUserComp = function () {
         var _this = this;
         if (!this.active) {
             return;
         }
-        var colDef = this.column.getColDef();
-        // this is unusual - we need a params value OUTSIDE the component the params are for.
-        // the params are for the floating filter component, but this property is actually for the wrapper.
-        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
         var compDetails = this.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); });
         if (compDetails) {
-            this.comp.setCompDetails(compDetails);
+            this.setCompDetails(compDetails);
         }
+    };
+    HeaderFilterCellCtrl.prototype.setCompDetails = function (compDetails) {
+        this.userCompDetails = compDetails;
+        this.comp.setCompDetails(compDetails);
     };
     HeaderFilterCellCtrl.prototype.showParentFilter = function () {
         var eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
@@ -215,14 +234,14 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             if (!compPromise) {
                 return;
             }
-            var parentModel = _this.filterManager.getCurrentFloatingFilterParentModel(_this.column);
             compPromise.then(function (comp) {
                 if (comp) {
+                    var parentModel = _this.filterManager.getCurrentFloatingFilterParentModel(_this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });
         };
-        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+        this.destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
         if (this.filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
@@ -236,9 +255,50 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);
         listener();
     };
+    HeaderFilterCellCtrl.prototype.setupFilterChangedListener = function () {
+        if (this.active) {
+            this.destroyFilterChangedListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+        }
+    };
     HeaderFilterCellCtrl.prototype.updateFilterButton = function () {
         if (!this.suppressFilterButton && this.comp) {
             this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+        }
+    };
+    HeaderFilterCellCtrl.prototype.onColDefChanged = function () {
+        var _this = this;
+        var _a, _b;
+        var wasActive = this.active;
+        this.setupActive();
+        var becomeActive = !wasActive && this.active;
+        if (wasActive && !this.active) {
+            (_a = this.destroySyncListener) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_b = this.destroyFilterChangedListener) === null || _b === void 0 ? void 0 : _b.call(this);
+        }
+        var newCompDetails = this.active
+            ? this.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); })
+            : null;
+        var compPromise = this.comp.getFloatingFilterComp();
+        if (!compPromise || !newCompDetails) {
+            this.updateCompDetails(newCompDetails, becomeActive);
+        }
+        else {
+            compPromise.then(function (compInstance) {
+                var _a;
+                if (!compInstance || ((_a = _this.userCompDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== newCompDetails.componentClass) {
+                    _this.updateCompDetails(newCompDetails, becomeActive);
+                }
+            });
+        }
+    };
+    HeaderFilterCellCtrl.prototype.updateCompDetails = function (compDetails, becomeActive) {
+        this.setCompDetails(compDetails);
+        // filter button and UI can change based on params, so always want to update
+        this.setupFilterButton();
+        this.setupUi();
+        if (becomeActive) {
+            this.setupSyncWithFilter();
+            this.setupFilterChangedListener();
         }
     };
     __decorate([

@@ -4,11 +4,23 @@ import { Text } from '../../../scene/shape/text';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDataContext, SeriesTooltip } from '../series';
 import { Label } from '../../label';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDatum, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { Point } from '../../../scene/point';
 import { AgCartesianSeriesLabelFormatterParams, AgTooltipRendererResult, AgBarSeriesFormatterParams, AgBarSeriesTooltipRendererParams, AgBarSeriesFormat, AgBarSeriesLabelPlacement, FontStyle, FontWeight } from '../../agChartOptions';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { ModuleContext } from '../../../util/module';
+interface BarNodeLabelDatum extends Readonly<Point> {
+    readonly text: string;
+    readonly fontStyle?: FontStyle;
+    readonly fontWeight?: FontWeight;
+    readonly fontSize: number;
+    readonly fontFamily: string;
+    readonly textAlign: CanvasTextAlign;
+    readonly textBaseline: CanvasTextBaseline;
+    readonly fill: string;
+}
 interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
     readonly yValue: number;
@@ -19,16 +31,7 @@ interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly stroke?: string;
     readonly colorIndex: number;
     readonly strokeWidth: number;
-    readonly label?: Readonly<Point> & {
-        readonly text: string;
-        readonly fontStyle?: FontStyle;
-        readonly fontWeight?: FontWeight;
-        readonly fontSize: number;
-        readonly fontFamily: string;
-        readonly textAlign: CanvasTextAlign;
-        readonly textBaseline: CanvasTextBaseline;
-        readonly fill: string;
-    };
+    readonly label?: BarNodeLabelDatum;
 }
 declare class BarSeriesLabel extends Label {
     formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string;
@@ -39,10 +42,9 @@ declare class BarSeriesTooltip extends SeriesTooltip {
 }
 export declare class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className: string;
-    static type: "bar";
+    static type: 'bar' | 'column';
     readonly label: BarSeriesLabel;
     tooltip: BarSeriesTooltip;
-    flipXY: boolean;
     fills: string[];
     strokes: string[];
     fillOpacity: number;
@@ -50,16 +52,14 @@ export declare class BarSeries extends CartesianSeries<SeriesNodeDataContext<Bar
     lineDash?: number[];
     lineDashOffset: number;
     formatter?: (params: AgBarSeriesFormatterParams<any>) => AgBarSeriesFormat;
-    constructor();
+    constructor(moduleCtx: ModuleContext);
     /**
      * Used to get the position of bars within each group.
      */
     private groupScale;
     protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection;
-    protected _xKey: string;
-    set xKey(value: string);
-    get xKey(): string;
-    xName: string;
+    xKey?: string;
+    xName?: string;
     private cumYKeyCount;
     private flatYKeys;
     hideInLegend: string[];
@@ -68,9 +68,7 @@ export declare class BarSeries extends CartesianSeries<SeriesNodeDataContext<Bar
     protected processYKeys(): void;
     visibles: boolean[];
     private processSeriesItemEnabled;
-    protected _grouped: boolean;
-    set grouped(value: boolean);
-    get grouped(): boolean;
+    grouped: boolean;
     stackGroups: Record<string, string[]>;
     protected getStackGroup(yKey: string): string | undefined;
     /**
@@ -81,14 +79,10 @@ export declare class BarSeries extends CartesianSeries<SeriesNodeDataContext<Bar
         [key in string]: string;
     };
     protected processYNames(): void;
-    /**
-     * The value to normalize the bars to.
-     * Should be a finite positive value or `undefined`.
-     * Defaults to `undefined` - bars are not normalized.
-     */
-    private _normalizedTo?;
-    set normalizedTo(value: number | undefined);
-    get normalizedTo(): number | undefined;
+    legendItemNames: {
+        [key in string]: string;
+    };
+    normalizedTo?: number;
     strokeWidth: number;
     shadow?: DropShadow;
     protected smallestDataInterval?: {
@@ -120,12 +114,40 @@ export declare class BarSeries extends CartesianSeries<SeriesNodeDataContext<Bar
         labelSelection: Selection<Text, BarNodeDatum>;
     }): Promise<void>;
     getTooltipHtml(nodeDatum: BarNodeDatum): string;
-    getLegendData(): LegendDatum[];
-    toggleSeriesItem(itemId: string, enabled: boolean): void;
+    getLegendData(): ChartLegendDatum[];
+    validateLegendData(): void;
+    onLegendItemClick(event: LegendItemClickChartEvent): void;
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent): void;
+    calculateVisibleDomain(): void;
+    animateEmptyUpdateReady({ datumSelections, labelSelections, }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+        labelSelections: Array<Selection<Text, BarNodeDatum>>;
+    }): void;
+    animateReadyUpdate({ datumSelections }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+    }): void;
+    animateReadyHighlight(highlightSelection: Selection<Rect, BarNodeDatum>): void;
+    animateReadyResize({ datumSelections }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+    }): void;
+    resetSelectionRects(selection: Selection<Rect, BarNodeDatum>): void;
     protected isLabelEnabled(): boolean;
     getBandScalePadding(): {
         inner: number;
         outer: number;
     };
+    protected getBarDirection(): ChartAxisDirection;
+    protected getCategoryDirection(): ChartAxisDirection;
+}
+export declare class ColumnSeries extends BarSeries {
+    static type: "column";
+    static className: string;
+    protected getBarDirection(): ChartAxisDirection;
+    protected getCategoryDirection(): ChartAxisDirection;
+    animateEmptyUpdateReady({ datumSelections, labelSelections, }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+        labelSelections: Array<Selection<Text, BarNodeDatum>>;
+    }): void;
 }
 export {};
+//# sourceMappingURL=barSeries.d.ts.map

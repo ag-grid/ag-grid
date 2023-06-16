@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v30.0.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -59,9 +59,11 @@ const HeaderRowContainerComp = (props) => {
             },
             // pinned only
             setPinnedContainerWidth: width => {
-                eGui.current.style.width = width;
-                eGui.current.style.minWidth = width;
-                eGui.current.style.maxWidth = width;
+                if (eGui.current) {
+                    eGui.current.style.width = width;
+                    eGui.current.style.minWidth = width;
+                    eGui.current.style.maxWidth = width;
+                }
             }
         };
         const ctrl = context.createBean(new core_1.HeaderRowContainerCtrl(props.pinned));

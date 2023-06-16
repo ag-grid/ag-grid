@@ -4,13 +4,18 @@ exports.PolarSeries = void 0;
 const series_1 = require("../series");
 const chartAxisDirection_1 = require("../../chartAxisDirection");
 class PolarSeries extends series_1.Series {
-    constructor({ useLabelLayer = false }) {
+    constructor({ moduleCtx, useLabelLayer = false, pickModes = [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH], }) {
         super({
+            moduleCtx,
             useLabelLayer,
-            pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            pickModes,
             directionKeys: {
                 [chartAxisDirection_1.ChartAxisDirection.X]: ['angleKey'],
                 [chartAxisDirection_1.ChartAxisDirection.Y]: ['radiusKey'],
+            },
+            directionNames: {
+                [chartAxisDirection_1.ChartAxisDirection.X]: ['angleName'],
+                [chartAxisDirection_1.ChartAxisDirection.Y]: ['radiusName'],
             },
         });
         /**
@@ -31,7 +36,7 @@ class PolarSeries extends series_1.Series {
     getLabelData() {
         return [];
     }
-    computeLabelsBBox(_options) {
+    computeLabelsBBox(_options, _seriesRect) {
         return null;
     }
 }

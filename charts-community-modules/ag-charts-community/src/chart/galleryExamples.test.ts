@@ -48,23 +48,23 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     SIMPLE_COLUMN_CHART_EXAMPLE: {
         options: examples.SIMPLE_COLUMN_CHART_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     GROUPED_COLUMN_EXAMPLE: {
         options: examples.GROUPED_COLUMN_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     STACKED_COLUMN_GRAPH_EXAMPLE: {
         options: examples.STACKED_COLUMN_GRAPH_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: {
         options: examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: {
         options: examples.COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     SIMPLE_PIE_CHART_EXAMPLE: {
         options: examples.SIMPLE_PIE_CHART_EXAMPLE,
@@ -128,11 +128,11 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     GROUPED_CATEGORY_AXIS_EXAMPLE: {
         options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['column'] }),
     },
     CROSS_LINES_EXAMPLE: {
         options: examples.CROSS_LINES_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
 };
 
@@ -213,8 +213,8 @@ describe('Gallery Examples', () => {
 
                 afterEach(() => {
                     chart.destroy();
-                    chart = null;
-                    options = null;
+                    chart = null!;
+                    options = null!;
                 });
 
                 it(`it should update chart instance as expected`, async () => {

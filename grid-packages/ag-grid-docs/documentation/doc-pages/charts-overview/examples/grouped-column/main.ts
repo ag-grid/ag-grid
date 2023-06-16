@@ -8,14 +8,15 @@ const options: AgChartOptions = {
   theme: {
     overrides: {
       column: {
-        legend: {
-          position: "bottom",
-        },
         series: {
           strokeWidth: 0,
           highlightStyle: {
             item: {
               strokeWidth: 1,
+            },
+            series: {
+              strokeWidth: 1,
+              dimOpacity: 0.2,
             },
           },
         },

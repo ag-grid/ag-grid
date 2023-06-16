@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -218,7 +220,6 @@ var ColumnFactory = /** @class */ (function (_super) {
         return colGroupDefMerged;
     };
     ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
-        var colDefMerged = this.mergeColDefs(colDef);
         // see if column already exists
         var column = this.findExistingColumn(colDef, existingColsCopy);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
@@ -228,11 +229,13 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
         if (!column) {
             // no existing column, need to create one
-            var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
+            var colDefMerged = this.mergeColDefs(colDef, colId);
             column = new column_1.Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         }
         else {
+            var colDefMerged = this.mergeColDefs(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -317,18 +320,13 @@ var ColumnFactory = /** @class */ (function (_super) {
             return false;
         });
     };
-    ColumnFactory.prototype.mergeColDefs = function (colDef) {
+    ColumnFactory.prototype.mergeColDefs = function (colDef, colId) {
         // start with empty merged definition
         var colDefMerged = {};
         // merge properties from default column definitions
         var defaultColDef = this.gridOptionsService.get('defaultColDef');
         object_1.mergeDeep(colDefMerged, defaultColDef, false, true);
-        // merge properties from column type properties
-        var columnType = colDef.type;
-        if (!columnType) {
-            columnType = defaultColDef && defaultColDef.type;
-        }
-        // if type of both colDef and defaultColDef, then colDef gets preference
+        var columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
         if (columnType) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
@@ -340,24 +338,11 @@ var ColumnFactory = /** @class */ (function (_super) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
             object_1.mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
+        this.dataTypeService.validateColDef(colDefMerged);
         return colDefMerged;
     };
-    ColumnFactory.prototype.assignColumnTypes = function (type, colDefMerged) {
-        var typeKeys = [];
-        if (type instanceof Array) {
-            var invalidArray = type.some(function (a) { return typeof a !== 'string'; });
-            if (invalidArray) {
-                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
-            }
-            else {
-                typeKeys = type;
-            }
-        }
-        else if (typeof type === 'string') {
-            typeKeys = type.split(',');
-        }
-        else {
-            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
+    ColumnFactory.prototype.assignColumnTypes = function (typeKeys, colDefMerged) {
+        if (!typeKeys.length) {
             return;
         }
         // merge user defined with default column types
@@ -388,6 +373,9 @@ var ColumnFactory = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('columnUtils')
     ], ColumnFactory.prototype, "columnUtils", void 0);
+    __decorate([
+        context_1.Autowired('dataTypeService')
+    ], ColumnFactory.prototype, "dataTypeService", void 0);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory'))
     ], ColumnFactory.prototype, "setBeans", null);

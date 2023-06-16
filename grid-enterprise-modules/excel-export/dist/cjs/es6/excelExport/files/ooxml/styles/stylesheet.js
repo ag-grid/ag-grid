@@ -275,14 +275,16 @@ const stylesheetFactory = {
         };
     }
 };
-exports.getStyleId = (name, currentSheet) => {
+const getStyleId = (name, currentSheet) => {
     return stylesMap[getStyleName(name, currentSheet)] || 0;
 };
-exports.registerStyles = (styles, _currentSheet) => {
+exports.getStyleId = getStyleId;
+const registerStyles = (styles, _currentSheet) => {
     currentSheet = _currentSheet;
     if (currentSheet === 1) {
         resetStylesheetValues();
     }
     styles.forEach(registerStyle);
 };
+exports.registerStyles = registerStyles;
 exports.default = stylesheetFactory;

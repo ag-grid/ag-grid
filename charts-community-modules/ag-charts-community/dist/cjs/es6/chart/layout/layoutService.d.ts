@@ -1,9 +1,6 @@
 import { BBox } from '../../scene/bbox';
 export declare type LayoutStage = 'start-layout' | 'before-series';
 export declare type AxisLabelLayout = {
-    baseline: 'hanging' | 'bottom' | 'middle';
-    align: 'start' | 'end' | 'center';
-    rotation: number;
     fractionDigits: number;
     padding: number;
     format?: string;
@@ -50,3 +47,4 @@ export declare class LayoutService {
     dispatchLayoutComplete(event: LayoutCompleteEvent): void;
 }
 export {};
+//# sourceMappingURL=layoutService.d.ts.map

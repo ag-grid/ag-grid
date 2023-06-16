@@ -1,6 +1,5 @@
-[[only-vue]]
-|
-|```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -11,7 +10,7 @@
 |const KEY_PAGE_END = 'End';
 |
 |const MyCellEditor = {
-|    template: `<input v-model="value" @keydown="onKeyDown" /lo>`,
+|    template: `&lt;input v-model="value" @keydown="onKeyDown" />`,
 |    data() {
 |        return {
 |            value: null
@@ -45,4 +44,5 @@
 |        this.value = this.params.value;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

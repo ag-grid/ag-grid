@@ -32,13 +32,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
     chartType: 'groupedColumn',
-    chartThemeOverrides: {
-      column: {
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }
   }
 
   params.api.createRangeChart(createRangeChartParams)

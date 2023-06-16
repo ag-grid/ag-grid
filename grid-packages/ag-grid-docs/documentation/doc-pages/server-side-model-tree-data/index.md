@@ -78,8 +78,9 @@ server-side row model:
 | }
 </snippet>
 
-[[note]]
-| Be careful not to get mixed up with the [Client-Side Tree Data](/tree-data/) configurations by mistake.
+<note>
+Be careful not to get mixed up with the [Client-Side Tree Data](../tree-data/) configurations by mistake.
+</note>
 
 The example below shows this in action where the following can be noted:
 

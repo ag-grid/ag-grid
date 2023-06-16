@@ -11,7 +11,7 @@ export class MedalCellRenderer implements ICellRendererAngularComp {
     public displayValue!: string;
 
     agInit(params: ICellRendererParams<IOlympicData, number>): void {
-        this.displayValue = new Array(params.value).fill('#').join('');
+        this.displayValue = new Array(params.value!).fill('#').join('');
     }
 
     refresh(params: ICellRendererParams) {

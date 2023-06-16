@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -64,12 +66,14 @@ var CsvCreator = /** @class */ (function (_super) {
         return 'csv';
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
-        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService;
+        var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
         var _b = params, processCellCallback = _b.processCellCallback, processHeaderCallback = _b.processHeaderCallback, processGroupHeaderCallback = _b.processGroupHeaderCallback, processRowGroupCallback = _b.processRowGroupCallback, suppressQuotes = _b.suppressQuotes, columnSeparator = _b.columnSeparator;
         return new CsvSerializingSession({
             columnModel: columnModel,
             valueService: valueService,
             gridOptionsService: gridOptionsService,
+            valueFormatterService: valueFormatterService,
+            valueParserService: valueParserService,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,
@@ -93,6 +97,12 @@ var CsvCreator = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsService')
     ], CsvCreator.prototype, "gridOptionsService", void 0);
+    __decorate([
+        Autowired('valueFormatterService')
+    ], CsvCreator.prototype, "valueFormatterService", void 0);
+    __decorate([
+        Autowired('valueParserService')
+    ], CsvCreator.prototype, "valueParserService", void 0);
     __decorate([
         PostConstruct
     ], CsvCreator.prototype, "postConstruct", null);

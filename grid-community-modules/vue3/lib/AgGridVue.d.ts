@@ -67,4 +67,4 @@ export declare const AgGridVue: import("vue").DefineComponent<{
     componentDependencies: String[];
     modules: Module[];
     modelValue: unknown[];
-}>;
+}, {}>;

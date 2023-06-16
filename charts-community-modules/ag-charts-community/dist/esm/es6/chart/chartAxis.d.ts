@@ -3,13 +3,13 @@ import { Axis, TickInterval } from '../axis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisModule, ModuleContext, ModuleInstanceMeta } from '../util/module';
-export declare function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection;
+import { AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 interface BoundSeries {
     type: string;
     getDomain(direction: ChartAxisDirection): any[];
     isEnabled(): boolean;
     getKeys(direction: ChartAxisDirection): string[];
+    getNames(direction: ChartAxisDirection): (string | undefined)[];
     visible: boolean;
     getBandScalePadding?(): {
         inner: number;
@@ -17,19 +17,20 @@ interface BoundSeries {
     };
 }
 export declare class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<S, D> {
-    private readonly moduleCtx;
     keys: string[];
-    direction: ChartAxisDirection;
     boundSeries: BoundSeries[];
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean;
-    protected readonly modules: Record<string, ModuleInstanceMeta>;
+    protected readonly modules: Record<string, {
+        instance: ModuleInstance;
+    }>;
     get type(): AgCartesianAxisType;
+    get direction(): ChartAxisDirection;
     protected useCalculatedTickCount(): boolean;
     protected constructor(moduleCtx: ModuleContext, scale: S);
-    protected _position: AgCartesianAxisPosition;
-    set position(value: AgCartesianAxisPosition);
-    get position(): AgCartesianAxisPosition;
+    position: AgCartesianAxisPosition;
+    update(primaryTickCount?: number): number | undefined;
+    protected updateDirection(): void;
     protected calculateDomain(): void;
     normaliseDataDomain(d: D[]): D[];
     isAnySeriesActive(): boolean;
@@ -39,5 +40,11 @@ export declare class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Sca
     removeModule(module: AxisModule): void;
     isModuleEnabled(module: AxisModule): boolean;
     destroy(): void;
+    protected getTitleFormatterParams(): {
+        direction: ChartAxisDirection;
+        boundSeries: import("./agChartOptions").AgAxisBoundSeries[];
+        defaultValue: string | undefined;
+    };
 }
 export {};
+//# sourceMappingURL=chartAxis.d.ts.map

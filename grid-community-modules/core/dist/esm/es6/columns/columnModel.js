@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -104,6 +104,9 @@ let ColumnModel = class ColumnModel extends BeanStub {
         const colsPreviouslyExisted = !!this.columnDefs;
         this.columnDefs = columnDefs;
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
+    }
+    recreateColumnDefs(source = 'api') {
+        this.onSharedColDefChanged(source);
     }
     destroyOldColumns(oldTree, newTree) {
         const oldObjectsById = {};
@@ -2384,9 +2387,6 @@ let ColumnModel = class ColumnModel extends BeanStub {
             }
         };
         this.gridColumns.forEach(checkFunc);
-        if (this.groupAutoColumns) {
-            this.groupAutoColumns.forEach(checkFunc);
-        }
     }
     getGroupDisplayColumns() {
         return this.groupDisplayColumns;
@@ -2397,7 +2397,6 @@ let ColumnModel = class ColumnModel extends BeanStub {
     updateDisplayedColumns(source) {
         const columnsForDisplay = this.calculateColumnsForDisplay();
         this.buildDisplayedTrees(columnsForDisplay);
-        this.calculateColumnsForGroupDisplay();
         // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
         // also called when group opened/closed
@@ -2509,6 +2508,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
@@ -2600,17 +2600,13 @@ let ColumnModel = class ColumnModel extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     refreshQuickFilterColumns() {
         var _a;
-        let columnsForQuickFilter;
+        let columnsForQuickFilter = (_a = (this.isPivotMode() ? this.secondaryColumns : this.primaryColumns)) !== null && _a !== void 0 ? _a : [];
         if (this.groupAutoColumns) {
-            columnsForQuickFilter = ((_a = this.primaryColumns) !== null && _a !== void 0 ? _a : []).concat(this.groupAutoColumns);
+            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
         }
-        else if (this.primaryColumns) {
-            columnsForQuickFilter = this.primaryColumns;
-        }
-        columnsForQuickFilter = columnsForQuickFilter !== null && columnsForQuickFilter !== void 0 ? columnsForQuickFilter : [];
-        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
-            : columnsForQuickFilter;
+        this.columnsForQuickFilter = this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')
+            ? columnsForQuickFilter
+            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
     placeLockedColumns(cols) {
         const left = [];
@@ -3084,6 +3080,8 @@ let ColumnModel = class ColumnModel extends BeanStub {
      * @returns whether auto cols have changed
      */
     createGroupAutoColumnsIfNeeded() {
+        const forceRecreateAutoGroups = this.forceRecreateAutoGroups;
+        this.forceRecreateAutoGroups = false;
         if (!this.autoGroupsNeedBuilding) {
             return false;
         }
@@ -3105,7 +3103,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
-            if (autoColsDifferent || this.forceRecreateAutoGroups) {
+            if (autoColsDifferent || forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
                 return true;
             }

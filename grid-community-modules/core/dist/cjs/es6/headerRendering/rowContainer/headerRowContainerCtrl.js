@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
     constructor(pinned) {
         super();
         this.hidden = false;
+        this.includeFloatingFilter = false;
         this.groupsRowCtrls = [];
         this.pinned = pinned;
     }
@@ -36,6 +37,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
         this.setupPinnedWidth();
         this.setupDragAndDrop(this.eViewport);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
         if (this.columnModel.isReady()) {
             this.refresh();
@@ -68,11 +70,11 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
             }
         };
         const refreshFilters = () => {
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
-            if (!includeFloatingFilter) {
+            if (!this.includeFloatingFilter) {
                 destroyPreviousComp();
                 return;
             }
@@ -114,6 +116,12 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     onGridColumnsChanged() {
         this.refresh(true);
+    }
+    onDisplayedColumnsChanged() {
+        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        if (this.includeFloatingFilter !== includeFloatingFilter) {
+            this.refresh(true);
+        }
     }
     setupCenterWidth() {
         if (this.pinned != null) {

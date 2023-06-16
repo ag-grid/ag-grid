@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -44,7 +46,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
         this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
-        this.addManagedListener(this.eFilterTextField.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
+        this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         var translate = this.localeService.getLocaleTextFunc();
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
@@ -84,7 +86,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         }
         this.onFilterTextChangedDebounced();
     };
-    PrimaryColsHeaderPanel.prototype.onMiniFilterKeyPress = function (e) {
+    PrimaryColsHeaderPanel.prototype.onMiniFilterKeyDown = function (e) {
         var _this = this;
         if (e.key === core_1.KeyCode.ENTER) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure

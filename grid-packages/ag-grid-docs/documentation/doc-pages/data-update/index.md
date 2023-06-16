@@ -2,15 +2,15 @@
 title: "Updating Data"
 ---
 
-[[only-javascript-or-angular-or-vue]]
+<framework-specific-section frameworks="javascript,angular,vue">
 |There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
+</framework-specific-section>
 
-
-[[only-react]]
-|<video-section id="_V5qFr62uhY" title="React Updating Datal" header="true">
-|There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
-|</video-section>
-
+<framework-specific-section frameworks="react">
+<video-section id="_V5qFr62uhY" title="React Updating Datal" header="true">
+There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
+</video-section>
+</framework-specific-section>
 
 ## Updates vs Edits vs Refresh
 
@@ -29,38 +29,32 @@ This page talks about updating data via the grid's API. It does not talk about t
 
 Updating data in the grid can be done in the following ways:
 
-- ### Row Data
+### Row Data
 
-    The easiest way to update data inside the grid is to replace the data you gave it with a fresh set of data. This is done by either updating the `rowData` bound property (if using a framework) or calling `api.setRowData(newData)`.
+The easiest way to update data inside the grid is to replace the data you gave it with a fresh set of data. This is done by either updating the `rowData` bound property (if using a framework) or calling `api.setRowData(newData)`.
 
-    See [Updating Row Data](/data-update-row-data/) for more details.
+See [Updating Row Data](/data-update-row-data/) for more details.
 
-    <br/>
+### Single Row / Cell
+Updates the value of a single row or cell. This is done by getting a reference to the Row Node and then calling either `rowNode.setData(data)` or `rowNode.setDataValue(col,value)`.
 
-- ### Single Row / Cell
-    Updates the value of a single row or cell. This is done by getting a reference to the Row Node and then calling either `rowNode.setData(data)` or `rowNode.setDataValue(col,value)`.
+There is no way to insert or remove rows with this method.
 
-    There is no way to insert or remove rows with this method.
-
-    See [Updating Single Row / Cell](/data-update-single-row-cell/) for more details.
-
-    <br/>
+See [Updating Single Row / Cell](/data-update-single-row-cell/) for more details.
     
-- ### Transaction
-    The grid takes a transaction containing rows to add, remove and update. This is done using `api.applyTransaction(transaction)`.
+### Transaction
+The grid takes a transaction containing rows to add, remove and update. This is done using `api.applyTransaction(transaction)`.
 
-    Use transactions for doing add, remove or update operations on a large number of rows that are infrequent.
+Use transactions for doing add, remove or update operations on a large number of rows that are infrequent.
 
-    If you are frequently updating rows (e.g. 5 or more updates a second), consider moving to [High Frequency](#high-frequency) instead (achieved with Async Transactions).
+If you are frequently updating rows (e.g. 5 or more updates a second), consider moving to [High Frequency](#high-frequency) instead (achieved with Async Transactions).
 
-    See [Transaction Updates](/data-update-transactions/) for more details.
+See [Transaction Updates](/data-update-transactions/) for more details.
 
-    <br/>
+### High Frequency
 
-- ### High Frequency
+High Frequency (achieved with Async Transactions) is a mechanism of applying many transactions over a small space of time and have the grid apply all the transactions in batches. The high frequency / batch method is for when you need the fastest possible way to process many continuous updates, such as providing a stream of updates to the grid. This is done using the API `api.applyTransactionAsync(transaction)`.
 
-    High Frequency (achieved with Async Transactions) is a mechanism of applying many transactions over a small space of time and have the grid apply all the transactions in batches. The high frequency / batch method is for when you need the fastest possible way to process many continuous updates, such as providing a stream of updates to the grid. This is done using the API `api.applyTransactionAsync(transaction)`.
+Use Async Transactions for doing add, remove or update operations that are frequent, e.g. for managing streaming updates into the grid of tens, hundreds or thousands of updates a second.
 
-    Use Async Transactions for doing add, remove or update operations that are frequent, e.g. for managing streaming updates into the grid of tens, hundreds or thousands of updates a second.
-
-    See [High Frequency Updates](/data-update-high-frequency/) for more details.
+See [High Frequency Updates](/data-update-high-frequency/) for more details.

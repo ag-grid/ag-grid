@@ -1,6 +1,6 @@
 import { AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, FieldDefinition, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
 
@@ -10,7 +10,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
@@ -29,12 +29,6 @@ export class ComboChartProxy extends CartesianChartProxy {
                 type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
-                title: {
-                    text: primaryYKeys.map(key => {
-                        const field = fieldsMap.get(key);
-                        return field ? field.displayName : key;
-                    }).join(' / '),
-                },
             });
         }
 
@@ -50,9 +44,6 @@ export class ComboChartProxy extends CartesianChartProxy {
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                    title: {
-                        text: field ? field.displayName! : secondaryYKey,
-                    },
                 }
 
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));
@@ -71,20 +62,22 @@ export class ComboChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateChartParams): any {
+    public getSeries(params: UpdateParams): any {
         const { fields, category, seriesChartTypes } = params;
 
         return fields.map(field => {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
+                const grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
+                const groupedOpts = grouped ? { grouped: true } : {};
                 return {
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
                     yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
                     stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
+                    ...groupedOpts,
                 }
             }
         });

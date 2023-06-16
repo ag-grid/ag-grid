@@ -227,9 +227,7 @@ export class AppComponent {
                         })
                     });
                 } else if (deselectCheck) {
-                    nodes.forEach(function (node) {
-                        node.setSelected(false);
-                    });
+                    this.leftApi.setNodesSelected({ nodes, newValue: false });
                 }
             }
         });

@@ -102,7 +102,8 @@ const NOT_SPECIFIED = Symbol('<unspecified-property>');
  * @returns the combination of all of the json inputs
  */
 export function jsonMerge(json, opts) {
-    const avoidDeepClone = (opts === null || opts === void 0 ? void 0 : opts.avoidDeepClone) || [];
+    var _a;
+    const avoidDeepClone = (_a = opts === null || opts === void 0 ? void 0 : opts.avoidDeepClone) !== null && _a !== void 0 ? _a : [];
     const jsonTypes = json.map((v) => classify(v));
     if (jsonTypes.some((v) => v === 'array')) {
         // Clone final array.
@@ -168,10 +169,10 @@ export function jsonMerge(json, opts) {
  * @param params.allowedTypes overrides by path for allowed property types
  */
 export function jsonApply(target, source, params = {}) {
-    var _a;
+    var _a, _b;
     const { path = undefined, matcherPath = path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined, skip = [], constructors = {}, allowedTypes = {}, idx, } = params;
     if (target == null) {
-        throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`);
+        throw new Error(`AG Charts - target is uninitialised: ${path !== null && path !== void 0 ? path : '<root>'}`);
     }
     if (source == null) {
         return target;
@@ -190,7 +191,7 @@ export function jsonApply(target, source, params = {}) {
         const propertyPath = `${path ? path + '.' : ''}${property}`;
         const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];
-        let ctr = (_a = constructors[property]) !== null && _a !== void 0 ? _a : constructors[propertyMatcherPath];
+        let ctr = (_a = constructors[propertyMatcherPath]) !== null && _a !== void 0 ? _a : constructors[property];
         try {
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
@@ -199,7 +200,7 @@ export function jsonApply(target, source, params = {}) {
                 Logger.warn(`unable to set [${propertyPath}] in ${targetClass === null || targetClass === void 0 ? void 0 : targetClass.name} - property is unknown`);
                 continue;
             }
-            const allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
+            const allowableTypes = (_b = allowedTypes[propertyMatcherPath]) !== null && _b !== void 0 ? _b : [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             }
@@ -254,8 +255,9 @@ export function jsonApply(target, source, params = {}) {
  * @param jsons to traverse in parallel
  */
 export function jsonWalk(json, visit, opts, ...jsons) {
+    var _a;
     const jsonType = classify(json);
-    const skip = opts.skip || [];
+    const skip = (_a = opts.skip) !== null && _a !== void 0 ? _a : [];
     if (jsonType === 'array') {
         json.forEach((element, index) => {
             jsonWalk(element, visit, opts, ...(jsons !== null && jsons !== void 0 ? jsons : []).map((o) => o === null || o === void 0 ? void 0 : o[index]));
@@ -278,6 +280,7 @@ export function jsonWalk(json, visit, opts, ...jsons) {
         }
     }
 }
+const isBrowser = typeof window !== 'undefined';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
@@ -285,7 +288,7 @@ function classify(value) {
     if (value == null) {
         return null;
     }
-    else if (value instanceof HTMLElement) {
+    else if (isBrowser && value instanceof HTMLElement) {
         return 'primitive';
     }
     else if (value instanceof Array) {

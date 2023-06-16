@@ -1,6 +1,7 @@
 import classnames from 'classnames';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Icon } from '../../components/Icon';
+import { trackBuyButton } from '../../utils/analytics';
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
@@ -112,7 +113,15 @@ const License = (props: LicenseData) => {
                 </div>
 
                 <div className={styles.licenseActions}>
-                    <a className="button" href={buyLink}>
+                    <a
+                        className="button"
+                        href={buyLink}
+                        onClick={() => {
+                            trackBuyButton({
+                                type: id,
+                            });
+                        }}
+                    >
                         Buy now
                     </a>
                 </div>
@@ -123,12 +132,16 @@ const License = (props: LicenseData) => {
     );
 };
 
-export const Licenses = () => {
-    return DEV_LICENSE_DATA.map((data) => {
-        return (
-            <div key={data.name} className={classnames(styles.license, data.className, 'ag-card', data.id)}>
-                <License {...data} />
-            </div>
-        );
-    });
+export const Licenses: FunctionComponent = () => {
+    return (
+        <>
+            {DEV_LICENSE_DATA.map((data) => {
+                return (
+                    <div key={data.name} className={classnames(styles.license, data.className, 'card', data.id)}>
+                        <License {...data} />
+                    </div>
+                );
+            })}
+        </>
+    );
 };

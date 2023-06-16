@@ -1,5 +1,5 @@
 import { AgCartesianAxisOptions, AgLineSeriesOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class LineChartProxy extends CartesianChartProxy {
@@ -8,7 +8,7 @@ export class LineChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
@@ -21,7 +21,7 @@ export class LineChartProxy extends CartesianChartProxy {
         ];
     }
 
-    public getSeries(params: UpdateChartParams) {
+    public getSeries(params: UpdateParams) {
         const series: AgLineSeriesOptions[] = params.fields.map(f => (
             {
                 type: this.standaloneChartType,

@@ -12,8 +12,9 @@ test('domain', () => {
 test('range', () => {
     const scale = new ColorScale();
 
-    expect(scale.range).toEqual(['red', 'green']);
+    expect(scale.range).toEqual(['red', 'blue']);
     scale.range = ['black', '#ffffff'];
+    scale.update();
     expect(scale.range).toEqual(['black', '#ffffff']);
 });
 
@@ -22,6 +23,7 @@ test('convert', () => {
 
     scale.domain = [-100, 100];
     scale.range = ['black', '#ffffff'];
+    scale.update();
 
     expect(scale.convert(-101)).toBe('black');
     expect(scale.convert(-100)).toBe('black');
@@ -35,6 +37,7 @@ test('multi-color range', () => {
 
     scale.domain = [-100, 100];
     scale.range = ['black', 'red', '#ffffff'];
+    scale.update();
 
     expect(scale.convert(-101)).toBe('black');
     expect(scale.convert(-100)).toBe('black');
@@ -50,6 +53,7 @@ test('multi-value domain', () => {
 
     scale.domain = [0, 100, 500];
     scale.range = ['black', 'red', '#ffffff'];
+    scale.update();
 
     expect(scale.convert(-1)).toBe('black');
     expect(scale.convert(0)).toBe('black');

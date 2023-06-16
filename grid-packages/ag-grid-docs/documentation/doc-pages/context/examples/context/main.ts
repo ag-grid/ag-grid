@@ -8,6 +8,7 @@ const columnDefs: ColDef[] = [
     field: 'price',
     cellStyle: { 'text-align': 'right' },
     cellRenderer: getCurrencyCellRenderer(),
+    cellDataType: false,
   },
   {
     headerName: 'Report Price',

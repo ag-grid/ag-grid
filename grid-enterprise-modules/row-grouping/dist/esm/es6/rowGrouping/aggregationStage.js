@@ -4,8 +4,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Bean, BeanStub, Autowired, _ } from "@ag-grid-community/core";
+import { Bean, BeanStub, Autowired, _, PostConstruct, } from "@ag-grid-community/core";
 let AggregationStage = class AggregationStage extends BeanStub {
+    init() {
+        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
+        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', (propChange) => this.alwaysAggregateAtRootLevel = propChange.currentValue);
+        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
+        this.addManagedPropertyListener('groupIncludeTotalFooter', (propChange) => this.groupIncludeTotalFooter = propChange.currentValue);
+    }
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     execute(params) {
@@ -15,24 +21,13 @@ let AggregationStage = class AggregationStage extends BeanStub {
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
         const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
-        const noUserAgg = !this.getGroupRowAggFunc();
+        const noUserAgg = !this.gridOptionsService.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
             return;
         }
         const aggDetails = this.createAggDetails(params);
         this.recursivelyCreateAggData(aggDetails);
-    }
-    getGroupRowAggFunc() {
-        const getGroupRowAgg = this.gridOptionsService.getCallback('getGroupRowAgg');
-        if (getGroupRowAgg) {
-            return getGroupRowAgg;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const groupRowAggNodes = this.gridOptionsService.get('groupRowAggNodes');
-        if (groupRowAggNodes) {
-            return (params) => groupRowAggNodes(params.nodes);
-        }
     }
     createAggDetails(params) {
         const pivotActive = this.columnModel.isPivotActive();
@@ -63,13 +58,12 @@ let AggregationStage = class AggregationStage extends BeanStub {
                 // never agg data for leaf nodes
                 return;
             }
-            //Optionally prevent the aggregation at the root Node
-            //https://ag-grid.atlassian.net/browse/AG-388
+            //Optionally enable the aggregation at the root Node
             const isRootNode = rowNode.level === -1;
-            if (isRootNode) {
+            // if total footer is displayed, the value is in use
+            if (isRootNode && !this.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
-                const suppressAggAtRootLevel = this.gridOptionsService.is('suppressAggAtRootLevel');
-                if (suppressAggAtRootLevel && notPivoting) {
+                if (!this.alwaysAggregateAtRootLevel && notPivoting) {
                     return;
                 }
             }
@@ -80,7 +74,7 @@ let AggregationStage = class AggregationStage extends BeanStub {
     aggregateRowNode(rowNode, aggDetails) {
         const measureColumnsMissing = aggDetails.valueColumns.length === 0;
         const pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        const userFunc = this.getGroupRowAggFunc();
+        const userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
         let aggResult;
         if (userFunc) {
             const params = { nodes: rowNode.childrenAfterFilter };
@@ -238,6 +232,9 @@ __decorate([
 __decorate([
     Autowired('columnApi')
 ], AggregationStage.prototype, "columnApi", void 0);
+__decorate([
+    PostConstruct
+], AggregationStage.prototype, "init", null);
 AggregationStage = __decorate([
     Bean('aggregationStage')
 ], AggregationStage);

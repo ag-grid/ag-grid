@@ -1,7 +1,8 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext } from '../series';
-import { LegendDatum } from '../../legendDatum';
+import { BBox } from '../../../scene/bbox';
+import { ChartLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDatum, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
@@ -10,6 +11,8 @@ import { Text } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { Point } from '../../../scene/point';
 import { AgCartesianSeriesTooltipRendererParams, AgCartesianSeriesLabelFormatterParams, FontStyle, FontWeight, AgTooltipRendererResult } from '../../agChartOptions';
+import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { ModuleContext } from '../../../util/module';
 interface FillSelectionDatum {
     readonly itemId: string;
     readonly points: {
@@ -65,11 +68,9 @@ export declare class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContex
     strokeOpacity: number;
     lineDash?: number[];
     lineDashOffset: number;
-    constructor();
-    protected _xKey: string;
-    set xKey(value: string);
-    get xKey(): string;
-    xName: string;
+    constructor(moduleCtx: ModuleContext);
+    xKey?: string;
+    xName?: string;
     protected _yKeys: string[];
     set yKeys(values: string[]);
     get yKeys(): string[];
@@ -88,17 +89,6 @@ export declare class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContex
     getDomain(direction: ChartAxisDirection): any[];
     createNodeData(): Promise<AreaSeriesNodeDataContext[]>;
     protected isPathOrSelectionDirty(): boolean;
-    protected updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        contextData: AreaSeriesNodeDataContext;
-        paths: Path[];
-    }): Promise<void>;
-    protected updatePathNodes(opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void>;
     protected markerFactory(): Marker;
     protected updateMarkerSelection(opts: {
         nodeData: MarkerSelectionDatum[];
@@ -118,7 +108,21 @@ export declare class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContex
     protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any>;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeDoubleClickEvent<any>;
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string;
-    getLegendData(): LegendDatum[];
+    getLegendData(): ChartLegendDatum[];
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent): void;
+    animateEmptyUpdateReady({ markerSelections, labelSelections, contextData, paths, seriesRect, }: {
+        markerSelections: Array<Selection<Marker, MarkerSelectionDatum>>;
+        labelSelections: Array<Selection<Text, LabelSelectionDatum>>;
+        contextData: Array<AreaSeriesNodeDataContext>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }): void;
+    animateReadyUpdate({ contextData, paths, }: {
+        contextData: Array<AreaSeriesNodeDataContext>;
+        paths: Array<Array<Path>>;
+    }): void;
+    private animateFormatter;
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=areaSeries.d.ts.map

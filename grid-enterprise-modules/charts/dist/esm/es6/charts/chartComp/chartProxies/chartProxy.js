@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { AgChart, _Theme } from "ag-charts-community";
+import { _Theme, AgChart } from "ag-charts-community";
 import { getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
 import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
@@ -75,14 +75,14 @@ export class ChartProxy {
         }
         return data;
     }
-    getCommonChartOptions() {
+    getCommonChartOptions(updatedOverrides) {
         var _a, _b;
         // Only apply active overrides if chart is initialised.
         const existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions()) !== null && _b !== void 0 ? _b : {};
         const formattingPanelOverrides = this.chart != null ?
             { overrides: this.getActiveFormattingPanelOverrides() } : {};
         this.clearThemeOverrides = false;
-        return Object.assign(Object.assign({}, existingOptions), { theme: Object.assign(Object.assign({}, createAgChartTheme(this.chartProxyParams, this)), formattingPanelOverrides), container: this.chartProxyParams.parentElement, mode: 'integrated' });
+        return Object.assign(Object.assign({}, existingOptions), { theme: Object.assign(Object.assign({}, createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
     }
     getActiveFormattingPanelOverrides() {
         var _a, _b;
@@ -90,8 +90,7 @@ export class ChartProxy {
             return {};
         }
         const inUseTheme = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions().theme;
-        const overrides = (_b = inUseTheme === null || inUseTheme === void 0 ? void 0 : inUseTheme.overrides) !== null && _b !== void 0 ? _b : {};
-        return overrides;
+        return (_b = inUseTheme === null || inUseTheme === void 0 ? void 0 : inUseTheme.overrides) !== null && _b !== void 0 ? _b : {};
     }
     destroy({ keepChartInstance = false } = {}) {
         if (keepChartInstance) {

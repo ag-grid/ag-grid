@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeprecatedAndRenamedTo = exports.Deprecated = exports.createDeprecationWarning = void 0;
+exports.DeprecatedAndRenamedTo = exports.Deprecated = void 0;
 var decorator_1 = require("./decorator");
 var logger_1 = require("./logger");
 function createDeprecationWarning() {
@@ -9,7 +9,6 @@ function createDeprecationWarning() {
         logger_1.Logger.warnOnce(msg);
     };
 }
-exports.createDeprecationWarning = createDeprecationWarning;
 function Deprecated(message, opts) {
     var def = opts === null || opts === void 0 ? void 0 : opts.default;
     var warn = createDeprecationWarning();

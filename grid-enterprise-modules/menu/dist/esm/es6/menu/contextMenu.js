@@ -13,7 +13,7 @@ let ContextMenuFactory = class ContextMenuFactory extends BeanStub {
     }
     getMenuItems(node, column, value) {
         const defaultMenuOptions = [];
-        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gridOptionsService.is('suppressCutToClipboard')) {
@@ -22,7 +22,7 @@ let ContextMenuFactory = class ContextMenuFactory extends BeanStub {
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.isRegistered(ModuleNames.GridChartsModule)) {
+        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -32,8 +32,8 @@ let ContextMenuFactory = class ContextMenuFactory extends BeanStub {
         }
         if (_.exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
-            const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
+            const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
+            const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
             const suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();

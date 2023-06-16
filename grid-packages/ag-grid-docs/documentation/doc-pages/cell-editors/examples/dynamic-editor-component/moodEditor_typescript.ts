@@ -22,7 +22,7 @@ export class MoodEditor implements ICellEditorComp {
     init(params: ICellEditorParams) {
         this.container = document.createElement('div');
         this.container.className = 'mood'
-        this.container.tabIndex = '0';                // to allow the div to capture keypresses
+        this.container.tabIndex = '0';                // to allow the div to capture events
 
         this.happyImg = document.createElement('img');
         this.happyImg.src = 'https://www.ag-grid.com/example-assets/smileys/happy.png';

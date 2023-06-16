@@ -226,7 +226,7 @@ export const AXIS_TICK_MAX_SPACING: AgChartOptions = {
 export const AXIS_TICK_MIN_MAX_SPACING: AgChartOptions = {
     ...examples.GROUPED_COLUMN_EXAMPLE,
     axes: [
-        { type: 'category', position: 'bottom', tick: { minSpacing: 150, maxSpacing: 250 } },
+        { type: 'category', position: 'bottom', tick: { minSpacing: 150 } },
         { type: 'number', position: 'left', tick: { minSpacing: 50, maxSpacing: 100 } },
     ],
 };

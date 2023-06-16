@@ -12,10 +12,11 @@ Users can change the contents of cells through the following grid features:
 - [Copy / Paste](/clipboard/)
 - [Fill Handle](/range-selection-fill-handle/)
 
-[[note]]
-| This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid
-| operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
-| undo / redo stacks.
+<note>
+This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing data updates (except for cell edits), or grid
+operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
+undo / redo stacks.
+</note>
 
 ## Enabling Undo / Redo
 
@@ -162,26 +163,21 @@ const gridOptions = {
 
 Complex object cell values must be immutable. If the cell values are mutated, undo / redo will not be able to restore the original values. This means that the Value Parser must return a new complex object.
 
-When using a [Fill Handle](/range-selection-fill-handle/) with a horizontal fill direction and your columns do not all have same complex object type, you will need to implement a [Custom User Function](/range-selection-fill-handle/#custom-user-function). Note that the fill values provided to the function could be complex objects from any column, which you will need to handle.
-
-[Clipboard](/clipboard/) operations (copy/paste) use string values, so complex objects require [Processing Pasted Data](/clipboard/#processing-pasted-data) to convert between complex objects and strings.
+Using the [Cell Data Type](/cell-data-types/) `object` presets many of the grid features to allow complex objects to work without further configuration by leveraging the [Value Formatter](/value-formatters/) and Value Parser. 
 
 The following example demonstrates how to use complex objects with undo / redo.
 - For column **A**:
     - A Value Getter is used to create complex objects from the data.
-    - The complex objects have a `toString` property used for rendering.
+    - A Value Formatter is used to convert the complex objects into strings for rendering.
     - A Value Setter is used to update the data from the complex objects (the inverse of the Value Getter).
-    - A Value Parser is used to convert the string values produced from cell editing into complex objects (the inverse of the `toString` method).
+    - A Value Parser is used to convert the string values produced from cell editing into complex objects (the inverse of the Value Formatter).
     - A Column Definition `equals` function is provided to compare the complex objects (without this the grid would use reference equality, but this won't work here as the Value Getter returns a new object each time).
 - For column **B**:
     - The column values are complex objects.
-    - A [Value Formatter](/value-formatters/) is used to convert the complex objects into strings for rendering.
+    - A Value Formatter is used to convert the complex objects into strings for rendering.
     - A Value Parser is used to convert the string values produced from cell editing into complex objects (the inverse of the Value Formatter).
-    - [Dynamic Parameters](/cell-editors/#dynamic-parameters) are provided to the cell editor to display a string value when you edit the cell (column **A** didn't need this as it has a `toString` property).
 - For all columns:
-    - `fillHandleDirection = 'y'` which prevents the Fill Handle from being used to drag values between the columns, as they have different complex object formats.
-    - `processCellForClipboard` is implemented, which converts complex object values into strings when copying cell values.
-    - `processCellFromClipboard` is implemented, which converts string values into complex objects when pasting cell values.
+    - The cell data type is set to `object` to allow other grid features to work, such as the fill handle, copy, paste, etc.
 - Try the following actions:
     - **Cell Editing**: click and edit some cell values.
     - **Fill Handle**: drag the fill handle to change a range of cells.

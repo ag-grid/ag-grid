@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -65,9 +67,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColumnModel = void 0;
@@ -156,6 +159,10 @@ var ColumnModel = /** @class */ (function (_super) {
         var colsPreviouslyExisted = !!this.columnDefs;
         this.columnDefs = columnDefs;
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
+    };
+    ColumnModel.prototype.recreateColumnDefs = function (source) {
+        if (source === void 0) { source = 'api'; }
+        this.onSharedColDefChanged(source);
     };
     ColumnModel.prototype.destroyOldColumns = function (oldTree, newTree) {
         var oldObjectsById = {};
@@ -1518,11 +1525,11 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     ColumnModel.prototype.getPrimaryAndSecondaryAndAutoColumns = function () {
         var _a;
-        return (_a = []).concat.apply(_a, __spread([
+        return (_a = []).concat.apply(_a, [
             this.primaryColumns || [],
             this.groupAutoColumns || [],
             this.secondaryColumns || [],
-        ]));
+        ]);
     };
     ColumnModel.prototype.createStateItemFromColumn = function (column) {
         var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
@@ -2531,9 +2538,6 @@ var ColumnModel = /** @class */ (function (_super) {
             }
         };
         this.gridColumns.forEach(checkFunc);
-        if (this.groupAutoColumns) {
-            this.groupAutoColumns.forEach(checkFunc);
-        }
     };
     ColumnModel.prototype.getGroupDisplayColumns = function () {
         return this.groupDisplayColumns;
@@ -2544,7 +2548,6 @@ var ColumnModel = /** @class */ (function (_super) {
     ColumnModel.prototype.updateDisplayedColumns = function (source) {
         var columnsForDisplay = this.calculateColumnsForDisplay();
         this.buildDisplayedTrees(columnsForDisplay);
-        this.calculateColumnsForGroupDisplay();
         // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
         // also called when group opened/closed
@@ -2654,11 +2657,12 @@ var ColumnModel = /** @class */ (function (_super) {
             // if group columns has changed, we don't preserve the group column order, so remove them from the old order
             sortOrderToRecover = sortOrderToRecover.filter(function (col) { return !groupAutoColsMap_1.has(col); });
             // and add them to the start of the order
-            sortOrderToRecover = __spread(this.groupAutoColumns, sortOrderToRecover);
+            sortOrderToRecover = __spreadArray(__spreadArray([], __read(this.groupAutoColumns)), __read(sortOrderToRecover));
         }
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
@@ -2735,7 +2739,7 @@ var ColumnModel = /** @class */ (function (_super) {
             }
             // find index of last column in the group
             var indexes = siblings.map(function (col) { return newGridColumns.indexOf(col); });
-            var lastIndex = Math.max.apply(Math, __spread(indexes));
+            var lastIndex = Math.max.apply(Math, __spreadArray([], __read(indexes)));
             array_1.insertIntoArray(newGridColumns, newCol, lastIndex + 1);
         });
         this.gridColumns = newGridColumns;
@@ -2750,17 +2754,13 @@ var ColumnModel = /** @class */ (function (_super) {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     ColumnModel.prototype.refreshQuickFilterColumns = function () {
         var _a;
-        var columnsForQuickFilter;
+        var columnsForQuickFilter = (_a = (this.isPivotMode() ? this.secondaryColumns : this.primaryColumns)) !== null && _a !== void 0 ? _a : [];
         if (this.groupAutoColumns) {
-            columnsForQuickFilter = ((_a = this.primaryColumns) !== null && _a !== void 0 ? _a : []).concat(this.groupAutoColumns);
+            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
         }
-        else if (this.primaryColumns) {
-            columnsForQuickFilter = this.primaryColumns;
-        }
-        columnsForQuickFilter = columnsForQuickFilter !== null && columnsForQuickFilter !== void 0 ? columnsForQuickFilter : [];
-        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(function (col) { return col.isVisible() || col.isRowGroupActive(); })
-            : columnsForQuickFilter;
+        this.columnsForQuickFilter = this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')
+            ? columnsForQuickFilter
+            : columnsForQuickFilter.filter(function (col) { return col.isVisible() || col.isRowGroupActive(); });
     };
     ColumnModel.prototype.placeLockedColumns = function (cols) {
         var left = [];
@@ -2778,7 +2778,7 @@ var ColumnModel = /** @class */ (function (_super) {
                 normal.push(col);
             }
         });
-        return __spread(left, normal, right);
+        return __spreadArray(__spreadArray(__spreadArray([], __read(left)), __read(normal)), __read(right));
     };
     ColumnModel.prototype.addAutoGroupToGridColumns = function () {
         if (generic_1.missing(this.groupAutoColumns)) {
@@ -3239,6 +3239,8 @@ var ColumnModel = /** @class */ (function (_super) {
      * @returns whether auto cols have changed
      */
     ColumnModel.prototype.createGroupAutoColumnsIfNeeded = function () {
+        var forceRecreateAutoGroups = this.forceRecreateAutoGroups;
+        this.forceRecreateAutoGroups = false;
         if (!this.autoGroupsNeedBuilding) {
             return false;
         }
@@ -3260,7 +3262,7 @@ var ColumnModel = /** @class */ (function (_super) {
             var autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
-            if (autoColsDifferent || this.forceRecreateAutoGroups) {
+            if (autoColsDifferent || forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
                 return true;
             }
@@ -3338,7 +3340,7 @@ var ColumnModel = /** @class */ (function (_super) {
         var displayedHeights = this.getAllDisplayedColumns()
             .filter(function (col) { return col.isAutoHeaderHeight(); })
             .map(function (col) { return col.getAutoHeaderHeight() || 0; });
-        return Math.max.apply(Math, __spread([defaultHeight], displayedHeights));
+        return Math.max.apply(Math, __spreadArray([defaultHeight], __read(displayedHeights)));
     };
     ColumnModel.prototype.getHeaderHeight = function () {
         var _a;

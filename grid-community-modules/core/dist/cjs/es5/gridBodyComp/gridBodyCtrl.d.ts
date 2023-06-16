@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -13,9 +13,7 @@ export declare enum RowAnimationCssClasses {
     ANIMATION_ON = "ag-row-animation",
     ANIMATION_OFF = "ag-row-no-animation"
 }
-export declare const CSS_CLASS_CELL_SELECTABLE = "ag-selectable";
 export declare const CSS_CLASS_FORCE_VERTICAL_SCROLL = "ag-force-vertical-scroll";
-export declare const CSS_CLASS_COLUMN_MOVING = "ag-column-moving";
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
@@ -35,6 +33,7 @@ export interface IGridBodyComp extends LayoutView {
     setBodyViewportWidth(width: string): void;
 }
 export declare class GridBodyCtrl extends BeanStub {
+    private animationFrameService;
     private rowContainerHeightService;
     private ctrlsService;
     private columnModel;

@@ -1,10 +1,20 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { RenderContext } from '../node';
-import { FontStyle, FontWeight } from '../../chart/agChartOptions';
+import { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
+export interface TextSizeProperties {
+    fontFamily: string;
+    fontSize: number;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    lineHeight?: number;
+    textBaseline?: CanvasTextBaseline;
+    textAlign?: CanvasTextAlign;
+}
 export declare class Text extends Shape {
     static className: string;
-    protected static defaultStyles: {
+    static defaultLineHeightRatio: number;
+    static defaultStyles: {
         fill: string;
         stroke: undefined;
         strokeWidth: number;
@@ -25,8 +35,8 @@ export declare class Text extends Shape {
     x: number;
     y: number;
     private lines;
-    private _splitText;
-    text: string;
+    private _setLines;
+    text?: string;
     private _dirtyFont;
     private _font?;
     get font(): string;
@@ -38,12 +48,28 @@ export declare class Text extends Shape {
     textBaseline: CanvasTextBaseline;
     lineHeight?: number;
     computeBBox(): BBox;
-    private getPreciseBBox;
-    private getVerticalOffset;
-    private getApproximateBBox;
     private getLineHeight;
     isPointInPath(x: number, y: number): boolean;
     render(renderCtx: RenderContext): void;
     private renderLines;
+    static wrap(text: string, maxWidth: number, maxHeight: number, textProps: TextSizeProperties, wrapping: TextWrap): string;
+    private static wrapLine;
+    private static punctuationMarks;
+    private static breakWord;
+    private static truncateLine;
+    private static wrapLineSequentially;
+    private static wrapLineBalanced;
 }
-export declare function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string;
+interface TextMeasurer {
+    size(text: string): {
+        width: number;
+        height: number;
+    };
+    width(line: string): number;
+}
+export declare function createTextMeasurer(font: string): TextMeasurer;
+export declare function getFont(fontProps: TextSizeProperties): string;
+export declare function measureText(lines: string[], x: number, y: number, textProps: TextSizeProperties): BBox;
+export declare function splitText(text?: string): string[];
+export {};
+//# sourceMappingURL=text.d.ts.map

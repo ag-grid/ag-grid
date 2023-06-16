@@ -28,9 +28,7 @@ In the example below, note the following:
 
 - When you drag from one grid to another, a line will appear indicating where the row will be placed.
 
-- Rows can be dragged from one grid to the other grid. When the row is received, it is **not**
-removed from the first grid. This is the choice of the example. The example could equally have removed
-from the other grid.
+- Rows can be dragged from one grid to the other grid. When the row is received, it is **not** removed from the first grid. This is the choice of the example. The example could equally have removed from the other grid.
 
 - Rows can be removed from both grids by dragging the row to the 'Trash' drop zone.
 

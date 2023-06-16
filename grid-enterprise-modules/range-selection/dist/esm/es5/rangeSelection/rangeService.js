@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -44,9 +46,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -216,7 +219,7 @@ var RangeService = /** @class */ (function (_super) {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spread([colToMove], otherCols) : __spread(otherCols, [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArray([colToMove], __read(otherCols)) : __spreadArray(__spreadArray([], __read(otherCols)), [colToMove]);
             }
             else {
                 cellRange.columns = otherCols;
@@ -304,9 +307,17 @@ var RangeService = /** @class */ (function (_super) {
     RangeService.prototype.setNewestRangeStartCell = function (position) {
         this.newestRangeStartCell = position;
     };
-    RangeService.prototype.clearCellRangeCellValues = function (cellRanges, source) {
+    RangeService.prototype.clearCellRangeCellValues = function (params) {
         var _this = this;
-        if (source === void 0) { source = 'rangeService'; }
+        var cellRanges = params.cellRanges;
+        var _a = params.cellEventSource, cellEventSource = _a === void 0 ? 'rangeService' : _a, dispatchWrapperEvents = params.dispatchWrapperEvents, _b = params.wrapperEventSource, wrapperEventSource = _b === void 0 ? 'deleteKey' : _b;
+        if (dispatchWrapperEvents) {
+            var startEvent = {
+                type: Events.EVENT_RANGE_DELETE_START,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(startEvent);
+        }
         if (!cellRanges) {
             cellRanges = this.cellRanges;
         }
@@ -321,10 +332,17 @@ var RangeService = /** @class */ (function (_super) {
                     if (!column || !column.isCellEditable(rowNode)) {
                         return;
                     }
-                    rowNode.setDataValue(column, null, source);
+                    rowNode.setDataValue(column, null, cellEventSource);
                 }
             });
         });
+        if (dispatchWrapperEvents) {
+            var endEvent = {
+                type: Events.EVENT_RANGE_DELETE_END,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(endEvent);
+        }
     };
     RangeService.prototype.createCellRangeFromCellRangeParams = function (params) {
         var _this = this;
@@ -415,7 +433,7 @@ var RangeService = /** @class */ (function (_super) {
                 var currentRangeColIds = range.columns.map(function (col) { return col.getId(); });
                 if (columns) {
                     var filteredColumns = currentRangeColIds.filter(function (col) { return columns.indexOf(col) === -1; });
-                    columns.push.apply(columns, __spread(filteredColumns));
+                    columns.push.apply(columns, __spreadArray([], __read(filteredColumns)));
                 }
                 else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
@@ -533,11 +551,11 @@ var RangeService = /** @class */ (function (_super) {
         }
         var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
         // ctrlKey for windows, metaKey for Apple
-        var multiKeyPressed = ctrlKey || metaKey;
+        var isMultiKey = ctrlKey || metaKey;
         var allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
-        var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+        var isMultiSelect = allowMulti ? isMultiKey : false;
         var extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
-        if (!multiSelectKeyPressed && (!extendRange || _.exists(_.last(this.cellRanges).type))) {
+        if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
         // The browser changes the Event target of cached events when working with the ShadowDOM
@@ -551,7 +569,7 @@ var RangeService = /** @class */ (function (_super) {
         }
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
+        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
         }
@@ -614,7 +632,7 @@ var RangeService = /** @class */ (function (_super) {
             // Top
             if (_this.rowPositionUtils.before(startRow, intersectionStartRow)) {
                 var top_1 = {
-                    columns: __spread(cols),
+                    columns: __spreadArray([], __read(cols)),
                     startColumn: lastRange.startColumn,
                     startRow: __assign({}, startRow),
                     endRow: _this.cellNavigationService.getRowAbove(intersectionStartRow),
@@ -634,7 +652,7 @@ var RangeService = /** @class */ (function (_super) {
             // Bottom
             if (_this.rowPositionUtils.before(intersectionEndRow, endRow)) {
                 newRanges.push({
-                    columns: __spread(cols),
+                    columns: __spreadArray([], __read(cols)),
                     startColumn: lastRange.startColumn,
                     startRow: _this.cellNavigationService.getRowBelow(intersectionEndRow),
                     endRow: __assign({}, endRow),

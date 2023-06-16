@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -106,7 +108,7 @@ var Shape = /** @class */ (function (_super) {
     Shape.prototype.updateGradient = function () {
         var fill = this.fill;
         var linearGradientMatch;
-        if ((fill === null || fill === void 0 ? void 0 : fill.startsWith('linear-gradient')) && (linearGradientMatch = fill.match(LINEAR_GRADIENT_REGEXP))) {
+        if ((fill === null || fill === void 0 ? void 0 : fill.startsWith('linear-gradient')) && (linearGradientMatch = LINEAR_GRADIENT_REGEXP.exec(fill))) {
             var angle = parseFloat(linearGradientMatch[1]);
             var colors_1 = [];
             var colorsPart = linearGradientMatch[2];
@@ -184,7 +186,7 @@ var Shape = /** @class */ (function (_super) {
         // manually here.
         var pixelRatio = (_b = (_a = this.layerManager) === null || _a === void 0 ? void 0 : _a.canvas.pixelRatio) !== null && _b !== void 0 ? _b : 1;
         var fillShadow = this.fillShadow;
-        if (fillShadow && fillShadow.enabled) {
+        if (fillShadow === null || fillShadow === void 0 ? void 0 : fillShadow.enabled) {
             ctx.shadowColor = fillShadow.color;
             ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
             ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;

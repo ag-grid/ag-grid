@@ -56,8 +56,6 @@ export declare class ColumnGroup implements IHeaderColumn {
     getChildren(): IHeaderColumn[] | null;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     getProvidedColumnGroup(): ProvidedColumnGroup;
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    getOriginalColumnGroup(): ProvidedColumnGroup;
     getPaddingLevel(): number;
     calculateDisplayedColumns(): void;
 }

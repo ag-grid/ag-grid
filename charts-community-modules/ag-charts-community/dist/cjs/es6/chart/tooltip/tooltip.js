@@ -6,13 +6,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tooltip = exports.TooltipPosition = exports.POSITION_TYPE = exports.toTooltipHtml = exports.DEFAULT_TOOLTIP_CLASS = void 0;
+exports.Tooltip = exports.TooltipPosition = exports.toTooltipHtml = void 0;
 const bbox_1 = require("../../scene/bbox");
 const deprecation_1 = require("../../util/deprecation");
 const validation_1 = require("../../util/validation");
-exports.DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
+const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 const defaultTooltipCss = `
-.${exports.DEFAULT_TOOLTIP_CLASS} {
+.${DEFAULT_TOOLTIP_CLASS} {
     transition: transform 0.1s ease;
     display: table;
     position: fixed;
@@ -27,20 +27,20 @@ const defaultTooltipCss = `
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-no-interaction {
+.${DEFAULT_TOOLTIP_CLASS}-no-interaction {
     pointer-events: none;
     user-select: none;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-no-animation {
+.${DEFAULT_TOOLTIP_CLASS}-no-animation {
     transition: none !important;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-hidden {
+.${DEFAULT_TOOLTIP_CLASS}-hidden {
     visibility: hidden;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-title {
+.${DEFAULT_TOOLTIP_CLASS}-title {
     font-weight: bold;
     padding: 7px;
     border-top-left-radius: 5px;
@@ -51,7 +51,7 @@ const defaultTooltipCss = `
     border-top-right-radius: 5px;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-content {
+.${DEFAULT_TOOLTIP_CLASS}-content {
     padding: 7px;
     line-height: 1.7em;
     border-bottom-left-radius: 5px;
@@ -59,12 +59,12 @@ const defaultTooltipCss = `
     overflow: hidden;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-content:empty {
+.${DEFAULT_TOOLTIP_CLASS}-content:empty {
     padding: 0;
     height: 7px;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-arrow::before {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::before {
     content: "";
 
     position: absolute;
@@ -85,7 +85,7 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
-.${exports.DEFAULT_TOOLTIP_CLASS}-arrow::after {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::after {
     content: "";
 
     position: absolute;
@@ -112,20 +112,21 @@ const defaultTooltipCss = `
 }
 `;
 function toTooltipHtml(input, defaults) {
+    var _a, _b, _c, _d;
     if (typeof input === 'string') {
         return input;
     }
-    defaults = defaults || {};
-    const { content = defaults.content || '', title = defaults.title || undefined, color = defaults.color || 'white', backgroundColor = defaults.backgroundColor || '#888', } = input;
+    defaults = defaults !== null && defaults !== void 0 ? defaults : {};
+    const { content = (_a = defaults.content) !== null && _a !== void 0 ? _a : '', title = (_b = defaults.title) !== null && _b !== void 0 ? _b : undefined, color = (_c = defaults.color) !== null && _c !== void 0 ? _c : 'white', backgroundColor = (_d = defaults.backgroundColor) !== null && _d !== void 0 ? _d : '#888', } = input;
     const titleHtml = title
-        ? `<div class="${exports.DEFAULT_TOOLTIP_CLASS}-title"
+        ? `<div class="${DEFAULT_TOOLTIP_CLASS}-title"
         style="color: ${color}; background-color: ${backgroundColor}">${title}</div>`
         : '';
-    return `${titleHtml}<div class="${exports.DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
+    return `${titleHtml}<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
 }
 exports.toTooltipHtml = toTooltipHtml;
 const POSITION_TYPES = ['pointer', 'node'];
-exports.POSITION_TYPE = validation_1.predicateWithMessage((v) => POSITION_TYPES.includes(v), `expecting a position type keyword such as 'pointer' or 'node'`);
+const POSITION_TYPE = validation_1.predicateWithMessage((v) => POSITION_TYPES.includes(v), `expecting a position type keyword such as 'pointer' or 'node'`);
 class TooltipPosition {
     constructor() {
         /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
@@ -137,7 +138,7 @@ class TooltipPosition {
     }
 }
 __decorate([
-    validation_1.Validate(exports.POSITION_TYPE)
+    validation_1.Validate(POSITION_TYPE)
 ], TooltipPosition.prototype, "type", void 0);
 __decorate([
     validation_1.Validate(validation_1.NUMBER())
@@ -150,17 +151,18 @@ class Tooltip {
     constructor(canvasElement, document, container) {
         this.enableInteraction = false;
         this.enabled = true;
+        this.showArrow = undefined;
         this.class = undefined;
         this.lastClass = undefined;
         this.delay = 0;
         this.range = 'nearest';
         this.position = new TooltipPosition();
         this.showTimeout = 0;
-        this.showArrow = true;
+        this._showArrow = true;
         this.tooltipRoot = container;
         const element = document.createElement('div');
         this.element = this.tooltipRoot.appendChild(element);
-        this.element.classList.add(exports.DEFAULT_TOOLTIP_CLASS);
+        this.element.classList.add(DEFAULT_TOOLTIP_CLASS);
         this.canvasElement = canvasElement;
         // Detect when the chart becomes invisible and hide the tooltip as well.
         if (window.IntersectionObserver) {
@@ -193,13 +195,13 @@ class Tooltip {
     }
     isVisible() {
         const { element } = this;
-        return !element.classList.contains(exports.DEFAULT_TOOLTIP_CLASS + '-hidden');
+        return !element.classList.contains(DEFAULT_TOOLTIP_CLASS + '-hidden');
     }
     updateClass(visible, showArrow) {
         const { element, class: newClass, lastClass, enableInteraction } = this;
         const wasVisible = this.isVisible();
         const toggleClass = (name, include) => {
-            const className = `${exports.DEFAULT_TOOLTIP_CLASS}-${name}`;
+            const className = `${DEFAULT_TOOLTIP_CLASS}-${name}`;
             if (include) {
                 element.classList.add(className);
             }
@@ -226,7 +228,7 @@ class Tooltip {
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta, html, instantly = false) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         const { element, canvasElement } = this;
         if (html !== undefined) {
             element.innerHTML = html;
@@ -247,11 +249,12 @@ class Tooltip {
         const maxTop = windowBounds.y + windowBounds.height - element.clientHeight;
         const left = limit(windowBounds.x, naiveLeft, maxLeft);
         const top = limit(windowBounds.y, naiveTop, maxTop);
-        const offsetApplied = xOffset !== 0 || yOffset !== 0;
         const constrained = left !== naiveLeft || top !== naiveTop;
-        this.showArrow = !constrained && !offsetApplied;
+        const defaultShowArrow = !constrained && !xOffset && !yOffset;
+        const showArrow = (_f = (_e = meta.showArrow) !== null && _e !== void 0 ? _e : this.showArrow) !== null && _f !== void 0 ? _f : defaultShowArrow;
+        this.updateShowArrow(showArrow);
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
-        this.enableInteraction = (_e = meta.enableInteraction) !== null && _e !== void 0 ? _e : false;
+        this.enableInteraction = (_g = meta.enableInteraction) !== null && _g !== void 0 ? _g : false;
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
             this.showTimeout = window.setTimeout(() => {
@@ -268,7 +271,7 @@ class Tooltip {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
         }
-        this.updateClass(visible, this.showArrow);
+        this.updateClass(visible, this._showArrow);
     }
     pointerLeftOntoTooltip(event) {
         var _a;
@@ -276,14 +279,20 @@ class Tooltip {
             return false;
         const classList = (_a = event.sourceEvent.relatedTarget) === null || _a === void 0 ? void 0 : _a.classList;
         const classes = ['', '-title', '-content'];
-        const classListContains = Boolean(classes.filter((c) => classList === null || classList === void 0 ? void 0 : classList.contains(`${exports.DEFAULT_TOOLTIP_CLASS}${c}`)));
+        const classListContains = Boolean(classes.filter((c) => classList === null || classList === void 0 ? void 0 : classList.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
         return classList !== undefined && classListContains;
+    }
+    updateShowArrow(show) {
+        this._showArrow = show;
     }
 }
 Tooltip.tooltipDocuments = [];
 __decorate([
     validation_1.Validate(validation_1.BOOLEAN)
 ], Tooltip.prototype, "enabled", void 0);
+__decorate([
+    validation_1.Validate(validation_1.OPT_BOOLEAN)
+], Tooltip.prototype, "showArrow", void 0);
 __decorate([
     validation_1.Validate(validation_1.OPT_STRING)
 ], Tooltip.prototype, "class", void 0);

@@ -20,6 +20,15 @@
         min-width: unset;
     }
 
+    .ag-button {
+        border-radius: 0px;
+        color: var(--ag-foreground-color);
+    }
+
+    .ag-button:hover {
+        background-color: transparent;
+    }
+
     .ag-label-align-right .ag-label {
         @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
     }
@@ -58,7 +67,7 @@
         }
     }
 
-    input[class^='ag-'][type='number'] {
+    input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -512,5 +521,10 @@
 
     .ag-column-select-virtual-list-item {
         padding: 0 var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-checkbox-edit {
+        padding-left: var(--ag-cell-horizontal-padding);
+        padding-right: var(--ag-cell-horizontal-padding);
     }
 }

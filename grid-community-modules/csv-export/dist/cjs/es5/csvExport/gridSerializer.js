@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -76,7 +78,7 @@ var GridSerializer = /** @class */ (function (_super) {
         if (shouldRowBeSkipped) {
             return;
         }
-        var rowAccumulator = gridSerializingSession.onNewBodyRow();
+        var rowAccumulator = gridSerializingSession.onNewBodyRow(node);
         columnsToExport.forEach(function (column, index) {
             rowAccumulator.onColumn(column, index, node);
         });
@@ -286,7 +288,7 @@ var GridSerializer = /** @class */ (function (_super) {
             var columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([core_1.GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     };

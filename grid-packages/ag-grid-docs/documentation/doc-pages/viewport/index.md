@@ -5,13 +5,14 @@ enterprise: true
 
 A Viewport is a row model that allows showing a 'window' of data in your client. Typically all the data will reside on the server and the server will know what data is displayed in the client. This is again useful for the server to push changes out to the client as it knows what data is currently displayed.
 
-[[note]]
-| Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.<br/><br/>
-| We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
-| complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
-| [Server-Side Row Model](/server-side-model/), as an alternative.
-| <br/><br/>
-| The differences between row models can be found in our [row models summary page](/row-models/)
+<note>
+|Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.<br/><br/>
+|We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
+|complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
+|[Server-Side Row Model](../server-side-model/), as an alternative.
+|
+|The differences between row models can be found in our [row models summary page](../row-models/)
+</note>
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.
 
@@ -25,14 +26,15 @@ Use a viewport to manage large live sets of data in the grid, where you only wan
 The diagram below shows how the viewport maps to a connection to your dataset. The dataset connection knows what the viewport is displaying and sends data accordingly. When the user scrolls, the viewport will 'get' data from the source. If / when the data changes, the source will 'push' the data to the viewport if it knows the viewport is displaying that data.
 
 
-<img src="resources/viewport.png" alt="Viewport Connected to Dataset"/>
+<image-caption src="viewport/resources/viewport.png" alt="Viewport Connected to Dataset" constrained="true" centered="true"></image-caption>
 
 <br/>
 
-[[note]]
-| It is the responsibility of the grid to display the data. It is the responsibility of the application
-| (i.e. your code) to fetch the data, so if you are using WebSockets or otherwise, all of that coding
-| belongs in the client code.
+<note>
+It is the responsibility of the grid to display the data. It is the responsibility of the application
+(i.e. your code) to fetch the data, so if you are using WebSockets or otherwise, all of that coding
+belongs in the client code.
+</note>
 
 ## Interface IViewportDatasource
 
@@ -60,8 +62,9 @@ Reading the interfaces will look confusing if you are looking at them for the fi
 
 1. If for example the user scrolls down 100 rows, the sequence above partially repeats; the grid calls `datasource.setViewportRange(100,119)`, the datasource asynchronously responds with `params.setRowData(map)`.
 
-[[note]]
-| It is possible to prevent unwanted row redraws when `setRowCount: (count: number, keepRenderedRows?: boolean) => void` is invoked by supplying `keepRenderedRows = true`.
+<note>
+It is possible to prevent unwanted row redraws when `setRowCount: (count: number, keepRenderedRows?: boolean) => void` is invoked by supplying `keepRenderedRows = true`.
+</note>
 
 ## Updating Data
 
@@ -89,8 +92,9 @@ As with sorting, filtering also must be done on the server. To implement, listen
 
 Selection works with viewport. It is recommended that you implement `getRowId()` to give a unique key to each row. That way, should the same row appear again but in a different location, it will keep its selection value. See the example below for setting up `getRowId()`.
 
-[[note]]
-| Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
+<note>
+Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
+</note>
 
 ## Grouping
 

@@ -6,6 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, AgPanel, AgPromise, Autowired, CHART_TOOL_PANEL_ALLOW_LIST, CHART_TOOL_PANEL_MENU_OPTIONS, CHART_TOOLBAR_ALLOW_LIST, Component, Events, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { TabbedChartMenu } from "./tabbedChartMenu";
+import { ChartController } from "../chartController";
 export class ChartMenu extends Component {
     constructor(eChartContainer, eMenuPanelContainer, chartController, chartOptionsService) {
         super(ChartMenu.TEMPLATE);
@@ -22,6 +23,7 @@ export class ChartMenu extends Component {
             chartDownload: ['save', () => this.saveChart()]
         };
         this.panels = [];
+        this.buttonListenersDestroyFuncs = [];
         this.menuVisible = false;
     }
     postConstruct() {
@@ -40,6 +42,7 @@ export class ChartMenu extends Component {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
     }
     isVisible() {
         return this.menuVisible;
@@ -159,8 +162,11 @@ export class ChartMenu extends Component {
         this.chartController.detachChartRange();
     }
     createButtons() {
+        this.buttonListenersDestroyFuncs.forEach(func => func());
+        this.buttonListenersDestroyFuncs = [];
         this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
+        _.clearElement(menuEl);
         this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [iconName, callback] = buttonConfig;
@@ -170,7 +176,7 @@ export class ChartMenu extends Component {
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
-            this.addManagedListener(buttonEl, 'click', callback);
+            this.buttonListenersDestroyFuncs.push(this.addManagedListener(buttonEl, 'click', callback));
             menuEl.appendChild(buttonEl);
         });
     }
@@ -298,7 +304,7 @@ export class ChartMenu extends Component {
 ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
 ChartMenu.TEMPLATE = `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
-        <button class="ag-chart-menu-close" ref="eHideButton">
+        <button class="ag-button ag-chart-menu-close" ref="eHideButton">
             <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>
         </button>
     </div>`;

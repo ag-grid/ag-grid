@@ -2,6 +2,7 @@ import { Component, FilterChangedEvent, IFloatingFilterComp, IFloatingFilterPara
 import { MultiFilter } from './multiFilter';
 export declare class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     private readonly userComponentFactory;
+    private readonly filterManager;
     private floatingFilters;
     private params;
     constructor();

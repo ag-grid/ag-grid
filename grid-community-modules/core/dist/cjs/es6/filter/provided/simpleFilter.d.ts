@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
@@ -145,6 +145,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     private filterPlaceholder;
     private lastUiCompletePosition;
     private joinOperatorId;
+    private filterListOptions;
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract createValueElement(): HTMLElement;
@@ -173,6 +174,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     private createJoinOperatorPanel;
     private createJoinOperator;
     private getDefaultJoinOperator;
+    private createFilterListOptions;
     private putOptionsIntoDropdown;
     private createBoilerplateListOption;
     private createCustomListOption;
@@ -223,4 +225,5 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: M): boolean;
     protected evaluateCustomFilter(customFilterOption: IFilterOptionDef | undefined, values: Tuple<V>, cellValue: V): boolean | undefined;
     protected isBlank(cellValue: V): boolean;
+    protected hasInvalidInputs(): boolean;
 }

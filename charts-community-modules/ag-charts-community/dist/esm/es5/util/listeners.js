@@ -1,3 +1,14 @@
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -14,21 +25,12 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
+import { Logger } from './logger';
 var Listeners = /** @class */ (function () {
     function Listeners() {
         this.registeredListeners = {};
@@ -43,29 +45,24 @@ var Listeners = /** @class */ (function () {
         return symbol;
     };
     Listeners.prototype.dispatch = function (type) {
-        var _a;
-        var params = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            params[_i - 1] = arguments[_i];
-        }
-        var listeners = (_a = this.registeredListeners[type]) !== null && _a !== void 0 ? _a : [];
-        return listeners.map(function (l) { return l.handler.apply(l, __spread(params)); });
-    };
-    Listeners.prototype.cancellableDispatch = function (type, cancelled) {
         var e_1, _a;
         var _b;
         var params = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            params[_i - 2] = arguments[_i];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            params[_i - 1] = arguments[_i];
         }
         var listeners = (_b = this.registeredListeners[type]) !== null && _b !== void 0 ? _b : [];
         var results = [];
         try {
             for (var listeners_1 = __values(listeners), listeners_1_1 = listeners_1.next(); !listeners_1_1.done; listeners_1_1 = listeners_1.next()) {
                 var listener = listeners_1_1.value;
-                if (cancelled())
-                    break;
-                results.push(listener.handler.apply(listener, __spread(params)));
+                try {
+                    results.push(listener.handler.apply(listener, __spreadArray([], __read(params))));
+                }
+                catch (e) {
+                    Logger.errorOnce(e);
+                    results.push(undefined);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -77,7 +74,7 @@ var Listeners = /** @class */ (function () {
         }
         return results;
     };
-    Listeners.prototype.reduceDispatch = function (type, reduceFn) {
+    Listeners.prototype.cancellableDispatch = function (type, cancelled) {
         var e_2, _a;
         var _b;
         var params = [];
@@ -85,12 +82,13 @@ var Listeners = /** @class */ (function () {
             params[_i - 2] = arguments[_i];
         }
         var listeners = (_b = this.registeredListeners[type]) !== null && _b !== void 0 ? _b : [];
-        var listenerResult = undefined;
+        var results = [];
         try {
             for (var listeners_2 = __values(listeners), listeners_2_1 = listeners_2.next(); !listeners_2_1.done; listeners_2_1 = listeners_2.next()) {
                 var listener = listeners_2_1.value;
-                listenerResult = listener.handler.apply(listener, __spread(params));
-                params = reduceFn.apply(void 0, __spread([listenerResult], params));
+                if (cancelled())
+                    break;
+                results.push(listener.handler.apply(listener, __spreadArray([], __read(params))));
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -99,6 +97,31 @@ var Listeners = /** @class */ (function () {
                 if (listeners_2_1 && !listeners_2_1.done && (_a = listeners_2.return)) _a.call(listeners_2);
             }
             finally { if (e_2) throw e_2.error; }
+        }
+        return results;
+    };
+    Listeners.prototype.reduceDispatch = function (type, reduceFn) {
+        var e_3, _a;
+        var _b;
+        var params = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            params[_i - 2] = arguments[_i];
+        }
+        var listeners = (_b = this.registeredListeners[type]) !== null && _b !== void 0 ? _b : [];
+        var listenerResult = undefined;
+        try {
+            for (var listeners_3 = __values(listeners), listeners_3_1 = listeners_3.next(); !listeners_3_1.done; listeners_3_1 = listeners_3.next()) {
+                var listener = listeners_3_1.value;
+                listenerResult = listener.handler.apply(listener, __spreadArray([], __read(params)));
+                params = reduceFn.apply(void 0, __spreadArray([listenerResult], __read(params)));
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (listeners_3_1 && !listeners_3_1.done && (_a = listeners_3.return)) _a.call(listeners_3);
+            }
+            finally { if (e_3) throw e_3.error; }
         }
         return listenerResult;
     };

@@ -14,7 +14,7 @@ const setValueModel_1 = require("./setValueModel");
 class SetFloatingFilterComp extends core_1.Component {
     constructor() {
         super(/* html */ `
-            <div class="ag-floating-filter-input" role="presentation">
+            <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
             </div>`);
         this.availableValuesListenerAdded = false;

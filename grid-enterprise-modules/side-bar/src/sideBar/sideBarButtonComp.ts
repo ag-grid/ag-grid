@@ -10,9 +10,9 @@ export class SideBarButtonComp extends Component {
 
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
 
-    @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
-    @RefSelector('eIconWrapper') private eIconWrapper: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('eToggleButton') private readonly eToggleButton: HTMLButtonElement;
+    @RefSelector('eIconWrapper') private readonly eIconWrapper: HTMLElement;
+    @RefSelector('eLabel') private readonly eLabel: HTMLElement;
 
     private readonly toolPanelDef: ToolPanelDef;
 
@@ -32,12 +32,13 @@ export class SideBarButtonComp extends Component {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 
     private createTemplate(): string {
         const res = /* html */
             `<div class="ag-side-button" role="presentation">
-                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" class="ag-side-button-button">
+                <button type="button" ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
                     <span ref ="eLabel" class="ag-side-button-label"></span>
                 </button>
@@ -63,5 +64,10 @@ export class SideBarButtonComp extends Component {
 
     public setSelected(selected: boolean): void {
         this.addOrRemoveCssClass('ag-selected', selected);
+        _.setAriaExpanded(this.eToggleButton, selected);
+    }
+
+    public getButtonElement(): Element {
+        return this.eToggleButton;
     }
 }

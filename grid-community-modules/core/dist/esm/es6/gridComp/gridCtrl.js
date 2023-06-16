@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -23,6 +23,7 @@ export class GridCtrl extends BeanStub {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
+        this.eGui.setAttribute('grid-id', this.context.getGridId());
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
@@ -48,16 +49,16 @@ export class GridCtrl extends BeanStub {
         return ((_a = el === null || el === void 0 ? void 0 : el.getAttribute('row-id')) === null || _a === void 0 ? void 0 : _a.startsWith('detail')) || false;
     }
     showDropZones() {
-        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
+        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
     }
     showSideBar() {
-        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
     }
     showStatusBar() {
-        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
     }
     showWatermark() {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     }
     onGridSizeChanged() {
         const event = {

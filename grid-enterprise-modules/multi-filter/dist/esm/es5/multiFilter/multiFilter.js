@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -155,8 +157,10 @@ var MultiFilter = /** @class */ (function (_super) {
         group.addItem(filter.getGui());
         group.toggleGroupExpand(false);
         if (filter.afterGuiAttached) {
-            var params_1 = { container: this.lastOpenedInContainer, suppressFocus: true };
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, function () { return filter.afterGuiAttached(params_1); });
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, function () { return filter.afterGuiAttached({
+                container: _this.lastOpenedInContainer,
+                suppressFocus: true
+            }); });
         }
         return group;
     };

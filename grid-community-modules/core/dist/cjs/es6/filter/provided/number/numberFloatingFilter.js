@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -47,7 +47,6 @@ class FloatingFilterNumberInputService extends beanStub_1.BeanStub {
     }
     setupListeners(element, listener) {
         this.addManagedListener(element, 'input', listener);
-        this.addManagedListener(element, 'keypress', listener);
         this.addManagedListener(element, 'keydown', listener);
     }
 }

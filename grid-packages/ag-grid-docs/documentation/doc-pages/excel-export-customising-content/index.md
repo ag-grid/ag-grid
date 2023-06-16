@@ -25,16 +25,20 @@ The grid cell and row group values exported to Excel can be customised using the
     config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported grid cell and row group values."}'>
 </interface-documentation>
 
+Note that it is also possible to format the values by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export).
+
 The following example shows Excel customisations where the exported document has the following:
 
 * All row groups with the prefix `row group: `
 * All cell values surrounded by `_`, unless they are `undefined`, in which case they are empty
 
-[[note]]
-| Row group column cells are also cells. This means that each row group column cell will first have the `processRowGroupCallback` invoked for it, and then the returned value will have `processCellCallback` invoked for it. This is why exported row group cell values will have the `_` surrounding the value, which is applied by the `processCellCallback`.
+<note>
+Row group column cells are also cells. This means that each row group column cell will first have the `processRowGroupCallback` invoked for it, and then the returned value will have `processCellCallback` invoked for it. This is why exported row group cell values will have the `_` surrounding the value, which is applied by the `processCellCallback`.
+</note>
 
-[[note]]
-| When using row grouping while [hiding open parents](/grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
+<note>
+When using row grouping while [hiding open parents](/grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
+</note>
 
 <grid-example title='Excel Export - Customising Row Groups' name='excel-export-customising-row-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "csv", "excel", "menu", "setfilter"]}'></grid-example>
 

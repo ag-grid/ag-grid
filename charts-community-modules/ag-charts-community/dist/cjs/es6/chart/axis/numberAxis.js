@@ -14,6 +14,17 @@ const validation_1 = require("../../util/validation");
 const default_1 = require("../../util/default");
 const secondaryAxisTicks_1 = require("../../util/secondaryAxisTicks");
 const logger_1 = require("../../util/logger");
+const axis_1 = require("../../axis");
+class NumberAxisTick extends axis_1.BaseAxisTick {
+    constructor() {
+        super(...arguments);
+        this.maxSpacing = NaN;
+    }
+}
+__decorate([
+    validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.GREATER_THAN('minSpacing'))),
+    default_1.Default(NaN)
+], NumberAxisTick.prototype, "maxSpacing", void 0);
 class NumberAxis extends chartAxis_1.ChartAxis {
     constructor(moduleCtx, scale = new linearScale_1.LinearScale()) {
         super(moduleCtx, scale);
@@ -22,9 +33,10 @@ class NumberAxis extends chartAxis_1.ChartAxis {
         scale.strictClampByDefault = true;
     }
     normaliseDataDomain(d) {
+        var _a;
         const { min, max } = this;
         if (d.length > 2) {
-            d = array_1.extent(d) || [NaN, NaN];
+            d = (_a = array_1.extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];
@@ -45,6 +57,9 @@ class NumberAxis extends chartAxis_1.ChartAxis {
             logger_1.Logger.warnOnce('data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
             return String(datum);
         }
+    }
+    createTick() {
+        return new NumberAxisTick();
     }
     updateSecondaryAxisTicks(primaryTickCount) {
         if (this.dataDomain == null) {

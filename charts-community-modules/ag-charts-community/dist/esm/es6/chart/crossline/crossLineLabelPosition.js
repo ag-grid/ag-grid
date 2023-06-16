@@ -36,21 +36,39 @@ const verticalCrossLineTranslationDirections = {
     insideTopRight: { xTranslationDirection: -1, yTranslationDirection: -1 },
     insideBottomRight: { xTranslationDirection: 1, yTranslationDirection: -1 },
 };
-export const calculateLabelTranslation = ({ yDirection, padding = 0, position, bbox, }) => {
-    var _a;
+export function calculateLabelTranslation({ yDirection, padding = 0, position = 'top', bbox, }) {
     const crossLineTranslationDirections = yDirection
         ? horizontalCrosslineTranslationDirections
         : verticalCrossLineTranslationDirections;
-    const { xTranslationDirection, yTranslationDirection } = (_a = crossLineTranslationDirections[position]) !== null && _a !== void 0 ? _a : crossLineTranslationDirections['top'];
+    const { xTranslationDirection, yTranslationDirection } = crossLineTranslationDirections[position];
     const w = yDirection ? bbox.width : bbox.height;
     const h = yDirection ? bbox.height : bbox.width;
     const xTranslation = xTranslationDirection * (padding + w / 2);
     const yTranslation = yTranslationDirection * (padding + h / 2);
-    return {
+    const result = {
         xTranslation,
         yTranslation,
     };
-};
+    return result;
+}
+export function calculateLabelChartPadding({ yDirection, bbox, padding = 0, position = 'top', }) {
+    const chartPadding = {};
+    if (position.startsWith('inside'))
+        return chartPadding;
+    if (position === 'top' && !yDirection) {
+        chartPadding.top = padding + bbox.height;
+    }
+    else if (position === 'bottom' && !yDirection) {
+        chartPadding.bottom = padding + bbox.height;
+    }
+    else if (position === 'left' && yDirection) {
+        chartPadding.left = padding + bbox.width;
+    }
+    else if (position === 'right' && yDirection) {
+        chartPadding.right = padding + bbox.width;
+    }
+    return chartPadding;
+}
 export const POSITION_TOP_COORDINATES = ({ yDirection, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd / 2, y: yStart };

@@ -164,3 +164,5 @@ var POSITIONS = ['top', 'right', 'bottom', 'left'];
 export var POSITION = predicateWithMessage(function (v) { return POSITIONS.includes(v); }, "expecting a position keyword such as 'top', 'right', 'bottom' or 'left");
 var INTERACTION_RANGES = ['exact', 'nearest'];
 export var INTERACTION_RANGE = predicateWithMessage(function (v) { return (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v); }, "expecting an interaction range of 'exact', 'nearest' or a number");
+var TEXT_WRAPS = ['never', 'always', 'hyphenate', 'on-space'];
+export var TEXT_WRAP = predicateWithMessage(function (v) { return TEXT_WRAPS.includes(v); }, "expecting a text wrap strategy keyword such as 'never', 'always', 'hyphenate', 'on-space'");

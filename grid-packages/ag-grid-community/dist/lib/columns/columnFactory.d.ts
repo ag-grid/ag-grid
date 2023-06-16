@@ -4,6 +4,7 @@ import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 export declare class ColumnFactory extends BeanStub {
     private columnUtils;
+    private dataTypeService;
     private logger;
     private setBeans;
     createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: IProvidedColumn[]): {
@@ -23,7 +24,7 @@ export declare class ColumnFactory extends BeanStub {
     applyColumnState(column: Column, colDef: ColDef): void;
     private findExistingColumn;
     private findExistingGroup;
-    mergeColDefs(colDef: ColDef): ColDef;
+    mergeColDefs(colDef: ColDef, colId: string): ColDef;
     private assignColumnTypes;
     private isColumnGroup;
 }

@@ -11,7 +11,7 @@ const core_1 = require("@ag-grid-community/core");
 const chartMenu_1 = require("./menu/chartMenu");
 const titleEdit_1 = require("./chartTitle/titleEdit");
 const chartController_1 = require("./chartController");
-const chartDataModel_1 = require("./chartDataModel");
+const chartDataModel_1 = require("./model/chartDataModel");
 const barChartProxy_1 = require("./chartProxies/cartesian/barChartProxy");
 const areaChartProxy_1 = require("./chartProxies/cartesian/areaChartProxy");
 const lineChartProxy_1 = require("./chartProxies/cartesian/lineChartProxy");
@@ -222,25 +222,27 @@ class GridChartComp extends core_1.Component {
             this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
         }
     }
-    update() {
-        if (this.shouldRecreateChart()) {
-            this.createChart();
+    update(params) {
+        // update chart model for api.updateChart()
+        if (params === null || params === void 0 ? void 0 : params.chartId) {
+            const validUpdate = this.chartController.update(params);
+            if (!validUpdate) {
+                return; // warning already logged!
+            }
         }
-        this.updateChart();
+        const chartTypeChanged = this.chartTypeChanged(params);
+        // recreate chart if chart type has changed
+        if (chartTypeChanged)
+            this.createChart();
+        // update chart options if chart type hasn't changed or if overrides are supplied
+        this.updateChart(params === null || params === void 0 ? void 0 : params.chartThemeOverrides);
+        if (params === null || params === void 0 ? void 0 : params.chartId) {
+            this.chartProxy.getChart().waitForUpdate().then(() => {
+                this.chartController.raiseChartApiUpdateEvent();
+            });
+        }
     }
-    shouldRecreateChart() {
-        return this.chartType !== this.chartController.getChartType() || this.chartThemeName !== this.chartController.getChartThemeName();
-    }
-    getCurrentChartType() {
-        return this.chartType;
-    }
-    getChartModel() {
-        return this.chartController.getChartModel();
-    }
-    getChartImageDataURL(fileFormat) {
-        return this.chartProxy.getChartImageDataURL(fileFormat);
-    }
-    updateChart() {
+    updateChart(updatedOverrides) {
         const { chartProxy } = this;
         const selectedCols = this.chartController.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
@@ -249,12 +251,22 @@ class GridChartComp extends core_1.Component {
         if (chartEmpty) {
             return;
         }
-        let chartUpdateParams = this.chartController.getChartUpdateParams();
+        let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
         this.chartProxy.getChart().waitForUpdate().then(() => {
             this.chartController.raiseChartUpdatedEvent();
         });
         this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+    }
+    chartTypeChanged(updateParams) {
+        const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams === null || updateParams === void 0 ? void 0 : updateParams.chartType];
+        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== updatedChartType);
+    }
+    getChartModel() {
+        return this.chartController.getChartModel();
+    }
+    getChartImageDataURL(fileFormat) {
+        return this.chartProxy.getChartImageDataURL(fileFormat);
     }
     handleEmptyChart(data, fields) {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();

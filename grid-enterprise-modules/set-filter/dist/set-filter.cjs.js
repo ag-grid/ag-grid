@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -241,9 +241,10 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1(arguments[i]));
-    return ar;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -332,7 +333,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
                     children.push(item);
                 }
                 children = item.children;
-                parentTreeKeys = __spread(parentTreeKeys, [treeKey]);
+                parentTreeKeys = __spreadArray(__spreadArray([], __read$1(parentTreeKeys)), [treeKey]);
             });
         };
         var this_1 = this;
@@ -987,6 +988,8 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1285,6 +1288,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -1542,7 +1547,8 @@ var SetFilter = /** @class */ (function (_super) {
             }
         }
         if (params.excelMode && params.defaultToNothingSelected) {
-            core._.doOnce(function () { return console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" does not work with "excelMode".'); }, 'setFilterExcelModeDefaultToNothingSelect');
+            params.defaultToNothingSelected = false;
+            core._.doOnce(function () { return console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'); }, 'setFilterExcelModeDefaultToNothingSelect');
         }
     };
     SetFilter.prototype.addEventListenersForDataChanges = function () {
@@ -1747,7 +1753,7 @@ var SetFilter = /** @class */ (function (_super) {
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', function (e) { return _this.onMiniFilterKeyDown(e); });
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
@@ -2038,7 +2044,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.setMiniFilter(null);
         _super.prototype.handleCancelEnd.call(this, e);
     };
-    SetFilter.prototype.onMiniFilterKeyPress = function (e) {
+    SetFilter.prototype.onMiniFilterKeyDown = function (e) {
         var _a = this.setFilterParams || {}, excelMode = _a.excelMode, readOnly = _a.readOnly;
         if (e.key === core.KeyCode.ENTER && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();
@@ -2369,6 +2375,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -2383,7 +2391,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
-        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input ag-set-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
         _this.availableValuesListenerAdded = false;
         _this.filterModelFormatter = new SetFilterModelFormatter();
         return _this;
@@ -2448,7 +2456,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '30.0.1';
 
 var SetFilterModule = {
     version: VERSION,

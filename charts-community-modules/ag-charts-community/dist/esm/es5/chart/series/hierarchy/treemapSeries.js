@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -64,8 +66,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 import { Selection } from '../../../scene/selection';
-import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
 import { SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
@@ -75,11 +87,10 @@ import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
-import { toFixed } from '../../../util/number';
-import { Path2D } from '../../../scene/path2D';
+import { toFixed, isEqual } from '../../../util/number';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
-import { BOOLEAN, NUMBER, NUMBER_ARRAY, OPT_BOOLEAN, OPT_COLOR_STRING, OPT_FUNCTION, OPT_NUMBER, OPT_STRING, STRING, COLOR_STRING_ARRAY, Validate, } from '../../../util/validation';
+import { BOOLEAN, NUMBER, NUMBER_ARRAY, OPT_BOOLEAN, OPT_COLOR_STRING, OPT_FUNCTION, OPT_NUMBER, OPT_STRING, STRING, COLOR_STRING_ARRAY, Validate, TEXT_WRAP, } from '../../../util/validation';
 import { Logger } from '../../../util/logger';
 var TreemapSeriesTooltip = /** @class */ (function (_super) {
     __extends(TreemapSeriesTooltip, _super);
@@ -134,6 +145,18 @@ var TreemapSeriesLabel = /** @class */ (function (_super) {
     ], TreemapSeriesLabel.prototype, "padding", void 0);
     return TreemapSeriesLabel;
 }(Label));
+var TreemapSeriesTileLabel = /** @class */ (function (_super) {
+    __extends(TreemapSeriesTileLabel, _super);
+    function TreemapSeriesTileLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.wrapping = 'on-space';
+        return _this;
+    }
+    __decorate([
+        Validate(TEXT_WRAP)
+    ], TreemapSeriesTileLabel.prototype, "wrapping", void 0);
+    return TreemapSeriesTileLabel;
+}(Label));
 var TreemapValueLabel = /** @class */ (function () {
     function TreemapValueLabel() {
         this.style = (function () {
@@ -158,8 +181,20 @@ var TextNodeTag;
     TextNodeTag[TextNodeTag["Name"] = 0] = "Name";
     TextNodeTag[TextNodeTag["Value"] = 1] = "Value";
 })(TextNodeTag || (TextNodeTag = {}));
+var tempText = new Text();
 function getTextSize(text, style) {
-    return HdpiCanvas.getTextSize(text, [style.fontWeight, style.fontSize + "px", style.fontFamily].join(' '));
+    var fontStyle = style.fontStyle, fontWeight = style.fontWeight, fontSize = style.fontSize, fontFamily = style.fontFamily;
+    tempText.fontStyle = fontStyle;
+    tempText.fontWeight = fontWeight;
+    tempText.fontSize = fontSize;
+    tempText.fontFamily = fontFamily;
+    tempText.text = text;
+    tempText.x = 0;
+    tempText.y = 0;
+    tempText.textAlign = 'left';
+    tempText.textBaseline = 'top';
+    var _a = tempText.computeBBox(), width = _a.width, height = _a.height;
+    return { width: width, height: height };
 }
 function validateColor(color) {
     if (typeof color === 'string' && !Color.validColorString(color)) {
@@ -187,7 +222,6 @@ var TreemapHighlightStyle = /** @class */ (function (_super) {
     }
     return TreemapHighlightStyle;
 }(HighlightStyle));
-export { TreemapHighlightStyle };
 var TreemapSeries = /** @class */ (function (_super) {
     __extends(TreemapSeries, _super);
     function TreemapSeries() {
@@ -213,29 +247,31 @@ var TreemapSeries = /** @class */ (function (_super) {
         })();
         _this.labels = {
             large: (function () {
-                var label = new Label();
+                var label = new TreemapSeriesTileLabel();
                 label.color = 'white';
                 label.fontWeight = 'bold';
                 label.fontSize = 18;
                 return label;
             })(),
             medium: (function () {
-                var label = new Label();
+                var label = new TreemapSeriesTileLabel();
                 label.color = 'white';
                 label.fontWeight = 'bold';
                 label.fontSize = 14;
                 return label;
             })(),
             small: (function () {
-                var label = new Label();
+                var label = new TreemapSeriesTileLabel();
                 label.color = 'white';
                 label.fontWeight = 'bold';
                 label.fontSize = 10;
                 return label;
             })(),
+            formatter: undefined,
             value: new TreemapValueLabel(),
         };
         _this.nodePadding = 2;
+        _this.nodeGap = 0;
         _this.labelKey = 'label';
         _this.sizeKey = 'size';
         _this.colorKey = 'color';
@@ -258,7 +294,8 @@ var TreemapSeries = /** @class */ (function (_super) {
         return _this;
     }
     TreemapSeries.prototype.getNodePaddingTop = function (nodeDatum, bbox) {
-        var _a = this, title = _a.title, subtitle = _a.subtitle, nodePadding = _a.nodePadding;
+        var _a;
+        var _b = this, title = _b.title, subtitle = _b.subtitle, nodePadding = _b.nodePadding;
         var label = nodeDatum.label;
         if (nodeDatum.isLeaf || !label || nodeDatum.depth === 0) {
             return nodePadding;
@@ -272,7 +309,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         if (textSize.height >= bbox.height) {
             return nodePadding;
         }
-        return textSize.height + nodePadding * 2;
+        return textSize.height + nodePadding + ((_a = font.padding) !== null && _a !== void 0 ? _a : 0);
     };
     TreemapSeries.prototype.getNodePadding = function (nodeDatum, bbox) {
         var nodePadding = this.nodePadding;
@@ -290,9 +327,12 @@ var TreemapSeries = /** @class */ (function (_super) {
      */
     TreemapSeries.prototype.squarify = function (nodeDatum, bbox, outputNodesBoxes) {
         if (outputNodesBoxes === void 0) { outputNodesBoxes = new Map(); }
+        if (bbox.width <= 0 || bbox.height <= 0) {
+            return outputNodesBoxes;
+        }
+        outputNodesBoxes.set(nodeDatum, bbox);
         var targetTileAspectRatio = 1; // The width and height will tend to this ratio
         var padding = this.getNodePadding(nodeDatum, bbox);
-        outputNodesBoxes.set(nodeDatum, bbox);
         var width = bbox.width - padding.left - padding.right;
         var height = bbox.height - padding.top - padding.bottom;
         if (width <= 0 || height <= 0 || nodeDatum.value <= 0) {
@@ -303,7 +343,8 @@ var TreemapSeries = /** @class */ (function (_super) {
         var minRatioDiff = Infinity;
         var partitionSum = nodeDatum.value;
         var children = nodeDatum.children;
-        var partition = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        var innerBox = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        var partition = innerBox.clone();
         for (var i = 0; i < children.length; i++) {
             var value = children[i].value;
             var firstValue = children[startIndex].value;
@@ -331,6 +372,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 var width_1 = isVertical_1 ? length_1 : stackThickness;
                 var height_1 = isVertical_1 ? stackThickness : length_1;
                 var childBox = new BBox(x, y, width_1, height_1);
+                this.applyGap(innerBox, childBox);
                 this.squarify(child, childBox, outputNodesBoxes);
                 partitionSum -= child.value;
                 start_1 += length_1;
@@ -358,35 +400,71 @@ var TreemapSeries = /** @class */ (function (_super) {
             var width_2 = partition.width * (isVertical ? part : 1);
             var height_2 = partition.height * (isVertical ? 1 : part);
             var childBox = new BBox(x, y, width_2, height_2);
+            this.applyGap(innerBox, childBox);
             this.squarify(children[i], childBox, outputNodesBoxes);
             start += isVertical ? width_2 : height_2;
         }
         return outputNodesBoxes;
     };
+    TreemapSeries.prototype.applyGap = function (innerBox, childBox) {
+        var gap = this.nodeGap / 2;
+        var getBounds = function (box) {
+            return {
+                left: box.x,
+                top: box.y,
+                right: box.x + box.width,
+                bottom: box.y + box.height,
+            };
+        };
+        var innerBounds = getBounds(innerBox);
+        var childBounds = getBounds(childBox);
+        var sides = Object.keys(innerBounds);
+        sides.forEach(function (side) {
+            if (!isEqual(innerBounds[side], childBounds[side])) {
+                childBox.shrink(gap, side);
+            }
+        });
+    };
     TreemapSeries.prototype.processData = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill, colorScale, createTreeNodeDatum;
+            var _a, data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill, labelFormatter, colorScale, createTreeNodeDatum;
             var _this = this;
             return __generator(this, function (_b) {
                 if (!this.data) {
                     return [2 /*return*/];
                 }
                 _a = this, data = _a.data, sizeKey = _a.sizeKey, labelKey = _a.labelKey, colorKey = _a.colorKey, colorDomain = _a.colorDomain, colorRange = _a.colorRange, groupFill = _a.groupFill;
+                labelFormatter = this.labels.formatter;
                 colorScale = new ColorScale();
                 colorScale.domain = colorDomain;
                 colorScale.range = colorRange;
+                colorScale.update();
                 createTreeNodeDatum = function (datum, depth, parent) {
-                    var _a, _b;
+                    var _a, _b, _c;
                     if (depth === void 0) { depth = 0; }
-                    var label = (labelKey && datum[labelKey]) || '';
-                    var colorScaleValue = colorKey ? (_a = datum[colorKey]) !== null && _a !== void 0 ? _a : depth : depth;
+                    var label;
+                    if (labelFormatter) {
+                        label = _this.ctx.callbackCache.call(labelFormatter, { datum: datum });
+                    }
+                    if (label !== undefined) {
+                        // Label retrieved from formatter successfully.
+                    }
+                    else if (labelKey) {
+                        label = (_a = datum[labelKey]) !== null && _a !== void 0 ? _a : '';
+                    }
+                    else {
+                        label = '';
+                    }
+                    var colorScaleValue = colorKey ? (_b = datum[colorKey]) !== null && _b !== void 0 ? _b : depth : depth;
                     colorScaleValue = validateColor(colorScaleValue);
                     var isLeaf = !datum.children;
-                    var fill = typeof colorScaleValue === 'string'
-                        ? colorScaleValue
-                        : isLeaf || !groupFill
-                            ? colorScale.convert(colorScaleValue)
-                            : groupFill;
+                    var fill = groupFill;
+                    if (typeof colorScaleValue === 'string') {
+                        fill = colorScaleValue;
+                    }
+                    else if (isLeaf || !groupFill) {
+                        fill = colorScale.convert(colorScaleValue);
+                    }
                     var nodeDatum = {
                         datum: datum,
                         depth: depth,
@@ -399,7 +477,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                         children: [],
                     };
                     if (isLeaf) {
-                        nodeDatum.value = sizeKey ? (_b = datum[sizeKey]) !== null && _b !== void 0 ? _b : 1 : 1;
+                        nodeDatum.value = sizeKey ? (_c = datum[sizeKey]) !== null && _c !== void 0 ? _c : 1 : 1;
                     }
                     else {
                         datum.children.forEach(function (child) {
@@ -491,14 +569,14 @@ var TreemapSeries = /** @class */ (function (_super) {
     };
     TreemapSeries.prototype.getTileFormat = function (datum, isHighlighted) {
         var _a;
-        var formatter = this.formatter;
+        var _b = this, formatter = _b.formatter, callbackCache = _b.ctx.callbackCache;
         if (!formatter) {
             return {};
         }
-        var _b = this, gradient = _b.gradient, colorKey = _b.colorKey, labelKey = _b.labelKey, sizeKey = _b.sizeKey, tileStroke = _b.tileStroke, tileStrokeWidth = _b.tileStrokeWidth, groupStroke = _b.groupStroke, groupStrokeWidth = _b.groupStrokeWidth;
+        var _c = this, gradient = _c.gradient, colorKey = _c.colorKey, labelKey = _c.labelKey, sizeKey = _c.sizeKey, tileStroke = _c.tileStroke, tileStrokeWidth = _c.tileStrokeWidth, groupStroke = _c.groupStroke, groupStrokeWidth = _c.groupStrokeWidth;
         var stroke = datum.isLeaf ? tileStroke : groupStroke;
         var strokeWidth = datum.isLeaf ? tileStrokeWidth : groupStrokeWidth;
-        return formatter({
+        var result = callbackCache.call(formatter, {
             seriesId: this.id,
             datum: datum.datum,
             depth: datum.depth,
@@ -512,10 +590,11 @@ var TreemapSeries = /** @class */ (function (_super) {
             gradient: gradient,
             highlighted: isHighlighted,
         });
+        return result !== null && result !== void 0 ? result : {};
     };
     TreemapSeries.prototype.updateNodes = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, gradient, _b, _c, highlightedFill, highlightedFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, highlightedTextColor, tileStroke, tileStrokeWidth, groupStroke, groupStrokeWidth, tileShadow, labelShadow, seriesRect, boxes, labelMeta, updateRectFn, updateLabelFn;
+            var _a, gradient, _b, _c, highlightedFill, highlightedFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, highlightedTextColor, tileStroke, tileStrokeWidth, groupStroke, groupStrokeWidth, tileShadow, labelShadow, seriesRect, boxes, labelMeta, highlightedSubtree, updateRectFn, updateLabelFn;
             var _this = this;
             return __generator(this, function (_d) {
                 if (!this.chart) {
@@ -525,6 +604,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 seriesRect = this.chart.getSeriesRect();
                 boxes = this.squarify(this.dataRoot, new BBox(0, 0, seriesRect.width, seriesRect.height));
                 labelMeta = this.buildLabelMeta(boxes);
+                highlightedSubtree = this.getHighlightedSubtree();
                 this.updateNodeMidPoint(boxes);
                 updateRectFn = function (rect, datum, isDatumHighlighted) {
                     var _a, _b, _c, _d, _e, _f;
@@ -535,16 +615,20 @@ var TreemapSeries = /** @class */ (function (_super) {
                     }
                     var fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
                     var fillOpacity = (_a = (isDatumHighlighted ? highlightedFillOpacity : 1)) !== null && _a !== void 0 ? _a : 1;
-                    var stroke = isDatumHighlighted && highlightedStroke !== undefined
-                        ? highlightedStroke
-                        : datum.isLeaf
-                            ? tileStroke
-                            : groupStroke;
-                    var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                        ? highlightedDatumStrokeWidth
-                        : datum.isLeaf
-                            ? tileStrokeWidth
-                            : groupStrokeWidth;
+                    var stroke = groupStroke;
+                    if (isDatumHighlighted && highlightedStroke !== undefined) {
+                        stroke = highlightedStroke;
+                    }
+                    else if (datum.isLeaf) {
+                        stroke = tileStroke;
+                    }
+                    var strokeWidth = groupStrokeWidth;
+                    if (isDatumHighlighted && highlightedDatumStrokeWidth !== undefined) {
+                        strokeWidth = highlightedDatumStrokeWidth;
+                    }
+                    else if (datum.isLeaf) {
+                        strokeWidth = tileStrokeWidth;
+                    }
                     var format = _this.getTileFormat(datum, isDatumHighlighted);
                     var fillColor = validateColor((_b = format === null || format === void 0 ? void 0 : format.fill) !== null && _b !== void 0 ? _b : fill);
                     if ((_c = format === null || format === void 0 ? void 0 : format.gradient) !== null && _c !== void 0 ? _c : gradient) {
@@ -565,31 +649,11 @@ var TreemapSeries = /** @class */ (function (_super) {
                     rect.width = box.width;
                     rect.height = box.height;
                     rect.visible = true;
-                    if (isDatumHighlighted && !datum.isLeaf) {
-                        var padding = _this.getNodePadding(datum, box);
-                        var x0 = box.x + padding.left;
-                        var x1 = box.x + box.width - padding.right;
-                        var y0 = box.y + padding.top;
-                        var y1 = box.y + box.height - padding.bottom;
-                        if (rect.clipPath) {
-                            rect.clipPath.clear();
-                        }
-                        else {
-                            rect.clipPath = new Path2D();
-                        }
-                        rect.clipMode = 'punch-out';
-                        rect.clipPath.moveTo(x0, y0);
-                        rect.clipPath.lineTo(x1, y0);
-                        rect.clipPath.lineTo(x1, y1);
-                        rect.clipPath.lineTo(x0, y1);
-                        rect.clipPath.lineTo(x0, y0);
-                        rect.clipPath.closePath();
-                    }
                 };
                 this.groupSelection.selectByClass(Rect).forEach(function (rect) { return updateRectFn(rect, rect.datum, false); });
                 this.highlightSelection.selectByClass(Rect).forEach(function (rect) {
                     var isDatumHighlighted = _this.isDatumHighlighted(rect.datum);
-                    rect.visible = isDatumHighlighted;
+                    rect.visible = isDatumHighlighted || highlightedSubtree.has(rect.datum);
                     if (rect.visible) {
                         updateRectFn(rect, rect.datum, isDatumHighlighted);
                     }
@@ -618,7 +682,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                     .forEach(function (text) { return updateLabelFn(text, text.datum, false, 'label'); });
                 this.highlightSelection.selectByTag(TextNodeTag.Name).forEach(function (text) {
                     var isDatumHighlighted = _this.isDatumHighlighted(text.datum);
-                    text.visible = isDatumHighlighted;
+                    text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
                     if (text.visible) {
                         updateLabelFn(text, text.datum, isDatumHighlighted, 'label');
                     }
@@ -628,7 +692,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                     .forEach(function (text) { return updateLabelFn(text, text.datum, false, 'value'); });
                 this.highlightSelection.selectByTag(TextNodeTag.Value).forEach(function (text) {
                     var isDatumHighlighted = _this.isDatumHighlighted(text.datum);
-                    text.visible = isDatumHighlighted;
+                    text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
                     if (text.visible) {
                         updateLabelFn(text, text.datum, isDatumHighlighted, 'value');
                     }
@@ -645,22 +709,99 @@ var TreemapSeries = /** @class */ (function (_super) {
             };
         });
     };
+    TreemapSeries.prototype.getHighlightedSubtree = function () {
+        var _this = this;
+        var items = new Set();
+        var traverse = function (datum) {
+            var _a;
+            if (_this.isDatumHighlighted(datum) || (datum.parent && items.has(datum.parent))) {
+                items.add(datum);
+            }
+            (_a = datum.children) === null || _a === void 0 ? void 0 : _a.forEach(traverse);
+        };
+        traverse(this.dataRoot);
+        return items;
+    };
     TreemapSeries.prototype.buildLabelMeta = function (boxes) {
-        var _a = this, labels = _a.labels, title = _a.title, subtitle = _a.subtitle, nodePadding = _a.nodePadding, labelKey = _a.labelKey;
+        var _a = this, labels = _a.labels, title = _a.title, subtitle = _a.subtitle, nodePadding = _a.nodePadding, labelKey = _a.labelKey, callbackCache = _a.ctx.callbackCache;
+        var wrappedRegExp = /-$/m;
         var labelMeta = new Map();
         boxes.forEach(function (box, datum) {
+            var _a, _b, _c;
             if (!labelKey || datum.depth === 0) {
                 return;
             }
+            var availTextWidth = box.width - 2 * nodePadding;
+            var availTextHeight = box.height - 2 * nodePadding;
+            var isBoxTooSmall = function (labelStyle) {
+                var minSizeRatio = 3;
+                return (labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio);
+            };
             var labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
-            var labelStyle;
+            var valueText = '';
+            var valueConfig = labels.value;
+            var valueStyle = valueConfig.style;
+            var valueMargin = Math.ceil(valueStyle.fontSize * 2 * (Text.defaultLineHeightRatio - 1));
             if (datum.isLeaf) {
-                // Choose the font size that fits
-                labelStyle =
-                    [labels.large, labels.medium, labels.small].find(function (s) {
-                        var _a = getTextSize(labelText, s), width = _a.width, height = _a.height;
-                        return width < box.width && height < box.height;
-                    }) || labels.small;
+                if (valueConfig.formatter) {
+                    valueText = (_a = callbackCache.call(valueConfig.formatter, { datum: datum.datum })) !== null && _a !== void 0 ? _a : '';
+                }
+                else if (valueConfig.key) {
+                    valueText = datum.datum[valueConfig.key];
+                }
+            }
+            var valueSize = getTextSize(valueText, valueStyle);
+            if (valueText && valueSize.width > availTextWidth) {
+                valueText = '';
+            }
+            var labelStyle;
+            var wrappedText = '';
+            if (datum.isLeaf) {
+                labelStyle = labels.small;
+                var pickStyle = function () {
+                    var e_1, _a;
+                    var availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
+                    var labelStyles = [labels.large, labels.medium, labels.small];
+                    try {
+                        for (var labelStyles_1 = __values(labelStyles), labelStyles_1_1 = labelStyles_1.next(); !labelStyles_1_1.done; labelStyles_1_1 = labelStyles_1.next()) {
+                            var style = labelStyles_1_1.value;
+                            var _b = getTextSize(labelText, style), width = _b.width, height = _b.height;
+                            if (height > availHeight || isBoxTooSmall(style)) {
+                                continue;
+                            }
+                            if (width <= availTextWidth) {
+                                return { style: style, wrappedText: undefined };
+                            }
+                            // Avoid hyphens and ellipsis for large and medium label styles
+                            var wrapped = Text.wrap(labelText, availTextWidth, availHeight, style, style.wrapping);
+                            if (wrapped &&
+                                wrapped !== '\u2026' &&
+                                (style === labels.small || !(wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))) {
+                                return { style: style, wrappedText: wrapped };
+                            }
+                        }
+                    }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (labelStyles_1_1 && !labelStyles_1_1.done && (_a = labelStyles_1.return)) _a.call(labelStyles_1);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    // Check if small font fits by height
+                    var smallSize = getTextSize(labelText, labels.small);
+                    if (smallSize.height <= availHeight && !isBoxTooSmall(labels.small)) {
+                        return { style: labels.small, wrappedText: undefined };
+                    }
+                    return { style: undefined, wrappedText: undefined };
+                };
+                var result = pickStyle();
+                if (!result.style && valueText) {
+                    valueText = '';
+                    result = pickStyle();
+                }
+                labelStyle = (_b = result.style) !== null && _b !== void 0 ? _b : labels.small;
+                wrappedText = (_c = result.wrappedText) !== null && _c !== void 0 ? _c : '';
             }
             else if (datum.depth === 1) {
                 labelStyle = title;
@@ -668,35 +809,22 @@ var TreemapSeries = /** @class */ (function (_super) {
             else {
                 labelStyle = subtitle;
             }
-            var labelSize = getTextSize(labelText, labelStyle);
-            var availTextWidth = box.width - 2 * nodePadding;
-            var availTextHeight = box.height - 2 * nodePadding;
-            var minSizeRatio = 3;
-            if (labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio) {
+            var labelSize = getTextSize(wrappedText || labelText, labelStyle);
+            if (isBoxTooSmall(labelStyle)) {
                 // Avoid labels on too small tiles
                 return;
             }
             // Crop text if not enough space
             if (labelSize.width > availTextWidth) {
                 var textLength = Math.floor((labelText.length * availTextWidth) / labelSize.width) - 1;
-                labelText = labelText.substring(0, textLength) + "\u2026";
+                labelText = labelText.substring(0, textLength).trim() + "\u2026";
             }
-            var valueConfig = labels.value;
-            var valueStyle = valueConfig.style;
-            var valueMargin = (labelStyle.fontSize + valueStyle.fontSize) / 8;
-            var valueText = String(datum.isLeaf
-                ? valueConfig.formatter
-                    ? valueConfig.formatter({ datum: datum.datum })
-                    : valueConfig.key
-                        ? datum.datum[valueConfig.key]
-                        : ''
-                : '');
-            var valueSize = getTextSize(valueText, valueStyle);
+            valueSize = getTextSize(valueText, valueStyle);
             var hasValueText = valueText &&
                 valueSize.width < availTextWidth &&
                 valueSize.height + labelSize.height + valueMargin < availTextHeight;
             labelMeta.set(datum, {
-                label: __assign({ text: labelText, style: labelStyle }, (datum.isLeaf
+                label: __assign({ text: wrappedText || labelText, style: labelStyle }, (datum.isLeaf
                     ? {
                         hAlign: 'center',
                         vAlign: 'middle',
@@ -733,23 +861,23 @@ var TreemapSeries = /** @class */ (function (_super) {
         return new TreemapSeriesNodeDoubleClickEvent(this.labelKey, this.sizeKey, this.colorKey, event, datum, this);
     };
     TreemapSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var _a;
+        var _a, _b, _c, _d;
         if (!this.highlightGroups && !nodeDatum.isLeaf) {
             return '';
         }
-        var _b = this, tooltip = _b.tooltip, sizeKey = _b.sizeKey, labelKey = _b.labelKey, colorKey = _b.colorKey, rootName = _b.rootName, seriesId = _b.id, labels = _b.labels;
+        var _e = this, tooltip = _e.tooltip, sizeKey = _e.sizeKey, labelKey = _e.labelKey, colorKey = _e.colorKey, rootName = _e.rootName, seriesId = _e.id, labels = _e.labels, callbackCache = _e.ctx.callbackCache;
         var datum = nodeDatum.datum;
         var tooltipRenderer = tooltip.renderer;
-        var title = nodeDatum.depth ? datum[labelKey] : rootName || datum[labelKey];
+        var title = nodeDatum.depth ? datum[labelKey] : (_a = datum[labelKey]) !== null && _a !== void 0 ? _a : rootName;
         var content = '';
         var format = this.getTileFormat(nodeDatum, false);
-        var color = (format === null || format === void 0 ? void 0 : format.fill) || nodeDatum.fill || 'gray';
+        var color = (_c = (_b = format === null || format === void 0 ? void 0 : format.fill) !== null && _b !== void 0 ? _b : nodeDatum.fill) !== null && _c !== void 0 ? _c : 'gray';
         var valueKey = labels.value.key;
         var valueFormatter = labels.value.formatter;
         if (valueKey || valueFormatter) {
             var valueText = '';
             if (valueFormatter) {
-                valueText = valueFormatter({ datum: datum });
+                valueText = callbackCache.call(valueFormatter, { datum: datum });
             }
             else {
                 var value = datum[valueKey];
@@ -772,7 +900,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.datum,
-                parent: (_a = nodeDatum.parent) === null || _a === void 0 ? void 0 : _a.datum,
+                parent: (_d = nodeDatum.parent) === null || _d === void 0 ? void 0 : _d.datum,
                 depth: nodeDatum.depth,
                 sizeKey: sizeKey,
                 labelKey: labelKey,
@@ -796,6 +924,9 @@ var TreemapSeries = /** @class */ (function (_super) {
     __decorate([
         Validate(NUMBER(0))
     ], TreemapSeries.prototype, "nodePadding", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], TreemapSeries.prototype, "nodeGap", void 0);
     __decorate([
         Validate(STRING)
     ], TreemapSeries.prototype, "labelKey", void 0);

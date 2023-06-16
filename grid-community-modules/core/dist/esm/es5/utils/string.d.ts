@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -16,3 +16,9 @@ export declare function escapeString(toEscape?: string | null, skipEscapingHtmlC
  * @return {string}
  */
 export declare function camelCaseToHumanText(camelCase: string | undefined): string | null;
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+export declare function camelCaseToHyphenated(camelCase: string): string;

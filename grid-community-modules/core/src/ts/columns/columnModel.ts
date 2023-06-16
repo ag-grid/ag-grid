@@ -295,6 +295,10 @@ export class ColumnModel extends BeanStub {
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
     }
 
+    public recreateColumnDefs(source: ColumnEventType = 'api'): void {
+        this.onSharedColDefChanged(source);
+    }
+
     private destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
         const oldObjectsById: {[id: number]: IProvidedColumn | null} = {};
 
@@ -3109,10 +3113,6 @@ export class ColumnModel extends BeanStub {
         };
 
         this.gridColumns.forEach(checkFunc);
-
-        if (this.groupAutoColumns) {
-            this.groupAutoColumns.forEach(checkFunc);
-        }
     }
 
     public getGroupDisplayColumns(): Column[] {
@@ -3127,7 +3127,6 @@ export class ColumnModel extends BeanStub {
         const columnsForDisplay = this.calculateColumnsForDisplay();
 
         this.buildDisplayedTrees(columnsForDisplay);
-        this.calculateColumnsForGroupDisplay();
 
         // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
@@ -3254,6 +3253,7 @@ export class ColumnModel extends BeanStub {
         this.orderGridColsLike(sortOrderToRecover);
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
@@ -3362,16 +3362,13 @@ export class ColumnModel extends BeanStub {
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterColumns(): void {
-        let columnsForQuickFilter;
+        let columnsForQuickFilter = (this.isPivotMode() ? this.secondaryColumns : this.primaryColumns) ?? [];
         if (this.groupAutoColumns) {
-            columnsForQuickFilter = (this.primaryColumns ?? []).concat(this.groupAutoColumns);
-        } else if (this.primaryColumns) {
-            columnsForQuickFilter = this.primaryColumns;
+            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
         }
-        columnsForQuickFilter = columnsForQuickFilter ?? [];
-        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
-            : columnsForQuickFilter;
+        this.columnsForQuickFilter = this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')
+            ? columnsForQuickFilter
+            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
 
     private placeLockedColumns(cols: Column[]): Column[] {
@@ -3927,6 +3924,8 @@ export class ColumnModel extends BeanStub {
      * @returns whether auto cols have changed
      */
     private createGroupAutoColumnsIfNeeded(): boolean {
+        const forceRecreateAutoGroups = this.forceRecreateAutoGroups;
+        this.forceRecreateAutoGroups = false;
         if (!this.autoGroupsNeedBuilding) { return false; }
 
         this.autoGroupsNeedBuilding = false;
@@ -3950,7 +3949,7 @@ export class ColumnModel extends BeanStub {
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
-            if (autoColsDifferent || this.forceRecreateAutoGroups) {
+            if (autoColsDifferent || forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
                 return true;
             }

@@ -5,17 +5,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Series = exports.SeriesTooltipInteraction = exports.SeriesTooltip = exports.HighlightStyle = exports.SeriesNodeDoubleClickEvent = exports.SeriesNodeClickEvent = exports.SeriesNodeBaseClickEvent = exports.sumProperties = exports.valueProperty = exports.keyProperty = exports.SeriesNodePickMode = void 0;
+exports.Series = exports.SeriesTooltipInteraction = exports.SeriesTooltip = exports.HighlightStyle = exports.SeriesItemHighlightStyle = exports.SeriesNodeDoubleClickEvent = exports.SeriesNodeClickEvent = exports.SeriesNodeBaseClickEvent = exports.trailingAccumulatedValueProperty = exports.accumulativeValueProperty = exports.rangedValueProperty = exports.valueProperty = exports.keyProperty = exports.SeriesNodePickMode = void 0;
 const group_1 = require("../../scene/group");
 const observable_1 = require("../../util/observable");
 const id_1 = require("../../util/id");
 const value_1 = require("../../util/value");
-const deprecation_1 = require("../../util/deprecation");
 const validation_1 = require("../../util/validation");
 const layers_1 = require("../layers");
 const chartAxisDirection_1 = require("../chartAxisDirection");
+const dataModel_1 = require("../data/dataModel");
 const tooltip_1 = require("../tooltip/tooltip");
+const aggregateFunctions_1 = require("../data/aggregateFunctions");
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
 var SeriesNodePickMode;
 (function (SeriesNodePickMode) {
@@ -28,38 +40,43 @@ var SeriesNodePickMode;
     /** Pick matches based upon distance to ideal position */
     SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
 })(SeriesNodePickMode = exports.SeriesNodePickMode || (exports.SeriesNodePickMode = {}));
-const warnDeprecated = deprecation_1.createDeprecationWarning();
-const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
 function keyProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, opts), { property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null });
+    const result = Object.assign({ property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null }, opts);
     return result;
 }
 exports.keyProperty = keyProperty;
 function valueProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, opts), { property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null });
+    const result = Object.assign({ property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null }, opts);
     return result;
 }
 exports.valueProperty = valueProperty;
-function sumProperties(props) {
-    const result = {
-        properties: props,
-        type: 'sum',
-    };
+function rangedValueProperty(propName, opts = {}) {
+    const { min = -Infinity, max = Infinity } = opts, defOpts = __rest(opts, ["min", "max"]);
+    return Object.assign({ type: 'value', property: propName, valueType: 'range', validation: (v) => value_1.checkDatum(v, true) != null, processor: () => (datum) => {
+            if (typeof datum !== 'number')
+                return datum;
+            if (isNaN(datum))
+                return datum;
+            return Math.min(Math.max(datum, min), max);
+        } }, defOpts);
+}
+exports.rangedValueProperty = rangedValueProperty;
+function accumulativeValueProperty(propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: aggregateFunctions_1.accumulatedValue() });
     return result;
 }
-exports.sumProperties = sumProperties;
+exports.accumulativeValueProperty = accumulativeValueProperty;
+function trailingAccumulatedValueProperty(propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: aggregateFunctions_1.trailingAccumulatedValue() });
+    return result;
+}
+exports.trailingAccumulatedValueProperty = trailingAccumulatedValueProperty;
 class SeriesNodeBaseClickEvent {
     constructor(nativeEvent, datum, series) {
         this.type = 'nodeClick';
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
-    }
-    /** @deprecated */
-    get series() {
-        warnSeriesDeprecated();
-        return this._series;
     }
 }
 exports.SeriesNodeBaseClickEvent = SeriesNodeBaseClickEvent;
@@ -93,6 +110,7 @@ __decorate([
 __decorate([
     validation_1.Validate(validation_1.OPT_NUMBER(0))
 ], SeriesItemHighlightStyle.prototype, "strokeWidth", void 0);
+exports.SeriesItemHighlightStyle = SeriesItemHighlightStyle;
 class SeriesHighlightStyle {
     constructor() {
         this.strokeWidth = undefined;
@@ -128,6 +146,7 @@ exports.HighlightStyle = HighlightStyle;
 class SeriesTooltip {
     constructor() {
         this.enabled = true;
+        this.showArrow = undefined;
         this.interaction = new SeriesTooltipInteraction();
         this.position = new tooltip_1.TooltipPosition();
     }
@@ -135,6 +154,9 @@ class SeriesTooltip {
 __decorate([
     validation_1.Validate(validation_1.BOOLEAN)
 ], SeriesTooltip.prototype, "enabled", void 0);
+__decorate([
+    validation_1.Validate(validation_1.OPT_BOOLEAN)
+], SeriesTooltip.prototype, "showArrow", void 0);
 exports.SeriesTooltip = SeriesTooltip;
 class SeriesTooltipInteraction {
     constructor() {
@@ -146,7 +168,7 @@ __decorate([
 ], SeriesTooltipInteraction.prototype, "enabled", void 0);
 exports.SeriesTooltipInteraction = SeriesTooltipInteraction;
 class Series extends observable_1.Observable {
-    constructor({ useSeriesGroupLayer = true, useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, } = {}) {
+    constructor(opts) {
         super();
         this.id = id_1.createId(this);
         // The group node that contains all the nodes used to render this series.
@@ -161,8 +183,11 @@ class Series extends observable_1.Observable {
         this.nodeClickRange = 'exact';
         this._declarationOrder = -1;
         this.highlightStyle = new HighlightStyle();
+        this.ctx = opts.moduleCtx;
+        const { useSeriesGroupLayer = true, useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, directionNames = {}, } = opts;
         const { rootGroup } = this;
         this.directionKeys = directionKeys;
+        this.directionNames = directionNames;
         this.contentGroup = rootGroup.appendChild(new group_1.Group({
             name: `${this.id}-content`,
             layer: useSeriesGroupLayer,
@@ -189,7 +214,8 @@ class Series extends observable_1.Observable {
         }
     }
     get type() {
-        return this.constructor.type || '';
+        var _a;
+        return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
     }
     set data(input) {
         this._data = input;
@@ -212,19 +238,15 @@ class Series extends observable_1.Observable {
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
     }
+    addChartEventListeners() {
+        return;
+    }
     destroy() {
         // Override point for sub-classes.
     }
-    set grouped(g) {
-        if (g === true) {
-            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
-        }
-    }
-    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-    getKeys(direction) {
-        const { directionKeys } = this;
+    getDirectionValues(direction, properties) {
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = properties === null || properties === void 0 ? void 0 : properties[resolvedDirection];
         const values = [];
         const flatten = (...array) => {
             for (const value of array) {
@@ -235,6 +257,9 @@ class Series extends observable_1.Observable {
             if (Array.isArray(value)) {
                 flatten(...value);
             }
+            else if (typeof value === 'object') {
+                flatten(Object.values(value));
+            }
             else {
                 values.push(value);
             }
@@ -243,11 +268,15 @@ class Series extends observable_1.Observable {
             return values;
         keys.forEach((key) => {
             const value = this[key];
-            if (!value)
-                return;
             addValue(value);
         });
         return values;
+    }
+    getKeys(direction) {
+        return this.getDirectionValues(direction, this.directionKeys);
+    }
+    getNames(direction) {
+        return this.getDirectionValues(direction, this.directionNames);
     }
     resolveKeyDirection(direction) {
         return direction;
@@ -377,43 +406,21 @@ class Series extends observable_1.Observable {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }
-    toggleOtherSeriesItems(_seriesToggled, _datumToggled, _enabled, _suggestedEnabled) {
-        return;
-    }
     isEnabled() {
         return this.visible;
     }
     fixNumericExtent(extent, axis) {
         var _a;
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = dataModel_1.fixNumericExtent(extent);
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
             const padding = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : 1;
             min -= padding;
             max += padding;
-        }
-        if (!(value_1.isNumber(min) && value_1.isNumber(max))) {
-            return [];
         }
         return [min, max];
     }

@@ -6,34 +6,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChartAxis = exports.flipChartAxisDirection = void 0;
+exports.ChartAxis = void 0;
 const axis_1 = require("../axis");
 const chartAxisDirection_1 = require("./chartAxisDirection");
 const linearScale_1 = require("../scale/linearScale");
 const continuousScale_1 = require("../scale/continuousScale");
 const validation_1 = require("../util/validation");
-function flipChartAxisDirection(direction) {
-    if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
-        return chartAxisDirection_1.ChartAxisDirection.Y;
-    }
-    else {
-        return chartAxisDirection_1.ChartAxisDirection.X;
-    }
-}
-exports.flipChartAxisDirection = flipChartAxisDirection;
 class ChartAxis extends axis_1.Axis {
     constructor(moduleCtx, scale) {
-        super(scale);
-        this.moduleCtx = moduleCtx;
+        super(moduleCtx, scale);
         this.keys = [];
-        this.direction = chartAxisDirection_1.ChartAxisDirection.Y;
         this.boundSeries = [];
         this.includeInvisibleDomains = false;
         this.modules = {};
-        this._position = 'left';
+        this.position = 'left';
     }
     get type() {
-        return this.constructor.type || '';
+        var _a;
+        return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
+    }
+    get direction() {
+        return ['top', 'bottom'].includes(this.position) ? chartAxisDirection_1.ChartAxisDirection.X : chartAxisDirection_1.ChartAxisDirection.Y;
     }
     useCalculatedTickCount() {
         // We only want to use the new algorithm for number axes. Category axes don't use a
@@ -41,43 +34,37 @@ class ChartAxis extends axis_1.Axis {
         // the time-range involved.
         return this.scale instanceof linearScale_1.LinearScale;
     }
-    set position(value) {
-        if (this._position !== value) {
-            this._position = value;
-            switch (value) {
-                case 'top':
-                    this.direction = chartAxisDirection_1.ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = true;
-                    this.label.parallel = true;
-                    break;
-                case 'right':
-                    this.direction = chartAxisDirection_1.ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = true;
-                    this.label.parallel = false;
-                    break;
-                case 'bottom':
-                    this.direction = chartAxisDirection_1.ChartAxisDirection.X;
-                    this.rotation = -90;
-                    this.label.mirrored = false;
-                    this.label.parallel = true;
-                    break;
-                case 'left':
-                    this.direction = chartAxisDirection_1.ChartAxisDirection.Y;
-                    this.rotation = 0;
-                    this.label.mirrored = false;
-                    this.label.parallel = false;
-                    break;
-            }
-            if (this.axisContext) {
-                this.axisContext.position = value;
-                this.axisContext.direction = this.direction;
-            }
-        }
+    update(primaryTickCount) {
+        this.updateDirection();
+        return super.update(primaryTickCount);
     }
-    get position() {
-        return this._position;
+    updateDirection() {
+        switch (this.position) {
+            case 'top':
+                this.rotation = -90;
+                this.label.mirrored = true;
+                this.label.parallel = true;
+                break;
+            case 'right':
+                this.rotation = 0;
+                this.label.mirrored = true;
+                this.label.parallel = false;
+                break;
+            case 'bottom':
+                this.rotation = -90;
+                this.label.mirrored = false;
+                this.label.parallel = true;
+                break;
+            case 'left':
+                this.rotation = 0;
+                this.label.mirrored = false;
+                this.label.parallel = false;
+                break;
+        }
+        if (this.axisContext) {
+            this.axisContext.position = this.position;
+            this.axisContext.direction = this.direction;
+        }
     }
     calculateDomain() {
         const { direction, boundSeries, includeInvisibleDomains } = this;
@@ -86,11 +73,10 @@ class ChartAxis extends axis_1.Axis {
         }
         else {
             const domains = [];
-            boundSeries
-                .filter((s) => includeInvisibleDomains || s.isEnabled())
-                .forEach((series) => {
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
                 domains.push(series.getDomain(direction));
-            });
+            }
             const domain = new Array().concat(...domains);
             this.dataDomain = this.normaliseDataDomain(domain);
         }
@@ -129,9 +115,9 @@ class ChartAxis extends axis_1.Axis {
                 scaleInvert: (val) => { var _a, _b, _c; return (_c = (_b = (_a = this.scale).invert) === null || _b === void 0 ? void 0 : _b.call(_a, val)) !== null && _c !== void 0 ? _c : undefined; },
             };
         }
-        const moduleMeta = module.initialiseModule(Object.assign(Object.assign({}, this.moduleCtx), { parent: this.axisContext }));
-        this.modules[module.optionsKey] = moduleMeta;
-        this[module.optionsKey] = moduleMeta.instance;
+        const moduleInstance = new module.instanceConstructor(Object.assign(Object.assign({}, this.moduleCtx), { parent: this.axisContext }));
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+        this[module.optionsKey] = moduleInstance;
     }
     removeModule(module) {
         var _a, _b;
@@ -150,11 +136,30 @@ class ChartAxis extends axis_1.Axis {
             delete this[key];
         }
     }
+    getTitleFormatterParams() {
+        var _a;
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, []);
+        return {
+            direction: this.direction,
+            boundSeries,
+            defaultValue: (_a = this.title) === null || _a === void 0 ? void 0 : _a.text,
+        };
+    }
 }
 __decorate([
     validation_1.Validate(validation_1.STRING_ARRAY)
 ], ChartAxis.prototype, "keys", void 0);
 __decorate([
     validation_1.Validate(validation_1.POSITION)
-], ChartAxis.prototype, "_position", void 0);
+], ChartAxis.prototype, "position", void 0);
 exports.ChartAxis = ChartAxis;

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -38,9 +40,6 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
             e.preventDefault();
         }
     };
-    SideBarButtonsComp.prototype.setToolPanelDefs = function (toolPanelDefs) {
-        toolPanelDefs.forEach(this.addButtonComp.bind(this));
-    };
     SideBarButtonsComp.prototype.setActiveButton = function (id) {
         this.buttonComps.forEach(function (comp) {
             comp.setSelected(id === comp.getToolPanelId());
@@ -57,6 +56,7 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
                 toolPanelId: def.id
             });
         });
+        return buttonComp;
     };
     SideBarButtonsComp.prototype.clearButtons = function () {
         this.buttonComps = this.destroyBeans(this.buttonComps);

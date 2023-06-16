@@ -95,8 +95,8 @@ const AG_GRID_LOCALE_EN = {
     addToLabels: 'Add ${variable} to labels',
     removeFromLabels: 'Remove ${variable} from labels',
     resetColumns: 'Reset Columns',
-    expandAll: 'Expand All',
-    collapseAll: 'Close All',
+    expandAll: 'Expand All Row Groups',
+    collapseAll: 'Close All Row Groups',
     copy: 'Copy',
     ctrlC: 'Ctrl+C',
     ctrlX: 'Ctrl+X',
@@ -294,6 +294,7 @@ const AG_GRID_LOCALE_EN = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
     ariaIndeterminate:'indeterminate',
@@ -306,6 +307,7 @@ const AG_GRID_LOCALE_EN = {
     ariaSearch: 'Search',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
+    ariaToggleCellValue: 'Press SPACE to toggle cell value',
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
@@ -335,6 +337,23 @@ const AG_GRID_LOCALE_EN = {
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
-    decimalSeparator: '.'
+    decimalSeparator: '.',
 
+    // Data types
+    true: 'True',
+    false: 'False',
+    invalidDate: 'Invalid Date',
+    invalidNumber: 'Invalid Number',
+    january: 'January',
+    february: 'February',
+    march: 'March',
+    april: 'April',
+    may: 'May',
+    june: 'June',
+    july: 'July',
+    august: 'August',
+    september: 'September',
+    october: 'October',
+    november: 'November',
+    december: 'December',
 }

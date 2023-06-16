@@ -91,7 +91,7 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private resetMiniFilter;
     protected resetUiToActiveModel(currentModel: SetFilterModel | null, afterUiUpdatedFunc?: () => void): void;
     protected handleCancelEnd(e: Event): void;
-    private onMiniFilterKeyPress;
+    private onMiniFilterKeyDown;
     private filterOnAllVisibleValues;
     private focusRowIfAlive;
     private onSelectAll;

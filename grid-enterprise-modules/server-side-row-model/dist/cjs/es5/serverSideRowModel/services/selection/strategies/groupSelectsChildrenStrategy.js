@@ -7,16 +7,40 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -34,9 +58,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupSelectsChildrenStrategy = void 0;
@@ -119,7 +144,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
     };
     GroupSelectsChildrenStrategy.prototype.deleteSelectionStateFromParent = function (parentRoute, removedNodeIds) {
         var parentState = this.selectedState;
-        var remainingRoute = __spread(parentRoute);
+        var remainingRoute = __spreadArray([], __read(parentRoute));
         while (parentState && remainingRoute.length) {
             parentState = parentState.toggledNodes.get(remainingRoute.pop());
         }
@@ -138,12 +163,19 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         }
         return anyStateChanged;
     };
-    GroupSelectsChildrenStrategy.prototype.setNodeSelected = function (params) {
+    GroupSelectsChildrenStrategy.prototype.setNodesSelected = function (params) {
         var _this = this;
+        var nodes = params.nodes, other = __rest(params, ["nodes"]);
+        if (nodes.length === 0)
+            return 0;
         if (params.rangeSelect) {
-            var nodes = this.rowModel.getNodesInRangeForSelection(params.node, this.lastSelected);
+            if (nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
+            }
+            var node_1 = nodes[0];
+            var rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node_1, this.lastSelected);
             // sort the routes by route length, high to low, this means we can do the lowest level children first
-            var routes = nodes.map(this.getRouteToNode).sort(function (a, b) { return b.length - a.length; });
+            var routes = rangeOfNodes.map(this.getRouteToNode).sort(function (a, b) { return b.length - a.length; });
             // skip routes if we've already done a descendent
             var completedRoutes_1 = new Set();
             routes.forEach(function (route) {
@@ -152,16 +184,18 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
                     return;
                 }
                 route.forEach(function (part) { return completedRoutes_1.add(part); });
-                _this.recursivelySelectNode(route, _this.selectedState, params);
+                _this.recursivelySelectNode(route, _this.selectedState, __assign({ node: node_1 }, other));
             });
             this.removeRedundantState();
-            this.lastSelected = params.node;
+            this.lastSelected = node_1;
             return 1;
         }
-        var idPathToNode = this.getRouteToNode(params.node);
-        this.recursivelySelectNode(idPathToNode, this.selectedState, params);
+        params.nodes.forEach(function (node) {
+            var idPathToNode = _this.getRouteToNode(node);
+            _this.recursivelySelectNode(idPathToNode, _this.selectedState, __assign(__assign({}, other), { node: node }));
+        });
         this.removeRedundantState();
-        this.lastSelected = params.node;
+        this.lastSelected = params.nodes[params.nodes.length - 1];
         return 1;
     };
     GroupSelectsChildrenStrategy.prototype.isNodeSelected = function (node) {

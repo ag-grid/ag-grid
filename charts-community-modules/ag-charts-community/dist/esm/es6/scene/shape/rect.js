@@ -120,7 +120,8 @@ export class Rect extends Path {
     }
     applyFillAlpha(ctx) {
         const { fillOpacity, microPixelEffectOpacity, opacity } = this;
-        ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
+        const { globalAlpha } = ctx;
+        ctx.globalAlpha = globalAlpha * opacity * fillOpacity * microPixelEffectOpacity;
     }
     renderStroke(ctx) {
         const { stroke, effectiveStrokeWidth, borderPath, borderClipPath, opacity, microPixelEffectOpacity } = this;

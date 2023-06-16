@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -29,6 +29,7 @@ export declare class AnimationFrameService extends BeanStub {
     flushAllFrames(): void;
     schedule(): void;
     private requestFrame;
+    requestAnimationFrame(callback: any): void;
     isQueueEmpty(): boolean;
     debounce(func: () => void): () => void;
 }

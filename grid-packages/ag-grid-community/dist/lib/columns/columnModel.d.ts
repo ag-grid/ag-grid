@@ -147,6 +147,7 @@ export declare class ColumnModel extends BeanStub {
     private onAutoGroupColumnDefChanged;
     private onSharedColDefChanged;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    recreateColumnDefs(source?: ColumnEventType): void;
     private destroyOldColumns;
     private destroyColumns;
     private createColumnsFromColumnDefs;

@@ -22,7 +22,7 @@ Accepted reproducible scenarios are
 - A description of the detailed steps to reproduce your behaviour in one of our examples in the docs.
 - A plunker
 
-If you decide to send us a plunkr, from any example in our website use the plunkr button in there to fork your own code by following the steps below:
+If you decide to send us a plunker, from any example in our website use the plunker button in there to fork your own code by following the steps below:
 
 - Select the framework that is appropriate to you from the drop-down
 - Open it in plunker. (Use the button plunker in our example)

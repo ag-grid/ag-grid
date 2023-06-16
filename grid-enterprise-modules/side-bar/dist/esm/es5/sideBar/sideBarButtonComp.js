@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -34,9 +36,10 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.eToggleButton.setAttribute('id', "ag-" + this.getCompId() + "-button");
     };
     SideBarButtonComp.prototype.createTemplate = function () {
-        var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" class=\"ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";
+        var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" aria-expanded=\"false\" class=\"ag-button ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";
         return res;
     };
     SideBarButtonComp.prototype.setLabel = function () {
@@ -53,6 +56,10 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     };
     SideBarButtonComp.prototype.setSelected = function (selected) {
         this.addOrRemoveCssClass('ag-selected', selected);
+        _.setAriaExpanded(this.eToggleButton, selected);
+    };
+    SideBarButtonComp.prototype.getButtonElement = function () {
+        return this.eToggleButton;
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate([

@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -69,21 +71,25 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 import { Rect } from '../../../scene/shape/rect';
-import { SeriesTooltip, Series, SeriesNodePickMode } from '../series';
+import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty, } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent, } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
-import { extent } from '../../../util/array';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { BOOLEAN, NUMBER, OPT_ARRAY, OPT_FUNCTION, OPT_LINE_DASH, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate, predicateWithMessage, } from '../../../util/validation';
+import { BOOLEAN, NUMBER, OPT_ARRAY, OPT_FUNCTION, OPT_LINE_DASH, OPT_NUMBER, OPT_COLOR_STRING, Validate, predicateWithMessage, OPT_STRING, } from '../../../util/validation';
+import { DataModel, fixNumericExtent, } from '../../data/dataModel';
+import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
+import { SORT_DOMAIN_GROUPS } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 var HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 var HISTOGRAM_AGGREGATION = predicateWithMessage(function (v) { return HISTOGRAM_AGGREGATIONS.includes(v); }, "expecting a histogram aggregation keyword such as 'count', 'sum' or 'mean");
 var HistogramSeriesNodeTag;
@@ -104,51 +110,6 @@ var HistogramSeriesLabel = /** @class */ (function (_super) {
     return HistogramSeriesLabel;
 }(Label));
 var defaultBinCount = 10;
-var aggregationFunctions = {
-    count: function (bin) { return bin.data.length; },
-    sum: function (bin, yKey) { return bin.data.reduce(function (acc, datum) { return acc + datum[yKey]; }, 0); },
-    mean: function (bin, yKey) { return aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey); },
-};
-var HistogramBin = /** @class */ (function () {
-    function HistogramBin(_a) {
-        var _b = __read(_a, 2), domainMin = _b[0], domainMax = _b[1];
-        this.data = [];
-        this.aggregatedValue = 0;
-        this.frequency = 0;
-        this.domain = [domainMin, domainMax];
-    }
-    HistogramBin.prototype.addDatum = function (datum) {
-        this.data.push(datum);
-        this.frequency++;
-    };
-    Object.defineProperty(HistogramBin.prototype, "domainWidth", {
-        get: function () {
-            var _a = __read(this.domain, 2), domainMin = _a[0], domainMax = _a[1];
-            return domainMax - domainMin;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(HistogramBin.prototype, "relativeHeight", {
-        get: function () {
-            return this.aggregatedValue / this.domainWidth;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    HistogramBin.prototype.calculateAggregatedValue = function (aggregationName, yKey) {
-        if (!yKey) {
-            // not having a yKey forces us into a frequency plot
-            aggregationName = 'count';
-        }
-        var aggregationFunction = aggregationFunctions[aggregationName];
-        this.aggregatedValue = aggregationFunction(this, yKey);
-    };
-    HistogramBin.prototype.getY = function (areaPlot) {
-        return areaPlot ? this.relativeHeight : this.aggregatedValue;
-    };
-    return HistogramBin;
-}());
 var HistogramSeriesTooltip = /** @class */ (function (_super) {
     __extends(HistogramSeriesTooltip, _super);
     function HistogramSeriesTooltip() {
@@ -163,11 +124,8 @@ var HistogramSeriesTooltip = /** @class */ (function (_super) {
 }(SeriesTooltip));
 var HistogramSeries = /** @class */ (function (_super) {
     __extends(HistogramSeries, _super);
-    function HistogramSeries() {
-        var _this = _super.call(this, { pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
-        _this.binnedData = [];
-        _this.xDomain = [];
-        _this.yDomain = [];
+    function HistogramSeries(moduleCtx) {
+        var _this = _super.call(this, { moduleCtx: moduleCtx, pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
         _this.label = new HistogramSeriesLabel();
         _this.tooltip = new HistogramSeriesTooltip();
         _this.fill = undefined;
@@ -176,38 +134,29 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.strokeOpacity = 1;
         _this.lineDash = [0];
         _this.lineDashOffset = 0;
-        _this.xKey = '';
+        _this.xKey = undefined;
         _this.areaPlot = false;
         _this.bins = undefined;
         _this.aggregation = 'count';
         _this.binCount = undefined;
-        _this.xName = '';
-        _this.yKey = '';
-        _this.yName = '';
+        _this.xName = undefined;
+        _this.yKey = undefined;
+        _this.yName = undefined;
         _this.strokeWidth = 1;
         _this.shadow = undefined;
+        _this.calculatedBins = [];
         _this.label.enabled = false;
         return _this;
     }
     // During processData phase, used to unify different ways of the user specifying
     // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
-    HistogramSeries.prototype.deriveBins = function () {
-        var _this = this;
-        var bins = this.bins;
-        if (!this.data) {
-            return [];
-        }
-        var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
-        var xDomain = this.fixNumericExtent(extent(xData));
+    HistogramSeries.prototype.deriveBins = function (xDomain) {
         if (this.binCount === undefined) {
-            if (bins) {
-                return bins;
-            }
             var binStarts = ticks(xDomain[0], xDomain[1], defaultBinCount);
             var binSize_1 = tickStep(xDomain[0], xDomain[1], defaultBinCount);
             var firstBinEnd = binStarts[0];
             var expandStartToBin = function (n) { return [n, n + binSize_1]; };
-            return __spread([[firstBinEnd - binSize_1, firstBinEnd]], binStarts.map(expandStartToBin));
+            return __spreadArray([[firstBinEnd - binSize_1, firstBinEnd]], __read(binStarts.map(expandStartToBin)));
         }
         else {
             return this.calculateNiceBins(xDomain, this.binCount);
@@ -242,104 +191,123 @@ var HistogramSeries = /** @class */ (function (_super) {
             binSize: binSize,
         };
     };
-    HistogramSeries.prototype.placeDataInBins = function (data) {
-        var _this = this;
-        var xKey = this.xKey;
-        var derivedBins = this.deriveBins();
-        this.bins = derivedBins;
-        // creating a sorted copy allows binning in O(n) rather than O(n²)
-        // but at the expense of more temporary memory
-        var sortedData = data.slice().sort(function (a, b) {
-            if (a[xKey] < b[xKey]) {
-                return -1;
-            }
-            if (a[xKey] > b[xKey]) {
-                return 1;
-            }
-            return 0;
-        });
-        var bins = [new HistogramBin(derivedBins[0])];
-        var currentBin = 0;
-        for (var i = 0; i < sortedData.length && currentBin < derivedBins.length; i++) {
-            var datum = sortedData[i];
-            while (datum[xKey] > derivedBins[currentBin][1] && currentBin < derivedBins.length) {
-                currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
-            }
-            if (currentBin < derivedBins.length) {
-                bins[currentBin].addDatum(datum);
-            }
-        }
-        bins.forEach(function (b) { return b.calculateAggregatedValue(_this.aggregation, _this.yKey); });
-        return bins;
-    };
-    Object.defineProperty(HistogramSeries.prototype, "xMax", {
-        get: function () {
-            var _this = this;
-            return (this.data &&
-                this.data.reduce(function (acc, datum) {
-                    return Math.max(acc, datum[_this.xKey]);
-                }, Number.NEGATIVE_INFINITY));
-        },
-        enumerable: false,
-        configurable: true
-    });
     HistogramSeries.prototype.processData = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xKey, data, yData, yMinMax, firstBin, lastBin, xMin, xMax;
+            var _a, xKey, yKey, data, areaPlot, aggregation, props, aggProp, aggProp, groupByFn;
             var _this = this;
             return __generator(this, function (_b) {
-                _a = this, xKey = _a.xKey, data = _a.data;
-                this.binnedData = this.placeDataInBins(xKey && data ? data : []);
-                yData = this.binnedData.map(function (b) { return b.getY(_this.areaPlot); });
-                yMinMax = extent(yData);
-                this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
-                firstBin = this.binnedData[0];
-                lastBin = this.binnedData[this.binnedData.length - 1];
-                xMin = firstBin.domain[0];
-                xMax = lastBin.domain[1];
-                this.xDomain = [xMin, xMax];
+                _a = this, xKey = _a.xKey, yKey = _a.yKey, data = _a.data, areaPlot = _a.areaPlot, aggregation = _a.aggregation;
+                props = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
+                if (yKey) {
+                    aggProp = groupCount();
+                    if (aggregation === 'count') {
+                        // Nothing to do.
+                    }
+                    else if (aggregation === 'sum') {
+                        aggProp = groupSum([yKey]);
+                    }
+                    else if (aggregation === 'mean') {
+                        aggProp = groupAverage([yKey]);
+                    }
+                    if (areaPlot) {
+                        aggProp = area([yKey], aggProp);
+                    }
+                    props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
+                }
+                else {
+                    aggProp = groupCount();
+                    if (areaPlot) {
+                        aggProp = area([], aggProp);
+                    }
+                    props.push(aggProp);
+                }
+                groupByFn = function (dataSet) {
+                    var _a;
+                    var xExtent = fixNumericExtent(dataSet.domain.keys[0]);
+                    if (xExtent.length === 0) {
+                        // No buckets can be calculated.
+                        dataSet.domain.groups = [];
+                        return function () { return []; };
+                    }
+                    var bins = (_a = _this.bins) !== null && _a !== void 0 ? _a : _this.deriveBins(xExtent);
+                    var binCount = bins.length;
+                    _this.calculatedBins = __spreadArray([], __read(bins));
+                    return function (item) {
+                        var xValue = item.keys[0];
+                        for (var i = 0; i < binCount; i++) {
+                            var nextBin = bins[i];
+                            if (xValue >= nextBin[0] && xValue < nextBin[1]) {
+                                return nextBin;
+                            }
+                            if (i === binCount - 1 && xValue <= nextBin[1]) {
+                                // Handle edge case of a value being at the maximum extent, and the
+                                // final bin aligning with it.
+                                return nextBin;
+                            }
+                        }
+                        return [];
+                    };
+                };
+                this.dataModel = new DataModel({
+                    props: props,
+                    dataVisible: this.visible,
+                    groupByFn: groupByFn,
+                });
+                this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
                 return [2 /*return*/];
             });
         });
     };
     HistogramSeries.prototype.getDomain = function (direction) {
+        var _a, _b, _c, _d;
+        var processedData = this.processedData;
+        if (!processedData)
+            return [];
+        var _e = processedData.domain.aggValues, _f = _e === void 0 ? [] : _e, _g = __read(_f, 1), yDomain = _g[0];
+        var xDomainMin = (_a = this.calculatedBins) === null || _a === void 0 ? void 0 : _a[0][0];
+        var xDomainMax = (_b = this.calculatedBins) === null || _b === void 0 ? void 0 : _b[((_d = (_c = this.calculatedBins) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
+            return fixNumericExtent([xDomainMin, xDomainMax]);
         }
-        else {
-            return this.yDomain;
-        }
+        return fixNumericExtent(yDomain);
     };
     HistogramSeries.prototype.getNodeClickEvent = function (event, datum) {
-        return new CartesianSeriesNodeClickEvent(this.xKey, this.yKey, event, datum, this);
+        var _a, _b;
+        return new CartesianSeriesNodeClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', (_b = this.yKey) !== null && _b !== void 0 ? _b : '', event, datum, this);
     };
     HistogramSeries.prototype.getNodeDoubleClickEvent = function (event, datum) {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, this.yKey, event, datum, this);
+        var _a, _b;
+        return new CartesianSeriesNodeDoubleClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', (_b = this.yKey) !== null && _b !== void 0 ? _b : '', event, datum, this);
     };
     HistogramSeries.prototype.createNodeData = function () {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xAxis, yAxis, xScale, yScale, _b, fill, stroke, strokeWidth, seriesId, yKey, xKey, nodeData, defaultLabelFormatter, _c, _d, labelFormatter, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor;
+            var _b, xAxis, yAxis, processedData, callbackCache, xScale, yScale, _c, fill, stroke, strokeWidth, seriesId, _d, yKey, _e, xKey, nodeData, defaultLabelFormatter, _f, _g, labelFormatter, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor;
             var _this = this;
-            return __generator(this, function (_e) {
-                _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
-                if (!this.seriesItemEnabled || !xAxis || !yAxis) {
+            return __generator(this, function (_h) {
+                _b = this, xAxis = _b.xAxis, yAxis = _b.yAxis, processedData = _b.processedData, callbackCache = _b.ctx.callbackCache;
+                if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
                     return [2 /*return*/, []];
                 }
                 xScale = xAxis.scale;
                 yScale = yAxis.scale;
-                _b = this, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth, seriesId = _b.id, yKey = _b.yKey, xKey = _b.xKey;
+                _c = this, fill = _c.fill, stroke = _c.stroke, strokeWidth = _c.strokeWidth, seriesId = _c.id, _d = _c.yKey, yKey = _d === void 0 ? '' : _d, _e = _c.xKey, xKey = _e === void 0 ? '' : _e;
                 nodeData = [];
                 defaultLabelFormatter = function (params) { return String(params.value); };
-                _c = this.label, _d = _c.formatter, labelFormatter = _d === void 0 ? defaultLabelFormatter : _d, labelFontStyle = _c.fontStyle, labelFontWeight = _c.fontWeight, labelFontSize = _c.fontSize, labelFontFamily = _c.fontFamily, labelColor = _c.color;
-                this.binnedData.forEach(function (binOfData) {
-                    var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = __read(binOfData.domain, 2), xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
-                    var xMinPx = xScale.convert(xDomainMin), xMaxPx = xScale.convert(xDomainMax), 
-                    // note: assuming can't be negative:
-                    y = _this.areaPlot ? relativeHeight : yKey ? total : frequency, yZeroPx = yScale.convert(0), yMaxPx = yScale.convert(y), w = xMaxPx - xMinPx, h = Math.abs(yMaxPx - yZeroPx);
-                    var selectionDatumLabel = y !== 0
+                _f = this.label, _g = _f.formatter, labelFormatter = _g === void 0 ? defaultLabelFormatter : _g, labelFontStyle = _f.fontStyle, labelFontWeight = _f.fontWeight, labelFontSize = _f.fontSize, labelFontFamily = _f.fontFamily, labelColor = _f.color;
+                processedData.data.forEach(function (group) {
+                    var _a;
+                    var _b = group.aggValues, _c = _b === void 0 ? [[0, 0]] : _b, _d = __read(_c, 1), _e = __read(_d[0], 2), negativeAgg = _e[0], positiveAgg = _e[1], datum = group.datum, frequency = group.datum.length, domain = group.keys, _f = __read(group.keys, 2), xDomainMin = _f[0], xDomainMax = _f[1];
+                    var xMinPx = xScale.convert(xDomainMin);
+                    var xMaxPx = xScale.convert(xDomainMax);
+                    var total = negativeAgg + positiveAgg;
+                    var yZeroPx = yScale.convert(0);
+                    var yMaxPx = yScale.convert(total);
+                    var w = xMaxPx - xMinPx;
+                    var h = Math.abs(yMaxPx - yZeroPx);
+                    var selectionDatumLabel = total !== 0
                         ? {
-                            text: labelFormatter({ value: binOfData.aggregatedValue, seriesId: seriesId }),
+                            text: (_a = callbackCache.call(labelFormatter, { value: total, seriesId: seriesId })) !== null && _a !== void 0 ? _a : String(total),
                             fontStyle: labelFontStyle,
                             fontWeight: labelFontWeight,
                             fontSize: labelFontSize,
@@ -355,10 +323,11 @@ var HistogramSeries = /** @class */ (function (_super) {
                     };
                     nodeData.push({
                         series: _this,
-                        datum: binOfData,
+                        datum: datum,
                         // since each selection is an aggregation of multiple data.
-                        aggregatedValue: binOfData.aggregatedValue,
-                        domain: binOfData.domain,
+                        aggregatedValue: total,
+                        frequency: frequency,
+                        domain: domain,
                         yKey: yKey,
                         xKey: xKey,
                         x: xMinPx,
@@ -372,7 +341,7 @@ var HistogramSeries = /** @class */ (function (_super) {
                         label: selectionDatumLabel,
                     });
                 });
-                return [2 /*return*/, [{ itemId: this.yKey, nodeData: nodeData, labelData: nodeData }]];
+                return [2 /*return*/, [{ itemId: (_a = this.yKey) !== null && _a !== void 0 ? _a : this.id, nodeData: nodeData, labelData: nodeData }]];
             });
         });
     };
@@ -399,16 +368,15 @@ var HistogramSeries = /** @class */ (function (_super) {
                 datumSelection = opts.datumSelection, isDatumHighlighted = opts.isHighlight;
                 _a = this, seriesFillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle.item, highlightedFill = _b.fill, _c = _b.fillOpacity, highlightFillOpacity = _c === void 0 ? seriesFillOpacity : _c, highlightedStroke = _b.stroke, highlightedDatumStrokeWidth = _b.strokeWidth;
                 datumSelection.each(function (rect, datum, index) {
+                    var _a, _b;
                     var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                         ? highlightedDatumStrokeWidth
                         : datum.strokeWidth;
                     var fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
                     rect.x = datum.x;
-                    rect.y = datum.y;
                     rect.width = datum.width;
-                    rect.height = datum.height;
-                    rect.fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-                    rect.stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
+                    rect.fill = (_a = (isDatumHighlighted ? highlightedFill : undefined)) !== null && _a !== void 0 ? _a : datum.fill;
+                    rect.stroke = (_b = (isDatumHighlighted ? highlightedStroke : undefined)) !== null && _b !== void 0 ? _b : datum.stroke;
                     rect.fillOpacity = fillOpacity;
                     rect.strokeOpacity = strokeOpacity;
                     rect.strokeWidth = strokeWidth;
@@ -464,17 +432,16 @@ var HistogramSeries = /** @class */ (function (_super) {
         });
     };
     HistogramSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, _b = _a.yKey, yKey = _b === void 0 ? '' : _b, xAxis = _a.xAxis, yAxis = _a.yAxis;
         if (!xKey || !xAxis || !yAxis) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltip = _b.tooltip, aggregation = _b.aggregation, seriesId = _b.id;
+        var _c = this, xName = _c.xName, yName = _c.yName, color = _c.fill, tooltip = _c.tooltip, aggregation = _c.aggregation, seriesId = _c.id;
         var tooltipRenderer = tooltip.renderer;
-        var bin = nodeDatum.datum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = __read(bin.domain, 2), rangeMin = _c[0], rangeMax = _c[1];
-        var title = sanitizeHtml(xName || xKey) + ": " + xAxis.formatDatum(rangeMin) + " - " + xAxis.formatDatum(rangeMax);
+        var aggregatedValue = nodeDatum.aggregatedValue, frequency = nodeDatum.frequency, domain = nodeDatum.domain, _d = __read(nodeDatum.domain, 2), rangeMin = _d[0], rangeMax = _d[1];
+        var title = sanitizeHtml(xName !== null && xName !== void 0 ? xName : xKey) + ": " + xAxis.formatDatum(rangeMin) + " - " + xAxis.formatDatum(rangeMax);
         var content = yKey
-            ? "<b>" + sanitizeHtml(yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue) + "<br>"
+            ? "<b>" + sanitizeHtml(yName !== null && yName !== void 0 ? yName : yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue) + "<br>"
             : '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {
@@ -484,12 +451,17 @@ var HistogramSeries = /** @class */ (function (_super) {
         };
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
-                datum: bin,
+                datum: {
+                    data: nodeDatum.datum,
+                    aggregatedValue: nodeDatum.aggregatedValue,
+                    domain: nodeDatum.domain,
+                    frequency: nodeDatum.frequency,
+                },
                 xKey: xKey,
-                xValue: bin.domain,
+                xValue: domain,
                 xName: xName,
                 yKey: yKey,
-                yValue: bin.aggregatedValue,
+                yValue: aggregatedValue,
                 yName: yName,
                 color: color,
                 title: title,
@@ -499,27 +471,106 @@ var HistogramSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     HistogramSeries.prototype.getLegendData = function () {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yName = _a.yName, visible = _a.visible, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _a;
+        var _b = this, id = _b.id, data = _b.data, xKey = _b.xKey, yName = _b.yName, visible = _b.visible, fill = _b.fill, stroke = _b.stroke, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity;
         if (!data || data.length === 0) {
             return [];
         }
-        return [
+        var legendData = [
             {
+                legendType: 'category',
                 id: id,
                 itemId: xKey,
                 seriesId: id,
                 enabled: visible,
                 label: {
-                    text: yName || xKey || 'Frequency',
+                    text: (_a = yName !== null && yName !== void 0 ? yName : xKey) !== null && _a !== void 0 ? _a : 'Frequency',
                 },
                 marker: {
-                    fill: fill || 'rgba(0, 0, 0, 0)',
-                    stroke: stroke || 'rgba(0, 0, 0, 0)',
+                    fill: fill !== null && fill !== void 0 ? fill : 'rgba(0, 0, 0, 0)',
+                    stroke: stroke !== null && stroke !== void 0 ? stroke : 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity,
                 },
             },
         ];
+        return legendData;
+    };
+    HistogramSeries.prototype.animateEmptyUpdateReady = function (_a) {
+        var _this = this;
+        var datumSelections = _a.datumSelections, labelSelections = _a.labelSelections;
+        var duration = 1000;
+        var labelDuration = 200;
+        var startingY = 0;
+        datumSelections.forEach(function (datumSelection) {
+            return datumSelection.each(function (_, datum) {
+                startingY = Math.max(startingY, datum.height + datum.y);
+            });
+        });
+        datumSelections.forEach(function (datumSelection) {
+            datumSelection.each(function (rect, datum) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + rect.id, [
+                    { from: startingY, to: datum.y },
+                    { from: 0, to: datum.height },
+                ], {
+                    disableInteractions: true,
+                    duration: duration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate: function (_a) {
+                        var _b = __read(_a, 2), y = _b[0], height = _b[1];
+                        rect.y = y;
+                        rect.height = height;
+                        rect.x = datum.x;
+                        rect.width = datum.width;
+                    },
+                });
+            });
+        });
+        labelSelections.forEach(function (labelSelection) {
+            labelSelection.each(function (label) {
+                var _a;
+                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                    from: 0,
+                    to: 1,
+                    delay: duration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: function (opacity) {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
+    };
+    HistogramSeries.prototype.animateReadyUpdate = function (_a) {
+        var _this = this;
+        var datumSelections = _a.datumSelections;
+        datumSelections.forEach(function (datumSelection) {
+            _this.resetSelectionRects(datumSelection);
+        });
+    };
+    HistogramSeries.prototype.animateReadyHighlight = function (highlightSelection) {
+        this.resetSelectionRects(highlightSelection);
+    };
+    HistogramSeries.prototype.animateReadyResize = function (_a) {
+        var _this = this;
+        var _b;
+        var datumSelections = _a.datumSelections;
+        (_b = this.animationManager) === null || _b === void 0 ? void 0 : _b.stop();
+        datumSelections.forEach(function (datumSelection) {
+            _this.resetSelectionRects(datumSelection);
+        });
+    };
+    HistogramSeries.prototype.resetSelectionRects = function (selection) {
+        selection.each(function (rect, datum) {
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+        });
     };
     HistogramSeries.prototype.isLabelEnabled = function () {
         return this.label.enabled;
@@ -545,7 +596,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         Validate(NUMBER(0))
     ], HistogramSeries.prototype, "lineDashOffset", void 0);
     __decorate([
-        Validate(STRING)
+        Validate(OPT_STRING)
     ], HistogramSeries.prototype, "xKey", void 0);
     __decorate([
         Validate(BOOLEAN)
@@ -560,13 +611,13 @@ var HistogramSeries = /** @class */ (function (_super) {
         Validate(OPT_NUMBER(0))
     ], HistogramSeries.prototype, "binCount", void 0);
     __decorate([
-        Validate(STRING)
+        Validate(OPT_STRING)
     ], HistogramSeries.prototype, "xName", void 0);
     __decorate([
-        Validate(STRING)
+        Validate(OPT_STRING)
     ], HistogramSeries.prototype, "yKey", void 0);
     __decorate([
-        Validate(STRING)
+        Validate(OPT_STRING)
     ], HistogramSeries.prototype, "yName", void 0);
     __decorate([
         Validate(NUMBER(0))

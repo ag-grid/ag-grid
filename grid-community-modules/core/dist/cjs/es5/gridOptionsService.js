@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -41,9 +41,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GridOptionsService = void 0;
@@ -89,7 +90,7 @@ var GridOptionsService = /** @class */ (function () {
         this.columnApi = columnApi;
     };
     GridOptionsService.prototype.init = function () {
-        this.gridOptionLookup = new Set(__spread(componentUtil_1.ComponentUtil.ALL_PROPERTIES, componentUtil_1.ComponentUtil.EVENT_CALLBACKS));
+        this.gridOptionLookup = new Set(__spreadArray(__spreadArray([], __read(componentUtil_1.ComponentUtil.ALL_PROPERTIES)), __read(componentUtil_1.ComponentUtil.EVENT_CALLBACKS)));
         var async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
         // sets an initial calculation for the scrollbar width
@@ -195,6 +196,9 @@ var GridOptionsService = /** @class */ (function () {
     };
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
+    GridOptionsService.prototype.getGridId = function () {
+        return this.api.getGridId();
+    };
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
@@ -319,19 +323,12 @@ var GridOptionsService = /** @class */ (function () {
         }
         return document;
     };
+    GridOptionsService.prototype.getWindow = function () {
+        var eDocument = this.getDocument();
+        return eDocument.defaultView || window;
+    };
     GridOptionsService.prototype.getRootNode = function () {
         return this.eGridDiv.getRootNode();
-    };
-    GridOptionsService.prototype.getRowIdFunc = function () {
-        var getRowId = this.getCallback('getRowId');
-        if (getRowId) {
-            return getRowId;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        var getRowNodeId = this.gridOptions.getRowNodeId;
-        if (getRowNodeId) {
-            return function (params) { return getRowNodeId(params.data); };
-        }
     };
     GridOptionsService.prototype.getAsyncTransactionWaitMillis = function () {
         return generic_1.exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
@@ -343,19 +340,27 @@ var GridOptionsService = /** @class */ (function () {
         }
         return this.is('animateRows');
     };
+    GridOptionsService.prototype.isGroupRowsSticky = function () {
+        if (this.is('suppressGroupRowsSticky') ||
+            this.is('paginateChildRows') ||
+            this.is('groupHideOpenParents')) {
+            return false;
+        }
+        return true;
+    };
     GridOptionsService.prototype.isTreeData = function () {
-        return this.is('treeData') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, 'Tree Data');
+        return this.is('treeData') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
     };
     GridOptionsService.prototype.isMasterDetail = function () {
-        return this.is('masterDetail') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, 'masterDetail');
+        return this.is('masterDetail') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
     };
     GridOptionsService.prototype.isEnableRangeSelection = function () {
-        return this.is('enableRangeSelection') && moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RangeSelectionModule);
+        return this.is('enableRangeSelection') && moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, this.api.getGridId());
     };
     GridOptionsService.prototype.isColumnsSortingCoupledToGroup = function () {
         var autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         var isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator);
+        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.isTreeData();
     };
     GridOptionsService.prototype.getGroupAggFiltering = function () {
         var userValue = this.gridOptions.groupAggFiltering;
@@ -394,7 +399,8 @@ var GridOptionsService = /** @class */ (function () {
         context_1.Autowired('eGridDiv')
     ], GridOptionsService.prototype, "eGridDiv", void 0);
     __decorate([
-        __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi'))
+        __param(0, context_1.Qualifier('gridApi')),
+        __param(1, context_1.Qualifier('columnApi'))
     ], GridOptionsService.prototype, "agWire", null);
     __decorate([
         context_1.PostConstruct

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Listeners = void 0;
+const logger_1 = require("./logger");
 class Listeners {
     constructor() {
         this.registeredListeners = {};
@@ -17,7 +18,17 @@ class Listeners {
     dispatch(type, ...params) {
         var _a;
         const listeners = (_a = this.registeredListeners[type]) !== null && _a !== void 0 ? _a : [];
-        return listeners.map((l) => l.handler(...params));
+        const results = [];
+        for (const listener of listeners) {
+            try {
+                results.push(listener.handler(...params));
+            }
+            catch (e) {
+                logger_1.Logger.errorOnce(e);
+                results.push(undefined);
+            }
+        }
+        return results;
     }
     cancellableDispatch(type, cancelled, ...params) {
         var _a;

@@ -1,8 +1,7 @@
 import classnames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
-import DepOrBreakFilterComponent from '../components/grid/DepOrBreakFilterComponent';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
@@ -15,8 +14,8 @@ const COLUMN_DEFS = [
     {
         field: 'key',
         headerName: 'Issue',
-        width: 140,
-        filter: false,
+        width: 135,
+        resizable: false,
         cellRendererSelector: (params) => {
             if (
                 params.node.data.moreInformation ||
@@ -35,13 +34,15 @@ const COLUMN_DEFS = [
     {
         field: 'versions',
         headerName: 'Version',
-        width: 100,
+        width: 95,
+        resizable: false,
+        filter: true,
+
     },
     {
         field: 'summary',
         tooltipField: 'summary',
         flex: 1,
-        filter: false,
     },
     {
         field: 'issueType',
@@ -51,13 +52,14 @@ const COLUMN_DEFS = [
         },
         cellRenderer: 'issueTypeCellRenderer',
         width: 180,
+        filter: true
     },
     {
         field: 'status',
         valueGetter: (params) => {
             return params.data.resolution;
         },
-        width: 100,
+        width: 110,
     },
     {
         field: 'features',
@@ -67,28 +69,35 @@ const COLUMN_DEFS = [
         filterParams: {
             valueFormatter: (params) => params.colDef.valueFormatter(params),
         },
-        width: 160,
+        width: 140,
     },
     {
         field: 'deprecated',
-        hide: true,
-        filter: 'depOrBreakFilterComponent',
-        valueGetter: (params) => (params.node.data.deprecationNotes ? 'Y' : 'N'),
+        headerName: 'Deprecation',
+        headerTooltip: 'Deprecation',
+        cellDataType: 'boolean',
+        valueGetter: (params) => (!!params.node.data.deprecationNotes),
+        width: 120,
+        minWidth: 120,
     },
     {
         field: 'breakingChange',
-        hide: true,
-        valueGetter: (params) => (params.node.data.breakingChangesNotes ? 'Y' : 'N'),
+        headerTooltip: 'Breaking Change',
+        cellDataType: 'boolean',
+        valueGetter: (params) => !!params.node.data.breakingChangesNotes,
+        width: 100,
+        minWidth: 100,
     },
 ];
 
 const defaultColDef = {
-    filter: true,
     sortable: true,
     resizable: true,
-    suppressMenu: true,
     cellClass: styles.fontClass,
     headerClass: styles.fontClass,
+    autoHeaderHeight: true,
+    wrapHeaderText: true,
+    suppressMenu: true,
     suppressKeyboardEvent: (params) => {
         if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
             params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
@@ -96,6 +105,7 @@ const defaultColDef = {
         }
         return false;
     },
+    cellDataType: false,
 };
 
 const detailCellRendererParams = (params) => {
@@ -172,16 +182,29 @@ const Changelog = ({ location }) => {
     const [versions, setVersions] = useState([]);
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
+    const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const [filterState, setFilterState] = useState({ deprecated: false, breakingChange: false });
     const searchBarEl = useRef(null);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
+
+    const components = useMemo(() => {
+        return {
+            myDetailCellRenderer: DetailCellRenderer,
+            paddingCellRenderer: PaddingCellRenderer,
+            chevronButtonCellRenderer: ChevronButtonCellRenderer,
+            issueTypeCellRenderer: IssueTypeCellRenderer,
+        }
+    }, []);
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
+            if (versionsFilterComponent) {
             const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: 'set' };
-            versionsFilterComponent.setModel(newModel);
+                versionsFilterComponent?.setModel(newModel);
             gridApi.onFilterChanged();
+            }
         }
     }, [gridApi, fixVersion, versions]);
 
@@ -205,62 +228,91 @@ const Changelog = ({ location }) => {
     }, [gridApi, fixVersion, versions, applyFixVersionFilter]);
 
     useEffect(() => {
-        if (fixVersion && allReleaseNotes) {
-            const releaseNotes = allReleaseNotes.find((element) => element['release version'].includes(fixVersion));
+        let releaseNotesVersion = fixVersion;
+        if (releaseNotesVersion === ALL_FIX_VERSIONS) {
+            // Find the latest release notes version
+            releaseNotesVersion = allReleaseNotes?.find((element) => !!element['release version'])?.['release version'];
+        }
+
+        if (releaseNotesVersion && allReleaseNotes) {
+            const releaseNotes = allReleaseNotes.find((element) => element['release version'].includes(releaseNotesVersion));
 
             let currentReleaseNotesHtml = null;
             if (releaseNotes) {
-                currentReleaseNotesHtml = Object.keys(releaseNotes)
-                    .map((element) => releaseNotes[element])
-                    .join(' ');
+
+                if (releaseNotes['markdown']) {
+                    fetch('/changelog/' + releaseNotes['markdown'])
+                        .then(response => response.text())
+                        .then(markdownContent => {
+                            setMarkdownContent(markdownContent);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching Markdown content:', error);
+                        });
+                } else {
+                    currentReleaseNotesHtml = Object.keys(releaseNotes)
+                        .map((element) => releaseNotes[element])
+                        .join(' ');
+                    setMarkdownContent(undefined);
+                }
             }
             setCurrentReleaseNotes(currentReleaseNotesHtml);
         }
     }, [fixVersion, allReleaseNotes]);
 
-    const gridReady = (params) => {
+    const gridReady = useCallback((params) => {
         setGridApi(params.api);
         searchBarEl.current.value = URLFilterItemKey;
         params.api.setQuickFilter(URLFilterItemKey);
-    };
+        params.api.sizeColumnsToFit();
+    }, []);
 
-    const onQuickFilterChange = (event) => {
+    const onQuickFilterChange = useCallback((event) => {
         gridApi.setQuickFilter(event.target.value);
-    };
+    }, [gridApi]);
 
-    const isRowMaster = (params) => {
+    const isRowMaster = useCallback((params) => {
         return params.moreInformation || params.deprecationNotes || params.breakingChangesNotes;
-    };
+    }, []);
 
     const filterOnDepsAndBreaking = (field, changed) => {
-        gridApi.getFilterInstance('deprecated', (instance) => {
-            instance.checkboxChanged(field, changed);
+        setFilterState((prevState) => {
+            return {
+                ...prevState,
+                [field]: changed,
+            };
         });
+        setTimeout(() => {
+            gridApi?.onFilterChanged();
+        }, 10);
     };
 
     const onCheckboxChange = (event, filterTerm) => {
         function setTheFilter(column, filterValue, shouldFilter) {
-            const filterInstance = gridApi.getFilterInstance(column);
-            const currentFilterModel = filterInstance.getModel();
-            const isCurrentFilterModel = !!currentFilterModel;
-            let newValues = undefined;
+            gridApi.getFilterInstance(column, (filterInstance) => {
+                const currentFilterModel = filterInstance.getModel();
+                const isCurrentFilterModel = !!currentFilterModel;
+                let newValues = undefined;
 
-            if (!shouldFilter && !isCurrentFilterModel) {
-                newValues = [...filterInstance.getValues()];
-                newValues.splice(newValues.indexOf(filterValue), 1);
-            } else if (!shouldFilter && isCurrentFilterModel) {
-                newValues = [...currentFilterModel.values];
-                const filterIdx = newValues.indexOf(filterValue);
-                if (filterIdx > -1) newValues.splice(filterIdx, 1);
-            } else if (shouldFilter && isCurrentFilterModel) {
-                newValues = [...currentFilterModel.values];
-                newValues.push(filterValue);
-            } else {
-                return;
-            }
-            const newModel = { values: newValues, filterType: 'set' };
-            filterInstance.setModel(newModel);
-            gridApi.onFilterChanged();
+                if (!shouldFilter && !isCurrentFilterModel) {
+                    newValues = [...filterInstance.getValues()];
+                    newValues.splice(newValues.indexOf(filterValue), 1);
+                } else if (!shouldFilter && isCurrentFilterModel) {
+                    newValues = [...currentFilterModel.values];
+                    const filterIdx = newValues.indexOf(filterValue);
+                    if (filterIdx > -1) newValues.splice(filterIdx, 1);
+                } else if (shouldFilter && isCurrentFilterModel) {
+                    newValues = [...currentFilterModel.values];
+                    newValues.push(filterValue);
+                } else {
+                    return;
+                }
+                const newModel = { values: newValues, filterType: 'set' };
+                filterInstance.setModel(newModel).then(() => {
+                    gridApi.onFilterChanged();
+                });
+            });
+
         }
 
         switch (filterTerm) {
@@ -288,6 +340,21 @@ const Changelog = ({ location }) => {
         { id: 'breakingChange', label: 'Breaking Changes', checked: false },
     ];
 
+    const doesExternalFilterPass = useCallback((node) => {
+        const isDeprecation = !!node.data.deprecationNotes;
+        const isBreakingChange = !!node.data.breakingChangesNotes;
+
+        if (filterState.deprecated && filterState.breakingChange) {
+            return isDeprecation || isBreakingChange;
+        } else if (filterState.deprecated) {
+            return isDeprecation;
+        } else if (filterState.breakingChange) {
+            return isBreakingChange;
+        } else {
+            return true;
+        }
+    }, [filterState]);
+
     const createLabeledCheckbox = (checkboxConfig) => {
         const { id, label, checked } = checkboxConfig;
         const key = `${id}-checkbox`;
@@ -311,72 +378,66 @@ const Changelog = ({ location }) => {
         window.history.pushState({}, '', url);
     };
 
+    const releaseNotesTitle = fixVersion == ALL_FIX_VERSIONS ? versions[1] : fixVersion;
+
     return (
         <>
             {!IS_SSR && (
-                <div className="ag-styles">
-                    <div className={classnames('page-margin', styles.container)}>
-                        <h1>AG Grid Changelog</h1>
+                <div className={classnames('page-margin', styles.container)}>
+                    <h1>AG Grid Changelog</h1>
 
-                        <section className={styles.header}>
-                            <Alert type="info">
-                                The AG Grid Changelog lists the feature requests implemented and defects resolved across
-                                AG Grid releases. If you can’t find the item you’re looking for, check the{' '}
-                                <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for items in our
-                                backlog.
-                            </Alert>
+                    <section className={styles.header}>
+                        <Alert type="idea">
+                            The AG Grid Changelog lists the feature requests implemented and defects resolved across AG
+                            Grid releases. If you can’t find the item you’re looking for, check the{' '}
+                            <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for items in our backlog.
+                        </Alert>
 
-                            <div className={styles.controls}>
-                                <input
-                                    type="text"
-                                    className={styles.searchBar}
-                                    placeholder={'Search changelog...'}
-                                    ref={searchBarEl}
-                                    onChange={onQuickFilterChange}
-                                ></input>
+                        <div className={styles.controls}>
+                            <input
+                                type="text"
+                                className={styles.searchBar}
+                                placeholder={'Search changelog...'}
+                                ref={searchBarEl}
+                                onChange={onQuickFilterChange}
+                            ></input>
 
-                                <div>
-                                    {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
+                            <div>
+                                {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
 
-                                    <label>
-                                        Version:{' '}
-                                        <VersionDropdownMenu
-                                            versions={versions}
-                                            onChange={switchDisplayedFixVersion}
-                                            fixVersion={fixVersion}
-                                        />
-                                    </label>
-                                </div>
+                                <label>
+                                    Version:{' '}
+                                    <VersionDropdownMenu
+                                        versions={versions}
+                                        onChange={switchDisplayedFixVersion}
+                                        fixVersion={fixVersion}
+                                    />
+                                </label>
                             </div>
+                        </div>
 
-                            <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
-                        </section>
+                        <ReleaseVersionNotes title={releaseNotesTitle} releaseNotes={currentReleaseNotes} markdownContent={markdownContent} />
+                    </section>
 
-                        <Grid
-                            gridHeight={'66vh'}
-                            columnDefs={COLUMN_DEFS}
-                            rowData={rowData}
-                            suppressReactUi
-                            components={{
-                                myDetailCellRenderer: DetailCellRenderer,
-                                paddingCellRenderer: PaddingCellRenderer,
-                                chevronButtonCellRenderer: ChevronButtonCellRenderer,
-                                depOrBreakFilterComponent: DepOrBreakFilterComponent,
-                                issueTypeCellRenderer: IssueTypeCellRenderer,
-                            }}
-                            defaultColDef={defaultColDef}
-                            detailRowAutoHeight={true}
-                            enableCellTextSelection={true}
-                            detailCellRendererParams={detailCellRendererParams}
-                            detailCellRenderer={'myDetailCellRenderer'}
-                            isRowMaster={isRowMaster}
-                            masterDetail
-                            onGridReady={gridReady}
-                            onFirstDataRendered={() => {
-                                applyFixVersionFilter();
-                            }}
-                        ></Grid>
-                    </div>
+                    <Grid
+                        gridHeight={'66vh'}
+                        columnDefs={COLUMN_DEFS}
+                        rowData={rowData}
+                        components={components}
+                        defaultColDef={defaultColDef}
+                        detailRowAutoHeight={true}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={'myDetailCellRenderer'}
+                        isRowMaster={isRowMaster}
+                        isExternalFilterPresent={() => true}
+                        doesExternalFilterPass={doesExternalFilterPass}
+                        masterDetail
+                        onGridReady={gridReady}
+                        onFirstDataRendered={() => {
+                            applyFixVersionFilter();
+                        }}
+                    ></Grid>
                 </div>
             )}
         </>

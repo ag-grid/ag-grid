@@ -1,15 +1,17 @@
-[[only-vue]]
-|Below is a simple example of filter component:
-|
-|```js
+<framework-specific-section frameworks="vue">
+|Below is an example of a date component:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const CustomDateComponent = {
 |    template: `
-|      <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-|          <input type="text" ref="eInput" data-input style="width: 100%;"/>
-|          <a class="input-button" title="clear" data-clear>
-|              <i class="fa fa-times"></i>
-|          </a>
-|      </div>
+|      &lt;div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
+|          &lt;input type="text" ref="eInput" data-input style="width: 100%;"/>
+|          &lt;a class="input-button" title="clear" data-clear>
+|              &lt;i class="fa fa-times">&lt;/i>
+|          &lt;/a>
+|      &lt;/div>
 |    `,
 |    data: function () {
 |        return {
@@ -53,4 +55,5 @@
 |        }
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

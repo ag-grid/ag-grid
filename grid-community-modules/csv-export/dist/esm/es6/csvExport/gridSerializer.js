@@ -55,7 +55,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
         if (shouldRowBeSkipped) {
             return;
         }
-        const rowAccumulator = gridSerializingSession.onNewBodyRow();
+        const rowAccumulator = gridSerializingSession.onNewBodyRow(node);
         columnsToExport.forEach((column, index) => {
             rowAccumulator.onColumn(column, index, node);
         });
@@ -259,7 +259,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
             const columns = this.gridOptionsService.isTreeData()
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
-            return columns.concat(this.columnModel.getAllPrimaryColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns() || []);
         }
         return this.columnModel.getAllDisplayedColumns();
     }

@@ -122,14 +122,15 @@ The behaviour of paste changes depending whether you have a single cell or a ran
 - When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
 - When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
-[[note]]
-| The 'paste' operation in the context menu is not possible and hence always disabled.
-| It is not possible because of a browser security restriction that JavaScript cannot
-| take data from the clipboard without the user explicitly doing a paste command from the browser
-| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
-| data from the client via grabbing from the clipboard maliciously. The reason why the grid keeps
-| the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
-| the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
+<note disableMarkdown='true'>
+The 'paste' operation in the context menu is not possible and hence always disabled.
+It is not possible because of a browser security restriction that JavaScript cannot
+take data from the clipboard without the user explicitly doing a paste command from the browser
+(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+data from the client via grabbing from the clipboard maliciously. The reason why the grid keeps
+the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
+the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
+</note>
 
 ## Disabling Paste
 
@@ -157,6 +158,8 @@ These three callbacks above are demonstrated in the example below. Note the foll
 - When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+It is also possible to process the data by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) to format the cells when copied, and  [Using the Value Parser for Import](/value-parsers/#use-value-parser-for-import) to format the cells when pasted.
 
 ### Processing Data from Clipboard
 
@@ -206,8 +209,9 @@ By default, the grid will use `\t` (tab) as the field delimiter. This is to keep
 
 The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. It's important to mention that this config should be combined with `ensureDomOrder=true` also in the gridOptions.
 
-[[note]]
-| This is not an enterprise config and can be used at any time to enable cell text selection.
+<note>
+This is not an enterprise config and can be used at any time to enable cell text selection.
+</note>
 
 <grid-example title='Using Browser text selection' name='cellTextSelection' type='generated'></grid-example>
 
@@ -215,16 +219,16 @@ The grid's selection and copy features replace the built-in browser behaviour fo
 
 The following events are relevant to clipboard operations:
 
-<api-documentation source='grid-events/events.json' section='clipboard' names='["pasteStart","pasteEnd"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-events/events.json' section='clipboard' names='["cutStart","cutEnd","pasteStart","pasteEnd"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 <api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]' config='{ "hideMore":false}'></api-documentation>
 
-For a paste operation the events will be fired as:
+For a cut or paste operation the events will be fired as:
 
-1. One `pasteStart` event.
+1. One `cutStart`/`pasteStart` event.
 1. Many `cellValueChanged` events.
-1. One `pasteEnd` event.
+1. One `cutEnd`/`pasteEnd` event.
 
-If the application is doing work each time it receives a `cellValueChanged`, you can use the `pasteStart` and `pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the paste operation after the paste operation.
+If the application is doing work each time it receives a `cellValueChanged`, you can use the `cutStart`/`pasteStart` and `cutEnd`/`pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the cut/paste operation after the cut/paste operation.
 
 There are no events triggered by copy to clipboard as this does not change the grid's data.
 

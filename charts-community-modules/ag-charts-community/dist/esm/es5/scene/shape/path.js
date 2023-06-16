@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -21,7 +23,7 @@ import { Shape } from './shape';
 import { Path2D } from '../path2D';
 import { RedrawType, SceneChangeDetection } from '../node';
 export function ScenePathChangeDetection(opts) {
-    var _a = opts || {}, _b = _a.redraw, redraw = _b === void 0 ? RedrawType.MAJOR : _b, changeCb = _a.changeCb, convertor = _a.convertor;
+    var _a = opts !== null && opts !== void 0 ? opts : {}, _b = _a.redraw, redraw = _b === void 0 ? RedrawType.MAJOR : _b, changeCb = _a.changeCb, convertor = _a.convertor;
     return SceneChangeDetection({ redraw: redraw, type: 'path', convertor: convertor, changeCb: changeCb });
 }
 var Path = /** @class */ (function (_super) {

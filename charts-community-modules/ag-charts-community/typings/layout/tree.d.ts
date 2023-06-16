@@ -59,3 +59,4 @@ export declare class TreeLayout {
     resize(width: number, height: number, shiftX?: number, shiftY?: number, flipX?: boolean): void;
 }
 export {};
+//# sourceMappingURL=tree.d.ts.map

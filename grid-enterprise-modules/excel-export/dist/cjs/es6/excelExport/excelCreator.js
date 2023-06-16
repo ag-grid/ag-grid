@@ -13,7 +13,7 @@ const excelXlsxSerializingSession_1 = require("./excelXlsxSerializingSession");
 const excelXlsxFactory_1 = require("./excelXlsxFactory");
 const csv_export_1 = require("@ag-grid-community/csv-export");
 const excelXmlFactory_1 = require("./excelXmlFactory");
-exports.getMultipleSheetsAsExcel = (params) => {
+const getMultipleSheetsAsExcel = (params) => {
     const { data, fontSize = 11, author = 'AG Grid' } = params;
     const hasImages = excelXlsxFactory_1.ExcelXlsxFactory.images.size > 0;
     csv_export_1.ZipContainer.addFolders([
@@ -63,13 +63,15 @@ exports.getMultipleSheetsAsExcel = (params) => {
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     return csv_export_1.ZipContainer.getContent(mimeType);
 };
-exports.exportMultipleSheetsAsExcel = (params) => {
+exports.getMultipleSheetsAsExcel = getMultipleSheetsAsExcel;
+const exportMultipleSheetsAsExcel = (params) => {
     const { fileName = 'export.xlsx' } = params;
     const contents = exports.getMultipleSheetsAsExcel(params);
     if (contents) {
         csv_export_1.Downloader.download(fileName, contents);
     }
 };
+exports.exportMultipleSheetsAsExcel = exportMultipleSheetsAsExcel;
 const createImageRelationsForSheet = (sheetIndex, currentRelationIndex) => {
     const drawingFolder = 'xl/drawings';
     const drawingFileName = `${drawingFolder}/drawing${currentRelationIndex + 1}.xml`;
@@ -160,7 +162,7 @@ let ExcelCreator = class ExcelCreator extends csv_export_1.BaseCreator {
         return this.getExportMode();
     }
     createSerializingSession(params) {
-        const { columnModel, valueService, gridOptionsService } = this;
+        const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
         let sheetName = 'ag-grid';
         if (params.sheetName != null) {
@@ -169,7 +171,9 @@ let ExcelCreator = class ExcelCreator extends csv_export_1.BaseCreator {
         const config = Object.assign(Object.assign({}, params), { sheetName,
             columnModel,
             valueService,
-            gridOptionsService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+            gridOptionsService,
+            valueFormatterService,
+            valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
         return new (isXlsx ? excelXlsxSerializingSession_1.ExcelXlsxSerializingSession : excelXmlSerializingSession_1.ExcelXmlSerializingSession)(config);
     }
     styleLinker(params) {
@@ -247,6 +251,12 @@ __decorate([
 __decorate([
     core_1.Autowired('gridOptionsService')
 ], ExcelCreator.prototype, "gridOptionsService", void 0);
+__decorate([
+    core_1.Autowired('valueFormatterService')
+], ExcelCreator.prototype, "valueFormatterService", void 0);
+__decorate([
+    core_1.Autowired('valueParserService')
+], ExcelCreator.prototype, "valueParserService", void 0);
 __decorate([
     core_1.PostConstruct
 ], ExcelCreator.prototype, "postConstruct", null);

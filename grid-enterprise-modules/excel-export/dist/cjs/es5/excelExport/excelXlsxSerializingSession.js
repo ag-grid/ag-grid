@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -23,8 +25,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
     }
     ExcelXlsxSerializingSession.prototype.createExcel = function (data) {
         var _a = this, excelStyles = _a.excelStyles, config = _a.config;
-        var margins = config.margins, pageSetup = config.pageSetup, headerFooterConfig = config.headerFooterConfig;
-        return excelXlsxFactory_1.ExcelXlsxFactory.createExcel(excelStyles, data, margins, pageSetup, headerFooterConfig);
+        return excelXlsxFactory_1.ExcelXlsxFactory.createExcel(excelStyles, data, config);
     };
     ExcelXlsxSerializingSession.prototype.getDataTypeForValue = function (valueForCell) {
         if (valueForCell === undefined) {
@@ -67,8 +68,11 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         excelXlsxFactory_1.ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     };
-    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value) {
+    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
+        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
+            value = valueFormatted;
+        }
         var typeTransformed = this.getType(type, actualStyle, value) || type;
         return {
             styleId: actualStyle ? styleId : undefined,

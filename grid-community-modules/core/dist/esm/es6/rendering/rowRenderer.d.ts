@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.2
+// Type definitions for @ag-grid-community/core v30.0.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowCtrl } from "./row/rowCtrl";
@@ -122,6 +122,7 @@ export declare class RowRenderer extends BeanStub {
     private redrawFullWidthEmbeddedRows;
     getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[];
     refreshFullWidthRow(rowNode: RowNode): void;
+    private refreshFullWidthRows;
     private createOrUpdateRowCtrl;
     private destroyRowCtrls;
     private getRowBuffer;

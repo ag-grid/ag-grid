@@ -1,4 +1,4 @@
-@use "../../design-system/" as ds;
+@use "../../design-system/" as *;
 
 .showHideButton {
     --button-text-color: var(--azure-blue);
@@ -9,12 +9,12 @@
     display: flex;
     align-items: center;
     width: 100%;
-    height: ds.$size-6;
-    gap: ds.$size-1;
+    height: $size-6;
+    gap: $size-1;
     text-align: left;
-    font-weight: ds.$font-weight-bold;
-    border: 1px solid var(--border-color) !important; // !important for .ag-styles specificity
-    transition: color ds.$default-transition-timing !important; // !important for .ag-styles specificity
+    font-weight: $font-weight-bold;
+    border: 1px solid var(--border-color);
+    transition: color $default-transition-timing !important;
 
     &:hover {
         --button-text-color: var(--medium-electric-blue);
@@ -33,14 +33,14 @@
         width: 20px;
         height: 20px;
         fill: var(--button-text-color);
-        transition: fill ds.$default-transition-timing, transform ds.$default-transition-timing;
+        transition: fill $default-transition-timing, transform $default-transition-timing;
     }
 }
 
 .content {
     $border: 1px solid var(--border-color);
 
-    padding: ds.$size-2;
+    padding: $size-2;
     border-bottom-right-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
     border-right: $border;

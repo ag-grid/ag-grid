@@ -18,6 +18,9 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     sheetName: string;
+    suppressColumnOutline?: boolean;
+    suppressRowOutline?: boolean;
+    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => {
         image: ExcelImage;
@@ -47,7 +50,7 @@ export declare abstract class BaseExcelSerializingSession<T> extends BaseGridSer
     protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell?: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
-    protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
+    protected abstract createCell(styleId: string | null, type: T, value: string, valueFormatted?: string | null): ExcelCell;
     protected abstract addImage(rowIndex: number, column: Column, value: string): {
         image: ExcelImage;
         value?: string;
@@ -56,7 +59,9 @@ export declare abstract class BaseExcelSerializingSession<T> extends BaseGridSer
     addCustomContent(customContent: ExcelRow[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
-    onNewBodyRow(): RowAccumulator;
+    onNewBodyRow(node?: RowNode): RowAccumulator;
+    private addRowOutlineIfNecessary;
+    private isAnyParentCollapsed;
     prepare(columnsToExport: Column[]): void;
     parse(): string;
     protected isFormula(value: string | null): boolean | undefined;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -270,10 +272,9 @@ var CellCtrl = /** @class */ (function (_super) {
         return selectionChanged || rowDragChanged || dndSourceChanged;
     };
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    CellCtrl.prototype.startEditing = function (key, charPress, cellStartedEdit, event) {
+    CellCtrl.prototype.startEditing = function (key, cellStartedEdit, event) {
         var _this = this;
         if (key === void 0) { key = null; }
-        if (charPress === void 0) { charPress = null; }
         if (cellStartedEdit === void 0) { cellStartedEdit = false; }
         if (event === void 0) { event = null; }
         if (!this.isCellEditable() || this.editing) {
@@ -282,10 +283,10 @@ var CellCtrl = /** @class */ (function (_super) {
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(function () { _this.startEditing(key, charPress, cellStartedEdit, event); });
+            this.onCellCompAttachedFuncs.push(function () { _this.startEditing(key, cellStartedEdit, event); });
             return;
         }
-        var editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
+        var editorParams = this.createCellEditorParams(key, cellStartedEdit);
         var colDef = this.column.getColDef();
         var compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
@@ -381,16 +382,13 @@ var CellCtrl = /** @class */ (function (_super) {
         return valueChanged;
     };
     CellCtrl.prototype.dispatchEditingStoppedEvent = function (oldValue, newValue, valueChanged) {
-        var editingStoppedEvent = __assign(__assign({}, this.createEvent(null, events_1.Events.EVENT_CELL_EDITING_STOPPED)), { oldValue: oldValue,
-            newValue: newValue,
-            valueChanged: valueChanged });
+        var editingStoppedEvent = __assign(__assign({}, this.createEvent(null, events_1.Events.EVENT_CELL_EDITING_STOPPED)), { oldValue: oldValue, newValue: newValue, valueChanged: valueChanged });
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     };
-    CellCtrl.prototype.createCellEditorParams = function (key, charPress, cellStartedEdit) {
+    CellCtrl.prototype.createCellEditorParams = function (key, cellStartedEdit) {
         return {
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
-            charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
             rowIndex: this.getCellPosition().rowIndex,
@@ -432,26 +430,7 @@ var CellCtrl = /** @class */ (function (_super) {
         return res;
     };
     CellCtrl.prototype.parseValue = function (newValue) {
-        var colDef = this.column.getColDef();
-        var params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            oldValue: this.getValue(),
-            newValue: newValue,
-            colDef: colDef,
-            column: this.column,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
-        var valueParser = colDef.valueParser;
-        if (generic_1.exists(valueParser)) {
-            if (typeof valueParser === 'function') {
-                return valueParser(params);
-            }
-            return this.beans.expressionService.evaluate(valueParser, params);
-        }
-        return newValue;
+        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     };
     CellCtrl.prototype.setFocusOutOnEditor = function () {
         if (!this.editing) {
@@ -543,22 +522,20 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    CellCtrl.prototype.stopEditingAndFocus = function (suppressNavigateAfterEdit) {
+    CellCtrl.prototype.stopEditingAndFocus = function (suppressNavigateAfterEdit, shiftKey) {
         if (suppressNavigateAfterEdit === void 0) { suppressNavigateAfterEdit = false; }
+        if (shiftKey === void 0) { shiftKey = false; }
         this.stopRowOrCellEdit();
         this.focusCell(true);
         if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit();
+            this.navigateAfterEdit(shiftKey);
         }
     };
-    CellCtrl.prototype.navigateAfterEdit = function () {
-        var fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
-        if (fullRowEdit) {
-            return;
-        }
-        var enterMovesDownAfterEdit = this.beans.gridOptionsService.is('enterMovesDownAfterEdit');
-        if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, keyCode_1.KeyCode.DOWN, this.getCellPosition(), false);
+    CellCtrl.prototype.navigateAfterEdit = function (shiftKey) {
+        var enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
+        if (enterNavigatesVerticallyAfterEdit) {
+            var key = shiftKey ? keyCode_1.KeyCode.UP : keyCode_1.KeyCode.DOWN;
+            this.beans.navigationService.navigateToNextCell(null, key, this.getCellPosition(), false);
         }
     };
     // user can also call this via API
@@ -670,9 +647,9 @@ var CellCtrl = /** @class */ (function (_super) {
         };
         return event;
     };
-    CellCtrl.prototype.onKeyPress = function (event) {
+    CellCtrl.prototype.processCharacter = function (event) {
         var _a;
-        (_a = this.cellKeyboardListenerFeature) === null || _a === void 0 ? void 0 : _a.onKeyPress(event);
+        (_a = this.cellKeyboardListenerFeature) === null || _a === void 0 ? void 0 : _a.processCharacter(event);
     };
     CellCtrl.prototype.onKeyDown = function (event) {
         var _a;
@@ -743,16 +720,16 @@ var CellCtrl = /** @class */ (function (_super) {
         return this.editing;
     };
     // called by rowRenderer when user navigates via tab key
-    CellCtrl.prototype.startRowOrCellEdit = function (key, charPress, event) {
+    CellCtrl.prototype.startRowOrCellEdit = function (key, event) {
         if (event === void 0) { event = null; }
         if (!this.cellComp) {
             return;
         }
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, charPress, this);
+            this.rowCtrl.startRowEditing(key, this);
         }
         else {
-            this.startEditing(key, charPress, true, event);
+            this.startEditing(key, true, event);
         }
     };
     CellCtrl.prototype.getRowCtrl = function () {
@@ -901,7 +878,7 @@ var CellCtrl = /** @class */ (function (_super) {
         return cbSelectionComponent;
     };
     CellCtrl.prototype.createDndSource = function () {
-        var dndSourceComp = new dndSourceComp_1.DndSourceComp(this.rowNode, this.column, this.beans, this.eGui);
+        var dndSourceComp = new dndSourceComp_1.DndSourceComp(this.rowNode, this.column, this.eGui);
         this.beans.context.createBean(dndSourceComp);
         return dndSourceComp;
     };

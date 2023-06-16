@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -163,6 +163,9 @@ var Beans = /** @class */ (function () {
     __decorate([
         context_1.Autowired('localeService')
     ], Beans.prototype, "localeService", void 0);
+    __decorate([
+        context_1.Autowired('valueParserService')
+    ], Beans.prototype, "valueParserService", void 0);
     __decorate([
         context_1.PostConstruct
     ], Beans.prototype, "postConstruct", null);

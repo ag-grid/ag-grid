@@ -2,6 +2,8 @@ import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } fr
 import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { PointLabelDatum } from '../../../util/labelPlacement';
+import { DataModel, ProcessedData } from '../../data/dataModel';
+import { ModuleContext } from '../../../util/module';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**
@@ -20,13 +22,29 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
      */
     radius: number = 0;
 
-    constructor({ useLabelLayer = false }) {
+    protected dataModel?: DataModel<any, any, any>;
+    protected processedData?: ProcessedData<any>;
+
+    constructor({
+        moduleCtx,
+        useLabelLayer = false,
+        pickModes = [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+    }: {
+        moduleCtx: ModuleContext;
+        useLabelLayer?: boolean;
+        pickModes?: SeriesNodePickMode[];
+    }) {
         super({
+            moduleCtx,
             useLabelLayer,
-            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            pickModes,
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],
+            },
+            directionNames: {
+                [ChartAxisDirection.X]: ['angleName'],
+                [ChartAxisDirection.Y]: ['radiusName'],
             },
         });
     }
@@ -35,7 +53,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
         return [];
     }
 
-    computeLabelsBBox(_options: { hideWhenNecessary: boolean }): BBox | null {
+    computeLabelsBBox(_options: { hideWhenNecessary: boolean }, _seriesRect: BBox): BBox | null {
         return null;
     }
 }

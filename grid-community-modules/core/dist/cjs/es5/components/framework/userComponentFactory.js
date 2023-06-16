@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.2
+ * @version v30.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -32,9 +34,6 @@ var utils_1 = require("../../utils");
 var object_1 = require("../../utils/object");
 var componentTypes_1 = require("./componentTypes");
 var floatingFilterMapper_1 = require("../../filter/floating/floatingFilterMapper");
-var moduleNames_1 = require("../../modules/moduleNames");
-var moduleRegistry_1 = require("../../modules/moduleRegistry");
-var function_1 = require("../../utils/function");
 var UserComponentFactory = /** @class */ (function (_super) {
     __extends(UserComponentFactory, _super);
     function UserComponentFactory() {
@@ -165,18 +164,9 @@ var UserComponentFactory = /** @class */ (function (_super) {
             // if selector, use this
             var selectorFunc = defObjectAny[propertyName + 'Selector'];
             var selectorRes = selectorFunc ? selectorFunc(params) : null;
-            var assignComp = function (providedJsComp, providedFwComp) {
-                var xxxFrameworkDeprecatedWarn = function () {
-                    var warningMessage = "AG Grid: As of v27, the property " + propertyName + "Framework is deprecated. The property " + propertyName + " can now be used for JavaScript AND Framework Components.";
-                    function_1.doOnce(function () { return console.warn(warningMessage); }, "UserComponentFactory." + propertyName + "FrameworkDeprecated");
-                };
+            var assignComp = function (providedJsComp) {
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp;
-                }
-                else if (typeof providedFwComp === 'string') {
-                    xxxFrameworkDeprecatedWarn();
-                    compName = providedFwComp;
-                    // comp===true for filters, which means use the default comp
                 }
                 else if (providedJsComp != null && providedJsComp !== true) {
                     var isFwkComp = _this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
@@ -187,27 +177,16 @@ var UserComponentFactory = /** @class */ (function (_super) {
                         jsComp = providedJsComp;
                     }
                 }
-                else if (providedFwComp != null) {
-                    xxxFrameworkDeprecatedWarn();
-                    fwComp = providedFwComp;
-                }
             };
             if (selectorRes) {
-                if (selectorRes.frameworkComponent != null) {
-                    var warningMessage_1 = "AG Grid: As of v27, the return for " + propertyName + "Selector has attributes [component, params] only. The attribute frameworkComponent is deprecated. You should now return back Framework Components using the 'component' attribute and the grid works out if it's a framework component or not.";
-                    function_1.doOnce(function () { return console.warn(warningMessage_1); }, "UserComponentFactory." + propertyName + "FrameworkSelectorDeprecated");
-                    assignComp(selectorRes.frameworkComponent, undefined);
-                }
-                else {
-                    assignComp(selectorRes.component, undefined);
-                }
+                assignComp(selectorRes.component);
                 paramsFromSelector = selectorRes.params;
                 popupFromSelector = selectorRes.popup;
                 popupPositionFromSelector = selectorRes.popupPosition;
             }
             else {
                 // if no selector, or result of selector is empty, take from defObject
-                assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
+                assignComp(defObjectAny[propertyName]);
             }
         }
         return { compName: compName, jsComp: jsComp, fwComp: fwComp, paramsFromSelector: paramsFromSelector, popupFromSelector: popupFromSelector, popupPositionFromSelector: popupPositionFromSelector };
@@ -261,7 +240,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         }
         return component.init(params);
     };
-    UserComponentFactory.prototype.getDefaultFloatingFilterType = function (def) {
+    UserComponentFactory.prototype.getDefaultFloatingFilterType = function (def, getFromDefault) {
         if (def == null) {
             return null;
         }
@@ -274,8 +253,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         else {
             var usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
-                var setFilterModuleLoaded = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule);
-                defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+                defaultFloatingFilterType = getFromDefault();
             }
         }
         return defaultFloatingFilterType;
