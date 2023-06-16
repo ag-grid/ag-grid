@@ -30,7 +30,7 @@ export function radioCssClass(element: HTMLElement, elementClass: string | null,
 }
 
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
+export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 export function isFocusableFormField(element: HTMLElement): boolean {
     const matches: (str: string) => boolean =
