@@ -202,8 +202,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         this.updateZoom(newZoom);
     }
 
-    private onLayoutComplete({ series: { rect } }: _ModuleSupport.LayoutCompleteEvent) {
-        this.seriesRect = rect;
+    private onLayoutComplete({ series: { paddedRect } }: _ModuleSupport.LayoutCompleteEvent) {
+        this.seriesRect = paddedRect;
     }
 
     private onContextMenuZoomToHere({ event }: ContextMenu.ContextMenuActionParams) {
