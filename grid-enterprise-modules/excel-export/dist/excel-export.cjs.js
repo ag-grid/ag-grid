@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.1
+          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -3756,7 +3756,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(csvExport.BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.1';
+var VERSION = '30.0.2';
 
 var ExcelExportModule = {
     version: VERSION,

@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - AG Grid Enterprise Features * @version v30.0.1
+ * ag-grid-enterprise - AG Grid Enterprise Features * @version v30.0.2
  * @link https://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -459,7 +459,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTY4NjkxNjU0OTQyOQ==';
+LicenseManager.RELEASE_INFORMATION = 'MTY4NzEzMDAyMDg0OA==';
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -528,7 +528,7 @@ __decorate$1([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.1';
+const VERSION = '30.0.2';
 
 const EnterpriseCoreModule = {
     version: VERSION,
@@ -32991,7 +32991,7 @@ __decorate$1c([
 ], GridChartComp.prototype, "init", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '30.0.1';
+const VERSION$2 = '30.0.2';
 
 var __rest$3 = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -35355,7 +35355,7 @@ SelectionHandleFactory = __decorate$1j([
 ], SelectionHandleFactory);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '30.0.1';
+const VERSION$3 = '30.0.2';
 
 const RangeSelectionModule = {
     version: VERSION$3,
@@ -36516,7 +36516,7 @@ GridSerializer = __decorate$1m([
 ], GridSerializer);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$4 = '30.0.1';
+const VERSION$4 = '30.0.2';
 
 const CsvExportModule = {
     version: VERSION$4,
@@ -37642,7 +37642,7 @@ ClipboardService = ClipboardService_1 = __decorate$1n([
 ], ClipboardService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$5 = '30.0.1';
+const VERSION$5 = '30.0.2';
 
 const ClipboardModule = {
     version: VERSION$5,
@@ -41810,7 +41810,7 @@ FilterAggregatesStage = __decorate$1F([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$6 = '30.0.1';
+const VERSION$6 = '30.0.2';
 
 var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -43361,7 +43361,7 @@ ToolPanelColDefService = __decorate$1Q([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$7 = '30.0.1';
+const VERSION$7 = '30.0.2';
 
 const SideBarModule = {
     version: VERSION$7,
@@ -43572,7 +43572,7 @@ ModelItemUtils = __decorate$1R([
 ], ModelItemUtils);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$8 = '30.0.1';
+const VERSION$8 = '30.0.2';
 
 const ColumnsToolPanelModule = {
     version: VERSION$8,
@@ -47088,7 +47088,7 @@ ExcelCreator = __decorate$1S([
 ], ExcelCreator);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$9 = '30.0.1';
+const VERSION$9 = '30.0.2';
 
 const ExcelExportModule = {
     version: VERSION$9,
@@ -48031,7 +48031,7 @@ __decorate$1X([
 ], FiltersToolPanel.prototype, "columnApi", void 0);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$a = '30.0.1';
+const VERSION$a = '30.0.2';
 
 const FiltersToolPanelModule = {
     version: VERSION$a,
@@ -48317,7 +48317,7 @@ __decorate$1Z([
 ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$b = '30.0.1';
+const VERSION$b = '30.0.2';
 
 const MasterDetailModule = {
     version: VERSION$b,
@@ -49317,7 +49317,7 @@ MenuItemMapper = __decorate$20([
 ], MenuItemMapper);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$c = '30.0.1';
+const VERSION$c = '30.0.2';
 
 var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -50105,7 +50105,7 @@ __decorate$23([
 ], MultiFloatingFilterComp.prototype, "filterManager", void 0);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$d = '30.0.1';
+const VERSION$d = '30.0.2';
 
 const MultiFilterModule = {
     version: VERSION$d,
@@ -50445,7 +50445,7 @@ __decorate$25([
 ], RichSelectCellEditor.prototype, "eList", void 0);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$e = '30.0.1';
+const VERSION$e = '30.0.2';
 
 const RichSelectModule = {
     version: VERSION$e,
@@ -54938,7 +54938,7 @@ ServerSideSelectionService = __decorate$2m([
 ], ServerSideSelectionService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$f = '30.0.1';
+const VERSION$f = '30.0.2';
 
 const ServerSideRowModelModule = {
     version: VERSION$f,
@@ -57181,7 +57181,7 @@ __decorate$2p([
 ], SetFloatingFilterComp.prototype, "columnModel", void 0);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$g = '30.0.1';
+const VERSION$g = '30.0.2';
 
 const SetFilterModule = {
     version: VERSION$g,
@@ -59328,7 +59328,7 @@ SparklineTooltipSingleton = __decorate$2r([
 ], SparklineTooltipSingleton);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$h = '30.0.1';
+const VERSION$h = '30.0.2';
 
 const SparklinesModule = {
     version: VERSION$h,
@@ -59901,7 +59901,7 @@ __decorate$2z([
 ], AggregationComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$i = '30.0.1';
+const VERSION$i = '30.0.2';
 
 const StatusBarModule = {
     version: VERSION$i,
@@ -59924,7 +59924,7 @@ const StatusBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$j = '30.0.1';
+const VERSION$j = '30.0.2';
 
 var __decorate$2A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
