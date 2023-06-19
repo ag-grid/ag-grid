@@ -10,7 +10,7 @@ import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { removeFromArray } from '../utils/array';
+import { removeFromUnorderedArray } from '../utils/array';
 import { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
@@ -216,14 +216,19 @@ export class ColumnFactory extends BeanStub {
         columnKeyCreator: ColumnKeyCreator,
         existingGroups: ProvidedColumnGroup[]
     ): IProvidedColumn[] {
-        return (defs || []).map((def) => {
+        if (!defs) return [];
+    
+        const result = new Array(defs.length);
+        for (let i = 0; i < result.length; i++) {
+            const def = defs[i];
             if (this.isColumnGroup(def)) {
-                return this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
+                result[i] = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
                     columnKeyCreator, existingGroups);
             } else {
-                return this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
             }
-        });
+        }
+        return result;
     }
 
     private createColumnGroup(
@@ -242,7 +247,7 @@ export class ColumnFactory extends BeanStub {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingGroup) {
-            removeFromArray(existingGroups, existingGroup);
+            removeFromUnorderedArray(existingGroups, existingGroup);
         }
 
         if (existingGroup && existingGroup.isExpanded()) {
@@ -277,7 +282,7 @@ export class ColumnFactory extends BeanStub {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingColsCopy && column) {
-            removeFromArray(existingColsCopy, column);
+            removeFromUnorderedArray(existingColsCopy, column);
         }
 
         if (!column) {
@@ -345,27 +350,33 @@ export class ColumnFactory extends BeanStub {
     }
 
     private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | undefined {
-        return (existingColsCopy || []).find(existingCol => {
+        if (!existingColsCopy) return undefined;
 
-            const existingColDef = existingCol.getUserProvidedColDef();
-            if (!existingColDef) { return false; }
+        for (let i = 0; i < existingColsCopy.length; i++) {
+            const def = existingColsCopy[i].getUserProvidedColDef();
+            if (!def) continue;
 
             const newHasId = newColDef.colId != null;
-            const newHasField = newColDef.field != null;
-
             if (newHasId) {
-                return existingCol.getId() === newColDef.colId;
+                if (existingColsCopy[i].getId() === newColDef.colId) {
+                    return existingColsCopy[i];
+                }
+                return undefined;
             }
 
+            const newHasField = newColDef.field != null;
             if (newHasField) {
-                return existingColDef.field === newColDef.field;
+                if (def.field === newColDef.field) {
+                    return existingColsCopy[i];
+                }
+                return undefined;
             }
 
-            // if no id or field present, then try object equivalence.
-            if (existingColDef === newColDef) { return true; }
-
-            return false;
-        });
+            if (def === newColDef) {
+                return existingColsCopy[i];
+            }
+        }
+        return undefined;
     }
 
     private findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | undefined {
