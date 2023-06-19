@@ -1,10 +1,10 @@
 {
   "name": "@ag-grid-enterprise/filter-tool-panel",
-  "version": "30.0.0",
+  "version": "30.0.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.js",
   "module": "./dist/esm/es6/main.js",
-  "browser": "./dist/esm/es5/main.js",
+
   "types": "./dist/esm/es6/main.d.ts",
   "scripts": {
     "clean": "rimraf dist .hash",
@@ -48,9 +48,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~30.0.0",
-    "@ag-grid-enterprise/core": "~30.0.0",
-    "@ag-grid-enterprise/side-bar": "~30.0.0"
+    "@ag-grid-community/core": "~30.0.1",
+    "@ag-grid-enterprise/core": "~30.0.1",
+    "@ag-grid-enterprise/side-bar": "~30.0.1"
   },
   "devDependencies": {
     "typescript": "~4.3.5",

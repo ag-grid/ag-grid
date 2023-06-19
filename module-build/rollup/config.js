@@ -27,16 +27,15 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './dist/esm/es6/main.js',
             format: 'es',
             env: 'development',
-            extension: '.esm.js',
-            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            extension: '.esm.js'
+
         },
         {
             name: 'es-modules-prod',
-            inputMainFile: './dist/esm/es6/main.js',
+            inputMainFile: './dist/esm/es5/main.js',
             format: 'es',
             env: 'production',
             extension: '.esm.min.js',
-            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
         }
     ]
 
@@ -137,7 +136,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
     return entries;
 }
 
-function genConfig(build, sourceDirectory, moduleName, esmAutoRegister) {
+function genConfig(build, sourceDirectory, moduleName) {
     const packageJson = require(path.resolve(sourceDirectory, './package.json'));
 
     const banner =
@@ -151,7 +150,7 @@ function genConfig(build, sourceDirectory, moduleName, esmAutoRegister) {
         ...(build.config ? build.config : {}),
         input: path.resolve(sourceDirectory, build.inputMainFile),
         plugins: [
-            nodeResolve(esmAutoRegister ? {browser: true} : {})      // for utils package - defaulting to use index.js
+            nodeResolve()      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
@@ -177,5 +176,5 @@ function genConfig(build, sourceDirectory, moduleName, esmAutoRegister) {
 
 exports.getAllBuilds = (sourceDirectory, bundlePrefix, esmType, umdModuleName) => {
     const buildsToUse = getBuilds(umdModuleName, bundlePrefix, esmType === 'autoRegister');
-    return buildsToUse.map(build => genConfig(build, sourceDirectory, bundlePrefix, esmType === 'autoRegister'));
+    return buildsToUse.map(build => genConfig(build, sourceDirectory, bundlePrefix));
 }
