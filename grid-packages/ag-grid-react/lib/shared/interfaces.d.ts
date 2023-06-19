@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.1
+// ag-grid-react v30.0.2
 import { ColumnApi, GridApi, GridOptions, ICellEditor, ICellRenderer, IDate, IFilter, IFloatingFilter, IHeader, IHeaderGroup, IStatusPanel, IToolPanel, Module } from 'ag-grid-community';
 /** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
 export declare enum ChangeDetectionStrategyType {

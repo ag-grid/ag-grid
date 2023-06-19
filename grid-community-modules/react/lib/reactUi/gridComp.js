@@ -1,68 +1,44 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@ag-grid-community/core");
-const react_1 = __importStar(require("react"));
-const beansContext_1 = require("./beansContext");
-const gridBodyComp_1 = __importDefault(require("./gridBodyComp"));
-const reactComment_1 = __importDefault(require("./reactComment"));
-const tabGuardComp_1 = __importDefault(require("./tabGuardComp"));
-const utils_1 = require("./utils");
+// @ag-grid-community/react v30.0.2
+import { FocusService, GridCtrl } from '@ag-grid-community/core';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
+import { BeansContext } from './beansContext';
+import GridBodyComp from './gridBodyComp';
+import useReactCommentEffect from './reactComment';
+import TabGuardComp from './tabGuardComp';
+import { classesList } from './utils';
 const GridComp = ({ context }) => {
-    const [rtlClass, setRtlClass] = react_1.useState('');
-    const [keyboardFocusClass, setKeyboardFocusClass] = react_1.useState('');
-    const [layoutClass, setLayoutClass] = react_1.useState('');
-    const [cursor, setCursor] = react_1.useState(null);
-    const [userSelect, setUserSelect] = react_1.useState(null);
-    const [initialised, setInitialised] = react_1.useState(false);
-    const [tabGuardReady, setTabGuardReady] = react_1.useState();
-    const gridCtrlRef = react_1.useRef(null);
-    const eRootWrapperRef = react_1.useRef(null);
-    const tabGuardRef = react_1.useRef();
-    const eGridBodyParentRef = react_1.useRef(null);
-    const focusInnerElementRef = react_1.useRef(() => undefined);
-    const onTabKeyDown = react_1.useCallback(() => undefined, []);
-    const beans = react_1.useMemo(() => {
+    const [rtlClass, setRtlClass] = useState('');
+    const [keyboardFocusClass, setKeyboardFocusClass] = useState('');
+    const [layoutClass, setLayoutClass] = useState('');
+    const [cursor, setCursor] = useState(null);
+    const [userSelect, setUserSelect] = useState(null);
+    const [initialised, setInitialised] = useState(false);
+    const [tabGuardReady, setTabGuardReady] = useState();
+    const gridCtrlRef = useRef(null);
+    const eRootWrapperRef = useRef(null);
+    const tabGuardRef = useRef();
+    const eGridBodyParentRef = useRef(null);
+    const focusInnerElementRef = useRef(() => undefined);
+    const onTabKeyDown = useCallback(() => undefined, []);
+    const beans = useMemo(() => {
         if (context.isDestroyed()) {
             return null;
         }
         return context.getBean('beans');
     }, [context]);
-    reactComment_1.default(' AG Grid ', eRootWrapperRef);
+    useReactCommentEffect(' AG Grid ', eRootWrapperRef);
     // create shared controller.
-    react_1.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         if (context.isDestroyed()) {
             return;
         }
-        const currentController = gridCtrlRef.current = context.createBean(new core_1.GridCtrl());
+        const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
         const gridCtrl = gridCtrlRef.current;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
         const compProxy = {
             destroyGridUi: () => { },
             setRtlClass: setRtlClass,
-            addOrRemoveKeyboardFocusClass: (addOrRemove) => setKeyboardFocusClass(addOrRemove ? core_1.FocusService.AG_KEYBOARD_FOCUS : ''),
+            addOrRemoveKeyboardFocusClass: (addOrRemove) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
                 var _a;
                 (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
@@ -92,7 +68,7 @@ const GridComp = ({ context }) => {
         };
     }, [context]);
     // initialise the extra components
-    react_1.useEffect(() => {
+    useEffect(() => {
         if (!tabGuardReady || !beans || !gridCtrlRef.current) {
             return;
         }
@@ -154,28 +130,28 @@ const GridComp = ({ context }) => {
             });
         };
     }, [tabGuardReady]);
-    const rootWrapperClasses = react_1.useMemo(() => utils_1.classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
-    const rootWrapperBodyClasses = react_1.useMemo(() => utils_1.classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
-    const topStyle = react_1.useMemo(() => ({
+    const rootWrapperClasses = useMemo(() => classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
+    const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
+    const topStyle = useMemo(() => ({
         userSelect: userSelect != null ? userSelect : '',
         WebkitUserSelect: userSelect != null ? userSelect : '',
         cursor: cursor != null ? cursor : ''
     }), [userSelect, cursor]);
     const eGridBodyParent = eGridBodyParentRef.current;
-    const setTabGuardCompRef = react_1.useCallback((ref) => {
+    const setTabGuardCompRef = useCallback((ref) => {
         tabGuardRef.current = ref;
         setTabGuardReady(ref !== null);
     }, []);
-    return (react_1.default.createElement("div", { ref: eRootWrapperRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
-        react_1.default.createElement("div", { className: rootWrapperBodyClasses, ref: eGridBodyParentRef, role: "presentation" }, initialised && eGridBodyParent && beans &&
-            react_1.default.createElement(beansContext_1.BeansContext.Provider, { value: beans },
-                react_1.default.createElement(tabGuardComp_1.default, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
+    return (React.createElement("div", { ref: eRootWrapperRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
+        React.createElement("div", { className: rootWrapperBodyClasses, ref: eGridBodyParentRef, role: "presentation" }, initialised && eGridBodyParent && beans &&
+            React.createElement(BeansContext.Provider, { value: beans },
+                React.createElement(TabGuardComp, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
                 // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                 // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                 // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
                 // hangs the UI)
-                react_1.default.createElement(gridBodyComp_1.default, null))))));
+                React.createElement(GridBodyComp, null))))));
 };
-exports.default = react_1.memo(GridComp);
+export default memo(GridComp);
 
 //# sourceMappingURL=gridComp.js.map

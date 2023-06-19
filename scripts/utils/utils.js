@@ -77,7 +77,7 @@ const extractSubAngularProjectDependencies = (packageDirectory, directory) => {
 const exclude = ['grid-packages/ag-grid-docs/documentation/']
 const getPackageInformation = () => {
     const lernaFile = readFile('lerna.json');
-    const packages = lernaFile.packages.map(pkg => pkg.replace('/*', ''));
+    const packages = lernaFile.packages.filter(pkg => !pkg.includes('charts-enterprise')).map(pkg => pkg.replace('/*', ''));
 
     const packageInformation = {};
 
@@ -85,7 +85,7 @@ const getPackageInformation = () => {
         .filter(packageDirectory => !exclude.includes(packageDirectory))
         .forEach(packageDirectory => {
             fs.readdirSync(packageDirectory)
-                .filter(directory => !directory.includes('.git'))
+                .filter(directory => !directory.includes('.git') && !directory.includes('angular-legacy'))
                 .forEach(directory => {
                     const projectRoot = `./${packageDirectory}/${directory}`;
                     const projectPackageJson = readFile(`${projectRoot}/package.json`);

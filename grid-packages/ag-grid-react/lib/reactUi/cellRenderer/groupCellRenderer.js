@@ -1,97 +1,65 @@
-// ag-grid-react v30.0.1
-"use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var ag_grid_community_1 = require("ag-grid-community");
-var react_1 = __importStar(require("react"));
-var beansContext_1 = require("../beansContext");
-var jsComp_1 = require("../jsComp");
-var useEffectOnce_1 = require("../useEffectOnce");
-var utils_1 = require("../utils");
-var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
-    var context = react_1.useContext(beansContext_1.BeansContext).context;
-    var eGui = react_1.useRef(null);
-    var eValueRef = react_1.useRef(null);
-    var eCheckboxRef = react_1.useRef(null);
-    var eExpandedRef = react_1.useRef(null);
-    var eContractedRef = react_1.useRef(null);
-    var _a = react_1.useState(), innerCompDetails = _a[0], setInnerCompDetails = _a[1];
-    var _b = react_1.useState(), childCount = _b[0], setChildCount = _b[1];
-    var _c = react_1.useState(), value = _c[0], setValue = _c[1];
-    var _d = react_1.useState(new utils_1.CssClasses()), cssClasses = _d[0], setCssClasses = _d[1];
-    var _e = react_1.useState(new utils_1.CssClasses('ag-hidden')), expandedCssClasses = _e[0], setExpandedCssClasses = _e[1];
-    var _f = react_1.useState(new utils_1.CssClasses('ag-hidden')), contractedCssClasses = _f[0], setContractedCssClasses = _f[1];
-    var _g = react_1.useState(new utils_1.CssClasses('ag-invisible')), checkboxCssClasses = _g[0], setCheckboxCssClasses = _g[1];
-    react_1.useImperativeHandle(ref, function () {
+// ag-grid-react v30.0.2
+import { GroupCellRendererCtrl, _ } from "ag-grid-community";
+import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect } from 'react';
+import { BeansContext } from "../beansContext";
+import { showJsComp } from "../jsComp";
+import { useLayoutEffectOnce } from "../useEffectOnce";
+import { CssClasses } from "../utils";
+const GroupCellRenderer = forwardRef((props, ref) => {
+    const context = useContext(BeansContext).context;
+    const eGui = useRef(null);
+    const eValueRef = useRef(null);
+    const eCheckboxRef = useRef(null);
+    const eExpandedRef = useRef(null);
+    const eContractedRef = useRef(null);
+    const [innerCompDetails, setInnerCompDetails] = useState();
+    const [childCount, setChildCount] = useState();
+    const [value, setValue] = useState();
+    const [cssClasses, setCssClasses] = useState(new CssClasses());
+    const [expandedCssClasses, setExpandedCssClasses] = useState(new CssClasses('ag-hidden'));
+    const [contractedCssClasses, setContractedCssClasses] = useState(new CssClasses('ag-hidden'));
+    const [checkboxCssClasses, setCheckboxCssClasses] = useState(new CssClasses('ag-invisible'));
+    useImperativeHandle(ref, () => {
         return {
             // force new instance when grid tries to refresh
-            refresh: function () { return false; }
+            refresh() { return false; }
         };
     });
-    react_1.useLayoutEffect(function () {
-        return jsComp_1.showJsComp(innerCompDetails, context, eValueRef.current);
+    useLayoutEffect(() => {
+        return showJsComp(innerCompDetails, context, eValueRef.current);
     }, [innerCompDetails]);
-    useEffectOnce_1.useLayoutEffectOnce(function () {
-        var compProxy = {
-            setInnerRenderer: function (details, valueToDisplay) {
+    useLayoutEffectOnce(() => {
+        const compProxy = {
+            setInnerRenderer: (details, valueToDisplay) => {
                 setInnerCompDetails(details);
                 setValue(valueToDisplay);
             },
-            setChildCount: function (count) { return setChildCount(count); },
-            addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
-            setContractedDisplayed: function (displayed) { return setContractedCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); }); },
-            setExpandedDisplayed: function (displayed) { return setExpandedCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); }); },
-            setCheckboxVisible: function (visible) { return setCheckboxCssClasses(function (prev) { return prev.setClass('ag-invisible', !visible); }); }
+            setChildCount: count => setChildCount(count),
+            addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
+            setContractedDisplayed: displayed => setContractedCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
+            setExpandedDisplayed: displayed => setExpandedCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
+            setCheckboxVisible: visible => setCheckboxCssClasses(prev => prev.setClass('ag-invisible', !visible))
         };
-        var ctrl = context.createBean(new ag_grid_community_1.GroupCellRendererCtrl());
+        const ctrl = context.createBean(new GroupCellRendererCtrl());
         ctrl.init(compProxy, eGui.current, eCheckboxRef.current, eExpandedRef.current, eContractedRef.current, GroupCellRenderer, props);
-        return function () { context.destroyBean(ctrl); };
+        return () => { context.destroyBean(ctrl); };
     });
-    var className = react_1.useMemo(function () { return "ag-cell-wrapper " + cssClasses.toString(); }, [cssClasses]);
-    var expandedClassName = react_1.useMemo(function () { return "ag-group-expanded " + expandedCssClasses.toString(); }, [expandedCssClasses]);
-    var contractedClassName = react_1.useMemo(function () { return "ag-group-contracted " + contractedCssClasses.toString(); }, [contractedCssClasses]);
-    var checkboxClassName = react_1.useMemo(function () { return "ag-group-checkbox " + checkboxCssClasses.toString(); }, [checkboxCssClasses]);
-    var useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
-    var FwRenderer = useFwRenderer ? innerCompDetails.componentClass : undefined;
-    var useValue = innerCompDetails == null && value != null;
-    var escapedValue = ag_grid_community_1._.escapeString(value, true);
-    return (react_1.default.createElement("span", __assign({ className: className, ref: eGui }, (!props.colDef ? { role: 'gridcell' } : {})),
-        react_1.default.createElement("span", { className: expandedClassName, ref: eExpandedRef }),
-        react_1.default.createElement("span", { className: contractedClassName, ref: eContractedRef }),
-        react_1.default.createElement("span", { className: checkboxClassName, ref: eCheckboxRef }),
-        react_1.default.createElement("span", { className: "ag-group-value", ref: eValueRef },
-            useValue && react_1.default.createElement(react_1.default.Fragment, null, escapedValue),
-            useFwRenderer && react_1.default.createElement(FwRenderer, __assign({}, innerCompDetails.params))),
-        react_1.default.createElement("span", { className: "ag-group-child-count" }, childCount)));
+    const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
+    const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
+    const contractedClassName = useMemo(() => `ag-group-contracted ${contractedCssClasses.toString()}`, [contractedCssClasses]);
+    const checkboxClassName = useMemo(() => `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses]);
+    const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
+    const FwRenderer = useFwRenderer ? innerCompDetails.componentClass : undefined;
+    const useValue = innerCompDetails == null && value != null;
+    const escapedValue = _.escapeString(value, true);
+    return (React.createElement("span", Object.assign({ className: className, ref: eGui }, (!props.colDef ? { role: 'gridcell' } : {})),
+        React.createElement("span", { className: expandedClassName, ref: eExpandedRef }),
+        React.createElement("span", { className: contractedClassName, ref: eContractedRef }),
+        React.createElement("span", { className: checkboxClassName, ref: eCheckboxRef }),
+        React.createElement("span", { className: "ag-group-value", ref: eValueRef },
+            useValue && React.createElement(React.Fragment, null, escapedValue),
+            useFwRenderer && React.createElement(FwRenderer, Object.assign({}, innerCompDetails.params))),
+        React.createElement("span", { className: "ag-group-child-count" }, childCount)));
 });
 // we do not memo() here, as it would stop the forwardRef working
-exports.default = GroupCellRenderer;
+export default GroupCellRenderer;

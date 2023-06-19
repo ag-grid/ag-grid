@@ -1,8 +1,5 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PortalManager = exports.LegacyPortalManager = void 0;
-class LegacyPortalManager {
+// @ag-grid-community/react v30.0.2
+export class LegacyPortalManager {
     constructor(parent, wrappingElement, maxComponentCreationTimeMs) {
         this.destroyed = false;
         this.portals = [];
@@ -72,9 +69,8 @@ class LegacyPortalManager {
         }
     }
 }
-exports.LegacyPortalManager = LegacyPortalManager;
 LegacyPortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
-class PortalManager {
+export class PortalManager {
     constructor(refresher, wrappingElement, maxComponentCreationTimeMs) {
         this.destroyed = false;
         this.portals = [];
@@ -143,7 +139,6 @@ class PortalManager {
         }
     }
 }
-exports.PortalManager = PortalManager;
 PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
 
 //# sourceMappingURL=portalManager.js.map

@@ -1,35 +1,11 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importStar(require("react"));
-const core_1 = require("@ag-grid-community/core");
-const jsComp_1 = require("../jsComp");
-const utils_1 = require("../utils");
-const beansContext_1 = require("../beansContext");
-const cellComp_1 = __importDefault(require("../cells/cellComp"));
-const useEffectOnce_1 = require("../useEffectOnce");
+// @ag-grid-community/react v30.0.2
+import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import { CssClassManager } from '@ag-grid-community/core';
+import { showJsComp } from '../jsComp';
+import { isComponentStateless, agFlushSync } from '../utils';
+import { BeansContext } from '../beansContext';
+import CellComp from '../cells/cellComp';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 const maintainOrderOnColumns = (prev, next, domOrder) => {
     if (domOrder) {
         const res = { list: next, instanceIdMap: new Map() };
@@ -64,31 +40,31 @@ const maintainOrderOnColumns = (prev, next, domOrder) => {
     return res;
 };
 const RowComp = (params) => {
-    const { context } = react_1.useContext(beansContext_1.BeansContext);
+    const { context } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
-    const [rowIndex, setRowIndex] = react_1.useState();
-    const [rowId, setRowId] = react_1.useState();
-    const [role, setRole] = react_1.useState();
-    const [rowBusinessKey, setRowBusinessKey] = react_1.useState();
-    const [tabIndex, setTabIndex] = react_1.useState();
-    const [userStyles, setUserStyles] = react_1.useState();
-    const [cellCtrls, setCellCtrls] = react_1.useState({ list: [], instanceIdMap: new Map() });
-    const [fullWidthCompDetails, setFullWidthCompDetails] = react_1.useState();
-    const [domOrder, setDomOrder] = react_1.useState(false);
+    const [rowIndex, setRowIndex] = useState();
+    const [rowId, setRowId] = useState();
+    const [role, setRole] = useState();
+    const [rowBusinessKey, setRowBusinessKey] = useState();
+    const [tabIndex, setTabIndex] = useState();
+    const [userStyles, setUserStyles] = useState();
+    const [cellCtrls, setCellCtrls] = useState({ list: [], instanceIdMap: new Map() });
+    const [fullWidthCompDetails, setFullWidthCompDetails] = useState();
+    const [domOrder, setDomOrder] = useState(false);
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = react_1.useState(rowCtrl.getInitialRowTop(containerType));
-    const [transform, setTransform] = react_1.useState(rowCtrl.getInitialTransform(containerType));
-    const eGui = react_1.useRef(null);
-    const fullWidthCompRef = react_1.useRef();
-    const autoHeightSetup = react_1.useRef(false);
-    const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = react_1.useState(0);
+    const [top, setTop] = useState(rowCtrl.getInitialRowTop(containerType));
+    const [transform, setTransform] = useState(rowCtrl.getInitialTransform(containerType));
+    const eGui = useRef(null);
+    const fullWidthCompRef = useRef();
+    const autoHeightSetup = useRef(false);
+    const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState(0);
     // puts autoHeight onto full with detail rows. this needs trickery, as we need
     // the HTMLElement for the provided Detail Cell Renderer, however the Detail Cell Renderer
     // could be a stateless React Func Comp which won't work with useRef, so we need
     // to poll (we limit to 10) looking for the Detail HTMLElement (which will be the only
     // child) after the fullWidthCompDetails is set.
-    react_1.useEffect(() => {
+    useEffect(() => {
         var _a;
         if (autoHeightSetup.current) {
             return;
@@ -108,10 +84,10 @@ const RowComp = (params) => {
             setAutoHeightSetupAttempt(prev => prev + 1);
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
-    const cssClassManager = react_1.useMemo(() => new core_1.CssClassManager(() => eGui.current), []);
+    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current), []);
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
@@ -136,7 +112,7 @@ const RowComp = (params) => {
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-                utils_1.agFlushSync(useFlushSync, () => {
+                agFlushSync(useFlushSync, () => {
                     setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder));
                 });
             },
@@ -148,31 +124,31 @@ const RowComp = (params) => {
             rowCtrl.unsetComp(containerType);
         };
     });
-    react_1.useLayoutEffect(() => jsComp_1.showJsComp(fullWidthCompDetails, context, eGui.current, fullWidthCompRef), [fullWidthCompDetails]);
-    const rowStyles = react_1.useMemo(() => {
+    useLayoutEffect(() => showJsComp(fullWidthCompDetails, context, eGui.current, fullWidthCompRef), [fullWidthCompDetails]);
+    const rowStyles = useMemo(() => {
         const res = { top, transform };
         Object.assign(res, userStyles);
         return res;
     }, [top, transform, userStyles]);
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
     const showCells = cellCtrls != null;
-    const reactFullWidthCellRendererStateless = react_1.useMemo(() => {
-        const res = (fullWidthCompDetails === null || fullWidthCompDetails === void 0 ? void 0 : fullWidthCompDetails.componentFromFramework) && utils_1.isComponentStateless(fullWidthCompDetails.componentClass);
+    const reactFullWidthCellRendererStateless = useMemo(() => {
+        const res = (fullWidthCompDetails === null || fullWidthCompDetails === void 0 ? void 0 : fullWidthCompDetails.componentFromFramework) && isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
-    const showCellsJsx = () => cellCtrls.list.map(cellCtrl => (react_1.default.createElement(cellComp_1.default, { cellCtrl: cellCtrl, editingRow: rowCtrl.isEditing(), printLayout: rowCtrl.isPrintLayout(), key: cellCtrl.getInstanceId() })));
+    const showCellsJsx = () => cellCtrls.list.map(cellCtrl => (React.createElement(CellComp, { cellCtrl: cellCtrl, editingRow: rowCtrl.isEditing(), printLayout: rowCtrl.isPrintLayout(), key: cellCtrl.getInstanceId() })));
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails.componentClass;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
+        return (React.createElement(React.Fragment, null,
             reactFullWidthCellRendererStateless
-                && react_1.default.createElement(FullWidthComp, Object.assign({}, fullWidthCompDetails.params)),
+                && React.createElement(FullWidthComp, Object.assign({}, fullWidthCompDetails.params)),
             !reactFullWidthCellRendererStateless
-                && react_1.default.createElement(FullWidthComp, Object.assign({}, fullWidthCompDetails.params, { ref: fullWidthCompRef }))));
+                && React.createElement(FullWidthComp, Object.assign({}, fullWidthCompDetails.params, { ref: fullWidthCompRef }))));
     };
-    return (react_1.default.createElement("div", { ref: eGui, role: role, style: rowStyles, "row-index": rowIndex, "row-id": rowId, "row-business-key": rowBusinessKey, tabIndex: tabIndex },
+    return (React.createElement("div", { ref: eGui, role: role, style: rowStyles, "row-index": rowIndex, "row-id": rowId, "row-business-key": rowBusinessKey, tabIndex: tabIndex },
         showCells && showCellsJsx(),
         showFullWidthFramework && showFullWidthFrameworkJsx()));
 };
-exports.default = react_1.memo(RowComp);
+export default memo(RowComp);
 
 //# sourceMappingURL=rowComp.js.map

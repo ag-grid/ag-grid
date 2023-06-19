@@ -1,51 +1,30 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importStar(require("react"));
-const utils_1 = require("../utils");
-const beansContext_1 = require("../beansContext");
-const agGridReactUi_1 = require("../agGridReactUi");
-const useEffectOnce_1 = require("../useEffectOnce");
+// @ag-grid-community/react v30.0.2
+import React, { useState, useMemo, useRef, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
+import { CssClasses } from "../utils";
+import { BeansContext } from "../beansContext";
+import { AgGridReactUi } from "../agGridReactUi";
+import { useLayoutEffectOnce } from "../useEffectOnce";
 const DetailCellRenderer = (props, ref) => {
-    const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = react_1.useContext(beansContext_1.BeansContext);
-    const [cssClasses, setCssClasses] = react_1.useState(new utils_1.CssClasses());
-    const [gridCssClasses, setGridCssClasses] = react_1.useState(new utils_1.CssClasses());
-    const [detailGridOptions, setDetailGridOptions] = react_1.useState();
-    const [detailRowData, setDetailRowData] = react_1.useState();
-    const ctrlRef = react_1.useRef();
-    const eGuiRef = react_1.useRef(null);
-    const topClassName = react_1.useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
-    const gridClassName = react_1.useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
+    const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
+    const [cssClasses, setCssClasses] = useState(new CssClasses());
+    const [gridCssClasses, setGridCssClasses] = useState(new CssClasses());
+    const [detailGridOptions, setDetailGridOptions] = useState();
+    const [detailRowData, setDetailRowData] = useState();
+    const ctrlRef = useRef();
+    const eGuiRef = useRef(null);
+    const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
+    const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
     if (ref) {
-        react_1.useImperativeHandle(ref, () => ({
+        useImperativeHandle(ref, () => ({
             refresh() { var _a, _b; return (_b = (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.refresh()) !== null && _b !== void 0 ? _b : false; }
         }));
     }
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
     });
-    useEffectOnce_1.useLayoutEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const compProxy = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveDetailGridCssClass: (name, on) => setGridCssClasses(prev => prev.setClass(name, on)),
@@ -98,13 +77,13 @@ const DetailCellRenderer = (props, ref) => {
             }
         };
     });
-    const setGridApi = react_1.useCallback((api, columnApi) => {
+    const setGridApi = useCallback((api, columnApi) => {
         var _a;
         (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.registerDetailWithMaster(api, columnApi);
     }, []);
-    return (react_1.default.createElement("div", { className: topClassName, ref: eGuiRef }, detailGridOptions &&
-        react_1.default.createElement(agGridReactUi_1.AgGridReactUi, Object.assign({ className: gridClassName }, detailGridOptions, { rowData: detailRowData, setGridApi: setGridApi }))));
+    return (React.createElement("div", { className: topClassName, ref: eGuiRef }, detailGridOptions &&
+        React.createElement(AgGridReactUi, Object.assign({ className: gridClassName }, detailGridOptions, { rowData: detailRowData, setGridApi: setGridApi }))));
 };
-exports.default = react_1.forwardRef(DetailCellRenderer);
+export default forwardRef(DetailCellRenderer);
 
 //# sourceMappingURL=detailCellRenderer.js.map

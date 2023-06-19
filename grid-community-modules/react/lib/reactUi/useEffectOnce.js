@@ -1,18 +1,15 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useLayoutEffectOnce = exports.useEffectOnce = void 0;
-const react_1 = require("react");
-const useEffectOnce = (effect) => {
-    const effectFn = react_1.useRef(effect);
-    const destroyFn = react_1.useRef();
-    const effectCalled = react_1.useRef(false);
-    const rendered = react_1.useRef(false);
-    const [, setVal] = react_1.useState(0);
+// @ag-grid-community/react v30.0.2
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+export const useEffectOnce = (effect) => {
+    const effectFn = useRef(effect);
+    const destroyFn = useRef();
+    const effectCalled = useRef(false);
+    const rendered = useRef(false);
+    const [, setVal] = useState(0);
     if (effectCalled.current) {
         rendered.current = true;
     }
-    react_1.useEffect(() => {
+    useEffect(() => {
         // only execute the effect first time around
         if (!effectCalled.current) {
             destroyFn.current = effectFn.current();
@@ -33,17 +30,16 @@ const useEffectOnce = (effect) => {
         };
     }, []);
 };
-exports.useEffectOnce = useEffectOnce;
-const useLayoutEffectOnce = (effect) => {
-    const effectFn = react_1.useRef(effect);
-    const destroyFn = react_1.useRef();
-    const effectCalled = react_1.useRef(false);
-    const rendered = react_1.useRef(false);
-    const [, setVal] = react_1.useState(0);
+export const useLayoutEffectOnce = (effect) => {
+    const effectFn = useRef(effect);
+    const destroyFn = useRef();
+    const effectCalled = useRef(false);
+    const rendered = useRef(false);
+    const [, setVal] = useState(0);
     if (effectCalled.current) {
         rendered.current = true;
     }
-    react_1.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         // only execute the effect first time around
         if (!effectCalled.current) {
             destroyFn.current = effectFn.current();

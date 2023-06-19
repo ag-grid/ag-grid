@@ -1,11 +1,9 @@
-// ag-grid-react v30.0.1
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
-var useGridApis = function (gridRef) {
-    var _a = react_1.useState(null), gridApi = _a[0], setGridApi = _a[1];
-    var _b = react_1.useState(null), columnApi = _b[0], setColumnApi = _b[1];
-    react_1.useEffect(function () {
+// ag-grid-react v30.0.2
+import { useEffect, useState } from 'react';
+const useGridApis = (gridRef) => {
+    const [gridApi, setGridApi] = useState(null);
+    const [columnApi, setColumnApi] = useState(null);
+    useEffect(() => {
         if (gridRef && gridRef.current) {
             setGridApi(gridRef.current.api);
             setColumnApi(gridRef.current.columnApi);
@@ -13,4 +11,4 @@ var useGridApis = function (gridRef) {
     }, [gridRef]);
     return [gridApi, columnApi];
 };
-exports.default = useGridApis;
+export default useGridApis;

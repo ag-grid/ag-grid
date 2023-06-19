@@ -1,28 +1,22 @@
-// @ag-grid-community/react v30.0.1
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NewReactComponent = void 0;
-const react_1 = require("react");
-const react_dom_1 = require("react-dom");
-const core_1 = require("@ag-grid-community/core");
-const reactComponent_1 = require("./reactComponent");
-const server_1 = require("react-dom/server");
-const keyGenerator_1 = __importDefault(require("./keyGenerator"));
-class NewReactComponent extends reactComponent_1.ReactComponent {
+// @ag-grid-community/react v30.0.2
+import { createElement } from 'react';
+import { createPortal } from 'react-dom';
+import { AgPromise } from '@ag-grid-community/core';
+import { ReactComponent } from './reactComponent';
+import { renderToStaticMarkup } from "react-dom/server";
+import generateNewKey from "./keyGenerator";
+export class NewReactComponent extends ReactComponent {
     constructor(reactComponent, parentComponent, componentType) {
         super(reactComponent, parentComponent, componentType);
         this.oldPortal = null;
-        this.key = keyGenerator_1.default();
-        this.portalKey = keyGenerator_1.default();
+        this.key = generateNewKey();
+        this.portalKey = generateNewKey();
     }
     init(params) {
         this.eParentElement = this.createParentElement(params);
         this.params = params;
         this.createOrUpdatePortal(params);
-        return new core_1.AgPromise(resolve => this.createReactComponent(resolve));
+        return new AgPromise(resolve => this.createReactComponent(resolve));
     }
     createOrUpdatePortal(params) {
         if (!this.isStatelessComponent()) {
@@ -32,8 +26,8 @@ class NewReactComponent extends reactComponent_1.ReactComponent {
                 this.addParentContainerStyleAndClasses();
             };
         }
-        this.reactElement = react_1.createElement(this.reactComponent, Object.assign(Object.assign({}, params), { key: this.key }));
-        this.portal = react_dom_1.createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer
+        this.reactElement = createElement(this.reactComponent, Object.assign(Object.assign({}, params), { key: this.key }));
+        this.portal = createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer
         );
     }
     createReactComponent(resolve) {
@@ -63,7 +57,7 @@ class NewReactComponent extends reactComponent_1.ReactComponent {
             // for this single operation
             console.error = () => {
             };
-            const staticMarkup = server_1.renderToStaticMarkup(react_1.createElement(this.reactComponent, params));
+            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params));
             return staticMarkup === '';
         }
         catch (ignore) {
@@ -96,6 +90,5 @@ class NewReactComponent extends reactComponent_1.ReactComponent {
         return !!method;
     }
 }
-exports.NewReactComponent = NewReactComponent;
 
 //# sourceMappingURL=newReactComponent.js.map

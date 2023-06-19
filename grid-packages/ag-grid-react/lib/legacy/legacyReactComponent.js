@@ -1,105 +1,80 @@
-// ag-grid-react v30.0.1
-"use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LegacyReactComponent = void 0;
-var react_1 = require("react");
-var react_dom_1 = require("react-dom");
-var ag_grid_community_1 = require("ag-grid-community");
-var reactComponent_1 = require("../shared/reactComponent");
-var server_1 = require("react-dom/server");
-var keyGenerator_1 = __importDefault(require("../shared/keyGenerator"));
-var LegacyReactComponent = /** @class */ (function (_super) {
-    __extends(LegacyReactComponent, _super);
-    function LegacyReactComponent(reactComponent, parentComponent, portalManager, componentType) {
-        var _this = _super.call(this, reactComponent, portalManager, componentType) || this;
-        _this.staticMarkup = null;
-        _this.staticRenderTime = 0;
-        _this.parentComponent = parentComponent;
-        return _this;
+// ag-grid-react v30.0.2
+import { createElement } from 'react';
+import { createPortal } from 'react-dom';
+import { AgPromise } from 'ag-grid-community';
+import { ReactComponent } from '../shared/reactComponent';
+import { renderToStaticMarkup } from 'react-dom/server';
+import generateNewKey from '../shared/keyGenerator';
+export class LegacyReactComponent extends ReactComponent {
+    constructor(reactComponent, parentComponent, portalManager, componentType) {
+        super(reactComponent, portalManager, componentType);
+        this.staticMarkup = null;
+        this.staticRenderTime = 0;
+        this.parentComponent = parentComponent;
     }
-    LegacyReactComponent.prototype.init = function (params) {
-        var _this = this;
+    init(params) {
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
-        return new ag_grid_community_1.AgPromise(function (resolve) { return _this.createReactComponent(params, resolve); });
-    };
-    LegacyReactComponent.prototype.createReactComponent = function (params, resolve) {
-        var _this = this;
+        return new AgPromise(resolve => this.createReactComponent(params, resolve));
+    }
+    createReactComponent(params, resolve) {
         // regular components (ie not functional)
         if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
-            params.ref = function (element) {
-                _this.componentInstance = element;
-                _this.addParentContainerStyleAndClasses();
-                _this.removeStaticMarkup();
+            params.ref = (element) => {
+                this.componentInstance = element;
+                this.addParentContainerStyleAndClasses();
+                this.removeStaticMarkup();
             };
         }
-        var reactComponent = react_1.createElement(this.reactComponent, params);
-        var portal = react_dom_1.createPortal(reactComponent, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
+        const reactComponent = createElement(this.reactComponent, params);
+        const portal = createPortal(reactComponent, this.eParentElement, generateNewKey() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
-        this.portalManager.mountReactPortal(portal, this, function (value) {
+        this.portalManager.mountReactPortal(portal, this, (value) => {
             resolve(value);
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if (_this.isStatelessComponent()) {
-                if (_this.isSlowRenderer()) {
-                    _this.removeStaticMarkup();
+            if (this.isStatelessComponent()) {
+                if (this.isSlowRenderer()) {
+                    this.removeStaticMarkup();
                 }
-                setTimeout(function () {
-                    _this.removeStaticMarkup();
+                setTimeout(() => {
+                    this.removeStaticMarkup();
                 });
             }
         });
-    };
-    LegacyReactComponent.prototype.fallbackMethodAvailable = function (name) {
+    }
+    fallbackMethodAvailable(name) {
         return false;
-    };
-    LegacyReactComponent.prototype.fallbackMethod = function (name, params) { };
-    LegacyReactComponent.prototype.isSlowRenderer = function () {
+    }
+    fallbackMethod(name, params) { }
+    isSlowRenderer() {
         return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERING_THRESHOLD;
-    };
-    LegacyReactComponent.prototype.isNullValue = function () {
+    }
+    isNullValue() {
         return this.staticMarkup === '';
-    };
+    }
     /*
      * Attempt to render the component as static markup if possible
      * What this does is eliminate any visible flicker for the user in the scenario where a component is destroyed and
      * recreated with exactly the same data (ie with force refresh)
      * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
      */
-    LegacyReactComponent.prototype.renderStaticMarkup = function (params) {
+    renderStaticMarkup(params) {
         if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.cellRenderer) {
             return;
         }
-        var originalConsoleError = console.error;
-        var reactComponent = react_1.createElement(this.reactComponent, params);
+        const originalConsoleError = console.error;
+        const reactComponent = createElement(this.reactComponent, params);
         try {
             // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
             // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
             // for this single operation
-            console.error = function () {
+            console.error = () => {
             };
-            var start = Date.now();
-            var staticMarkup = server_1.renderToStaticMarkup(reactComponent);
+            const start = Date.now();
+            const staticMarkup = renderToStaticMarkup(reactComponent);
             this.staticRenderTime = Date.now() - start;
             console.error = originalConsoleError;
             // if the render method returns null the result will be an empty string
@@ -122,8 +97,8 @@ var LegacyReactComponent = /** @class */ (function (_super) {
         finally {
             console.error = originalConsoleError;
         }
-    };
-    LegacyReactComponent.prototype.removeStaticMarkup = function () {
+    }
+    removeStaticMarkup() {
         if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.cellRenderer) {
             return;
         }
@@ -139,13 +114,11 @@ var LegacyReactComponent = /** @class */ (function (_super) {
                 this.staticMarkup = null;
             }
         }
-    };
-    LegacyReactComponent.prototype.rendered = function () {
+    }
+    rendered() {
         return this.isNullValue() ||
             !!this.staticMarkup || (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
-    };
-    LegacyReactComponent.SLOW_RENDERING_THRESHOLD = 3;
-    return LegacyReactComponent;
-}(reactComponent_1.ReactComponent));
-exports.LegacyReactComponent = LegacyReactComponent;
+    }
+}
+LegacyReactComponent.SLOW_RENDERING_THRESHOLD = 3;
