@@ -108,7 +108,9 @@ export class PolarChart extends Chart {
             const labelBoxes = [];
             for (const series of [...polarAxes, ...polarSeries]) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
-                box && labelBoxes.push(box);
+                if (box) {
+                    labelBoxes.push(box);
+                }
             }
 
             if (labelBoxes.length === 0) {
