@@ -43,34 +43,26 @@ const options: AgChartOptions = {
 const chart = AgEnterpriseCharts.create(options)
 
 function reset() {
-  AgChart.update(chart, {
-    ...options,
-    data: getData(),
-  } as any)
+  options.data = getData()
+  AgChart.update(chart, options as any)
 }
 
 function randomise() {
-  AgChart.update(chart, {
-    ...options,
-    data: [
-      ...getData().map((d: any) => ({
-        ...d,
-        age: Math.max(
-          17,
-          Math.min(33, d.age + Math.floor(Math.random() * 4) - 2)
-        ),
-      })),
-    ],
-  } as any)
+  options.data = [
+    ...getData().map((d: any) => ({
+      ...d,
+      age: Math.max(
+        17,
+        Math.min(33, d.age + Math.floor(Math.random() * 4) - 2)
+      ),
+    })),
+  ]
+  AgChart.update(chart, options as any)
 }
 
 function remove() {
-  AgChart.update(chart, {
-    ...options,
-    data: [
-      ...getData().filter(
-        (d: any) => (d.age < 20 || d.age >= 22) && d.age < 32
-      ),
-    ],
-  } as any)
+  options.data = [
+    ...getData().filter((d: any) => (d.age < 20 || d.age >= 22) && d.age < 32),
+  ]
+  AgChart.update(chart, options as any)
 }
