@@ -24,12 +24,11 @@ const commonConfig = {
         ],
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    testEnvironment: 'jsdom',
+    testEnvironment: './jest.jsdom-with-timezone.cjs',
     setupFiles: ['jest-canvas-mock'],
 };
 
 module.exports = {
-    globalSetup: './jest.setup.cjs',
     projects: [
         {
             displayName: 'unit',
