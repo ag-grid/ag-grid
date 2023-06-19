@@ -53,6 +53,7 @@ export interface ChartAxis {
     translation: { x: number; y: number };
     type: string;
     update(primaryTickCount?: number): number | undefined;
+    updateScale(): void;
     updatePosition(position: { rotation: number; sideFlag: Flag }): void;
     visibleRange: number[];
 }

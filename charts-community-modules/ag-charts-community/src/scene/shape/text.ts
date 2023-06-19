@@ -484,6 +484,18 @@ export class Text extends Shape {
 
         return lines;
     }
+
+    setFont(props: TextSizeProperties) {
+        this.fontFamily = props.fontFamily;
+        this.fontSize = props.fontSize;
+        this.fontStyle = props.fontStyle;
+        this.fontWeight = props.fontWeight;
+    }
+
+    setAlign(props: { textAlign: CanvasTextAlign; textBaseline: CanvasTextBaseline }) {
+        this.textAlign = props.textAlign;
+        this.textBaseline = props.textBaseline;
+    }
 }
 
 interface TextMeasurer {

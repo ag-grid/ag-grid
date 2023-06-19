@@ -5,6 +5,7 @@ import { BBox } from '../scene/bbox';
 import { SeriesNodeDatum } from './series/series';
 import { PieSeries } from './series/polar/pieSeries';
 import { ChartAxisDirection } from './chartAxisDirection';
+import { PolarAxis } from './axis/polarAxis';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -21,8 +22,8 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        const { radius, centerX, centerY } = this.computeCircle();
-        this.updateAxes(radius, centerX, centerY);
+        this.computeCircle();
+        this.axes.forEach((axis) => axis.update());
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -38,7 +39,7 @@ export class PolarChart extends Chart {
         return shrinkRect;
     }
 
-    protected updateAxes(radius: number, cx: number, cy: number) {
+    protected updateAxes(cx: number, cy: number, radius: number) {
         this.axes.forEach((axis) => {
             if (axis.direction === ChartAxisDirection.X) {
                 axis.range = [-Math.PI / 2, (3 * Math.PI) / 2];
@@ -50,7 +51,7 @@ export class PolarChart extends Chart {
                 axis.translation.x = cx;
                 axis.translation.y = cy - radius;
             }
-            axis.update();
+            axis.updateScale();
         });
     }
 
@@ -67,11 +68,15 @@ export class PolarChart extends Chart {
 
     private computeCircle() {
         const seriesBox = this.seriesRect!;
-        const polarSeries = this.series.filter((series) => {
+        const polarSeries = this.series.filter((series): series is PolarSeries<SeriesNodeDatum> => {
             return series instanceof PolarSeries;
-        }) as PolarSeries<SeriesNodeDatum>[];
+        });
+        const polarAxes = this.axes.filter((axis): axis is PolarAxis => {
+            return axis instanceof PolarAxis;
+        });
 
         const setSeriesCircle = (cx: number, cy: number, r: number) => {
+            this.updateAxes(cx, cy, r);
             polarSeries.forEach((series) => {
                 series.centerX = cx;
                 series.centerY = cy;
@@ -101,11 +106,11 @@ export class PolarChart extends Chart {
 
         const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = [];
-            for (const series of polarSeries) {
+            for (const series of [...polarAxes, ...polarSeries]) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
-                if (box == null) continue;
-
-                labelBoxes.push(box);
+                if (box) {
+                    labelBoxes.push(box);
+                }
             }
 
             if (labelBoxes.length === 0) {

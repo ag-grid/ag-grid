@@ -31,7 +31,7 @@ const {
     valueProperty,
 } = _ModuleSupport;
 
-const { Group, Path, PointerEvents, Selection, Text, getMarker, toTooltipHtml } = _Scene;
+const { BBox, Group, Path, PointerEvents, Selection, Text, getMarker, toTooltipHtml } = _Scene;
 const { extent, interpolateString, isNumberEqual, sanitizeHtml, toFixed } = _Util;
 
 class RadarLineSeriesNodeBaseClickEvent extends _ModuleSupport.SeriesNodeBaseClickEvent<any> {
@@ -64,8 +64,8 @@ interface RadarLineNodeDatum extends _ModuleSupport.SeriesNodeDatum {
         text: string;
         x: number;
         y: number;
-        hAlign: CanvasTextAlign;
-        vAlign: CanvasTextBaseline;
+        textAlign: CanvasTextAlign;
+        textBaseline: CanvasTextBaseline;
     };
     readonly angleValue: any;
     readonly radiusValue: any;
@@ -237,8 +237,22 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         this.processedData = this.dataModel.processData(data);
     }
 
+    private circleCache = { r: 0, cx: 0, cy: 0 };
+
+    private didCircleChange() {
+        const r = this.radius;
+        const cx = this.centerX;
+        const cy = this.centerY;
+        const cache = this.circleCache;
+        if (!(r === cache.r && cx === cache.cx && cy === cache.cy)) {
+            this.circleCache = { r, cx, cy };
+            return true;
+        }
+        return false;
+    }
+
     maybeRefreshNodeData() {
-        if (!this.nodeDataRefresh) return;
+        if (!this.nodeDataRefresh && !this.didCircleChange()) return;
         const [{ nodeData = [] } = {}] = this._createNodeData();
         this.nodeData = nodeData;
         this.nodeDataRefresh = false;
@@ -275,13 +289,13 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             const radiusDatum = values[radiusIdx];
 
             const angle = angleScale.convert(angleDatum);
-            const radius = this.getRadius() - radiusScale.convert(radiusDatum);
+            const radius = this.radius - radiusScale.convert(radiusDatum);
 
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
 
-            const x = this.centerX + cos * radius;
-            const y = this.centerY + sin * radius;
+            const x = cos * radius;
+            const y = sin * radius;
 
             let labelNodeDatum: RadarLineNodeDatum['label'];
             if (label.enabled) {
@@ -300,8 +314,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                         text: labelText,
                         x: labelX,
                         y: labelY,
-                        hAlign: isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right',
-                        vAlign: isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom',
+                        textAlign: isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right',
+                        textBaseline: isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom',
                     };
                 }
             }
@@ -323,15 +337,13 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     async update() {
         this.maybeRefreshNodeData();
 
+        this.rootGroup.translationX = this.centerX;
+        this.rootGroup.translationY = this.centerY;
+
         this.updatePath();
         this.updateMarkers(this.markerSelection, false);
         this.updateMarkers(this.highlightSelection, true);
         this.updateLabels();
-    }
-
-    private getRadius() {
-        const radiusAxis = this.axes[ChartAxisDirection.Y];
-        return radiusAxis?.range[0] ?? 0;
     }
 
     private updatePath() {
@@ -419,8 +431,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 node.fontStyle = label.fontStyle;
                 node.fontWeight = label.fontWeight;
                 node.text = datum.label.text;
-                node.textAlign = datum.label.hAlign;
-                node.textBaseline = datum.label.vAlign;
+                node.textAlign = datum.label.textAlign;
+                node.textBaseline = datum.label.textBaseline;
 
                 node.visible = true;
             } else {
@@ -562,7 +574,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         const { x, y } = point;
         const { rootGroup, nodeData, centerX: cx, centerY: cy, marker } = this;
         const hitPoint = rootGroup.transformPoint(x, y);
-        const radius = this.getRadius();
+        const radius = this.radius;
 
         const distanceFromCenter = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
         if (distanceFromCenter > radius + marker.size) {
@@ -594,4 +606,29 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     animateEmptyUpdateReady() {}
 
     animateUpdateReady() {}
+
+    computeLabelsBBox() {
+        const { label } = this;
+
+        this.maybeRefreshNodeData();
+
+        const textBoxes: _Scene.BBox[] = [];
+        const tempText = new Text();
+        this.nodeData.forEach((nodeDatum) => {
+            if (!label.enabled || !nodeDatum.label) {
+                return;
+            }
+            tempText.text = nodeDatum.label.text;
+            tempText.x = nodeDatum.label.x;
+            tempText.y = nodeDatum.label.y;
+            tempText.setFont(label);
+            tempText.setAlign(nodeDatum.label);
+            const box = tempText.computeBBox();
+            textBoxes.push(box);
+        });
+        if (textBoxes.length === 0) {
+            return null;
+        }
+        return BBox.merge(textBoxes);
+    }
 }

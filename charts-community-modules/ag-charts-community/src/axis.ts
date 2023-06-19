@@ -482,7 +482,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         };
     }
 
-    protected updateScale() {
+    updateScale() {
         this.updateRange();
         this.calculateDomain();
         this.setDomain();
