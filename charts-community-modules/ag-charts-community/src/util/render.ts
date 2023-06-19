@@ -62,7 +62,7 @@ function buildScheduler(scheduleFn: (cb: () => void) => void, cb: Callback) {
                 return;
             }
 
-            if (!awaitingPromise) {
+            if (awaitingPromise == null) {
                 awaitingPromise = new Promise((resolve) => {
                     awaitingDone = resolve;
                 });
