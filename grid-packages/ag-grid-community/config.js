@@ -17,6 +17,7 @@ const builds = {
         dest: path.resolve(__dirname, './dist/ag-grid-community.cjs.js'),
         format: 'cjs',
         env: 'development',
+        nodeFormatOverride: 'es5-cjs',
         banner
     },
     'community-cjs-prod': {
@@ -24,6 +25,7 @@ const builds = {
         dest: path.resolve(__dirname, './dist/ag-grid-community.cjs.min.js'),
         format: 'cjs',
         env: 'production',
+        nodeFormatOverride: 'es5-cjs',
         banner
     },
     'community-esm-dev': {
@@ -47,16 +49,16 @@ function genConfig(name) {
     const config = {
         input: opts.entry,
         plugins: [
-            node({browser: true}),      // for utils package - defaulting to use index.js
+            node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             typescript({
                 tsconfig: "tsconfig.es6.json"
-            })
+            }),
         ].concat(opts.plugins || []),
         output: {
             file: opts.dest,
             format: opts.format,
             banner: opts.banner,
-            name: opts.moduleName
+            name: opts.moduleName,
         },
         onwarn: (msg, warn) => {
             if (msg.code === 'THIS_IS_UNDEFINED') return;

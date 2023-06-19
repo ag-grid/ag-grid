@@ -20,6 +20,7 @@ const builds = {
         dest: path.resolve(__dirname, './dist/ag-grid-enterprise.cjs.js'),
         format: 'cjs',
         env: 'development',
+        nodeFormatOverride: 'es5-cjs',
         banner
     },
     'enterprise-cjs-prod': {
@@ -27,6 +28,7 @@ const builds = {
         dest: path.resolve(__dirname, './dist/ag-grid-enterprise.cjs.min.js'),
         format: 'cjs',
         env: 'production',
+        nodeFormatOverride: 'es5-cjs',
         banner
     },
     'enterprise-esm-dev': {
@@ -58,7 +60,7 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            node({browser: true}),      // for utils package - defaulting to use index.js
+            node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),
