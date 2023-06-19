@@ -23,6 +23,7 @@ export class PolarChart extends Chart {
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
         this.computeCircle();
+        this.axes.forEach((axis) => axis.update());
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -50,7 +51,7 @@ export class PolarChart extends Chart {
                 axis.translation.x = cx;
                 axis.translation.y = cy - radius;
             }
-            axis.update();
+            axis.updateScale();
         });
     }
 
@@ -105,12 +106,8 @@ export class PolarChart extends Chart {
 
         const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = [];
-            for (const series of polarSeries) {
+            for (const series of [...polarAxes, ...polarSeries]) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
-                box && labelBoxes.push(box);
-            }
-            for (const axis of polarAxes) {
-                const box = axis.computeLabelsBBox();
                 box && labelBoxes.push(box);
             }
 
