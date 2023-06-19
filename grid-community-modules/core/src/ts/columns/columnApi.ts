@@ -1,6 +1,7 @@
 import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
-import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
+import { ColumnModel } from "./columnModel";
+import { ColumnState, ApplyColumnStateParams } from "./columnState";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column, ColumnPinnedType } from "../entities/column";

@@ -10,6 +10,7 @@ import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
 import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
+import { ApplyColumnStateParams } from './columns/columnState';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -494,6 +495,12 @@ export interface ColumnVisibleEvent<TData = any, TContext = any> extends ColumnE
 export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
     /** Either 'left', 'right', or null (it not pinned) */
     pinned: ColumnPinnedType;
+}
+
+// internal event
+export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    params: ApplyColumnStateParams;
+    source: ColumnEventType;
 }
 
 /**------------*/

@@ -236,5 +236,7 @@ export class Events {
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
 
+    public static EVENT_COLUMN_STATE_UPDATED: 'columnStateUpdated' = 'columnStateUpdated';
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

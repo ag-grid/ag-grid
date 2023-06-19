@@ -19,6 +19,7 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
 import { ColumnModel } from './columnModel';
+import { ApplyColumnStateParams } from './columnState';
 import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -30,7 +31,7 @@ import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
-import { RowDataUpdateStartedEvent } from '../events';
+import { ColumnEventType, ColumnStateUpdatedEvent, RowDataUpdateStartedEvent } from '../events';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -66,6 +67,8 @@ export class DataTypeService extends BeanStub {
     private hasObjectValueFormatter: boolean;
     private groupHideOpenParents: boolean;
     private initialData: any | null | undefined;
+    // once set this is not unset (e.g. if row data is removed)
+    private hasReceivedInitialData: boolean = false;
 
     @PostConstruct
     public init(): void {
@@ -360,6 +363,7 @@ export class DataTypeService extends BeanStub {
         if (initialData) {
             const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
+            this.hasReceivedInitialData = true
         } else {
             this.initWaitForRowData();
         }
@@ -392,15 +396,35 @@ export class DataTypeService extends BeanStub {
             return;
         }
         this.isWaitingForRowData = true;
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
+        let destroyColumnStateListener: (() => null) | undefined;
+        let columnStateUpdates: ({ params: ApplyColumnStateParams, source: ColumnEventType })[] = [];
+        const hasReceivedInitialData = this.hasReceivedInitialData;
+
+        if (!hasReceivedInitialData) {
+            // queue up any column state updates so we can reapply them once data is received
+            destroyColumnStateListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_STATE_UPDATED, (event: ColumnStateUpdatedEvent) => {
+                const { params, source } = event;
+                columnStateUpdates.push({ params, source });
+            });
+        }
+
+        const destroyRowDataListener = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
             const { firstRowData } = event;
             if (!firstRowData) {
                 return;
             }
-            destroyFunc?.();
+            destroyRowDataListener?.();
             this.isWaitingForRowData = false;
             this.initialData = firstRowData;
+            const state = hasReceivedInitialData ? this.columnModel.getColumnState() : undefined;
             this.columnModel.recreateColumnDefs('rowDataUpdated');
+            if (hasReceivedInitialData) {
+                // if we're here, row data has been deleted and then a new column added. Therefore we can just re-apply existing state
+                this.columnModel.applyColumnState({ state, applyOrder: true }, 'rowDataUpdated');
+            } else {
+                destroyColumnStateListener?.();
+                columnStateUpdates.forEach(({ params, source }) => this.columnModel.applyColumnState(params, source));
+            }
             this.initialData = null;
         });
     }

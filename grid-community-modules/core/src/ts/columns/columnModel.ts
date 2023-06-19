@@ -19,6 +19,7 @@ import {
     ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
     ColumnRowGroupChangedEvent,
+    ColumnStateUpdatedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     DisplayedColumnsChangedEvent,
@@ -50,52 +51,13 @@ import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/header
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
 import { PropertyChangedEvent } from '../gridOptionsService';
+import { ApplyColumnStateParams, ColumnState, ColumnStateParams } from './columnState';
 
 export interface ColumnResizeSet {
     columns: Column[];
     ratios: number[];
     width: number;
 }
-
-export interface ColumnStateParams {
-    /** True if the column is hidden */
-    hide?: boolean | null;
-    /** Width of the column in pixels */
-    width?: number;
-    /** Column's flex if flex is set */
-    flex?: number | null;
-    /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | null;
-    /** The order of the sort, if sorting by many columns */
-    sortIndex?: number | null;
-    /** The aggregation function applied */
-    aggFunc?: string | IAggFunc | null;
-    /** True if pivot active */
-    pivot?: boolean | null;
-    /** The order of the pivot, if pivoting by many columns */
-    pivotIndex?: number | null;
-    /** Set if column is pinned */
-    pinned?: ColumnPinnedType;
-    /** True if row group active */
-    rowGroup?: boolean | null;
-    /** The order of the row group, if grouping by many columns */
-    rowGroupIndex?: number | null;
-}
-
-export interface ColumnState extends ColumnStateParams {
-    /** ID of the column */
-    colId: string;
-}
-
-export interface ApplyColumnStateParams {
-    /** The state from `getColumnState` */
-    state?: ColumnState[];
-    /** Whether column order should be applied */
-    applyOrder?: boolean;
-    /** State to apply to columns where state is missing for those columns */
-    defaultState?: ColumnStateParams;
-}
-
 export interface ISizeColumnsToFitParams {
     /** Defines a default minimum width for every column (does not override the column minimum width) */
     defaultMinWidth?: number;
@@ -2173,6 +2135,13 @@ export class ColumnModel extends BeanStub {
             ).unmatchedCount;
         }
         this.columnAnimationService.finish();
+
+        const event: WithoutGridCommon<ColumnStateUpdatedEvent> = {
+            type: Events.EVENT_COLUMN_STATE_UPDATED,
+            params,
+            source
+        }
+        this.eventService.dispatchEvent(event);
 
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }
