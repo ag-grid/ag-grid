@@ -81,7 +81,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.seriesRect = rect;
         this.hoverRect = hoverRect;
 
-        const { position: axisPosition, axisId } = this.axisCtx;
+        const { position: axisPosition = 'left', axisId } = this.axisCtx;
 
         const axisLayout = axes.find((a) => a.id === axisId);
 
