@@ -1,3 +1,7 @@
+/**
+ * @timezone UTC
+ */
+
 import { expect, test } from '@jest/globals';
 import { sunday } from './week';
 import { durationMinute } from './duration';
