@@ -7,7 +7,7 @@
   "types": "./dist/esm/es6/main.d.ts",
   "scripts": {
     "clean": "rimraf dist typings .hash",
-    "testx": "./test.sh",
+    "test": "./test.sh",
     "test-watch": "./test.sh watch",
     "test-coverage": "./test.sh coverage",
     "test-update": "./test.sh update",

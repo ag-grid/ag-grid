@@ -13,6 +13,8 @@ export class SizeMonitor {
     private static resizeObserver: any;
     private static ready = false;
 
+    private static pollerHandler?: number;
+
     static init() {
         const NativeResizeObserver = (window as any).ResizeObserver;
 
@@ -30,10 +32,20 @@ export class SizeMonitor {
                     this.checkClientSize(element, entry);
                 });
             };
-            window.setInterval(step, 100);
+            this.pollerHandler = window.setInterval(step, 100);
         }
 
         this.ready = true;
+    }
+
+    private static destroy() {
+        if (this.pollerHandler != null) {
+            clearInterval(this.pollerHandler);
+            this.pollerHandler = undefined;
+        }
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = undefined;
+        this.ready = false;
     }
 
     private static checkSize(entry: Entry | undefined, element: HTMLElement, width: number, height: number) {
@@ -65,6 +77,10 @@ export class SizeMonitor {
             this.resizeObserver.unobserve(element);
         }
         this.elements.delete(element);
+
+        if (this.elements.size === 0) {
+            this.destroy();
+        }
     }
 
     static checkClientSize(element: HTMLElement, entry: Entry) {

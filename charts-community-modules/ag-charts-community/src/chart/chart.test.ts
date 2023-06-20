@@ -391,7 +391,7 @@ describe('Chart', () => {
                 series: [testOptions.seriesOptions],
             });
             const chartProxy = AgChart.create(chartOptions);
-            const chart = deproxy(chartProxy);
+            chart = deproxy(chartProxy);
             await waitForChartStability(chart);
             expect(testOptions.getNodes(chart).length).toEqual(0);
 

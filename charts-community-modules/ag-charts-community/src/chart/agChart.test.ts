@@ -7,6 +7,7 @@ import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
 import { AgChart } from './agChartV2';
 import { deproxy, waitForChartStability } from './test/utils';
+import { AgChartInstance } from './agChartOptions';
 
 const revenueProfitData = [
     {
@@ -36,16 +37,22 @@ const revenueProfitData = [
 ];
 
 describe('update', () => {
+    let chartProxy: AgChartInstance;
+
     beforeEach(() => {
         console.warn = jest.fn();
     });
 
     afterEach(() => {
+        if (chartProxy) {
+            chartProxy.destroy();
+            chartProxy = undefined as any;
+        }
         expect(console.warn).not.toBeCalled();
     });
 
     test('cartesian chart top-level properties', async () => {
-        const chartProxy = AgChart.create({
+        chartProxy = AgChart.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
             data: revenueProfitData,
@@ -178,7 +185,7 @@ describe('update', () => {
     });
 
     test('series', async () => {
-        const chartProxy = AgChart.create({
+        chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -363,7 +370,7 @@ describe('update', () => {
     });
 
     test('axes', async () => {
-        const chartProxy = AgChart.create({
+        chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
