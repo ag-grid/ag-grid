@@ -1,3 +1,7 @@
+/**
+ * @timezone UTC
+ */
+
 import { expect, test } from '@jest/globals';
 import day from './day';
 
