@@ -8,9 +8,7 @@ function encode(date: Date) {
 }
 
 function decode(encoded: number) {
-    const d = new Date(0);
-    const startTzOffsetMs = d.getTimezoneOffset() * 60_000;
-    d.setTime(d.getTime() + startTzOffsetMs);
+    const d = new Date(1970, 0, 1);
     d.setDate(d.getDate() + encoded);
 
     return d;
