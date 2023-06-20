@@ -62,7 +62,7 @@ export class SizeMonitor {
         if (!this.ready) {
             this.init();
         }
-        this.unobserve(element);
+        this.unobserve(element, false);
         if (this.resizeObserver) {
             this.resizeObserver.observe(element);
         }
@@ -72,13 +72,13 @@ export class SizeMonitor {
         this.checkClientSize(element, { cb });
     }
 
-    static unobserve(element: HTMLElement) {
+    static unobserve(element: HTMLElement, cleanup = true) {
         if (this.resizeObserver) {
             this.resizeObserver.unobserve(element);
         }
         this.elements.delete(element);
 
-        if (this.elements.size === 0) {
+        if (cleanup && this.elements.size === 0) {
             this.destroy();
         }
     }
