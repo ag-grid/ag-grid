@@ -741,6 +741,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (this.axes.length > 0) {
             this.assignAxesToSeries();
             this.assignSeriesToAxes();
+            this.zoomManager.updateAxes(this.axes);
         }
 
         await Promise.all(this.series.map((s) => s.processData()));
