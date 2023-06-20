@@ -29,7 +29,7 @@ type SUPPORTED_EVENTS =
     | 'touchcancel'
     | 'pagehide'
     | 'wheel';
-const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup'];
+const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup', 'wheel'];
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
     'dblclick',
@@ -41,7 +41,6 @@ const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'touchmove',
     'touchend',
     'touchcancel',
-    'wheel',
 ];
 
 export type InteractionEvent<T extends InteractionTypes> = {
