@@ -1,0 +1,7 @@
+{
+    "extends": "./tsconfig.esm.es5.json",
+    "compilerOptions": {
+        "composite": true,
+        "sourceMap": true
+    }
+}
