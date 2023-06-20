@@ -99,12 +99,12 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             autoplay: this.isPlaying ? opts.autoplay : false,
             driver: this.createDriver(id, disableInteractions),
         };
-        const controller = baseAnimate(optsExtra);
 
         if (this.controllers[id]) {
             this.controllers[id].stop();
         }
 
+        const controller = baseAnimate(optsExtra);
         this.controllers[id] = controller;
 
         if (this.skipAnimations) {
