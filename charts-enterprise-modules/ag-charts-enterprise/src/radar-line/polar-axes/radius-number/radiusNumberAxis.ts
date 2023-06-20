@@ -76,7 +76,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
             const { path } = node;
             const angles = this.gridAngles;
             path.clear({ trackChanges: true });
-            if (angles.length < 3) {
+            if (!angles || angles.length < 3) {
                 return;
             }
 

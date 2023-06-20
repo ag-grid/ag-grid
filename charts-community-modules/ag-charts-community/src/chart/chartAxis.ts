@@ -49,7 +49,6 @@ export interface ChartAxis {
     scale: Scale<any, any, any>;
     seriesAreaPadding: number;
     setCrossLinesVisible(visible: boolean): void;
-    thickness: number;
     translation: { x: number; y: number };
     type: string;
     update(primaryTickCount?: number): number | undefined;

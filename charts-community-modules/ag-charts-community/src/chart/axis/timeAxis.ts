@@ -2,9 +2,9 @@ import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ModuleContext } from '../../util/moduleContext';
-import { Axis } from '../../axis';
 import { Default } from '../../util/default';
 import { AxisTick } from './axisTick';
+import { CartesianAxis } from './cartesianAxis';
 
 class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
@@ -12,7 +12,7 @@ class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     maxSpacing: number = NaN;
 }
 
-export class TimeAxis extends Axis<TimeScale, number | Date> {
+export class TimeAxis extends CartesianAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 

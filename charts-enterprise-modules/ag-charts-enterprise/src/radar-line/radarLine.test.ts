@@ -65,14 +65,6 @@ describe('Radar Line sChart', () => {
         legend: {
             enabled: true,
         },
-        axes: [
-            {
-                type: 'polar-angle-category',
-            },
-            {
-                type: 'polar-radius-number',
-            },
-        ],
     };
 
     const compare = async () => {

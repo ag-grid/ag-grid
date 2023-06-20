@@ -2,7 +2,7 @@ import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 
 const { ChartAxisDirection } = _ModuleSupport;
 const { BandScale } = _Scale;
-const { Text } = _Scene;
+const { Path, Text } = _Scene;
 const { isNumberEqual } = _Util;
 
 interface AngleCategoryAxisLabelDatum {
@@ -19,6 +19,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     static type = 'polar-angle-category' as const;
 
     protected labelData: AngleCategoryAxisLabelDatum[] = [];
+    protected radiusLine: _Scene.Path = this.axisGroup.appendChild(new Path());
 
     constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super(moduleCtx, new BandScale());
@@ -35,6 +36,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         this.updateGridLines();
         this.updateTickLines();
         this.updateLabels();
+        this.updateRadiusLine();
         return ticks.length;
     }
 
@@ -48,6 +50,38 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
 
         gridGroup.translationX = translationX;
         gridGroup.translationY = translationY;
+    }
+
+    protected updateRadiusLine() {
+        const { scale } = this;
+        const node = this.radiusLine;
+        const shape = this.gridShape;
+        const radius = this.gridLength;
+
+        const { path } = node;
+        path.clear({ trackChanges: true });
+        if (shape === 'circle') {
+            path.moveTo(radius, 0);
+            path.arc(0, 0, radius, 0, 2 * Math.PI);
+        } else if (shape === 'polygon') {
+            const angles = (scale.ticks?.() || []).map((value) => scale.convert(value));
+            if (angles.length > 2) {
+                angles.forEach((angle, i) => {
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    if (i === 0) {
+                        path.moveTo(x, y);
+                    } else {
+                        path.lineTo(x, y);
+                    }
+                });
+            }
+        }
+        path.closePath();
+
+        node.stroke = this.line.color;
+        node.strokeWidth = this.line.width;
+        node.fill = undefined;
     }
 
     protected updateGridLines() {

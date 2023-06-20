@@ -1,4 +1,5 @@
 import { Chart, TransferableResources } from './chart';
+import { CartesianAxis } from './axis/cartesianAxis';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { ChartAxis } from './chartAxis';
@@ -378,7 +379,7 @@ export class CartesianChart extends Chart {
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
         const paddedBoundsCoefficient = 0.3;
 
-        if (axis.thickness > 0) {
+        if (axis instanceof CartesianAxis && axis.thickness > 0) {
             axis.maxThickness = axis.thickness;
         } else if (direction === ChartAxisDirection.Y) {
             axis.maxThickness = paddedBounds.width * paddedBoundsCoefficient;
@@ -390,7 +391,7 @@ export class CartesianChart extends Chart {
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
         let axisThickness = 0;
-        if (axis.thickness) {
+        if (axis instanceof CartesianAxis && axis.thickness) {
             axisThickness = axis.thickness;
         } else {
             const bbox = axis.computeBBox();

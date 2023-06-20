@@ -11,7 +11,7 @@ import { createId } from './util/id';
 import { normalizeAngle360, toRadians } from './util/angle';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
-import { Validate, BOOLEAN, NUMBER, ARRAY, POSITION, STRING_ARRAY, predicateWithMessage } from './util/validation';
+import { Validate, BOOLEAN, ARRAY, POSITION, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
@@ -1252,8 +1252,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         return String(datum);
     }
 
-    @Validate(NUMBER(0))
-    thickness: number = 0;
     maxThickness: number = Infinity;
 
     computeBBox(): BBox {

@@ -5,7 +5,6 @@ import { Text } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { BandScale } from '../../scale/bandScale';
 import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
-import { Axis } from '../../axis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
 import { Point } from '../../scene/point';
@@ -15,13 +14,14 @@ import { ModuleContext } from '../../util/moduleContext';
 import { AgAxisCaptionFormatterParams } from '../agChartOptions';
 import { AxisLabel } from './axisLabel';
 import { AxisLine } from './axisLine';
+import { CartesianAxis } from './cartesianAxis';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
     grid: boolean = false;
 }
 
-export class GroupedCategoryAxis extends Axis<BandScale<string | number>> {
+export class GroupedCategoryAxis extends CartesianAxis<BandScale<string | number>> {
     static className = 'GroupedCategoryAxis';
     static type = 'groupedCategory' as const;
 

@@ -672,10 +672,6 @@ export interface AgBaseAxisOptions {
     /** Axis type identifier. */
     type: string;
     keys?: string[];
-    /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
-    thickness?: PixelSize;
-    /** Configuration for the title shown next to the axis. */
-    title?: AgAxisCaptionOptions;
     /** Configuration for the axis line. */
     line?: AgAxisLineOptions;
     /** Configuration for the axis labels, shown next to the ticks. */
@@ -793,6 +789,10 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     position?: AgCartesianAxisPosition;
     /** Add cross lines or regions corresponding to data values. */
     crossLines?: AgCrossLineOptions[];
+    /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
+    thickness?: PixelSize;
+    /** Configuration for the title shown next to the axis. */
+    title?: AgAxisCaptionOptions;
 }
 
 export interface AgCrossLineOptions {
