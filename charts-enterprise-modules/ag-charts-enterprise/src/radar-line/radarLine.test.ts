@@ -74,8 +74,22 @@ describe('Radar Line sChart', () => {
         (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
     };
 
-    it(`should render placeholder chart as expected`, async () => {
+    it(`should render polar chart as expected`, async () => {
         const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
+        prepareTestOptions(options as any);
+
+        chart = AgEnterpriseCharts.create(options);
+        await compare();
+    });
+
+    it(`should render polar chart with circle axes as expected`, async () => {
+        const options: AgChartOptions = {
+            ...EXAMPLE_OPTIONS,
+            axes: [
+                { type: 'polar-angle-category', gridShape: 'circle' },
+                { type: 'polar-radius-number', gridShape: 'circle' },
+            ],
+        };
         prepareTestOptions(options as any);
 
         chart = AgEnterpriseCharts.create(options);
