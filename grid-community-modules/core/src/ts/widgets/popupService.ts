@@ -531,6 +531,7 @@ export class PopupService extends BeanStub {
         }
 
         popup.stopAnchoringPromise = undefined;
+        popup.isAnchored = false;
 
         if (!relativeElement) { return; }
 
@@ -543,6 +544,7 @@ export class PopupService extends BeanStub {
         });
 
         popup.stopAnchoringPromise = destroyPositionTracker;
+        popup.isAnchored = true;
 
         return destroyPositionTracker;
     }
