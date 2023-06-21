@@ -192,7 +192,12 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
 
     for (const nextProp of props) {
         const values = json
-            .map((j) => (j != null && nextProp in j ? (j as any)[nextProp] : NOT_SPECIFIED))
+            .map((j) => {
+                if (j != null && typeof j === 'object' && nextProp in j) {
+                    return (j as any)[nextProp];
+                }
+                return NOT_SPECIFIED;
+            })
             .filter((v) => v !== NOT_SPECIFIED);
 
         if (values.length === 0) {
@@ -245,7 +250,7 @@ export type JsonApplyParams = {
  *                            require object construction
  * @param params.allowedTypes overrides by path for allowed property types
  */
-export function jsonApply<Target, Source extends DeepPartial<Target>>(
+export function jsonApply<Target extends object, Source extends DeepPartial<Target>>(
     target: Target,
     source?: Source,
     params: {

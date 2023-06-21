@@ -624,7 +624,11 @@ function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) 
     }
 }
 
-function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {
+function applyOptionValues<T extends object, S>(
+    target: T,
+    options?: S,
+    { skip, path }: { skip?: string[]; path?: string } = {}
+): T {
     const applyOpts = {
         ...getJsonApplyOptions(),
         skip,

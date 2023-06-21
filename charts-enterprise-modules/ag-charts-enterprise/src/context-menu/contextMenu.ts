@@ -248,7 +248,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     public renderItem(item: ContextMenuItem): HTMLElement | void {
-        if (item && typeof item === 'object' && item.constructor === Object && item.action && item.label) {
+        if (item && typeof item === 'object' && item.constructor === Object) {
             return this.createActionElement(item);
         }
     }

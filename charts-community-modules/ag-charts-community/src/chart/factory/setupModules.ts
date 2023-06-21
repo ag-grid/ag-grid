@@ -7,7 +7,7 @@ import { registerSeries } from './seriesTypes';
 
 export function setupModules() {
     for (const m of REGISTERED_MODULES) {
-        if (m.optionConstructors != null) {
+        if (JSON_APPLY_PLUGINS.constructors != null && m.optionConstructors != null) {
             Object.assign(JSON_APPLY_PLUGINS.constructors, m.optionConstructors);
         }
 

@@ -262,7 +262,7 @@ function mergeSeriesOptions<T extends SeriesOptionsTypes>(
     return mergedSeries;
 }
 
-function prepareMainOptions<T>(
+function prepareMainOptions<T extends AgChartOptions>(
     defaultOverrides: T,
     options: T
 ): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
