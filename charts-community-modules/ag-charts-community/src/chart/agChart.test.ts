@@ -136,15 +136,15 @@ describe('update', () => {
         expect(chart.padding.right).toBe(40);
         expect(chart.padding.bottom).toBe(50);
         expect(chart.padding.left).toBe(60);
-        expect(chart.title!.enabled).toBe(theme.config.cartesian.title.enabled);
-        expect(chart.title!.text).toBe(theme.config.cartesian.title.text);
-        expect(chart.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);
-        expect(chart.title!.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
-        expect(chart.title!.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
-        expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
-        expect(chart.subtitle!.text).toBe(theme.config.cartesian.subtitle.text);
-        expect(chart.subtitle!.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
-        expect(chart.subtitle!.enabled).toBe(false);
+        expect(chart.title?.enabled).toBe(theme.config.cartesian.title.enabled);
+        expect(chart.title?.text).toBe(theme.config.cartesian.title.text);
+        expect(chart.title?.fontSize).toBe(theme.config.cartesian.title.fontSize);
+        expect(chart.title?.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
+        expect(chart.title?.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
+        expect(chart.title?.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
+        expect(chart.subtitle?.text).toBe(theme.config.cartesian.subtitle.text);
+        expect(chart.subtitle?.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
+        expect(chart.subtitle?.enabled).toBe(false);
         expect((chart as any).background.fill).toBe('red');
         expect((chart as any).background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
@@ -172,16 +172,16 @@ describe('update', () => {
         });
         await waitForChartStability(chartProxy);
 
-        expect(chart.title!.enabled).toBe(theme.config.cartesian.title.enabled);
-        expect(chart.title!.text).toBe(theme.config.cartesian.title.text);
-        expect(chart.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);
-        expect(chart.title!.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
-        expect(chart.title!.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
-        expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
+        expect(chart.title?.enabled).toBe(theme.config.cartesian.title.enabled);
+        expect(chart.title?.text).toBe(theme.config.cartesian.title.text);
+        expect(chart.title?.fontSize).toBe(theme.config.cartesian.title.fontSize);
+        expect(chart.title?.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
+        expect(chart.title?.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
+        expect(chart.title?.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
 
-        expect(chart.subtitle!.enabled).toBe(false);
-        expect(chart.subtitle!.text).toBe(theme.config.cartesian.subtitle.text);
-        expect(chart.subtitle!.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
+        expect(chart.subtitle?.enabled).toBe(false);
+        expect(chart.subtitle?.text).toBe(theme.config.cartesian.subtitle.text);
+        expect(chart.subtitle?.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
     });
 
     test('series', async () => {
@@ -413,9 +413,9 @@ describe('update', () => {
         let leftAxis = axes.find((axis) => axis.position === 'left') as any;
         expect(axes.find((axis) => axis.position === 'bottom')).toBeDefined();
         expect(leftAxis).toBeDefined();
-        expect(leftAxis!.title!.text).toBe('Hello');
+        expect(leftAxis?.title?.text).toBe('Hello');
 
-        expect(leftAxis!.gridStyle).toEqual([
+        expect(leftAxis?.gridStyle).toEqual([
             {
                 stroke: 'rgb(219, 219, 219)',
                 lineDash: [4, 2],
@@ -456,7 +456,7 @@ describe('update', () => {
         await waitForChartStability(chartProxy);
 
         leftAxis = chart.axes.find((axis) => axis.position === 'left');
-        expect(leftAxis!.gridStyle).toEqual([
+        expect(leftAxis?.gridStyle).toEqual([
             {
                 stroke: 'red',
                 lineDash: [5, 5],

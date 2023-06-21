@@ -321,6 +321,19 @@ describe('Axis Examples', () => {
         expect(console.error).not.toBeCalled();
     });
 
+    const snapshot = async () => {
+        await waitForChartStability(chart);
+
+        return ctx.nodeCanvas?.toBuffer('raw');
+    };
+
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const newImageData = extractImageData({ ...ctx });
+        (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     for (const [exampleName, example] of Object.entries(EXAMPLES)) {
         it(`for ${exampleName} it should create chart instance as expected`, async () => {
             const options: AgChartOptions = example.options;
@@ -330,7 +343,7 @@ describe('Axis Examples', () => {
         });
 
         it(`for ${exampleName} it should render to canvas as expected`, async () => {
-            const compare = async () => {
+            const axisCompare = async () => {
                 await waitForChartStability(chart);
 
                 for (const axis of chart.axes) {
@@ -348,12 +361,12 @@ describe('Axis Examples', () => {
             const options: AgChartOptions = { ...example.options };
             prepareTestOptions(options);
 
-            chart = deproxy(AgChart.create(options)) as Chart;
-            await compare();
+            chart = deproxy(AgChart.create(options));
+            await axisCompare();
 
             if (example.extraScreenshotActions) {
                 await example.extraScreenshotActions(chart);
-                await compare();
+                await axisCompare();
             }
         });
     }
@@ -367,23 +380,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -393,16 +399,10 @@ describe('Axis Examples', () => {
             });
 
             it(`for ${exampleName} it should render identically after legend toggle`, async () => {
-                const snapshot = async () => {
-                    await waitForChartStability(chart);
-
-                    return ctx.nodeCanvas?.toBuffer('raw');
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 const reference = await snapshot();
 
                 chart.series.forEach((s) => {
@@ -426,16 +426,10 @@ describe('Axis Examples', () => {
 
     describe('toggle secondary axis series', () => {
         it(`for ADV_COMBINATION_SERIES_CHART_EXAMPLE it should render identically after legend toggle`, async () => {
-            const snapshot = async () => {
-                await waitForChartStability(chart);
-
-                return ctx.nodeCanvas?.toBuffer('raw');
-            };
-
             const options: AgChartOptions = { ...examples.ADV_COMBINATION_SERIES_CHART_EXAMPLE };
             prepareTestOptions(options);
 
-            chart = deproxy(AgChart.create(options)) as Chart;
+            chart = deproxy(AgChart.create(options));
             const reference = await snapshot();
             expect(chart.series[1].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
 
@@ -459,23 +453,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_VALUES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -490,23 +477,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_SPACING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -521,23 +501,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_LABEL_AUTO_WRAPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -552,23 +525,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_CLIPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {

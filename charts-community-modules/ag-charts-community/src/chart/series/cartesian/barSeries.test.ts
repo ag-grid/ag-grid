@@ -94,6 +94,13 @@ describe('BarSeries', () => {
 
     const ctx = setupMockCanvas();
 
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
@@ -114,13 +121,6 @@ describe('BarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
@@ -136,13 +136,6 @@ describe('BarSeries', () => {
     });
 
     describe('initial animation', () => {
-        const compare = async () => {
-            await waitForChartStability(chart);
-
-            const imageData = extractImageData(ctx);
-            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-        };
-
         afterEach(() => {
             jest.restoreAllMocks();
         });
@@ -190,13 +183,6 @@ describe('BarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 

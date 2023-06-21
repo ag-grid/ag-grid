@@ -181,9 +181,9 @@ describe('ChartTheme', () => {
         test('Cartesian chart instance properties', () => {
             if (!(chart instanceof CartesianChart)) fail();
 
-            expect(chart.title && chart.title.enabled).toBe(true);
-            expect(chart.title && chart.title.fontSize).toBe(24);
-            expect(chart.title && chart.title.fontWeight).toBe('normal');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
@@ -275,9 +275,9 @@ describe('ChartTheme', () => {
         test('Polar chart instance properties', () => {
             if (!(chart instanceof PolarChart)) fail();
 
-            expect(chart.title && chart.title.enabled).toBe(true);
-            expect(chart.title && chart.title.fontSize).toBe(24);
-            expect(chart.title && chart.title.fontWeight).toBe('normal');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
@@ -422,20 +422,20 @@ describe('ChartTheme', () => {
 
             await waitForChartStability(chart);
 
-            expect(chart!.title && chart!.title.enabled).toBe(true);
-            expect(chart!.title && chart!.title.fontSize).toBe(24);
-            expect(chart!.title && chart!.title.fontWeight).toBe('normal');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart!.series[0].type).toBe('column');
-            expect((chart!.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((chart!.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((chart!.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((chart!.series[0] as BarSeries).label.color).toBe('blue');
-            expect((chart!.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((chart!.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((chart!.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            expect(chart.series[0].type).toBe('column');
+            expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
+            expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
+            expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
+            expect((chart.series[0] as BarSeries).label.color).toBe('blue');
+            expect((chart.series[0] as BarSeries).label.fontSize).toBe(18);
+            expect((chart.series[0] as BarSeries).tooltip.enabled).toBe(false);
+            expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
         });
 
         test('Polar chart intstance properties', async () => {
@@ -444,20 +444,20 @@ describe('ChartTheme', () => {
 
             await waitForChartStability(chart);
 
-            expect(chart!.title && chart!.title.enabled).toBe(true);
-            expect(chart!.title && chart!.title.fontSize).toBe(24);
-            expect(chart!.title && chart!.title.fontWeight).toBe('normal');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart!.series[0].type).toBe('pie');
-            expect((chart!.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
-            expect((chart!.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
-            expect((chart!.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
-            expect((chart!.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
-            expect((chart!.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
-            expect((chart!.series[0] as PieSeries).tooltip.enabled).toBe(false);
-            expect((chart!.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
+            expect(chart.series[0].type).toBe('pie');
+            expect((chart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
+            expect((chart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
+            expect((chart.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
+            expect((chart.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
+            expect((chart.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
+            expect((chart.series[0] as PieSeries).tooltip.enabled).toBe(false);
+            expect((chart.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
         });
     });
 

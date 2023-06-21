@@ -36,7 +36,7 @@ const accumulatedPropertyValue = (property: string, id?: string) => ({
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
         it('should generated the expected results', () => {
-            const data = examples.SIMPLE_LINE_CHART_EXAMPLE.data!;
+            const data = examples.SIMPLE_LINE_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any>({
                 props: [rangeKey('date'), value('petrol'), value('diesel')],
             });
@@ -134,7 +134,7 @@ describe('DataModel', () => {
 
     describe('ungrouped processing - accumulated and normalised properties', () => {
         it('should generated the expected results', () => {
-            const data = examples.SIMPLE_PIE_CHART_EXAMPLE.series?.[0].data!;
+            const data = examples.SIMPLE_PIE_CHART_EXAMPLE.series?.[0].data ?? [];
             const dataModel = new DataModel<any, any>({
                 props: [
                     accumulatedPropertyValue('population'),
@@ -238,7 +238,7 @@ describe('DataModel', () => {
 
     describe('grouped processing - grouped example', () => {
         it('should generated the expected results', () => {
-            const data = examples.GROUPED_BAR_CHART_EXAMPLE.data!;
+            const data = examples.GROUPED_BAR_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [categoryKey('type'), value('total'), value('regular'), sum(['total', 'regular'])],
                 groupByKeys: true,
@@ -450,7 +450,7 @@ describe('DataModel', () => {
 
     describe('grouped processing - stacked example', () => {
         it('should generated the expected results', () => {
-            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
@@ -549,7 +549,7 @@ describe('DataModel', () => {
 
     describe('grouped processing - stacked with accumulation example', () => {
         it('should generated the expected results', () => {
-            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
@@ -625,7 +625,7 @@ describe('DataModel', () => {
 
     describe('grouped processing - stacked and normalised example', () => {
         it('should generated the expected results for 100% stacked columns example', () => {
-            const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
+            const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
@@ -648,7 +648,7 @@ describe('DataModel', () => {
         });
 
         it('should generated the expected results for 100% stacked area example', () => {
-            const data = examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.data!;
+            const data = examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('month'),
@@ -732,7 +732,7 @@ describe('DataModel', () => {
 
     describe('grouped processing - stacked with accumulation and normalised example', () => {
         it('should generated the expected results', () => {
-            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
@@ -829,7 +829,7 @@ describe('DataModel', () => {
         };
 
         it('should generated the expected results for simple histogram example with hard-coded buckets', () => {
-            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!.slice(0, 20);
+            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data?.slice(0, 20) ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [categoryKey('engine-size'), groupCount(), SORT_DOMAIN_GROUPS],
                 groupByFn,
@@ -841,7 +841,7 @@ describe('DataModel', () => {
         });
 
         it('should generated the expected results for simple histogram example with average bucket calculation', () => {
-            const data = examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.data!.slice(0, 20);
+            const data = examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.data?.slice(0, 20) ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('engine-size'),
@@ -858,7 +858,7 @@ describe('DataModel', () => {
         });
 
         it('should generated the expected results for simple histogram example with area bucket calculation', () => {
-            const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data!.slice(0, 20);
+            const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data?.slice(0, 20) ?? [];
             const dataModel = new DataModel<any, any, true>({
                 props: [rangeKey('curb-weight'), value('curb-weight'), area([], groupCount()), SORT_DOMAIN_GROUPS],
                 groupByFn: () => {
@@ -976,7 +976,7 @@ describe('DataModel', () => {
 
     describe('repeated property processing', () => {
         it('should generated the expected results', () => {
-            const data = [...examples.PIE_IN_A_DOUGHNUT.series![0]!.data!.map((v) => ({ ...v }))];
+            const data = [...(examples.PIE_IN_A_DOUGHNUT.series?.[0]?.data?.map((v) => ({ ...v })) ?? [])];
             const dataModel = new DataModel<any, any>({
                 props: [
                     accumulatedPropertyValue('share', 'angle'),

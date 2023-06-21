@@ -117,9 +117,9 @@ describe('Rect', () => {
         ];
 
         it('should render as expected', () => {
-            const ctx = canvasCtx.nodeCanvas!.getContext('2d');
+            const ctx = canvasCtx.nodeCanvas.getContext('2d');
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvasCtx.nodeCanvas?.width ?? 0, canvasCtx.nodeCanvas?.height ?? 0);
+            ctx.fillRect(0, 0, canvasCtx.nodeCanvas.width ?? 0, canvasCtx.nodeCanvas.height ?? 0);
 
             let currY = 0;
             let rowHeight = 0;

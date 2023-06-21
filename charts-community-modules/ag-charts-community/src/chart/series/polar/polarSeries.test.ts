@@ -92,6 +92,13 @@ describe('PolarSeries', () => {
 
     const ctx = setupMockCanvas();
 
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
@@ -112,13 +119,6 @@ describe('PolarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgPolarChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
@@ -134,13 +134,6 @@ describe('PolarSeries', () => {
     });
 
     describe('initial animation', () => {
-        const compare = async () => {
-            await waitForChartStability(chart);
-
-            const imageData = extractImageData(ctx);
-            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-        };
-
         afterEach(() => {
             jest.restoreAllMocks();
         });

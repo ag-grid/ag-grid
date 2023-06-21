@@ -212,10 +212,10 @@ describe('Text', () => {
         ];
 
         it('should render as expected', () => {
-            const ctx = canvasCtx.nodeCanvas!.getContext('2d');
+            const ctx = canvasCtx.nodeCanvas.getContext('2d');
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'black';
-            ctx.fillRect(0, 0, canvasCtx.nodeCanvas?.width ?? 800, canvasCtx.nodeCanvas?.height ?? 600);
+            ctx.fillRect(0, 0, canvasCtx.nodeCanvas.width ?? 800, canvasCtx.nodeCanvas.height ?? 600);
 
             let currY = 0;
             let rowHeight = 0;
@@ -249,10 +249,10 @@ describe('Text', () => {
         });
 
         it('should wrap and render as expected', () => {
-            const ctx = canvasCtx.nodeCanvas!.getContext('2d');
+            const ctx = canvasCtx.nodeCanvas.getContext('2d');
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'black';
-            ctx.fillRect(0, 0, canvasCtx.nodeCanvas?.width ?? 800, canvasCtx.nodeCanvas?.height ?? 600);
+            ctx.fillRect(0, 0, canvasCtx.nodeCanvas.width ?? 800, canvasCtx.nodeCanvas.height ?? 600);
 
             let currY = 0;
             let rowHeight = 0;

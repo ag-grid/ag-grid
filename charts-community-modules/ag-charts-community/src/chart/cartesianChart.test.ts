@@ -15,6 +15,7 @@ import {
     prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
+import { fail } from 'assert';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -210,9 +211,10 @@ describe('CartesianChart', () => {
 
     const seriesHighlightingTestCases = (name: string, tcOptions: AgCartesianChartOptions) => {
         describe(`${name}${name ? ' ' : ''}Series Highlighting`, () => {
-            const YKEYS = tcOptions.series!.reduce((r, s: any) => {
-                return r.concat(s.yKey ? [s.yKey] : s.yKeys);
-            }, []);
+            const YKEYS =
+                tcOptions.series?.reduce((r, s: any) => {
+                    return r.concat(s.yKey ? [s.yKey] : s.yKeys);
+                }, []) ?? [];
             it.each(YKEYS)(`should render series with yKey [%s] appropriately`, async (yKey) => {
                 const options: AgChartOptions = { ...tcOptions };
                 prepareTestOptions(options);
@@ -223,8 +225,9 @@ describe('CartesianChart', () => {
                 const seriesImpl = chart.series.find(
                     (v: any) => v.yKey === yKey || v.yKeys?.some((s) => s.includes(yKey))
                 );
+                if (seriesImpl == null) fail('No seriesImpl found');
 
-                const nodeDataArray: SeriesNodeDataContext<any, any>[] = seriesImpl!['contextNodeData'];
+                const nodeDataArray: SeriesNodeDataContext<any, any>[] = seriesImpl['contextNodeData'];
                 const nodeData = nodeDataArray.find((n) => n.itemId === yKey);
 
                 const highlightManager = (chart as any).highlightManager;
@@ -245,7 +248,7 @@ describe('CartesianChart', () => {
         it('should highlight scatter datum when overlapping histogram', async () => {
             const options = {
                 ...examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE,
-                series: examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.series!.map((s) => {
+                series: examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.series?.map((s) => {
                     if (s.type === 'scatter') {
                         // Tweak marker size so it's large enough to trigger test failures if the
                         // fake mouse hover doesn't work below.
@@ -263,11 +266,13 @@ describe('CartesianChart', () => {
             await waitForChartStability(chart);
 
             const series = chart.series.find((v: any) => v.type === 'scatter');
-            const nodeDataArray: SeriesNodeDataContext<any, any>[] = series!['contextNodeData'];
+            if (series == null) fail('No series found');
+
+            const nodeDataArray: SeriesNodeDataContext<any, any>[] = series['contextNodeData'];
             const context = nodeDataArray[0];
             const item = context.nodeData.find((n) => n.datum['engine-size'] === 108 && n.datum['highway-mpg'] === 23);
 
-            const { x, y } = series!.rootGroup.inverseTransformPoint(item.point.x, item.point.y);
+            const { x, y } = series.rootGroup.inverseTransformPoint(item.point.x, item.point.y);
 
             await hoverAction(x, y)(chart);
             await waitForChartStability(chart);

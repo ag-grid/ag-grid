@@ -340,78 +340,82 @@ describe('prepare', () => {
             const preparedOptions = prepareOptions(options);
             const theme = new ChartTheme();
 
-            expect(preparedOptions.title!.enabled).toBe(false);
-            expect(preparedOptions.title!.text).toBe(theme.config.cartesian.title.text);
-            expect(preparedOptions.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);
-            expect(preparedOptions.title!.spacing).toBe(theme.config.cartesian.title.spacing);
+            expect(preparedOptions.title?.enabled).toBe(false);
+            expect(preparedOptions.title?.text).toBe(theme.config.cartesian.title.text);
+            expect(preparedOptions.title?.fontSize).toBe(theme.config.cartesian.title.fontSize);
+            expect(preparedOptions.title?.spacing).toBe(theme.config.cartesian.title.spacing);
 
-            expect(preparedOptions.subtitle!.enabled).toBe(false);
-            expect(preparedOptions.subtitle!.text).toBe(theme.config.cartesian.subtitle.text);
-            expect(preparedOptions.subtitle!.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
-            expect(preparedOptions.subtitle!.spacing).toBe(theme.config.cartesian.subtitle.spacing);
+            expect(preparedOptions.subtitle?.enabled).toBe(false);
+            expect(preparedOptions.subtitle?.text).toBe(theme.config.cartesian.subtitle.text);
+            expect(preparedOptions.subtitle?.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
+            expect(preparedOptions.subtitle?.spacing).toBe(theme.config.cartesian.subtitle.spacing);
 
-            expect(preparedOptions.footnote!.enabled).toBe(false);
-            expect(preparedOptions.footnote!.text).toBe(theme.config.cartesian.footnote.text);
-            expect(preparedOptions.footnote!.fontSize).toBe(theme.config.cartesian.footnote.fontSize);
-            expect(preparedOptions.footnote!.spacing).toBe(theme.config.cartesian.footnote.spacing);
+            expect(preparedOptions.footnote?.enabled).toBe(false);
+            expect(preparedOptions.footnote?.text).toBe(theme.config.cartesian.footnote.text);
+            expect(preparedOptions.footnote?.fontSize).toBe(theme.config.cartesian.footnote.fontSize);
+            expect(preparedOptions.footnote?.spacing).toBe(theme.config.cartesian.footnote.spacing);
 
-            expect(preparedOptions.axes![0]!.tick!.enabled).toBe(false);
-            expect(preparedOptions.axes![0]!.tick!.width).toBe(theme.config.cartesian.axes.time.tick.width);
-            expect(preparedOptions.axes![0]!.tick!.size).toBe(theme.config.cartesian.axes.time.tick.size);
+            expect(preparedOptions.axes?.[0]?.tick?.enabled).toBe(false);
+            expect(preparedOptions.axes?.[0]?.tick?.width).toBe(theme.config.cartesian.axes.time.tick.width);
+            expect(preparedOptions.axes?.[0]?.tick?.size).toBe(theme.config.cartesian.axes.time.tick.size);
 
-            expect(preparedOptions.axes![0]!.title!.enabled).toBe(false);
-            expect(preparedOptions.axes![0]!.title!.text).toBe(theme.config.cartesian.axes.time.title.text);
+            expect(preparedOptions.axes?.[0]?.title?.enabled).toBe(false);
+            expect(preparedOptions.axes?.[0]?.title?.text).toBe(theme.config.cartesian.axes.time.title.text);
 
-            expect(preparedOptions.axes![0]!.label!.enabled).toBe(false);
-            expect(preparedOptions.axes![0]!.label!.avoidCollisions).toBe(
+            expect(preparedOptions.axes?.[0]?.label?.enabled).toBe(false);
+            expect(preparedOptions.axes?.[0]?.label?.avoidCollisions).toBe(
                 theme.config.cartesian.axes.time.label.avoidCollisions
             );
-            expect(preparedOptions.axes![0]!.label!.autoRotate).toBe(theme.config.cartesian.axes.time.label.autoRotate);
-            expect(preparedOptions.axes![0]!.label!.minSpacing).toBe(theme.config.cartesian.axes.time.label.minSpacing);
+            expect(preparedOptions.axes?.[0]?.label?.autoRotate).toBe(
+                theme.config.cartesian.axes.time.label.autoRotate
+            );
+            expect(preparedOptions.axes?.[0]?.label?.minSpacing).toBe(
+                theme.config.cartesian.axes.time.label.minSpacing
+            );
 
-            expect(preparedOptions.axes![0]!.crossLines![0]!.enabled).toBe(false);
-            expect(preparedOptions.axes![0]!.crossLines![0]!.type).toBe(
+            expect(preparedOptions.axes?.[0]?.crossLines?.[0]?.enabled).toBe(false);
+            expect(preparedOptions.axes?.[0]?.crossLines?.[0]?.type).toBe(
                 theme.config.cartesian.axes.time.crossLines.type
             );
-            expect(preparedOptions.axes![0]!.crossLines![0]!.label!.enabled).toBe(false);
-            expect(preparedOptions.axes![0]!.crossLines![0]!.label!.text).toBe(
+            expect(preparedOptions.axes?.[0]?.crossLines?.[0]?.label?.enabled).toBe(false);
+            expect(preparedOptions.axes?.[0]?.crossLines?.[0]?.label?.text).toBe(
                 theme.config.cartesian.axes.time.crossLines.label.text
             );
 
-            expect(preparedOptions.axes![1]!.title!.enabled).toBe(true);
-            expect(preparedOptions.axes![1]!.title!.text).toBe('Custom Left Axis Title');
+            expect(preparedOptions.axes![1]?.title?.enabled).toBe(true);
+            expect(preparedOptions.axes![1]?.title?.text).toBe('Custom Left Axis Title');
 
-            expect((preparedOptions.series![0]! as AgLineSeriesOptions).marker!.enabled).toBe(false);
-            expect((preparedOptions.series![0]! as AgLineSeriesOptions).marker!.strokeWidth).toBe(
+            expect((preparedOptions.series?.[0]! as AgLineSeriesOptions).marker?.enabled).toBe(false);
+            expect((preparedOptions.series?.[0]! as AgLineSeriesOptions).marker?.strokeWidth).toBe(
                 theme.config.cartesian.series.line.marker.strokeWidth
             );
-            expect(preparedOptions.series![0]!.label!.enabled).toBe(false);
-            expect(preparedOptions.series![0]!.label!.color).toBe(theme.config.cartesian.series.line.label.color);
-            expect(preparedOptions.series![0]!.tooltip!.enabled).toBe(false);
-            expect(preparedOptions.series![0]!.tooltip!.renderer).toBe(
+            expect(preparedOptions.series?.[0]?.label?.enabled).toBe(false);
+            expect(preparedOptions.series?.[0]?.label?.color).toBe(theme.config.cartesian.series.line.label.color);
+            expect(preparedOptions.series?.[0]?.tooltip?.enabled).toBe(false);
+            expect(preparedOptions.series?.[0]?.tooltip?.renderer).toBe(
                 theme.config.cartesian.series.line.tooltip.renderer
             );
 
-            expect(preparedOptions.tooltip!.enabled).toBe(false);
-            expect(preparedOptions.tooltip!.range).toBe(theme.config.cartesian.tooltip.range);
+            expect(preparedOptions.tooltip?.enabled).toBe(false);
+            expect(preparedOptions.tooltip?.range).toBe(theme.config.cartesian.tooltip.range);
 
-            expect(preparedOptions.legend!.enabled).toBe(false);
-            expect(preparedOptions.legend!.maxHeight).toBe(theme.config.cartesian.legend.maxHeight);
-            expect(preparedOptions.legend!.maxWidth).toBe(theme.config.cartesian.legend.maxWidth);
-            expect(preparedOptions.legend!.orientation).toBe(theme.config.cartesian.legend.orientation);
-            expect(preparedOptions.legend!.spacing).toBe(theme.config.cartesian.legend.spacing);
-            expect(preparedOptions.legend!.reverseOrder).toBe(theme.config.cartesian.legend.reverseOrder);
-            expect(preparedOptions.legend!.pagination!.marker!.shape).toBe(
+            expect(preparedOptions.legend?.enabled).toBe(false);
+            expect(preparedOptions.legend?.maxHeight).toBe(theme.config.cartesian.legend.maxHeight);
+            expect(preparedOptions.legend?.maxWidth).toBe(theme.config.cartesian.legend.maxWidth);
+            expect(preparedOptions.legend?.orientation).toBe(theme.config.cartesian.legend.orientation);
+            expect(preparedOptions.legend?.spacing).toBe(theme.config.cartesian.legend.spacing);
+            expect(preparedOptions.legend?.reverseOrder).toBe(theme.config.cartesian.legend.reverseOrder);
+            expect(preparedOptions.legend?.pagination!.marker!.shape).toBe(
                 theme.config.cartesian.legend.pagination.marker.shape
             );
-            expect(preparedOptions.legend!.item!.label!.maxLength).toBe(
+            expect(preparedOptions.legend?.item!.label!.maxLength).toBe(
                 theme.config.cartesian.legend.item.label.maxLength
             );
 
-            expect(preparedOptions.navigator!.enabled).toBe(false);
-            expect(preparedOptions.navigator!.height).toBe(theme.config.cartesian.navigator.height);
-            expect(preparedOptions.navigator!.min).toBe(theme.config.cartesian.navigator.min);
-            expect(preparedOptions.navigator!.max).toBe(theme.config.cartesian.navigator.max);
+            expect(preparedOptions.navigator?.enabled).toBe(false);
+            expect(preparedOptions.navigator?.height).toBe(theme.config.cartesian.navigator.height);
+            expect(preparedOptions.navigator?.min).toBe(theme.config.cartesian.navigator.min);
+            expect(preparedOptions.navigator?.max).toBe(theme.config.cartesian.navigator.max);
         });
     });
 });

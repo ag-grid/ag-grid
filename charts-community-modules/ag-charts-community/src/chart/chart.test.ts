@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
+import { fail } from 'assert';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { Node } from '../scene/node';
 import { Selection } from '../scene/selection';
@@ -97,7 +98,7 @@ describe('Chart', () => {
             const tooltip = params.hasTooltip
                 ? {
                       renderer: (params) => {
-                          const values = testParams.getTooltipRenderedValues!(params);
+                          const values = testParams.getTooltipRenderedValues(params);
                           return format(...values);
                       },
                   }
@@ -142,11 +143,11 @@ describe('Chart', () => {
             iterator: (params: { series: any; item: any; x: number; y: number }) => Promise<void>
         ) => {
             for (const series of chart.series) {
-                const nodeData = testParams.getNodeData!(series);
+                const nodeData = testParams.getNodeData(series);
                 expect(nodeData.length).toBeGreaterThan(0);
                 for (const item of nodeData) {
-                    const itemPoint = testParams.getNodePoint!(item);
-                    const { x, y } = series!.rootGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
+                    const itemPoint = testParams.getNodePoint(item);
+                    const { x, y } = series.rootGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
                     await hoverAction(x, y)(chart);
                     await waitForChartStability(chart);
                     await iterator({ series, item, x, y });
@@ -157,7 +158,7 @@ describe('Chart', () => {
         const checkHighlight = async (chart: Chart) => {
             await hoverChartNodes(chart, async ({ series }) => {
                 // Check the highlighted marker
-                const highlightNode = testParams.getHighlightNode!(series);
+                const highlightNode = testParams.getHighlightNode(series);
                 expect(highlightNode).toBeDefined();
                 expect(highlightNode.fill).toEqual('lime');
             });
@@ -171,7 +172,7 @@ describe('Chart', () => {
             });
 
             // Check click handler
-            const nodeCount = chart.series.reduce((sum, series) => sum + testParams.getNodeData!(series).length, 0);
+            const nodeCount = chart.series.reduce((sum, series) => sum + testParams.getNodeData(series).length, 0);
             expect(onNodeClick).toBeCalledTimes(nodeCount);
         };
 
@@ -181,24 +182,26 @@ describe('Chart', () => {
                 // Check the tooltip is shown
                 const tooltip = document.querySelector('.ag-chart-tooltip');
                 expect(tooltip).toBeInstanceOf(HTMLElement);
-                expect(tooltip!.classList.contains('ag-chart-tooltip-hidden')).toBe(false);
+                expect(tooltip?.classList.contains('ag-chart-tooltip-hidden')).toBe(false);
 
                 // Check the tooltip position
                 const transformMatch = (tooltip as HTMLElement).style.transform.match(/translate\((.*?)px, (.*?)px\)/);
-                const [, translateX, translateY] = Array.from(transformMatch!).map((s) => parseFloat(s));
+                if (transformMatch == null) fail('transformMatch not found');
+
+                const [, translateX, translateY] = Array.from(transformMatch).map((s) => parseFloat(s));
                 expect(translateX).toEqual(Math.round(x));
                 expect(translateY).toEqual(Math.round(y - 8));
 
                 // Check the tooltip text
-                const values = testParams.getDatumValues!(item, series);
-                expect(tooltip!.textContent).toEqual(format(...values));
+                const values = testParams.getDatumValues(item, series);
+                expect(tooltip?.textContent).toEqual(format(...values));
             });
 
             // Check the tooltip is hidden
             await hoverAction(0, 0)(chart);
             await waitForChartStability(chart);
             const tooltip = document.querySelector('.ag-chart-tooltip');
-            expect(tooltip!.classList.contains('ag-chart-tooltip-hidden')).toBe(true);
+            expect(tooltip?.classList.contains('ag-chart-tooltip-hidden')).toBe(true);
         });
 
         it(`should highlight hovered items`, async () => {
