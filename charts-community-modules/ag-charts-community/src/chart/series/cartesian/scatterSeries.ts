@@ -27,8 +27,8 @@ import {
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel } from '../../data/dataModel';
 import { ModuleContext } from '../../../util/moduleContext';
+import { DataController } from '../../data/dataController';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly sizeValue: any;
@@ -140,7 +140,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         label.enabled = false;
     }
 
-    async processData() {
+    async processData(dataController: DataController) {
         const { xKey = '', yKey = '', sizeKey, labelKey, axes, marker, data } = this;
 
         const xAxis = axes[ChartAxisDirection.X];
@@ -150,7 +150,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const { colorScale, colorDomain, colorRange, colorKey } = this;
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data ?? [], {
             props: [
                 valueProperty(xKey, isContinuousX, { id: `xValue` }),
                 valueProperty(yKey, isContinuousY, { id: `yValue` }),
@@ -160,17 +160,18 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             ],
             dataVisible: this.visible,
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
 
         if (sizeKey) {
-            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndexById(`sizeValue`)?.index ?? -1;
-            const processedSize = this.processedData?.domain.values[sizeKeyIdx] ?? [];
+            const sizeKeyIdx = dataModel.resolveProcessedDataIndexById(`sizeValue`)?.index ?? -1;
+            const processedSize = processedData.domain.values[sizeKeyIdx] ?? [];
             this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
         }
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
-            colorScale.domain = colorDomain ?? this.processedData?.domain.values[colorKeyIdx] ?? [];
+            const colorKeyIdx = dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
+            colorScale.domain = colorDomain ?? processedData.domain.values[colorKeyIdx] ?? [];
             colorScale.range = colorRange;
             colorScale.update();
         }

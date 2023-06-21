@@ -17,7 +17,6 @@ import {
 
 const {
     ChartAxisDirection,
-    DataModel,
     HighlightStyle,
     NUMBER,
     OPT_COLOR_STRING,
@@ -222,19 +221,20 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         }
     }
 
-    async processData() {
+    async processData(dataController: _ModuleSupport.DataController) {
         const { data = [] } = this;
         const { angleKey, radiusKey } = this;
 
         if (!angleKey || !radiusKey) return;
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 valueProperty(angleKey, false, { id: 'angleValue' }),
                 valueProperty(radiusKey, false, { id: 'radiusValue', invalidValue: undefined }),
             ],
         });
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     private circleCache = { r: 0, cx: 0, cy: 0 };

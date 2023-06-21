@@ -29,8 +29,9 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel, UngroupedDataItem } from '../../data/dataModel';
+import { UngroupedDataItem } from '../../data/dataModel';
 import { ModuleContext } from '../../../util/moduleContext';
+import { DataController } from '../../data/dataController';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -120,7 +121,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     @Validate(OPT_STRING)
     yName?: string = undefined;
 
-    async processData() {
+    async processData(dataController: DataController) {
         const { axes, xKey = '', yKey = '' } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
@@ -129,14 +130,15 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
                 valueProperty(xKey, isContinuousX, { id: 'xValue' }),
                 valueProperty(yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
             ],
             dataVisible: this.visible,
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

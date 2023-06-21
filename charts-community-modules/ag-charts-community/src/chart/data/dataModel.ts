@@ -108,7 +108,7 @@ export function fixNumericExtent(extent?: (number | Date)[]): [] | [number, numb
 
 type GroupingFn<K> = (data: UngroupedDataItem<K, any[]>) => K[];
 export type GroupByFn = (extractedData: UngroupedData<any>) => GroupingFn<any>;
-type Options<K, Grouped extends boolean | undefined> = {
+export type DataModelOptions<K, Grouped extends boolean | undefined> = {
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
     readonly groupByFn?: GroupByFn;
@@ -189,7 +189,7 @@ export class DataModel<
 > {
     static DEBUG = () => [true, 'data-model'].includes(windowValue('agChartsDebug') as string) ?? false;
 
-    private readonly opts: Options<K, Grouped>;
+    private readonly opts: DataModelOptions<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
     private readonly aggregates: AggregatePropertyDefinition<D, K>[];
@@ -198,7 +198,7 @@ export class DataModel<
     private readonly reducers: ReducerOutputPropertyDefinition<any>[];
     private readonly processors: ProcessorOutputPropertyDefinition<any>[];
 
-    public constructor(opts: Options<K, Grouped>) {
+    public constructor(opts: DataModelOptions<K, Grouped>) {
         const { props } = opts;
 
         // Validate that keys appear before values in the definitions, as output ordering depends

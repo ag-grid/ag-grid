@@ -26,6 +26,7 @@ import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 import { ModuleContext } from '../../util/moduleContext';
+import { DataController } from '../data/dataController';
 
 /**
  * Processed series datum used in node selections,
@@ -416,7 +417,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getDomain(direction: ChartAxisDirection): any[];
 
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
-    abstract processData(): Promise<void>;
+    abstract processData(dataController: DataController): Promise<void>;
 
     // Using processed data, create data that backs visible nodes.
     abstract createNodeData(): Promise<C[]>;

@@ -50,10 +50,10 @@ import {
 import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
 import * as easing from '../../../motion/easing';
-import { DataModel } from '../../data/dataModel';
 import { normalisePropertyTo } from '../../data/processors';
 import { ModuleContext } from '../../../util/moduleContext';
 import { Has } from '../../../util/types';
+import { DataController } from '../../data/dataController';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -394,7 +394,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
     }
 
-    async processData() {
+    async processData(dataController: DataController) {
         let { data = [] } = this;
         const { angleKey, radiusKey, calloutLabelKey, sectorLabelKey, legendItemKey, seriesItemEnabled } = this;
 
@@ -421,7 +421,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : { ...d, [angleKey]: 0 }));
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 accumulativeValueProperty(angleKey, true, { id: `angleValue` }),
                 valueProperty(angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
@@ -429,7 +429,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 ...extraProps,
             ],
         });
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     maybeRefreshNodeData() {

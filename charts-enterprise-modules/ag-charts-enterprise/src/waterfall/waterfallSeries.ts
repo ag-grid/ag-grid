@@ -11,7 +11,6 @@ import { AgWaterfallSeriesFormat, AgWaterfallSeriesLabelPlacement, AgWaterfallSe
 
 const {
     Validate,
-    DataModel,
     SeriesNodePickMode,
     valueProperty,
     keyProperty,
@@ -244,7 +243,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
-    async processData() {
+    async processData(dataController: _ModuleSupport.DataController) {
         const { xKey, yKey, seriesItemEnabled, data = [], typeKey = '' } = this;
 
         if (!yKey) return;
@@ -270,7 +269,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
         const validation = (v: any, datum: any) => checkDatum(v, true) != null && isActive(v, datum);
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 keyProperty(xKey, isContinuousX),
                 accumulativeValueProperty(yKey, true, { id: `yCurrent`, validation }),
@@ -280,8 +279,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             ],
             dataVisible: this.visible,
         });
-
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {

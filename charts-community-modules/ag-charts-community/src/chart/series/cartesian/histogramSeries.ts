@@ -43,17 +43,12 @@ import {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
-import {
-    AggregatePropertyDefinition,
-    DataModel,
-    fixNumericExtent,
-    GroupByFn,
-    PropertyDefinition,
-} from '../../data/dataModel';
+import { AggregatePropertyDefinition, fixNumericExtent, GroupByFn, PropertyDefinition } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { ModuleContext } from '../../../util/moduleContext';
+import { DataController } from '../../data/dataController';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -222,7 +217,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         };
     }
 
-    async processData() {
+    async processData(dataController: DataController) {
         const { xKey, yKey, data, areaPlot, aggregation } = this;
 
         const props: PropertyDefinition<any>[] = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
@@ -283,12 +278,13 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             props.push(diff(this.processedData, false));
         }
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props,
             dataVisible: this.visible,
             groupByFn,
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
 
         this.animationState.transition('updateData');
     }
