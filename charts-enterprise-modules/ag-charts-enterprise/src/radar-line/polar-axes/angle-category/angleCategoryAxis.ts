@@ -91,7 +91,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         }
 
         const ticks = scale.ticks?.() ?? [];
-        this.gridLineGroupSelection.update(ticks).each((line, value, index) => {
+        this.gridLineGroupSelection.update(tick.enabled ? ticks : []).each((line, value, index) => {
             const style = gridStyle[index % gridStyle.length];
             const angle = scale.convert(value);
             line.x1 = 0;
@@ -109,7 +109,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         const { label, tickLabelGroupSelection, scale } = this;
 
         const ticks = scale.ticks?.() || [];
-        tickLabelGroupSelection.update(ticks).each((node, _, index) => {
+        tickLabelGroupSelection.update(label.enabled ? ticks : []).each((node, _, index) => {
             const labelDatum = this.labelData[index];
             node.text = labelDatum.text;
             node.setFont(label);
@@ -125,7 +125,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         const { scale, gridLength: radius, tick, tickLineGroupSelection } = this;
 
         const ticks = scale.ticks?.() || [];
-        tickLineGroupSelection.update(ticks).each((line, value) => {
+        tickLineGroupSelection.update(tick.enabled ? ticks : []).each((line, value) => {
             const angle = scale.convert(value);
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
