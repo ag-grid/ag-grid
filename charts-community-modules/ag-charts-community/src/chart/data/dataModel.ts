@@ -662,7 +662,7 @@ export class DataModel<
     buildAccessors(...defs: { property: string }[]) {
         const result: Record<string, (d: any) => any> = {};
         for (const def of defs) {
-            const isPath = def.property.indexOf('.') >= 0;
+            const isPath = def.property.indexOf('.') >= 0 || def.property.indexOf('[') >= 0;
             if (!isPath) continue;
 
             result[def.property] = new Function('datum', `return datum.${def.property};`) as (d: any) => any;
