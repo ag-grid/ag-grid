@@ -13,6 +13,7 @@ interface AngleCategoryAxisLabelDatum {
     rotation: number;
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
+    box: _Scene.BBox | undefined;
 }
 
 export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
@@ -146,23 +147,23 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         });
     }
 
-    computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: _Scene.BBox) {
-        this.labelData = [];
-
+    protected createLabelNodeData(
+        options: { hideWhenNecessary: boolean },
+        seriesRect: _Scene.BBox
+    ): AngleCategoryAxisLabelDatum[] {
         const { label, gridLength: radius, scale, tick } = this;
         if (!label.enabled) {
-            return null;
+            return [];
         }
 
         const ticks = scale.ticks?.() || [];
 
         const tempText = new Text();
-        const textBoxes: _Scene.BBox[] = [];
 
         const seriesLeft = seriesRect.x - this.translation.x;
         const seriesRight = seriesRect.x + seriesRect.width - this.translation.x;
 
-        ticks.forEach((value) => {
+        const labelData: AngleCategoryAxisLabelDatum[] = ticks.map((value, index) => {
             const distance = radius + label.padding + tick.size;
             const angle = scale.convert(value);
             const cos = Math.cos(angle);
@@ -176,7 +177,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                 rotation = angle + toRadians(label.autoRotateAngle ?? 0) + Math.PI / 2;
             }
 
-            let text = String(value);
+            let text = label.formatter ? label.formatter({ value, index }) : String(value);
             tempText.text = text;
             tempText.x = x;
             tempText.y = y;
@@ -206,7 +207,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                 }
             }
 
-            this.labelData.push({
+            return {
                 text,
                 x,
                 y,
@@ -214,14 +215,19 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                 textBaseline,
                 hidden: text === '',
                 rotation,
-            });
-
-            if (box) {
-                textBoxes.push(box);
-            }
+                box,
+            };
         });
 
-        if (textBoxes.length === 0) {
+        return labelData;
+    }
+
+    computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: _Scene.BBox) {
+        this.labelData = this.createLabelNodeData(options, seriesRect);
+
+        const textBoxes = this.labelData.map(({ box }) => box).filter((box): box is _Scene.BBox => box != null);
+
+        if (!this.label.enabled || textBoxes.length === 0) {
             return null;
         }
 
