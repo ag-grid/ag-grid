@@ -1,6 +1,7 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 import * as ContextMenu from '../context-menu/main';
 
+import { ZoomAxisDragger } from './zoomAxisDragger';
 import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
@@ -8,7 +9,7 @@ import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, transla
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
-const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
+const { BOOLEAN, NUMBER, STRING_UNION, ChartAxisDirection, ChartUpdateType, Validate } = _ModuleSupport;
 
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
 const CONTEXT_PAN_ACTION_ID = 'pan-action';
@@ -19,13 +20,16 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public enabled = true;
 
     @Validate(BOOLEAN)
+    public enableAxisDragging = true;
+
+    @Validate(BOOLEAN)
+    public enablePanning = true;
+
+    @Validate(BOOLEAN)
     public enableScrolling = true;
 
     @Validate(BOOLEAN)
     public enableSelecting = false;
-
-    @Validate(BOOLEAN)
-    public enablePanning = true;
 
     @Validate(STRING_UNION('alt', 'ctrl', 'meta', 'shift'))
     public panKey: 'alt' | 'ctrl' | 'meta' | 'shift' = 'alt';
@@ -55,6 +59,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private readonly updateService: _ModuleSupport.UpdateService;
 
     // Zoom methods
+    private readonly axisDragger: ZoomAxisDragger;
     private readonly panner: ZoomPanner;
     private readonly selector: ZoomSelector;
     private readonly scroller: ZoomScroller;
@@ -76,14 +81,18 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragEnd()),
             ctx.interactionManager.addListener('wheel', (event) => this.onWheel(event)),
+            ctx.interactionManager.addListener('hover', (event) => this.onHover(event)),
         ].forEach((s) => this.destroyFns.push(() => ctx.interactionManager.removeListener(s)));
 
         // Add layout listener
         const layoutHandle = ctx.layoutService.addListener('layout-complete', (event) => this.onLayoutComplete(event));
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
 
-        // Add scrolling zoom method
-        this.scroller = new ZoomScroller();
+        // Add dragging axis zoom method
+        this.axisDragger = new ZoomAxisDragger();
+
+        // Add panning while zoomed method
+        this.panner = new ZoomPanner();
 
         // Add selection zoom method and attach selection rect to root scene
         const selectionRect = new ZoomRect();
@@ -92,8 +101,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         this.scene.root?.appendChild(selectionRect);
         this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
 
-        // Add panning while zoomed method
-        this.panner = new ZoomPanner();
+        // Add scrolling zoom method
+        this.scroller = new ZoomScroller();
 
         // Add context menu zoom actions
         ContextMenu._registerDefaultAction(
@@ -128,13 +137,24 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
 
-        // Allow panning if not at the maximum zoom and either selection is disabled or the panning key is pressed.
+        if (this.enableAxisDragging && this.seriesRect && this.isPointerWithinAxis(sourceEvent)) {
+            const newZoom = this.axisDragger.update(
+                event,
+                this.isPointerWithinXAxis(sourceEvent) ? ChartAxisDirection.X : ChartAxisDirection.Y,
+                this.seriesRect,
+                zoom
+            );
+            this.updateZoom(newZoom);
+            return;
+        }
+
         if (
             this.enablePanning &&
             this.seriesRect &&
             !this.isMaxZoom(zoom) &&
             (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))
         ) {
+            // Allow panning if not at the maximum zoom and either selection is disabled or the panning key is pressed.
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
             this.updateZoom(newZoom);
             this.cursorManager.updateCursor(CURSOR_ID, 'grabbing');
@@ -162,7 +182,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             zoom
         );
 
-        this.updateService.update(_ModuleSupport.ChartUpdateType.PERFORM_LAYOUT);
+        this.updateService.update(ChartUpdateType.PERFORM_LAYOUT);
     }
 
     private onDragEnd() {
@@ -171,9 +191,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
 
-        if (this.enablePanning && this.panner.isPanning) {
+        this.cursorManager.updateCursor(CURSOR_ID);
+
+        if (this.enableAxisDragging && this.axisDragger.isAxisDragging) {
+            this.axisDragger.stop();
+        } else if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
-            this.cursorManager.updateCursor(CURSOR_ID);
         } else if (this.enableSelecting && !this.isMinZoom(zoom)) {
             const newZoom = this.selector.stop(this.seriesRect, zoom);
             this.updateZoom(newZoom);
@@ -200,6 +223,16 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         );
 
         this.updateZoom(newZoom);
+    }
+
+    private onHover(event: _ModuleSupport.InteractionEvent<'hover'>) {
+        const sourceEvent = event.sourceEvent as MouseEvent;
+        if (this.enableAxisDragging && this.seriesRect && this.isPointerWithinAxis(sourceEvent)) {
+            this.cursorManager.updateCursor(
+                CURSOR_ID,
+                this.isPointerWithinXAxis(sourceEvent) ? 'ew-resize' : 'ns-resize'
+            );
+        }
     }
 
     private onLayoutComplete({ series: { paddedRect } }: _ModuleSupport.LayoutCompleteEvent) {
@@ -264,6 +297,32 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             case 'meta':
                 return event.metaKey;
         }
+    }
+
+    private isPointerWithinSeries(event: MouseEvent) {
+        const { seriesRect } = this;
+        const { offsetX, offsetY } = event;
+
+        if (!seriesRect) return false;
+
+        const { x, y, width, height } = seriesRect;
+
+        return offsetX >= x && offsetX <= x + width && offsetY >= y && offsetY <= y + height;
+    }
+
+    private isPointerWithinAxis(event: MouseEvent) {
+        return !this.isPointerWithinSeries(event);
+    }
+
+    private isPointerWithinXAxis(event: MouseEvent) {
+        const { seriesRect } = this;
+        const { offsetY } = event;
+
+        if (!seriesRect) return false;
+
+        const { y, height } = seriesRect;
+
+        return offsetY < y || offsetY > y + height;
     }
 
     private isScalingX(): boolean {
