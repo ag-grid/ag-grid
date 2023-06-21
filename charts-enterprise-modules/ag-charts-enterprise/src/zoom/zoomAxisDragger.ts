@@ -11,17 +11,24 @@ export class ZoomAxisDragger {
 
     update(
         event: _ModuleSupport.InteractionEvent<'drag'>,
-        axis: _ModuleSupport.ChartAxisDirection,
+        direction: _ModuleSupport.ChartAxisDirection,
         bbox: _Scene.BBox,
-        zoom?: _ModuleSupport.AxisZoomState
-    ): DefinedZoomState {
+        zoom?: _ModuleSupport.AxisZoomState,
+        axisZoom?: _ModuleSupport.ZoomState
+    ): _ModuleSupport.ZoomState {
         this.isAxisDragging = true;
+
+        // Store the initial zoom state, merged with the state for this axis
         if (this.oldZoom == null) {
-            this.oldZoom = definedZoomState(zoom);
+            if (direction === _ModuleSupport.ChartAxisDirection.X) {
+                this.oldZoom = definedZoomState({ ...zoom, x: axisZoom });
+            } else {
+                this.oldZoom = definedZoomState({ ...zoom, y: axisZoom });
+            }
         }
 
         this.updateCoords(event.offsetX, event.offsetY);
-        const newZoom = this.updateZoom(axis, bbox);
+        const newZoom = this.updateZoom(direction, bbox);
 
         return newZoom;
     }
@@ -41,34 +48,42 @@ export class ZoomAxisDragger {
         }
     }
 
-    private updateZoom(axis: _ModuleSupport.ChartAxisDirection, bbox: _Scene.BBox): DefinedZoomState {
+    private updateZoom(direction: _ModuleSupport.ChartAxisDirection, bbox: _Scene.BBox): _ModuleSupport.ZoomState {
         const { coords, oldZoom } = this;
 
         let newZoom = definedZoomState(oldZoom);
 
-        if (!coords || !oldZoom) return newZoom;
+        if (!coords || !oldZoom) {
+            if (direction === _ModuleSupport.ChartAxisDirection.X) return newZoom.x;
+            return newZoom.y;
+        }
 
+        // Scale the zoom along the given axis, pivoting on the end of the axis
         const origin = pointToRatio(bbox, coords.x1, coords.y1);
         const target = pointToRatio(bbox, coords.x2, coords.y2);
 
-        if (axis === _ModuleSupport.ChartAxisDirection.X) {
+        if (direction === _ModuleSupport.ChartAxisDirection.X) {
             const scaleX = target.x - origin.x;
 
             newZoom.x.max += scaleX;
 
             newZoom.x.min = oldZoom.x.max - (newZoom.x.max - newZoom.x.min);
             newZoom.x.max = oldZoom.x.max;
-        } else {
-            const scaleY = target.y - origin.y;
 
-            newZoom.y.max += scaleY;
+            newZoom = constrainZoom(newZoom);
 
-            newZoom.y.min = oldZoom.y.max - (newZoom.y.max - newZoom.y.min);
-            newZoom.y.max = oldZoom.y.max;
+            return newZoom.x;
         }
+
+        const scaleY = target.y - origin.y;
+
+        newZoom.y.max += scaleY;
+
+        newZoom.y.min = oldZoom.y.max - (newZoom.y.max - newZoom.y.min);
+        newZoom.y.max = oldZoom.y.max;
 
         newZoom = constrainZoom(newZoom);
 
-        return newZoom;
+        return newZoom.y;
     }
 }

@@ -2,7 +2,7 @@ import { ChartAxis } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { BaseManager } from './baseManager';
 
-interface ZoomState {
+export interface ZoomState {
     min: number;
     max: number;
 }
@@ -14,6 +14,7 @@ export interface AxisZoomState {
 
 export interface ZoomChangeEvent extends AxisZoomState {
     type: 'zoom-change';
+    axes: Record<string, ZoomState | undefined>;
 }
 
 /**
@@ -41,8 +42,6 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         this.axes[axisId]?.updateZoom(callerId, newZoom);
 
         this.applyStates();
-
-        // TODO: fire event?
     }
 
     public getZoom(): AxisZoomState | undefined {
@@ -71,13 +70,21 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         const changed = Object.values(this.axes)
             .map((axis) => axis.applyStates())
             .some(Boolean);
+
         if (!changed) {
             return;
         }
+
         const currentZoom = this.getZoom();
+        const axes: Record<string, ZoomState | undefined> = {};
+        for (const [axisId, axis] of Object.entries(this.axes)) {
+            axes[axisId] = axis.getZoom();
+        }
+
         const event: ZoomChangeEvent = {
             type: 'zoom-change',
             ...(currentZoom ?? {}),
+            axes,
         };
         this.listeners.dispatch('zoom-change', event);
     }

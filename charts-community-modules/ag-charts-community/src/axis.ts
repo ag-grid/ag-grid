@@ -38,6 +38,7 @@ import { AxisLine } from './chart/axis/axisLine';
 import { AxisTitle } from './chart/axis/axisTitle';
 import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
 import { ChartAxis, BoundSeries } from './chart/chartAxis';
+import { InteractionEvent } from './chart/interaction/interactionManager';
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
@@ -189,12 +190,17 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
+    private destroyFns: Function[] = [];
+
     constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
         this._scale = scale;
         this.refreshScale();
 
         this._titleCaption.node.rotation = -Math.PI / 2;
         this.axisGroup.appendChild(this._titleCaption.node);
+
+        const axisHoverHandle = moduleCtx.interactionManager.addListener('hover', (e) => this.checkAxisHover(e));
+        this.destroyFns.push(() => moduleCtx.interactionManager.removeListener(axisHoverHandle));
     }
 
     private attachCrossLine(crossLine: CrossLine) {
@@ -211,6 +217,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             delete this.modules[key];
             delete (this as any)[key];
         }
+        this.destroyFns.forEach((f) => f());
     }
 
     protected refreshScale() {
@@ -391,6 +398,15 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     protected createTick(): AxisTick<S> {
         return new AxisTick();
+    }
+
+    private checkAxisHover(event: InteractionEvent<'hover'>) {
+        const bbox = this.computeBBox();
+        const isInAxis = bbox.containsPoint(event.offsetX, event.offsetY);
+
+        if (!isInAxis) return;
+
+        this.moduleCtx.chartEventManager.axisHover(this.id, this.direction);
     }
 
     /**
