@@ -3,13 +3,14 @@ import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 const { ChartAxisDirection } = _ModuleSupport;
 const { BandScale } = _Scale;
 const { Path, Text } = _Scene;
-const { isNumberEqual } = _Util;
+const { isNumberEqual, toRadians } = _Util;
 
 interface AngleCategoryAxisLabelDatum {
     text: string;
     x: number;
     y: number;
     hidden: boolean;
+    rotation: number;
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
 }
@@ -118,6 +119,13 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             node.y = labelDatum.y;
             node.textAlign = labelDatum.textAlign;
             node.textBaseline = labelDatum.textBaseline;
+            if (labelDatum.rotation) {
+                node.rotation = labelDatum.rotation;
+                node.rotationCenterX = labelDatum.x;
+                node.rotationCenterY = labelDatum.y;
+            } else {
+                node.rotation = 0;
+            }
         });
     }
 
@@ -161,8 +169,12 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             const sin = Math.sin(angle);
             const x = distance * cos;
             const y = distance * sin;
-            const textAlign = isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right';
-            const textBaseline = isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom';
+            const { textAlign, textBaseline } = this.getLabelAlign(angle);
+
+            let rotation = toRadians(label.rotation ?? 0);
+            if (label.autoRotate) {
+                rotation = angle + toRadians(label.autoRotateAngle ?? 0) + Math.PI / 2;
+            }
 
             let text = String(value);
             tempText.text = text;
@@ -171,9 +183,14 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             tempText.setFont(label);
             tempText.textAlign = textAlign;
             tempText.textBaseline = textBaseline;
+            tempText.rotation = rotation;
+            if (rotation) {
+                tempText.rotationCenterX = x;
+                tempText.rotationCenterY = y;
+            }
 
-            let box: _Scene.BBox | null = tempText.computeBBox();
-            if (options.hideWhenNecessary) {
+            let box: _Scene.BBox | undefined = rotation ? tempText.computeTransformedBBox() : tempText.computeBBox();
+            if (box && options.hideWhenNecessary && !rotation) {
                 const overflowLeft = seriesLeft - box.x;
                 const overflowRight = box.x + box.width - seriesRight;
                 const pixelError = 1;
@@ -182,7 +199,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                     text = Text.wrap(text, availWidth, Infinity, label, 'never');
                     if (text === '\u2026') {
                         text = '';
-                        box = null;
+                        box = undefined;
                     }
                     tempText.text = text;
                     box = tempText.computeBBox();
@@ -196,9 +213,12 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                 textAlign,
                 textBaseline,
                 hidden: text === '',
+                rotation,
             });
 
-            box && textBoxes.push(box);
+            if (box) {
+                textBoxes.push(box);
+            }
         });
 
         if (textBoxes.length === 0) {
@@ -206,5 +226,46 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         }
 
         return _Scene.BBox.merge(textBoxes);
+    }
+
+    protected getLabelAlign(angle: number) {
+        const { label } = this;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        let textAlign: CanvasTextAlign;
+        let textBaseline: CanvasTextBaseline;
+        if (label.autoRotate) {
+            if (isNumberEqual(label.autoRotateAngle, 0)) {
+                textAlign = 'center';
+                textBaseline = 'bottom';
+            } else if (isNumberEqual(label.autoRotateAngle, 180)) {
+                textAlign = 'center';
+                textBaseline = 'top';
+            } else {
+                if (label.autoRotateAngle > 0 && label.autoRotateAngle < 180) {
+                    textAlign = 'right';
+                } else {
+                    textAlign = 'left';
+                }
+                if (isNumberEqual(Math.abs(label.autoRotateAngle), 90) || isNumberEqual(label.autoRotateAngle, 270)) {
+                    textBaseline = 'middle';
+                } else if (label.autoRotateAngle > 270 || (label.autoRotateAngle > -90 && label.autoRotateAngle < 90)) {
+                    textBaseline = 'bottom';
+                } else {
+                    textBaseline = 'top';
+                }
+            }
+        } else if (label.rotation) {
+            const rot = toRadians(label.rotation);
+            const rotCos = Math.cos(angle - rot);
+            const rotSin = Math.sin(angle - rot);
+            textAlign = isNumberEqual(rotCos, 0) ? 'center' : rotCos > 0 ? 'left' : 'right';
+            textBaseline = isNumberEqual(rotSin, 0) ? 'middle' : rotSin > 0 ? 'top' : 'bottom';
+        } else {
+            textAlign = isNumberEqual(cos, 0) ? 'center' : cos > 0 ? 'left' : 'right';
+            textBaseline = isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom';
+        }
+        return { textAlign, textBaseline };
     }
 }
