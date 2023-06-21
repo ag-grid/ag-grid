@@ -1,9 +1,9 @@
 import { NUMBER, Validate } from '../../util/validation';
 import { BandScale } from '../../scale/bandScale';
 import { ModuleContext } from '../../util/moduleContext';
-import { Axis } from '../../axis';
+import { CartesianAxis } from './cartesianAxis';
 
-export class CategoryAxis extends Axis<BandScale<string | object>> {
+export class CategoryAxis extends CartesianAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
 

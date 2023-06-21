@@ -42,14 +42,14 @@ export interface ChartAxis {
     linkedTo?: ChartAxis;
     maxThickness: number;
     nice: boolean;
-    position: AgCartesianAxisPosition;
+    position?: AgCartesianAxisPosition;
     range: number[];
     removeModule(module: any): void;
     rotation: number;
     scale: Scale<any, any, any>;
     seriesAreaPadding: number;
     setCrossLinesVisible(visible: boolean): void;
-    thickness: number;
+    thickness?: number;
     translation: { x: number; y: number };
     type: string;
     update(primaryTickCount?: number): number | undefined;

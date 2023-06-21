@@ -34,7 +34,7 @@ export interface ModuleContextWithParent<P> extends ModuleContext {
 
 export interface AxisContext {
     axisId: string;
-    position: AgCartesianAxisPosition;
+    position?: AgCartesianAxisPosition;
     direction: 'x' | 'y';
     continuous: boolean;
     keys: () => string[];

@@ -10,4 +10,6 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
+    /** Shape of grid lines. Default: `polygon` */
+    gridShape?: 'polygon' | 'circle';
 }

@@ -200,7 +200,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
         return isAxisType;
     };
 
-    if (isAgCartesianChartOptions(mergedOptions)) {
+    if ('axes' in mergedOptions) {
         let validAxesTypes = true;
         for (const { type: axisType } of mergedOptions.axes ?? []) {
             if (!checkAxisType(axisType)) {

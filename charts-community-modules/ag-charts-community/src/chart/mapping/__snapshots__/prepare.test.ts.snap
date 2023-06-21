@@ -39,7 +39,6 @@ exports[`prepare #prepareOptions for ADV_CHART_CUSTOMISATION it should prepare o
       },
       "nice": false,
       "position": "top",
-      "thickness": 0,
       "tick": {
         "color": "#3f7cbf",
         "interval": TimeInterval {
@@ -89,7 +88,6 @@ exports[`prepare #prepareOptions for ADV_CHART_CUSTOMISATION it should prepare o
       },
       "nice": false,
       "position": "right",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 10,
@@ -463,7 +461,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -511,7 +508,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -558,7 +554,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "right",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -894,7 +889,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -938,7 +932,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1556,7 +1549,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1600,7 +1592,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1888,7 +1879,6 @@ exports[`prepare #prepareOptions for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it sho
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1932,7 +1922,6 @@ exports[`prepare #prepareOptions for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it sho
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2164,7 +2153,6 @@ exports[`prepare #prepareOptions for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it s
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2208,7 +2196,6 @@ exports[`prepare #prepareOptions for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it s
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2641,7 +2628,6 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2685,7 +2671,6 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3267,7 +3252,6 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3311,7 +3295,6 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3560,7 +3543,6 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3604,7 +3586,6 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3847,7 +3828,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it sho
       "paddingInner": 0.2,
       "paddingOuter": 0.3,
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "black",
         "size": 6,
@@ -3886,7 +3866,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it sho
       "paddingInner": 0.2,
       "paddingOuter": 0.3,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "black",
         "size": 6,
@@ -4116,7 +4095,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE i
       "min": -180,
       "nice": false,
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4163,7 +4141,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE i
       "min": -90,
       "nice": false,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4393,7 +4370,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4437,7 +4413,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4709,7 +4684,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4753,7 +4727,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5028,7 +5001,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5072,7 +5044,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5366,7 +5337,6 @@ exports[`prepare #prepareOptions for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it sh
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 500,
@@ -5411,7 +5381,6 @@ exports[`prepare #prepareOptions for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it sh
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5652,7 +5621,6 @@ exports[`prepare #prepareOptions for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5699,7 +5667,6 @@ exports[`prepare #prepareOptions for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prep
       "min": 0.2,
       "nice": false,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -6876,7 +6843,6 @@ exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -6920,7 +6886,6 @@ exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7366,7 +7331,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7411,7 +7375,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7706,7 +7669,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7751,7 +7713,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8030,7 +7991,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8075,7 +8035,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8372,7 +8331,6 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": TimeInterval {
@@ -8421,7 +8379,6 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8905,7 +8862,6 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8949,7 +8905,6 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -9412,7 +9367,6 @@ exports[`prepare #prepareOptions for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should pr
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 20,
@@ -9457,7 +9411,6 @@ exports[`prepare #prepareOptions for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should pr
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -9684,7 +9637,6 @@ exports[`prepare #prepareOptions for SIMPLE_LINE_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": TimeInterval {
@@ -9733,7 +9685,6 @@ exports[`prepare #prepareOptions for SIMPLE_LINE_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10241,7 +10192,6 @@ exports[`prepare #prepareOptions for SIMPLE_SCATTER_CHART_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10285,7 +10235,6 @@ exports[`prepare #prepareOptions for SIMPLE_SCATTER_CHART_EXAMPLE it should prep
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10510,7 +10459,6 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": CountableTimeInterval {
@@ -10559,7 +10507,6 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10871,7 +10818,6 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10916,7 +10862,6 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
       },
       "nice": false,
       "position": "top",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11188,7 +11133,6 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11232,7 +11176,6 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11523,7 +11466,6 @@ exports[`prepare #prepareOptions for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should pr
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 500,
@@ -11568,7 +11510,6 @@ exports[`prepare #prepareOptions for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should pr
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,

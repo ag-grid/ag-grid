@@ -213,7 +213,7 @@ export class CartesianChart extends Chart {
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
         axes.forEach((axis) => {
-            const { position } = axis;
+            const { position = 'left' } = axis;
 
             const {
                 clipSeries: newClipSeries,
@@ -344,7 +344,7 @@ export class CartesianChart extends Chart {
         const { axis, seriesRect, paddedBounds, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } =
             opts;
         let { clipSeries } = opts;
-        const { position, direction } = axis;
+        const { position = 'left', direction } = axis;
 
         const axisLeftRightRange = (axis: ChartAxis) => {
             if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
@@ -378,7 +378,7 @@ export class CartesianChart extends Chart {
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
         const paddedBoundsCoefficient = 0.3;
 
-        if (axis.thickness > 0) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axis.maxThickness = axis.thickness;
         } else if (direction === ChartAxisDirection.Y) {
             axis.maxThickness = paddedBounds.width * paddedBoundsCoefficient;
@@ -390,7 +390,7 @@ export class CartesianChart extends Chart {
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
         let axisThickness = 0;
-        if (axis.thickness) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axisThickness = axis.thickness;
         } else {
             const bbox = axis.computeBBox();

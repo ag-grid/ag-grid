@@ -53,6 +53,13 @@ export class PolarChart extends Chart {
             }
             axis.updateScale();
         });
+
+        const angleAxis = this.axes.find((axis) => axis.direction === ChartAxisDirection.X);
+        const scale = angleAxis?.scale;
+        const angles = scale?.ticks?.().map((value) => scale.convert(value));
+        this.axes
+            .filter((axis): axis is PolarAxis => axis instanceof PolarAxis)
+            .forEach((axis) => (axis.gridAngles = angles));
     }
 
     private computeSeriesRect(shrinkRect: BBox) {

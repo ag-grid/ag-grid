@@ -1,5 +1,6 @@
 import { _ModuleSupport, _Scale } from 'ag-charts-community';
 import { AngleCategoryAxis } from './angleCategoryAxis';
+import { ANGLE_CATEGORY_AXIS_THEME } from './angleCategoryAxisThemes';
 
 export const AngleCategoryAxisModule: _ModuleSupport.AxisModule = {
     type: 'axis',
@@ -10,5 +11,5 @@ export const AngleCategoryAxisModule: _ModuleSupport.AxisModule = {
 
     identifier: 'polar-angle-category',
     instanceConstructor: AngleCategoryAxis,
-    themeTemplate: {},
+    themeTemplate: ANGLE_CATEGORY_AXIS_THEME,
 };

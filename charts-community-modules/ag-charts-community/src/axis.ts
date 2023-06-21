@@ -11,18 +11,13 @@ import { createId } from './util/id';
 import { normalizeAngle360, toRadians } from './util/angle';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
-import { Validate, BOOLEAN, NUMBER, ARRAY, POSITION, STRING_ARRAY, predicateWithMessage } from './util/validation';
+import { Validate, BOOLEAN, ARRAY, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import {
-    AgAxisCaptionFormatterParams,
-    AgAxisGridStyle,
-    AgCartesianAxisPosition,
-    TextWrap,
-} from './chart/agChartOptions';
+import { AgAxisCaptionFormatterParams, AgAxisGridStyle, TextWrap } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
@@ -131,12 +126,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         return (this.constructor as any).type ?? '';
     }
 
-    @Validate(POSITION)
-    position: AgCartesianAxisPosition = 'left';
-
-    get direction() {
-        return ['top', 'bottom'].includes(this.position) ? ChartAxisDirection.X : ChartAxisDirection.Y;
-    }
+    abstract get direction(): ChartAxisDirection;
 
     boundSeries: BoundSeries[] = [];
     linkedTo?: Axis<any, any>;
@@ -195,7 +185,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         },
     };
 
-    private axisContext?: AxisContext;
+    protected axisContext?: AxisContext;
 
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
@@ -403,41 +393,10 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         return new AxisTick();
     }
 
-    protected updateDirection() {
-        switch (this.position) {
-            case 'top':
-                this.rotation = -90;
-                this.label.mirrored = true;
-                this.label.parallel = true;
-                break;
-            case 'right':
-                this.rotation = 0;
-                this.label.mirrored = true;
-                this.label.parallel = false;
-                break;
-            case 'bottom':
-                this.rotation = -90;
-                this.label.mirrored = false;
-                this.label.parallel = true;
-                break;
-            case 'left':
-                this.rotation = 0;
-                this.label.mirrored = false;
-                this.label.parallel = false;
-                break;
-        }
-
-        if (this.axisContext) {
-            this.axisContext.position = this.position;
-            this.axisContext.direction = this.direction;
-        }
-    }
-
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        this.updateDirection();
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -1252,8 +1211,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         return String(datum);
     }
 
-    @Validate(NUMBER(0))
-    thickness: number = 0;
     maxThickness: number = Infinity;
 
     computeBBox(): BBox {
@@ -1313,32 +1270,35 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             ...this.layout,
         };
     }
+
+    protected createAxisContext(): AxisContext {
+        const keys = () => {
+            return this.boundSeries
+                .map((s) => s.getKeys(this.direction))
+                .reduce((keys, seriesKeys) => {
+                    keys.push(...seriesKeys);
+                    return keys;
+                }, []);
+        };
+        return {
+            axisId: this.id,
+            direction: this.direction,
+            continuous: this.scale instanceof ContinuousScale,
+            keys,
+            scaleValueFormatter: (specifier: string) => this.scale.tickFormat?.({ specifier }) ?? undefined,
+            scaleBandwidth: () => this.scale.bandwidth ?? 0,
+            scaleConvert: (val) => this.scale.convert(val),
+            scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
+        };
+    }
+
     addModule(module: AxisOptionModule) {
         if (this.modules[module.optionsKey] != null) {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
 
         if (this.axisContext == null) {
-            const keys = () => {
-                return this.boundSeries
-                    .map((s) => s.getKeys(this.direction))
-                    .reduce((keys, seriesKeys) => {
-                        keys.push(...seriesKeys);
-                        return keys;
-                    }, []);
-            };
-
-            this.axisContext = {
-                axisId: this.id,
-                position: this.position,
-                direction: this.direction,
-                continuous: this.scale instanceof ContinuousScale,
-                keys,
-                scaleValueFormatter: (specifier: string) => this.scale.tickFormat?.({ specifier }) ?? undefined,
-                scaleBandwidth: () => this.scale.bandwidth ?? 0,
-                scaleConvert: (val) => this.scale.convert(val),
-                scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
-            };
+            this.axisContext = this.createAxisContext();
         }
 
         const moduleInstance = new module.instanceConstructor({
