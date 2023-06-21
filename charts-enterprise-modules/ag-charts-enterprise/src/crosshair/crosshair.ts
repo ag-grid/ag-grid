@@ -60,7 +60,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         this.axisCtx = ctx.parent;
 
-        ctx.scene.root!.appendChild(this.crosshairGroup);
+        ctx.scene.root?.appendChild(this.crosshairGroup);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.crosshairGroup));
 
         this.crosshairGroup.visible = false;

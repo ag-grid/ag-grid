@@ -34,7 +34,7 @@ export function getJsonApplyOptions() {
             ...JSON_APPLY_PLUGINS.constructors,
         },
         allowedTypes: {
-            ...JSON_APPLY_OPTIONS.allowedTypes!,
+            ...JSON_APPLY_OPTIONS.allowedTypes,
         },
     };
 }

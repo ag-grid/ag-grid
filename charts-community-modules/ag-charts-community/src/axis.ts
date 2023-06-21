@@ -844,7 +844,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     private createTicks(tickCount: number, minTickCount: number, maxTickCount: number) {
         this.setTickCount(tickCount, minTickCount, maxTickCount);
-        return this.scale.ticks!();
+        return this.scale.ticks?.() ?? [];
     }
 
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {

@@ -604,9 +604,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (canAdd) {
             const beforeIndex = before ? allSeries.indexOf(before) : -1;
 
-            if (beforeIndex >= 0) {
+            if (before && beforeIndex >= 0) {
                 allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.rootGroup, before!.rootGroup);
+                seriesRoot.insertBefore(series.rootGroup, before.rootGroup);
             } else {
                 allSeries.push(series);
                 seriesRoot.append(series.rootGroup);
@@ -774,18 +774,22 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private attachLegend(legendType: string) {
-        if (this.legendType === legendType) {
-            return;
+    private attachLegend(legendType: string): ChartLegend {
+        if (this.legendType === legendType && this.legend) {
+            return this.legend;
         }
 
         this.legend?.destroy();
         this.legend = undefined;
 
         const ctx = this.getModuleContext();
-        this.legend = getLegend(legendType, ctx);
-        this.legend.attachLegend(this.scene.root);
+        const legend = getLegend(legendType, ctx);
+        legend.attachLegend(this.scene.root);
+
+        this.legend = legend;
         this.legendType = legendType;
+
+        return legend;
     }
 
     private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
@@ -803,14 +807,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 legendData.push(...data);
             });
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
-        this.attachLegend(legendType);
-        this.applyLegendOptions?.(this.legend!);
+        const legend = this.attachLegend(legendType);
+        this.applyLegendOptions?.(legend);
 
         if (legendType === 'category') {
             this.validateLegendData(legendData);
         }
 
-        this.legend!.data = legendData;
+        legend.data = legendData;
     }
 
     protected validateLegendData(legendData: ChartLegendDatum[]) {
@@ -842,7 +846,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected async performLayout() {
-        this.scene.root!.visible = true;
+        if (this.scene.root != null) {
+            this.scene.root.visible = true;
+        }
 
         const {
             scene: { width, height },

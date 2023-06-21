@@ -551,7 +551,7 @@ function applyLegend(chart: Chart, options: AgChartOptions) {
     chart.setLegendInit((legend) => {
         applyOptionValues(legend, options.legend ?? {}, { skip });
         if (options.legend?.listeners) {
-            Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
+            Object.assign(chart.legend?.listeners, options.legend.listeners ?? {});
         }
     });
 }
@@ -563,7 +563,7 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     let index = 0;
     for (const seriesOptions of options ?? []) {
         const path = `series[${index++}]`;
-        const seriesInstance = getSeries(seriesOptions.type!, moduleContext);
+        const seriesInstance = getSeries(seriesOptions.type ?? 'unknown', moduleContext);
         applySeriesValues(seriesInstance, seriesOptions, { path, index });
         series.push(seriesInstance);
     }

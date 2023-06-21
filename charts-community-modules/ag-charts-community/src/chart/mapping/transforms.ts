@@ -100,21 +100,7 @@ function legendItemNamesMapping(
     return result;
 }
 
-function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
-    const result = {
-        ...options,
-    };
-    delete result['yKey'];
-    delete result['yName'];
-
-    return transform(result, {
-        yNames: yNamesMapping,
-        yKeys: yKeysMapping,
-        legendItemNames: legendItemNamesMapping,
-    }) as T;
-}
-
-function columnSeriesTransform<T extends AgColumnSeriesOptions>(options: T): T {
+function barSeriesTransform<T extends AgBarSeriesOptions | AgColumnSeriesOptions>(options: T): T {
     const result = {
         ...options,
     };
@@ -155,7 +141,7 @@ const SERIES_TRANSFORMS: {
 } = {
     area: identityTransform,
     bar: barSeriesTransform,
-    column: columnSeriesTransform,
+    column: barSeriesTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,

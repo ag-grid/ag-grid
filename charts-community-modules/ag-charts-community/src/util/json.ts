@@ -354,8 +354,7 @@ export function jsonApply<Target extends object, Source extends DeepPartial<Targ
                 targetAny[property] = newValue;
             }
         } catch (error) {
-            const err = error as any;
-            Logger.warn(`unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`);
+            Logger.warn(`unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`);
             continue;
         }
     }

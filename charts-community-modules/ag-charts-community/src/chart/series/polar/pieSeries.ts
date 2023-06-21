@@ -53,6 +53,7 @@ import * as easing from '../../../motion/easing';
 import { DataModel } from '../../data/dataModel';
 import { normalisePropertyTo } from '../../data/processors';
 import { ModuleContext } from '../../../util/moduleContext';
+import { Has } from '../../../util/types';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -345,9 +346,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const pieCalloutLabels = new Group({ name: 'pieCalloutLabels' });
         const pieSectorLabels = new Group({ name: 'pieSectorLabels' });
         const innerLabels = new Group({ name: 'innerLabels' });
-        this.labelGroup!.append(pieCalloutLabels);
-        this.labelGroup!.append(pieSectorLabels);
-        this.labelGroup!.append(innerLabels);
+        this.labelGroup?.append(pieCalloutLabels);
+        this.labelGroup?.append(pieSectorLabels);
+        this.labelGroup?.append(innerLabels);
         this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
         this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         this.innerLabelsSelection = Selection.select(innerLabels, Text);
@@ -850,7 +851,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.backgroundGroup.visible = isVisible;
         this.contentGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && highlightedDatum?.series === this;
-        this.labelGroup!.visible = isVisible;
+        if (this.labelGroup) {
+            this.labelGroup.visible = isVisible;
+        }
 
         this.contentGroup.opacity = this.getOpacity();
 
@@ -937,9 +940,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 let x2 = datum.midCos * (outerRadius + calloutLength);
                 let y2 = datum.midSin * (outerRadius + calloutLength);
 
-                if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
+                const isMoved = label.collisionTextAlign || label.collisionOffsetY !== 0;
+                if (isMoved && label.box != null) {
                     // Get the closest point to the text bounding box
-                    const box = label.box!;
+                    const box = label.box;
                     let cx = x2;
                     let cy = y2;
                     if (x2 < box.x) {
@@ -1020,9 +1024,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         const fullData = this.nodeData;
-        const data = this.nodeData.filter((text) => !shouldSkip(text));
+        const data = this.nodeData.filter((t): t is Has<'calloutLabel', PieNodeDatum> => !shouldSkip(t));
         data.forEach((datum) => {
-            const label = datum.calloutLabel!;
+            const label = datum.calloutLabel;
+            if (label == null) return;
+
             label.hidden = false;
             label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
@@ -1035,15 +1041,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const leftLabels = data.filter((d) => d.midCos < 0).sort((a, b) => a.midSin - b.midSin);
         const rightLabels = data.filter((d) => d.midCos >= 0).sort((a, b) => a.midSin - b.midSin);
         const topLabels = data
-            .filter((d) => d.midSin < 0 && d.calloutLabel!.textAlign === 'center')
+            .filter((d) => d.midSin < 0 && d.calloutLabel?.textAlign === 'center')
             .sort((a, b) => a.midCos - b.midCos);
         const bottomLabels = data
-            .filter((d) => d.midSin >= 0 && d.calloutLabel!.textAlign === 'center')
+            .filter((d) => d.midSin >= 0 && d.calloutLabel?.textAlign === 'center')
             .sort((a, b) => a.midCos - b.midCos);
 
         const tempTextNode = new Text();
-        const getTextBBox = (datum: PieNodeDatum) => {
-            const label = datum.calloutLabel!;
+        const getTextBBox = (datum: (typeof data)[number]) => {
+            const label = datum.calloutLabel;
+            if (label == null) return new BBox(0, 0, 0, 0);
+
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
@@ -1063,8 +1071,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         const avoidNeighbourYCollision = (
-            label: PieNodeDatum,
-            next: PieNodeDatum,
+            label: (typeof data)[number],
+            next: (typeof data)[number],
             direction: 'to-top' | 'to-bottom'
         ) => {
             const box = getTextBBox(label).grow(minSpacing / 2);
@@ -1077,11 +1085,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 (direction === 'to-top' ? box.y < other.y + other.height : box.y + box.height > other.y);
             if (collidesOrBehind) {
                 const dy = direction === 'to-top' ? box.y - other.y - other.height : box.y + box.height - other.y;
-                next.calloutLabel!.collisionOffsetY = dy;
+                next.calloutLabel.collisionOffsetY = dy;
             }
         };
 
-        const avoidYCollisions = (labels: PieNodeDatum[]) => {
+        const avoidYCollisions = (labels: typeof data) => {
             const midLabel = labels.slice().sort((a, b) => Math.abs(a.midSin) - Math.abs(b.midSin))[0];
             const midIndex = labels.indexOf(midLabel);
             for (let i = midIndex - 1; i >= 0; i--) {
@@ -1096,8 +1104,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         };
 
-        const avoidXCollisions = (labels: PieNodeDatum[]) => {
-            const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel!.collisionOffsetY !== 0);
+        const avoidXCollisions = (labels: typeof data) => {
+            const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel.collisionOffsetY !== 0);
 
             const boxes = labels.map((label) => getTextBBox(label));
             const paddedBoxes = boxes.map((box) => box.clone().grow(minSpacing / 2));
@@ -1129,12 +1137,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             labels
-                .filter((datum) => datum.calloutLabel!.textAlign === 'center')
-                .forEach((datum) => {
-                    const label = datum.calloutLabel!;
-                    if (datum.midCos < 0) {
+                .filter((d) => d.calloutLabel.textAlign === 'center')
+                .forEach((d) => {
+                    const label = d.calloutLabel;
+                    if (d.midCos < 0) {
                         label.collisionTextAlign = 'right';
-                    } else if (datum.midCos > 0) {
+                    } else if (d.midCos > 0) {
                         label.collisionTextAlign = 'left';
                     } else {
                         label.collisionTextAlign = 'center';

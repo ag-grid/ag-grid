@@ -54,12 +54,12 @@ export class Text extends Shape {
     private _dirtyFont: boolean = true;
     private _font?: string;
     get font(): string {
-        if (this._dirtyFont) {
+        if (this._font == null || this._dirtyFont) {
             this._dirtyFont = false;
             this._font = getFont(this);
         }
 
-        return this._font!;
+        return this._font;
     }
 
     @SceneFontChangeDetection()

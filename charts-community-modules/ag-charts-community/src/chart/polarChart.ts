@@ -22,7 +22,7 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        this.computeCircle();
+        this.computeCircle(shrinkRect);
         this.axes.forEach((axis) => axis.update());
 
         const hoverRectPadding = 20;
@@ -66,8 +66,7 @@ export class PolarChart extends Chart {
         this.seriesRect = shrinkRect;
     }
 
-    private computeCircle() {
-        const seriesBox = this.seriesRect!;
+    private computeCircle(seriesBox: BBox) {
         const polarSeries = this.series.filter((series): series is PolarSeries<SeriesNodeDatum> => {
             return series instanceof PolarSeries;
         });
@@ -119,7 +118,7 @@ export class PolarChart extends Chart {
             }
 
             const labelBox = BBox.merge(labelBoxes);
-            const refined = this.refineCircle(labelBox, radius);
+            const refined = this.refineCircle(labelBox, radius, seriesBox);
             setSeriesCircle(refined.centerX, refined.centerY, refined.radius);
 
             if (refined.radius === radius) {
@@ -138,10 +137,9 @@ export class PolarChart extends Chart {
         return { radius, centerX, centerY };
     }
 
-    private refineCircle(labelsBox: BBox, radius: number) {
+    private refineCircle(labelsBox: BBox, radius: number, seriesBox: BBox) {
         const minCircleRatio = 0.5; // Prevents reduced circle to be too small
 
-        const seriesBox = this.seriesRect!;
         const circleLeft = -radius;
         const circleTop = -radius;
         const circleRight = radius;

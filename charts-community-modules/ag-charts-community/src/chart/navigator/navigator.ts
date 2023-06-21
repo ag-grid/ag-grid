@@ -103,7 +103,7 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
             ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
         ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
 
-        ctx.scene.root!.appendChild(this.rs);
+        ctx.scene.root?.appendChild(this.rs);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
         this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
 
