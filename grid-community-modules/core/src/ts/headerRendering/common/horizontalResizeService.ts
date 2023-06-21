@@ -26,10 +26,12 @@ export class HorizontalResizeService extends BeanStub {
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
-            onDragging: this.onDragging.bind(this, params)
+            onDragging: this.onDragging.bind(this, params),
+            includeTouch: true,
+            stopPropagationForTouch: true
         };
 
-        this.dragService.addDragSource(dragSource, true);
+        this.dragService.addDragSource(dragSource);
 
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source

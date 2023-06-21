@@ -25,6 +25,7 @@ import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
 import { isBrowserSafari } from "../../../utils/browser";
+import { FocusService } from "../../../focusService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
@@ -123,13 +124,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         // so we need to make sure we don't prevent focus on mousedown
         if (!isBrowserSafari()) { return; }
 
-        this.addManagedListener(eGui, 'mousedown', () => {
-            const activeEl = this.gridOptionsService.getDocument().activeElement;
-
-            if (activeEl !== eGui && !eGui.contains(activeEl)) {
-                eGui.focus();
-            }
-        });
+        const events = ['mousedown', 'touchstart'];
+        const eDocument = this.gridOptionsService.getDocument();
+        events.forEach(eventName => {
+            this.addManagedListener(eGui, eventName, (e: MouseEvent | TouchEvent) => {
+                const activeEl = eDocument.activeElement;
+    
+                if (activeEl !== eGui && !eGui.contains(activeEl)) {
+                    eGui.focus();
+                    FocusService.toggleKeyboardMode(e)
+                }
+            });
+        })
     }
 
     private setupUserComp(): void {

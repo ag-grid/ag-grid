@@ -200,12 +200,13 @@ export class DragAndDropService extends BeanStub {
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
-            onDragging: this.onDragging.bind(this)
+            onDragging: this.onDragging.bind(this),
+            includeTouch: allowTouch
         };
 
         this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
 
-        this.dragService.addDragSource(params, allowTouch);
+        this.dragService.addDragSource(params);
     }
 
     public removeDragSource(dragSource: DragSource): void {

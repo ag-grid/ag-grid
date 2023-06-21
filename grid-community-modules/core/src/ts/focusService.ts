@@ -100,7 +100,7 @@ export class FocusService extends BeanStub {
      *
      * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
      */
-    private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
+    public static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
         const isKeyboardActive = FocusService.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
 

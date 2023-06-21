@@ -58,9 +58,11 @@ export class DragService extends BeanStub {
         return this.dragging;
     }
 
-    public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
+    public addDragSource(params: DragListenerParams): void {
         const mouseListener = this.onMouseDown.bind(this, params);
-        params.eElement.addEventListener('mousedown', mouseListener);
+        const { eElement, includeTouch, stopPropagationForTouch } = params;
+
+        eElement.addEventListener('mousedown', mouseListener);
 
         let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
@@ -69,21 +71,23 @@ export class DragService extends BeanStub {
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
                 if (isFocusableFormField(touchEvent.target as HTMLElement)) { return; }
-                if (touchEvent.cancelable) { 
+                if (touchEvent.cancelable) {
                     touchEvent.preventDefault();
-                    touchEvent.stopPropagation();
+                    if (stopPropagationForTouch) {
+                        touchEvent.stopPropagation();
+                    }
                 }
                 this.onTouchStart(params, touchEvent);
             };
             // we set passive=false, as we want to prevent default on this event
-            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
+            eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
 
         this.dragSources.push({
             dragSource: params,
             mouseDownListener: mouseListener,
             touchStartListener: touchListener,
-            touchEnabled: includeTouch
+            touchEnabled: !!includeTouch
         });
     }
 
@@ -350,4 +354,8 @@ export interface DragListenerParams {
     onDragStop: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for mouse move while dragging */
     onDragging: (mouseEvent: MouseEvent | Touch) => void;
+    /** Include touch events for this Drag Listener */
+    includeTouch?: boolean;
+    /** If `true`, it will stop the propagation of Touch Events */
+    stopPropagationForTouch?: boolean;
 }
