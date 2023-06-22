@@ -61,15 +61,14 @@ any other state attribute.
 
 ### Applying Partial State
 
-When applying a Column State, in cases where some state attributes or columns are missing from the Column State,
+When applying a Column State, in cases where some state attributes or columns are missing from the Column State, 
 the following rules apply:
 
-- If a Column State is missing attributes, or attributes are provided as `undefined`, then those missing / undefined
-attributes are not updated. For example if a Column has a Column State with just `pinned`, then Pinned is applied to
-that Column but other attributes, such as Sort, are left intact.
-- When state is applied and there are additional Columns in the grid that do not appear in the provided state, then the
-`params.defaultState` is applied to those additional Columns.
-- If `params.defaultState` is not provided, then any additional Columns in the grid will not be updated.
+- Attributes that are not supplied or are set to `undefined` will remain unchanged. For example if a Column has a Column State with just `pinned`, then Pinned is applied to that Column but other attributes, such as `sort` are left intact. 
+
+- When state is applied and there are additional Columns in the grid that do not appear in the provided state, then the `params.defaultState` is applied to those additional Columns.
+
+- If `params.defaultState` is not provided, then any additional Columns in the grid will not be updated. 
 
 Combining these rules together leaves for flexible fine grained state control. Take the following code snippets as
 examples:
