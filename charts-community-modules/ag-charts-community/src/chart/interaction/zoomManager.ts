@@ -1,4 +1,3 @@
-import { ChartAxis } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { BaseManager } from './baseManager';
 
@@ -24,9 +23,16 @@ export interface ZoomChangeEvent extends AxisZoomState {
 export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
     private axes: Record<string, AxisZoomManager> = {};
 
-    public updateAxes(axes: Array<ChartAxis>) {
+    public updateAxes(axes: Array<{ id: string; direction: ChartAxisDirection }>) {
+        const removedAxes = new Set(Object.keys(this.axes));
+
         axes.forEach((axis) => {
-            this.axes[axis.id] = this.axes[axis.id] ?? new AxisZoomManager(axis.direction);
+            removedAxes.delete(axis.id);
+            this.axes[axis.id] ??= new AxisZoomManager(axis.direction);
+        });
+
+        removedAxes.forEach((axisId) => {
+            delete this.axes[axisId];
         });
     }
 
