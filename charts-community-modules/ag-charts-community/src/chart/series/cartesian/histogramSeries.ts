@@ -603,7 +603,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
         labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
     }) {
-        const duration = 1000;
+        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let startingY = 0;
@@ -685,7 +685,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return;
         }
 
-        const totalDuration = 1000;
+        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;

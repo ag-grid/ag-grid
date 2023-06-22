@@ -984,7 +984,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         datumSelections: Array<Selection<Rect, BarNodeDatum>>;
         labelSelections: Array<Selection<Text, BarNodeDatum>>;
     }) {
-        const duration = 1000;
+        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let startingX = Infinity;
@@ -1066,7 +1066,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             return;
         }
 
-        const totalDuration = 1000;
+        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;

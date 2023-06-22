@@ -757,7 +757,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         paths: Array<Array<_Scene.Path>>;
         seriesRect?: _Scene.BBox;
     }) {
-        const duration = 1000;
+        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
 
         contextData.forEach(({ pointData }, contextDataIndex) => {
             this.animateRects(datumSelections[contextDataIndex], duration);
