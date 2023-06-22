@@ -100,8 +100,7 @@ const GridComponent = () => {
                 columnDefs={columnDefs}
                 rowData={rowData}
                 modules={[ClientSideRowModelModule]}
-                onGridReady={onGridReady}>
-            </AgGridReact>
+                onGridReady={onGridReady} />
         </div>
     )
 }

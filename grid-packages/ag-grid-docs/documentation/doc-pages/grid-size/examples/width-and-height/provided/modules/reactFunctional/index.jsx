@@ -78,8 +78,7 @@ const GridExample = () => {
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        onGridReady={onGridReady}>
-                    </AgGridReact>
+                        onGridReady={onGridReady} />
                 </div>
             </div>
         </div>

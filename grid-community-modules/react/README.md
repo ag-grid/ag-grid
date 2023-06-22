@@ -112,8 +112,7 @@ class App extends Component {
 			>
 				<AgGridReact
 					columnDefs={this.state.columnDefs}
-					rowData={this.state.rowData}>
-				</AgGridReact>
+					rowData={this.state.rowData} />
 			</div>
 		);
 	}

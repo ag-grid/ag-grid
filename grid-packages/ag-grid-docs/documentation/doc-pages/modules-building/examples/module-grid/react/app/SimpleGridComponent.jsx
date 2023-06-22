@@ -38,8 +38,7 @@ export default class App extends Component {
                 <AgGridReact
                     columnDefs={this.state.columnDefs}
                     rowData={this.state.rowData}
-                    onGridReady={params => params.api.sizeColumnsToFit()}>
-                </AgGridReact>
+                    onGridReady={params => params.api.sizeColumnsToFit()} />
             </div>
         );
     }

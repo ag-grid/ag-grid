@@ -121,8 +121,7 @@ const GridExample = () => {
                     domLayout={'autoHeight'}
                     isFullWidthRow={isFullWidthRow}
                     fullWidthCellRenderer={fullWidthCellRenderer}
-                >
-                </AgGridReact>
+                />
             </div>
 
             <p>

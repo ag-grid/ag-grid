@@ -76,8 +76,7 @@ const GridExample = () => {
                         overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}
                         overlayNoRowsTemplate={'<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">This is a custom \'no rows\' overlay</span>'}
                         onGridReady={onGridReady}
-                    >
-                    </AgGridReact>
+                    />
                 </div>
             </div>
         </div>

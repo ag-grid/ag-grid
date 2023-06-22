@@ -108,8 +108,7 @@ const GridExample = () => {
                         defaultColDef={defaultColDef}
                         sideBar={'filters'}
                         onFirstDataRendered={onFirstDataRendered}
-                    >
-                    </AgGridReact>
+                    />
                 </div>
             </div>
         </div>

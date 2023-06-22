@@ -347,8 +347,7 @@ const GridExample = () => {
                         minWidth: 100,
                         filter: true,
                         resizable: true
-                    }}>
-                </AgGridReact>
+                    }} />
             </div>
         </div>
     );

@@ -58,7 +58,7 @@ const GridExample = () => {
                     groupDisplayType={'groupRows'}
                     animateRows={true}
                     onGridReady={onGridReady}
-                ></AgGridReact>
+                />
             </div>
         </div>
     );

@@ -100,8 +100,7 @@ class App extends Component {
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
                         modules={[ClientSideRowModelModule]}
-                        onGridReady={this.onGridReady}>
-                    </AgGridReact>
+                        onGridReady={this.onGridReady} />
                 </div>
             </div>
         );

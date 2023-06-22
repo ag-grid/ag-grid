@@ -256,8 +256,7 @@ render() {
                 {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
                 {/* return key required for immutable data */}
-                getRowId={params => params.data.id}>
-            </AgGridReact>
+                getRowId={params => params.data.id} />
         </div>
     )
 }

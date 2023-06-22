@@ -231,8 +231,7 @@ const GridExample = () => {
                             getRowId={getRowId}
                             getRowStyle={getRowStyle}
                             onGridReady={onGridReady}
-                        >
-                        </AgGridReact>
+                        />
                     </div>
                 </div>
             </div>

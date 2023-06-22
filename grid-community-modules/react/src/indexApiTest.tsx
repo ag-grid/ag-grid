@@ -34,8 +34,7 @@ const App = () => {
                 ref={ gridRef }
                 rowData={ rowData }
                 columnDefs={colDefs}
-                modules={[ClientSideRowModelModule]}>
-            </AgGridReact>
+                modules={[ClientSideRowModelModule]} />
         </div>
     );
 };

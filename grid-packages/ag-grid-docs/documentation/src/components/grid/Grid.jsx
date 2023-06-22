@@ -40,7 +40,7 @@ const Grid = forwardRef((props, ref) => {
                         { statusPanel: "agAggregationComponent" },
                     ],
                 }}
-            ></AgGridReact>
+            />
         </div>
     )
 })

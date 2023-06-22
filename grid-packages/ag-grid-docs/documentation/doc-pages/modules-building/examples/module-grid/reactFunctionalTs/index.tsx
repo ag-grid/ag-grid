@@ -33,8 +33,7 @@ const GridExample = () => {
         <AgGridReact
             columnDefs={columnDefs}
             rowData={rowData}
-            onGridReady={params => params.api.sizeColumnsToFit()}>
-        </AgGridReact>
+            onGridReady={params => params.api.sizeColumnsToFit()} />
     </div>;
 };
 

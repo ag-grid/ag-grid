@@ -212,7 +212,6 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     addFrameworkContext(result) {
-        const colDefs = result.length === 0 ? '' : result;
         const externalProperties = this.externalisedProperties.length > 0;
         const externalSnippet = externalProperties ? this.externalisedProperties.join('\n').trim() + '\n\n' : '';
 
@@ -226,18 +225,16 @@ class ReactTransformer extends SnippetTransformer {
 
         if (this.options.inlineReactProperties && this.inlinePropertiesWithValues.length > 0) {
             const space = this.inlinePropertiesWithValues.length > 0 ? ' ' : '';
-            return `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')}>${colDefs}\n</AgGridReact>`;
+            return `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')} />`;
         }
 
         if (this.inlineProperties.length > 1) {
             return externalSnippet +
-                   `<AgGridReact\n${tab(1)}${this.inlineProperties.join(`\n${tab(1)}`).trim()}\n>` +
-                        `${colDefs}\n` +
-                   `</AgGridReact>`;
+                `<AgGridReact\n${tab(1)}${this.inlineProperties.join(`\n${tab(1)}`).trim()}\n/>`;
         }
 
         const space = this.inlineProperties.length > 0 ? ' ' : '';
-        return externalSnippet + `<AgGridReact${space}${this.inlineProperties.join(' ')}>${colDefs}</AgGridReact>`;
+        return externalSnippet + `<AgGridReact${space}${this.inlineProperties.join(' ')} />`;
     }
 
     addComment() {

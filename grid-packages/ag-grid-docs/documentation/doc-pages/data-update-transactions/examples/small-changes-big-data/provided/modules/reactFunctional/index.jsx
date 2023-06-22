@@ -236,8 +236,7 @@ const GridExample = () => {
                         autoGroupColumnDef={autoGroupColumnDef}
                         isGroupOpenByDefault={isGroupOpenByDefault}
                         onGridReady={onGridReady}
-                    >
-                    </AgGridReact>
+                    />
                 </div>
             </div>
 

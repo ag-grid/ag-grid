@@ -133,8 +133,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
-                >
-                </AgGridReact>
+                />
             </div>
         </div>
     );

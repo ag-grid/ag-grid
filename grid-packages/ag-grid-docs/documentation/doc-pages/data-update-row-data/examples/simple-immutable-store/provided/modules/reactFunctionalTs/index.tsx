@@ -227,8 +227,7 @@ const GridExample = () => {
                             groupDefaultExpanded={1}
                             getRowId={getRowId}
                             onGridReady={onGridReady}
-                        >
-                        </AgGridReact>
+                        />
                     </div>
                 </div>
             </div>

@@ -93,8 +93,7 @@ const GridExample = () => {
                             resizable: true,
                         }}
                         onGridReady={onGridReady}
-                    >
-                    </AgGridReact>
+                    />
                 </div>
                 <div className="form-container">
                     <label>Tab into the grid with Shift-Tab (Default Behavior)</label>
