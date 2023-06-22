@@ -177,7 +177,12 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
                 rotation = angle + toRadians(label.autoRotateAngle ?? 0) + Math.PI / 2;
             }
 
-            let text = label.formatter ? label.formatter({ value, index }) : String(value);
+            let text = String(value);
+            if (label.formatter) {
+                const { callbackCache } = this.moduleCtx;
+                text = callbackCache.call(label.formatter, { value, index }) ?? '';
+            }
+
             tempText.text = text;
             tempText.x = x;
             tempText.y = y;
