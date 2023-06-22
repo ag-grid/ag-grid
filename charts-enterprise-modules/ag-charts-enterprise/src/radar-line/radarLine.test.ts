@@ -95,4 +95,23 @@ describe('Radar Line sChart', () => {
         chart = AgEnterpriseCharts.create(options);
         await compare();
     });
+
+    it(`should avoid polar chart label collisions`, async () => {
+        const options: AgChartOptions = {
+            ...EXAMPLE_OPTIONS,
+            data: Array.from({ length: 95 }).map((_, i) => ({
+                subject: `Subject ${i}`,
+                gradeA: 2 * ((i % 5) + 1),
+                gradeB: 2 * (((i + 3) % 5) + 1),
+            })),
+            axes: [
+                { type: 'polar-angle-category', label: { avoidCollisions: true, minSpacing: 2 } },
+                { type: 'polar-radius-number' },
+            ],
+        };
+        prepareTestOptions(options as any);
+
+        chart = AgEnterpriseCharts.create(options);
+        await compare();
+    });
 });

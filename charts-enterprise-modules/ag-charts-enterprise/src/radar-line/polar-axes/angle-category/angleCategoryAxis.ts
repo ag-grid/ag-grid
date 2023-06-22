@@ -113,6 +113,11 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         const ticks = scale.ticks?.() || [];
         tickLabelGroupSelection.update(label.enabled ? ticks : []).each((node, _, index) => {
             const labelDatum = this.labelData[index];
+            if (labelDatum.hidden) {
+                node.visible = false;
+                return;
+            }
+
             node.text = labelDatum.text;
             node.setFont(label);
             node.fill = label.color;
@@ -120,6 +125,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             node.y = labelDatum.y;
             node.textAlign = labelDatum.textAlign;
             node.textBaseline = labelDatum.textBaseline;
+            node.visible = true;
             if (labelDatum.rotation) {
                 node.rotation = labelDatum.rotation;
                 node.rotationCenterX = labelDatum.x;
@@ -224,7 +230,89 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             };
         });
 
+        if (label.avoidCollisions) {
+            this.avoidLabelCollisions(labelData);
+        }
+
         return labelData;
+    }
+
+    private avoidLabelCollisions(labelData: AngleCategoryAxisLabelDatum[]) {
+        let { minSpacing } = this.tick;
+        if (!Number.isFinite(minSpacing)) {
+            minSpacing = 0;
+        }
+
+        if (labelData.length < 3) {
+            return;
+        }
+
+        const loopRightPart = (
+            step: number,
+            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
+        ) => {
+            let prev = labelData[0];
+            const lastIndex = Math.floor(labelData.length / 2);
+            for (let i = step; i <= lastIndex; i += step) {
+                const curr = labelData[i];
+                if (iterator(prev, curr)) {
+                    return true;
+                }
+                prev = curr;
+            }
+            return false;
+        };
+        const loopLeftPart = (
+            step: number,
+            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
+        ) => {
+            let prev = labelData[0];
+            const lastIndex = Math.floor(labelData.length / 2) + 1;
+            for (let i = labelData.length - step; i >= lastIndex; i -= step) {
+                const curr = labelData[i];
+                if (iterator(prev, curr)) {
+                    return true;
+                }
+                prev = curr;
+            }
+            return false;
+        };
+        const loopSymmetrically = (
+            step: number,
+            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
+        ) => {
+            if (loopRightPart(step, iterator)) {
+                return true;
+            }
+            return loopLeftPart(step, iterator);
+        };
+        const labelsCollide = (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => {
+            if (prev.hidden || next.hidden) {
+                return false;
+            }
+            const prevBox = prev.box!.clone().grow(minSpacing / 2);
+            const nextBox = next.box!.clone().grow(minSpacing / 2);
+            return prevBox.collidesBBox(nextBox);
+        };
+
+        const visibleLabels = new Set<AngleCategoryAxisLabelDatum>();
+        visibleLabels.add(labelData[0]);
+        const maxStep = Math.floor(labelData.length / 2);
+        for (let step = 1; step <= maxStep; step++) {
+            const collisionDetected = loopSymmetrically(step, labelsCollide);
+            if (!collisionDetected) {
+                loopSymmetrically(step, (_, next) => {
+                    visibleLabels.add(next);
+                });
+                break;
+            }
+        }
+        labelData.forEach((datum) => {
+            if (!visibleLabels.has(datum)) {
+                datum.hidden = true;
+                datum.box = undefined;
+            }
+        });
     }
 
     computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: _Scene.BBox) {
