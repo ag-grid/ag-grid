@@ -83,6 +83,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     @ActionOnSet<Chart>({
         newValue(value) {
+            if (this.destroyed) return;
+
             value.appendChild(this.element);
         },
         oldValue(value) {
