@@ -54,7 +54,7 @@ export class ColumnDefFactory {
                     pointer = pointer.getOriginalParent();
                 }
 
-                if (lastPointer === pointer) {
+                if (pointer != null && lastPointer === pointer) {
                     addToResult = false;
                     break;
                 }
