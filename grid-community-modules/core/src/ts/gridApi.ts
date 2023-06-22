@@ -826,7 +826,9 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Sets columns to adjust in size to fit the grid horizontally.
+     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
     public sizeColumnsToFit(params?: ISizeColumnsToFitParams) {
         this.gridBodyCtrl.sizeColumnsToFit(params);

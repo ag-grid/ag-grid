@@ -15,7 +15,7 @@ import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnUtils } from "../columns/columnUtils";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { ColumnEvent, ColumnEventType } from "../events";
+import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { ModuleNames } from "../modules/moduleNames";
@@ -26,6 +26,7 @@ import { mergeDeep } from "../utils/object";
 import { GridOptionsService } from "../gridOptionsService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { IRowNode } from "../interfaces/iRowNode";
+import { ColumnState } from "../columns/columnModel";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -42,7 +43,8 @@ export type ColumnEventName =
     'menuVisibleChanged' |
     'columnRowGroupChanged' |
     'columnPivotChanged' |
-    'columnValueChanged';
+    'columnValueChanged' |
+    'columnStateUpdated';
 
 let instanceIdSequence = 0;
 export function getNextColInstanceId() {
@@ -85,6 +87,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public static EVENT_PIVOT_CHANGED: ColumnEventName = 'columnPivotChanged';
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED: ColumnEventName = 'columnValueChanged';
+    // + dataTypeService - when waiting to infer cell data types
+    public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
@@ -523,6 +527,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
+        this.dispatchStateUpdatedEvent('sort');
     }
 
     public setMenuVisible(visible: boolean, source: ColumnEventType = "api"): void {
@@ -558,10 +563,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     public setSortIndex(sortOrder?: number | null): void {
         this.sortIndex = sortOrder;
+        this.dispatchStateUpdatedEvent('sortIndex');
     }
 
     public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {
         this.aggFunc = aggFunc;
+        this.dispatchStateUpdatedEvent('aggFunc');
     }
 
     /** If aggregation is set for the column, returns the aggregation function. */
@@ -620,6 +627,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         } else {
             this.pinned = null;
         }
+        this.dispatchStateUpdatedEvent('pinned');
     }
 
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {
@@ -666,6 +674,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             this.visible = newValue;
             this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
+        this.dispatchStateUpdatedEvent('hide');
     }
 
     public isVisible(): boolean {
@@ -780,6 +789,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
                 this.fireColumnWidthChangedEvent(source);
             }
         }
+        this.dispatchStateUpdatedEvent('width');
     }
 
     public fireColumnWidthChangedEvent(source: ColumnEventType): void {
@@ -809,6 +819,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // change flex when required by the applyColumnState method.
     public setFlex(flex: number | null) {
         if (this.flex !== flex) { this.flex = flex; }
+        this.dispatchStateUpdatedEvent('flex');
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {
@@ -822,6 +833,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
+        this.dispatchStateUpdatedEvent('rowGroup');
     }
 
     /** Returns `true` if row group is currently active for this column. */
@@ -834,6 +846,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
+        this.dispatchStateUpdatedEvent('pivot');
     }
 
     /** Returns `true` if pivot is currently active for this column. */
@@ -881,5 +894,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         return menuTabs;
+    }
+
+    private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
+        this.eventService.dispatchEvent({
+            type: Column.EVENT_STATE_UPDATED,
+            key
+        } as AgEvent);
     }
 }
