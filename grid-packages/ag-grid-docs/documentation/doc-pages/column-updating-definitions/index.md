@@ -35,10 +35,8 @@ can be applied.
 The example below demonstrates updating column definitions to change how columns are configured. Note the following:
 
 - All Columns are provided with just the `field` attribute set on the Column Definition.
-- 'Set Header Names' and 'Remove Header Names' sets and then subsequently removes the `headerName` attribute on all
-Columns.
-- 'Set Value Formatter' and 'Remove Value Formatter' sets and then subsequently removes the `valueFormatter` attribute
-on all Columns.
+- 'Set Header Names' and 'Remove Header Names' sets and then subsequently removes the `headerName` attribute on all Columns.
+- 'Set Value Formatter' and 'Remove Value Formatter' sets and then subsequently removes the `valueFormatter` attribute on all Columns.
 - Note that any resizing, sorting etc of the Columns is kept intact between updates to the Column Definitions.
 
 <grid-example title='Updating Column Definition' name='update-column-definition' type='mixed' options='{ "modules": true }'></grid-example>
@@ -89,8 +87,7 @@ const gridOptions = {
 The example below shows Column Definitions using **initial attributes**. Note the following:
 
 - The `initialWidth`, `initialSort` and `initialPinned` are applied only when the columns are created.
-- If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with
-Initials', the columns state will not change.
+- If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with Initials', the columns state will not change.
 - Removing the columns first and then setting them again will use the initial values again.
 
 <grid-example title='Updating Column Initial Attributes' name='changing-default' type='mixed' options='{ "modules": true }'></grid-example>
@@ -98,11 +95,8 @@ Initials', the columns state will not change.
 The following example shows Column Definitions using **stateful attributes**. Note the following:
 
 - The `width`, `sort` and `pinned` stateful attributes are applied whenever Column Definitions are set.
-- If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with
-State', the columns state will change and the changes made via the UI will be lost.
-- Note the `defaultColDef` is used to remove state. For example `sort=null` is set so that any sorting the user might of
-done on another column is cleared down. Otherwise the grid would see the `sort` attribute as `undefined` which means the
-state should not be changed.
+- If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with  State', the columns state will change and the changes made via the UI will be lost.
+- Note the `defaultColDef` is used to remove state. For example `sort=null` is set so that any sorting the user might have done on another column is cleared down. Otherwise, the grid would see the `sort` attribute as `undefined` which means the state should not be changed.
 
 <grid-example title='Updating Column State' name='changing-state' type='mixed' options='{ "modules": true }'></grid-example>
 
