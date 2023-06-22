@@ -1,8 +1,8 @@
-import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } from 'ag-charts-community';
 
 const { ChartAxisDirection, Layers } = _ModuleSupport;
 const { LinearScale } = _Scale;
-const { Group, Arc, Path, Selection } = _Scene;
+const { Arc, Caption, Group, Path, Selection } = _Scene;
 
 export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     static className = 'RadiusNumberAxis';
@@ -92,5 +92,46 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
             });
             path.closePath();
         });
+    }
+
+    protected updateTitle() {
+        const identityFormatter = (params: AgAxisCaptionFormatterParams) => params.defaultValue;
+        const {
+            title,
+            _titleCaption,
+            lineNode,
+            range: requestedRange,
+            moduleCtx: { callbackCache },
+        } = this;
+        const { formatter = identityFormatter } = this.title ?? {};
+
+        if (!title) {
+            _titleCaption.enabled = false;
+            return;
+        }
+
+        _titleCaption.enabled = title.enabled;
+        _titleCaption.fontFamily = title.fontFamily;
+        _titleCaption.fontSize = title.fontSize;
+        _titleCaption.fontStyle = title.fontStyle;
+        _titleCaption.fontWeight = title.fontWeight;
+        _titleCaption.color = title.color;
+        _titleCaption.wrapping = title.wrapping;
+
+        let titleVisible = false;
+        const titleNode = _titleCaption.node;
+        if (title.enabled && lineNode.visible) {
+            titleVisible = true;
+
+            titleNode.rotation = Math.PI / 2;
+            titleNode.x = Math.floor((requestedRange[0] + requestedRange[1]) / 2);
+            titleNode.y = -Caption.PADDING;
+            titleNode.textAlign = 'center';
+            titleNode.textBaseline = 'bottom';
+
+            titleNode.text = callbackCache.call(formatter, this.getTitleFormatterParams());
+        }
+
+        titleNode.visible = titleVisible;
     }
 }

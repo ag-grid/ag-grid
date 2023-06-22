@@ -134,7 +134,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
 
-    private lineNode = this.axisGroup.appendChild(new Line());
+    protected lineNode = this.axisGroup.appendChild(new Line());
     protected readonly tickLineGroup = this.axisGroup.appendChild(
         new Group({ name: `${this.id}-Axis-tick-lines`, zIndex: Layers.AXIS_ZINDEX })
     );
@@ -1117,7 +1117,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         lineNode.visible = true;
     }
 
-    private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
+    protected updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
         const identityFormatter = (params: AgAxisCaptionFormatterParams) => params.defaultValue;
         const {
             rotation,
