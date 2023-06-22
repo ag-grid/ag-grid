@@ -26,9 +26,17 @@
         {
             "label": "Clean",
             "command": "lerna",
-            "args": [
-                "clean"
-            ]
+            "args": ["clean"]
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "charts-examples/ag-charts-enterprise-example/tsconfig.json",
+            "option": "watch",
+            "problemMatcher": ["$tsc-watch"],
+            "group": {
+                "kind": "build"
+            },
+            "label": "Standalone Charts: Enterprise Watch"
         }
     ]
 }
