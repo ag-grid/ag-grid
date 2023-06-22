@@ -5,6 +5,12 @@ const { LinearScale } = _Scale;
 const { Arc, Caption, Group, Path, Selection } = _Scene;
 const { extent } = _Util;
 
+class RadiusNumberAxisTick extends _ModuleSupport.AxisTick<_Scale.LinearScale, number> {
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    @Default(NaN)
+    maxSpacing: number = NaN;
+}
+
 export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     static className = 'RadiusNumberAxis';
     static type = 'polar-radius-number' as const;
@@ -161,5 +167,9 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
         }
 
         return d;
+    }
+
+    protected createTick() {
+        return new RadiusNumberAxisTick();
     }
 }
