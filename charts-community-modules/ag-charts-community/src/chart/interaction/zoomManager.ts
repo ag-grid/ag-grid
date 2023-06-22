@@ -22,6 +22,7 @@ export interface ZoomChangeEvent extends AxisZoomState {
  */
 export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
     private axes: Record<string, AxisZoomManager> = {};
+    private initialZoom?: { callerId: string; newZoom?: AxisZoomState };
 
     public updateAxes(axes: Array<{ id: string; direction: ChartAxisDirection }>) {
         const removedAxes = new Set(Object.keys(this.axes));
@@ -34,9 +35,19 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         removedAxes.forEach((axisId) => {
             delete this.axes[axisId];
         });
+
+        if (this.initialZoom) {
+            this.updateZoom(this.initialZoom.callerId, this.initialZoom.newZoom);
+            this.initialZoom = undefined;
+        }
     }
 
     public updateZoom(callerId: string, newZoom?: AxisZoomState) {
+        if (Object.keys(this.axes).length === 0) {
+            this.initialZoom = { callerId, newZoom };
+            return;
+        }
+
         Object.values(this.axes).forEach((axis) => {
             axis.updateZoom(callerId, newZoom?.[axis.direction]);
         });
