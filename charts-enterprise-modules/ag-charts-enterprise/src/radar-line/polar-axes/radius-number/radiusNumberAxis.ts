@@ -1,14 +1,23 @@
 import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } from 'ag-charts-community';
 
-const { ChartAxisDirection, Layers } = _ModuleSupport;
+const { AND, ChartAxisDirection, Default, GREATER_THAN, Layers, LESS_THAN, NUMBER_OR_NAN, Validate } = _ModuleSupport;
 const { LinearScale } = _Scale;
 const { Arc, Caption, Group, Path, Selection } = _Scene;
+const { extent } = _Util;
 
 export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     static className = 'RadiusNumberAxis';
     static type = 'polar-radius-number' as const;
 
     gridShape: 'polygon' | 'circle' = 'polygon';
+
+    @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
+    @Default(NaN)
+    min: number = NaN;
+
+    @Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min')))
+    @Default(NaN)
+    max: number = NaN;
 
     protected readonly gridArcGroup = this.gridGroup.appendChild(
         new Group({
@@ -133,5 +142,24 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
         }
 
         titleNode.visible = titleVisible;
+    }
+
+    normaliseDataDomain(d: number[]) {
+        const { min, max } = this;
+
+        if (d.length > 2) {
+            d = extent(d) ?? [NaN, NaN];
+        }
+        if (!isNaN(min)) {
+            d = [min, d[1]];
+        }
+        if (!isNaN(max)) {
+            d = [d[0], max];
+        }
+        if (d[0] > d[1]) {
+            d = [];
+        }
+
+        return d;
     }
 }

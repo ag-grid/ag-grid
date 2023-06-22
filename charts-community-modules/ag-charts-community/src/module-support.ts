@@ -1,4 +1,5 @@
 export * from './util/validation';
+export * from './util/default';
 export * from './util/module';
 export * from './util/moduleContext';
 export * from './util/navigator-module';
