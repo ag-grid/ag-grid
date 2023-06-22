@@ -38,6 +38,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: AgMenuItemComponent | null = null;
+    private hidePopup?: () => void;
 
     private afterFiltersReadyFuncs: (() => void)[] = [];
 
@@ -188,7 +189,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         if (filter.afterGuiAttached) {
             group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached!({
                 container: this.lastOpenedInContainer!,
-                suppressFocus: true
+                suppressFocus: true,
+                hidePopup: this.hidePopup
             }));
         }
 
@@ -303,7 +305,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params) {
+            this.hidePopup = params.hidePopup;
             this.refreshGui(params.container!);
+        } else {
+            this.hidePopup = undefined;
         }
 
         const { filters } = this.params;
@@ -344,6 +349,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         this.filters!.length = 0;
         this.destroyChildren();
+        this.hidePopup = undefined;
 
         super.destroy();
     }
