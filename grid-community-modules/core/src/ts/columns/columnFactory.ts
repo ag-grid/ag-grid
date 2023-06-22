@@ -297,6 +297,8 @@ export class ColumnFactory extends BeanStub {
             this.applyColumnState(column, colDefMerged);
         }
 
+        this.dataTypeService.addColumnListeners(column);
+
         return column;
     }
 

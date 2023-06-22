@@ -455,7 +455,8 @@ export type ColumnEventType =
     "api" |
     "flex" |
     "pivotChart" |
-    "columnRowGroupChanged";
+    "columnRowGroupChanged" |
+    "cellDataTypeInferred";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */

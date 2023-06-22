@@ -18,7 +18,7 @@ import {
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
-import { ColumnModel } from './columnModel';
+import { ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
 import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -31,6 +31,7 @@ import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { RowDataUpdateStartedEvent } from '../events';
+import { ColumnUtils } from './columnUtils';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -56,6 +57,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', '
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
@@ -66,6 +68,10 @@ export class DataTypeService extends BeanStub {
     private hasObjectValueFormatter: boolean;
     private groupHideOpenParents: boolean;
     private initialData: any | null | undefined;
+    private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
+    // keep track of any column state updates whilst waiting for data types to be inferred
+    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
+    private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
     @PostConstruct
     public init(): void {
@@ -143,6 +149,11 @@ export class DataTypeService extends BeanStub {
     ): DataTypeDefinition & GroupSafeValueFormatter | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
         const extendsCellDataType = dataTypeDefinition.extendsDataType;
+
+        if (dataTypeDefinition.columnTypes) {
+            this.isColumnTypeOverrideInDataTypeDefinitions = true;
+        }
+
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
             const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
@@ -268,7 +279,7 @@ export class DataTypeService extends BeanStub {
             cellDataType = colDef.cellDataType;
         }
         if ((cellDataType == null || cellDataType === true)) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field) : false;
+            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
         if (!cellDataType) {
             colDef.cellDataType = false;
@@ -301,7 +312,19 @@ export class DataTypeService extends BeanStub {
     ): string[] | undefined {
         const dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(colDef, userColDef, colId);
         const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
+        colDef.type = columnTypes;
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
+    }
+
+    public addColumnListeners(column: Column): void {
+        if (!this.isWaitingForRowData) { return; }
+        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
+        if (!columnStateUpdates) { return; }
+        const columnListener = (event: { key: keyof ColumnStateParams }) => {
+            columnStateUpdates.add(event.key);
+        };
+        column.addEventListener(Column.EVENT_STATE_UPDATED, columnListener);
+        this.columnStateUpdateListenerDestroyFuncs.push(() => column.removeEventListener(Column.EVENT_STATE_UPDATED, columnListener));
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
@@ -351,7 +374,7 @@ export class DataTypeService extends BeanStub {
         }
     }
 
-    private inferCellDataType(field: string | undefined): string | undefined {
+    private inferCellDataType(field: string | undefined, colId: string): string | undefined {
         if (!field) {
             return undefined;
         }
@@ -361,7 +384,7 @@ export class DataTypeService extends BeanStub {
             const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
-            this.initWaitForRowData();
+            this.initWaitForRowData(colId);
         }
         if (value == null) {
             return undefined;
@@ -387,11 +410,16 @@ export class DataTypeService extends BeanStub {
         return null;
     }
 
-    private initWaitForRowData(): void {
+    private initWaitForRowData(colId: string): void {
+        this.columnStateUpdatesPendingInference[colId] = new Set();
         if (this.isWaitingForRowData) {
             return;
         }
         this.isWaitingForRowData = true;
+        const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
+        if (columnTypeOverridesExist) {
+            this.columnModel.queueResizeOperations();
+        }
         const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
             const { firstRowData } = event;
             if (!firstRowData) {
@@ -399,10 +427,59 @@ export class DataTypeService extends BeanStub {
             }
             destroyFunc?.();
             this.isWaitingForRowData = false;
-            this.initialData = firstRowData;
-            this.columnModel.recreateColumnDefs('rowDataUpdated');
-            this.initialData = null;
+            this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
+            this.columnStateUpdatesPendingInference = {};
+            if (columnTypeOverridesExist) {
+                this.columnModel.processResizeOperations();
+            }
         });
+    }
+
+    private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {
+        this.initialData = firstRowData;
+        const state: ColumnState[] = [];
+        this.columnStateUpdateListenerDestroyFuncs.forEach(destroyFunc => destroyFunc());
+        this.columnStateUpdateListenerDestroyFuncs = [];
+        const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
+        const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
+        Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
+            const column = this.columnModel.getGridColumn(colId);
+            if (!column) { return; }
+            const oldColDef = column.getColDef();
+            if (!this.columnModel.resetColumnDefIntoColumn(column)) { return; }
+            const newColDef = column.getColDef();
+            if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
+                const updatedColumnState = this.getUpdatedColumnState(column, columnStateUpdates);
+                if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
+                    newRowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
+                    newPivotColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                state.push(updatedColumnState);
+            }
+        });
+        if (columnTypeOverridesExist) {
+            state.push(...this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
+        }
+        if (state.length) {
+            this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
+        }
+        this.initialData = null;
+    }
+
+    private getUpdatedColumnState(column: Column, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
+        const columnState = this.columnModel.getColumnStateFromColDef(column);
+        columnStateUpdates.forEach(key => {
+            // if the column state has been updated, don't update again
+            delete columnState[key];
+            if (key === 'rowGroup') {
+                delete columnState.rowGroupIndex;
+            } else if (key === 'pivot') {
+                delete columnState.pivotIndex;
+            }
+        });
+        return columnState;
     }
 
     private checkObjectValueHandlers(defaultDataTypes: { [key: string]: CoreDataTypeDefinition }): void {
