@@ -6,6 +6,7 @@ export * from './util/proxy';
 export * from './chart/background/backgroundModule';
 export * from './chart/chartAxisDirection';
 export * from './chart/data/dataModel';
+export * from './chart/data/dataController';
 export * from './chart/updateService';
 export * from './chart/layout/layoutService';
 export * from './chart/interaction/animationManager';

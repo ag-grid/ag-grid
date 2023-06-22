@@ -40,6 +40,7 @@ import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
 import { CallbackCache } from '../util/callbackCache';
 import { ModuleContext } from '../util/moduleContext';
+import { DataController } from './data/dataController';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -743,7 +744,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.assignSeriesToAxes();
         }
 
-        await Promise.all(this.series.map((s) => s.processData()));
+        const dataController = new DataController();
+        const seriesPromises = this.series.map((s) => s.processData(dataController));
+        await dataController.execute();
+        await Promise.all(seriesPromises);
         await this.updateLegend();
     }
 

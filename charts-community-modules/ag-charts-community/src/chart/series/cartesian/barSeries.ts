@@ -49,13 +49,13 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
 import { ModuleContext } from '../../../util/moduleContext';
+import { DataController } from '../../data/dataController';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -304,7 +304,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     shadow?: DropShadow = undefined;
 
     protected smallestDataInterval?: { x: number; y: number } = undefined;
-    async processData() {
+    async processData(dataController: DataController) {
         this.processYKeys();
         this.processYNames();
 
@@ -331,7 +331,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             extraProps.push(diff(this.processedData));
         }
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 keyProperty(xKey, isContinuousX),
                 ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
@@ -344,10 +344,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             dataVisible: this.visible && activeSeriesItems.length > 0,
         });
 
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
 
         this.smallestDataInterval = {
-            x: this.processedData?.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
+            x: processedData.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
             y: Infinity,
         };
 

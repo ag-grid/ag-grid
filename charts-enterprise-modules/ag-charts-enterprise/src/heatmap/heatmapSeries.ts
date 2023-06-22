@@ -4,7 +4,6 @@ import { AgHeatmapSeriesFormat, AgHeatmapSeriesTooltipRendererParams, AgHeatmapS
 
 const {
     Validate,
-    DataModel,
     SeriesNodePickMode,
     valueProperty,
     ChartAxisDirection,
@@ -124,7 +123,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         this.colorScale = new ColorScale();
     }
 
-    async processData() {
+    async processData(dataController: _ModuleSupport.DataController) {
         const { xKey = '', yKey = '', axes, labelKey } = this;
 
         const xAxis = axes[ChartAxisDirection.X];
@@ -142,7 +141,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         const { colorScale, colorDomain, colorRange, colorKey } = this;
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
                 valueProperty(xKey, isContinuousX, { id: 'xValue' }),
                 valueProperty(yKey, isContinuousY, { id: 'yValue' }),
@@ -150,11 +149,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
                 ...(labelKey ? [valueProperty(labelKey, false, { id: 'labelValue' })] : []),
             ],
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
-            colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
+            const colorKeyIdx = dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
+            colorScale.domain = colorDomain ?? processedData.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
             colorScale.update();
         }

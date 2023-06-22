@@ -45,12 +45,12 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
 import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { ModuleContext } from '../../../util/moduleContext';
+import { DataController } from '../../data/dataController';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -223,7 +223,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     protected highlightedDatum?: MarkerSelectionDatum;
 
-    async processData() {
+    async processData(dataController: DataController) {
         const { xKey, yKeys, seriesItemEnabled, axes, normalizedTo } = this;
 
         const xAxis = axes[ChartAxisDirection.X];
@@ -242,7 +242,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             extraProps.push(normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
         }
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 keyProperty(xKey, isContinuousX, { id: 'xValue' }),
                 ...enabledYKeys.map((yKey) =>
@@ -259,7 +259,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             dataVisible: this.visible && enabledYKeys.length > 0,
         });
 
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
