@@ -18,6 +18,7 @@
     "no-consecutive-blank-lines": false,
     "no-unused-expression": false,
     "max-classes-per-file": false,
-    "only-arrow-functions": false
+    "only-arrow-functions": false,
+    "max-line-length": false
   }
 }
