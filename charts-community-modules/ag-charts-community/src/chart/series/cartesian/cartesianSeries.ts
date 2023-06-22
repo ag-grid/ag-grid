@@ -30,6 +30,7 @@ import { DataModel, ProcessedData } from '../../data/dataModel';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
 import { ModuleContext } from '../../../util/moduleContext';
+import { Logger } from '../../../util/logger';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -248,9 +249,16 @@ export abstract class CartesianSeries<
             seriesRectWidth: seriesRect?.width,
             seriesRectHeight: seriesRect?.height,
         };
-        if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+        const resize = jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null;
+        if (resize) {
             this.nodeDataDependencies = newNodeDataDependencies;
             this.markNodeDataDirty();
+        }
+
+        await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
+        await this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
+
+        if (resize) {
             this.animationState.transition('resize', {
                 datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
                 markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
@@ -258,9 +266,6 @@ export abstract class CartesianSeries<
                 paths: this.subGroups.map(({ paths }) => paths),
             });
         }
-
-        await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
-        await this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
 
         this.animationState.transition('update', {
             datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
@@ -284,6 +289,9 @@ export abstract class CartesianSeries<
         if (this.nodeDataRefresh) {
             this.nodeDataRefresh = false;
 
+            if (this.chart?.debug) {
+                Logger.debug(`CartesianSeries.updateSelections() - calling createNodeData() for`, this.id);
+            }
             this._contextNodeData = await this.createNodeData();
             await this.updateSeriesGroups();
         }
