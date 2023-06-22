@@ -152,6 +152,7 @@ export class GridSerializer extends BeanStub {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
                 const displayedGroups: IHeaderColumn[] = this.displayedGroupCreator.createDisplayedGroups(
                     columnsToExport,
+                    this.columnModel.getGridBalancedTree(),
                     groupInstanceIdCreator,
                     null
                 );
