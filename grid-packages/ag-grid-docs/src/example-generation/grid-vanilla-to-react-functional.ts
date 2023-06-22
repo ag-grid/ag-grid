@@ -90,8 +90,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
-            >
-            </AgGridReact>
+            />
         </div>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;
