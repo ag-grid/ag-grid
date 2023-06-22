@@ -675,14 +675,14 @@ function logProcessedData(processedData: ProcessedData<any>) {
     const log = (name: string, data: any[]) => {
         if (data.length > 0) {
             // eslint-disable-next-line no-console
-            console.log(name);
+            console.log(`DataModel.processData() - ${name}`);
             // eslint-disable-next-line no-console
             console.table(data);
         }
     };
 
     // eslint-disable-next-line no-console
-    console.log({ processedData });
+    console.log('DataModel.processData() - processedData', processedData);
     log('Key Domains', processedData.domain.keys);
     log('Group Domains', processedData.domain.groups ?? []);
     log('Value Domains', processedData.domain.values);

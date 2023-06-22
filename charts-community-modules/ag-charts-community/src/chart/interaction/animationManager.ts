@@ -9,6 +9,7 @@ import {
     TweenControls,
     TweenOptions,
 } from '../../motion/animate';
+import { Logger } from '../../util/logger';
 
 type AnimationId = string;
 type AnimationEventType = 'animation-frame';
@@ -42,6 +43,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private interactionManager: InteractionManager;
 
     public skipAnimations = false;
+    public debug = false;
 
     constructor(interactionManager: InteractionManager) {
         super();
@@ -63,6 +65,10 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
         this.isPlaying = true;
 
+        if (this.debug) {
+            Logger.debug('AnimationManager.play()');
+        }
+
         for (const id in this.controllers) {
             this.controllers[id].play();
         }
@@ -76,6 +82,10 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         this.isPlaying = false;
         this.cancelAnimationFrame();
 
+        if (this.debug) {
+            Logger.debug('AnimationManager.pause()');
+        }
+
         for (const id in this.controllers) {
             this.controllers[id].pause();
         }
@@ -84,6 +94,10 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     public stop() {
         this.isPlaying = false;
         this.cancelAnimationFrame();
+
+        if (this.debug) {
+            Logger.debug('AnimationManager.stop()');
+        }
 
         for (const id in this.controllers) {
             this.controllers[id].stop();
@@ -232,9 +246,11 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             const deltaMs = time - this.lastTime;
             this.lastTime = time;
 
-            this.updaters.forEach(([_, update]) => {
-                update(deltaMs);
-            });
+            if (this.debug) {
+                Logger.debug('AnimationManager - frame()', { updaterCount: this.updaters.length });
+            }
+
+            this.updaters.forEach(([_, update]) => update(deltaMs));
 
             this.listeners.dispatch('animation-frame', { type: 'animation-frame', deltaMs });
         };

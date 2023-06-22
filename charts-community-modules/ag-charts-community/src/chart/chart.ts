@@ -75,6 +75,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     @ActionOnSet<Chart>({
         newValue(value) {
             this.scene.debug.consoleLog = value;
+            if (this.animationManager) {
+                this.animationManager.debug = value;
+            }
         },
     })
     public debug;
@@ -236,7 +239,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         element.style.position = 'relative';
 
         this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
-        this.debug = false;
         this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
@@ -263,6 +265,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.overlays = new ChartOverlays(this.element);
         this.highlight = new ChartHighlight();
         this.container = container;
+        this.debug = false;
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -406,9 +409,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return result;
     }
 
-    log(opts: any) {
+    log(...opts: any[]) {
         if (this.debug) {
-            Logger.debug(opts);
+            Logger.debug(...opts);
         }
     }
 
@@ -503,6 +506,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
     private async performUpdate(count: number) {
         const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+        this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
         const splits = [performance.now()];
 
         switch (performUpdateType) {
@@ -531,6 +535,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 await this.performLayout();
                 this.handleOverlays();
+                this.log('Chart.performUpdate() - seriesRect', this.seriesRect);
                 splits.push(performance.now());
 
             // eslint-disable-next-line no-fallthrough
@@ -559,7 +564,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         const end = performance.now();
-        this.log({
+        this.log('Chart.performUpdate() - end', {
             chart: this,
             durationMs: Math.round((end - splits[0]) * 100) / 100,
             count,
@@ -730,6 +735,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private resize(width?: number, height?: number) {
         width ??= this.width ?? (this.autoSize ? this._lastAutoSize?.[0] : this.scene.canvas.width);
         height ??= this.height ?? (this.autoSize ? this._lastAutoSize?.[1] : this.scene.canvas.height);
+        this.log('Chart.resize()', { width, height });
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {

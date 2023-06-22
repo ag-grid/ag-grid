@@ -226,7 +226,7 @@ abstract class AgChartInternal {
     ) {
         AgChartInternal.initialiseModules();
 
-        debug('>>> createOrUpdate() user options', userOptions);
+        debug('>>> AgChartV2.createOrUpdate() user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG() === true) {
             mixinOpts['debug'] = true;
@@ -281,8 +281,8 @@ abstract class AgChartInternal {
 
         const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? chart.userOptions;
         const userOptions = jsonMerge([lastUpdateOptions, deltaOptions]);
-        debug('>>> updateUserDelta() user delta', deltaOptions);
-        debug('base options', lastUpdateOptions);
+        debug('>>> AgChartV2.updateUserDelta() user delta', deltaOptions);
+        debug('AgChartV2.updateUserDelta() - base options', lastUpdateOptions);
         AgChartInternal.createOrUpdate(userOptions as any, proxy);
     }
 
@@ -388,7 +388,7 @@ abstract class AgChartInternal {
 
         if (chart.destroyed) return;
 
-        debug('applying delta', processedOptions);
+        debug('AgChartV2.updateDelta() - applying delta', processedOptions);
         applyChartOptions(chart, processedOptions, userOptions);
     }
 }
@@ -452,7 +452,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
 
     const majorChange = forceNodeDataRefresh || modulesChanged;
     const updateType = majorChange ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
-    debug('chart update type', { updateType: ChartUpdateType[updateType] });
+    debug('AgChartV2.applyChartOptions() - update type', ChartUpdateType[updateType]);
     chart.update(updateType, { forceNodeDataRefresh });
 }
 
@@ -503,7 +503,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
                 return;
             }
 
-            debug(`applying series diff idx ${i}`, seriesDiff);
+            debug(`AgChartV2.applySeries() - applying series diff idx ${i}`, seriesDiff);
 
             applySeriesValues(s as any, seriesDiff, { path: `series[${i}]`, index: i });
             s.markNodeDataDirty();
@@ -532,7 +532,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
                 const previousOpts = oldOpts.axes?.[i] ?? {};
                 const axisDiff = jsonDiff(previousOpts, optAxes[i]) as any;
 
-                debug(`applying axis diff idx ${i}`, axisDiff);
+                debug(`AgChartV2.applyAxes() - applying axis diff idx ${i}`, axisDiff);
 
                 const path = `axes[${i}]`;
                 const skip = ['axes[].type'];

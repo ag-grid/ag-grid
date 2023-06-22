@@ -235,6 +235,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // Package-level visibility, not meant to be set by the user.
     chart?: {
         mode: 'standalone' | 'integrated';
+        debug: boolean;
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
