@@ -18,6 +18,8 @@ export interface AgZoomOptions {
     axes?: AgZoomAxes;
     /** Set to true to enable the zoom module. */
     enabled?: boolean;
+    /** Set to true to enable dragging an axis to zoom series attached to that axis, defaults to true. */
+    enableAxisDragging?: boolean;
     /** Set to true to enable panning while zoomed, defaults to true. */
     enablePanning?: boolean;
     /** Set to true to enable zooming with the mouse wheel, defaults to true. */

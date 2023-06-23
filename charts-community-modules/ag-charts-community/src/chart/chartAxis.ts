@@ -28,7 +28,7 @@ export interface ChartAxis {
     dataDomain: any[];
     destroy(): void;
     detachAxis(node: Node): void;
-    direction: 'x' | 'y';
+    direction: ChartAxisDirection;
     formatDatum(datum: any): string;
     getLayoutState(): AxisLayout;
     gridLength: number;

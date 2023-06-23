@@ -367,7 +367,7 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        const zoom = this.zoomManager.getZoom()?.[axis.direction];
+        const zoom = this.zoomManager.getAxisZoom(axis.id);
         const { min = 0, max = 1 } = zoom ?? {};
         axis.visibleRange = [min, max];
 

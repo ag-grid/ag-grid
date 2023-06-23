@@ -1,6 +1,7 @@
+import { ChartAxisDirection } from '../chartAxisDirection';
 import { BaseManager } from './baseManager';
 
-interface ZoomState {
+export interface ZoomState {
     min: number;
     max: number;
 }
@@ -12,16 +13,7 @@ export interface AxisZoomState {
 
 export interface ZoomChangeEvent extends AxisZoomState {
     type: 'zoom-change';
-}
-
-function isEqual(a?: AxisZoomState, b?: AxisZoomState) {
-    if (a === b) return true;
-    if (a?.x?.min !== b?.x?.min) return false;
-    if (a?.x?.max !== b?.x?.max) return false;
-    if (a?.y?.max !== b?.y?.max) return false;
-    if (a?.y?.min !== b?.y?.min) return false;
-
-    return true;
+    axes: Record<string, ZoomState | undefined>;
 }
 
 /**
@@ -29,46 +21,122 @@ function isEqual(a?: AxisZoomState, b?: AxisZoomState) {
  * and handles conflicting zoom requests.
  */
 export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
-    private readonly states: Record<string, AxisZoomState> = {};
-    private currentZoom?: AxisZoomState = undefined;
+    private axes: Record<string, AxisZoomManager> = {};
+    private initialZoom?: { callerId: string; newZoom?: AxisZoomState };
 
-    public constructor() {
-        super();
+    public updateAxes(axes: Array<{ id: string; direction: ChartAxisDirection }>) {
+        const removedAxes = new Set(Object.keys(this.axes));
+
+        axes.forEach((axis) => {
+            removedAxes.delete(axis.id);
+            this.axes[axis.id] ??= new AxisZoomManager(axis.direction);
+        });
+
+        removedAxes.forEach((axisId) => {
+            delete this.axes[axisId];
+        });
+
+        if (this.initialZoom) {
+            this.updateZoom(this.initialZoom.callerId, this.initialZoom.newZoom);
+            this.initialZoom = undefined;
+        }
     }
 
     public updateZoom(callerId: string, newZoom?: AxisZoomState) {
-        delete this.states[callerId];
-
-        if (newZoom != null) {
-            this.states[callerId] = { ...newZoom };
+        if (Object.keys(this.axes).length === 0) {
+            this.initialZoom = { callerId, newZoom };
+            return;
         }
+
+        Object.values(this.axes).forEach((axis) => {
+            axis.updateZoom(callerId, newZoom?.[axis.direction]);
+        });
+
+        this.applyStates();
+    }
+
+    public updateAxisZoom(callerId: string, axisId: string, newZoom?: ZoomState) {
+        this.axes[axisId]?.updateZoom(callerId, newZoom);
 
         this.applyStates();
     }
 
     public getZoom(): AxisZoomState | undefined {
-        return this.currentZoom;
+        let x: ZoomState | undefined;
+        let y: ZoomState | undefined;
+
+        // TODO: this only works when there is a single axis on each direction as it gets the last of each
+        Object.values(this.axes).forEach((axis) => {
+            if (axis.direction === ChartAxisDirection.X) {
+                x = axis.getZoom();
+            } else if (axis.direction === ChartAxisDirection.Y) {
+                y = axis.getZoom();
+            }
+        });
+
+        if (x || y) {
+            return { x, y };
+        }
+    }
+
+    public getAxisZoom(axisId: string): ZoomState | undefined {
+        return this.axes[axisId]?.getZoom();
     }
 
     private applyStates() {
-        const currentZoom = this.currentZoom;
-        const zoomToApply: AxisZoomState = {};
+        const changed = Object.values(this.axes)
+            .map((axis) => axis.applyStates())
+            .some(Boolean);
 
-        // Last added entry wins.
-        for (const [_, { x, y }] of Object.entries(this.states)) {
-            zoomToApply.x = x ?? zoomToApply.x;
-            zoomToApply.y = y ?? zoomToApply.y;
-        }
-        this.currentZoom = zoomToApply.x != null || zoomToApply.y != null ? zoomToApply : undefined;
-
-        const changed = !isEqual(currentZoom, this.currentZoom);
         if (!changed) {
             return;
         }
+
+        const currentZoom = this.getZoom();
+        const axes: Record<string, ZoomState | undefined> = {};
+        for (const [axisId, axis] of Object.entries(this.axes)) {
+            axes[axisId] = axis.getZoom();
+        }
+
         const event: ZoomChangeEvent = {
             type: 'zoom-change',
             ...(currentZoom ?? {}),
+            axes,
         };
         this.listeners.dispatch('zoom-change', event);
+    }
+}
+
+class AxisZoomManager {
+    private readonly states: Record<string, ZoomState> = {};
+    private currentZoom?: ZoomState = undefined;
+
+    public direction: ChartAxisDirection;
+
+    constructor(direction: ChartAxisDirection) {
+        this.direction = direction;
+    }
+
+    public updateZoom(callerId: string, newZoom?: ZoomState) {
+        delete this.states[callerId];
+
+        if (newZoom != null) {
+            this.states[callerId] = { ...newZoom };
+        }
+    }
+
+    public getZoom(): ZoomState | undefined {
+        return this.currentZoom;
+    }
+
+    public applyStates(): boolean {
+        const prevZoom = this.currentZoom;
+        const last = Object.keys(this.states)[Object.keys(this.states).length - 1];
+
+        this.currentZoom = { ...this.states[last] };
+
+        const changed = prevZoom?.min !== this.currentZoom?.min || prevZoom?.max !== this.currentZoom?.max;
+
+        return changed;
     }
 }

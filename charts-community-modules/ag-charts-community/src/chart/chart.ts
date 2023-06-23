@@ -589,6 +589,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             axis.attachAxis(this.axisGroup);
             removedAxes.delete(axis);
         });
+        this.zoomManager.updateAxes(this._axes);
 
         removedAxes.forEach((axis) => axis.destroy());
     }
