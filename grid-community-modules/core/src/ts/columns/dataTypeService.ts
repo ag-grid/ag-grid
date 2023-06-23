@@ -558,7 +558,7 @@ export class DataTypeService extends BeanStub {
             }
             return this.valueFormatterService.formatValue(column, node, value, valueFormatter as any);
         }
-        const usingSetFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
+        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();
         colDef.useValueFormatterForExport = true;
         colDef.useValueParserForImport = true;

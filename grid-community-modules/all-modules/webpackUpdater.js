@@ -33,7 +33,7 @@ const modules = glob.sync("../../grid-community-modules/*")
 const moduleRequireLines = modules.map(module => `var ${module.moduleName} = require('${module.directory}');`);
 const moduleRegisterLines = modules.filter(module => module.directory.indexOf('core') === -1) // exclude core - we don't register core
     .map(module => `agGrid.ModuleRegistry.register(${module.moduleName}.${module.moduleName});`);
-const moduleIsUmdLine = `agGrid.ModuleRegistry.setIsBundled();`
+const moduleIsUmdLine = `agGrid.ModuleRegistry.__setIsBundled();`
 
 const css = glob.sync("./styles/*.css")
     .filter(css => css.indexOf('.min.css') === -1)

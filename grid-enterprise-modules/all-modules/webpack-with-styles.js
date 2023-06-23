@@ -65,7 +65,7 @@ agGrid.ModuleRegistry.register(SideBarModule.SideBarModule);
 agGrid.ModuleRegistry.register(SparklinesModule.SparklinesModule);
 agGrid.ModuleRegistry.register(StatusBarModule.StatusBarModule);
 agGrid.ModuleRegistry.register(ViewportRowModelModule.ViewportRowModelModule);
-agGrid.ModuleRegistry.setIsBundled();
+agGrid.ModuleRegistry.__setIsBundled();
 require('./styles/ag-grid-no-native-widgets.css');
 require('./styles/ag-grid.css');
 require('./styles/ag-theme-alpine-no-font.css');

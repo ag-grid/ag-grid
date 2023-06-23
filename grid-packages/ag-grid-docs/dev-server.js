@@ -354,7 +354,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
-    const moduleIsUmdLine = `ModuleRegistry.setIsBundled();`
+    const moduleIsUmdLine = `ModuleRegistry.__setIsBundled();`
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
