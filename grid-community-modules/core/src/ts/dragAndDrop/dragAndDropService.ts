@@ -447,10 +447,10 @@ export class DragAndDropService extends BeanStub {
 
         const offsetParentSize = getElementRectWithOffset(ghost.offsetParent as HTMLElement);
 
-        const { pageY, pageX } = event;
+        const { clientY, clientX } = event;
 
-        let top = (pageY - offsetParentSize.top) - (ghostHeight / 2);
-        let left = (pageX - offsetParentSize.left) - 10;
+        let top = (clientY - offsetParentSize.top) - (ghostHeight / 2);
+        let left = (clientX - offsetParentSize.left) - 10;
 
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);
