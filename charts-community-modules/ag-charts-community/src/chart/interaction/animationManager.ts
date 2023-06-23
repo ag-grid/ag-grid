@@ -42,6 +42,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     private interactionManager: InteractionManager;
 
+    public defaultOptions: Partial<Pick<AnimationOptions<any>, 'duration'>> = {};
     public skipAnimations = false;
     public debug = false;
 

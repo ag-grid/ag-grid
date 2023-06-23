@@ -1588,7 +1588,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     animateEmptyUpdateReady() {
-        const duration = 1000;
+        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         const rotation = Math.PI / -2 + toRadians(this.rotation);

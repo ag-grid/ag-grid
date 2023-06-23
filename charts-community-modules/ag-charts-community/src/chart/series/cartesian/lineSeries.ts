@@ -566,7 +566,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDash = this.lineDash;
             lineNode.lineDashOffset = this.lineDashOffset;
 
-            const duration = 1000;
+            const duration = this.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {

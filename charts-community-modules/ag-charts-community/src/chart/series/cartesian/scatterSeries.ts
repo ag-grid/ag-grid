@@ -583,7 +583,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
         labelSelections: Array<Selection<Text, ScatterNodeDatum>>;
     }) {
-        const duration = 1000;
+        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         markerSelections.forEach((markerSelection) => {
