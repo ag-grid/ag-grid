@@ -206,7 +206,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                     },
                     resize: {
                         target: 'ready',
-                        action: (data: any) => this.animateReadyResize(data),
+                        action: (data) => this.animateReadyResize(data),
                     },
                 },
             },
