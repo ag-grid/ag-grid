@@ -17,7 +17,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
     const ctrlRef = useRef<IDetailCellRendererCtrl>();
     const eGuiRef = useRef<HTMLDivElement>(null);
 
-    const parentModules = useMemo(() => ModuleRegistry.getRegisteredModules(props.api.getGridId()), [props]);
+    const parentModules = useMemo(() => ModuleRegistry.__getGridRegisteredModules(props.api.getGridId()), [props]);
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
     const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 
