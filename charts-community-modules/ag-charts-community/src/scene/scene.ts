@@ -1,11 +1,11 @@
 import { HdpiCanvas, Size } from '../canvas/hdpiCanvas';
-import { Node, RedrawType, RenderContext } from './node';
+import { Node, RedrawType, RenderContext, ZIndexSubOrder } from './node';
 import { createId } from '../util/id';
 import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
-import { SceneDebugOptions } from './sceneDebugOptions';
+import { SceneDebugLevel, SceneDebugOptions } from './sceneDebugOptions';
 import { Logger } from '../util/logger';
 
 interface SceneOptions {
@@ -17,7 +17,7 @@ interface SceneLayer {
     id: number;
     name?: string;
     zIndex: number;
-    zIndexSubOrder?: [string, number];
+    zIndexSubOrder?: ZIndexSubOrder;
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
     getComputedOpacity: () => number;
     getVisibility: () => boolean;
@@ -70,7 +70,10 @@ export class Scene {
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
 
         this.opts = { document, mode };
-        this.debug.consoleLog = windowValue('agChartsDebug') === true;
+        this.debug.consoleLog = [true, 'scene'].includes(windowValue('agChartsDebug') as any);
+        this.debug.level = ['scene'].includes(windowValue('agChartsDebug') as any)
+            ? SceneDebugLevel.DETAILED
+            : SceneDebugLevel.SUMMARY;
         this.debug.stats = (windowValue('agChartsSceneStats') as any) ?? false;
         this.debug.dirtyTree = (windowValue('agChartsSceneDirtyTree') as boolean) ?? false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
@@ -125,7 +128,7 @@ export class Scene {
     private _nextLayerId = 0;
     addLayer(opts: {
         zIndex?: number;
-        zIndexSubOrder?: [string, number];
+        zIndexSubOrder?: ZIndexSubOrder;
         name?: string;
         getComputedOpacity: () => number;
         getVisibility: () => boolean;
@@ -183,7 +186,7 @@ export class Scene {
         }
 
         if (this.debug.consoleLog) {
-            Logger.debug({ layers: this.layers });
+            Logger.debug('Scene.addLayer() - layers', this.layers);
         }
 
         return newLayer.canvas;
@@ -198,12 +201,12 @@ export class Scene {
             this.markDirty();
 
             if (this.debug.consoleLog) {
-                Logger.debug({ layers: this.layers });
+                Logger.debug('Scene.removeLayer() -  layers', this.layers);
             }
         }
     }
 
-    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number, newZIndexSubOrder?: [string, number]) {
+    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number, newZIndexSubOrder?: ZIndexSubOrder) {
         const layer = this.layers.find((l) => l.canvas === canvas);
 
         if (layer) {
@@ -213,7 +216,7 @@ export class Scene {
             this.markDirty();
 
             if (this.debug.consoleLog) {
-                Logger.debug({ layers: this.layers });
+                Logger.debug('Scene.moveLayer() -  layers', this.layers);
             }
         }
     }
@@ -253,7 +256,17 @@ export class Scene {
             if (node.parent === null && node.layerManager && node.layerManager !== this) {
                 (node.layerManager as Scene).root = null;
             }
-            node._setLayerManager(this);
+            node._setLayerManager({
+                addLayer: (opts) => this.addLayer(opts),
+                moveLayer: (...opts) => this.moveLayer(...opts),
+                removeLayer: (...opts) => this.removeLayer(...opts),
+                markDirty: () => this.markDirty(),
+                canvas: this.canvas,
+                debug: {
+                    ...this.debug,
+                    consoleLog: this.debug.level >= SceneDebugLevel.DETAILED,
+                },
+            });
         }
 
         this.markDirty();
@@ -267,6 +280,7 @@ export class Scene {
         stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
+        level: SceneDebugLevel.SUMMARY,
         sceneNodeHighlight: [],
     };
 
@@ -318,7 +332,7 @@ export class Scene {
 
         if (root && !this.dirty) {
             if (this.debug.consoleLog) {
-                Logger.debug('no-op', {
+                Logger.debug('Scene.render() - no-op', {
                     redrawType: RedrawType[root.dirty],
                     tree: this.buildTree(root),
                 });
@@ -347,12 +361,12 @@ export class Scene {
 
         if (root && this.debug.dirtyTree) {
             const { dirtyTree, paths } = this.buildDirtyTree(root);
-            Logger.debug({ dirtyTree, paths });
+            Logger.debug('Scene.render() - dirtyTree', { dirtyTree, paths });
         }
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                Logger.debug('before', {
+                Logger.debug('Scene.render() - before', {
                     redrawType: RedrawType[root.dirty],
                     canvasCleared,
                     tree: this.buildTree(root),
@@ -390,7 +404,11 @@ export class Scene {
         this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
 
         if (root && this.debug.consoleLog) {
-            Logger.debug('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+            Logger.debug('Scene.render() - after', {
+                redrawType: RedrawType[root.dirty],
+                canvasCleared,
+                tree: this.buildTree(root),
+            });
         }
     }
 
@@ -473,7 +491,7 @@ export class Scene {
             const predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
             const nodes = this.root?.findNodes(predicate);
             if (!nodes || nodes.length === 0) {
-                Logger.debug(`no debugging node with id [${next}] in scene graph.`);
+                Logger.debug(`Scene.render() - no debugging node with id [${next}] in scene graph.`);
                 continue;
             }
 
@@ -492,7 +510,7 @@ export class Scene {
             const bbox = node.computeTransformedBBox();
 
             if (!bbox) {
-                Logger.debug(`no bbox for debugged node [${name}].`);
+                Logger.debug(`Scene.render() - no bbox for debugged node [${name}].`);
                 continue;
             }
 
