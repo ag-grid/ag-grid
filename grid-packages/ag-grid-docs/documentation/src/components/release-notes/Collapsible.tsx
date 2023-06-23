@@ -11,22 +11,12 @@ interface Props {
     children: any;
 }
 
-const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, onChange, children }) => {
+const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, onChange, children, hideExpander }) => {
     const [showNotes, setShowNotes] = useState(true);
     const [showMore, setShowMore] = useState(false);
 
     const collapsibleHandler = () => {
         setShowNotes((prevShowNotes) => !prevShowNotes);
-
-        let url = new URL(window.location);
-
-        if (!showNotes) {
-            url.searchParams.set('showNotes', 'true');
-        } else {
-            url.searchParams.delete('showNotes');
-        }
-
-        window.history.pushState({}, '', url);
     };
 
     const handleVersionLabelClick = (event: React.MouseEvent<HTMLLabelElement>) => {
@@ -63,21 +53,27 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                 </div>
             </button>
             {showNotes && (
-                <div className={`${styles.content} ${showMore ? styles.contentExpanded : styles.contentCollapsed}`}>
+                <div
+                    className={`${styles.content} ${showMore ? styles.contentExpanded : styles.contentCollapsed} ${
+                        hideExpander ? styles.notExpandable : ''
+                    }`}
+                >
                     <div>{children}</div>
-                    <a
-                        className={styles.showMoreLink}
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowMore(!showMore);
-                        }}
-                    >
-                        {showMore ? 'Show less' : 'Show more'}
-                        <span>
-                            <Icon name={showMore ? 'chevronUp' : 'chevronDown'} />
-                        </span>
-                    </a>
+                    {!hideExpander ? (
+                        <a
+                            className={styles.showMoreLink}
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setShowMore(!showMore);
+                            }}
+                        >
+                            {showMore ? 'Show less' : 'Show more'}
+                            <span>
+                                <Icon name={showMore ? 'chevronUp' : 'chevronDown'} />
+                            </span>
+                        </a>
+                    ) : null}
                 </div>
             )}
         </div>

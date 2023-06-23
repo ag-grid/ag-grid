@@ -1,7 +1,8 @@
 import { BaseManager } from './baseManager';
+import { ChartAxisDirection } from '../chartAxisDirection';
 
-type ChartEventType = 'legend-item-click' | 'legend-item-double-click';
-type ChartEvents = LegendItemClickChartEvent | LegendItemDoubleClickChartEvent;
+type ChartEventType = 'legend-item-click' | 'legend-item-double-click' | 'axis-hover';
+type ChartEvents = LegendItemClickChartEvent | LegendItemDoubleClickChartEvent | AxisHoverChartEvent;
 
 interface ChartEvent<ChartEventType> {
     type: ChartEventType;
@@ -18,6 +19,11 @@ export interface LegendItemDoubleClickChartEvent extends ChartEvent<'legend-item
     itemId: any;
     enabled: boolean;
     numVisibleItems: { [key: string]: number };
+}
+
+export interface AxisHoverChartEvent extends ChartEvent<'axis-hover'> {
+    axisId: string;
+    direction: ChartAxisDirection;
 }
 
 export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> {
@@ -42,5 +48,15 @@ export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> 
         };
 
         this.listeners.dispatch('legend-item-double-click', event);
+    }
+
+    axisHover(axisId: string, direction: ChartAxisDirection) {
+        const event: AxisHoverChartEvent = {
+            type: 'axis-hover',
+            axisId,
+            direction,
+        };
+
+        this.listeners.dispatch('axis-hover', event);
     }
 }

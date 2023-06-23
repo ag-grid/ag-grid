@@ -849,7 +849,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         contextData.forEach(({ fillSelectionData, strokeSelectionData, itemId }, seriesIdx) => {
             const [fill, stroke] = paths[seriesIdx];
 
-            const duration = 1000;
+            const duration = this.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {

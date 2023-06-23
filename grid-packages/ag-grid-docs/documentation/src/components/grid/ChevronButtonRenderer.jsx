@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import { hostPrefix } from '../../utils/consts';
 import styles from './ChevronButtonRenderer.module.scss';
 
-const TreeClosed = '/theme-icons/alpine/tree-closed.svg';
+const TreeClosed = `${hostPrefix}/theme-icons/alpine/tree-closed.svg`;
 
 const IS_SSR = typeof window === 'undefined';
 

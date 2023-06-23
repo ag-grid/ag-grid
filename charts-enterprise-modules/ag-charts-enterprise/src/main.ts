@@ -115,6 +115,7 @@ declare module 'ag-charts-community' {
     export type AgPolarAxisOptions = AgAngleCategoryAxisOptions | AgRadiusNumberAxisOptions;
 
     export interface AgPolarChartOptions {
+        animation?: AgAnimationOptions;
         contextMenu?: AgContextMenuOptions;
         /** Axis configurations. */
         axes?: AgPolarAxisOptions[];

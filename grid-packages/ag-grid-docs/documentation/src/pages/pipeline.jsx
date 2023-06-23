@@ -1,11 +1,12 @@
 import classnames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
 import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
+import { Icon } from '../components/Icon';
 import styles from './pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
@@ -13,10 +14,6 @@ const COLUMN_DEFS = [
         field: 'key',
         headerName: 'Issue',
         width: 140,
-        filter: 'agTextColumnFilter',
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
         cellRendererSelector: (params) => {
             if (
                 params.node.data.moreInformation ||
@@ -38,20 +35,11 @@ const COLUMN_DEFS = [
         width: 300,
         minWidth: 200,
         flex: 1,
-        filter: 'agTextColumnFilter',
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
     },
     {
         field: 'issueType',
         width: 180,
         valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-        filterParams: {
-            valueFormatter: (params) => {
-                return params.colDef.valueFormatter(params);
-            },
-        },
         cellRenderer: 'issueTypeCellRenderer',
     },
     {
@@ -82,8 +70,6 @@ const COLUMN_DEFS = [
 
 const defaultColDef = {
     resizable: true,
-    filter: true,
-    floatingFilter: true,
     sortable: true,
     suppressMenu: true,
     autoHeight: true,
@@ -153,6 +139,7 @@ const Pipeline = ({ location }) => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
+    const searchBarEl = useRef(null);
 
     useEffect(() => {
         fetch('/pipeline/pipeline.json')
@@ -167,6 +154,13 @@ const Pipeline = ({ location }) => {
         params.api.setQuickFilter(URLFilterSearchQuery);
     };
 
+    const onQuickFilterChange = useCallback(
+        (event) => {
+            gridApi.setQuickFilter(event.target.value);
+        },
+        [gridApi]
+    );
+
     return (
         <>
             {!IS_SSR && (
@@ -178,12 +172,24 @@ const Pipeline = ({ location }) => {
                                 The AG Grid pipeline lists the feature requests and active bugs in our product backlog.
                                 Use it to see the items scheduled for our next release or to look up the status of a
                                 specific item. If you can’t find the item you’re looking for, check the{' '}
-                                <a href="../changelog/">Changelog</a> containing the list
-                                of completed items.
+                                <a href="../changelog/">Changelog</a> containing the list of completed items.
                             </p>
                         </Alert>
-
                     </section>
+
+                    <div className={styles.searchBarOuter}>
+                        <Icon name="search" />
+                        <input
+                            type="search"
+                            className={styles.searchBar}
+                            placeholder={'Search pipeline...'}
+                            ref={searchBarEl}
+                            onChange={onQuickFilterChange}
+                        ></input>
+                        <span className={classnames(styles.searchExplainer, 'text-secondary')}>
+                            Find pipeline items by issue number, summary content, or version
+                        </span>
+                    </div>
 
                     <Grid
                         gridHeight={'78vh'}
