@@ -324,7 +324,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const normaliseTo = normalizedToAbs && isFinite(normalizedToAbs) ? normalizedToAbs : undefined;
         const extraProps = [];
         if (normaliseTo) {
-            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+            extraProps.push(normaliseGroupTo(this, activeSeriesItems, normaliseTo, 'sum'));
         }
 
         if (!this.animationManager?.skipAnimations && this.processedData) {

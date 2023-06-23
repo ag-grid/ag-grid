@@ -383,19 +383,32 @@ export class DataModel<
         return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
-    private valueIdxLookup(prop: PropertyId<any>) {
+    private valueIdxLookup(scopes: string[], prop: PropertyId<any>) {
         let result;
+
+        const noScopesToMatch = scopes == null || scopes.length === 0;
+        const scopeMatch = (compareTo?: string[]) => {
+            const noScopes = compareTo == null || compareTo.length === 0;
+            if (noScopesToMatch === noScopes) return true;
+
+            return compareTo?.some((s) => scopes.includes(s));
+        };
+
         if (typeof prop === 'string') {
-            result = this.values.findIndex((def) => def.property === prop);
+            result = this.values.findIndex((def) => scopeMatch(def.scopes) && def.property === prop);
         } else {
-            result = this.values.findIndex((def) => def.id === prop.id);
+            result = this.values.findIndex((def) => scopeMatch(def.scopes) && def.id === prop.id);
         }
 
         if (result >= 0) {
             return result;
         }
 
-        throw new Error('AG Charts - configuration error, unknown property: ' + prop);
+        throw new Error(
+            `AG Charts - configuration error, unknown property ${JSON.stringify(prop)} in scope(s) ${JSON.stringify(
+                scopes
+            )}`
+        );
     }
 
     private extractData(data: D[]): UngroupedData<D> {
@@ -445,7 +458,7 @@ export class DataModel<
         resultData.length = resultDataIdx;
 
         const propertyDomain = (def: InternalDatumPropertyDefinition<K>) => {
-            const result = dataDomain.get(def.id ?? def.property)!.domain;
+            const result = dataDomain.get(def)!.domain;
             if (Array.isArray(result) && result[0] > result[1]) {
                 // Ignore starting values.
                 return [];
@@ -514,7 +527,9 @@ export class DataModel<
         if (!aggDefs) return;
 
         const resultAggValues = aggDefs.map((): ContinuousDomain<number> => [Infinity, -Infinity]);
-        const resultAggValueIndices = aggDefs.map((defs) => defs.properties.map((prop) => this.valueIdxLookup(prop)));
+        const resultAggValueIndices = aggDefs.map((defs) =>
+            defs.properties.map((prop) => this.valueIdxLookup(defs.scopes ?? [], prop))
+        );
         const resultAggFns = aggDefs.map((def) => def.aggregateFunction);
         const resultGroupAggFns = aggDefs.map((def) => def.groupAggregateFunction);
         const resultFinalFns = aggDefs.map((def) => def.finalFunction);
@@ -557,7 +572,7 @@ export class DataModel<
         if (!groupProcessors) return;
 
         for (const processor of groupProcessors) {
-            const valueIndexes = processor.properties.map((p) => this.valueIdxLookup(p));
+            const valueIndexes = processor.properties.map((p) => this.valueIdxLookup(processor.scopes ?? [], p));
             const adjustFn = processor.adjust();
             if (processedData.type === 'grouped') {
                 for (const group of processedData.data) {
@@ -582,8 +597,8 @@ export class DataModel<
 
         if (!propertyProcessors) return;
 
-        for (const { adjust, property } of propertyProcessors) {
-            adjust()(processedData, this.valueIdxLookup(property));
+        for (const { adjust, property, scopes } of propertyProcessors) {
+            adjust()(processedData, this.valueIdxLookup(scopes ?? [], property));
         }
     }
 
@@ -619,21 +634,20 @@ export class DataModel<
     private initDataDomainProcessor() {
         const { keys: keyDefs, values: valueDefs } = this;
         const dataDomain: Map<
-            string,
+            object,
             { type: 'range'; domain: [number, number] } | { type: 'category'; domain: Set<any> }
         > = new Map();
         const processorFns = new Map<InternalDatumPropertyDefinition<K>, ProcessorFn>();
-        const initDataDomainKey = (key: string, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
+        const initDataDomainKey = (key: object, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
             if (type === 'category') {
                 updateDataDomain.set(key, { type, domain: new Set() });
             } else {
                 updateDataDomain.set(key, { type, domain: [Infinity, -Infinity] });
             }
         };
-        const initDataDomain = (updateDataDomain = dataDomain) => {
-            keyDefs.forEach((def) => initDataDomainKey(def.id ?? def.property, def.valueType, updateDataDomain));
-            valueDefs.forEach((def) => initDataDomainKey(def.id ?? def.property, def.valueType, updateDataDomain));
-            return updateDataDomain;
+        const initDataDomain = () => {
+            keyDefs.forEach((def) => initDataDomainKey(def, def.valueType, dataDomain));
+            valueDefs.forEach((def) => initDataDomainKey(def, def.valueType, dataDomain));
         };
         initDataDomain();
 
@@ -656,8 +670,8 @@ export class DataModel<
                 def.missing = true;
             }
 
-            if (!dataDomain.has(def.id ?? def.property)) {
-                initDataDomain(dataDomain);
+            if (!dataDomain.has(def)) {
+                initDataDomain();
             }
 
             if (valueInDatum) {
@@ -678,7 +692,7 @@ export class DataModel<
                 value = processorFns.get(def)?.(value, previousDatum !== INVALID_VALUE ? previousDatum : undefined);
             }
 
-            const meta = dataDomain.get(def.id ?? def.property);
+            const meta = dataDomain.get(def);
             if (meta?.type === 'category') {
                 meta.domain.add(value);
             } else if (meta?.type === 'range') {

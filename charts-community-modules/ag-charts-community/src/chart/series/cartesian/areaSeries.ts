@@ -239,7 +239,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
         const extraProps = [];
         if (normaliseTo) {
-            extraProps.push(normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
+            extraProps.push(normaliseGroupTo(this, enabledYKeys, normaliseTo, 'sum'));
         }
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {

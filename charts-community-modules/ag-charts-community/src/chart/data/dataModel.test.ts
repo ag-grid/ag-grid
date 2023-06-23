@@ -4,7 +4,7 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { AggregatePropertyDefinition, DataModel, GroupByFn } from './dataModel';
+import { AggregatePropertyDefinition, DataModel, GroupByFn, PropertyId } from './dataModel';
 import {
     area as actualArea,
     groupAverage as actualGroupAverage,
@@ -15,22 +15,33 @@ import {
 } from './aggregateFunctions';
 import {
     AGG_VALUES_EXTENT,
-    normaliseGroupTo,
-    normalisePropertyTo,
+    normaliseGroupTo as actualNormaliseGroupTo,
+    normalisePropertyTo as actualNormalisePropertyTo,
     SMALLEST_KEY_INTERVAL,
     SORT_DOMAIN_GROUPS,
 } from './processors';
 import { rangedValueProperty } from '../series/series';
 
-const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
-const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
+const rangeKey = (property: string) => ({ scope: 'test', property, type: 'key' as const, valueType: 'range' as const });
+const categoryKey = (property: string) => ({
+    scopes: ['test'],
+    property,
+    type: 'key' as const,
+    valueType: 'category' as const,
+});
 const value = (property: string, id?: string) => ({
+    scopes: ['test'],
     property,
     type: 'value' as const,
     valueType: 'range' as const,
     id,
 });
-const categoryValue = (property: string) => ({ property, type: 'value' as const, valueType: 'category' as const });
+const categoryValue = (property: string) => ({
+    scopes: ['test'],
+    property,
+    type: 'value' as const,
+    valueType: 'category' as const,
+});
 const accumulatedGroupValue = (property: string, id?: string) => ({
     ...value(property, id),
     processor: () => (next, total) => next + (total ?? 0),
@@ -45,6 +56,10 @@ const groupAverage = (props: string[]) => actualGroupAverage({ id: 'test' }, `gr
 const groupCount = () => actualGroupCount({ id: 'test' }, `groupCount`);
 const area = (props: string[], aggFn: AggregatePropertyDefinition<any, any>) =>
     actualArea({ id: 'test' }, `area-${props.join('-')}`, props, aggFn);
+const normaliseGroupTo = (props: string[], normaliseTo: number, mode?: 'sum' | 'range') =>
+    actualNormaliseGroupTo({ id: 'test' }, props, normaliseTo, mode);
+const normalisePropertyTo = (prop: PropertyId<any>, normaliseTo: [number, number]) =>
+    actualNormalisePropertyTo({ id: 'test' }, prop, normaliseTo);
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {

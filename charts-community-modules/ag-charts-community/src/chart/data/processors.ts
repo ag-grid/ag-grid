@@ -5,6 +5,7 @@ import {
     PropertyValueProcessorDefinition,
     ReducerOutputPropertyDefinition,
     ProcessedData,
+    ScopeProvider,
 } from './dataModel';
 
 export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
@@ -64,6 +65,7 @@ export const SORT_DOMAIN_GROUPS: ProcessorOutputPropertyDefinition<any> = {
 };
 
 export function normaliseGroupTo(
+    scope: ScopeProvider,
     properties: PropertyId<any>[],
     normaliseTo: number,
     mode: 'sum' | 'range' = 'sum'
@@ -77,6 +79,7 @@ export function normaliseGroupTo(
     };
 
     return {
+        scopes: [scope.id],
         type: 'group-value-processor',
         properties,
         adjust: () => (values: any[], valueIndexes: number[]) => {
@@ -102,6 +105,7 @@ export function normaliseGroupTo(
 }
 
 export function normalisePropertyTo(
+    scope: ScopeProvider,
     property: PropertyId<any>,
     normaliseTo: [number, number],
     rangeMin?: number,
@@ -118,6 +122,7 @@ export function normalisePropertyTo(
     };
 
     return {
+        scopes: [scope.id],
         type: 'property-value-processor',
         property,
         adjust: () => (pData, pIdx) => {
