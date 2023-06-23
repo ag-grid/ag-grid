@@ -85,10 +85,7 @@ describe('Radar Line sChart', () => {
     it(`should render polar chart with circle axes as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
-            axes: [
-                { type: 'polar-angle-category', gridShape: 'circle' },
-                { type: 'polar-radius-number', gridShape: 'circle' },
-            ],
+            shape: 'circle',
         };
         prepareTestOptions(options as any);
 
