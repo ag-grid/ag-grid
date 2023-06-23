@@ -84,25 +84,17 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     private extraDebugStats: Record<string, number> = {};
 
-    private _container: OptionalHTMLElement = undefined;
-    set container(value: OptionalHTMLElement) {
-        if (this._container !== value) {
-            const { parentNode } = this.element;
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            if (this.destroyed) return;
 
-            if (parentNode != null) {
-                parentNode.removeChild(this.element);
-            }
-
-            if (value && !this.destroyed) {
-                value.appendChild(this.element);
-            }
-
-            this._container = value;
-        }
-    }
-    get container(): OptionalHTMLElement {
-        return this._container;
-    }
+            value.appendChild(this.element);
+        },
+        oldValue(value) {
+            value.removeChild(this.element);
+        },
+    })
+    container: OptionalHTMLElement = undefined;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -517,21 +509,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 splits.push(performance.now());
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (this.autoSize && !this._lastAutoSize) {
-                    const count = this._performUpdateNoRenderCount++;
-
-                    if (count < 5) {
-                        // Reschedule if canvas size hasn't been set yet to avoid a race.
-                        this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
-                        this.performUpdateTrigger.schedule();
-                        break;
-                    }
-
-                    // After several failed passes, continue and accept there maybe a redundant
-                    // render. Sometimes this case happens when we already have the correct
-                    // width/height, and we end up never rendering the chart in that scenario.
-                }
-                this._performUpdateNoRenderCount = 0;
+                if (!this.checkFirstAutoSize()) break;
 
                 await this.performLayout();
                 this.handleOverlays();
@@ -570,6 +548,30 @@ export abstract class Chart extends Observable implements AgChartInstance {
             count,
             performUpdateType: ChartUpdateType[performUpdateType],
         });
+    }
+
+    private checkFirstAutoSize() {
+        if (this.autoSize && !this._lastAutoSize) {
+            const count = this._performUpdateNoRenderCount++;
+            const backOffMs = (count ^ 2) * 10;
+
+            if (count < 5) {
+                // Reschedule if canvas size hasn't been set yet to avoid a race.
+                this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                this.performUpdateTrigger.schedule(backOffMs);
+
+                this.log('Chart.checkFirstAutoSize() - backing off until first size update', backOffMs);
+                return false;
+            }
+
+            // After several failed passes, continue and accept there maybe a redundant
+            // render. Sometimes this case happens when we already have the correct
+            // width/height, and we end up never rendering the chart in that scenario.
+            this.log('Chart.checkFirstAutoSize() - timeout for first size update.');
+        }
+        this._performUpdateNoRenderCount = 0;
+
+        return true;
     }
 
     readonly element: HTMLElement;

@@ -5,15 +5,15 @@ type Callback = (params: { count: number }) => Promise<void> | void;
  * after the first schedule() call, and subsequent schedule() calls will be ignored until the
  * animation callback executes.
  */
-export function debouncedAnimationFrame(cb: Callback): { schedule(): void; await(): Promise<void> } {
-    return buildScheduler((cb) => requestAnimationFrame(cb), cb);
+export function debouncedAnimationFrame(cb: Callback): { schedule(delayMs?: number): void; await(): Promise<void> } {
+    return buildScheduler((cb, _delayMs) => requestAnimationFrame(cb), cb);
 }
 
-export function debouncedCallback(cb: Callback): { schedule(): void; await(): Promise<void> } {
-    return buildScheduler((cb) => setTimeout(cb, 0), cb);
+export function debouncedCallback(cb: Callback): { schedule(delayMs?: number): void; await(): Promise<void> } {
+    return buildScheduler((cb, delayMs = 0) => setTimeout(cb, delayMs), cb);
 }
 
-function buildScheduler(scheduleFn: (cb: () => void) => void, cb: Callback) {
+function buildScheduler(scheduleFn: (cb: () => void, delayMs?: number) => void, cb: Callback) {
     let scheduleCount = 0;
     let promiseRunning = false;
     let awaitingPromise: Promise<void> | undefined;
@@ -51,9 +51,9 @@ function buildScheduler(scheduleFn: (cb: () => void) => void, cb: Callback) {
     };
 
     return {
-        schedule() {
+        schedule(delayMs?: number) {
             if (scheduleCount === 0 && !busy()) {
-                scheduleFn(scheduleCb);
+                scheduleFn(scheduleCb, delayMs);
             }
             scheduleCount++;
         },
