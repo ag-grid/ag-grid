@@ -1,4 +1,6 @@
 import { jsonDiff } from '../../util/json';
+import { Logger } from '../../util/logger';
+import { windowValue } from '../../util/window';
 import { DataModel, DataModelOptions, DatumPropertyDefinition, ProcessedData, PropertyDefinition } from './dataModel';
 
 interface RequestedProcessing<
@@ -33,6 +35,8 @@ type Result<
 
 /** Implements cross-series data model coordination. */
 export class DataController {
+    static DEBUG = () => [true, 'data-model'].includes(windowValue('agChartsDebug') as string) ?? false;
+
     private requested: RequestedProcessing<any, any, any>[] = [];
     private status: 'setup' | 'executed' = 'setup';
 
@@ -61,7 +65,9 @@ export class DataController {
 
         this.status = 'executed';
 
+        if (DataController.DEBUG()) Logger.debug('DataController.execute() - requested', this.requested);
         const merged = this.mergeRequested();
+        if (DataController.DEBUG()) Logger.debug('DataController.execute() - merged', merged);
 
         for (const { opts, data, resultCbs, rejects } of merged) {
             try {
