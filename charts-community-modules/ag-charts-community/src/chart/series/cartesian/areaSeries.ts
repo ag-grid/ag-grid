@@ -244,15 +244,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                keyProperty(xKey, isContinuousX, { id: 'xValue' }),
+                keyProperty(this, xKey, isContinuousX, { id: 'xValue' }),
                 ...enabledYKeys.map((yKey) =>
-                    valueProperty(yKey, isContinuousY, {
+                    valueProperty(this, yKey, isContinuousY, {
                         id: `yValue-${yKey}`,
                         missingValue: NaN,
                         invalidValue: undefined,
                     })
                 ),
-                sum(enabledYKeys),
+                sum(this, 'sum', enabledYKeys),
                 ...extraProps,
             ],
             groupByKeys: true,
@@ -264,25 +264,26 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData, axes } = this;
-        if (!processedData) return [];
+        const { processedData, dataModel, axes } = this;
+        if (!processedData || !dataModel) return [];
 
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
         const {
-            defs: {
-                keys: [keyDef],
-            },
             domain: {
-                keys: [keys],
                 values: [yExtent],
                 aggValues: [ySumExtent] = [],
             },
         } = processedData;
 
+        const keyDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
+        const keys = dataModel.getDomain(this, `xValue`, 'key', processedData);
+        // const yExtent = dataModel.getDomain(``);
+        // const ySumExtent = dataModel.getDomain(``);
+
         if (direction === ChartAxisDirection.X) {
-            if (keyDef.valueType === 'category') {
+            if (keyDef?.def.type === 'key' && keyDef.def.valueType === 'category') {
                 return keys;
             }
 
@@ -299,13 +300,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             axes,
             data,
             processedData: { data: groupedData } = {},
+            dataModel,
             ctx: { callbackCache },
         } = this;
 
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!xAxis || !yAxis || !data) {
+        if (!xAxis || !yAxis || !data || !dataModel) {
             return [];
         }
 
@@ -323,6 +325,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             .fill(null)
             .map(() => ({ left: 0, right: 0 }));
         const cumulativeMarkerValues: number[] = new Array(xDataCount).fill(0);
+        const enabledYKeys = [...this.seriesItemEnabled.entries()]
+            .filter(([, enabled]) => enabled)
+            .map(([yKey]) => yKey);
+        const yIndexes = enabledYKeys.reduce((result, next) => {
+            result[next] = dataModel.resolveProcessedDataIndexById(this, `yValue-${next}`).index;
+            return result;
+        }, {} as Record<string, number>);
 
         const createPathCoordinates = (
             xDatum: any,
@@ -368,7 +377,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         };
 
         yKeys.forEach((yKey, seriesIdx) => {
-            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
+            const yKeyDataIndex = yIndexes[yKey] ?? -1;
             const labelSelectionData: LabelSelectionDatum[] = [];
             const markerSelectionData: MarkerSelectionDatum[] = [];
             const strokeSelectionData: StrokeSelectionDatum = { itemId: yKey, points: [], yValues: [] };
@@ -381,7 +390,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeSelectionData,
             };
 
-            if (!yKeyDataIndex) {
+            if (yKeyDataIndex === -1) {
                 return;
             }
 
@@ -403,14 +412,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     datumIdx++;
 
                     const seriesDatum = datumArray[valueIdx];
-                    const rawYDatum = values[yKeyDataIndex.index];
+                    const rawYDatum = values[yKeyDataIndex];
                     const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
 
                     const nextValuesSameGroup = valueIdx < valuesArray.length - 1;
                     const nextDatumGroup = nextValuesSameGroup ? datumGroup : groupedData[dataIdx + 1];
                     const nextXDatum = nextDatumGroup?.keys[0];
                     const rawNextYIdx = nextValuesSameGroup ? valueIdx + 1 : 0;
-                    const rawNextYDatum = nextDatumGroup?.values[rawNextYIdx][yKeyDataIndex.index];
+                    const rawNextYDatum = nextDatumGroup?.values[rawNextYIdx][yKeyDataIndex];
                     const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                     // marker data
@@ -673,7 +682,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey, id: seriesId } = this;
         const { yKey, xValue, yValue, datum } = nodeDatum;
-        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
+        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(this, `yValue-${yKey}`);
 
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';

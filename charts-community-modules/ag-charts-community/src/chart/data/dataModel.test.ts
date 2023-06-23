@@ -4,8 +4,15 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { DataModel, GroupByFn } from './dataModel';
-import { area, groupAverage, groupCount, range, sum, accumulatedValue } from './aggregateFunctions';
+import { AggregatePropertyDefinition, DataModel, GroupByFn } from './dataModel';
+import {
+    area as actualArea,
+    groupAverage as actualGroupAverage,
+    groupCount as actualGroupCount,
+    range as actualRange,
+    sum as actualSum,
+    accumulatedValue,
+} from './aggregateFunctions';
 import {
     AGG_VALUES_EXTENT,
     normaliseGroupTo,
@@ -32,6 +39,12 @@ const accumulatedPropertyValue = (property: string, id?: string) => ({
     ...value(property, id),
     processor: accumulatedValue(),
 });
+const sum = (props: string[]) => actualSum({ id: 'test' }, `sum-${props.join('-')}`, props);
+const range = (props: string[]) => actualRange({ id: 'test' }, `range-${props.join('-')}`, props);
+const groupAverage = (props: string[]) => actualGroupAverage({ id: 'test' }, `groupAverage-${props.join('-')}`, props);
+const groupCount = () => actualGroupCount({ id: 'test' }, `groupCount`);
+const area = (props: string[], aggFn: AggregatePropertyDefinition<any, any>) =>
+    actualArea({ id: 'test' }, `area-${props.join('-')}`, props, aggFn);
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -980,7 +993,7 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any>({
                 props: [
                     accumulatedPropertyValue('share', 'angle'),
-                    rangedValueProperty('share', { id: 'radius', min: 0.05, max: 0.7 }),
+                    rangedValueProperty({ id: 'test' }, 'share', { id: 'radius', min: 0.05, max: 0.7 }),
                     normalisePropertyTo({ id: 'angle' }, [0, 1]),
                 ],
             });

@@ -132,8 +132,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
-                valueProperty(xKey, isContinuousX, { id: 'xValue' }),
-                valueProperty(yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
+                valueProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                valueProperty(this, yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
             ],
             dataVisible: this.visible,
         });
@@ -148,16 +148,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        const xDef = dataModel.resolveProcessedDataDefById(`xValue`);
+        const xDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
         if (direction === ChartAxisDirection.X) {
-            const domain = dataModel.getDomain(`xValue`, processedData);
-            if (xDef?.valueType === 'category') {
+            const domain = dataModel.getDomain(this, `xValue`, 'value', processedData);
+            if (xDef?.def.type === 'value' && xDef.def.valueType === 'category') {
                 return domain;
             }
 
             return this.fixNumericExtent(extent(domain), xAxis);
         } else {
-            const domain = dataModel.getDomain(`yValue`, processedData);
+            const domain = dataModel.getDomain(this, `yValue`, 'value', processedData);
             return this.fixNumericExtent(domain as any, yAxis);
         }
     }
@@ -186,8 +186,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const nodeData: LineNodeDatum[] = new Array(processedData.data.length);
         const size = markerEnabled ? markerSize : 0;
 
-        const xIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`)?.index ?? -1;
-        const yIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`)?.index ?? -1;
+        const xIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+        const yIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;

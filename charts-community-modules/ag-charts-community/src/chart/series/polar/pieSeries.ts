@@ -54,6 +54,7 @@ import { normalisePropertyTo } from '../../data/processors';
 import { ModuleContext } from '../../../util/moduleContext';
 import { Has } from '../../../util/types';
 import { DataController } from '../../data/dataController';
+import { DataModel } from '../../data/dataModel';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -403,28 +404,32 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const extraProps = [];
         if (radiusKey) {
             extraProps.push(
-                rangedValueProperty(radiusKey, { id: 'radiusValue', min: this.radiusMin ?? 0, max: this.radiusMax }),
-                valueProperty(radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
+                rangedValueProperty(this, radiusKey, {
+                    id: 'radiusValue',
+                    min: this.radiusMin ?? 0,
+                    max: this.radiusMax,
+                }),
+                valueProperty(this, radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
                 normalisePropertyTo({ id: 'radiusValue' }, [0, 1], this.radiusMin ?? 0, this.radiusMax)
             );
             extraProps.push();
         }
         if (calloutLabelKey) {
-            extraProps.push(valueProperty(calloutLabelKey, false, { id: `calloutLabelValue` }));
+            extraProps.push(valueProperty(this, calloutLabelKey, false, { id: `calloutLabelValue` }));
         }
         if (sectorLabelKey) {
-            extraProps.push(valueProperty(sectorLabelKey, false, { id: `sectorLabelValue` }));
+            extraProps.push(valueProperty(this, sectorLabelKey, false, { id: `sectorLabelValue` }));
         }
         if (legendItemKey) {
-            extraProps.push(valueProperty(legendItemKey, false, { id: `legendItemValue` }));
+            extraProps.push(valueProperty(this, legendItemKey, false, { id: `legendItemValue` }));
         }
 
         data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : { ...d, [angleKey]: 0 }));
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                accumulativeValueProperty(angleKey, true, { id: `angleValue` }),
-                valueProperty(angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
+                accumulativeValueProperty(this, angleKey, true, { id: `angleValue` }),
+                valueProperty(this, angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
                 normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0),
                 ...extraProps,
             ],
@@ -444,18 +449,29 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return this._createNodeData();
     }
 
+    private getProcessedDataIndexes(dataModel: DataModel<any>) {
+        const angleIdx = dataModel.resolveProcessedDataIndexById(this, `angleValue`).index;
+        const radiusIdx = this.radiusKey ? dataModel.resolveProcessedDataIndexById(this, `radiusValue`).index : -1;
+        const calloutLabelIdx = this.calloutLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `calloutLabelValue`).index
+            : -1;
+        const sectorLabelIdx = this.sectorLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `sectorLabelValue`).index
+            : -1;
+        const legendItemIdx = this.legendItemKey
+            ? dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index
+            : -1;
+
+        return { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx };
+    }
+
     private _createNodeData() {
         const { id: seriesId, processedData, dataModel, rotation, angleScale } = this;
 
         if (!processedData || !dataModel || processedData.type !== 'ungrouped') return [];
 
-        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
-        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
-        const calloutLabelIdx = dataModel.resolveProcessedDataIndexById(`calloutLabelValue`)?.index ?? -1;
-        const sectorLabelIdx = dataModel.resolveProcessedDataIndexById(`sectorLabelValue`)?.index ?? -1;
-        const legendItemIdx = dataModel.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
-
-        if (angleIdx < 0) return [];
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } =
+            this.getProcessedDataIndexes(dataModel);
 
         let currentStart = 0;
         const nodeData = processedData.data.map((group, index): PieNodeDatum => {
@@ -1496,11 +1512,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (!legendItemKey && !calloutLabelKey) return [];
 
-        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
-        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
-        const calloutLabelIdx = dataModel.resolveProcessedDataIndexById(`calloutLabelValue`)?.index ?? -1;
-        const sectorLabelIdx = dataModel.resolveProcessedDataIndexById(`sectorLabelValue`)?.index ?? -1;
-        const legendItemIdx = dataModel.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } =
+            this.getProcessedDataIndexes(dataModel);
 
         const titleText = this.title?.showInLegend && this.title.text;
         const legendData: CategoryLegendDatum[] = [];
@@ -1572,14 +1585,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     toggleOtherSeriesItems(series: PieSeries, itemId: number, enabled: boolean): void {
         const { legendItemKey, dataModel } = this;
 
-        if (!legendItemKey) return;
+        if (!legendItemKey || !dataModel) return;
 
         const datumToggledLegendItemValue =
             series.legendItemKey && series.data?.find((_, index) => index === itemId)[series.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 
-        const legendItemIdx = dataModel?.resolveProcessedDataIndexById(`legendItemValue`)?.index ?? -1;
+        const legendItemIdx = dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index;
         this.processedData?.data.forEach(({ values }, datumItemId) => {
             if (values[legendItemIdx] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);

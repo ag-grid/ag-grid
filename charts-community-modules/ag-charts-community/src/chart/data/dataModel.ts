@@ -3,6 +3,8 @@ import { isNumber } from '../../util/value';
 import { windowValue } from '../../util/window';
 import { ContinuousDomain, extendDomain } from './utilFunctions';
 
+export type ScopeProvider = { id: string };
+
 export type UngroupedDataItem<D, V> = {
     keys: any[];
     values: V;
@@ -19,10 +21,6 @@ export interface UngroupedData<D> {
         groups?: any[][];
         aggValues?: [number, number][];
     };
-    indices: {
-        keys: Record<keyof D, number>;
-        values: Record<keyof D, number>;
-    };
     reduced?: Record<string, any>;
     defs: {
         keys: DatumPropertyDefinition<keyof D>[];
@@ -37,7 +35,6 @@ export interface GroupedData<D> {
     type: 'grouped';
     data: GroupedDataItem<D>[];
     domain: UngroupedData<D>['domain'];
-    indices: UngroupedData<D>['indices'];
     reduced?: UngroupedData<D>['reduced'];
     defs: UngroupedData<D>['defs'];
     time: number;
@@ -109,6 +106,7 @@ export function fixNumericExtent(extent?: (number | Date)[]): [] | [number, numb
 type GroupingFn<K> = (data: UngroupedDataItem<K, any[]>) => K[];
 export type GroupByFn = (extractedData: UngroupedData<any>) => GroupingFn<any>;
 export type DataModelOptions<K, Grouped extends boolean | undefined> = {
+    readonly scopes?: string[];
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
     readonly groupByFn?: GroupByFn;
@@ -128,6 +126,7 @@ export type PropertyId<K extends string> = K | { id: string };
 
 export type DatumPropertyDefinition<K> = {
     id?: string;
+    scopes?: string[];
     type: 'key' | 'value';
     valueType: DatumPropertyType;
     property: K;
@@ -137,13 +136,16 @@ export type DatumPropertyDefinition<K> = {
     processor?: () => ProcessorFn;
 };
 
-type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
-    index: number;
-    missing: boolean;
-};
+type InternalDefinition = { index: number };
+
+type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> &
+    InternalDefinition & {
+        missing: boolean;
+    };
 
 export type AggregatePropertyDefinition<D, K extends keyof D & string, R = [number, number], R2 = R> = {
     id?: string;
+    scopes?: string[];
     type: 'aggregate';
     aggregateFunction: (values: D[K][], keys?: D[K][]) => R;
     groupAggregateFunction?: (next?: R, acc?: R2) => R2;
@@ -153,6 +155,7 @@ export type AggregatePropertyDefinition<D, K extends keyof D & string, R = [numb
 
 export type GroupValueProcessorDefinition<D, K extends keyof D & string> = {
     id?: string;
+    scopes?: string[];
     type: 'group-value-processor';
     properties: PropertyId<K>[];
     adjust: () => (values: D[K][], indexes: number[]) => void;
@@ -160,6 +163,7 @@ export type GroupValueProcessorDefinition<D, K extends keyof D & string> = {
 
 export type PropertyValueProcessorDefinition<D> = {
     id?: string;
+    scopes?: string[];
     type: 'property-value-processor';
     property: PropertyId<keyof D & string>;
     adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void;
@@ -167,6 +171,7 @@ export type PropertyValueProcessorDefinition<D> = {
 
 export type ReducerOutputPropertyDefinition<R> = {
     id?: string;
+    scopes?: string[];
     type: 'reducer';
     property: string;
     initialValue?: R;
@@ -175,6 +180,7 @@ export type ReducerOutputPropertyDefinition<R> = {
 
 export type ProcessorOutputPropertyDefinition<R> = {
     id?: string;
+    scopes?: string[];
     type: 'processor';
     property: string;
     calculate: (data: ProcessedData<any>) => R;
@@ -192,11 +198,11 @@ export class DataModel<
     private readonly opts: DataModelOptions<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
-    private readonly aggregates: AggregatePropertyDefinition<D, K>[];
-    private readonly groupProcessors: GroupValueProcessorDefinition<D, K>[];
-    private readonly propertyProcessors: PropertyValueProcessorDefinition<D>[];
-    private readonly reducers: ReducerOutputPropertyDefinition<any>[];
-    private readonly processors: ProcessorOutputPropertyDefinition<any>[];
+    private readonly aggregates: (AggregatePropertyDefinition<D, K> & InternalDefinition)[];
+    private readonly groupProcessors: (GroupValueProcessorDefinition<D, K> & InternalDefinition)[];
+    private readonly propertyProcessors: (PropertyValueProcessorDefinition<D> & InternalDefinition)[];
+    private readonly reducers: (ReducerOutputPropertyDefinition<any> & InternalDefinition)[];
+    private readonly processors: (ProcessorOutputPropertyDefinition<any> & InternalDefinition)[];
 
     public constructor(opts: DataModelOptions<K, Grouped>) {
         const { props } = opts;
@@ -220,17 +226,21 @@ export class DataModel<
         this.values = props
             .filter((def): def is DatumPropertyDefinition<K> => def.type === 'value')
             .map((def, index) => ({ ...def, index, missing: false }));
-        this.aggregates = props.filter((def): def is AggregatePropertyDefinition<D, K> => def.type === 'aggregate');
-        this.groupProcessors = props.filter(
-            (def): def is GroupValueProcessorDefinition<D, K> => def.type === 'group-value-processor'
-        );
-        this.propertyProcessors = props.filter(
-            (def): def is PropertyValueProcessorDefinition<D> => def.type === 'property-value-processor'
-        );
-        this.reducers = props.filter((def): def is ReducerOutputPropertyDefinition<unknown> => def.type === 'reducer');
-        this.processors = props.filter(
-            (def): def is ProcessorOutputPropertyDefinition<unknown> => def.type === 'processor'
-        );
+        this.aggregates = props
+            .filter((def): def is AggregatePropertyDefinition<D, K> => def.type === 'aggregate')
+            .map((def, index) => ({ ...def, index }));
+        this.groupProcessors = props
+            .filter((def): def is GroupValueProcessorDefinition<D, K> => def.type === 'group-value-processor')
+            .map((def, index) => ({ ...def, index }));
+        this.propertyProcessors = props
+            .filter((def): def is PropertyValueProcessorDefinition<D> => def.type === 'property-value-processor')
+            .map((def, index) => ({ ...def, index }));
+        this.reducers = props
+            .filter((def): def is ReducerOutputPropertyDefinition<unknown> => def.type === 'reducer')
+            .map((def, index) => ({ ...def, index }));
+        this.processors = props
+            .filter((def): def is ProcessorOutputPropertyDefinition<unknown> => def.type === 'processor')
+            .map((def, index) => ({ ...def, index }));
 
         for (const { properties } of this.aggregates ?? []) {
             if (properties.length === 0) continue;
@@ -250,34 +260,70 @@ export class DataModel<
         }
     }
 
-    resolveProcessedDataIndexById(searchId: string): { type: 'key' | 'value'; index: number } | undefined {
-        const { keys, values } = this;
+    resolveProcessedDataIndexById(
+        scope: ScopeProvider,
+        searchId: string,
+        type: PropertyDefinition<any>['type'] = 'value'
+    ): { type: typeof type; index: number; def: PropertyDefinition<any> } | never {
+        const { index, def } = this.resolveProcessedDataDefById(scope, searchId, type) ?? {};
+        return { type, index, def };
+    }
 
-        const def = [...keys, ...values].find(({ id }) => id === searchId);
-        if (!def) return undefined;
+    resolveProcessedDataDefById(
+        scope: ScopeProvider,
+        searchId: string,
+        type: PropertyDefinition<any>['type'] = 'value'
+    ): { index: number; def: PropertyDefinition<any> } | never {
+        const { keys, values, aggregates, groupProcessors, reducers } = this;
 
-        if (def?.type === 'key' || def?.type === 'value') {
-            return { type: def.type, index: def.index };
+        const allDefs: (PropertyDefinition<any> & InternalDefinition)[][] = [
+            keys,
+            values,
+            aggregates,
+            groupProcessors,
+            reducers,
+        ];
+        for (const defs of allDefs) {
+            const def = defs.find(
+                ({ id, scopes }) => id === searchId && (scope == null || (scopes?.includes(scope.id) ?? false))
+            );
+            if (def) return { index: def.index, def };
         }
+
+        throw new Error(`AG Charts - didn't find property definition for [${searchId}, ${scope.id}, ${type}]`);
     }
 
-    resolveProcessedDataDefById(searchId: string): InternalDatumPropertyDefinition<any> | undefined {
-        const { keys, values } = this;
-
-        const def = [...keys, ...values].find(({ id }) => id === searchId);
-        if (!def) return undefined;
-
-        return def;
-    }
-
-    getDomain(searchId: string, processedData: ProcessedData<K>): any[] | ContinuousDomain<number> | [] {
-        const idx = this.resolveProcessedDataIndexById(searchId);
+    getDomain(
+        scope: ScopeProvider,
+        searchId: string,
+        type: PropertyDefinition<any>['type'] = 'value',
+        processedData: ProcessedData<K>
+    ): any[] | ContinuousDomain<number> | [] {
+        const idx = this.resolveProcessedDataIndexById(scope, searchId, type);
 
         if (!idx) {
             return [];
         }
 
-        return processedData.domain[idx.type === 'key' ? 'keys' : 'values'][idx.index];
+        let domainProp: keyof ProcessedData<any>['domain'];
+        switch (type) {
+            case 'key':
+                domainProp = 'keys';
+                break;
+            case 'value':
+                domainProp = 'values';
+                break;
+            case 'aggregate':
+                domainProp = 'aggValues';
+                break;
+            case 'group-value-processor':
+                domainProp = 'groups';
+                break;
+            default:
+                return [];
+        }
+
+        return processedData.domain[domainProp]?.[idx.index] ?? [];
     }
 
     processData(data: D[]): (Grouped extends true ? GroupedData<D> : UngroupedData<D>) | undefined {
@@ -413,16 +459,6 @@ export class DataModel<
             domain: {
                 keys: keyDefs.map((def) => propertyDomain(def)),
                 values: valueDefs.map((def) => propertyDomain(def)),
-            },
-            indices: {
-                keys: keyDefs.reduce((r, { property, index }) => {
-                    r[property] = index;
-                    return r;
-                }, {} as Record<keyof D, number>),
-                values: valueDefs.reduce((r, { property, index }) => {
-                    r[property] = index;
-                    return r;
-                }, {} as Record<keyof D, number>),
             },
             defs: {
                 keys: keyDefs,

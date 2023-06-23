@@ -59,17 +59,6 @@ exports[`DataModel empty data set processing should generated the expected resul
       [],
     ],
   },
-  "indices": {
-    "keys": {
-      "year": 0,
-    },
-    "values": {
-      "chrome": 1,
-      "firefox": 2,
-      "ie": 0,
-      "safari": 3,
-    },
-  },
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -301,14 +290,6 @@ exports[`DataModel grouped processing - calculated grouping should generated the
         3505,
       ],
     ],
-  },
-  "indices": {
-    "keys": {
-      "curb-weight": 0,
-    },
-    "values": {
-      "curb-weight": 0,
-    },
   },
   "reduced": {
     "sortedGroupDomain": [
@@ -580,14 +561,6 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       ],
     ],
   },
-  "indices": {
-    "keys": {
-      "engine-size": 0,
-    },
-    "values": {
-      "highway-mpg": 0,
-    },
-  },
   "reduced": {
     "sortedGroupDomain": [
       [
@@ -780,12 +753,6 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       ],
     ],
     "values": [],
-  },
-  "indices": {
-    "keys": {
-      "engine-size": 0,
-    },
-    "values": {},
   },
   "reduced": {
     "sortedGroupDomain": [
@@ -1057,15 +1024,6 @@ exports[`DataModel grouped processing - grouped example should generated the exp
         4.2,
       ],
     ],
-  },
-  "indices": {
-    "keys": {
-      "type": 0,
-    },
-    "values": {
-      "regular": 1,
-      "total": 0,
-    },
   },
   "time": Any<Number>,
   "type": "grouped",
@@ -1621,19 +1579,6 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       ],
     ],
   },
-  "indices": {
-    "keys": {
-      "month": 0,
-    },
-    "values": {
-      "bioenergyWaste": 2,
-      "imported": 5,
-      "naturalGas": 1,
-      "nuclear": 3,
-      "petroleum": 0,
-      "windSolarHydro": 4,
-    },
-  },
   "reduced": {
     "aggValuesExtent": [
       0,
@@ -1929,19 +1874,6 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
         95064,
       ],
     ],
-  },
-  "indices": {
-    "keys": {
-      "type": 0,
-    },
-    "values": {
-      "asian": 2,
-      "black": 3,
-      "chinese": 4,
-      "mixed": 1,
-      "other": 5,
-      "white": 0,
-    },
   },
   "reduced": {
     "aggValuesExtent": [
@@ -2290,17 +2222,6 @@ exports[`DataModel grouped processing - stacked example should generated the exp
         919,
       ],
     ],
-  },
-  "indices": {
-    "keys": {
-      "type": 0,
-    },
-    "values": {
-      "housingAssociation": 3,
-      "localAuthority": 2,
-      "ownerOccupied": 0,
-      "privateRented": 1,
-    },
   },
   "reduced": {
     "aggValuesExtent": [
@@ -2654,17 +2575,6 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       ],
     ],
   },
-  "indices": {
-    "keys": {
-      "type": 0,
-    },
-    "values": {
-      "housingAssociation": 3,
-      "localAuthority": 2,
-      "ownerOccupied": 0,
-      "privateRented": 1,
-    },
-  },
   "reduced": {
     "aggValuesExtent": [
       23.7745,
@@ -2963,17 +2873,6 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       ],
     ],
   },
-  "indices": {
-    "keys": {
-      "type": 0,
-    },
-    "values": {
-      "housingAssociation": 3,
-      "localAuthority": 2,
-      "ownerOccupied": 0,
-      "privateRented": 1,
-    },
-  },
   "time": Any<Number>,
   "type": "grouped",
 }
@@ -3262,17 +3161,6 @@ exports[`DataModel missing and invalid data processing should generated the expe
       ],
     ],
   },
-  "indices": {
-    "keys": {
-      "year": 0,
-    },
-    "values": {
-      "chrome": 1,
-      "firefox": 2,
-      "ie": 0,
-      "safari": 3,
-    },
-  },
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -3360,6 +3248,9 @@ exports[`DataModel repeated property processing should generated the expected re
         "missing": false,
         "processor": [Function],
         "property": "share",
+        "scopes": [
+          "test",
+        ],
         "type": "value",
         "validation": [Function],
         "valueType": "range",
@@ -3378,12 +3269,6 @@ exports[`DataModel repeated property processing should generated the expected re
         0.6869,
       ],
     ],
-  },
-  "indices": {
-    "keys": {},
-    "values": {
-      "share": 1,
-    },
   },
   "time": Any<Number>,
   "type": "ungrouped",
@@ -3541,13 +3426,6 @@ exports[`DataModel ungrouped processing - accumulated and normalised properties 
         8666000,
       ],
     ],
-  },
-  "indices": {
-    "keys": {},
-    "values": {
-      "population": 2,
-      "religion": 1,
-    },
   },
   "time": Any<Number>,
   "type": "ungrouped",
@@ -4332,15 +4210,6 @@ exports[`DataModel ungrouped processing should generated the expected results 1`
         136.45,
       ],
     ],
-  },
-  "indices": {
-    "keys": {
-      "date": 0,
-    },
-    "values": {
-      "diesel": 1,
-      "petrol": 0,
-    },
   },
   "time": Any<Number>,
   "type": "ungrouped",

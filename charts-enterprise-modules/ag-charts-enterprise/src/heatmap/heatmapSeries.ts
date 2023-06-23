@@ -143,17 +143,17 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
-                valueProperty(xKey, isContinuousX, { id: 'xValue' }),
-                valueProperty(yKey, isContinuousY, { id: 'yValue' }),
-                ...(colorKey ? [valueProperty(colorKey, true, { id: 'colorValue' })] : []),
-                ...(labelKey ? [valueProperty(labelKey, false, { id: 'labelValue' })] : []),
+                valueProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                valueProperty(this, yKey, isContinuousY, { id: 'yValue' }),
+                ...(colorKey ? [valueProperty(this, colorKey, true, { id: 'colorValue' })] : []),
+                ...(labelKey ? [valueProperty(this, labelKey, false, { id: 'labelValue' })] : []),
             ],
         });
         this.dataModel = dataModel;
         this.processedData = processedData;
 
         if (colorKey) {
-            const colorKeyIdx = dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
+            const colorKeyIdx = dataModel.resolveProcessedDataIndexById(this, 'colorValue', 'value').index;
             colorScale.domain = colorDomain ?? processedData.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
             colorScale.update();
@@ -161,17 +161,14 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById('xValue');
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById('yValue');
+        const { dataModel, processedData } = this;
 
-        if (!xDataIdx || !yDataIdx) {
-            return [];
-        }
+        if (!dataModel || !processedData) return [];
 
         if (direction === ChartAxisDirection.X) {
-            return this.processedData?.domain.values[0] ?? [];
+            return dataModel.getDomain(this, `xValue`, 'value', processedData);
         } else {
-            return this.processedData?.domain.values[1] ?? [];
+            return dataModel.getDomain(this, `yValue`, 'value', processedData);
         }
     }
 
@@ -191,12 +188,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async createNodeData() {
-        const { data, visible, axes } = this;
+        const { data, visible, axes, dataModel } = this;
 
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!(data && visible && xAxis && yAxis)) {
+        if (!(data && dataModel && visible && xAxis && yAxis)) {
             return [];
         }
 
@@ -207,10 +204,10 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             return [];
         }
 
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`)?.index ?? -1;
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`)?.index ?? -1;
-        const labelDataIdx = this.dataModel?.resolveProcessedDataIndexById(`labelValue`)?.index ?? -1;
-        const colorDataIdx = this.dataModel?.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
+        const xDataIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+        const yDataIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
+        const labelDataIdx = this.labelKey ? dataModel.resolveProcessedDataIndexById(this, `labelValue`).index : -1;
+        const colorDataIdx = this.colorKey ? dataModel.resolveProcessedDataIndexById(this, `colorValue`).index : -1;
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
@@ -496,7 +493,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         if (colorKey) {
             let colorDomain = this.colorDomain;
             if (!colorDomain) {
-                const colorKeyIdx = this.dataModel!.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
+                const colorKeyIdx = this.dataModel!.resolveProcessedDataIndexById(this, 'colorValue').index;
                 colorDomain = this.processedData!.domain.values[colorKeyIdx];
             }
             return [

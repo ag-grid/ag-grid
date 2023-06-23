@@ -1,4 +1,4 @@
-import { AggregatePropertyDefinition, DatumPropertyDefinition } from './dataModel';
+import { AggregatePropertyDefinition, DatumPropertyDefinition, ScopeProvider } from './dataModel';
 import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];
@@ -19,8 +19,10 @@ function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<numbe
     return accumulator;
 }
 
-export function sum<K>(props: K[]) {
+export function sum<K>(scope: ScopeProvider, id: string, props: K[]) {
     const result: AggregatePropertyDefinition<any, any> = {
+        id,
+        scopes: [scope.id],
         properties: props,
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
@@ -29,8 +31,14 @@ export function sum<K>(props: K[]) {
     return result;
 }
 
-export function groupSum<K>(props: K[]): AggregatePropertyDefinition<any, any, [number, number]> {
+export function groupSum<K>(
+    scope: ScopeProvider,
+    id: string,
+    props: K[]
+): AggregatePropertyDefinition<any, any, [number, number]> {
     return {
+        id,
+        scopes: [scope.id],
         type: 'aggregate',
         properties: props,
         aggregateFunction: (values) => sumValues(values),
@@ -42,8 +50,10 @@ export function groupSum<K>(props: K[]): AggregatePropertyDefinition<any, any, [
     };
 }
 
-export function range<K>(props: K[]) {
+export function range<K>(scope: ScopeProvider, id: string, props: K[]) {
     const result: AggregatePropertyDefinition<any, any> = {
+        id,
+        scopes: [scope.id],
         properties: props,
         type: 'aggregate',
         aggregateFunction: (values) => extendDomain(values),
@@ -52,8 +62,10 @@ export function range<K>(props: K[]) {
     return result;
 }
 
-export function count() {
+export function count(scope: ScopeProvider, id: string) {
     const result: AggregatePropertyDefinition<any, any> = {
+        id,
+        scopes: [scope.id],
         properties: [],
         type: 'aggregate',
         aggregateFunction: () => [0, 1],
@@ -62,8 +74,10 @@ export function count() {
     return result;
 }
 
-export function groupCount(): AggregatePropertyDefinition<any, any, [number, number]> {
+export function groupCount(scope: ScopeProvider, id: string): AggregatePropertyDefinition<any, any, [number, number]> {
     return {
+        id,
+        scopes: [scope.id],
         type: 'aggregate',
         properties: [],
         aggregateFunction: () => [0, 1],
@@ -75,8 +89,10 @@ export function groupCount(): AggregatePropertyDefinition<any, any, [number, num
     };
 }
 
-export function average<K>(props: K[]) {
+export function average<K>(scope: ScopeProvider, id: string, props: K[]) {
     const result: AggregatePropertyDefinition<any, any> = {
+        id,
+        scopes: [scope.id],
         properties: props,
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values).map((v) => v / values.length) as [number, number],
@@ -85,8 +101,10 @@ export function average<K>(props: K[]) {
     return result;
 }
 
-export function groupAverage<K>(props: K[]) {
+export function groupAverage<K>(scope: ScopeProvider, id: string, props: K[]) {
     const result: AggregatePropertyDefinition<any, any, [number, number], [number, number, number]> = {
+        id,
+        scopes: [scope.id],
         properties: props,
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
@@ -108,8 +126,10 @@ export function groupAverage<K>(props: K[]) {
     return result;
 }
 
-export function area<K>(props: K[], aggFn: AggregatePropertyDefinition<any, any>) {
+export function area<K>(scope: ScopeProvider, id: string, props: K[], aggFn: AggregatePropertyDefinition<any, any>) {
     const result: AggregatePropertyDefinition<any, any> = {
+        id,
+        scopes: [scope.id],
         properties: props,
         type: 'aggregate',
         aggregateFunction: (values, keyRange = []) => {
