@@ -1,12 +1,14 @@
 import classnames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
 import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
+import { Icon } from '../components/Icon';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
+import { hostPrefix } from '../utils/consts';
 import styles from './pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
@@ -30,6 +32,7 @@ const Changelog = ({ location }) => {
     const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
+    const searchBarEl = useRef(null);
 
     const components = useMemo(() => {
         return {
@@ -41,14 +44,14 @@ const Changelog = ({ location }) => {
     }, []);
 
     useEffect(() => {
-        fetch('/changelog/changelog.json')
+        fetch(`${hostPrefix}/changelog/changelog.json`)
             .then((response) => response.json())
             .then((data) => {
                 const gridVersions = [...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
                 setRowData(data);
             });
-        fetch('/changelog/releaseVersionNotes.json')
+        fetch(`${hostPrefix}/changelog/releaseVersionNotes.json`)
             .then((response) => response.json())
             .then((data) => {
                 setAllReleaseNotes(data);
@@ -68,9 +71,10 @@ const Changelog = ({ location }) => {
             );
 
             let currentReleaseNotesHtml = null;
+
             if (releaseNotes) {
                 if (releaseNotes['markdown']) {
-                    fetch('/changelog/' + releaseNotes['markdown'])
+                    fetch(`${hostPrefix}/changelog` + releaseNotes['markdown'])
                         .then((response) => response.text())
                         .then((markdownContent) => {
                             setMarkdownContent(markdownContent);
@@ -92,10 +96,18 @@ const Changelog = ({ location }) => {
     const gridReady = useCallback(
         (params) => {
             setGridApi(params.api);
+            searchBarEl.current.value = URLFilterItemKey;
             params.api.setQuickFilter(URLFilterItemKey);
             params.api.sizeColumnsToFit();
         },
         [URLFilterItemKey]
+    );
+
+    const onQuickFilterChange = useCallback(
+        (event) => {
+            gridApi.setQuickFilter(event.target.value);
+        },
+        [gridApi]
     );
 
     const isRowMaster = useCallback((params) => {
@@ -128,8 +140,6 @@ const Changelog = ({ location }) => {
             return false;
         },
         cellDataType: false,
-        filter: 'agTextColumnFilter',
-        floatingFilter: true,
     };
 
     const detailCellRendererParams = useCallback((params) => {
@@ -215,9 +225,6 @@ const Changelog = ({ location }) => {
                         component: 'paddingCellRenderer',
                     };
                 },
-                floatingFilterComponentParams: {
-                    suppressFilterButton: true,
-                },
             },
             {
                 field: 'summary',
@@ -226,26 +233,18 @@ const Changelog = ({ location }) => {
                 width: 300,
                 minWidth: 200,
                 flex: 1,
-                floatingFilterComponentParams: {
-                    suppressFilterButton: true,
-                },
             },
             {
                 field: 'versions',
                 headerName: 'Version',
                 width: 120,
                 resizable: true,
-                filter: 'agSetColumnFilter',
             },
             {
                 field: 'issueType',
                 valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-                filterParams: {
-                    valueFormatter: (params) => params.colDef.valueFormatter(params),
-                },
                 cellRenderer: 'issueTypeCellRenderer',
                 width: 175,
-                filter: true,
             },
             {
                 field: 'status',
@@ -253,7 +252,6 @@ const Changelog = ({ location }) => {
                     return params.data.resolution;
                 },
                 width: 110,
-                filter: true,
             },
         ],
         []
@@ -280,6 +278,20 @@ const Changelog = ({ location }) => {
                             onChange={switchDisplayedFixVersion}
                         />
                     </section>
+
+                    <div className={styles.searchBarOuter}>
+                        <Icon name="search" />
+                        <input
+                            type="search"
+                            className={styles.searchBar}
+                            placeholder={'Search changelog...'}
+                            ref={searchBarEl}
+                            onChange={onQuickFilterChange}
+                        ></input>
+                        <span className={classnames(styles.searchExplainer, 'text-secondary')}>
+                            Find changelog items by issue number, summary content, or version
+                        </span>
+                    </div>
 
                     <Grid
                         gridHeight={'70.5vh'}

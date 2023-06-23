@@ -48,13 +48,14 @@
     border-right: $border;
     border-bottom: $border;
     border-left: $border;
+    overflow: hidden;
 
-    > div {
+    &:not(.notExpandable) > div {
         overflow: hidden;
         padding-bottom: $size-7;
     }
 
-    &.contentCollapsed > div {
+    &.contentCollapsed:not(.notExpandable) > div {
         max-height: 340px;
     }
 

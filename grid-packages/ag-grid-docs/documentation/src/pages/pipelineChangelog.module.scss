@@ -16,20 +16,42 @@
     margin-bottom: $size-2;
 }
 
-.controls,
-.controls > div {
+.searchBarOuter {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
+    gap: 0 $size-1;
+    margin-top: $size-6;
+    margin-bottom: $size-1;
+
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --text-color: var(--secondary-text-color);
+
+        position: absolute;
+        left: 0.625em;
+    }
+
+    input[type='search'] {
+        width: 100%;
+        padding-left: 2em;
+
+        @media screen and (min-width: $breakpoint-changelog-pipeline-large) {
+            width: max(33.33%, 28em);
+        }
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
 }
 
-.controls {
-    gap: $size-1 0;
-}
+.searchExplainer {
+    line-height: var(--line-height-tight);
 
-.controls > div {
-    gap: $size-1 $size-4;
-    justify-content: space-between;
+    @media screen and (max-width: $breakpoint-changelog-pipeline-large) {
+        display: none;
+    }
 }
 
 .checkboxLabel {
