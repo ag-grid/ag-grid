@@ -13,8 +13,23 @@ export class ModuleRegistry {
     private static isBundled: boolean | undefined;
     private static areGridScopedModules = false;
 
+    /**
+     * Globally register the given module for all grids.
+     * @param module - module to register
+     */
+    public static register(module: Module): void {
+        ModuleRegistry.__register(module, true, undefined);
+    }
+    /**
+     * Globally register the given modules for all grids.
+     * @param modules - modules to register
+     */
+    public static registerModules(modules: Module[]): void {
+        ModuleRegistry.__registerModules(modules, true, undefined);
+    }
 
-    public static register(module: Module, moduleBased = true, gridId: string | undefined = undefined): void {
+    /** AG GRID INTERNAL - Module registration helper. */
+    public static __register(module: Module, moduleBased: boolean, gridId: string | undefined): void {
         ModuleRegistry.runVersionChecks(module);
 
         if (gridId !== undefined) {
@@ -30,17 +45,18 @@ export class ModuleRegistry {
         ModuleRegistry.setModuleBased(moduleBased);
     }
 
-    public static unRegisterGridModules(gridId: string): void {
+    /** AG GRID INTERNAL - Unregister grid scoped module. */
+    public static __unRegisterGridModules(gridId: string): void {
         delete ModuleRegistry.gridModulesMap[gridId];
     }
-
-    public static registerModules(modules: Module[], moduleBased = true, gridId: string | undefined = undefined): void {
+    /** AG GRID INTERNAL - Module registration helper. */
+    public static __registerModules(modules: Module[], moduleBased: boolean, gridId: string | undefined): void {
         ModuleRegistry.setModuleBased(moduleBased);
 
         if (!modules) {
             return;
         }
-        modules.forEach(module => ModuleRegistry.register(module, moduleBased, gridId));
+        modules.forEach(module => ModuleRegistry.__register(module, moduleBased, gridId));
     }
 
     private static isValidModuleVersion(module: Module): boolean {
@@ -86,14 +102,15 @@ export class ModuleRegistry {
     }
 
     /**
-     * INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
+     * AG GRID INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
      */
-    public static setIsBundled() {
+    public static __setIsBundled() {
         ModuleRegistry.isBundled = true;
     }
 
-    public static assertRegistered(moduleName: ModuleNames, reason: string, gridId: string): boolean {
-        if (this.isRegistered(moduleName, gridId)) {
+    /** AG GRID INTERNAL - Assert a given module has been register, globally or individually with this grid. */
+    public static __assertRegistered(moduleName: ModuleNames, reason: string, gridId: string): boolean {
+        if (this.__isRegistered(moduleName, gridId)) {
             return true;
         }
 
@@ -137,15 +154,23 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         return false;
     }
 
-    public static isRegistered(moduleName: ModuleNames, gridId: string): boolean {
+    /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
+    public static __isRegistered(moduleName: ModuleNames, gridId: string): boolean {
         return !!ModuleRegistry.globalModulesMap[moduleName] || !!ModuleRegistry.gridModulesMap[gridId]?.[moduleName];
     }
 
-    public static getRegisteredModules(gridId: string): Module[] {
+    /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */
+    public static __getRegisteredModules(gridId: string): Module[] {
         return [...values(ModuleRegistry.globalModulesMap), ...values(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
 
-    public static isPackageBased(): boolean {
+    /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
+    public static __getGridRegisteredModules(gridId: string): Module[] {
+        return values(ModuleRegistry.gridModulesMap[gridId] ?? {}) || [];
+    }
+
+    /** INTERNAL */
+    public static __isPackageBased(): boolean {
         return !ModuleRegistry.moduleBased;
     }
 }
