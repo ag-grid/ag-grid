@@ -82,6 +82,13 @@ class RadarLineSeriesTooltip extends _ModuleSupport.SeriesTooltip {
     format?: string = undefined;
 }
 
+interface RadarLineAnimationData {
+    markerSelection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>;
+    labelSelection: _Scene.Selection<_Scene.Text, RadarLineNodeDatum>;
+    nodeData: RadarLineNodeDatum[];
+    lineNode: _Scene.Path;
+}
+
 export class RadarLineSeriesMarker extends _ModuleSupport.SeriesMarker {
     @Validate(OPT_FUNCTION)
     @_Scene.SceneChangeDetection({ redraw: _Scene.RedrawType.MAJOR })
@@ -89,7 +96,7 @@ export class RadarLineSeriesMarker extends _ModuleSupport.SeriesMarker {
 }
 
 type RadarLineAnimationState = 'empty' | 'ready';
-type RadarLineAnimationEvent = 'update';
+type RadarLineAnimationEvent = 'update' | 'resize';
 class RadarLineStateMachine extends StateMachine<RadarLineAnimationState, RadarLineAnimationEvent> {}
 
 export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDatum> {
@@ -187,7 +194,7 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 on: {
                     update: {
                         target: 'ready',
-                        action: () => this.animateEmptyUpdateReady(),
+                        action: (data) => this.animateEmptyUpdateReady(data),
                     },
                 },
             },
@@ -195,13 +202,15 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
                 on: {
                     update: {
                         target: 'ready',
-                        action: () => this.animateUpdateReady(),
+                        action: (data) => this.animateReadyUpdate(data),
+                    },
+                    resize: {
+                        target: 'ready',
+                        action: (data: any) => this.animateReadyResize(data),
                     },
                 },
             },
         });
-        // TODO: To be deleted when animations are enabled (prevents TSLint warning).
-        this.animationState.debug;
     }
 
     addChartEventListeners(): void {
@@ -340,34 +349,22 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         this.rootGroup.translationX = this.centerX;
         this.rootGroup.translationY = this.centerY;
 
-        this.updatePath();
+        this.updatePathSelection();
         this.updateMarkers(this.markerSelection, false);
         this.updateMarkers(this.highlightSelection, true);
         this.updateLabels();
+
+        const animationData: RadarLineAnimationData = {
+            markerSelection: this.markerSelection,
+            labelSelection: this.labelSelection,
+            nodeData: this.nodeData,
+            lineNode: this.pathSelection.nodes()[0],
+        };
+        this.animationState.transition('update', animationData);
     }
 
-    private updatePath() {
-        this.pathSelection.update(this.visible ? [true] : []).each((node) => {
-            const { path } = node;
-            path.clear({ trackChanges: true });
-            this.nodeData.forEach((datum, index) => {
-                const point = datum.point!;
-                if (index === 0) {
-                    path.moveTo(point.x, point.y);
-                } else {
-                    path.lineTo(point.x, point.y);
-                }
-            });
-            path.closePath();
-            node.pointerEvents = PointerEvents.None;
-            node.lineJoin = 'round';
-            node.fill = undefined;
-            node.stroke = this.stroke;
-            node.strokeOpacity = this.strokeOpacity;
-            node.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-            node.lineDash = this.lineDash;
-            node.lineDashOffset = this.lineDashOffset;
-        });
+    private updatePathSelection() {
+        this.pathSelection.update(this.visible ? [true] : []);
     }
 
     private updateMarkers(selection: _Scene.Selection<_Scene.Marker, RadarLineNodeDatum>, highlight: boolean) {
@@ -603,10 +600,6 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         }
     }
 
-    animateEmptyUpdateReady() {}
-
-    animateUpdateReady() {}
-
     computeLabelsBBox() {
         const { label } = this;
 
@@ -630,5 +623,192 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             return null;
         }
         return BBox.merge(textBoxes);
+    }
+
+    animateEmptyUpdateReady({ markerSelection, labelSelection, nodeData, lineNode }: RadarLineAnimationData) {
+        if (!lineNode) {
+            return;
+        }
+        const { path: linePath } = lineNode;
+
+        const nodeLengths: Array<number> = [0];
+        const points = nodeData.map((datum) => datum.point!);
+        const first = points[0];
+        points.push(first); // connect the last point with the first
+
+        let lineLength = 0;
+        points.forEach((point, index) => {
+            if (index === 0) return;
+            const prev = points[index - 1];
+            const { x: prevX, y: prevY } = prev;
+            const { x, y } = point;
+            if (isNaN(x) || isNaN(y) || isNaN(prevX) || isNaN(prevY)) {
+                nodeLengths.push(lineLength);
+                return;
+            }
+            lineLength += Math.sqrt((x - prevX) ** 2 + (y - prevY) ** 2);
+            nodeLengths.push(lineLength);
+            return lineLength;
+        }, 0);
+
+        lineNode.fill = undefined;
+        lineNode.lineJoin = 'round';
+        lineNode.pointerEvents = PointerEvents.None;
+
+        lineNode.stroke = this.stroke;
+        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+        lineNode.strokeOpacity = this.strokeOpacity;
+
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
+
+        const duration = 1000;
+        const markerDuration = 200;
+
+        const animationOptions = {
+            from: 0,
+            to: lineLength,
+        };
+
+        this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+            ...animationOptions,
+            duration,
+            onUpdate(length) {
+                linePath.clear({ trackChanges: true });
+
+                points.forEach((point, index) => {
+                    if (nodeLengths[index] <= length) {
+                        // Draw/move the full segment if past the end of this segment
+                        const { x, y } = point;
+                        if (index === 0) {
+                            linePath.moveTo(x, y);
+                        } else {
+                            linePath.lineTo(x, y);
+                        }
+                    } else if (index > 0 && nodeLengths[index - 1] < length) {
+                        // Draw/move partial line if in between the start and end of this segment
+                        const start = points[index - 1];
+                        const end = point;
+
+                        const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
+                        const remainingLength = nodeLengths[index] - length;
+                        const ratio = (segmentLength - remainingLength) / segmentLength;
+
+                        const x = (1 - ratio) * start.x + ratio * end.x;
+                        const y = (1 - ratio) * start.y + ratio * end.y;
+
+                        if (index === 0) {
+                            linePath.moveTo(x, y);
+                        } else {
+                            linePath.lineTo(x, y);
+                        }
+                    }
+                });
+
+                lineNode.checkPathDirty();
+            },
+        });
+
+        markerSelection.each((marker, datum, index) => {
+            const delay = lineLength > 0 ? (nodeLengths[index] / lineLength) * duration : 0;
+            const format = this.animateFormatter(datum);
+            const size = datum.point?.size ?? 0;
+
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                ...animationOptions,
+                to: format?.size ?? size,
+                delay,
+                duration: markerDuration,
+                onUpdate(size) {
+                    marker.size = size;
+                },
+            });
+        });
+
+        labelSelection.each((label, _, index) => {
+            const delay = (nodeLengths[index] / lineLength) * duration;
+            this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                from: 0,
+                to: 1,
+                delay,
+                duration: markerDuration,
+                onUpdate: (opacity) => {
+                    label.opacity = opacity;
+                },
+            });
+        });
+    }
+
+    animateReadyUpdate(data: RadarLineAnimationData) {
+        this.resetMarkersAndPaths(data);
+    }
+
+    animateReadyResize(data: RadarLineAnimationData) {
+        this.animationManager?.stop();
+        this.resetMarkersAndPaths(data);
+    }
+
+    private resetMarkersAndPaths({ markerSelection, nodeData, lineNode }: RadarLineAnimationData) {
+        const { path: linePath } = lineNode;
+
+        lineNode.stroke = this.stroke;
+        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+        lineNode.strokeOpacity = this.strokeOpacity;
+
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
+
+        linePath.clear({ trackChanges: true });
+
+        nodeData.forEach((datum, index) => {
+            const { x, y } = datum.point!;
+            if (index === 0) {
+                linePath.moveTo(x, y);
+            } else {
+                linePath.lineTo(x, y);
+            }
+        });
+        linePath.closePath();
+
+        lineNode.checkPathDirty();
+
+        markerSelection.each((marker, datum) => {
+            const format = this.animateFormatter(datum);
+            const size = datum.point?.size ?? 0;
+            marker.size = format?.size ?? size;
+        });
+    }
+
+    private animateFormatter(datum: RadarLineNodeDatum) {
+        const {
+            marker,
+            angleKey = '',
+            radiusKey = '',
+            stroke: lineStroke,
+            id: seriesId,
+            ctx: { callbackCache },
+        } = this;
+        const { size, formatter } = marker;
+
+        const fill = marker.fill;
+        const stroke = marker.stroke ?? lineStroke;
+        const strokeWidth = marker.strokeWidth ?? this.strokeWidth;
+
+        let format: AgRadarLineSeriesMarkerFormat | undefined = undefined;
+        if (formatter) {
+            format = callbackCache.call(formatter, {
+                datum: datum.datum,
+                angleKey,
+                radiusKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false,
+                seriesId,
+            });
+        }
+
+        return format;
     }
 }
