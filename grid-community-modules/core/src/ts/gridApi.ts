@@ -126,6 +126,7 @@ import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
+import { IFilterExpression } from "./filter/expression/iFilterExpression";
 
 export interface DetailGridInfo {
     /**
@@ -695,6 +696,14 @@ export class GridApi<TData = any> {
     /** Pass a Quick Filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
         this.gridOptionsService.set('quickFilterText', newFilter);
+    }
+
+    public getFilterExpression(): IFilterExpression | null {
+        return this.filterManager.getFilterExpression();
+    }
+
+    public setFilterExpression(expression: IFilterExpression | null): void {
+        this.filterManager.setFilterExpression(expression);
     }
 
     /** 

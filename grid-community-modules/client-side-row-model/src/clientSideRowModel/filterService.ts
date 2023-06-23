@@ -13,9 +13,7 @@ export class FilterService extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
 
     public filter(changedPath: ChangedPath): void {
-        const filterActive: boolean = this.filterManager.isColumnFilterPresent()
-                                    || this.filterManager.isQuickFilterPresent() 
-                                    || this.filterManager.isExternalFilterPresent();
+        const filterActive: boolean = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
 

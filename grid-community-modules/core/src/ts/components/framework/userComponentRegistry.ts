@@ -32,6 +32,7 @@ import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
 import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCellRenderer";
 import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
+import { FakeFloatingFilter } from "../../filter/expression/fakeFloatingFilter";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -52,6 +53,7 @@ export class UserComponentRegistry extends BeanStub {
         agNumberColumnFloatingFilter: NumberFloatingFilter,
         agDateColumnFloatingFilter: DateFloatingFilter,
         agReadOnlyFloatingFilter: ReadOnlyFloatingFilter,
+        agFakeFloatingFilter: FakeFloatingFilter,
 
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,

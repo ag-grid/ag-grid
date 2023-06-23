@@ -22,6 +22,8 @@ import { PropertyChangedEvent } from '../gridOptionsService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
+import { FilterExpressionService } from './expression/filterExpressionService';
+import { IFilterExpression } from './expression/iFilterExpression';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -33,6 +35,7 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('filterExpressionService') private filterExpressionService: FilterExpressionService;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -216,6 +219,13 @@ export class FilterManager extends BeanStub {
 
     public isExternalFilterPresent(): boolean {
         return this.externalFilterPresent;
+    }
+
+    public isChildFilterPresent(): boolean {
+        return this.isColumnFilterPresent()
+            || this.isQuickFilterPresent() 
+            || this.isExternalFilterPresent()
+            || this.filterExpressionService.isFilterPresent();
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -495,6 +505,10 @@ export class FilterManager extends BeanStub {
 
         // lastly, check column filter
         if (this.isColumnFilterPresent() && !this.doColumnFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+            return false;
+        }
+
+        if (this.filterExpressionService.isFilterPresent() && !this.filterExpressionService.doesFilterPass(params.rowNode)) {
             return false;
         }
 
@@ -893,6 +907,15 @@ export class FilterManager extends BeanStub {
         if (!compDetails || filterWrapper.compDetails?.componentClass !== compDetails.componentClass) {
             this.destroyFilter(column, 'columnChanged');
         }
+    }
+
+    public getFilterExpression(): IFilterExpression | null {
+        return this.filterExpressionService.getExpression();
+    }
+
+    public setFilterExpression(expression: IFilterExpression | null): void {
+        this.filterExpressionService.setExpression(expression);
+        this.onFilterChanged();
     }
 
     protected destroy() {
