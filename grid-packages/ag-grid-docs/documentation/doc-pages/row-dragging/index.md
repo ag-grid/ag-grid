@@ -109,6 +109,11 @@ Typically a drag will fire the following events:
 
 Additional `rowDragLeave` and `rowDragEnter` events are fired if the mouse leaves or re-enters the grid. If the drag is finished outside of the grid, then the `rowDragLeave` is the last event fired and no `rowDragEnd` is fired, as the drag did not end on the grid.
 
+<note>
+When the Grid is created, a [Drop Zone](../row-dragging-to-external-dropzone/) that is responsible for firing all the Row Drag Events is added to the Grid Body. This why Row Drag Events (including `rowDragEnd`) are only fired when they happen on top of the Grid. If you need to monitor when a Row Drag ends outside of the Grid, for example, use the [DragStopped](../grid-events/#reference-miscellaneous-dragStopped) event.
+</note>
+
+
 Each of the four row drag events extend the `RowDragEvent` interface.
 
 <interface-documentation interfaceName='RowDragEvent' ></interface-documentation>
