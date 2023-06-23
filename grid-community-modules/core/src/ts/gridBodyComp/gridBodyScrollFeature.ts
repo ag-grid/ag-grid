@@ -16,7 +16,6 @@ import { Column } from "../entities/column";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, isVisible, setScrollLeft } from "../utils/dom";
-import { waitUntil } from "../utils/function";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -327,12 +326,13 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     // called by scrollHorizontally method and alignedGridsService
-    public setHorizontalScrollPosition(hScrollPosition: number): void {
-        const fakeHScrollGui = this.ctrlsService.getFakeHScrollComp().getGui();
+    public setHorizontalScrollPosition(hScrollPosition: number, fromAlignedGridsService = false): void {
         const minScrollLeft = 0;
         const maxScrollLeft = this.centerRowContainerCtrl.getViewportElement().scrollWidth - this.centerRowContainerCtrl.getCenterWidth();
 
-        if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
+        // if this is call is coming from the alignedGridsService, we don't need to validate the
+        // scroll, because it has already been validated by the grid firing the scroll event.
+        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
             if (this.enableRtl && isRtlNegativeScroll()) {
                 hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
             } else {
