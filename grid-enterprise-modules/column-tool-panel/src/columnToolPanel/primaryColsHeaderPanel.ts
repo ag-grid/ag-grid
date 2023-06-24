@@ -74,8 +74,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
 
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
-        this.eExpand.setAttribute('tabindex', tabIndex.toString());
+        this.activateTabIndex([this.eExpand]);
     }
 
     public init(params: ToolPanelColumnCompParams): void {

@@ -112,7 +112,8 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private activateTabGuards(): void {
-        this.comp.setTabIndex(this.getGridTabIndex());
+        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        this.comp.setTabIndex(tabIndex.toString());
     }
 
     private deactivateTabGuards(): void {
@@ -173,10 +174,6 @@ export class TabGuardCtrl extends BeanStub {
 
         nextRoot.focus();
         e.preventDefault();
-    }
-
-    public getGridTabIndex(): string {
-        return (this.gridOptionsService.getNum('tabIndex') || 0).toString();
     }
 
     public focusInnerElement(fromBottom = false): void {

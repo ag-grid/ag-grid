@@ -94,9 +94,7 @@ export class DropZoneColumnComp extends Component {
         });
 
         this.setupTooltip();
-
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
-        eGui.setAttribute('tabindex', tabIndex.toString());
+        this.activateTabIndex();
     }
 
     private setupAria() {

@@ -48,9 +48,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         }
 
         this.addInputListeners();
-
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
-        this.eInput.setAttribute('tabindex', tabIndex.toString());
+        this.activateTabIndex([this.eInput]);
     }
 
     protected refreshLabel() {

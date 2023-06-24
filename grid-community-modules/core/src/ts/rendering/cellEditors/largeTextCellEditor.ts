@@ -42,9 +42,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
         }
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
-
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
-        this.getGui().setAttribute('tabindex', tabIndex.toString());
+        this.activateTabIndex();
     }
 
     private onKeyDown(event: KeyboardEvent): void {
