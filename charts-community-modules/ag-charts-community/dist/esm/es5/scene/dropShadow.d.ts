@@ -6,4 +6,3 @@ export declare class DropShadow extends ChangeDetectable {
     yOffset: number;
     blur: number;
 }
-//# sourceMappingURL=dropShadow.d.ts.map

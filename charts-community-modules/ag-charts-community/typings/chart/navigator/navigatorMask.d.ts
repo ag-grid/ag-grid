@@ -11,4 +11,3 @@ export declare class NavigatorMask {
     get fillOpacity(): number;
     constructor(rangeMask: RangeMask);
 }
-//# sourceMappingURL=navigatorMask.d.ts.map

@@ -21,4 +21,3 @@ export declare class Selection<TChild extends Node = Node, TDatum = any> {
     nodes(): TChild[];
 }
 export {};
-//# sourceMappingURL=selection.d.ts.map

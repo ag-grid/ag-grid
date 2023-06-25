@@ -61,4 +61,3 @@ export declare class Matrix {
     }): Matrix;
     static fromContext(ctx: CanvasTransform): Matrix;
 }
-//# sourceMappingURL=matrix.d.ts.map

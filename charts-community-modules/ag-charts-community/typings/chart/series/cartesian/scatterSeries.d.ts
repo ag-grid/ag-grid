@@ -94,4 +94,3 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
     protected isLabelEnabled(): boolean;
 }
 export {};
-//# sourceMappingURL=scatterSeries.d.ts.map

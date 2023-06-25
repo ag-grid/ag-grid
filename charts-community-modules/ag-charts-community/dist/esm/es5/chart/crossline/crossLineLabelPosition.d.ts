@@ -31,4 +31,3 @@ export declare function calculateLabelChartPadding({ yDirection, bbox, padding, 
 export declare const POSITION_TOP_COORDINATES: CoordinatesFn;
 export declare const labeldDirectionHandling: Record<CrossLineLabelPosition, PositionCalcFns>;
 export {};
-//# sourceMappingURL=crossLineLabelPosition.d.ts.map

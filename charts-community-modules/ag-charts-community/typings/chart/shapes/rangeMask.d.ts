@@ -32,4 +32,3 @@ export declare class RangeMask extends Path {
     computeVisibleRangeBBox(): BBox;
     updatePath(): void;
 }
-//# sourceMappingURL=rangeMask.d.ts.map

@@ -31,4 +31,3 @@ export declare class Path extends Shape {
     updatePath(): void;
     render(renderCtx: RenderContext): void;
 }
-//# sourceMappingURL=path.d.ts.map

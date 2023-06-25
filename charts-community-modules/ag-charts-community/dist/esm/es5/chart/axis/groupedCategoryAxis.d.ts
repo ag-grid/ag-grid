@@ -50,4 +50,3 @@ export declare class GroupedCategoryAxis extends ChartAxis<BandScale<string | nu
     update(primaryTickCount?: number): number | undefined;
 }
 export {};
-//# sourceMappingURL=groupedCategoryAxis.d.ts.map

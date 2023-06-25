@@ -1,1 +1,0 @@
-{"version":3,"file":"cursorManager.d.ts","sourceRoot":"","sources":["../../../src/chart/interaction/cursorManager.ts"],"names":[],"mappings":"AAIA;;;GAGG;AACH,qBAAa,aAAa;IACtB,OAAO,CAAC,QAAQ,CAAC,MAAM,CAAmC;IAC1D,OAAO,CAAC,QAAQ,CAAC,OAAO,CAAc;gBAEnB,OAAO,EAAE,WAAW;IAIhC,YAAY,CAAC,QAAQ,EAAE,MAAM,EAAE,KAAK,CAAC,EAAE,MAAM;IAUpD,OAAO,CAAC,WAAW;CAWtB"}

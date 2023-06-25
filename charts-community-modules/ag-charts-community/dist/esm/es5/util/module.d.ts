@@ -86,4 +86,3 @@ export declare abstract class BaseModuleInstance {
 export declare const REGISTERED_MODULES: Module[];
 export declare function registerModule(module: Module): void;
 export {};
-//# sourceMappingURL=module.d.ts.map

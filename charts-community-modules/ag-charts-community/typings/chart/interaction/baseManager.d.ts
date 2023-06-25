@@ -8,4 +8,3 @@ export declare abstract class BaseManager<EventTypes extends string = never, Eve
     }>(type: T, cb: (event: E) => void): Symbol;
     removeListener(listenerSymbol: Symbol): void;
 }
-//# sourceMappingURL=baseManager.d.ts.map

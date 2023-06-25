@@ -90,4 +90,3 @@ export declare abstract class Shape extends Node {
     abstract isPointInPath(x: number, y: number): boolean;
 }
 export {};
-//# sourceMappingURL=shape.d.ts.map

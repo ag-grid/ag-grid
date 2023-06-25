@@ -25,4 +25,3 @@ export declare function isPointLabelDatum(x: any): x is PointLabelDatum;
 export declare function placeLabels(data: readonly (readonly PointLabelDatum[])[], bounds?: Bounds, padding?: number): PlacedLabel[][];
 export declare function axisLabelsOverlap(data: readonly PointLabelDatum[], padding?: number): boolean;
 export {};
-//# sourceMappingURL=labelPlacement.d.ts.map

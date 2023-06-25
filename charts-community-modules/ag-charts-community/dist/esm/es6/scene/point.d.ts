@@ -5,4 +5,3 @@ export interface Point {
 export interface SizedPoint extends Point {
     size: number;
 }
-//# sourceMappingURL=point.d.ts.map

@@ -9,4 +9,3 @@ export declare class Image extends Node {
     opacity: number;
     render(renderCtx: RenderContext): void;
 }
-//# sourceMappingURL=image.d.ts.map

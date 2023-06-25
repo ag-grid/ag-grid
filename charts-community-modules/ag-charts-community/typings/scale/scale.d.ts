@@ -22,4 +22,3 @@ export interface Scale<D, R, I = number> {
     bandwidth?: number;
 }
 export {};
-//# sourceMappingURL=scale.d.ts.map

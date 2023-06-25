@@ -1744,4 +1744,3 @@ export interface AgChartInstance {
  */
 export declare const __FORCE_MODULE_DETECTION = 0;
 export {};
-//# sourceMappingURL=agChartOptions.d.ts.map

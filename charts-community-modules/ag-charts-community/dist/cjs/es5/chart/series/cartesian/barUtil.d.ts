@@ -70,4 +70,3 @@ export declare function updateLabel<LabelDatumType extends LabelDatum>({ labelNo
     visible: boolean;
 }): void;
 export {};
-//# sourceMappingURL=barUtil.d.ts.map

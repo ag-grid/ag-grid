@@ -12,4 +12,3 @@ export declare const CHART_TYPES: {
 export declare function registerChartSeriesType(seriesType: string, chartType: ChartType): void;
 export declare function registerChartDefaults(chartType: ChartType, defaults: {}): void;
 export declare function getChartDefaults(chartType: ChartType): {};
-//# sourceMappingURL=chartTypes.d.ts.map

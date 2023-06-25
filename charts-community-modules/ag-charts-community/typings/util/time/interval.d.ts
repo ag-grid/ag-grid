@@ -54,4 +54,3 @@ export declare class CountableTimeInterval extends TimeInterval {
     every(step: number, options?: CountableTimeIntervalOptions): TimeInterval;
 }
 export {};
-//# sourceMappingURL=interval.d.ts.map

@@ -68,4 +68,3 @@ export declare class CrossLine {
     calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>): void;
 }
 export {};
-//# sourceMappingURL=crossLine.d.ts.map

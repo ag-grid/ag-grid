@@ -4,4 +4,3 @@ export declare class Triangle extends Marker {
     static moves: MarkerPathMove[];
     updatePath(): void;
 }
-//# sourceMappingURL=triangle.d.ts.map

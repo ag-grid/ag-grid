@@ -36,4 +36,3 @@ export declare class AnimationManager extends BaseManager<AnimationEventType, An
     private cancelAnimationFrame;
 }
 export {};
-//# sourceMappingURL=animationManager.d.ts.map

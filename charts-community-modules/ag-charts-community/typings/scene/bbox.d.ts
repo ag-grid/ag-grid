@@ -23,4 +23,3 @@ export declare class BBox {
     static merge(boxes: BBox[]): BBox;
 }
 export {};
-//# sourceMappingURL=bbox.d.ts.map

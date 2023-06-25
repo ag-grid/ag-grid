@@ -18,4 +18,3 @@ export declare class SizeMonitor {
     static checkClientSize(element: HTMLElement, entry: Entry): void;
 }
 export {};
-//# sourceMappingURL=sizeMonitor.d.ts.map
