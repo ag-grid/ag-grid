@@ -55,9 +55,8 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     }
 
     protected updateRadiusLine() {
-        const { scale } = this;
+        const { scale, shape } = this;
         const node = this.radiusLine;
-        const shape = this.gridShape;
         const radius = this.gridLength;
 
         const { path } = node;

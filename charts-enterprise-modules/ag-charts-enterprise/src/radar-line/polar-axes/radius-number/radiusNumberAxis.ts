@@ -15,7 +15,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     static className = 'RadiusNumberAxis';
     static type = 'radius-number' as const;
 
-    gridShape: 'polygon' | 'circle' = 'polygon';
+    shape: 'polygon' | 'circle' = 'polygon';
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
     @Default(NaN)
@@ -56,7 +56,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     }
 
     private updateGridArcs() {
-        const { scale, gridStyle, tick, gridShape } = this;
+        const { scale, gridStyle, tick, shape } = this;
         if (!gridStyle) {
             return;
         }
@@ -75,7 +75,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
             node.fill = undefined;
         };
 
-        this.gridArcGroupSelection.update(gridShape === 'circle' ? ticks : []).each((node, value, index) => {
+        this.gridArcGroupSelection.update(shape === 'circle' ? ticks : []).each((node, value, index) => {
             setStyle(node, index);
 
             node.centerX = 0;
@@ -85,7 +85,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
             node.endAngle = 2 * Math.PI;
         });
 
-        this.gridPolygonGroupSelection.update(gridShape === 'polygon' ? ticks : []).each((node, value, index) => {
+        this.gridPolygonGroupSelection.update(shape === 'polygon' ? ticks : []).each((node, value, index) => {
             setStyle(node, index);
 
             const { path } = node;

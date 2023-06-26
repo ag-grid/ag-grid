@@ -22,10 +22,9 @@ series: [{
 
 <chart-example title='Basic Radar Line' name='basic-radar-line' type='generated' options='{ "enterprise": true }'></chart-example>
 
-The next example demonstrates multiple radar lines with axes having a circular shape:
+The next example demonstrates multiple radar line series on the same chart:
 
 ```js
-shape: 'circle',
 series: [
     {
         type: 'radar-line',
@@ -37,27 +36,28 @@ series: [
         angleKey: 'subject',
         radiusKey: `Tony's grades`,
     },
-]
+],
 ```
 
 <chart-example title='Radar Line with Circular Axes' name='radar-line-circle-axes' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Polar axes
 
-Aside from controlling the shape of axes, there are many ways to modify a look of polar grid lines and labels:
+There are many ways to modify a look of polar grid lines and labels. For example it's possible to change the shape of grid lines from polygons to circles:
 
 ```js
-shape: 'circle',
 series: [
     ...
 ],
 axes: [
-    { type: 'angle-category', label: { ... } },
+    { type: 'angle-category', shape: 'circle', label: { ... } },
     { type: 'radius-number', gridStyle: [{ ... }] },
 ]
 ```
 
 <chart-example title='Polar Axes' name='polar-axes' type='generated' options='{ "enterprise": true }'></chart-example>
+
+Please see the API reference for more details.
 
 ### API Reference
 

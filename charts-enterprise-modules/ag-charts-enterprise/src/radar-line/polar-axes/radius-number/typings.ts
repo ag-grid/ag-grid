@@ -11,7 +11,7 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
     /** Shape of grid lines. Default: `polygon` */
-    gridShape?: 'polygon' | 'circle';
+    shape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
 }

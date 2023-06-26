@@ -86,8 +86,8 @@ describe('Radar Line sChart', () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
             axes: [
-                { type: 'angle-category', gridShape: 'circle' },
-                { type: 'radius-number', gridShape: 'circle' },
+                { type: 'angle-category', shape: 'circle' },
+                { type: 'radius-number', shape: 'circle' },
             ],
         };
         prepareTestOptions(options as any);

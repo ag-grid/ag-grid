@@ -7,7 +7,6 @@ const options: AgChartOptions = {
     title: {
         text: 'School Grades',
     },
-    shape: 'circle',
     series: [
         {
             type: 'radar-line',
@@ -43,6 +42,7 @@ const options: AgChartOptions = {
             line: { width: 2, color: 'red' }, // outer line
             tick: { width: 2, color: 'red' }, // outer tick lines
             gridStyle: [{ stroke: 'red', lineDash: [2, 2] }], // inner grid
+            shape: 'circle',
             label: { autoRotate: true },
         },
         {
@@ -50,6 +50,7 @@ const options: AgChartOptions = {
             title: { text: 'Grades (0-10)', color: 'gray' },
             line: { width: 2, color: 'green' }, // radius axis line
             tick: { width: 2, color: 'green', minSpacing: 10 }, // radius axis tick lines
+            shape: 'circle',
             gridStyle: [{ stroke: 'green', lineDash: [2, 2] }], // inner grid
             label: { autoRotate: true, color: 'green', fontWeight: 'bold' },
         },

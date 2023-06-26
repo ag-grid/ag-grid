@@ -7,7 +7,6 @@ const options: AgChartOptions = {
     title: {
         text: 'School Grades',
     },
-    shape: 'circle',
     series: [
         {
             type: 'radar-line',
