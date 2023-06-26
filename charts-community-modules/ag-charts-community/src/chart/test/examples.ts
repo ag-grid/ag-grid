@@ -57,13 +57,14 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const dataFileContent = dataFileExists ? cleanJs(fs.readFileSync(dataFile)) : [];
     const exampleFileLines = cleanJs(fs.readFileSync(exampleFile));
 
-    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; return ${evalFn};`;
     // @ts-ignore - used in the eval() call.
     const agCharts = require('../../main');
     // @ts-ignore - used in the eval() call.
     const { AgChart, time, Marker } = agCharts;
     try {
-        return eval(evalExpr);
+        const exampleRunFn = new Function('agCharts', 'AgChart', 'time', 'Marker', evalExpr);
+        return exampleRunFn(agCharts, AgChart, time, Marker);
     } catch (error) {
         Logger.error(`unable to read example data for [${name}]; error: ${error.message}`);
         Logger.debug(evalExpr);
