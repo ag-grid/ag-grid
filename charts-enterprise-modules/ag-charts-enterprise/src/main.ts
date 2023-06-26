@@ -119,8 +119,6 @@ declare module 'ag-charts-community' {
         contextMenu?: AgContextMenuOptions;
         /** Axis configurations. */
         axes?: AgPolarAxisOptions[];
-        /** Polar axes shape. Default: `polygon` */
-        shape?: 'polygon' | 'circle';
     }
 
     export interface AgHierarchyChartOptions {

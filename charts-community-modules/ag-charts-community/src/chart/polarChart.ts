@@ -13,8 +13,6 @@ export class PolarChart extends Chart {
 
     padding = new Padding(40);
 
-    shape: 'polygon' | 'circle' = 'polygon';
-
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
     }
@@ -61,10 +59,7 @@ export class PolarChart extends Chart {
         const angles = scale?.ticks?.().map((value) => scale.convert(value));
         this.axes
             .filter((axis): axis is PolarAxis => axis instanceof PolarAxis)
-            .forEach((axis) => {
-                axis.gridAngles = angles;
-                axis.gridShape = this.shape;
-            });
+            .forEach((axis) => (axis.gridAngles = angles));
     }
 
     private computeSeriesRect(shrinkRect: BBox) {
