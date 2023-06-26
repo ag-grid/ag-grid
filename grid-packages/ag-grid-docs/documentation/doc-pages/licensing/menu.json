@@ -1936,6 +1936,11 @@
                 "enterprise": "charts"
               },
               {
+                "title": "Radar",
+                "url": "/charts-radar-line-series/",
+                "enterprise": "charts"
+              },
+              {
                 "title": "Waterfall",
                 "url": "/charts-waterfall-series/",
                 "enterprise": "charts"
