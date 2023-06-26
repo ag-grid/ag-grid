@@ -22,7 +22,14 @@ export function setupModules() {
         if (m.type === 'series') {
             if (m.chartTypes.length > 1) throw new Error('AG Charts - Module definition error: ' + m.identifier);
 
-            registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate);
+            registerSeries(
+                m.identifier,
+                m.chartTypes[0],
+                m.instanceConstructor,
+                m.seriesDefaults,
+                m.themeTemplate,
+                m.paletteFactory
+            );
         }
 
         if (m.type === 'axis-option') {

@@ -13,4 +13,14 @@ export const RadarLineModule: _ModuleSupport.SeriesModule = {
     instanceConstructor: RadarLineSeries,
     seriesDefaults: RADAR_LINE_DEFAULTS,
     themeTemplate: RADAR_LINE_SERIES_THEME,
+    paletteFactory: ({ takeColors }) => {
+        const {
+            fills: [fill],
+            strokes: [stroke],
+        } = takeColors(1);
+        return {
+            stroke: fill,
+            marker: { fill, stroke },
+        };
+    },
 };

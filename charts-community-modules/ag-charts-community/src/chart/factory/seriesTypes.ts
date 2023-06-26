@@ -7,7 +7,7 @@ import { ScatterSeries } from '../series/cartesian/scatterSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { TreemapSeries } from '../series/hierarchy/treemapSeries';
 import { ChartType, registerChartSeriesType } from './chartTypes';
-import { SeriesConstructor } from '../../util/module';
+import { SeriesConstructor, SeriesPaletteFactory } from '../../util/module';
 import { ModuleContext } from '../../util/moduleContext';
 
 const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
@@ -24,17 +24,22 @@ const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
 const SERIES_FACTORIES: Record<string, SeriesConstructor> = {};
 const SERIES_DEFAULTS: Record<string, any> = {};
 const SERIES_THEME_TEMPLATES: Record<string, {}> = {};
+const SERIES_PALETTE_FACTORIES: Record<string, SeriesPaletteFactory> = {};
 
 export function registerSeries(
     seriesType: string,
     chartType: ChartType,
     cstr: SeriesConstructor,
     defaults: {},
-    theme: {}
+    theme: {},
+    paletteFactory: SeriesPaletteFactory | undefined
 ) {
     SERIES_FACTORIES[seriesType] = cstr;
     SERIES_DEFAULTS[seriesType] = defaults;
     SERIES_THEME_TEMPLATES[seriesType] = theme;
+    if (paletteFactory) {
+        addSeriesPaletteFactory(seriesType, paletteFactory);
+    }
 
     registerChartSeriesType(seriesType, chartType);
 }
@@ -54,4 +59,12 @@ export function getSeriesDefaults(chartType: string): {} {
 
 export function getSeriesThemeTemplate(chartType: string): {} {
     return SERIES_THEME_TEMPLATES[chartType];
+}
+
+export function addSeriesPaletteFactory(seriesType: string, factory: SeriesPaletteFactory) {
+    SERIES_PALETTE_FACTORIES[seriesType] = factory;
+}
+
+export function getSeriesPaletteFactory(seriesType: string) {
+    return SERIES_PALETTE_FACTORIES[seriesType];
 }
