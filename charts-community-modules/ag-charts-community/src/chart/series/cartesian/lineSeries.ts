@@ -206,6 +206,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 if (isNaN(x)) {
                     prevXInRange = undefined;
                     moveTo = true;
+                    nextPoint = undefined;
                     continue;
                 }
                 const tolerance = (xScale.bandwidth ?? markerSize * 0.5 + (strokeWidth ?? 0)) + 1;
