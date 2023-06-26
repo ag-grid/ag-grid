@@ -12,6 +12,7 @@ export function getData() {
               0,
               Math.min(100, data[i - 1].spending + random() * 10 - 5)
             ),
+      tonnes: 0,
     })
   }
 
