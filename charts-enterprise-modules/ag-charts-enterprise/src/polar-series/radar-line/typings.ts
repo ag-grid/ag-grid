@@ -97,9 +97,6 @@ export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseSeriesO
     listeners?: AgSeriesListeners<DatumType>;
 }
 
-export * from './polar-axes/angle-category/typings';
-export * from './polar-axes/radius-number/typings';
-
 /**
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
  */

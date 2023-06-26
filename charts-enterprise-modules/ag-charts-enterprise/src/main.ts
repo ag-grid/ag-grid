@@ -26,10 +26,11 @@ import {
     HeatmapModule,
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
+import { AngleCategoryAxisModule, AgAngleCategoryAxisOptions } from './polar-axes/angle-category/main';
+import { RadiusNumberAxisModule, AgRadiusNumberAxisOptions } from './polar-axes/radius-number/main';
+export { RadiusNumberAxisModule } from './polar-axes/radius-number/radiusNumberAxisModule';
 import {
     RadarLineModule,
-    AngleCategoryAxisModule,
-    RadiusNumberAxisModule,
     AgRadarLineSeriesLabelFormatterParams,
     AgRadarLineSeriesLabelOptions,
     AgRadarLineSeriesMarker,
@@ -39,9 +40,7 @@ import {
     AgRadarLineSeriesOptions,
     AgRadarLineSeriesTooltip,
     AgRadarLineSeriesTooltipRendererParams,
-    AgAngleCategoryAxisOptions,
-    AgRadiusNumberAxisOptions,
-} from './radar-line/main';
+} from './polar-series/radar-line/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 import {
     WaterfallBarModule,
@@ -77,6 +76,7 @@ export {
     AgHeatmapSeriesTooltip,
     AgHeatmapSeriesTooltipRendererParams,
 };
+export { AgAngleCategoryAxisOptions, AgRadiusNumberAxisOptions };
 export {
     AgRadarLineSeriesLabelFormatterParams,
     AgRadarLineSeriesLabelOptions,
