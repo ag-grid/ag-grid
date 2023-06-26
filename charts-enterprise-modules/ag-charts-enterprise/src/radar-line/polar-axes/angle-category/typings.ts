@@ -1,7 +1,7 @@
 import { AgBaseAxisOptions, AgAxisCategoryTickOptions } from 'ag-charts-community';
 
 export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
-    type: 'polar-angle-category';
+    type: 'angle-category';
     /** Configuration for the axis ticks. */
     tick?: AgAxisCategoryTickOptions;
     /** Shape of grid lines. Default: `polygon` */

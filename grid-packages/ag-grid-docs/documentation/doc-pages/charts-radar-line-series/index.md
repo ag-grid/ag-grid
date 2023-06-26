@@ -52,8 +52,8 @@ series: [
     ...
 ],
 axes: [
-    { type: 'polar-angle-category', label: { ... } },
-    { type: 'polar-radius-number', gridStyle: [{ ... }] },
+    { type: 'angle-category', label: { ... } },
+    { type: 'radius-number', gridStyle: [{ ... }] },
 ]
 ```
 
@@ -151,13 +151,13 @@ export interface AgRadarLineSeriesTooltip extends AgSeriesTooltip {
 }
 
 export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
-    type: 'polar-angle-category';
+    type: 'angle-category';
     /** Configuration for the axis ticks. */
     tick?: AgAxisCategoryTickOptions;
 }
 
 export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
-    type: 'polar-radius-number';
+    type: 'radius-number';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
     /** User override for the automatically determined min value (based on series data). */

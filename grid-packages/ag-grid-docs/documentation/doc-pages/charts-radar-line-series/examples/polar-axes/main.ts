@@ -39,14 +39,14 @@ const options: AgChartOptions = {
     },
     axes: [
         {
-            type: 'polar-angle-category',
+            type: 'angle-category',
             line: { width: 2, color: 'red' }, // outer line
             tick: { width: 2, color: 'red' }, // outer tick lines
             gridStyle: [{ stroke: 'red', lineDash: [2, 2] }], // inner grid
             label: { autoRotate: true },
         },
         {
-            type: 'polar-radius-number',
+            type: 'radius-number',
             title: { text: 'Grades (0-10)', color: 'gray' },
             line: { width: 2, color: 'green' }, // radius axis line
             tick: { width: 2, color: 'green', minSpacing: 10 }, // radius axis tick lines

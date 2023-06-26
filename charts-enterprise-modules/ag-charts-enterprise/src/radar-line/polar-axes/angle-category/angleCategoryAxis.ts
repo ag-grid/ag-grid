@@ -18,7 +18,7 @@ interface AngleCategoryAxisLabelDatum {
 
 export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     static className = 'AngleCategoryAxis';
-    static type = 'polar-angle-category' as const;
+    static type = 'angle-category' as const;
 
     protected labelData: AngleCategoryAxisLabelDatum[] = [];
     protected radiusLine: _Scene.Path = this.axisGroup.appendChild(new Path());
