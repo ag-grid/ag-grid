@@ -13,7 +13,7 @@ class RadiusNumberAxisTick extends _ModuleSupport.AxisTick<_Scale.LinearScale, n
 
 export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
     static className = 'RadiusNumberAxis';
-    static type = 'polar-radius-number' as const;
+    static type = 'radius-number' as const;
 
     gridShape: 'polygon' | 'circle' = 'polygon';
 

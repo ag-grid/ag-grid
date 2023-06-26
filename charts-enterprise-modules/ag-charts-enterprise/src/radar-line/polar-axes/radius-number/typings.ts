@@ -1,7 +1,7 @@
 import { AgBaseAxisOptions, AgAxisCaptionOptions, AgAxisNumberTickOptions } from 'ag-charts-community';
 
 export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
-    type: 'polar-radius-number';
+    type: 'radius-number';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
     /** User override for the automatically determined min value (based on series data). */
@@ -10,6 +10,8 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
+    /** Shape of grid lines. Default: `polygon` */
+    gridShape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
 }

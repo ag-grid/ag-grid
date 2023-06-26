@@ -85,7 +85,10 @@ describe('Radar Line sChart', () => {
     it(`should render polar chart with circle axes as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
-            shape: 'circle',
+            axes: [
+                { type: 'angle-category', gridShape: 'circle' },
+                { type: 'radius-number', gridShape: 'circle' },
+            ],
         };
         prepareTestOptions(options as any);
 
@@ -102,8 +105,8 @@ describe('Radar Line sChart', () => {
                 gradeB: 2 * (((i + 3) % 5) + 1),
             })),
             axes: [
-                { type: 'polar-angle-category', label: { avoidCollisions: true, minSpacing: 2 } },
-                { type: 'polar-radius-number' },
+                { type: 'angle-category', label: { avoidCollisions: true, minSpacing: 2 } },
+                { type: 'radius-number' },
             ],
         };
         prepareTestOptions(options as any);

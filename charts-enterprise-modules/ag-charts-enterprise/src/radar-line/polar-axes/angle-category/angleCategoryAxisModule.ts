@@ -9,7 +9,7 @@ export const AngleCategoryAxisModule: _ModuleSupport.AxisModule = {
     packageType: 'enterprise',
     chartTypes: ['polar'],
 
-    identifier: 'polar-angle-category',
+    identifier: 'angle-category',
     instanceConstructor: AngleCategoryAxis,
     themeTemplate: ANGLE_CATEGORY_AXIS_THEME,
 };
