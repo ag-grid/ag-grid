@@ -86,13 +86,18 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         node.fill = undefined;
     }
 
+    protected getTickValues() {
+        const { scale, tick } = this;
+        return tick.values || scale.ticks?.() || [];
+    }
+
     protected updateGridLines() {
         const { scale, gridLength: radius, gridStyle, tick } = this;
         if (!(gridStyle && radius > 0)) {
             return;
         }
 
-        const ticks = scale.ticks?.() ?? [];
+        const ticks = this.getTickValues();
         this.gridLineGroupSelection.update(tick.enabled ? ticks : []).each((line, value, index) => {
             const style = gridStyle[index % gridStyle.length];
             const angle = scale.convert(value);
@@ -108,9 +113,9 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     }
 
     protected updateLabels() {
-        const { label, tickLabelGroupSelection, scale } = this;
+        const { label, tickLabelGroupSelection } = this;
 
-        const ticks = scale.ticks?.() || [];
+        const ticks = this.getTickValues();
         tickLabelGroupSelection.update(label.enabled ? ticks : []).each((node, _, index) => {
             const labelDatum = this.labelData[index];
             if (labelDatum.hidden) {
@@ -139,7 +144,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     protected updateTickLines() {
         const { scale, gridLength: radius, tick, tickLineGroupSelection } = this;
 
-        const ticks = scale.ticks?.() || [];
+        const ticks = this.getTickValues();
         tickLineGroupSelection.update(tick.enabled ? ticks : []).each((line, value) => {
             const angle = scale.convert(value);
             const cos = Math.cos(angle);
@@ -162,7 +167,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             return [];
         }
 
-        const ticks = scale.ticks?.() || [];
+        const ticks = this.getTickValues();
 
         const tempText = new Text();
 
