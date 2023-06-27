@@ -128,7 +128,22 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             this._datumNodeIndices.delete(datumId);
         });
 
-        this._nodes = this._nodes.filter((n) => n !== undefined);
+        // Reset map of datum ids to node indices while filtering out any removed, undefined, nodes
+        let newIndex = 0;
+
+        const datumNodeIndices = this._datumNodeIndices.entries();
+        const nodeIndexDatums = new Map();
+        for (const [datumId, nodeIndex] of datumNodeIndices) {
+            nodeIndexDatums.set(nodeIndex, datumId);
+        }
+
+        this._nodes = this._nodes.filter((node, index) => {
+            if (node === undefined) return false;
+            const datumId = nodeIndexDatums.get(index);
+            this._datumNodeIndices.set(datumId, newIndex);
+            newIndex++;
+            return true;
+        });
 
         this._garbage = [];
     }
