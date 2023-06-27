@@ -43,23 +43,11 @@ describe('Radar Line sChart', () => {
                 type: 'radar-line',
                 angleKey: 'subject',
                 radiusKey: 'gradeA',
-                stroke: 'red',
-                strokeWidth: 2,
-                marker: {
-                    fill: 'red',
-                    size: 10,
-                },
             },
             {
                 type: 'radar-line',
                 angleKey: 'subject',
                 radiusKey: 'gradeB',
-                stroke: 'blue',
-                strokeWidth: 2,
-                marker: {
-                    fill: 'blue',
-                    size: 10,
-                },
             },
         ],
         legend: {
