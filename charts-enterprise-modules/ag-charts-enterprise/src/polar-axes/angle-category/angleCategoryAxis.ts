@@ -87,7 +87,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
 
     protected getTickValues() {
         const { scale, tick } = this;
-        return tick.values || scale.ticks?.() || [];
+        return tick.values ?? scale.ticks?.() ?? [];
     }
 
     protected updateGridLines() {
