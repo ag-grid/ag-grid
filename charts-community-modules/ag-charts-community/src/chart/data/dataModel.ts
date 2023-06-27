@@ -10,6 +10,7 @@ export type UngroupedDataItem<D, V> = {
     values: V;
     aggValues?: [number, number][];
     datum: D;
+    validScopes?: string[];
 };
 
 export interface UngroupedData<D> {
@@ -25,7 +26,9 @@ export interface UngroupedData<D> {
     defs: {
         keys: DatumPropertyDefinition<keyof D>[];
         values: DatumPropertyDefinition<keyof D>[];
+        allScopesHaveSameDefs: boolean;
     };
+    partialValidDataCount: number;
     time: number;
 }
 
@@ -37,6 +40,7 @@ export interface GroupedData<D> {
     domain: UngroupedData<D>['domain'];
     reduced?: UngroupedData<D>['reduced'];
     defs: UngroupedData<D>['defs'];
+    partialValidDataCount: number;
     time: number;
 }
 
@@ -388,6 +392,9 @@ export class DataModel<
 
         const noScopesToMatch = scopes == null || scopes.length === 0;
         const scopeMatch = (compareTo?: string[]) => {
+            const anyScope = compareTo == null;
+            if (anyScope) return true;
+
             const noScopes = compareTo == null || compareTo.length === 0;
             if (noScopesToMatch === noScopes) return true;
 
@@ -418,11 +425,13 @@ export class DataModel<
             opts: { dataVisible },
         } = this;
 
-        const { dataDomain, processValue } = this.initDataDomainProcessor();
+        const { dataDomain, processValue, scopes, allScopesHaveSameDefs } = this.initDataDomainProcessor();
 
         const resultData = new Array(dataVisible ? data.length : 0);
         let resultDataIdx = 0;
+        let partialValidDataCount = 0;
         for (const datum of data) {
+            const validScopes = scopes.size > 0 ? new Set(scopes) : undefined;
             const keys = dataVisible ? new Array(keyDefs.length) : undefined;
             let keyIdx = 0;
             let key;
@@ -440,19 +449,33 @@ export class DataModel<
             let value;
             for (const def of valueDefs) {
                 value = processValue(def, datum, value);
-                if (value === INVALID_VALUE) break;
-                if (values) {
+                if (value === INVALID_VALUE) {
+                    if (allScopesHaveSameDefs) break;
+                    for (const scope of def.scopes ?? scopes) {
+                        validScopes?.delete(scope);
+                    }
+                    valueIdx++;
+                    if (validScopes?.size === 0) break;
+                } else if (values) {
                     values[valueIdx++] = value;
                 }
             }
-            if (value === INVALID_VALUE) continue;
+            if (value === INVALID_VALUE && allScopesHaveSameDefs) continue;
+            if (validScopes?.size === 0) continue;
 
             if (dataVisible) {
-                resultData[resultDataIdx++] = {
+                const result: UngroupedDataItem<D, any> = {
                     datum,
-                    keys,
+                    keys: keys!,
                     values,
                 };
+
+                if (!allScopesHaveSameDefs && validScopes && validScopes.size < scopes.size) {
+                    partialValidDataCount++;
+                    result.validScopes = [...validScopes];
+                }
+
+                resultData[resultDataIdx++] = result;
             }
         }
         resultData.length = resultDataIdx;
@@ -474,18 +497,20 @@ export class DataModel<
                 values: valueDefs.map((def) => propertyDomain(def)),
             },
             defs: {
+                allScopesHaveSameDefs,
                 keys: keyDefs,
                 values: valueDefs,
             },
+            partialValidDataCount,
             time: 0,
         };
     }
 
     private groupData(data: UngroupedData<D>, groupingFn?: GroupingFn<D>): GroupedData<D> {
-        const processedData = new Map<string, { keys: D[K][]; values: D[K][][]; datum: D[] }>();
+        const processedData = new Map<string, { keys: D[K][]; values: D[K][][]; datum: D[]; validScopes?: string[] }>();
 
         for (const dataEntry of data.data) {
-            const { keys, values, datum } = dataEntry;
+            const { keys, values, datum, validScopes } = dataEntry;
             const group = groupingFn ? groupingFn(dataEntry) : keys;
             const groupStr = toKeyString(group);
 
@@ -493,20 +518,32 @@ export class DataModel<
                 const existingData = processedData.get(groupStr)!;
                 existingData.values.push(values);
                 existingData.datum.push(datum);
+                if (validScopes != null) {
+                    // Intersection of existing validScopes with new validScopes.
+                    for (let index = 0; index < (existingData.validScopes?.length ?? 0); index++) {
+                        const scope = existingData.validScopes?.[index];
+                        if (validScopes.some((s) => s === scope)) continue;
+
+                        existingData.validScopes?.splice(index, 1);
+                    }
+                }
             } else {
-                processedData.set(groupStr, { keys: group, values: [values], datum: [datum] });
+                processedData.set(groupStr, { keys: group, values: [values], datum: [datum], validScopes });
             }
         }
 
         const resultData = new Array(processedData.size);
         const resultGroups = new Array(processedData.size);
         let dataIndex = 0;
-        for (const [, { keys, values, datum }] of processedData.entries()) {
+        for (const [, { keys, values, datum, validScopes }] of processedData.entries()) {
+            if (validScopes?.length === 0) continue;
+
             resultGroups[dataIndex] = keys;
             resultData[dataIndex++] = {
                 keys,
                 values,
                 datum,
+                validScopes,
             };
         }
 
@@ -536,6 +573,7 @@ export class DataModel<
 
         for (const group of processedData.data) {
             let { values } = group;
+            const { validScopes } = group;
             group.aggValues ??= new Array(resultAggValueIndices.length);
 
             if (processedData.type === 'ungrouped') {
@@ -544,6 +582,12 @@ export class DataModel<
 
             let resultIdx = 0;
             for (const indices of resultAggValueIndices) {
+                const scopeValid = validScopes?.some((s) => aggDefs[resultIdx].scopes?.some((as) => s === as)) ?? true;
+                if (!scopeValid) {
+                    resultIdx++;
+                    continue;
+                }
+
                 let groupAggValues = resultGroupAggFns[resultIdx]?.() ?? extendDomain([]);
                 for (const distinctValues of values) {
                     const valuesToAgg = indices.map((valueIdx) => distinctValues[valueIdx] as D[K]);
@@ -576,17 +620,27 @@ export class DataModel<
             const adjustFn = processor.adjust();
             if (processedData.type === 'grouped') {
                 for (const group of processedData.data) {
+                    const scopeValid = group.validScopes?.some((s) => processor.scopes?.some((as) => s === as)) ?? true;
+                    if (!scopeValid) {
+                        continue;
+                    }
+
                     for (const values of group.values) {
                         if (values) {
                             adjustFn(values, valueIndexes);
                         }
                     }
                 }
-            } else {
-                for (const group of processedData.data) {
-                    if (group.values) {
-                        adjustFn(group.values, valueIndexes);
-                    }
+                continue;
+            }
+
+            for (const group of processedData.data) {
+                const scopeValid = group.validScopes?.some((s) => processor.scopes?.some((as) => s === as)) ?? true;
+                if (!scopeValid) {
+                    continue;
+                }
+                if (group.values) {
+                    adjustFn(group.values, valueIndexes);
                 }
             }
         }
@@ -605,12 +659,19 @@ export class DataModel<
     private reduceData(processedData: ProcessedData<D>) {
         const { reducers: reducerDefs } = this;
 
+        const scopes = reducerDefs.map((def) => def.scopes);
         const reducers = reducerDefs.map((def) => def.reducer());
         const accValues = reducerDefs.map((def) => def.initialValue);
 
         for (const group of processedData.data) {
             let reducerIndex = 0;
             for (const reducer of reducers) {
+                const scopeValid = group.validScopes?.some((s) => scopes[reducerIndex]?.some((as) => s === as)) ?? true;
+                if (!scopeValid) {
+                    reducerIndex++;
+                    continue;
+                }
+
                 accValues[reducerIndex] = reducer(accValues[reducerIndex], group);
                 reducerIndex++;
             }
@@ -633,21 +694,36 @@ export class DataModel<
 
     private initDataDomainProcessor() {
         const { keys: keyDefs, values: valueDefs } = this;
+
+        const scopes = new Set<string>();
+        for (const valueDef of valueDefs) {
+            for (const scope of valueDef.scopes ?? []) {
+                scopes.add(scope);
+            }
+        }
+        const scopesCount = scopes.size;
+
         const dataDomain: Map<
             object,
             { type: 'range'; domain: [number, number] } | { type: 'category'; domain: Set<any> }
         > = new Map();
         const processorFns = new Map<InternalDatumPropertyDefinition<K>, ProcessorFn>();
-        const initDataDomainKey = (key: object, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
+        let allScopesHaveSameDefs = true;
+        const initDataDomainKey = (
+            key: InternalDatumPropertyDefinition<K>,
+            type: DatumPropertyType,
+            updateDataDomain: typeof dataDomain = dataDomain
+        ) => {
             if (type === 'category') {
                 updateDataDomain.set(key, { type, domain: new Set() });
             } else {
                 updateDataDomain.set(key, { type, domain: [Infinity, -Infinity] });
+                allScopesHaveSameDefs &&= (key.scopes ?? []).length === scopesCount;
             }
         };
         const initDataDomain = () => {
-            keyDefs.forEach((def) => initDataDomainKey(def, def.valueType, dataDomain));
-            valueDefs.forEach((def) => initDataDomainKey(def, def.valueType, dataDomain));
+            keyDefs.forEach((def) => initDataDomainKey(def, def.valueType));
+            valueDefs.forEach((def) => initDataDomainKey(def, def.valueType));
         };
         initDataDomain();
 
@@ -706,7 +782,7 @@ export class DataModel<
             return value;
         };
 
-        return { dataDomain, processValue, initDataDomain };
+        return { dataDomain, processValue, initDataDomain, scopes, allScopesHaveSameDefs };
     }
 
     buildAccessors(...defs: { property: string }[]) {

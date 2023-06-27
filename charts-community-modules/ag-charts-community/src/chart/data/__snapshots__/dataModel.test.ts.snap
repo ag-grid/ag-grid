@@ -4,6 +4,7 @@ exports[`DataModel empty data set processing should generated the expected resul
 {
   "data": [],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -74,6 +75,7 @@ exports[`DataModel empty data set processing should generated the expected resul
       [],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -131,6 +133,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
         2000,
         3000,
       ],
+      "validScopes": undefined,
       "values": [
         [
           2548,
@@ -201,6 +204,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
         3000,
         4500,
       ],
+      "validScopes": undefined,
       "values": [
         [
           3086,
@@ -241,6 +245,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
         0,
         2000,
       ],
+      "validScopes": undefined,
       "values": [
         [
           1488,
@@ -252,6 +257,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": false,
     "keys": [
       {
         "index": 0,
@@ -310,6 +316,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "sortedGroupDomain": [
       [
@@ -390,6 +397,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         "100 - 150",
       ],
+      "validScopes": undefined,
       "values": [
         [
           27,
@@ -466,6 +474,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         ">150",
       ],
+      "validScopes": undefined,
       "values": [
         [
           26,
@@ -510,6 +519,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         "<100",
       ],
+      "validScopes": undefined,
       "values": [
         [
           53,
@@ -521,6 +531,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -586,6 +597,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "sortedGroupDomain": [
       [
@@ -652,6 +664,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         "100 - 150",
       ],
+      "validScopes": undefined,
       "values": [
         undefined,
         undefined,
@@ -699,6 +712,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         ">150",
       ],
+      "validScopes": undefined,
       "values": [
         undefined,
         undefined,
@@ -727,6 +741,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
       "keys": [
         "<100",
       ],
+      "validScopes": undefined,
       "values": [
         undefined,
         undefined,
@@ -734,6 +749,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -782,6 +798,7 @@ exports[`DataModel grouped processing - calculated grouping should generated the
     ],
     "values": [],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "sortedGroupDomain": [
       [
@@ -820,6 +837,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Whole economy",
       ],
+      "validScopes": undefined,
       "values": [
         [
           2.9,
@@ -844,6 +862,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Finance and business services",
       ],
+      "validScopes": undefined,
       "values": [
         [
           3.7,
@@ -868,6 +887,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Public sector",
       ],
+      "validScopes": undefined,
       "values": [
         [
           3.3,
@@ -892,6 +912,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Construction",
       ],
+      "validScopes": undefined,
       "values": [
         [
           3.2,
@@ -916,6 +937,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Private sector",
       ],
+      "validScopes": undefined,
       "values": [
         [
           2.7,
@@ -940,6 +962,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Manufacturing",
       ],
+      "validScopes": undefined,
       "values": [
         [
           2.7,
@@ -964,6 +987,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       "keys": [
         "Wholesaling, retailing, hotels and restaurants",
       ],
+      "validScopes": undefined,
       "values": [
         [
           1.1,
@@ -973,6 +997,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -1062,6 +1087,7 @@ exports[`DataModel grouped processing - grouped example should generated the exp
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "grouped",
 }
@@ -1092,6 +1118,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Jan",
       ],
+      "validScopes": undefined,
       "values": [
         [
           29.946524064171125,
@@ -1125,6 +1152,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Feb",
       ],
+      "validScopes": undefined,
       "values": [
         [
           31.46067415730337,
@@ -1158,6 +1186,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Mar",
       ],
+      "validScopes": undefined,
       "values": [
         [
           30.167597765363126,
@@ -1191,6 +1220,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Apr",
       ],
+      "validScopes": undefined,
       "values": [
         [
           38.56209150326798,
@@ -1224,6 +1254,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "May",
       ],
+      "validScopes": undefined,
       "values": [
         [
           42.10526315789474,
@@ -1257,6 +1288,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Jun",
       ],
+      "validScopes": undefined,
       "values": [
         [
           46.03174603174603,
@@ -1290,6 +1322,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Jul",
       ],
+      "validScopes": undefined,
       "values": [
         [
           44.44444444444444,
@@ -1323,6 +1356,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Aug",
       ],
+      "validScopes": undefined,
       "values": [
         [
           46.456692913385815,
@@ -1356,6 +1390,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Sep",
       ],
+      "validScopes": undefined,
       "values": [
         [
           44.27480916030535,
@@ -1389,6 +1424,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Oct",
       ],
+      "validScopes": undefined,
       "values": [
         [
           37.41496598639456,
@@ -1422,6 +1458,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Nov",
       ],
+      "validScopes": undefined,
       "values": [
         [
           35.54216867469879,
@@ -1455,6 +1492,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Dec",
       ],
+      "validScopes": undefined,
       "values": [
         [
           33.33333333333333,
@@ -1468,6 +1506,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -1637,6 +1676,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "aggValuesExtent": [
       0,
@@ -1672,6 +1712,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Nursery",
       ],
+      "validScopes": undefined,
       "values": [
         [
           59.712524678576585,
@@ -1704,6 +1745,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Primary",
       ],
+      "validScopes": undefined,
       "values": [
         [
           74.28693389376268,
@@ -1736,6 +1778,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Secondary",
       ],
+      "validScopes": undefined,
       "values": [
         [
           74.49944393701765,
@@ -1768,6 +1811,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Special",
       ],
+      "validScopes": undefined,
       "values": [
         [
           74.84837848647854,
@@ -1800,6 +1844,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       "keys": [
         "Referral units",
       ],
+      "validScopes": undefined,
       "values": [
         [
           78.45841011628646,
@@ -1813,6 +1858,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -1954,6 +2000,7 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "aggValuesExtent": [
       0,
@@ -1987,6 +2034,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Semi-detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           4567,
@@ -2015,6 +2063,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Medium/large terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           2842,
@@ -2043,6 +2092,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           3655,
@@ -2071,6 +2121,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Purpose-built flat low rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           905,
@@ -2099,6 +2150,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Small terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           1013,
@@ -2127,6 +2179,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Bungalow",
       ],
+      "validScopes": undefined,
       "values": [
         [
           1486,
@@ -2155,6 +2208,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Converted flat",
       ],
+      "validScopes": undefined,
       "values": [
         [
           252,
@@ -2183,6 +2237,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       "keys": [
         "Purpose-built flat high rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           97,
@@ -2194,6 +2249,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -2317,6 +2373,7 @@ exports[`DataModel grouped processing - stacked example should generated the exp
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "aggValuesExtent": [
       0,
@@ -2350,6 +2407,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Semi-detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           76.09130289903365,
@@ -2378,6 +2436,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Medium/large terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           64.11008346492217,
@@ -2406,6 +2465,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           92.01913393756294,
@@ -2434,6 +2494,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Purpose-built flat low rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           25.251116071428573,
@@ -2462,6 +2523,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Small terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           44.081810269799824,
@@ -2490,6 +2552,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Bungalow",
       ],
+      "validScopes": undefined,
       "values": [
         [
           70.4933586337761,
@@ -2518,6 +2581,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Converted flat",
       ],
+      "validScopes": undefined,
       "values": [
         [
           27.155172413793103,
@@ -2546,6 +2610,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       "keys": [
         "Purpose-built flat high rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           23.774509803921568,
@@ -2557,6 +2622,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -2684,6 +2750,7 @@ exports[`DataModel grouped processing - stacked with accumulation and normalised
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "reduced": {
     "aggValuesExtent": [
       23.7745,
@@ -2711,6 +2778,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Semi-detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           4567,
@@ -2733,6 +2801,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Medium/large terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           2842,
@@ -2755,6 +2824,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Detached house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           3655,
@@ -2777,6 +2847,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Purpose-built flat low rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           905,
@@ -2799,6 +2870,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Small terraced house",
       ],
+      "validScopes": undefined,
       "values": [
         [
           1013,
@@ -2821,6 +2893,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Bungalow",
       ],
+      "validScopes": undefined,
       "values": [
         [
           1486,
@@ -2843,6 +2916,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Converted flat",
       ],
+      "validScopes": undefined,
       "values": [
         [
           252,
@@ -2865,6 +2939,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       "keys": [
         "Purpose-built flat high rise",
       ],
+      "validScopes": undefined,
       "values": [
         [
           97,
@@ -2876,6 +2951,7 @@ exports[`DataModel grouped processing - stacked with accumulation example should
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -2997,8 +3073,306 @@ exports[`DataModel grouped processing - stacked with accumulation example should
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "grouped",
+}
+`;
+
+exports[`DataModel missing and invalid data processing - multiple scopes should generated the expected results 1`] = `
+{
+  "data": [
+    {
+      "datum": {
+        "chrome": "illegal value",
+        "firefox": 26.85,
+        "safari": 2.79,
+        "year": "2009",
+      },
+      "keys": [
+        "2009",
+      ],
+      "validScopes": [
+        "series-b",
+        "series-c",
+      ],
+      "values": [
+        null,
+        ,
+        26.85,
+        2.79,
+      ],
+    },
+    {
+      "datum": {
+        "firefox": 31.15,
+        "ie": 54.39,
+        "safari": 4.22,
+        "year": "2010",
+      },
+      "keys": [
+        "2010",
+      ],
+      "values": [
+        54.39,
+        null,
+        31.15,
+        4.22,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 15.01,
+        "ie": 44.03,
+        "safari": 5.94,
+        "year": "2011",
+      },
+      "keys": [
+        "2011",
+      ],
+      "values": [
+        44.03,
+        15.01,
+        null,
+        5.94,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 31.71,
+        "firefox": undefined,
+        "safari": undefined,
+        "year": "2013",
+      },
+      "keys": [
+        "2013",
+      ],
+      "validScopes": [
+        "series-a",
+      ],
+      "values": [
+        null,
+        31.71,
+        ,
+        ,
+      ],
+    },
+    {
+      "datum": {
+        "firefox": 14.77,
+        "ie": 17.75,
+        "safari": 12.63,
+        "year": "2014",
+      },
+      "keys": [
+        "2014",
+      ],
+      "values": [
+        17.75,
+        null,
+        14.77,
+        12.63,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 42.27,
+        "ie": -13.3,
+        "safari": "illegal value",
+        "year": "2015",
+      },
+      "keys": [
+        "2015",
+      ],
+      "validScopes": [
+        "series-a",
+        "series-b",
+      ],
+      "values": [
+        -13.3,
+        42.27,
+        null,
+        ,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 47.79,
+        "firefox": 8.97,
+        "ie": -8.94,
+        "year": "2016",
+      },
+      "keys": [
+        "2016",
+      ],
+      "values": [
+        -8.94,
+        47.79,
+        8.97,
+        null,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 51.76,
+        "firefox": 6.75,
+        "safari": 14.54,
+        "year": "2017",
+      },
+      "keys": [
+        "2017",
+      ],
+      "values": [
+        null,
+        51.76,
+        6.75,
+        14.54,
+      ],
+    },
+    {
+      "datum": {
+        "firefox": "illegal value",
+        "ie": 3.2,
+        "safari": 14.44,
+        "year": "2018",
+      },
+      "keys": [
+        "2018",
+      ],
+      "validScopes": [
+        "series-a",
+        "series-c",
+      ],
+      "values": [
+        3.2,
+        null,
+        ,
+        14.44,
+      ],
+    },
+    {
+      "datum": {
+        "chrome": 61.72,
+        "ie": 2.7,
+        "safari": 15.23,
+        "year": "2019",
+      },
+      "keys": [
+        "2019",
+      ],
+      "values": [
+        2.7,
+        61.72,
+        null,
+        15.23,
+      ],
+    },
+  ],
+  "defs": {
+    "allScopesHaveSameDefs": false,
+    "keys": [
+      {
+        "index": 0,
+        "missing": false,
+        "property": "year",
+        "scopes": [
+          "test",
+        ],
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": [
+      {
+        "id": undefined,
+        "index": 0,
+        "missing": false,
+        "missingValue": null,
+        "property": "ie",
+        "scopes": undefined,
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      {
+        "id": undefined,
+        "index": 1,
+        "missing": false,
+        "missingValue": null,
+        "property": "chrome",
+        "scopes": [
+          "series-a",
+        ],
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      {
+        "id": undefined,
+        "index": 2,
+        "missing": false,
+        "missingValue": null,
+        "property": "firefox",
+        "scopes": [
+          "series-b",
+        ],
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      {
+        "id": undefined,
+        "index": 3,
+        "missing": false,
+        "missingValue": null,
+        "property": "safari",
+        "scopes": [
+          "series-c",
+        ],
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": {
+    "keys": [
+      [
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+      ],
+    ],
+    "values": [
+      [
+        -13.3,
+        54.39,
+      ],
+      [
+        null,
+        61.72,
+      ],
+      [
+        null,
+        31.15,
+      ],
+      [
+        null,
+        15.23,
+      ],
+    ],
+  },
+  "partialValidDataCount": 4,
+  "time": Any<Number>,
+  "type": "ungrouped",
 }
 `;
 
@@ -3194,6 +3568,7 @@ exports[`DataModel missing and invalid data processing should generated the expe
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [
       {
         "index": 0,
@@ -3300,6 +3675,7 @@ exports[`DataModel missing and invalid data processing should generated the expe
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -3370,6 +3746,7 @@ exports[`DataModel repeated property processing should generated the expected re
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [],
     "values": [
       {
@@ -3412,6 +3789,7 @@ exports[`DataModel repeated property processing should generated the expected re
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -3518,6 +3896,7 @@ exports[`DataModel ungrouped processing - accumulated and normalised properties 
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": true,
     "keys": [],
     "values": [
       {
@@ -3578,6 +3957,7 @@ exports[`DataModel ungrouped processing - accumulated and normalised properties 
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "ungrouped",
 }
@@ -4316,6 +4696,7 @@ exports[`DataModel ungrouped processing should generated the expected results 1`
     },
   ],
   "defs": {
+    "allScopesHaveSameDefs": false,
     "keys": [
       {
         "index": 0,
@@ -4369,6 +4750,7 @@ exports[`DataModel ungrouped processing should generated the expected results 1`
       ],
     ],
   },
+  "partialValidDataCount": 0,
   "time": Any<Number>,
   "type": "ungrouped",
 }

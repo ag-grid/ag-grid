@@ -29,13 +29,14 @@ const categoryKey = (property: string) => ({
     type: 'key' as const,
     valueType: 'category' as const,
 });
-const value = (property: string, id?: string) => ({
-    scopes: ['test'],
+const scopedValue = (scope: string | undefined, property: string, id?: string) => ({
+    scopes: scope ? [scope] : undefined,
     property,
     type: 'value' as const,
     valueType: 'range' as const,
     id,
 });
+const value = (property: string, id?: string) => scopedValue('test', property, id);
 const categoryValue = (property: string) => ({
     scopes: ['test'],
     property,
@@ -51,6 +52,10 @@ const accumulatedPropertyValue = (property: string, id?: string) => ({
     processor: accumulatedValue(),
 });
 const sum = (props: string[]) => actualSum({ id: 'test' }, `sum-${props.join('-')}`, props);
+const scopedSum = (scopes: string[] | undefined, props: string[]) => ({
+    ...actualSum({ id: 'test' }, `sum-${props.join('-')}`, props),
+    scopes,
+});
 const range = (props: string[]) => actualRange({ id: 'test' }, `range-${props.join('-')}`, props);
 const groupAverage = (props: string[]) => actualGroupAverage({ id: 'test' }, `groupAverage-${props.join('-')}`, props);
 const groupCount = () => actualGroupCount({ id: 'test' }, `groupCount`);
@@ -967,6 +972,73 @@ describe('DataModel', () => {
                     [6, 9, null],
                     [6, 9, 4],
                 ]);
+            });
+        });
+    });
+
+    describe('missing and invalid data processing - multiple scopes', () => {
+        it('should generated the expected results', () => {
+            const data = [...DATA_BROWSER_MARKET_SHARE.map((v) => ({ ...v }))];
+            const DEFAULTS = {
+                missingValue: null,
+                validation: isNumber,
+            };
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    categoryKey('year'),
+                    { ...DEFAULTS, ...scopedValue(undefined, 'ie') },
+                    { ...DEFAULTS, ...scopedValue('series-a', 'chrome') },
+                    { ...DEFAULTS, ...scopedValue('series-b', 'firefox') },
+                    { ...DEFAULTS, ...scopedValue('series-c', 'safari') },
+                ],
+            });
+            data.forEach((datum, idx) => {
+                delete datum[['ie', 'chrome', 'firefox', 'safari'][idx % 4]];
+                if (idx % 3 === 0) {
+                    datum[['ie', 'chrome', 'firefox', 'safari'][(idx + 1) % 4]] = 'illegal value';
+                }
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const validated = { validation: (v) => typeof v === 'number' };
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    { ...scopedValue(undefined, 'vp1'), ...validated },
+                    { ...scopedValue('scope-1', 'vp2'), ...validated },
+                    { ...scopedValue('scope-2', 'vp3') },
+                    scopedSum(['scope-1'], ['vp1', 'vp2']),
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 'illegal value', vp2: 7, vp3: 1 },
+                { kp: 'Q2', vp1: 1, vp2: 'illegal value', vp3: 2 },
+                { kp: 'Q3', vp1: 6, vp2: 9, vp3: 'illegal value' },
+                { kp: 'Q4', vp1: 6, vp2: 9, vp3: 4 },
+            ];
+
+            it('should record per result data validation status per scope', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.data.length).toEqual(3);
+                expect(result?.data[0].validScopes).toEqual(['scope-2']);
+                expect(result?.data[1].validScopes).toBeUndefined();
+                expect(result?.data[2].validScopes).toBeUndefined();
+            });
+
+            it('should handle scope validations distinctly for values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.data.length).toEqual(3);
+                expect(result?.data[0].values).toEqual([[1, undefined, 2]]);
+                expect(result?.data[1].values).toEqual([[6, 9, 'illegal value']]);
+                expect(result?.data[2].values).toEqual([[6, 9, 4]]);
             });
         });
     });

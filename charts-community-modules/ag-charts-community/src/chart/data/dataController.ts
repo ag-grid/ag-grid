@@ -69,12 +69,14 @@ export class DataController {
         const merged = this.mergeRequested();
         if (DataController.DEBUG()) Logger.debug('DataController.execute() - merged', merged);
 
-        for (const { opts, data, resultCbs, rejects } of merged) {
+        for (const { opts, data, resultCbs, rejects, ids } of merged) {
             try {
                 const dataModel = new DataModel<any>(opts);
                 const processedData = dataModel.processData(data);
-                if (processedData) {
+                if (processedData && processedData.partialValidDataCount === 0) {
                     resultCbs.forEach((cb) => cb({ dataModel, processedData }));
+                } else if (processedData) {
+                    this.splitResult(dataModel, processedData, ids, resultCbs);
                 } else {
                     rejects.forEach((cb) => cb(new Error(`AG Charts - no processed data generated`)));
                 }
@@ -157,5 +159,27 @@ export class DataController {
         }
 
         return grouped.map(merge);
+    }
+
+    private splitResult(
+        dataModel: DataModel<any>,
+        processedData: ProcessedData<any>,
+        scopes: string[],
+        resultCbs: ((result: Result<any, any, any>) => void)[]
+    ) {
+        for (let index = 0; index < scopes.length; index++) {
+            const scope = scopes[index];
+            const resultCb = resultCbs[index];
+
+            resultCb({
+                dataModel,
+                processedData: {
+                    ...processedData,
+                    data: processedData.data.filter(({ validScopes }) => {
+                        return validScopes == null || validScopes.some((s) => s === scope);
+                    }),
+                },
+            });
+        }
     }
 }
