@@ -324,7 +324,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const normaliseTo = normalizedToAbs && isFinite(normalizedToAbs) ? normalizedToAbs : undefined;
         const extraProps = [];
         if (normaliseTo) {
-            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+            extraProps.push(normaliseGroupTo(this, activeSeriesItems, normaliseTo, 'sum'));
         }
 
         if (!this.animationManager?.skipAnimations && this.processedData) {
@@ -333,9 +333,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                keyProperty(xKey, isContinuousX),
-                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
-                ...activeStacks.map((stack) => sum(stack)),
+                keyProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                ...activeSeriesItems.map((yKey, idx) =>
+                    valueProperty(this, yKey, isContinuousY, { id: `yValue-${idx}`, invalidValue: null })
+                ),
+                ...activeStacks.map((stack, idx) => sum(this, `stack-${idx}`, stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 AGG_VALUES_EXTENT,
                 ...extraProps,
@@ -356,25 +358,22 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData } = this;
-        if (!processedData) return [];
+        const { processedData, dataModel } = this;
+        if (!processedData || !dataModel) return [];
 
         const {
-            defs: {
-                keys: [keyDef],
-            },
-            domain: {
-                keys: [keys],
-                values: [yExtent],
-            },
             reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
         const categoryAxis = this.getCategoryAxis();
         const valueAxis = this.getValueAxis();
 
+        const keyDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
+        const keys = dataModel.getDomain(this, `xValue`, 'key', processedData);
+        const yExtent = dataModel.getDomain(this, /yValue-.*/, 'value', processedData);
+
         if (direction === this.getCategoryDirection()) {
-            if (keyDef.valueType === 'category') {
+            if (keyDef?.def.type === 'key' && keyDef?.def.valueType === 'category') {
                 return keys;
             }
 
@@ -437,11 +436,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     async createNodeData() {
-        const { data, visible } = this;
+        const { visible, dataModel } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
-        if (!(data && visible && xAxis && yAxis)) {
+        if (!(dataModel && visible && xAxis && yAxis)) {
             return [];
         }
 
@@ -497,7 +496,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 : // Handle high-volume bar charts gracefully.
                   groupScale.rawBandwidth;
 
-        const xIndex = processedData?.indices.keys[xKey] ?? -1;
+        const activeSeriesItems = [...seriesItemEnabled.entries()]
+            .filter(([, enabled]) => enabled)
+            .map(([yKey]) => yKey);
+        const xIndex = dataModel.resolveProcessedDataIndexById(this, `xValue`, 'key').index;
+        const yIndexes = activeSeriesItems.reduce((result, next, index) => {
+            result[next] = dataModel.resolveProcessedDataIndexById(this, `yValue-${index}`).index;
+            return result;
+        }, {} as Record<string, number>);
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
         processedData?.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
             const xValue = keys[xIndex];
@@ -512,7 +518,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 for (let levelIndex = 0; levelIndex < stackYKeys.length; levelIndex++) {
                     const yKey = stackYKeys[levelIndex];
-                    const yIndex = processedData?.indices.values[yKey] ?? -1;
+                    const yIndex = yIndexes[yKey];
                     contexts[stackIndex][levelIndex] ??= {
                         itemId: yKey,
                         nodeData: [],

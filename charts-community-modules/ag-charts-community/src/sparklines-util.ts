@@ -4,7 +4,7 @@ export * from './util/padding';
 export * from './util/json';
 export * from './util/angle';
 
-export { extent } from './util/array';
+export { extent, normalisedExtent } from './util/array';
 export { toFixed, isEqual as isNumberEqual } from './util/number';
 export { tickFormat } from './util/numberFormat';
 export { interpolate as interpolateString } from './util/string';

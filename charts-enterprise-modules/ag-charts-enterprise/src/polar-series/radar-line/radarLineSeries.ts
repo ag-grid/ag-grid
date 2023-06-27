@@ -223,9 +223,9 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
         if (!processedData || !dataModel) return [];
 
         if (direction === ChartAxisDirection.X) {
-            return dataModel.getDomain(`angleValue`, processedData);
+            return dataModel.getDomain(this, `angleValue`, 'value', processedData);
         } else {
-            const domain = dataModel.getDomain(`radiusValue`, processedData);
+            const domain = dataModel.getDomain(this, `radiusValue`, 'value', processedData);
             return this.fixNumericExtent(extent([0].concat(domain)));
         }
     }
@@ -238,8 +238,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                valueProperty(angleKey, false, { id: 'angleValue' }),
-                valueProperty(radiusKey, false, { id: 'radiusValue', invalidValue: undefined }),
+                valueProperty(this, angleKey, false, { id: 'angleValue' }),
+                valueProperty(this, radiusKey, false, { id: 'radiusValue', invalidValue: undefined }),
             ],
         });
         this.dataModel = dataModel;
@@ -285,8 +285,8 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
             return [];
         }
 
-        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
-        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
+        const angleIdx = dataModel.resolveProcessedDataIndexById(this, `angleValue`, 'value').index;
+        const radiusIdx = dataModel.resolveProcessedDataIndexById(this, `radiusValue`, 'value').index;
 
         const { label, marker, id: seriesId } = this;
         const { size: markerSize } = this.marker;

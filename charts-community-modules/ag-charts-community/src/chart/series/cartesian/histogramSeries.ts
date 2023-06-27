@@ -220,26 +220,26 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     async processData(dataController: DataController) {
         const { xKey, yKey, data, areaPlot, aggregation } = this;
 
-        const props: PropertyDefinition<any>[] = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
+        const props: PropertyDefinition<any>[] = [keyProperty(this, xKey, true), SORT_DOMAIN_GROUPS];
         if (yKey) {
-            let aggProp: AggregatePropertyDefinition<any, any, any> = groupCount();
+            let aggProp: AggregatePropertyDefinition<any, any, any> = groupCount(this, 'groupCount');
 
             if (aggregation === 'count') {
                 // Nothing to do.
             } else if (aggregation === 'sum') {
-                aggProp = groupSum([yKey]);
+                aggProp = groupSum(this, 'groupAgg', [yKey]);
             } else if (aggregation === 'mean') {
-                aggProp = groupAverage([yKey]);
+                aggProp = groupAverage(this, 'groupAgg', [yKey]);
             }
             if (areaPlot) {
-                aggProp = area([yKey], aggProp);
+                aggProp = area(this, 'groupAgg', [yKey], aggProp);
             }
-            props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
+            props.push(valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
         } else {
-            let aggProp = groupCount();
+            let aggProp = groupCount(this, 'groupAgg');
 
             if (areaPlot) {
-                aggProp = area([], aggProp);
+                aggProp = area(this, 'groupAgg', [], aggProp);
             }
             props.push(aggProp);
         }
@@ -290,13 +290,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData } = this;
+        const { processedData, dataModel } = this;
 
-        if (!processedData) return [];
+        if (!processedData || !dataModel) return [];
 
-        const {
-            domain: { aggValues: [yDomain] = [] },
-        } = processedData;
+        const yDomain = dataModel.getDomain(this, `groupAgg`, 'aggregate', processedData);
         const xDomainMin = this.calculatedBins?.[0][0];
         const xDomainMax = this.calculatedBins?.[(this.calculatedBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {

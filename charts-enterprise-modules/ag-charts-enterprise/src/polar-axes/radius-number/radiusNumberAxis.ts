@@ -3,7 +3,7 @@ import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } f
 const { AND, ChartAxisDirection, Default, GREATER_THAN, Layers, LESS_THAN, NUMBER_OR_NAN, Validate } = _ModuleSupport;
 const { LinearScale } = _Scale;
 const { Arc, Caption, Group, Path, Selection } = _Scene;
-const { extent } = _Util;
+const { normalisedExtent } = _Util;
 
 class RadiusNumberAxisTick extends _ModuleSupport.AxisTick<_Scale.LinearScale, number> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
@@ -152,21 +152,7 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
 
     normaliseDataDomain(d: number[]) {
         const { min, max } = this;
-
-        if (d.length > 2) {
-            d = extent(d) ?? [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            d = [min, d[1]];
-        }
-        if (!isNaN(max)) {
-            d = [d[0], max];
-        }
-        if (d[0] > d[1]) {
-            d = [];
-        }
-
-        return d;
+        return normalisedExtent(d, min, max);
     }
 
     protected createTick() {

@@ -4,26 +4,45 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { DataModel, GroupByFn } from './dataModel';
-import { area, groupAverage, groupCount, range, sum, accumulatedValue } from './aggregateFunctions';
+import { AggregatePropertyDefinition, DataModel, GroupByFn, PropertyId } from './dataModel';
+import {
+    area as actualArea,
+    groupAverage as actualGroupAverage,
+    groupCount as actualGroupCount,
+    range as actualRange,
+    sum as actualSum,
+    accumulatedValue,
+} from './aggregateFunctions';
 import {
     AGG_VALUES_EXTENT,
-    normaliseGroupTo,
-    normalisePropertyTo,
+    normaliseGroupTo as actualNormaliseGroupTo,
+    normalisePropertyTo as actualNormalisePropertyTo,
     SMALLEST_KEY_INTERVAL,
     SORT_DOMAIN_GROUPS,
 } from './processors';
 import { rangedValueProperty } from '../series/series';
 
-const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
-const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
-const value = (property: string, id?: string) => ({
+const rangeKey = (property: string) => ({ scope: 'test', property, type: 'key' as const, valueType: 'range' as const });
+const categoryKey = (property: string) => ({
+    scopes: ['test'],
+    property,
+    type: 'key' as const,
+    valueType: 'category' as const,
+});
+const scopedValue = (scope: string | undefined, property: string, id?: string) => ({
+    scopes: scope ? [scope] : undefined,
     property,
     type: 'value' as const,
     valueType: 'range' as const,
     id,
 });
-const categoryValue = (property: string) => ({ property, type: 'value' as const, valueType: 'category' as const });
+const value = (property: string, id?: string) => scopedValue('test', property, id);
+const categoryValue = (property: string) => ({
+    scopes: ['test'],
+    property,
+    type: 'value' as const,
+    valueType: 'category' as const,
+});
 const accumulatedGroupValue = (property: string, id?: string) => ({
     ...value(property, id),
     processor: () => (next, total) => next + (total ?? 0),
@@ -32,6 +51,20 @@ const accumulatedPropertyValue = (property: string, id?: string) => ({
     ...value(property, id),
     processor: accumulatedValue(),
 });
+const sum = (props: string[]) => actualSum({ id: 'test' }, `sum-${props.join('-')}`, props);
+const scopedSum = (scopes: string[] | undefined, props: string[]) => ({
+    ...actualSum({ id: 'test' }, `sum-${props.join('-')}`, props),
+    scopes,
+});
+const range = (props: string[]) => actualRange({ id: 'test' }, `range-${props.join('-')}`, props);
+const groupAverage = (props: string[]) => actualGroupAverage({ id: 'test' }, `groupAverage-${props.join('-')}`, props);
+const groupCount = () => actualGroupCount({ id: 'test' }, `groupCount`);
+const area = (props: string[], aggFn: AggregatePropertyDefinition<any, any>) =>
+    actualArea({ id: 'test' }, `area-${props.join('-')}`, props, aggFn);
+const normaliseGroupTo = (props: string[], normaliseTo: number, mode?: 'sum' | 'range') =>
+    actualNormaliseGroupTo({ id: 'test' }, props, normaliseTo, mode);
+const normalisePropertyTo = (prop: PropertyId<any>, normaliseTo: [number, number]) =>
+    actualNormalisePropertyTo({ id: 'test' }, prop, normaliseTo);
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -943,6 +976,73 @@ describe('DataModel', () => {
         });
     });
 
+    describe('missing and invalid data processing - multiple scopes', () => {
+        it('should generated the expected results', () => {
+            const data = [...DATA_BROWSER_MARKET_SHARE.map((v) => ({ ...v }))];
+            const DEFAULTS = {
+                missingValue: null,
+                validation: isNumber,
+            };
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    categoryKey('year'),
+                    { ...DEFAULTS, ...scopedValue(undefined, 'ie') },
+                    { ...DEFAULTS, ...scopedValue('series-a', 'chrome') },
+                    { ...DEFAULTS, ...scopedValue('series-b', 'firefox') },
+                    { ...DEFAULTS, ...scopedValue('series-c', 'safari') },
+                ],
+            });
+            data.forEach((datum, idx) => {
+                delete datum[['ie', 'chrome', 'firefox', 'safari'][idx % 4]];
+                if (idx % 3 === 0) {
+                    datum[['ie', 'chrome', 'firefox', 'safari'][(idx + 1) % 4]] = 'illegal value';
+                }
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const validated = { validation: (v) => typeof v === 'number' };
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    { ...scopedValue(undefined, 'vp1'), ...validated },
+                    { ...scopedValue('scope-1', 'vp2'), ...validated },
+                    { ...scopedValue('scope-2', 'vp3') },
+                    scopedSum(['scope-1'], ['vp1', 'vp2']),
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 'illegal value', vp2: 7, vp3: 1 },
+                { kp: 'Q2', vp1: 1, vp2: 'illegal value', vp3: 2 },
+                { kp: 'Q3', vp1: 6, vp2: 9, vp3: 'illegal value' },
+                { kp: 'Q4', vp1: 6, vp2: 9, vp3: 4 },
+            ];
+
+            it('should record per result data validation status per scope', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.data.length).toEqual(3);
+                expect(result?.data[0].validScopes).toEqual(['scope-2']);
+                expect(result?.data[1].validScopes).toBeUndefined();
+                expect(result?.data[2].validScopes).toBeUndefined();
+            });
+
+            it('should handle scope validations distinctly for values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.data.length).toEqual(3);
+                expect(result?.data[0].values).toEqual([[1, undefined, 2]]);
+                expect(result?.data[1].values).toEqual([[6, 9, 'illegal value']]);
+                expect(result?.data[2].values).toEqual([[6, 9, 4]]);
+            });
+        });
+    });
+
     describe('empty data set processing', () => {
         it('should generated the expected results', () => {
             const dataModel = new DataModel<any, any>({
@@ -980,7 +1080,7 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any>({
                 props: [
                     accumulatedPropertyValue('share', 'angle'),
-                    rangedValueProperty('share', { id: 'radius', min: 0.05, max: 0.7 }),
+                    rangedValueProperty({ id: 'test' }, 'share', { id: 'radius', min: 0.05, max: 0.7 }),
                     normalisePropertyTo({ id: 'angle' }, [0, 1]),
                 ],
             });

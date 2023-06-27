@@ -791,8 +791,6 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let labelStyle: Label;
             let wrappedText = '';
             if (datum.isLeaf) {
-                labelStyle = labels.small;
-
                 const pickStyle = () => {
                     const availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
                     const labelStyles = [labels.large, labels.medium, labels.small];
