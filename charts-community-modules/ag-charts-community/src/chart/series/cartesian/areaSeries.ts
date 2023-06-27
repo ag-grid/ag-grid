@@ -51,6 +51,7 @@ import { normaliseGroupTo } from '../../data/processors';
 import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { ModuleContext } from '../../../util/moduleContext';
 import { DataController } from '../../data/dataController';
+import { ContinuousDomain } from '../../data/utilFunctions';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -270,17 +271,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        const {
-            domain: {
-                values: [yExtent],
-                aggValues: [ySumExtent] = [],
-            },
-        } = processedData;
-
         const keyDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
         const keys = dataModel.getDomain(this, `xValue`, 'key', processedData);
-        // const yExtent = dataModel.getDomain(``);
-        // const ySumExtent = dataModel.getDomain(``);
+        const yExtent = dataModel.getDomain(this, /yValue-.*/, 'value', processedData);
+        const ySumExtent = dataModel.getDomain(this, `sum`, 'aggregate', processedData) as ContinuousDomain<number>;
 
         if (direction === ChartAxisDirection.X) {
             if (keyDef?.def.type === 'key' && keyDef.def.valueType === 'category') {

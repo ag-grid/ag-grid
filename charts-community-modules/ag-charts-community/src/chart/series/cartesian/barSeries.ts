@@ -362,9 +362,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         if (!processedData || !dataModel) return [];
 
         const {
-            domain: {
-                values: [yExtent],
-            },
             reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
@@ -373,6 +370,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const keyDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
         const keys = dataModel.getDomain(this, `xValue`, 'key', processedData);
+        const yExtent = dataModel.getDomain(this, /yValue-.*/, 'value', processedData);
 
         if (direction === this.getCategoryDirection()) {
             if (keyDef?.def.type === 'key' && keyDef?.def.valueType === 'category') {

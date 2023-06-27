@@ -290,13 +290,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData } = this;
+        const { processedData, dataModel } = this;
 
-        if (!processedData) return [];
+        if (!processedData || !dataModel) return [];
 
-        const {
-            domain: { aggValues: [yDomain] = [] },
-        } = processedData;
+        const yDomain = dataModel.getDomain(this, `groupAgg`, 'aggregate', processedData);
         const xDomainMin = this.calculatedBins?.[0][0];
         const xDomainMax = this.calculatedBins?.[(this.calculatedBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {

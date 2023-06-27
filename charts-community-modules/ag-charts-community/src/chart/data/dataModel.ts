@@ -273,12 +273,39 @@ export class DataModel<
         return { type, index, def };
     }
 
+    resolveProcessedDataIndicesById(
+        scope: ScopeProvider,
+        searchId: string | RegExp,
+        type: PropertyDefinition<any>['type'] = 'value'
+    ): { type: typeof type; index: number; def: PropertyDefinition<any> }[] | never {
+        return this.resolveProcessedDataDefsById(scope, searchId, type).map(({ index, def }) => ({ type, index, def }));
+    }
+
     resolveProcessedDataDefById(
         scope: ScopeProvider,
         searchId: string,
         type: PropertyDefinition<any>['type'] = 'value'
     ): { index: number; def: PropertyDefinition<any> } | never {
+        return this.resolveProcessedDataDefsById(scope, searchId, type)[0];
+    }
+
+    resolveProcessedDataDefsById(
+        scope: ScopeProvider,
+        searchId: RegExp | string,
+        type: PropertyDefinition<any>['type'] = 'value'
+    ): { index: number; def: PropertyDefinition<any> }[] | never {
         const { keys, values, aggregates, groupProcessors, reducers } = this;
+
+        const match = ({ id, scopes }: PropertyDefinition<any> & InternalDefinition) => {
+            if (id == null) return false;
+            if (scope != null && !scopes?.includes(scope.id)) return false;
+
+            if (typeof searchId === 'string') {
+                return id === searchId;
+            }
+
+            return searchId.test(id);
+        };
 
         const allDefs: (PropertyDefinition<any> & InternalDefinition)[][] = [
             keys,
@@ -287,11 +314,13 @@ export class DataModel<
             groupProcessors,
             reducers,
         ];
+        const result: { index: number; def: PropertyDefinition<any> }[] = [];
         for (const defs of allDefs) {
-            const def = defs.find(
-                ({ id, scopes }) => id === searchId && (scope == null || (scopes?.includes(scope.id) ?? false))
-            );
-            if (def) return { index: def.index, def };
+            result.push(...defs.filter(match).map((def) => ({ index: def.index, def })));
+        }
+
+        if (result.length > 0) {
+            return result;
         }
 
         throw new Error(`AG Charts - didn't find property definition for [${searchId}, ${scope.id}, ${type}]`);
@@ -299,14 +328,16 @@ export class DataModel<
 
     getDomain(
         scope: ScopeProvider,
-        searchId: string,
+        searchId: string | RegExp,
         type: PropertyDefinition<any>['type'] = 'value',
         processedData: ProcessedData<K>
     ): any[] | ContinuousDomain<number> | [] {
-        const idx = this.resolveProcessedDataIndexById(scope, searchId, type);
-
-        if (!idx) {
-            return [];
+        let matches;
+        try {
+            matches = this.resolveProcessedDataIndicesById(scope, searchId, type);
+        } catch (e) {
+            if (typeof searchId !== 'string' && /didn't find property definition/.test(e.message)) return [];
+            throw e;
         }
 
         let domainProp: keyof ProcessedData<any>['domain'];
@@ -327,7 +358,16 @@ export class DataModel<
                 return [];
         }
 
-        return processedData.domain[domainProp]?.[idx.index] ?? [];
+        const firstMatch = processedData.domain[domainProp]?.[matches[0].index] ?? [];
+        if (matches.length === 1) {
+            return firstMatch;
+        }
+
+        const result = [...firstMatch];
+        for (const idx of matches.slice(1)) {
+            extendDomain(processedData.domain[domainProp]?.[idx.index] ?? [], result as ContinuousDomain<any>);
+        }
+        return result;
     }
 
     processData(data: D[]): (Grouped extends true ? GroupedData<D> : UngroupedData<D>) | undefined {
