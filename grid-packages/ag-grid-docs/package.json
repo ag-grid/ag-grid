@@ -10,6 +10,7 @@
     "serve-core-only": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-core-only",
     "serve-with-formatting": "NODE_OPTIONS=--openssl-legacy-provider  ./node_modules/.bin/gulp serve-with-formatting",
     "serve-charts-core-only": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp serve-charts-core-only",
+    "serve-framework": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp serve-framework",
     "serve-website-only": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp serve-website-only",
     "tsc": "npx tsc -p tests/config/tsconfig.json",
     "test": "npx jest",
