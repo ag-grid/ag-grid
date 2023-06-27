@@ -22,7 +22,7 @@ import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
+import { DatumPropertyDefinition, fixNumericExtent, ScopeProvider } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 import { ModuleContext } from '../../util/moduleContext';
@@ -62,38 +62,60 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+function basicContinuousCheckDatumValidation(v: any) {
+    return checkDatum(v, true) != null;
+}
+
+function basicDiscreteCheckDatumValidation(v: any) {
+    return checkDatum(v, false) != null;
+}
+
+export function keyProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
     const result: DatumPropertyDefinition<K> = {
+        scopes: [scope.id],
         property: propName,
         type: 'key',
         valueType: continuous ? 'range' : 'category',
-        validation: (v) => checkDatum(v, continuous) != null,
+        validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation,
         ...opts,
     };
     return result;
 }
 
-export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+export function valueProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
     const result: DatumPropertyDefinition<K> = {
+        scopes: [scope.id],
         property: propName,
         type: 'value',
         valueType: continuous ? 'range' : 'category',
-        validation: (v) => checkDatum(v, continuous) != null,
+        validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation,
         ...opts,
     };
     return result;
 }
 
 export function rangedValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
 ): DatumPropertyDefinition<K> {
     const { min = -Infinity, max = Infinity, ...defOpts } = opts;
     return {
+        scopes: [scope.id],
         type: 'value',
         property: propName,
         valueType: 'range',
-        validation: (v) => checkDatum(v, true) != null,
+        validation: basicContinuousCheckDatumValidation,
         processor: () => (datum) => {
             if (typeof datum !== 'number') return datum;
             if (isNaN(datum)) return datum;
@@ -105,24 +127,26 @@ export function rangedValueProperty<K>(
 }
 
 export function accumulativeValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     continuous: boolean,
     opts = {} as Partial<DatumPropertyDefinition<K>>
 ) {
     const result: DatumPropertyDefinition<K> = {
-        ...valueProperty(propName, continuous, opts),
+        ...valueProperty(scope, propName, continuous, opts),
         processor: accumulatedValue(),
     };
     return result;
 }
 
 export function trailingAccumulatedValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     continuous: boolean,
     opts = {} as Partial<DatumPropertyDefinition<K>>
 ) {
     const result: DatumPropertyDefinition<K> = {
-        ...valueProperty(propName, continuous, opts),
+        ...valueProperty(scope, propName, continuous, opts),
         processor: trailingAccumulatedValue(),
     };
     return result;

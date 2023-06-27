@@ -271,11 +271,11 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                keyProperty(xKey, isContinuousX),
-                accumulativeValueProperty(yKey, true, { id: `yCurrent`, validation }),
-                trailingAccumulatedValueProperty(yKey, true, { id: `yPrevious`, validation }),
-                valueProperty(yKey, true, { id: `yRaw` }), // Raw value pass-through.
-                ...(typeKey ? [valueProperty(typeKey, false, { id: `typeValue`, missingValue: undefined })] : []),
+                keyProperty(this, xKey, isContinuousX, { id: `xKey` }),
+                accumulativeValueProperty(this, yKey, true, { id: `yCurrent`, validation }),
+                trailingAccumulatedValueProperty(this, yKey, true, { id: `yPrevious`, validation }),
+                valueProperty(this, yKey, true, { id: `yRaw` }), // Raw value pass-through.
+                ...(typeKey ? [valueProperty(this, typeKey, false, { id: `typeValue`, missingValue: undefined })] : []),
             ],
             dataVisible: this.visible,
         });
@@ -347,16 +347,16 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const offsetDirection = barAlongX ? -1 : 1;
         const offset = offsetDirection * halfLineWidth;
 
-        const { yKey = '', xKey = '', typeKey = '', processedData } = this;
+        const { yKey = '', xKey = '', processedData } = this;
         if (processedData?.type !== 'ungrouped') return [];
 
         const contexts: WaterfallContext[] = [];
 
-        const yIndex = processedData?.indices.values[yKey] ?? -1;
-        const xIndex = processedData?.indices.keys[xKey] ?? -1;
-        const typeKeyIndex = processedData?.indices.values[typeKey] ?? -1;
-        const yCurrIndex = dataModel.resolveProcessedDataIndexById('yCurrent')?.index ?? -1;
-        const yPrevIndex = dataModel.resolveProcessedDataIndexById('yPrevious')?.index ?? -1;
+        const yRawIndex = dataModel.resolveProcessedDataIndexById(this, `yRaw`).index;
+        const xIndex = dataModel.resolveProcessedDataIndexById(this, `xKey`).index;
+        const yCurrIndex = dataModel.resolveProcessedDataIndexById(this, 'yCurrent').index;
+        const yPrevIndex = dataModel.resolveProcessedDataIndexById(this, 'yPrevious').index;
+        const typeKeyIndex = this.typeKey ? dataModel.resolveProcessedDataIndexById(this, `typeValue`).index : -1;
 
         const contextIndexMap = new Map<SeriesItemType, number>();
 
@@ -372,7 +372,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const xDatum = keys[xIndex];
             const x = xScale.convert(xDatum);
 
-            const rawValue = values[yIndex];
+            const rawValue = values[yRawIndex];
             const cumulativeValue = values[yCurrIndex];
             const trailingValue = isTotalOrSubtotal ? 0 : values[yPrevIndex];
 
