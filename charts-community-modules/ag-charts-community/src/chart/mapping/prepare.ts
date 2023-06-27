@@ -316,18 +316,12 @@ const singleSeriesPaletteFactory: SeriesPaletteFactory = ({ takeColors }) => {
     return { fill, stroke };
 };
 addSeriesPaletteFactory('histogram', singleSeriesPaletteFactory);
-addSeriesPaletteFactory('scatter', ({ takeColors }) => {
-    const {
-        fills: [fill],
-        strokes: [stroke],
-    } = takeColors(1);
+addSeriesPaletteFactory('scatter', (params) => {
+    const { fill, stroke } = singleSeriesPaletteFactory(params);
     return { marker: { fill, stroke } };
 });
-addSeriesPaletteFactory('line', ({ takeColors }) => {
-    const {
-        fills: [fill],
-        strokes: [stroke],
-    } = takeColors(1);
+addSeriesPaletteFactory('line', (params) => {
+    const { fill, stroke } = singleSeriesPaletteFactory(params);
     return {
         stroke: fill,
         marker: { fill, stroke },
