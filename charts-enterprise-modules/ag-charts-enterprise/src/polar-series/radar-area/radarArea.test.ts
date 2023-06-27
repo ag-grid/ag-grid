@@ -12,7 +12,7 @@ import {
 
 expect.extend({ toMatchImageSnapshot });
 
-describe('Radar Line Chart', () => {
+describe('Radar Area Chart', () => {
     let chart: any;
     const ctx = setupMockCanvas();
 
@@ -40,12 +40,12 @@ describe('Radar Line Chart', () => {
         ],
         series: [
             {
-                type: 'radar-line',
+                type: 'radar-area',
                 angleKey: 'subject',
                 radiusKey: 'gradeA',
             },
             {
-                type: 'radar-line',
+                type: 'radar-area',
                 angleKey: 'subject',
                 radiusKey: 'gradeB',
             },
