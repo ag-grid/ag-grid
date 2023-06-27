@@ -38,7 +38,10 @@ import { AxisLine } from './chart/axis/axisLine';
 import { AxisTitle } from './chart/axis/axisTitle';
 import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
 import { ChartAxis, BoundSeries } from './chart/chartAxis';
+import { AnimationManager } from './chart/interaction/animationManager';
 import { InteractionEvent } from './chart/interaction/interactionManager';
+import * as easing from './motion/easing';
+import { StateMachine } from './motion/states';
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
@@ -93,6 +96,16 @@ type TickDatum = {
 };
 
 type TickData = { rawTicks: any[]; ticks: TickDatum[]; labelCount: number };
+
+type AxisAnimationState = 'empty' | 'align' | 'ready';
+type AxisAnimationEvent = 'update';
+class AxisStateMachine extends StateMachine<AxisAnimationState, AxisAnimationEvent> {}
+type AxisUpdateDiff = {
+    changed: boolean;
+    tickCount: number;
+    added: { [key: string]: true };
+    removed: { [key: string]: true };
+};
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -152,9 +165,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         })
     );
 
-    protected tickLineGroupSelection = Selection.select(this.tickLineGroup, Line);
-    protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text);
-    protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line);
+    protected tickLineGroupSelection = Selection.select(this.tickLineGroup, Line, false);
+    protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text, false);
+    protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line, false);
 
     private _crossLines?: CrossLine[] = [];
     set crossLines(value: CrossLine[] | undefined) {
@@ -190,6 +203,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
+    private animationManager: AnimationManager;
+    private animationState: AxisStateMachine;
+
     private destroyFns: Function[] = [];
 
     constructor(protected readonly moduleCtx: ModuleContext, scale: S) {
@@ -201,6 +217,34 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         const axisHoverHandle = moduleCtx.interactionManager.addListener('hover', (e) => this.checkAxisHover(e));
         this.destroyFns.push(() => moduleCtx.interactionManager.removeListener(axisHoverHandle));
+
+        this.animationManager = moduleCtx.animationManager;
+        this.animationState = new AxisStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'align',
+                        action: () => this.resetSelectionNodes(),
+                    },
+                },
+            },
+            align: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: () => this.resetSelectionNodes(),
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data: AxisUpdateDiff) => this.animateReadyUpdate(data),
+                    },
+                },
+            },
+        });
     }
 
     private attachCrossLine(crossLine: CrossLine) {
@@ -413,6 +457,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        const previous = this.tickLabelGroupSelection.nodes().map((node) => node.datum.tickLabel);
+
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -430,6 +476,12 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         });
 
         this.updateSelections(tickData.ticks);
+
+        if (!this.animationManager.skipAnimations) {
+            const diff = this.calculateUpdateDiff(previous, tickData);
+            this.animationState.transition('update', diff);
+        }
+
         this.updateLabels({
             tickLabelGroupSelection: this.tickLabelGroupSelection,
             combinedRotation,
@@ -998,32 +1050,41 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     private updateSelections(data: TickDatum[]) {
         const gridData = this.gridLength ? data : [];
-        const gridLineGroupSelection = this.gridLineGroupSelection.update(gridData, (group) => {
-            const node = new Line();
-            node.tag = Tags.GridLine;
-            group.append(node);
-        });
-        const tickLineGroupSelection = this.tickLineGroupSelection.update(data, (group) => {
-            const line = new Line();
-            line.tag = Tags.TickLine;
-            group.appendChild(line);
-        });
-        const tickLabelGroupSelection = this.tickLabelGroupSelection.update(data, (group) => {
-            const text = new Text();
-            text.tag = Tags.TickLabel;
-            group.appendChild(text);
-        });
-
-        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
-        // But node `translationY` values must be rounded to get pixel grid alignment
-        const translationFn = (node: Line | Arc | Text) => (node.translationY = Math.round(node.datum.translationY));
-        gridLineGroupSelection.each(translationFn);
-        tickLineGroupSelection.each(translationFn);
-        tickLabelGroupSelection.each(translationFn);
+        const gridLineGroupSelection = this.gridLineGroupSelection.update(
+            gridData,
+            (group) => {
+                const node = new Line();
+                node.tag = Tags.GridLine;
+                group.append(node);
+            },
+            (datum: TickDatum) => datum.tickLabel
+        );
+        const tickLineGroupSelection = this.tickLineGroupSelection.update(
+            data,
+            (group) => {
+                const line = new Line();
+                line.tag = Tags.TickLine;
+                group.appendChild(line);
+            },
+            (datum: TickDatum) => datum.tickLabel
+        );
+        const tickLabelGroupSelection = this.tickLabelGroupSelection.update(
+            data,
+            (group) => {
+                const text = new Text();
+                text.tag = Tags.TickLabel;
+                group.appendChild(text);
+            },
+            (datum: TickDatum) => datum.tickLabel
+        );
 
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
+
+        if (this.animationManager.skipAnimations) {
+            this.resetSelectionNodes();
+        }
     }
 
     protected updateGridLines(sideFlag: Flag) {
@@ -1334,5 +1395,147 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
     isModuleEnabled(module: AxisOptionModule) {
         return this.modules[module.optionsKey] != null;
+    }
+
+    animateReadyUpdate(diff: AxisUpdateDiff) {
+        if (!diff.changed) {
+            this.resetSelectionNodes();
+            return;
+        }
+
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+
+        const addedCount = Object.keys(diff.added).length;
+        const removedCount = Object.keys(diff.removed).length;
+
+        if (removedCount === diff.tickCount) {
+            this.resetSelectionNodes();
+            return;
+        }
+
+        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
+        let sectionDuration = Math.floor(totalDuration / 2);
+        if (addedCount > 0 && removedCount > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        }
+        const options = {
+            delay: removedCount > 0 ? sectionDuration : 0,
+            duration: sectionDuration,
+        };
+
+        tickLabelGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum);
+        });
+
+        gridLineGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum);
+        });
+
+        tickLineGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum);
+        });
+    }
+
+    private animateSelectionNode(
+        selection: Selection<Text | Line, any>,
+        diff: AxisUpdateDiff,
+        options: { delay: number; duration: number },
+        node: Text | Line,
+        datum: TickDatum
+    ) {
+        const roundedTranslationY = Math.round(datum.translationY);
+        let translate = { from: node.translationY, to: roundedTranslationY };
+        let opacity = { from: 1, to: 1 };
+
+        const { duration } = options;
+        let { delay } = options;
+
+        const datumId = datum.tickLabel;
+        if (diff.added[datumId]) {
+            translate = { from: roundedTranslationY, to: roundedTranslationY };
+            opacity = { from: 0, to: 1 };
+            delay += duration;
+        } else if (diff.removed[datumId]) {
+            opacity = { from: 1, to: 0 };
+            delay = 0;
+        }
+
+        const props = [translate, opacity];
+
+        this.animationManager.debouncedAnimateMany(`${this.id}_ready-update_${node.id}`, props, {
+            disableInteractions: false,
+            delay,
+            duration,
+            ease: easing.easeOut,
+            onUpdate([translationY, opacity]) {
+                node.translationY = translationY;
+                node.opacity = opacity;
+            },
+            onComplete() {
+                selection.cleanup();
+            },
+        });
+    }
+
+    private resetSelectionNodes() {
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+
+        gridLineGroupSelection.cleanup();
+        tickLineGroupSelection.cleanup();
+        tickLabelGroupSelection.cleanup();
+
+        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
+        // But node `translationY` values must be rounded to get pixel grid alignment
+        const resetFn = (node: Line | Text) => {
+            node.translationY = Math.round(node.datum.translationY);
+            node.opacity = 1;
+        };
+        gridLineGroupSelection.each(resetFn);
+        tickLineGroupSelection.each(resetFn);
+        tickLabelGroupSelection.each(resetFn);
+    }
+
+    private calculateUpdateDiff(previous: string[], tickData: TickData): AxisUpdateDiff {
+        const added = new Set<string>();
+        const removed = new Set<string>();
+
+        const tickCount = Math.max(previous.length, tickData.ticks.length);
+
+        for (let i = 0; i < tickCount; i++) {
+            const prev = previous[i];
+            const tick = tickData.ticks[i]?.tickLabel;
+
+            if (prev === tick) {
+                continue;
+            }
+
+            if (removed.has(tick)) {
+                removed.delete(tick);
+            } else if (tick) {
+                added.add(tick);
+            }
+
+            if (added.has(prev)) {
+                added.delete(prev);
+            } else if (prev) {
+                removed.add(prev);
+            }
+        }
+
+        const addedKeys: { [key: string]: true } = {};
+        const removedKeys: { [key: string]: true } = {};
+        added.forEach((a) => {
+            addedKeys[a] = true;
+        });
+        removed.forEach((r) => {
+            removedKeys[r] = true;
+        });
+
+        return {
+            changed: added.size > 0 || removed.size > 0,
+            tickCount,
+            added: addedKeys,
+            removed: removedKeys,
+        };
     }
 }
