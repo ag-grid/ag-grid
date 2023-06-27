@@ -477,7 +477,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         this.updateSelections(tickData.ticks);
 
-        if (!this.animationManager.skipAnimations) {
+        if (this.animationManager.skipAnimations) {
+            this.resetSelectionNodes();
+        } else {
             const diff = this.calculateUpdateDiff(previous, tickData);
             this.animationState.transition('update', diff);
         }
@@ -1081,10 +1083,6 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
-
-        if (this.animationManager.skipAnimations) {
-            this.resetSelectionNodes();
-        }
     }
 
     protected updateGridLines(sideFlag: Flag) {
