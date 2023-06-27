@@ -281,6 +281,9 @@ export class ColumnModel extends BeanStub {
     }
 
     private onAutoGroupColumnDefChanged() {
+        // Possible for update to be called before columns are present in which case there is nothing to do here.
+        if (!this.columnDefs) { return; }
+
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
