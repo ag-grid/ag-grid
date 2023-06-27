@@ -28,3 +28,19 @@ export function extent(values: Array<number | Date>): [number, number] | undefin
     }
     return extent;
 }
+
+export function normalisedExtent(d: number[], min: number, max: number) {
+    if (d.length > 2) {
+        d = extent(d) ?? [NaN, NaN];
+    }
+    if (!isNaN(min)) {
+        d = [min, d[1]];
+    }
+    if (!isNaN(max)) {
+        d = [d[0], max];
+    }
+    if (d[0] > d[1]) {
+        d = [];
+    }
+    return d;
+}
