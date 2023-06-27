@@ -1,4 +1,5 @@
 import { Logger } from '../util/logger';
+import { windowValue } from '../util/window';
 
 interface StateDefinition<State extends string, Event extends string> {
     actions?: {
@@ -14,16 +15,16 @@ interface StateDefinition<State extends string, Event extends string> {
 }
 
 export class StateMachine<State extends string, Event extends string> {
+    static DEBUG = () => [true, 'animation'].includes(windowValue('agChartsDebug') as string) ?? false;
+
     private states: Record<State, StateDefinition<State, Event>>;
     private state: State;
-
-    debug = false;
 
     constructor(initialState: State, states: Record<State, StateDefinition<State, Event>>) {
         this.state = initialState;
         this.states = states;
 
-        if (this.debug) Logger.debug(`%c${this.constructor.name} | init -> ${initialState}`, 'color: green');
+        if (StateMachine.DEBUG()) Logger.debug(`%c${this.constructor.name} | init -> ${initialState}`, 'color: green');
     }
 
     transition(event: Event, data?: any) {
@@ -31,7 +32,7 @@ export class StateMachine<State extends string, Event extends string> {
         const destinationTransition = currentStateConfig?.on?.[event];
 
         if (!destinationTransition) {
-            if (this.debug) {
+            if (StateMachine.DEBUG()) {
                 Logger.debug(`%c${this.constructor.name} | ${this.state} -> ${event} -> ${this.state}`, 'color: grey');
             }
             return;
@@ -40,7 +41,7 @@ export class StateMachine<State extends string, Event extends string> {
         const destinationState = destinationTransition.target;
         const destinationStateConfig = this.states[destinationState];
 
-        if (this.debug) {
+        if (StateMachine.DEBUG()) {
             Logger.debug(
                 `%c${this.constructor.name} | ${this.state} -> ${event} -> ${destinationState}`,
                 'color: green'
