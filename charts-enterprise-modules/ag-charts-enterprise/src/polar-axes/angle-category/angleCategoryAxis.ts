@@ -251,45 +251,6 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             return;
         }
 
-        const loopRightPart = (
-            step: number,
-            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
-        ) => {
-            let prev = labelData[0];
-            const lastIndex = Math.floor(labelData.length / 2);
-            for (let i = step; i <= lastIndex; i += step) {
-                const curr = labelData[i];
-                if (iterator(prev, curr)) {
-                    return true;
-                }
-                prev = curr;
-            }
-            return false;
-        };
-        const loopLeftPart = (
-            step: number,
-            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
-        ) => {
-            let prev = labelData[0];
-            const lastIndex = Math.floor(labelData.length / 2) + 1;
-            for (let i = labelData.length - step; i >= lastIndex; i -= step) {
-                const curr = labelData[i];
-                if (iterator(prev, curr)) {
-                    return true;
-                }
-                prev = curr;
-            }
-            return false;
-        };
-        const loopSymmetrically = (
-            step: number,
-            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
-        ) => {
-            if (loopRightPart(step, iterator)) {
-                return true;
-            }
-            return loopLeftPart(step, iterator);
-        };
         const labelsCollide = (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => {
             if (prev.hidden || next.hidden) {
                 return false;
@@ -299,8 +260,36 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             return prevBox.collidesBBox(nextBox);
         };
 
-        const visibleLabels = new Set<AngleCategoryAxisLabelDatum>();
-        visibleLabels.add(labelData[0]);
+        const loopSymmetrically = (
+            step: number,
+            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
+        ) => {
+            const midIndex = Math.floor(labelData.length / 2);
+
+            // Loop right part
+            let prev = labelData[0];
+            for (let i = step; i <= midIndex; i += step) {
+                const curr = labelData[i];
+                if (iterator(prev, curr)) {
+                    return true;
+                }
+                prev = curr;
+            }
+
+            // Loop left part
+            prev = labelData[0];
+            for (let i = labelData.length - step; i >= midIndex + 1; i -= step) {
+                const curr = labelData[i];
+                if (iterator(prev, curr)) {
+                    return true;
+                }
+                prev = curr;
+            }
+
+            return false;
+        };
+
+        const visibleLabels = new Set<AngleCategoryAxisLabelDatum>(labelData.slice(0, 1));
         const maxStep = Math.floor(labelData.length / 2);
         for (let step = 1; step <= maxStep; step++) {
             const collisionDetected = loopSymmetrically(step, labelsCollide);

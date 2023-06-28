@@ -99,7 +99,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
         if (currentColumnGroupIndex !== -1) {
-            if (node.groupData?.[column.getId()]) { return true; }
+            if (node.groupData?.[column.getId()] != null) { return true; }
 
             // if this is a top level footer, always render`Total` in the left-most cell
             if (node.footer && node.level === -1) {

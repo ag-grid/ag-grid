@@ -749,8 +749,13 @@ export class RadarLineSeries extends _ModuleSupport.PolarSeries<RadarLineNodeDat
     }
 
     private resetMarkersAndPaths({ markerSelection, nodeData, lineNode }: RadarLineAnimationData) {
+        if (!lineNode) {
+            return;
+        }
+
         const { path: linePath } = lineNode;
 
+        lineNode.fill = undefined;
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
         lineNode.strokeOpacity = this.strokeOpacity;
