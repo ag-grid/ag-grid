@@ -6,7 +6,7 @@ enterprise: true
 **Radar** series (sometimes called a *Spider chart*) represent a dataset in a form of a line or area drawn over a radial grid.
 It can be very useful when you need to compare some datasets across **multiple categories**.
 
-## Radar Line configuration
+## Radar Line
 
 To plot a basic Radar Line we need an array of data, where every item will have a single category value (for the angle axis) and a single numeric value (for the radius axis).
 
@@ -22,24 +22,26 @@ series: [{
 
 <chart-example title='Basic Radar Line' name='basic-radar-line' type='generated' options='{ "enterprise": true }'></chart-example>
 
-The next example demonstrates multiple radar line series on the same chart:
+## Radar Area
+
+Radar Areas are very similar to Radar Lines. The next example demonstrates multiple radar area series on the same chart:
 
 ```js
 series: [
     {
-        type: 'radar-line',
+        type: 'radar-area',
         angleKey: 'subject',
         radiusKey: `Mike's grades`,
     },
     {
-        type: 'radar-line',
+        type: 'radar-area',
         angleKey: 'subject',
         radiusKey: `Tony's grades`,
     },
 ],
 ```
 
-<chart-example title='Radar Line with Circular Axes' name='radar-line-circle-axes' type='generated' options='{ "enterprise": true }'></chart-example>
+<chart-example title='Basic Radar Area' name='basic-radar-area' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Polar axes
 
@@ -65,8 +67,22 @@ Please see the API reference for more details.
 
 ```ts
 /** Configuration for Radar Line series. */
-export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
+export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseRadarSeriesOptions<DatumType> {
     type?: 'radar-line';
+}
+
+/** Configuration for Radar Area series. */
+export interface AgRadarAreaSeriesOptions<DatumType = any> extends AgBaseRadarSeriesOptions<DatumType> {
+    type?: 'radar-area';
+    /** The colour to use for the fill of the area. */
+    fill?: CssColor;
+    /** The opacity of the fill for the area. */
+    fillOpacity?: Opacity;
+}
+
+/** Configuration for Radar series. */
+export interface AgBaseRadarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
+    type?: 'radar-line' | 'radar-area';
     /** The key to use to retrieve angle values from the data. */
     angleKey?: string;
     /** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -76,7 +92,7 @@ export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseSeriesO
     /** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     radiusName?: string;
 
-    marker?: AgRadarLineSeriesMarker<DatumType>;
+    marker?: AgRadarSeriesMarker<DatumType>;
     /** The colour of the stroke for the lines. */
     stroke?: CssColor;
     /** The width in pixels of the stroke for the lines. */
@@ -88,14 +104,14 @@ export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseSeriesO
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
     /** Configuration for the labels shown on top of data points. */
-    label?: AgRadarLineSeriesLabelOptions;
+    label?: AgRadarSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
-    tooltip?: AgRadarLineSeriesTooltip;
+    tooltip?: AgRadarSeriesTooltip;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
 }
 
-export interface AgRadarLineSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
+export interface AgRadarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     /** xKey as specified on series options. */
     readonly angleKey: string;
     /** xValue as read from series data via the xKey property. */
@@ -111,42 +127,42 @@ export interface AgRadarLineSeriesTooltipRendererParams extends AgSeriesTooltipR
     readonly radiusName?: string;
 }
 
-export interface AgRadarLineSeriesMarkerFormatterParams<DatumType> extends AgSeriesMarkerFormatterParams<DatumType> {
+export interface AgRadarSeriesMarkerFormatterParams<DatumType> extends AgSeriesMarkerFormatterParams<DatumType> {
     angleKey: string;
     radiusKey: string;
 }
 
-export interface AgRadarLineSeriesMarkerFormat {
+export interface AgRadarSeriesMarkerFormat {
     fill?: CssColor;
     stroke?: CssColor;
     strokeWidth?: PixelSize;
     size?: PixelSize;
 }
 
-export interface AgRadarLineSeriesMarker<DatumType> extends AgSeriesMarker {
+export interface AgRadarSeriesMarker<DatumType> extends AgSeriesMarker {
     /** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
-    formatter?: AgRadarLineSeriesMarkerFormatter<DatumType>;
+    formatter?: AgRadarSeriesMarkerFormatter<DatumType>;
 }
 
-export type AgRadarLineSeriesMarkerFormatter<DatumType> = (
-    params: AgRadarLineSeriesMarkerFormatterParams<DatumType>
-) => AgRadarLineSeriesMarkerFormat | undefined;
+export type AgRadarSeriesMarkerFormatter<DatumType> = (
+    params: AgRadarSeriesMarkerFormatterParams<DatumType>
+) => AgRadarSeriesMarkerFormat | undefined;
 
-export interface AgRadarLineSeriesLabelFormatterParams {
+export interface AgRadarSeriesLabelFormatterParams {
     /** The ID of the series. */
     readonly seriesId: string;
     /** The value of radiusKey as specified on series options. */
     readonly value: number;
 }
 
-export interface AgRadarLineSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgRadarSeriesLabelOptions extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: AgRadarLineSeriesLabelFormatterParams) => string;
+    formatter?: (params: AgRadarSeriesLabelFormatterParams) => string;
 }
 
-export interface AgRadarLineSeriesTooltip extends AgSeriesTooltip {
+export interface AgRadarSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
-    renderer?: (params: AgRadarLineSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    renderer?: (params: AgRadarSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
     format?: string;
 }
 
@@ -154,6 +170,8 @@ export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
     type: 'angle-category';
     /** Configuration for the axis ticks. */
     tick?: AgAxisCategoryTickOptions;
+    /** Shape of grid lines. Default: `polygon` */
+    shape?: 'polygon' | 'circle';
 }
 
 export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
@@ -166,7 +184,9 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
+    /** Shape of grid lines. Default: `polygon` */
+    shape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
 }
-```
+ 0```

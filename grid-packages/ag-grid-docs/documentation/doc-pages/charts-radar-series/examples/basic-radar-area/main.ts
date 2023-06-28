@@ -9,28 +9,16 @@ const options: AgChartOptions = {
     },
     series: [
         {
-            type: 'radar-line',
+            type: 'radar-area',
             angleKey: 'subject',
             radiusKey: 'mike',
             radiusName: `Mike's grades`,
-            stroke: 'red',
-            strokeWidth: 2,
-            marker: {
-                fill: 'red',
-                size: 10,
-            },
         },
         {
-            type: 'radar-line',
+            type: 'radar-area',
             angleKey: 'subject',
             radiusKey: 'tony',
             radiusName: `Tony's grades`,
-            stroke: 'blue',
-            strokeWidth: 2,
-            marker: {
-                fill: 'blue',
-                size: 10,
-            },
         },
     ],
     legend: {

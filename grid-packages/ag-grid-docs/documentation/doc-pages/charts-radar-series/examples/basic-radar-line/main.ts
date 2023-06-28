@@ -12,17 +12,8 @@ const options: AgChartOptions = {
             type: 'radar-line',
             angleKey: 'subject',
             radiusKey: 'grade',
-            stroke: 'red',
-            strokeWidth: 2,
-            marker: {
-                fill: 'red',
-                size: 10,
-            },
         },
     ],
-    legend: {
-        enabled: true,
-    },
 };
 
 const chart = AgEnterpriseCharts.create(options);
