@@ -260,31 +260,28 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             return prevBox.collidesBBox(nextBox);
         };
 
+        const loopLabels = (
+            start: number,
+            end: number,
+            step: number,
+            iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
+        ) => {
+            let prev = labelData[0];
+            for (let i = start; step > 0 ? i <= end : i > end; i += step) {
+                const curr = labelData[i];
+                if (iterator(prev, curr)) return true;
+                prev = curr;
+            }
+        };
+
         const loopSymmetrically = (
             step: number,
             iterator: (prev: AngleCategoryAxisLabelDatum, next: AngleCategoryAxisLabelDatum) => any
         ) => {
             const midIndex = Math.floor(labelData.length / 2);
 
-            // Loop right part
-            let prev = labelData[0];
-            for (let i = step; i <= midIndex; i += step) {
-                const curr = labelData[i];
-                if (iterator(prev, curr)) {
-                    return true;
-                }
-                prev = curr;
-            }
-
-            // Loop left part
-            prev = labelData[0];
-            for (let i = labelData.length - step; i >= midIndex + 1; i -= step) {
-                const curr = labelData[i];
-                if (iterator(prev, curr)) {
-                    return true;
-                }
-                prev = curr;
-            }
+            if (loopLabels(step, midIndex, step, iterator)) return true;
+            if (loopLabels(labelData.length - step, midIndex, -step, iterator)) return true;
 
             return false;
         };
