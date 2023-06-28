@@ -25,6 +25,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
 
     constructor(moduleCtx: _ModuleSupport.ModuleContext) {
         super(moduleCtx, new BandScale());
+        this.includeInvisibleDomains = true;
     }
 
     get direction() {
