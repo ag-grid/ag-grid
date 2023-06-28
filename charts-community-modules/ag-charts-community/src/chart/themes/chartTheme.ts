@@ -36,6 +36,7 @@ type ChartThemeDefaults = {
 
 export const EXTENDS_AXES_DEFAULTS = Symbol('extends-axes-defaults');
 export const EXTENDS_AXES_LABEL_DEFAULTS = Symbol('extends-axes-label-defaults');
+export const EXTENDS_AXES_LINE_DEFAULTS = Symbol('extends-axes-line-defaults');
 export const EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
 export const OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
 export const DEFAULT_FONT_FAMILY = Symbol('default-font');
@@ -765,6 +766,7 @@ export class ChartTheme {
         const extensions = new Map();
         extensions.set(EXTENDS_AXES_DEFAULTS, ChartTheme.getAxisDefaults());
         extensions.set(EXTENDS_AXES_LABEL_DEFAULTS, ChartTheme.getAxisDefaults().label);
+        extensions.set(EXTENDS_AXES_LINE_DEFAULTS, ChartTheme.getAxisDefaults().line);
         extensions.set(EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
         extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, {});
 
