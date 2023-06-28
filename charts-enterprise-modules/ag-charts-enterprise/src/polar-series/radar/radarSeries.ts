@@ -752,28 +752,32 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     protected resetMarkersAndPaths() {
         const { markerSelection, nodeData } = this;
         const lineNode = this.getLineNode();
-        const { path: linePath } = lineNode;
 
-        lineNode.stroke = this.stroke;
-        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        lineNode.strokeOpacity = this.strokeOpacity;
+        if (lineNode) {
+            const { path: linePath } = lineNode;
 
-        lineNode.lineDash = this.lineDash;
-        lineNode.lineDashOffset = this.lineDashOffset;
+            lineNode.fill = undefined;
+            lineNode.stroke = this.stroke;
+            lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            lineNode.strokeOpacity = this.strokeOpacity;
 
-        linePath.clear({ trackChanges: true });
+            lineNode.lineDash = this.lineDash;
+            lineNode.lineDashOffset = this.lineDashOffset;
 
-        nodeData.forEach((datum, index) => {
-            const { x, y } = datum.point!;
-            if (index === 0) {
-                linePath.moveTo(x, y);
-            } else {
-                linePath.lineTo(x, y);
-            }
-        });
-        linePath.closePath();
+            linePath.clear({ trackChanges: true });
 
-        lineNode.checkPathDirty();
+            nodeData.forEach((datum, index) => {
+                const { x, y } = datum.point!;
+                if (index === 0) {
+                    linePath.moveTo(x, y);
+                } else {
+                    linePath.lineTo(x, y);
+                }
+            });
+            linePath.closePath();
+
+            lineNode.checkPathDirty();
+        }
 
         markerSelection.each((marker, datum) => {
             const format = this.animateFormatter(datum);

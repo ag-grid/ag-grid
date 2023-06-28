@@ -90,4 +90,37 @@ export class RadarAreaSeries extends RadarSeries {
         areaPath.closePath();
         areaNode.checkPathDirty();
     }
+
+    protected resetMarkersAndPaths() {
+        super.resetMarkersAndPaths();
+        const { nodeData } = this;
+        const areaNode = this.getAreaNode();
+
+        if (areaNode) {
+            const { path: areaPath } = areaNode;
+
+            areaNode.fill = this.fill;
+            areaNode.fillOpacity = this.fillOpacity;
+            areaNode.stroke = this.stroke;
+            areaNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            areaNode.strokeOpacity = this.strokeOpacity;
+
+            areaNode.lineDash = this.lineDash;
+            areaNode.lineDashOffset = this.lineDashOffset;
+
+            areaPath.clear({ trackChanges: true });
+
+            nodeData.forEach((datum, index) => {
+                const { x, y } = datum.point!;
+                if (index === 0) {
+                    areaPath.moveTo(x, y);
+                } else {
+                    areaPath.lineTo(x, y);
+                }
+            });
+            areaPath.closePath();
+
+            areaNode.checkPathDirty();
+        }
+    }
 }
