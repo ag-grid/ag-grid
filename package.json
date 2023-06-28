@@ -55,7 +55,7 @@
     "buildAngular": "npx lerna run build --scope '{@ag-grid-community/core,@ag-grid-community/angular,ag-grid-angular}'",
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
-    "docs": "cd grid-packages/ag-grid-docs && npm start",
+    "docs": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK= && npm start",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "docs-react-only": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK=react && npm run serve-framework-only",
     "docs-angular-only": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK=angular && npm run serve-framework-only",
