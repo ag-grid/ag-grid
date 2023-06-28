@@ -444,7 +444,7 @@ const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
     const onlyFramework = process.env.AG_SERVE_FRAMEWORK;
     const frameworks = onlyFramework ? [onlyFramework] : ['angular', 'react', 'vue', 'vue3'];
-
+    console.log(`Frameworks running: ${frameworks}`);
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
             lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName].filter(filter);
@@ -687,7 +687,6 @@ const watchFrameworkModules = async () => {
         '**/node_modules/**/*',
         '**/dist/**/*',
         '**/bundles/**/*',
-        '**/lib/**/*',
         '.hash',
         '.AUTO.json',
     ];
