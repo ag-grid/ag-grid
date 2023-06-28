@@ -189,4 +189,4 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
 }
- 0```
+```
