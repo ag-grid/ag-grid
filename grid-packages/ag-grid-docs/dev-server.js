@@ -442,8 +442,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 
 const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
-
-    const frameworks = ['angular', 'react', 'vue', 'vue3'];
+    const onlyFramework = process.env.AG_SERVE_FRAMEWORK;
+    const frameworks = onlyFramework ? [onlyFramework] : ['angular', 'react', 'vue', 'vue3'];
 
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
@@ -460,8 +460,8 @@ const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
         // we also filter out ag-charts-community as it'll also be dealt with by TSC compilation
         // this will leave us with frameworks and "legacy" packages like ag-grid-community
         const includeFrameworksFilter = dependent => (
-            (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) ||
-            (dependent.startsWith('ag-') && dependent !== 'ag-charts-community')
+            (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion)))
+            || (!onlyFramework && dependent.startsWith('ag-') && frameworks.some(inclusion => dependent.includes(inclusion)) && dependent !== 'ag-charts-community')
         );
         filterBuildChain(includeFrameworksFilter);
     }
@@ -780,7 +780,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -797,6 +797,10 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             process.on('SIGINT', () => {
                 console.log("Docs process killed. Safe to restart.");
                 process.exit(0);
+            });
+
+            console.log("Config", {
+                skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK
             });
 
             if (chartsOnly) {
@@ -840,7 +844,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks, chartsOnly);
 
-            if (!chartsOnly) {
+            if (!skipAutoDocGeneration) {
                 console.log("Watching Auto Doc Files");
                 await watchAutoDocFiles();
             }
