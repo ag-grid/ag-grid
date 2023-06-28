@@ -152,4 +152,4 @@ gulp.task('serve-core-only',        require('./dev-server').bind(null, true,    
 gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false,                 false,       false,                false));
 gulp.task('serve-charts-core-only', require('./dev-server').bind(null, true,            true,                  true,        false,                false));
 gulp.task('serve-website-only',     require('./dev-server').bind(null, false,           true,                  false,       true,                 false));
-gulp.task('serve-framework',        require('./dev-server').bind(null, false,           true,                  false,       true,                 true));
+gulp.task('serve-framework-only',   require('./dev-server').bind(null, false,           true,                  false,       true,                 true));
