@@ -41,8 +41,9 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
     }
 
     /**
-     * Update the data in a selection. If an `id()` function is provided, maintain a list of ids related to the nodes.
-     * Otherwise, take the more efficient route of simply creating and destroying nodes at the end of the array.
+     * Update the data in a selection. If an `getDatumId()` function is provided, maintain a list of ids related to
+     * the nodes. Otherwise, take the more efficient route of simply creating and destroying nodes at the end
+     * of the array.
      */
     update(data: TDatum[], init?: (node: TChild) => void, getDatumId?: (datum: TDatum) => string | number) {
         const old = this._data;
@@ -125,6 +126,23 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             delete this._nodes[nodeIndex];
             this._parent.removeChild(node);
             this._datumNodeIndices.delete(datumId);
+        });
+
+        // Reset map of datum ids to node indices while filtering out any removed, undefined, nodes
+        let newIndex = 0;
+
+        const datumNodeIndices = this._datumNodeIndices.entries();
+        const nodeIndexDatums = new Map();
+        for (const [datumId, nodeIndex] of datumNodeIndices) {
+            nodeIndexDatums.set(nodeIndex, datumId);
+        }
+
+        this._nodes = this._nodes.filter((node, index) => {
+            if (node === undefined) return false;
+            const datumId = nodeIndexDatums.get(index);
+            this._datumNodeIndices.set(datumId, newIndex);
+            newIndex++;
+            return true;
         });
 
         this._garbage = [];
