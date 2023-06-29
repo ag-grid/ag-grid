@@ -42,7 +42,7 @@ const localConfiguration = {
         "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export/dist/csv-export.cjs.js`,
         "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model/dist/infinite-row-model.cjs.js`,
         /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.esm.js`,
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
     },
     gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
@@ -69,8 +69,8 @@ const localConfiguration = {
         "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar/dist/status-bar.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/viewport-row-model.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.esm.js`,
-        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.esm.js`,
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
+        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
 
     },
     chartMap: {
@@ -80,8 +80,8 @@ const localConfiguration = {
         "ag-charts-vue3": `${localPrefix}/ag-charts-vue3`
     },
     chartPaths: {
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.esm.js`,
-        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.esm.js`,
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
+        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
     }
 };
 
@@ -281,12 +281,12 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
     if (isDevelopment()) {
         configuration.gridCommunityPaths = {
             ...configuration.gridCommunityPaths,
-            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.auto.esm.js`
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`
         };
         configuration.gridEnterprisePaths = {
             ...configuration.gridEnterprisePaths,
-            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.auto.esm.js`,
-            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.auto.esm.js`
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
+            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`
         }
         configuration.gridMap = {
             ...configuration.gridMap,
