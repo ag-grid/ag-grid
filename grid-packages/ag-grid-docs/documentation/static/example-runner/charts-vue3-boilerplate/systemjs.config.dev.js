@@ -42,11 +42,11 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
+                main: './dist/ag-charts-community.cjs.js',
                 defaultExtension: 'js'
             },
             'ag-charts-enterprise': {
-                main: './dist/cjs/es5/main.js',
+                main: './dist/ag-charts-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
         },
