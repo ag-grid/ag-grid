@@ -229,23 +229,22 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onHover() {
-        if (!this.axisDragger.isAxisDragging && !this.panner.isPanning) {
-            this.cursorManager.updateCursor(CURSOR_ID);
-        }
+        this.draggedAxis = undefined;
+        this.cursorManager.updateCursor(CURSOR_ID);
     }
 
     private onAxisHover(event: _ModuleSupport.AxisHoverChartEvent) {
+        if (!this.enableAxisDragging) return;
+
         this.draggedAxis = {
             id: event.axisId,
             direction: event.direction,
         };
 
-        if (this.enableAxisDragging) {
-            this.cursorManager.updateCursor(
-                CURSOR_ID,
-                event.direction === ChartAxisDirection.X ? 'ew-resize' : 'ns-resize'
-            );
-        }
+        this.cursorManager.updateCursor(
+            CURSOR_ID,
+            event.direction === ChartAxisDirection.X ? 'ew-resize' : 'ns-resize'
+        );
     }
 
     private onLayoutComplete({ series: { paddedRect } }: _ModuleSupport.LayoutCompleteEvent) {
