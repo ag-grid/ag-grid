@@ -484,7 +484,9 @@ const rebuildPackagesBasedOnChangeState = async (chartsOnly = false, skipSelf = 
             }
             return true;
         })
-        .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
+        .filter(changedPackage => !['ag-grid-community', 'ag-grid-enterprise'].includes(changedPackage))
+        .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]))
+        .filter(changedPackage => !['ag-grid-community', 'ag-grid-enterprise'].includes(changedPackage))
 
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
@@ -518,15 +520,24 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
         }
     }));
 
+    const tsEsmWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch', "tsconfig-esm.json"], {
+        cwd: '../../',
+        stdio: 'inherit',
+        encoding: 'buffer'
+    });
+
+
     tsWatch.stderr.on('data', await processStdio(async (output) => {
         console.error("Core Typescript: " + output);
     }));
 
     process.on('exit', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
     process.on('SIGINT', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
 };
 
@@ -564,6 +575,12 @@ const buildCoreModules = async (exitOnError, chartsOnly) => {
 
         return;
     }
+
+    cp.spawnSync(tsc, ["--build", "tsconfig-esm.json", ], {
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
+    });
 
     // temp addition for AG-7340
     // future commits will make this more generic/flexible
@@ -631,7 +648,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
 
     const getModuleConfig = module => [
         `            '${module.publishedName}': {`,
-        `                main: './dist/esm/es6/main.js',`,
+        `                main: './dist/cjs/es5/main.js',`,
         `                defaultExtension: 'js'`,
         `            },`
     ].join(EOL);
@@ -856,8 +873,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             addWebpackMiddleware(app, chartsOnly);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
-            // spl todo - add this back post release (allow for different local, build and prod end points)
-            // updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);

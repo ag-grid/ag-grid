@@ -89,11 +89,11 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/esm/es6/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             'ag-charts-enterprise': {
-                main: './dist/esm/es6/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             rxjs: {
