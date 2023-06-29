@@ -124,8 +124,10 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
 
             const node = this._nodes[nodeIndex];
             delete this._nodes[nodeIndex];
-            this._parent.removeChild(node);
             this._datumNodeIndices.delete(datumId);
+            if (node) {
+                this._parent.removeChild(node);
+            }
         });
 
         // Reset map of datum ids to node indices while filtering out any removed, undefined, nodes
