@@ -208,7 +208,9 @@ export class RowContainerEventsFeature extends BeanStub {
                 switch (key) {
                     case KeyCode.PAGE_HOME:
                     case KeyCode.PAGE_END:
-                        this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    case KeyCode.PAGE_UP:
+                    case KeyCode.PAGE_DOWN:
+                        this.navigationService.handlePageScrollingKey(keyboardEvent, true);
                         break;
     
                     case KeyCode.UP:
