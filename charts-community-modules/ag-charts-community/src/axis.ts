@@ -92,6 +92,7 @@ enum TickGenerationType {
 type TickDatum = {
     tickLabel: string;
     tick: any;
+    tickId: string;
     translationY: number;
 };
 
@@ -457,7 +458,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        const previous = this.tickLabelGroupSelection.nodes().map((node) => node.datum.tickLabel);
+        const previous = this.tickLabelGroupSelection.nodes().map((node) => node.datum.tickId);
 
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
@@ -849,12 +850,24 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         const ticks: TickDatum[] = [];
 
         let labelCount = 0;
+        let prevTickId;
+        let prevTickIdIndex = 0;
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
 
             const tickLabel = this.formatTick(rawTick, i);
-            ticks.push({ tick: rawTick, tickLabel, translationY });
+
+            // Create a tick id from the label, or as an increment of the last label if this tick label is blank
+            let tickId = tickLabel;
+            if (tickLabel === '' || tickLabel == undefined) {
+                tickId = `${prevTickId}_${i - prevTickIdIndex}`;
+            } else {
+                prevTickId = tickId;
+                prevTickIdIndex = i;
+            }
+
+            ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
 
             if (tickLabel === '' || tickLabel == undefined) {
                 continue;
@@ -1059,7 +1072,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
                 node.tag = Tags.GridLine;
                 group.append(node);
             },
-            (datum: TickDatum) => datum.tickLabel
+            (datum: TickDatum) => datum.tickId
         );
         const tickLineGroupSelection = this.tickLineGroupSelection.update(
             data,
@@ -1068,7 +1081,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
                 line.tag = Tags.TickLine;
                 group.appendChild(line);
             },
-            (datum: TickDatum) => datum.tickLabel
+            (datum: TickDatum) => datum.tickId
         );
         const tickLabelGroupSelection = this.tickLabelGroupSelection.update(
             data,
@@ -1077,7 +1090,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
                 text.tag = Tags.TickLabel;
                 group.appendChild(text);
             },
-            (datum: TickDatum) => datum.tickLabel
+            (datum: TickDatum) => datum.tickId
         );
 
         this.tickLineGroupSelection = tickLineGroupSelection;
@@ -1501,7 +1514,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         for (let i = 0; i < tickCount; i++) {
             const prev = previous[i];
-            const tick = tickData.ticks[i]?.tickLabel;
+            const tick = tickData.ticks[i]?.tickId;
 
             if (prev === tick) {
                 continue;
