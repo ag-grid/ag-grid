@@ -125,3 +125,4 @@ export declare class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContex
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=areaSeries.d.ts.map

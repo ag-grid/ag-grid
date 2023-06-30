@@ -12,3 +12,4 @@ export declare function isAgHierarchyChartOptions(input: AgChartOptions): input 
 export declare function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions;
 export declare const noDataCloneMergeOptions: JsonMergeOptions;
 export declare function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T;
+//# sourceMappingURL=prepare.d.ts.map

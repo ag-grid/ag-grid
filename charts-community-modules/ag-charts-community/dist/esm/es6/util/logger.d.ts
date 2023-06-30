@@ -5,3 +5,4 @@ export declare const Logger: {
     warnOnce(message: string, ...logContent: any[]): void;
     errorOnce(message: string, ...logContent: any[]): void;
 };
+//# sourceMappingURL=logger.d.ts.map

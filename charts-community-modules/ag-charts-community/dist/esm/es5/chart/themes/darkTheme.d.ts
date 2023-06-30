@@ -15,3 +15,4 @@ export declare class DarkTheme extends ChartTheme {
     };
     constructor(options?: AgChartThemeOptions);
 }
+//# sourceMappingURL=darkTheme.d.ts.map

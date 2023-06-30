@@ -5,3 +5,4 @@ export declare function registerSeries(seriesType: string, chartType: ChartType,
 export declare function getSeries(chartType: string, moduleCtx: ModuleContext): Series<any>;
 export declare function getSeriesDefaults(chartType: string): {};
 export declare function getSeriesThemeTemplate(chartType: string): {};
+//# sourceMappingURL=seriesTypes.d.ts.map

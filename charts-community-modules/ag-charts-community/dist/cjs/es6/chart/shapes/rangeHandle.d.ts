@@ -29,3 +29,4 @@ export declare class RangeHandle extends Path {
     isPointInPath(x: number, y: number): boolean;
     updatePath(): void;
 }
+//# sourceMappingURL=rangeHandle.d.ts.map

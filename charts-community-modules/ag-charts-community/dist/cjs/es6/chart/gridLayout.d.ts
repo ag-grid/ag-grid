@@ -27,3 +27,4 @@ export declare function gridLayout({ orientation, bboxes, maxHeight, maxWidth, i
     maxPageHeight: number;
 } | undefined;
 export {};
+//# sourceMappingURL=gridLayout.d.ts.map

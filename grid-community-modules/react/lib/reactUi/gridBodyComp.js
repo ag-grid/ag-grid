@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.2
+// @ag-grid-community/react v30.0.3
 import { CssClassManager, GridBodyCtrl, RowContainerName, _ } from '@ag-grid-community/core';
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';

@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.2
+// ag-grid-react v30.0.3
 import { getRowContainerTypeForName, RowContainerCtrl, RowContainerName } from 'ag-grid-community';
 import React, { useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList, agFlushSync } from '../utils';

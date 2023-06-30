@@ -108,3 +108,4 @@ export declare class HistogramSeries extends CartesianSeries<SeriesNodeDataConte
     protected isLabelEnabled(): boolean;
 }
 export {};
+//# sourceMappingURL=histogramSeries.d.ts.map

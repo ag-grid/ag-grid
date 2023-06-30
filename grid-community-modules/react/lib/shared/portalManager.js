@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.2
+// @ag-grid-community/react v30.0.3
 export class LegacyPortalManager {
     constructor(parent, wrappingElement, maxComponentCreationTimeMs) {
         this.destroyed = false;

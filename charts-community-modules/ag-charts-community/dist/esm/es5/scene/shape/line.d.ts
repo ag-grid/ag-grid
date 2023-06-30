@@ -13,3 +13,4 @@ export declare class Line extends Shape {
     isPointInPath(_x: number, _y: number): boolean;
     render(renderCtx: RenderContext): void;
 }
+//# sourceMappingURL=line.d.ts.map

@@ -167,3 +167,4 @@ export declare abstract class Node extends ChangeDetectable {
     };
     protected zIndexChanged(): void;
 }
+//# sourceMappingURL=node.d.ts.map

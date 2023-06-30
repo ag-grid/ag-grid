@@ -71,3 +71,4 @@ export declare class TimeScale extends ContinuousScale<Date, TimeInterval | numb
     protected updateNiceDomainIteration(d0: Date, d1: Date): void;
 }
 export {};
+//# sourceMappingURL=timeScale.d.ts.map

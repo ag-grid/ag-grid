@@ -14,3 +14,4 @@ export declare function toFixed(value: number, fractionOrSignificantDigits?: num
  * NOT modulus, which is why this is needed.
  */
 export declare function mod(n: number, m: number): number;
+//# sourceMappingURL=number.d.ts.map

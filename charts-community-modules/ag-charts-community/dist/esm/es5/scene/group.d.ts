@@ -42,3 +42,4 @@ export declare class Group extends Node {
      */
     setClipRectInGroupCoordinateSpace(bbox?: BBox): void;
 }
+//# sourceMappingURL=group.d.ts.map

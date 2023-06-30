@@ -1,5 +1,5 @@
 /**
-          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v8.0.1
+          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v8.0.3
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -31371,7 +31371,7 @@
     }
 
     // DO NOT UPDATE MANUALLY: Generated from script during build time
-    var VERSION = '8.0.0';
+    var VERSION = '8.0.3';
 
     var __extends = (undefined && undefined.__extends) || (function () {
         var extendStatics = function (d, b) {

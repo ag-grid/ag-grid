@@ -24,3 +24,4 @@ export declare class ChartEventManager extends BaseManager<ChartEventType, Chart
     }): void;
 }
 export {};
+//# sourceMappingURL=chartEventManager.d.ts.map

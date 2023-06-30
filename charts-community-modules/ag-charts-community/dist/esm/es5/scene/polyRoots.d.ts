@@ -7,3 +7,4 @@
  * An adaptation of http://www.particleincell.com/blog/2013/cubic-line-intersection/
  */
 export declare function cubicRoots(a: number, b: number, c: number, d: number): number[];
+//# sourceMappingURL=polyRoots.d.ts.map

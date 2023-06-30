@@ -6,3 +6,4 @@ export declare const durationDay: number;
 export declare const durationWeek: number;
 export declare const durationMonth: number;
 export declare const durationYear: number;
+//# sourceMappingURL=duration.d.ts.map

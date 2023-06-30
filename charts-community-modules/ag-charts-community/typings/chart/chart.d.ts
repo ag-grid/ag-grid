@@ -165,3 +165,4 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected handleNoDataOverlay(): void;
 }
 export {};
+//# sourceMappingURL=chart.d.ts.map

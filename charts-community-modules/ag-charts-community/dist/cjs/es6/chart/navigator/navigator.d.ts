@@ -34,3 +34,4 @@ export declare class Navigator extends BaseModuleInstance implements ModuleInsta
     private onDragStop;
     private stopHandleDragging;
 }
+//# sourceMappingURL=navigator.d.ts.map

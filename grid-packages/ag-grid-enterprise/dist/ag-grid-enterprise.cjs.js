@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - AG Grid Enterprise Features * @version v30.0.2
+ * ag-grid-enterprise - AG Grid Enterprise Features * @version v30.0.3
  * @link https://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -476,7 +476,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTY4NzEzMDAyMDg0OA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY4ODEzNTg4OTg0OA==';
     return LicenseManager;
 }());
 
@@ -583,7 +583,7 @@ var WatermarkComp = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.3';
 
 var EnterpriseCoreModule = {
     version: VERSION,
@@ -31960,7 +31960,7 @@ function applySeriesValues(target, options, _a) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '8.0.0';
+var VERSION$1 = '8.0.3';
 
 var __extends$15 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40443,7 +40443,7 @@ var GridChartComp = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$2 = '30.0.2';
+var VERSION$2 = '30.0.3';
 
 var __assign$I = (undefined && undefined.__assign) || function () {
     __assign$I = Object.assign || function(t) {
@@ -43185,7 +43185,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$3 = '30.0.2';
+var VERSION$3 = '30.0.3';
 
 var RangeSelectionModule = {
     version: VERSION$3,
@@ -44475,7 +44475,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$4 = '30.0.2';
+var VERSION$4 = '30.0.3';
 
 var CsvExportModule = {
     version: VERSION$4,
@@ -45727,7 +45727,7 @@ var ClipboardService = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$5 = '30.0.2';
+var VERSION$5 = '30.0.3';
 
 var ClipboardModule = {
     version: VERSION$5,
@@ -50404,7 +50404,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$6 = '30.0.2';
+var VERSION$6 = '30.0.3';
 
 var __extends$2u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52194,7 +52194,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$7 = '30.0.2';
+var VERSION$7 = '30.0.3';
 
 var SideBarModule = {
     version: VERSION$7,
@@ -52409,7 +52409,7 @@ var ModelItemUtils = /** @class */ (function () {
 }());
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$8 = '30.0.2';
+var VERSION$8 = '30.0.3';
 
 var ColumnsToolPanelModule = {
     version: VERSION$8,
@@ -56175,7 +56175,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$9 = '30.0.2';
+var VERSION$9 = '30.0.3';
 
 var ExcelExportModule = {
     version: VERSION$9,
@@ -57217,7 +57217,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$a = '30.0.2';
+var VERSION$a = '30.0.3';
 
 var FiltersToolPanelModule = {
     version: VERSION$a,
@@ -57554,7 +57554,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$b = '30.0.2';
+var VERSION$b = '30.0.3';
 
 var MasterDetailModule = {
     version: VERSION$b,
@@ -58653,7 +58653,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$c = '30.0.2';
+var VERSION$c = '30.0.3';
 
 var __extends$2T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -59570,7 +59570,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$d = '30.0.2';
+var VERSION$d = '30.0.3';
 
 var MultiFilterModule = {
     version: VERSION$d,
@@ -59946,7 +59946,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
 }(agGridCommunity.PopupComponent));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$e = '30.0.2';
+var VERSION$e = '30.0.3';
 
 var RichSelectModule = {
     version: VERSION$e,
@@ -64919,7 +64919,7 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$f = '30.0.2';
+var VERSION$f = '30.0.3';
 
 var ServerSideRowModelModule = {
     version: VERSION$f,
@@ -67378,7 +67378,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$g = '30.0.2';
+var VERSION$g = '30.0.3';
 
 var SetFilterModule = {
     version: VERSION$g,
@@ -69695,7 +69695,7 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
 }(agGridCommunity.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$h = '30.0.2';
+var VERSION$h = '30.0.3';
 
 var SparklinesModule = {
     version: VERSION$h,
@@ -70406,7 +70406,7 @@ var AggregationComp = /** @class */ (function (_super) {
 }(agGridCommunity.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$i = '30.0.2';
+var VERSION$i = '30.0.3';
 
 var StatusBarModule = {
     version: VERSION$i,
@@ -70429,7 +70429,7 @@ var StatusBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$j = '30.0.2';
+var VERSION$j = '30.0.3';
 
 var __extends$3s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {

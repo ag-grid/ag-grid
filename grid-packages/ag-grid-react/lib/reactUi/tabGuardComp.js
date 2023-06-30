@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.2
+// ag-grid-react v30.0.3
 import React, { useRef, useState, forwardRef, useImperativeHandle, memo, useContext } from 'react';
 import { TabGuardCtrl, TabGuardClassNames } from 'ag-grid-community';
 import { BeansContext } from './beansContext';

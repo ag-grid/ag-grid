@@ -63,3 +63,4 @@ export declare class ChartTheme {
     protected mergeWithParentDefaults(parentDefaults: ChartThemeDefaults, defaults: ChartThemeDefaults): ChartThemeDefaults;
 }
 export {};
+//# sourceMappingURL=chartTheme.d.ts.map

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.2
+// @ag-grid-community/react v30.0.3
 import { FocusService, GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { BeansContext } from './beansContext';

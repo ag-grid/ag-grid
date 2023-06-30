@@ -50,3 +50,4 @@ export declare class Arc extends Path {
     isPointInPath(x: number, y: number): boolean;
 }
 export {};
+//# sourceMappingURL=arc.d.ts.map

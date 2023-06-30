@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.2
+// ag-grid-react v30.0.3
 import React, { Component } from 'react';
 import { AgGridReactLegacy } from './legacy/agGridReactLegacy';
 import { AgGridReactUi } from './reactUi/agGridReactUi';

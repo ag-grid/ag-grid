@@ -196,3 +196,4 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[];
 }
 export {};
+//# sourceMappingURL=series.d.ts.map

@@ -31,3 +31,4 @@ export declare class Rect extends Path {
     protected applyFillAlpha(ctx: CanvasRenderingContext2D): void;
     protected renderStroke(ctx: CanvasRenderingContext2D): void;
 }
+//# sourceMappingURL=rect.d.ts.map

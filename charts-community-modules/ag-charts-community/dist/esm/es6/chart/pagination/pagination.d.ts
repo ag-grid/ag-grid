@@ -90,3 +90,4 @@ export declare class Pagination {
     computeBBox(): import("../../integrated-charts-scene").BBox;
 }
 export {};
+//# sourceMappingURL=pagination.d.ts.map
