@@ -77,7 +77,7 @@ export class ZoomAxisDragger {
 
         const scaleY = target.y - origin.y;
 
-        newZoom.y.max += scaleY;
+        newZoom.y.max -= scaleY;
 
         newZoom.y.min = oldZoom.y.max - (newZoom.y.max - newZoom.y.min);
         newZoom.y.max = oldZoom.y.max;
