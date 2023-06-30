@@ -1,5 +1,5 @@
 import { BaseManager } from './baseManager';
-import { ChartAxisDirection } from '../chartAxisDirection';
+import type { ChartAxisDirection } from '../chartAxisDirection';
 
 type ChartEventType = 'legend-item-click' | 'legend-item-double-click' | 'axis-hover';
 type ChartEvents = LegendItemClickChartEvent | LegendItemDoubleClickChartEvent | AxisHoverChartEvent;

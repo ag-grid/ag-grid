@@ -1,8 +1,8 @@
 import { PointerEvents } from '../../scene/node';
 import { Group } from '../../scene/group';
 import { Text } from '../../scene/shape/text';
-import { BBox } from '../../scene/bbox';
-import { Scale } from '../../scale/scale';
+import type { BBox } from '../../scene/bbox';
+import type { Scale } from '../../scale/scale';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { ChartAxisDirection } from '../chartAxisDirection';
@@ -15,7 +15,7 @@ import {
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
-import { Point } from '../../scene/point';
+import type { Point } from '../../scene/point';
 import { Range } from '../../scene/shape/range';
 import {
     OPT_ARRAY,
@@ -32,7 +32,7 @@ import {
     OPTIONAL,
     predicateWithMessage,
 } from '../../util/validation';
-import { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
+import type { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
 import { calculateLabelRotation } from '../label';
 
 const CROSSLINE_LABEL_POSITIONS = [

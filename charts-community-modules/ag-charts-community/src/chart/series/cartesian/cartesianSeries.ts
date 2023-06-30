@@ -6,30 +6,30 @@ import {
     SeriesNodePickMatch,
     SeriesNodeBaseClickEvent,
 } from '../series';
-import { ChartAxis } from '../../chartAxis';
+import type { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
-import { Marker } from '../../marker/marker';
+import type { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
-import { Node } from '../../../scene/node';
+import type { Node } from '../../../scene/node';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
-import { PointLabelDatum } from '../../../util/labelPlacement';
+import type { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
-import { Point } from '../../../scene/point';
+import type { Point } from '../../../scene/point';
 import { OPT_FUNCTION, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
-import { BBox } from '../../../scene/bbox';
-import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import type { BBox } from '../../../scene/bbox';
+import type { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
-import { DataModel, ProcessedData } from '../../data/dataModel';
-import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import type { DataModel, ProcessedData } from '../../data/dataModel';
+import type { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
-import { ModuleContext } from '../../../util/moduleContext';
+import type { ModuleContext } from '../../../util/moduleContext';
 import { Logger } from '../../../util/logger';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<

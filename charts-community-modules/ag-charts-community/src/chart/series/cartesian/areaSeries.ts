@@ -1,11 +1,11 @@
-import { Selection } from '../../../scene/selection';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { Selection } from '../../../scene/selection';
+import type { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty } from '../series';
-import { BBox } from '../../../scene/bbox';
+import type { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import { Path } from '../../../scene/shape/path';
-import { Marker } from '../../marker/marker';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { Path } from '../../../scene/shape/path';
+import type { Marker } from '../../marker/marker';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
@@ -19,12 +19,12 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { interpolate } from '../../../util/string';
-import { Text } from '../../../scene/shape/text';
+import type { Text } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous, isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { Point, SizedPoint } from '../../../scene/point';
+import type { Point, SizedPoint } from '../../../scene/point';
 import {
     BOOLEAN_ARRAY,
     NUMBER,
@@ -36,7 +36,7 @@ import {
     Validate,
     OPT_NUMBER,
 } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesTooltipRendererParams,
     AgCartesianSeriesLabelFormatterParams,
     FontStyle,
@@ -48,10 +48,10 @@ import { LogAxis } from '../../axis/logAxis';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
 import { normaliseGroupTo } from '../../data/processors';
-import { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
-import { ContinuousDomain } from '../../data/utilFunctions';
+import type { LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
+import type { ContinuousDomain } from '../../data/utilFunctions';
 
 interface FillSelectionDatum {
     readonly itemId: string;

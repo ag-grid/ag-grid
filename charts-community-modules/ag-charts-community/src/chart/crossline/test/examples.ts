@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions, AgCrossLineOptions } from '../../agChartOptions';
+import type { AgCartesianChartOptions, AgCrossLineOptions } from '../../agChartOptions';
 import { DATA_MEAN_SEA_LEVEL } from '../../test/data';
 import { loadExampleOptions } from '../../test/examples';
 import { DATA_OIL_PETROLEUM } from './data';

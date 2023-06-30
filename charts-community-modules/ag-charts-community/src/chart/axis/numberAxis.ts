@@ -1,11 +1,11 @@
 import { LinearScale } from '../../scale/linearScale';
-import { LogScale } from '../../scale/logScale';
+import type { LogScale } from '../../scale/logScale';
 import { normalisedExtent } from '../../util/array';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
-import { ModuleContext } from '../../module-support';
+import type { ModuleContext } from '../../module-support';
 import { AxisTick } from './axisTick';
 import { CartesianAxis } from './cartesianAxis';
 

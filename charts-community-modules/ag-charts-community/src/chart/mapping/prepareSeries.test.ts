@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import 'jest-canvas-mock';
 import { groupSeriesByType, reduceSeries, processSeriesOptions } from './prepareSeries';
-import { AgColumnSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
+import type { AgColumnSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
 
 const colSeriesIPhone: AgColumnSeriesOptions = {
     type: 'column',

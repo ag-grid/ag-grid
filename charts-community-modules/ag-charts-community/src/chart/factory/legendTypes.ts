@@ -1,7 +1,7 @@
-import { LegendConstructor } from '../../util/module';
-import { ModuleContext } from '../../util/moduleContext';
+import type { LegendConstructor } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 import { Legend } from '../legend';
-import { ChartLegend } from '../legendDatum';
+import type { ChartLegend } from '../legendDatum';
 
 const LEGEND_FACTORIES: Record<string, LegendConstructor> = {
     category: Legend,

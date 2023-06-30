@@ -1,5 +1,5 @@
 import { BaseManager } from './baseManager';
-import { InteractionManager } from './interactionManager';
+import type { InteractionManager } from './interactionManager';
 import {
     animate as baseAnimate,
     AnimationControls,

@@ -1,11 +1,11 @@
 import { Matrix } from './matrix';
-import { BBox } from './bbox';
+import type { BBox } from './bbox';
 import { createId } from '../util/id';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
-import { SceneDebugOptions } from './sceneDebugOptions';
-import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
-import { LiteralOrFn } from '../util/compare';
+import type { SceneDebugOptions } from './sceneDebugOptions';
+import type { HdpiCanvas } from '../canvas/hdpiCanvas';
+import type { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
+import type { LiteralOrFn } from '../util/compare';
 
 export { SceneChangeDetection, RedrawType };
 

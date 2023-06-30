@@ -1,5 +1,5 @@
 import { DATA_MARKET_SHARE, DATA_MANY_LONG_LABELS } from './data';
-import { AgPolarChartOptions } from '../../../agChartOptions';
+import type { AgPolarChartOptions } from '../../../agChartOptions';
 
 export const PIE_SERIES: AgPolarChartOptions = {
     title: {

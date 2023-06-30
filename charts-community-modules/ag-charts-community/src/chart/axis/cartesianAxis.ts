@@ -1,10 +1,10 @@
 import { Axis } from '../../axis';
-import { Scale } from '../../scale/scale';
-import { AxisContext } from '../../util/moduleContext';
+import type { Scale } from '../../scale/scale';
+import type { AxisContext } from '../../util/moduleContext';
 import { Validate, NUMBER, POSITION } from '../../util/validation';
-import { AgCartesianAxisPosition } from '../agChartOptions';
+import type { AgCartesianAxisPosition } from '../agChartOptions';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { TickInterval } from './axisTick';
+import type { TickInterval } from './axisTick';
 
 export abstract class CartesianAxis<
     S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>,

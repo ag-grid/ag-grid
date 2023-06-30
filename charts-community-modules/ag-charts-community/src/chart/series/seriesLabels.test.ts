@@ -12,10 +12,10 @@ import {
     TestCase,
     waitForChartStability,
 } from '../test/utils';
-import { AgChartOptions } from '../agChartOptions';
+import type { AgChartOptions } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
 import * as examples from './test/examples';
-import { Chart } from '../chart';
+import type { Chart } from '../chart';
 
 expect.extend({ toMatchImageSnapshot });
 

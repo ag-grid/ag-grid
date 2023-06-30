@@ -1,11 +1,11 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { fail } from 'assert';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { Node } from '../scene/node';
+import type { Node } from '../scene/node';
 import { Selection } from '../scene/selection';
 import { Rect } from '../scene/shape/rect';
 import { Sector } from '../scene/shape/sector';
-import {
+import type {
     AgAreaSeriesOptions,
     AgCartesianChartOptions,
     AgChartInteractionRange,
@@ -17,7 +17,7 @@ import {
     AgTreemapSeriesOptions,
 } from './agChartOptions';
 import { AgChart } from './agChartV2';
-import { Chart } from './chart';
+import type { Chart } from './chart';
 import { Circle } from './marker/circle';
 import {
     waitForChartStability,

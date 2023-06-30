@@ -1,6 +1,6 @@
-import { BBox } from '../../scene/bbox';
-import { Tooltip, TooltipMeta } from '../tooltip/tooltip';
-import { InteractionEvent, InteractionManager } from './interactionManager';
+import type { BBox } from '../../scene/bbox';
+import type { Tooltip, TooltipMeta } from '../tooltip/tooltip';
+import type { InteractionEvent, InteractionManager } from './interactionManager';
 
 interface TooltipState {
     content: string;

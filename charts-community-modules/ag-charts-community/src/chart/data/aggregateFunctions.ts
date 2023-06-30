@@ -1,4 +1,4 @@
-import { AggregatePropertyDefinition, DatumPropertyDefinition, ScopeProvider } from './dataModel';
+import type { AggregatePropertyDefinition, DatumPropertyDefinition, ScopeProvider } from './dataModel';
 import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];

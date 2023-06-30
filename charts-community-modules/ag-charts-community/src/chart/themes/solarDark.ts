@@ -1,5 +1,5 @@
 import { DarkTheme } from './darkTheme';
-import { AgChartThemePalette } from '../agChartOptions';
+import type { AgChartThemePalette } from '../agChartOptions';
 
 const palette: AgChartThemePalette = {
     fills: [

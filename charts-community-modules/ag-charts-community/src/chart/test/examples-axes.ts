@@ -1,5 +1,5 @@
 import day from '../../util/time/day';
-import {
+import type {
     AgChartOptions,
     AgCartesianChartOptions,
     AgAxisTimeTickOptions,

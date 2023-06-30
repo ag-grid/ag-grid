@@ -1,4 +1,4 @@
-import { Series } from '../series/series';
+import type { Series } from '../series/series';
 import { AreaSeries } from '../series/cartesian/areaSeries';
 import { BarSeries, ColumnSeries } from '../series/cartesian/barSeries';
 import { HistogramSeries } from '../series/cartesian/histogramSeries';
@@ -7,8 +7,8 @@ import { ScatterSeries } from '../series/cartesian/scatterSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { TreemapSeries } from '../series/hierarchy/treemapSeries';
 import { ChartType, registerChartSeriesType } from './chartTypes';
-import { SeriesConstructor, SeriesPaletteFactory } from '../../util/module';
-import { ModuleContext } from '../../util/moduleContext';
+import type { SeriesConstructor, SeriesPaletteFactory } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 
 const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
     area: AreaSeries,

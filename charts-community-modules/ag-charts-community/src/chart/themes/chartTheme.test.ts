@@ -1,19 +1,19 @@
 import { describe, expect, test, beforeEach, afterEach } from '@jest/globals';
-import {
+import type {
     AgCartesianChartOptions,
     AgCartesianSeriesMarkerFormatter,
     AgChartInstance,
     AgChartTheme,
     AgPolarChartOptions,
 } from '../agChartOptions';
-import { AreaSeries } from '../series/cartesian/areaSeries';
-import { BarSeries } from '../series/cartesian/barSeries';
-import { PieSeries } from '../series/polar/pieSeries';
+import type { AreaSeries } from '../series/cartesian/areaSeries';
+import type { BarSeries } from '../series/cartesian/barSeries';
+import type { PieSeries } from '../series/polar/pieSeries';
 import { ChartTheme } from './chartTheme';
 import { AgChart } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
-import { LineSeries } from '../series/cartesian/lineSeries';
+import type { LineSeries } from '../series/cartesian/lineSeries';
 import { deproxy, waitForChartStability } from '../test/utils';
 import { fail } from 'assert';
 

@@ -9,8 +9,8 @@ import {
     predicateWithMessage,
     OPT_BOOLEAN,
 } from '../../util/validation';
-import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
-import { InteractionEvent } from '../interaction/interactionManager';
+import type { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
+import type { InteractionEvent } from '../interaction/interactionManager';
 
 const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 

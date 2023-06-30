@@ -8,7 +8,7 @@ import { SolarLight } from '../themes/solarLight';
 import { SolarDark } from '../themes/solarDark';
 import { VividLight } from '../themes/vividLight';
 import { VividDark } from '../themes/vividDark';
-import { AgChartTheme, AgChartThemeName, AgChartThemeOverrides } from '../agChartOptions';
+import type { AgChartTheme, AgChartThemeName, AgChartThemeOverrides } from '../agChartOptions';
 import { jsonMerge } from '../../util/json';
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme };

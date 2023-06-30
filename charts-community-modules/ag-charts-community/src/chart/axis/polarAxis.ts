@@ -1,5 +1,5 @@
 import { Axis } from '../../axis';
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 
 export abstract class PolarAxis extends Axis {
     gridAngles: number[] | undefined;

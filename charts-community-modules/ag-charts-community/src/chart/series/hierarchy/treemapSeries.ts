@@ -8,8 +8,8 @@ import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { ChartAxisDirection } from '../../chartAxisDirection';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { toFixed, isEqual } from '../../../util/number';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
@@ -27,7 +27,7 @@ import {
     Validate,
     TEXT_WRAP,
 } from '../../../util/validation';
-import {
+import type {
     AgTreemapSeriesLabelsOptions,
     AgTreemapSeriesTooltipRendererParams,
     AgTooltipRendererResult,

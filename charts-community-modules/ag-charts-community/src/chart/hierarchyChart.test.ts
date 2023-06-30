@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChartOptions } from './agChartOptions';
+import type { AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
-import { Chart } from './chart';
+import type { Chart } from './chart';
 import {
     waitForChartStability,
     IMAGE_SNAPSHOT_DEFAULTS,
@@ -12,8 +12,8 @@ import {
     prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
-import { HierarchyChart } from './hierarchyChart';
-import { TreemapSeries } from './series/hierarchy/treemapSeries';
+import type { HierarchyChart } from './hierarchyChart';
+import type { TreemapSeries } from './series/hierarchy/treemapSeries';
 
 expect.extend({ toMatchImageSnapshot });
 

@@ -7,7 +7,7 @@ import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
 import { AgChart } from './agChartV2';
 import { deproxy, waitForChartStability } from './test/utils';
-import { AgChartInstance } from './agChartOptions';
+import type { AgChartInstance } from './agChartOptions';
 
 const revenueProfitData = [
     {

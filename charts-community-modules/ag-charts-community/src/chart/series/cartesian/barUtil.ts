@@ -1,6 +1,6 @@
 import { isNumber } from '../../../util/value';
-import { Point } from '../../../scene/point';
-import {
+import type { Point } from '../../../scene/point';
+import type {
     AgBarSeriesFormat,
     AgCartesianSeriesLabelFormatterParams,
     FontFamily,
@@ -8,12 +8,12 @@ import {
     FontStyle,
     AgBarSeriesOptions,
 } from '../../agChartOptions';
-import { Rect } from '../../../scene/shape/rect';
-import { DropShadow } from '../../../scene/dropShadow';
-import { CartesianSeriesNodeDatum } from './cartesianSeries';
-import { SeriesItemHighlightStyle } from '../series';
-import { Text } from '../../../scene/shape/text';
-import { ModuleContext } from '../../../util/moduleContext';
+import type { Rect } from '../../../scene/shape/rect';
+import type { DropShadow } from '../../../scene/dropShadow';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import type { SeriesItemHighlightStyle } from '../series';
+import type { Text } from '../../../scene/shape/text';
+import type { ModuleContext } from '../../../util/moduleContext';
 
 type Bounds = {
     x: number;

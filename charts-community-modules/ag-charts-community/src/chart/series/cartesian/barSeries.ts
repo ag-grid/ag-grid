@@ -1,19 +1,19 @@
-import { Selection } from '../../../scene/selection';
+import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text } from '../../../scene/shape/text';
+import type { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode, keyProperty, valueProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
     CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
-import { ChartAxis } from '../../chartAxis';
+import type { ChartAxis } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
@@ -21,7 +21,7 @@ import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Logger } from '../../../util/logger';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { Point } from '../../../scene/point';
+import type { Point } from '../../../scene/point';
 import {
     BOOLEAN,
     BOOLEAN_ARRAY,
@@ -38,7 +38,7 @@ import {
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgTooltipRendererResult,
     AgBarSeriesFormatterParams,
@@ -50,12 +50,12 @@ import {
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
 import { sum } from '../../data/aggregateFunctions';
-import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import type { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>

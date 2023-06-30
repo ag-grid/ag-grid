@@ -1,9 +1,9 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
-import { BBox } from '../../../scene/bbox';
+import type { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { PointLabelDatum } from '../../../util/labelPlacement';
-import { DataModel, ProcessedData } from '../../data/dataModel';
-import { ModuleContext } from '../../../util/moduleContext';
+import type { PointLabelDatum } from '../../../util/labelPlacement';
+import type { DataModel, ProcessedData } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**

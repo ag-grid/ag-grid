@@ -1,4 +1,4 @@
-import { Scale } from '../../scale/scale';
+import type { Scale } from '../../scale/scale';
 import {
     AND,
     BOOLEAN,
@@ -13,7 +13,7 @@ import {
 } from '../../util/validation';
 import { Default } from '../../util/default';
 import { Deprecated } from '../../util/deprecation';
-import { TimeScale } from '../../scale/timeScale';
+import type { TimeScale } from '../../scale/timeScale';
 import { TimeInterval } from '../../util/time/interval';
 
 export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;

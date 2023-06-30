@@ -1,6 +1,6 @@
 import { jsonMerge, jsonWalk } from '../../util/json';
 import { deepMerge } from '../../util/object';
-import {
+import type {
     FontWeight,
     AgPolarSeriesTheme,
     AgChartThemePalette,

@@ -1,7 +1,7 @@
 import { Group } from '../../scene/group';
-import { ChartLegendDatum } from '../legendDatum';
+import type { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
-import { ChartAxis } from '../chartAxis';
+import type { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum } from '../../util/value';
 import {
@@ -13,20 +13,20 @@ import {
     STRING,
     Validate,
 } from '../../util/validation';
-import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
+import type { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
-import { SizedPoint, Point } from '../../scene/point';
-import { BBox } from '../../scene/bbox';
-import { AnimationManager } from '../interaction/animationManager';
-import { ChartEventManager } from '../interaction/chartEventManager';
-import { HighlightManager } from '../interaction/highlightManager';
+import type { SizedPoint, Point } from '../../scene/point';
+import type { BBox } from '../../scene/bbox';
+import type { AnimationManager } from '../interaction/animationManager';
+import type { ChartEventManager } from '../interaction/chartEventManager';
+import type { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { AgChartInteractionRange } from '../agChartOptions';
+import type { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent, ScopeProvider } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
-import { ModuleContext } from '../../util/moduleContext';
-import { DataController } from '../data/dataController';
+import type { ModuleContext } from '../../util/moduleContext';
+import type { DataController } from '../data/dataController';
 
 /**
  * Processed series datum used in node selections,

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { Logger } from '../../util/logger';
 
-import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
     DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
     DATA_INTERNET_EXPLORER_MARKET_SHARE_BAD_Y_VALUE,

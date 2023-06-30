@@ -1,7 +1,7 @@
-import { Selection } from '../../../scene/selection';
+import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text } from '../../../scene/shape/text';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { Text } from '../../../scene/shape/text';
+import type { DropShadow } from '../../../scene/dropShadow';
 import {
     SeriesTooltip,
     Series,
@@ -12,7 +12,7 @@ import {
 } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
@@ -35,7 +35,7 @@ import {
     predicateWithMessage,
     OPT_STRING,
 } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgTooltipRendererResult,
     AgHistogramSeriesOptions,
@@ -47,8 +47,8 @@ import { AggregatePropertyDefinition, fixNumericExtent, GroupByFn, PropertyDefin
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(

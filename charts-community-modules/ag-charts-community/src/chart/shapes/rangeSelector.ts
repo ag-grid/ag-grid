@@ -1,7 +1,7 @@
 import { Group } from '../../scene/group';
 import { RangeHandle } from './rangeHandle';
 import { RangeMask } from './rangeMask';
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 import { RedrawType, RenderContext } from '../../scene/node';
 
 export class RangeSelector extends Group {
