@@ -1,0 +1,1 @@
+{"version":3,"file":"legendTypes.d.ts","sourceRoot":"","sources":["../../../../../src/chart/factory/legendTypes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAC;AAErE,OAAO,EAAE,WAAW,EAAE,MAAM,gBAAgB,CAAC;AAM7C,wBAAgB,cAAc,CAAC,IAAI,EAAE,MAAM,EAAE,GAAG,EAAE,iBAAiB,QAMlE;AAED,wBAAgB,SAAS,CAAC,IAAI,EAAE,MAAM,EAAE,GAAG,EAAE,aAAa,GAAG,WAAW,CAMvE"}
