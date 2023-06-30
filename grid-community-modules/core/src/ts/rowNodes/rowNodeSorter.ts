@@ -40,10 +40,10 @@ export class RowNodeSorter extends BeanStub {
 
         // Slice so we are not mutating the original array so that the original order is preserved
         // when no sorting is applied.
-        const toSort = rowNodes.slice(0);
-        toSort.sort(this.compareRowNodes.bind(this, sortOptions));
+        const sortedRowNodes = rowNodes.slice(0);
+        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
 
-        return toSort;
+        return sortedRowNodes;
     }
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
 
