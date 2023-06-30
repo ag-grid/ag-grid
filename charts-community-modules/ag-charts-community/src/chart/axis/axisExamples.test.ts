@@ -1,11 +1,11 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
+import type { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
-import { Chart } from '../chart';
+import type { Chart } from '../chart';
 import { ChartUpdateType } from '../chartUpdateType';
-import { ChartAxis } from '../chartAxis';
+import type { ChartAxis } from '../chartAxis';
 import * as axesExamples from '../test/examples-axes';
 import * as examples from '../test/examples';
 import {

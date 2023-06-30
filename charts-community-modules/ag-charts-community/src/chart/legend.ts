@@ -4,8 +4,8 @@ import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
 import { BBox } from '../scene/bbox';
 import { getFont } from '../scene/shape/text';
-import { Marker } from './marker/marker';
-import {
+import type { Marker } from './marker/marker';
+import type {
     AgChartLegendClickEvent,
     AgChartLegendDoubleClickEvent,
     AgChartLegendListeners,
@@ -35,13 +35,13 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { ChartUpdateType } from './chartUpdateType';
-import { InteractionEvent } from './interaction/interactionManager';
+import type { InteractionEvent } from './interaction/interactionManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { toTooltipHtml } from './tooltip/tooltip';
-import { CategoryLegendDatum } from './legendDatum';
+import type { CategoryLegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
-import { ModuleContext } from '../util/moduleContext';
+import type { ModuleContext } from '../util/moduleContext';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 const OPT_ORIENTATION = predicateWithMessage(

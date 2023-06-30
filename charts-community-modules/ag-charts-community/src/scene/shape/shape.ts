@@ -1,5 +1,5 @@
 import { Node, RedrawType, SceneChangeDetection } from '../node';
-import { DropShadow } from '../dropShadow';
+import type { DropShadow } from '../dropShadow';
 import { LinearGradient } from '../gradient/linearGradient';
 
 export type ShapeLineCap = 'butt' | 'round' | 'square';

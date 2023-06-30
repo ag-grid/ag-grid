@@ -1,5 +1,5 @@
 import { Gradient } from './gradient';
-import { BBox } from '../bbox';
+import type { BBox } from '../bbox';
 import { toRadians, normalizeAngle360 } from '../../util/angle';
 
 export class LinearGradient extends Gradient {

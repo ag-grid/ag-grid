@@ -3,9 +3,9 @@ import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { BaseModuleInstance, ModuleInstance } from '../../util/module';
 import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
-import { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
+import type { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
 import { BBox } from '../../scene/bbox';
-import { ModuleContext } from '../../util/moduleContext';
+import type { ModuleContext } from '../../util/moduleContext';
 
 interface Offset {
     offsetX: number;

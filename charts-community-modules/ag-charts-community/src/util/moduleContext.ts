@@ -1,16 +1,16 @@
-import { AgCartesianAxisPosition } from '../chart/agChartOptions';
-import { DataService } from '../chart/dataService';
-import { AnimationManager } from '../chart/interaction/animationManager';
-import { ChartEventManager } from '../chart/interaction/chartEventManager';
-import { CursorManager } from '../chart/interaction/cursorManager';
-import { HighlightManager } from '../chart/interaction/highlightManager';
-import { InteractionManager } from '../chart/interaction/interactionManager';
-import { TooltipManager } from '../chart/interaction/tooltipManager';
-import { ZoomManager } from '../chart/interaction/zoomManager';
-import { LayoutService } from '../chart/layout/layoutService';
-import { UpdateService } from '../chart/updateService';
-import { Scene } from '../integrated-charts-scene';
-import { CallbackCache } from './callbackCache';
+import type { AgCartesianAxisPosition } from '../chart/agChartOptions';
+import type { DataService } from '../chart/dataService';
+import type { AnimationManager } from '../chart/interaction/animationManager';
+import type { ChartEventManager } from '../chart/interaction/chartEventManager';
+import type { CursorManager } from '../chart/interaction/cursorManager';
+import type { HighlightManager } from '../chart/interaction/highlightManager';
+import type { InteractionManager } from '../chart/interaction/interactionManager';
+import type { TooltipManager } from '../chart/interaction/tooltipManager';
+import type { ZoomManager } from '../chart/interaction/zoomManager';
+import type { LayoutService } from '../chart/layout/layoutService';
+import type { UpdateService } from '../chart/updateService';
+import type { Scene } from '../integrated-charts-scene';
+import type { CallbackCache } from './callbackCache';
 
 export interface ModuleContext {
     scene: Scene;

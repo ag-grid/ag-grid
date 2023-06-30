@@ -10,10 +10,10 @@ import {
     setupMockCanvas,
     waitForChartStability,
 } from '../test/utils';
-import { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
 import * as examples from './test/examples';
-import { Chart } from '../chart';
+import type { Chart } from '../chart';
 
 expect.extend({ toMatchImageSnapshot });
 

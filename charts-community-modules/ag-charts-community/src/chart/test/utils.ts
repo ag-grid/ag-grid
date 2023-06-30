@@ -8,7 +8,7 @@ import { Chart } from '../chart';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
 import { AnimationManager } from '../interaction/animationManager';
 import { resetIds } from '../../util/id';
 import * as mockCanvas from './mock-canvas';

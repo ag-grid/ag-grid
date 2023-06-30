@@ -1,5 +1,5 @@
 import { themes as themeFactories } from './chart/mapping/themes';
-import { ChartTheme as ChartThemeType } from './chart/themes/chartTheme';
+import type { ChartTheme as ChartThemeType } from './chart/themes/chartTheme';
 
 export { getChartTheme } from './chart/mapping/themes';
 export {

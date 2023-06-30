@@ -3,7 +3,7 @@ import { Line } from '../../../scene/shape/line';
 import { Text } from '../../../scene/shape/text';
 import { Circle } from '../../marker/circle';
 import { Selection } from '../../../scene/selection';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
@@ -21,7 +21,7 @@ import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -40,21 +40,21 @@ import {
     Validate,
     COLOR_STRING,
 } from '../../../util/validation';
-import {
+import type {
     AgPieSeriesLabelFormatterParams,
     AgPieSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import type { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
 import * as easing from '../../../motion/easing';
 import { normalisePropertyTo } from '../../data/processors';
-import { ModuleContext } from '../../../util/moduleContext';
-import { Has } from '../../../util/types';
-import { DataController } from '../../data/dataController';
-import { DataModel } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { Has } from '../../../util/types';
+import type { DataController } from '../../data/dataController';
+import type { DataModel } from '../../data/dataModel';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;

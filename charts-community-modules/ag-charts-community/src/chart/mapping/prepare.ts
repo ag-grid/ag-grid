@@ -1,4 +1,4 @@
-import {
+import type {
     AgChartOptions,
     AgHierarchyChartOptions,
     AgPolarChartOptions,
@@ -18,7 +18,7 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
-import { SeriesPaletteFactory } from '../../util/module';
+import type { SeriesPaletteFactory } from '../../util/module';
 import { AXIS_TYPES } from '../factory/axisTypes';
 import { CHART_TYPES } from '../factory/chartTypes';
 import { addSeriesPaletteFactory, getSeriesDefaults, getSeriesPaletteFactory } from '../factory/seriesTypes';

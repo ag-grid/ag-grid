@@ -1,8 +1,8 @@
-import { ChartAxis } from '../chart/chartAxis';
-import { Series } from '../chart/series/series';
-import { ChartLegend } from '../chart/legendDatum';
-import { JsonApplyParams } from './json';
-import { AxisContext, ModuleContext, ModuleContextWithParent } from './moduleContext';
+import type { ChartAxis } from '../chart/chartAxis';
+import type { Series } from '../chart/series/series';
+import type { ChartLegend } from '../chart/legendDatum';
+import type { JsonApplyParams } from './json';
+import type { AxisContext, ModuleContext, ModuleContextWithParent } from './moduleContext';
 
 export type AxisConstructor = new (moduleContext: ModuleContext) => ChartAxis;
 export type SeriesConstructor = new (moduleContext: ModuleContext) => Series<any>;

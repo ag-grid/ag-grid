@@ -1,11 +1,11 @@
-import { Path } from '../../../scene/shape/path';
+import type { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { Selection } from '../../../scene/selection';
+import type { Selection } from '../../../scene/selection';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
-import { Text } from '../../../scene/shape/text';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { Text } from '../../../scene/shape/text';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
@@ -19,9 +19,9 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { Marker } from '../../marker/marker';
+import type { Marker } from '../../marker/marker';
 import { NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_STRING, OPT_COLOR_STRING, Validate } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
@@ -29,9 +29,9 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { UngroupedDataItem } from '../../data/dataModel';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
+import type { UngroupedDataItem } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {

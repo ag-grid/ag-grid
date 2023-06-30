@@ -12,9 +12,9 @@ import {
     STRING,
     Validate,
 } from '../../util/validation';
-import { AgAxisLabelFormatterParams, FontStyle, FontWeight } from '../../chart/agChartOptions';
+import type { AgAxisLabelFormatterParams, FontStyle, FontWeight } from '../../chart/agChartOptions';
 import { Default } from '../../util/default';
-import { Flag } from '../../chart/label';
+import type { Flag } from '../../chart/label';
 
 export class AxisLabel {
     @Validate(BOOLEAN)

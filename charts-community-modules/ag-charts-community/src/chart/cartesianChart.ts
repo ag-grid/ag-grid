@@ -1,10 +1,10 @@
 import { Chart, TransferableResources } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { ChartAxis } from './chartAxis';
+import type { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
-import { BBox } from '../scene/bbox';
-import { AgCartesianAxisPosition } from './agChartOptions';
+import type { BBox } from '../scene/bbox';
+import type { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
 import { toRadians } from '../util/angle';
 

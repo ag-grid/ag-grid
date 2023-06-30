@@ -1,10 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
+import type { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
-import { CartesianChart } from './cartesianChart';
-import { Chart } from './chart';
-import { SeriesNodeDataContext } from './series/series';
+import type { CartesianChart } from './cartesianChart';
+import type { Chart } from './chart';
+import type { SeriesNodeDataContext } from './series/series';
 import {
     waitForChartStability,
     IMAGE_SNAPSHOT_DEFAULTS,

@@ -1,10 +1,10 @@
-import { Node } from '../scene/node';
-import { BBox } from '../scene/bbox';
-import { AgCartesianAxisPosition } from './agChartOptions';
-import { Flag } from './label';
-import { AxisLayout } from './layout/layoutService';
-import { ChartAxisDirection } from './chartAxisDirection';
-import { Scale } from '../scale/scale';
+import type { Node } from '../scene/node';
+import type { BBox } from '../scene/bbox';
+import type { AgCartesianAxisPosition } from './agChartOptions';
+import type { Flag } from './label';
+import type { AxisLayout } from './layout/layoutService';
+import type { ChartAxisDirection } from './chartAxisDirection';
+import type { Scale } from '../scale/scale';
 
 export interface BoundSeries {
     getBandScalePadding?(): { inner: number; outer: number };

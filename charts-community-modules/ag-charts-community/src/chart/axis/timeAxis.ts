@@ -1,7 +1,7 @@
 import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
-import { ModuleContext } from '../../util/moduleContext';
+import type { ModuleContext } from '../../util/moduleContext';
 import { Default } from '../../util/default';
 import { AxisTick } from './axisTick';
 import { CartesianAxis } from './cartesianAxis';

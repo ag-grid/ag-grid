@@ -1,4 +1,4 @@
-import { AgChartThemeOptions } from '../agChartOptions';
+import type { AgChartThemeOptions } from '../agChartOptions';
 import { ChartTheme, OVERRIDE_SERIES_LABEL_DEFAULTS } from './chartTheme';
 import { CHART_TYPES } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';

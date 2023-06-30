@@ -1,4 +1,4 @@
-import {
+import type {
     AgChartOptions,
     AgCartesianChartOptions,
     AgLineSeriesOptions,
@@ -15,20 +15,20 @@ import {
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
-import { Series } from './series/series';
+import type { Series } from './series/series';
 import { getAxis } from './factory/axisTypes';
 import { getSeries } from './factory/seriesTypes';
-import { AreaSeries } from './series/cartesian/areaSeries';
-import { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
-import { HistogramSeries } from './series/cartesian/histogramSeries';
-import { LineSeries } from './series/cartesian/lineSeries';
-import { ScatterSeries } from './series/cartesian/scatterSeries';
+import type { AreaSeries } from './series/cartesian/areaSeries';
+import type { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
+import type { HistogramSeries } from './series/cartesian/histogramSeries';
+import type { LineSeries } from './series/cartesian/lineSeries';
+import type { ScatterSeries } from './series/cartesian/scatterSeries';
 import { PieSeries, PieTitle } from './series/polar/pieSeries';
-import { TreemapSeries } from './series/hierarchy/treemapSeries';
-import { ChartAxis } from './chartAxis';
-import { Chart } from './chart';
+import type { TreemapSeries } from './series/hierarchy/treemapSeries';
+import type { ChartAxis } from './chartAxis';
+import type { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
-import { TypedEventListener } from '../util/observable';
+import type { TypedEventListener } from '../util/observable';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import {
     prepareOptions,
@@ -38,9 +38,9 @@ import {
     optionsType,
     noDataCloneMergeOptions,
 } from './mapping/prepare';
-import { SeriesOptionsTypes } from './mapping/defaults';
+import type { SeriesOptionsTypes } from './mapping/defaults';
 import { windowValue } from '../util/window';
-import { AxisOptionModule, Module, RootModule } from '../util/module';
+import type { AxisOptionModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { getJsonApplyOptions } from './chartOptions';
 

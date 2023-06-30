@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { TextWrap } from '../../chart/agChartOptions';
+import type { TextWrap } from '../../chart/agChartOptions';
 import { setupMockCanvas, extractImageData } from '../../chart/test/utils';
-import { LayerManager } from '../node';
+import type { LayerManager } from '../node';
 import { Text } from './text';
 
 expect.extend({ toMatchImageSnapshot });
