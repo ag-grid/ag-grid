@@ -37,18 +37,15 @@ export class RowNodeSorter extends BeanStub {
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-        
-        const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
-        const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
-        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        // Slice so we are not mutating the original array so that the original order is preserved
+        // when no sorting is applied.
+        const toSort = rowNodes.slice(0);
+        toSort.sort(this.compareRowNodes.bind(this, sortOptions));
 
-        return sortedRowNodes.map(item => item.rowNode);
+        return toSort;
     }
-
-    public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
-        const nodeA: RowNode = sortedNodeA.rowNode;
-        const nodeB: RowNode = sortedNodeB.rowNode;
+    public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
@@ -73,28 +70,28 @@ export class RowNodeSorter extends BeanStub {
             const validResult = !isNaN(comparatorResult);
 
             if (validResult && comparatorResult !== 0) {
-                return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
+                return isDescending ? comparatorResult * -1 : comparatorResult;
             }
         }
-        // All matched, we make is so that the original sort order is kept:
-        return sortedNodeA.currentPos - sortedNodeB.currentPos;
+        // All matched so return 0 to stable sort by Browser Spec
+        return 0;
     }
 
     private getComparator(sortOption: SortOption, rowNode: RowNode):
         ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
 
-        const column = sortOption.column;
+        const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = column.getColDef().comparator;
+        const comparatorOnCol = colDef.comparator;
         if (comparatorOnCol != null) {
             return comparatorOnCol;
         }
 
-        if (!column.getColDef().showRowGroup) { return; }
+        if (!colDef.showRowGroup) { return; }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        const groupLeafField = !rowNode.group && column.getColDef().field;
+        const groupLeafField = !rowNode.group && colDef.field;
         if (!groupLeafField) { return; }
 
         const primaryColumn = this.columnModel.getPrimaryColumn(groupLeafField);
