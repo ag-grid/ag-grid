@@ -37,18 +37,13 @@ export class RowNodeSorter extends BeanStub {
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-
-        const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
-        const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
-
-        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
-
-        return sortedRowNodes.map(item => item.rowNode);
+        // Slice so we are not mutating the original array so that when no sort is active the original order is preserved.
+        const sortedRowNodes = rowNodes.slice(0);
+        sortedRowNodes.sort(this.comparePlainRowNodes.bind(this, sortOptions));
+        return sortedRowNodes;
     }
 
-    public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
-        const nodeA: RowNode = sortedNodeA.rowNode;
-        const nodeB: RowNode = sortedNodeB.rowNode;
+    private comparePlainRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
@@ -76,8 +71,19 @@ export class RowNodeSorter extends BeanStub {
                 return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
             }
         }
+        return 0;
+    }
+
+    public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
+        const nodeA: RowNode = sortedNodeA.rowNode;
+        const nodeB: RowNode = sortedNodeB.rowNode;
+
+        const sortOrder = this.comparePlainRowNodes(sortOptions, nodeA, nodeB);
+
         // All matched, we make is so that the original sort order is kept:
-        return sortedNodeA.currentPos - sortedNodeB.currentPos;
+        // NOTE: Stable sorting is part of the browser spec now so this may not be required depending on the use case.
+        // i.e fullSort does not use this any more as it simply sorts the entire array. 
+        return sortOrder === 0 ? sortedNodeA.currentPos - sortedNodeB.currentPos : sortOrder;
     }
 
     private getComparator(sortOption: SortOption, rowNode: RowNode):
