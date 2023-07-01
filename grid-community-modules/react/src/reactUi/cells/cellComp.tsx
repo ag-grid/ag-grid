@@ -387,7 +387,7 @@ const CellComp = (props: {
         cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
 
         if (cssClassManager.containsCssClass('ag-cell-focus')) {
-            eGui.current.focus();
+            eGui.current.focus({ preventScroll: true });
         }
     });
 
