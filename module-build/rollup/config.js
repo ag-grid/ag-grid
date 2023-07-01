@@ -10,7 +10,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'cjs',
             env: 'development',
             extension: '.cjs.js',
-            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' && /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
 
         },
         {
@@ -19,12 +19,12 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'cjs',
             env: 'production',
             extension: '.cjs.min.js',
-            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' && /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
 
         },
         {
             name: 'es-modules-dev',
-            inputMainFile: './dist/esm/es6/main.js',
+            inputMainFile: (bundlePrefix && !(bundlePrefix === 'ag-grid-community' || bundlePrefix === 'ag-grid-enterprise')) ? './dist/esm/es6/main.mjs' : './dist/esm/es6/main.js',
             format: 'es',
             env: 'development',
             extension: '.esm.js'
@@ -68,7 +68,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './esm-main.auto.js',
             format: 'es',
             env: 'development',
-            extension: '.auto.esm.js',
+            extension: '.auto.esm.mjs',
             config: {
                 external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
             },
@@ -93,7 +93,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './esm-main.auto.js',
             format: 'es',
             env: 'production',
-            extension: '.auto.esm.min.js',
+            extension: '.auto.esm.min.mjs',
             config: {
                 external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
             },

@@ -2,8 +2,8 @@
   "name": "ag-charts-community",
   "version": "8.0.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/esm/es6/main.js",
-  "module": "./dist/esm/es6/main.js",
+  "main": "./dist/esm/es6/main.mjs",
+  "module": "./dist/esm/es6/main.mjs",
   "types": "./dist/esm/es6/main.d.ts",
   "scripts": {
     "clean": "rimraf dist typings .hash",
@@ -16,7 +16,7 @@
     "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false --declarationMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false --declarationMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --declarationMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --declarationMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --declarationMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --declarationMap false && npx gulp build-prod",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
     "build": "npm run build-cjs && npm run build-esm && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && tsc -p tsconfig.typings.json && npm run hash",
@@ -103,7 +103,11 @@
     "timezone-mock": "^1.3.6",
     "ts-jest": "^29.1.0",
     "typescript": "~4.3.5",
-    "ws": "8.9.0"
+    "ws": "8.9.0",
+    "gulp": "^4.0.2",
+    "gulp-replace": "^1.0.0",
+    "gulp-rename": "^2.0.0",
+    "del": "^6.0.0"
   },
   "publishConfig": {
     "access": "public"

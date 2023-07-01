@@ -64,8 +64,8 @@
                 defaultExtension: 'tsx'
             },
             'ag-grid-react': {
-                main: './main.js',
-                defaultExtension: 'js'
+                main: './lib/main.mjs',
+                defaultExtension: 'mjs'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.js',
@@ -76,8 +76,8 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/react': {
-                main: './main.js',
-                defaultExtension: 'js'
+                main: './lib/main.mjs',
+                defaultExtension: 'mjs'
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-grid-community/core/dist/cjs/es5/utils': {

@@ -14,6 +14,7 @@ const clean = require('gulp-clean');
 const link = require('lnk').sync;
 const os = require('os');
 const replace = require('gulp-replace');
+const rename = require('gulp-rename');
 const merge = require('merge-stream');
 
 const WINDOWS = /^win/.test(os.platform());
@@ -39,7 +40,20 @@ tscTask = () => {
 
     return merge([
         tsResult.dts.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib')),
-        tsResult.js.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib'))
+        tsResult.js.pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(replace(/(import|export)(.*['"]\..*)(['"].*)/gi, (line) => {
+                const regexp = /(import|export)(.*['"]\..*)(['"].*)/gi;
+                const matches = [...line.matchAll(regexp)][0];
+                return `${matches[1]}${matches[2]}.mjs${matches[3]}`
+            }))
+            .pipe(rename((path) => {
+                let { extname} = path;
+                if(extname === '.js') {
+                    path.extname = extname.replace('.js', '.mjs')
+                }
+                return path;
+            }))
+            .pipe(gulp.dest('lib'))
     ]);
 };
 
@@ -131,11 +145,7 @@ const copyFromModuleSource = () => {
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))
         .pipe(gulp.dest("./src"), {cwd: '.'});
 
-    const copyMain = gulp.src(["../../grid-community-modules/react/main.d.ts",
-        "../../grid-community-modules/react/main.js"])
-        .pipe(gulp.dest("./"));
-
-    return merge(copySource, copyMain);
+    return merge(copySource);
 };
 
 gulp.task('copy-from-module-source', copyFromModuleSource);

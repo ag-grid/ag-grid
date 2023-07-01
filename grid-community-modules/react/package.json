@@ -2,8 +2,8 @@
   "name": "@ag-grid-community/react",
   "version": "30.0.2",
   "description": "AG Grid React Component",
-  "main": "main.js",
-  "typings": "./main.d.ts",
+  "main": "lib/main.mjs",
+  "typings": "./lib/main.d.ts",
   "scripts": {
     "clean": "rimraf bundles lib .hash",
     "build": "npx gulp && npm run hash",
@@ -53,6 +53,7 @@
     "gulp-header": "^2.0.0",
     "gulp-merge": "^0.1.1",
     "gulp-replace": "^1.0.0",
+    "gulp-rename": "2.0.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-typescript": "^5.0.0",
     "jest": "26.6.0",

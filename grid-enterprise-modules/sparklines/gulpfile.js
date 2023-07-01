@@ -6,10 +6,6 @@ const del = require("del");
 
 const DIST_FOLDER = 'dist/esm/es6/';
 
-const copyLicenseFiles = () => {
-    return gulp.src(['../../grid-enterprise-modules/core/src/license/shared/*']).pipe(gulp.dest('./src/license/'));
-};
-
 const mjsProcessing = () => {
     return gulp
         .src(['dist/esm/es6/**/*.js', '!dist/esm/es6/**/*.map'])
@@ -24,7 +20,6 @@ const mjsProcessing = () => {
 
 const cleanup = () => del([`${DIST_FOLDER}/**/*.js`]);
 
-gulp.task('copy-license-files', copyLicenseFiles);
 gulp.task('build-prod', series(mjsProcessing, cleanup));
 
 

@@ -2,8 +2,8 @@
   "name": "ag-grid-community",
   "version": "30.0.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/ag-grid-community.auto.esm.js",
-  "module": "./dist/ag-grid-community.auto.esm.js",
+  "main": "./dist/ag-grid-community.auto.esm.mjs",
+  "module": "./dist/ag-grid-community.auto.esm.mjs",
   "scripts": {
     "clean": "rimraf dist main.d.ts src/styles .hash",
     "build": "npm run customise && npx gulp build && npm run rollup && npm run hash",

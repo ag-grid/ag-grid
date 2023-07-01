@@ -2,8 +2,8 @@
   "name": "ag-grid-enterprise",
   "version": "30.0.2",
   "description": "AG Grid Enterprise Features",
-  "main": "./dist/ag-grid-enterprise.auto.esm.js",
-  "module": "./dist/ag-grid-enterprise.auto.esm.js",
+  "main": "./dist/ag-grid-enterprise.auto.esm.mjs",
+  "module": "./dist/ag-grid-enterprise.auto.esm.mjs",
   "types": "main.d.ts",
   "scripts": {
     "clean": "rimraf dist main.d.ts .hash",
