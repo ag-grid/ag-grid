@@ -79,7 +79,7 @@ const tscSrcCjsEs6Task = async () => {
 };
 
 const tscSrcEsModulesEs6Task = async () => {
-    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', true);
+    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', true, true);
 };
 
 const tscSrcEsModulesEs5Task = async () => {
