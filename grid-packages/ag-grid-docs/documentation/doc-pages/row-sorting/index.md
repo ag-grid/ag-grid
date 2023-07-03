@@ -178,7 +178,7 @@ This is provided via the `postSortRows` grid callback function as shown below:
 <snippet>
 const gridOptions = {
     postSortRows: params => {
-        let rowNodes = params.rowNodes;
+        let rowNodes = params.nodes;
         // here we put Ireland rows on top while preserving the sort order
         let nextInsertPos = 0;
         for (let i = 0; i < rowNodes.length; i++) {
