@@ -34,41 +34,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiniChartsContainer = void 0;
 var core_1 = require("@ag-grid-community/core");
-var miniCharts_1 = require("./miniCharts");
+var index_1 = require("./miniCharts/index"); // please leave this as is - we want it to be explicit for build reasons
 var miniChartMapping = {
     columnGroup: {
-        column: miniCharts_1.MiniColumn,
-        stackedColumn: miniCharts_1.MiniStackedColumn,
-        normalizedColumn: miniCharts_1.MiniNormalizedColumn
+        column: index_1.MiniColumn,
+        stackedColumn: index_1.MiniStackedColumn,
+        normalizedColumn: index_1.MiniNormalizedColumn
     },
     barGroup: {
-        bar: miniCharts_1.MiniBar,
-        stackedBar: miniCharts_1.MiniStackedBar,
-        normalizedBar: miniCharts_1.MiniNormalizedBar
+        bar: index_1.MiniBar,
+        stackedBar: index_1.MiniStackedBar,
+        normalizedBar: index_1.MiniNormalizedBar
     },
     pieGroup: {
-        pie: miniCharts_1.MiniPie,
-        doughnut: miniCharts_1.MiniDoughnut
+        pie: index_1.MiniPie,
+        doughnut: index_1.MiniDoughnut
     },
     lineGroup: {
-        line: miniCharts_1.MiniLine
+        line: index_1.MiniLine
     },
     scatterGroup: {
-        scatter: miniCharts_1.MiniScatter,
-        bubble: miniCharts_1.MiniBubble
+        scatter: index_1.MiniScatter,
+        bubble: index_1.MiniBubble
     },
     areaGroup: {
-        area: miniCharts_1.MiniArea,
-        stackedArea: miniCharts_1.MiniStackedArea,
-        normalizedArea: miniCharts_1.MiniNormalizedArea
+        area: index_1.MiniArea,
+        stackedArea: index_1.MiniStackedArea,
+        normalizedArea: index_1.MiniNormalizedArea
     },
     histogramGroup: {
-        histogram: miniCharts_1.MiniHistogram
+        histogram: index_1.MiniHistogram
     },
     combinationGroup: {
-        columnLineCombo: miniCharts_1.MiniColumnLineCombo,
-        areaColumnCombo: miniCharts_1.MiniAreaColumnCombo,
-        customCombo: miniCharts_1.MiniCustomCombo
+        columnLineCombo: index_1.MiniColumnLineCombo,
+        areaColumnCombo: index_1.MiniAreaColumnCombo,
+        customCombo: index_1.MiniCustomCombo
     }
 };
 var MiniChartsContainer = /** @class */ (function (_super) {

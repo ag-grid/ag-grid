@@ -94,4 +94,3 @@ declare type Classification = 'array' | 'object' | 'primitive';
  */
 declare function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null;
 export {};
-//# sourceMappingURL=json.d.ts.map

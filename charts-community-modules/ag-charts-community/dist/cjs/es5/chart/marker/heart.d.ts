@@ -4,4 +4,3 @@ export declare class Heart extends Marker {
     rad(degree: number): number;
     updatePath(): void;
 }
-//# sourceMappingURL=heart.d.ts.map

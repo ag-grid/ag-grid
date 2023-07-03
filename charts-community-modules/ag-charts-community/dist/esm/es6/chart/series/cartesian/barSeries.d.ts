@@ -150,4 +150,3 @@ export declare class ColumnSeries extends BarSeries {
     }): void;
 }
 export {};
-//# sourceMappingURL=barSeries.d.ts.map

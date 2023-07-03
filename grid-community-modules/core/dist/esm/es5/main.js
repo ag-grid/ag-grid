@@ -172,7 +172,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
-export * from "./utils";
+export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";

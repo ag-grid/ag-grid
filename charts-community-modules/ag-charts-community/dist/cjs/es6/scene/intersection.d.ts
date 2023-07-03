@@ -24,4 +24,3 @@ export declare function arcIntersections(cx: number, cy: number, r: number, star
     x: number;
     y: number;
 }>;
-//# sourceMappingURL=intersection.d.ts.map

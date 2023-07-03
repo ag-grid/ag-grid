@@ -1,0 +1,75 @@
+import { Node } from './node.mjs';
+export class Selection {
+    constructor(parent, classOrFactory) {
+        this._nodes = [];
+        this._data = [];
+        this._parent = parent;
+        this._factory = Object.prototype.isPrototypeOf.call(Node, classOrFactory)
+            ? () => new classOrFactory()
+            : classOrFactory;
+    }
+    static select(parent, classOrFactory) {
+        return new Selection(parent, classOrFactory);
+    }
+    each(iterate) {
+        this._nodes.forEach((node, i) => iterate(node, node.datum, i));
+        return this;
+    }
+    update(data, init) {
+        const old = this._data;
+        const parent = this._parent;
+        const factory = this._factory;
+        if (data.length > old.length) {
+            data.slice(old.length).forEach((datum) => {
+                const node = factory(datum);
+                node.datum = datum;
+                init === null || init === void 0 ? void 0 : init(node);
+                parent.appendChild(node);
+                this._nodes.push(node);
+            });
+        }
+        else if (data.length < old.length) {
+            this._nodes.splice(data.length).forEach((node) => {
+                parent.removeChild(node);
+            });
+        }
+        this._data = data.slice(0);
+        for (let i = 0; i < data.length; i++) {
+            this._nodes[i].datum = this._data[i];
+        }
+        return this;
+    }
+    clear() {
+        this.update([]);
+        return this;
+    }
+    static selectAll(parent, predicate) {
+        const results = [];
+        const traverse = (node) => {
+            if (predicate(node)) {
+                results.push(node);
+            }
+            node.children.forEach(traverse);
+        };
+        traverse(parent);
+        return results;
+    }
+    static selectByClass(node, Class) {
+        return Selection.selectAll(node, (node) => node instanceof Class);
+    }
+    static selectByTag(node, tag) {
+        return Selection.selectAll(node, (node) => node.tag === tag);
+    }
+    select(predicate) {
+        return Selection.selectAll(this._parent, predicate);
+    }
+    selectByClass(Class) {
+        return this.select((node) => node instanceof Class);
+    }
+    selectByTag(tag) {
+        return this.select((node) => node.tag === tag);
+    }
+    nodes() {
+        return this._nodes;
+    }
+}

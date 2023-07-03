@@ -18,4 +18,3 @@ export declare class StateMachine<State extends string, Event extends string> {
     transition(event: Event, data?: any): State | undefined;
 }
 export {};
-//# sourceMappingURL=states.d.ts.map

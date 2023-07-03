@@ -8,6 +8,8 @@ const gulpif = require('gulp-if');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
+const replace = require('gulp-replace');
+const rename = require('gulp-rename');
 
 const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -29,7 +31,7 @@ const cleanDist = () => {
         .pipe(clean());
 };
 
-const tscTask = async (tsConfigFile, destination, sourceMaps) => {
+const tscTask = async (tsConfigFile, destination, sourceMaps, mjsProcessing = false) => {
     const tsProject = gulpTypescript.createProject(tsConfigFile, {typescript: typescript});
 
     const tsResult = gulp
@@ -37,15 +39,34 @@ const tscTask = async (tsConfigFile, destination, sourceMaps) => {
         .pipe(gulpif(sourceMaps, sourcemaps.init()))
         .pipe(tsProject());
 
+    let stream = tsResult.js.pipe(header(headerTemplate, {pkg: pkg}));
+    if (mjsProcessing) {
+        stream = stream
+            .pipe(replace(/(import|export)(.*['"]\..*)(['"].*)/gi, (line) => {
+                if(line.startsWith("import") && (line.endsWith('./utils";') || line.endsWith('./utils\';'))) {
+                    return line.replace('./utils', './utils/index.mjs');
+                }
+
+                const regexp = /(import|export)(.*['"]\..*)(['"].*)/gi;
+                const matches = [...line.matchAll(regexp)][0];
+                return `${matches[1]}${matches[2]}.mjs${matches[3]}`
+            }))
+            .pipe(rename((path) => {
+                let {extname} = path;
+                if (extname === '.js') {
+                    path.extname = extname.replace('.js', '.mjs')
+                }
+                return path;
+            }))
+    }
+    stream = stream.pipe(gulpif(sourceMaps, sourcemaps.write('.')))
+        .pipe(gulp.dest(destination));
+
+
     return await merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest(destination)),
-        tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulpif(sourceMaps, sourcemaps.write('.')))
-            .pipe(gulp.dest(destination))
-    ]);
+            .pipe(gulp.dest(destination)), stream])
 
 }
 
@@ -74,7 +95,7 @@ const tscSrcCjsEs6ProdTask = async () => {
 };
 
 const tscSrcEsModulesEs6ProdTask = async () => {
-    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', false);
+    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', false, true);
 };
 
 const tscSrcEsModulesEs5ProdTask = async () => {

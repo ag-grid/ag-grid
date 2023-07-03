@@ -25,4 +25,3 @@ export * from './chart/legendDatum';
 export * as Motion from './motion/easing';
 export * from './motion/states';
 export { ChartUpdateType } from './chart/chartUpdateType';
-//# sourceMappingURL=module-support.d.ts.map

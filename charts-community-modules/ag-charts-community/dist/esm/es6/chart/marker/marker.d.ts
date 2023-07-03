@@ -12,4 +12,3 @@ export declare abstract class Marker extends Path {
     computeBBox(): BBox;
     protected applyPath(s: number, moves: MarkerPathMove[]): void;
 }
-//# sourceMappingURL=marker.d.ts.map

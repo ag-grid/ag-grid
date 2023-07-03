@@ -8320,7 +8320,7 @@ function radioCssClass(element, elementClass, otherElementClass) {
     }
 }
 const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
+const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *.mjs';
 function isFocusableFormField(element) {
     const matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     const inputSelector = 'input, select, button, textarea';

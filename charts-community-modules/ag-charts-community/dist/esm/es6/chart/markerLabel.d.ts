@@ -29,4 +29,3 @@ export declare class MarkerLabel extends Group {
     private update;
     render(renderCtx: RenderContext): void;
 }
-//# sourceMappingURL=markerLabel.d.ts.map

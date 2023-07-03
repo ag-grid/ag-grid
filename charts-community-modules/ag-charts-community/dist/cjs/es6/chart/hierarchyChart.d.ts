@@ -7,4 +7,3 @@ export declare class HierarchyChart extends Chart {
     protected _data: any;
     performLayout(): Promise<BBox>;
 }
-//# sourceMappingURL=hierarchyChart.d.ts.map

@@ -21,4 +21,3 @@ export declare class TooltipManager {
     private checkExclusiveRects;
     private applyStates;
 }
-//# sourceMappingURL=tooltipManager.d.ts.map

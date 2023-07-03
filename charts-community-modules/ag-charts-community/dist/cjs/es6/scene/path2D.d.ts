@@ -28,4 +28,3 @@ export declare class Path2D {
     isPointInPath(x: number, y: number): boolean;
 }
 export {};
-//# sourceMappingURL=path2D.d.ts.map

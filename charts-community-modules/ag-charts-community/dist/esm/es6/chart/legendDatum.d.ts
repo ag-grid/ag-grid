@@ -38,4 +38,3 @@ export interface CategoryLegendDatum extends ChartLegendDatum {
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
  */
 export declare const __FORCE_MODULE_DETECTION = 0;
-//# sourceMappingURL=legendDatum.d.ts.map

@@ -11,4 +11,3 @@ export declare class PolarChart extends Chart {
     private computeCircle;
     private refineCircle;
 }
-//# sourceMappingURL=polarChart.d.ts.map

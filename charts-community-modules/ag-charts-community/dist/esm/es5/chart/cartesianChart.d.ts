@@ -26,4 +26,3 @@ export declare class CartesianChart extends Chart {
     private calculateAxisDimensions;
     private positionAxis;
 }
-//# sourceMappingURL=cartesianChart.d.ts.map

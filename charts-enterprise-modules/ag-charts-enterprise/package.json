@@ -2,17 +2,17 @@
   "name": "ag-charts-enterprise",
   "version": "8.0.3",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/esm/es6/main.js",
-  "module": "./dist/esm/es6/main.js",
+  "main": "./dist/esm/es6/main.mjs",
+  "module": "./dist/esm/es6/main.mjs",
   "types": "./dist/esm/es6/main.d.ts",
   "private": true,
   "scripts": {
     "clean": "rimraf dist .hash",
-    "build-cjs": "rimraf dist/tsconfig.esm.es6.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --inlineSourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --inlineSourceMap false",
-    "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false && npx gulp build-prod",
+    "watch-esm": "tsc -p tsconfig.esm.es5.json -w --preserveWatchOutput",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
     "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npm run hash",
     "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
@@ -96,7 +96,10 @@
     "prettier": "^2.8.3",
     "rimraf": "3.0.2",
     "ts-jest": "^29.1.0",
-    "typescript": "~4.3.5"
+    "typescript": "~4.3.5",
+    "gulp-replace": "^1.0.0",
+    "gulp-rename": "^2.0.0",
+    "del": "^6.0.0"
   },
   "peerDependencies": {
     "ag-charts-community": "~8.0.3"

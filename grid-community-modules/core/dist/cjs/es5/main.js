@@ -350,7 +350,7 @@ var templateService_1 = require("./templateService");
 Object.defineProperty(exports, "TemplateService", { enumerable: true, get: function () { return templateService_1.TemplateService; } });
 var localeService_1 = require("./localeService");
 Object.defineProperty(exports, "LocaleService", { enumerable: true, get: function () { return localeService_1.LocaleService; } });
-__exportStar(require("./utils"), exports);
+__exportStar(require("./utils/index"), exports); // please leave this as is - we want it to be explicit for build reasons
 var valueService_1 = require("./valueService/valueService");
 Object.defineProperty(exports, "ValueService", { enumerable: true, get: function () { return valueService_1.ValueService; } });
 var valueCache_1 = require("./valueService/valueCache");

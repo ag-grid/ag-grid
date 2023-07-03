@@ -27,4 +27,3 @@ export declare function getLabelSpacing(minSpacing: number, rotated?: boolean): 
 export declare function getTextBaseline(parallel: boolean, labelRotation: number, sideFlag: Flag, parallelFlipFlag: Flag): CanvasTextBaseline;
 export declare function getTextAlign(parallel: boolean, labelRotation: number, labelAutoRotation: number, sideFlag: Flag, regularFlipFlag: Flag): CanvasTextAlign;
 export declare function calculateLabelBBox(text: string, bbox: BBox, labelX: number, labelY: number, labelMatrix: Matrix): PointLabelDatum;
-//# sourceMappingURL=label.d.ts.map

@@ -20,4 +20,3 @@ export declare class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     calculatePadding(_min: number, _max: number): number;
 }
 export {};
-//# sourceMappingURL=timeAxis.d.ts.map

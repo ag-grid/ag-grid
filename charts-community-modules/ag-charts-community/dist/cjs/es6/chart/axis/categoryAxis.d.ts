@@ -14,4 +14,3 @@ export declare class CategoryAxis extends ChartAxis<BandScale<string | object>> 
     normaliseDataDomain(d: (string | object)[]): (string | object)[];
     protected calculateDomain(): void;
 }
-//# sourceMappingURL=categoryAxis.d.ts.map

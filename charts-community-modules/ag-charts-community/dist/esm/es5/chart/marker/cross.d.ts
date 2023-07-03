@@ -4,4 +4,3 @@ export declare class Cross extends Marker {
     static moves: MarkerPathMove[];
     updatePath(): void;
 }
-//# sourceMappingURL=cross.d.ts.map

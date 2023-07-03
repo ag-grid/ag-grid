@@ -2,8 +2,8 @@
   "name": "@ag-grid-community/core",
   "version": "30.0.3",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/esm/es6/main.js",
-  "module": "./dist/esm/es6/main.js",
+  "main": "./dist/esm/es6/main.mjs",
+  "module": "./dist/esm/es6/main.mjs",
   "types": "./dist/esm/es6/main.d.ts",
   "scripts": {
     "lint": "npx tslint -p tsconfig.cjs.es5.json src/ts/**/*.ts",
@@ -71,6 +71,7 @@
     "gulp-if": "3.0.0",
     "gulp-jasmine": "^4.0.0",
     "gulp-replace": "^1.0.0",
+    "gulp-rename": "^2.0.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-stylus": "^2.7.0",
     "gulp-tsd": "^0.1.0",

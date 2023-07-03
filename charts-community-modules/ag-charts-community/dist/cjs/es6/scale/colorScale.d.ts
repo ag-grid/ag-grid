@@ -6,4 +6,3 @@ export declare class ColorScale implements Scale<number, string, number> {
     update(): void;
     convert(x: number): string;
 }
-//# sourceMappingURL=colorScale.d.ts.map

@@ -129,4 +129,3 @@ export declare class DataModel<D extends object, K extends keyof D & string = ke
     private initDataDomainProcessor;
 }
 export {};
-//# sourceMappingURL=dataModel.d.ts.map

@@ -174,7 +174,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
-export * from "./utils";
+export * from "./utils/index";
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
