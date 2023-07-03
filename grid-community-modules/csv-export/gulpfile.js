@@ -20,6 +20,6 @@ const mjsProcessing = () => {
 
 const cleanup = () => del([`${DIST_FOLDER}/**/*.js`]);
 
-gulp.task('build-prod', series(mjsProcessing, cleanup));
+gulp.task('mjs-processing', series(mjsProcessing, cleanup));
 
 
