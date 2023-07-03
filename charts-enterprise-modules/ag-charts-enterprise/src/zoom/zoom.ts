@@ -150,15 +150,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
-        if (
-            this.enablePanning &&
-            this.seriesRect &&
-            !this.isMaxZoom(zoom) &&
-            (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))
-        ) {
-            // Allow panning if not at the maximum zoom and either selection is disabled or the panning key is pressed.
-            const newZoom = this.panner.update(event, this.seriesRect, zoom);
-            this.updateZoom(newZoom);
+        // Allow panning if either selection is disabled or the panning key is pressed.
+        if (this.enablePanning && this.seriesRect && (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))) {
+            const newZooms = this.panner.update(event, this.seriesRect, this.zoomManager.getAxisZooms());
+            for (const [axisId, { direction, zoom: newZoom }] of Object.entries(newZooms)) {
+                this.updateAxisZoom(axisId, direction, newZoom);
+            }
             this.cursorManager.updateCursor(CURSOR_ID, 'grabbing');
             return;
         }

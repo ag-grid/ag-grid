@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { definedZoomState, pointToRatio, constrainZoom, translateZoom } from './zoomTransformers';
-import { DefinedZoomState, ZoomCoords } from './zoomTypes';
+import { ZoomCoords } from './zoomTypes';
 
 export class ZoomPanner {
     public isPanning: boolean = false;
@@ -11,12 +11,15 @@ export class ZoomPanner {
     update(
         event: _ModuleSupport.InteractionEvent<'drag'>,
         bbox: _Scene.BBox,
-        zoom?: _ModuleSupport.AxisZoomState
-    ): DefinedZoomState {
+        zooms: Record<
+            string,
+            { direction: _ModuleSupport.ChartAxisDirection; zoom: _ModuleSupport.ZoomState | undefined }
+        >
+    ): Record<string, { direction: _ModuleSupport.ChartAxisDirection; zoom: _ModuleSupport.ZoomState }> {
         this.isPanning = true;
 
         this.updateCoords(event.offsetX, event.offsetY);
-        return this.translate(bbox, zoom);
+        return this.translateZooms(bbox, zooms);
     }
 
     stop() {
@@ -35,7 +38,13 @@ export class ZoomPanner {
         }
     }
 
-    private translate(bbox: _Scene.BBox, currentZoom?: _ModuleSupport.AxisZoomState) {
+    private translateZooms(
+        bbox: _Scene.BBox,
+        currentZooms: Record<
+            string,
+            { direction: _ModuleSupport.ChartAxisDirection; zoom: _ModuleSupport.ZoomState | undefined }
+        >
+    ) {
         const { x1 = 0, y1 = 0, x2 = 0, y2 = 0 } = this.coords ?? {};
 
         const dx = x1 <= x2 ? x2 - x1 : x1 - x2;
@@ -46,10 +55,31 @@ export class ZoomPanner {
         const offsetX = x1 <= x2 ? -offset.x : offset.x;
         const offsetY = y1 <= y2 ? offset.y : -offset.y;
 
-        const zoom = definedZoomState(currentZoom);
-        const scaleX = zoom.x.max - zoom.x.min;
-        const scaleY = zoom.y.max - zoom.y.min;
+        const newZooms: Record<
+            string,
+            { direction: _ModuleSupport.ChartAxisDirection; zoom: _ModuleSupport.ZoomState }
+        > = {};
 
-        return constrainZoom(translateZoom(zoom, offsetX * scaleX, offsetY * scaleY));
+        for (const [axisId, { direction, zoom: currentZoom }] of Object.entries(currentZooms)) {
+            let zoom;
+            if (direction === _ModuleSupport.ChartAxisDirection.X) {
+                zoom = definedZoomState({ x: currentZoom });
+            } else {
+                zoom = definedZoomState({ y: currentZoom });
+            }
+
+            const scaleX = zoom.x.max - zoom.x.min;
+            const scaleY = zoom.y.max - zoom.y.min;
+
+            zoom = constrainZoom(translateZoom(zoom, offsetX * scaleX, offsetY * scaleY));
+
+            if (direction === _ModuleSupport.ChartAxisDirection.X) {
+                newZooms[axisId] = { direction, zoom: zoom.x };
+            } else {
+                newZooms[axisId] = { direction, zoom: zoom.y };
+            }
+        }
+
+        return newZooms;
     }
 }
