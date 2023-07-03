@@ -15,7 +15,7 @@
     "watch-esm": "tsc -p tsconfig.esm.es5.json -w --preserveWatchOutput",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
     "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npx gulp build-prod && npm run hash",
-    "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
+    "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npx gulp build-prod && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "install-hooks": "cd ../.. && husky install charts-enterprise-modules/ag-charts-enterprise/.husky",
     "lint": "run-s lint:*",
