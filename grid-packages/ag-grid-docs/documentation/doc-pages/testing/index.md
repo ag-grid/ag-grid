@@ -3,9 +3,42 @@ title: "Testing AG Grid"
 ---
 
 <framework-specific-section frameworks="javascript">
-| We will walk through how you can use `Protractor` and `Jasmine` to do Unit & End to End (e2e)
-| testing with AG Grid in this section.
+We will walk through how you can use `Jest' for unit testing, and `Protractor` and `Jasmine` to do Unit & End to End (e2e)
+testing with AG Grid in this section.
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+| ## Testing with Jest
+| 
+| In order to test AG Grid with Jest you'll need to make the following configuration changes:
 |
+| In `jest.config.js` add the following line:
+|
+| `resolver: '&lt;rootDir>myResolver.js',`
+|
+| Then create a file called `myResolver.js` in the root directory of your project:
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
+|module.exports = (request, options) => {
+|    return options.defaultResolver(request, {
+|        ...options,
+|        packageFilter: pkg => {
+|            const packageName = pkg.name;
+|            const agDependency = packageName.startsWith("@ag-grid") || packageName.startsWith("ag-grid");
+|            return {
+|                ...pkg,
+|                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
+|                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
+|            };
+|        },
+|    });
+|};
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 | ## Unit Testing with Jasmine - Waiting for the API
 |
 | In order to unit test your application you need to ensure that the Grid API is available - the
@@ -608,9 +641,49 @@ title: "Testing AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
+| ### Using Jest with Angular (for example with an Nx/Angular project)
+|
+| In order to test AG Grid with Jest you'll need to make the following configuration changes:
+|
+| In `jest.config.js` add the following line:
+|
+| `resolver: '&lt;rootDir>myResolver.js',`
+|
+| Then create a file called `myResolver.js` in the root directory of your project:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+|module.exports = (request, options) => {
+|    return options.defaultResolver(request, {
+|        ...options,
+|        packageFilter: pkg => {
+|            const packageName = pkg.name;
+|            if(packageName === '@ag-grid-community/angular' || packageName === 'ag-grid-angular') {
+|                return {
+|                    ...pkg,
+|                };
+|            }
+|            const agDependency = packageName.startsWith("@ag-grid") || packageName.startsWith("ag-grid");
+|            return {
+|                ...pkg,
+|                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
+|                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
+|            };
+|        },
+|    });
+|};
+</snippet>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="angular">
 |## Next Up
 |
 |Continue to the next section to learn about [Testing with FakeAsync](../testing-async/) parts of the grid.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
