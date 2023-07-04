@@ -28,9 +28,9 @@ export class AngleCrossLine extends PolarCrossLine {
     }
 
     private updateLineNode(visible: boolean) {
-        const { scale, shape, type, value, lineNode: line } = this;
+        const { scale, type, value, lineNode: line } = this;
         let angle: number;
-        if (!visible || type !== 'line' || shape !== 'polygon' || !scale || isNaN((angle = scale.convert(value)))) {
+        if (!visible || type !== 'line' || !scale || isNaN((angle = scale.convert(value)))) {
             line.visible = false;
             return;
         }
