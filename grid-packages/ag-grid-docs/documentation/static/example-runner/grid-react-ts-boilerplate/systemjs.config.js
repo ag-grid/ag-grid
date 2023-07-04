@@ -75,9 +75,9 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/react': {
-                main: './main.js',
-                defaultExtension: 'js',
-            },
+                main: './lib/main.mjs',
+                defaultExtension: 'mjs'
+            }
         },
         meta: {
             typescript: {
