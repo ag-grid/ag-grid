@@ -499,12 +499,12 @@ export class RowRenderer extends BeanStub {
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
-        const rowsToRecycle = recycleRows ? this.recycleRows() : null;
+        const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
         }
 
-        this.redrawInternal(rowsToRecycle, animate);
+        this.recycleRows(rowsToRecycle, animate);
 
         this.gridBodyCtrl.updateRowCount();
 
@@ -808,7 +808,7 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(rowIndexesToRemove);
     }
 
-    private recycleRows(): RowCtrlMap {
+    private getRowsToRecycle(): RowCtrlMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
         iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
@@ -863,7 +863,7 @@ export class RowRenderer extends BeanStub {
         }
 
         this.getLockOnRefresh();
-        this.redrawInternal(null, false, afterScroll);
+        this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
         this.dispatchDisplayedRowsChanged(afterScroll);
 
@@ -918,7 +918,7 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
-    private redrawInternal(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
+    private recycleRows(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
