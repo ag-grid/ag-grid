@@ -1,4 +1,5 @@
 import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } from 'ag-charts-community';
+import { RadiusCrossLine } from './radiusCrossLine';
 
 const { AND, ChartAxisDirection, Default, GREATER_THAN, Layers, LESS_THAN, NUMBER_OR_NAN, Validate } = _ModuleSupport;
 const { LinearScale } = _Scale;
@@ -157,5 +158,15 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
 
     protected createTick() {
         return new RadiusNumberAxisTick();
+    }
+
+    protected updateCrossLines() {
+        this.crossLines?.forEach((crossLine) => {
+            if (crossLine instanceof RadiusCrossLine) {
+                crossLine.shape = this.shape;
+                crossLine.gridAngles = this.gridAngles;
+            }
+        });
+        super.updateCrossLines({ rotation: 0, parallelFlipRotation: 0, regularFlipRotation: 0, sideFlag: -1 });
     }
 }

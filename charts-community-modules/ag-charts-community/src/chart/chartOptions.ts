@@ -2,7 +2,7 @@ import { AxisTitle } from './axis/axisTitle';
 import { Caption } from '../caption';
 import { DropShadow } from '../scene/dropShadow';
 import type { JsonApplyParams } from '../util/json';
-import { CrossLine } from './crossline/crossLine';
+import { CartesianCrossLine } from './crossline/cartesianCrossLine';
 import { DoughnutInnerLabel, DoughnutInnerCircle } from './series/polar/pieSeries';
 
 export const JSON_APPLY_PLUGINS: JsonApplyParams = {
@@ -16,7 +16,7 @@ const JSON_APPLY_OPTIONS: JsonApplyParams = {
         footnote: Caption,
         shadow: DropShadow,
         innerCircle: DoughnutInnerCircle,
-        'axes[].crossLines[]': CrossLine,
+        'axes[].crossLines[]': CartesianCrossLine,
         'axes[].title': AxisTitle,
         'series[].innerLabels[]': DoughnutInnerLabel,
     },

@@ -1,4 +1,5 @@
 import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import { AngleCrossLine } from './angleCrossLine';
 
 const { ChartAxisDirection } = _ModuleSupport;
 const { BandScale } = _Scale;
@@ -40,11 +41,12 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         this.updateTickLines();
         this.updateLabels();
         this.updateRadiusLine();
+        this.updateCrossLines();
         return ticks.length;
     }
 
     updatePosition() {
-        const { translation, axisGroup, gridGroup } = this;
+        const { translation, axisGroup, gridGroup, crossLineGroup } = this;
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
 
@@ -53,6 +55,9 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
 
         gridGroup.translationX = translationX;
         gridGroup.translationY = translationY;
+
+        crossLineGroup.translationX = translationX;
+        crossLineGroup.translationY = translationY;
     }
 
     protected updateRadiusLine() {
@@ -357,5 +362,14 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
             textBaseline = isNumberEqual(sin, 0) ? 'middle' : sin > 0 ? 'top' : 'bottom';
         }
         return { textAlign, textBaseline };
+    }
+
+    protected updateCrossLines() {
+        this.crossLines?.forEach((crossLine) => {
+            if (crossLine instanceof AngleCrossLine) {
+                crossLine.shape = this.shape;
+            }
+        });
+        super.updateCrossLines({ rotation: 0, parallelFlipRotation: 0, regularFlipRotation: 0, sideFlag: -1 });
     }
 }

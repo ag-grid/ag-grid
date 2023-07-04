@@ -1,8 +1,8 @@
 import { PointerEvents } from '../../scene/node';
 import { Group } from '../../scene/group';
 import { Text } from '../../scene/shape/text';
-import type { BBox } from '../../scene/bbox';
-import type { Scale } from '../../scale/scale';
+import { BBox } from '../../scene/bbox';
+import { Scale } from '../../scale/scale';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { ChartAxisDirection } from '../chartAxisDirection';
@@ -15,7 +15,7 @@ import {
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
-import type { Point } from '../../scene/point';
+import { Point } from '../../scene/point';
 import { Range } from '../../scene/shape/range';
 import {
     OPT_ARRAY,
@@ -32,8 +32,9 @@ import {
     OPTIONAL,
     predicateWithMessage,
 } from '../../util/validation';
-import type { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
+import { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
 import { calculateLabelRotation } from '../label';
+import { CrossLine } from './crossLine';
 
 const CROSSLINE_LABEL_POSITIONS = [
     'top',
@@ -110,7 +111,7 @@ type NodeData = number[];
 
 type CrossLineType = 'line' | 'range';
 
-export class CrossLine {
+export class CartesianCrossLine implements CrossLine {
     protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
     protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
 
@@ -155,7 +156,7 @@ export class CrossLine {
     regularFlipRotation: number = 0;
     direction: ChartAxisDirection = ChartAxisDirection.X;
 
-    readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.LINE_LAYER_ZINDEX });
+    readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CartesianCrossLine.LINE_LAYER_ZINDEX });
     private crossLineRange: Range = new Range();
     private crossLineLabel = new Text();
     private labelPoint?: Point = undefined;
@@ -367,10 +368,10 @@ export class CrossLine {
 
     protected getZIndex(isRange: boolean = false): number {
         if (isRange) {
-            return CrossLine.RANGE_LAYER_ZINDEX;
+            return CartesianCrossLine.RANGE_LAYER_ZINDEX;
         }
 
-        return CrossLine.LINE_LAYER_ZINDEX;
+        return CartesianCrossLine.LINE_LAYER_ZINDEX;
     }
 
     private getRange(): [any, any] {

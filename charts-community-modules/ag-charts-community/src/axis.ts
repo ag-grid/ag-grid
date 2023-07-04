@@ -156,7 +156,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
     protected readonly tickLabelGroup = this.axisGroup.appendChild(
         new Group({ name: `${this.id}-Axis-tick-labels`, zIndex: Layers.AXIS_ZINDEX })
     );
-    private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
+    protected readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     readonly gridGroup = new Group({ name: `${this.id}-Axis-grid` });
     protected readonly gridLineGroup = this.gridGroup.appendChild(
@@ -973,7 +973,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.tickLabelGroup.visible = this.label.enabled;
     }
 
-    private updateCrossLines({
+    protected updateCrossLines({
         rotation,
         parallelFlipRotation,
         regularFlipRotation,

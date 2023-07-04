@@ -27,6 +27,7 @@ export * from './axis';
 export * from './chart/axis/axisTick';
 export * from './chart/axis/polarAxis';
 export * from './chart/chartAxis';
+export * from './chart/crossline/crossLine';
 export * from './chart/legendDatum';
 export * as Motion from './motion/easing';
 export * from './motion/states';
