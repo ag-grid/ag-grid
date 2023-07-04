@@ -42,6 +42,7 @@ export class FocusService extends BeanStub {
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
+    private restoredFocusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
 
     private static keyboardModeActive: boolean = false;
@@ -223,6 +224,33 @@ export class FocusService extends BeanStub {
         return this.focusedCellPosition;
     }
 
+    public shouldRestoreFocus(cell: CellPosition): boolean {
+        if (this.isCellRestoreFocused(cell)) {
+
+            setTimeout(() => {
+                this.restoredFocusedCellPosition = null;
+            }, 0);
+            return true;
+        }
+        return false;
+    }
+
+    public isCellRestoreFocused(cellPosition: CellPosition): boolean {
+        if (this.restoredFocusedCellPosition == null) { return false; }
+
+        return this.restoredFocusedCellPosition.column === cellPosition.column &&
+            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+    }
+    public isRowRestoreFocused(rowIndex: number, floating?: string | null): boolean {
+        if (this.restoredFocusedCellPosition == null) { return false; }
+
+        return this.restoredFocusedCellPosition.rowIndex === rowIndex && this.restoredFocusedCellPosition.rowPinned === makeNull(floating);
+    }
+
+    public setRestoreFocusedCell(params: CellPosition): void {
+        this.restoredFocusedCellPosition = params;
+    }
+
     private getFocusEventParams(): CommonCellFocusParams {
         const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
 
@@ -243,6 +271,7 @@ export class FocusService extends BeanStub {
     }
 
     public clearFocusedCell(): void {
+        this.restoredFocusedCellPosition = null;
         if (this.focusedCellPosition == null) { return; }
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
