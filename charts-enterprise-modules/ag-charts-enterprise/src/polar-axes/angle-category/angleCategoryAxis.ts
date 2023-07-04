@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 import { AngleCrossLine } from './angleCrossLine';
 
-const { ChartAxisDirection } = _ModuleSupport;
+const { ChartAxisDirection, assignJsonApplyConstructedArray } = _ModuleSupport;
 const { BandScale } = _Scale;
 const { Path, Text } = _Scene;
 const { isNumberEqual, toRadians } = _Util;
@@ -31,6 +31,10 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
 
     get direction() {
         return ChartAxisDirection.X;
+    }
+
+    protected assignCrossLineArrayConstructor(crossLines: _ModuleSupport.CrossLine[]) {
+        assignJsonApplyConstructedArray(crossLines, AngleCrossLine);
     }
 
     update() {

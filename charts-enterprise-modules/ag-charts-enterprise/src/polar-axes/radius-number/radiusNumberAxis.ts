@@ -1,7 +1,17 @@
 import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } from 'ag-charts-community';
 import { RadiusCrossLine } from './radiusCrossLine';
 
-const { AND, ChartAxisDirection, Default, GREATER_THAN, Layers, LESS_THAN, NUMBER_OR_NAN, Validate } = _ModuleSupport;
+const {
+    AND,
+    assignJsonApplyConstructedArray,
+    ChartAxisDirection,
+    Default,
+    GREATER_THAN,
+    Layers,
+    LESS_THAN,
+    NUMBER_OR_NAN,
+    Validate,
+} = _ModuleSupport;
 const { LinearScale } = _Scale;
 const { Arc, Caption, Group, Path, Selection } = _Scene;
 const { normalisedExtent } = _Util;
@@ -48,6 +58,10 @@ export class RadiusNumberAxis extends _ModuleSupport.PolarAxis {
 
     get direction() {
         return ChartAxisDirection.Y;
+    }
+
+    protected assignCrossLineArrayConstructor(crossLines: _ModuleSupport.CrossLine[]) {
+        assignJsonApplyConstructedArray(crossLines, RadiusCrossLine);
     }
 
     update(primaryTickCount?: number) {

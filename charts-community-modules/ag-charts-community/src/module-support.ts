@@ -6,6 +6,7 @@ export * from './util/navigator-module';
 export * from './util/proxy';
 export * from './chart/background/backgroundModule';
 export * from './chart/chartAxisDirection';
+export { assignJsonApplyConstructedArray } from './chart/chartOptions';
 export * from './chart/data/dataModel';
 export * from './chart/data/dataController';
 export * from './chart/updateService';
