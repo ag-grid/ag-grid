@@ -25,6 +25,6 @@ const mjsProcessing = () => {
 const cleanup = () => del([`${DIST_FOLDER}/**/*.js`]);
 
 gulp.task('copy-license-files', copyLicenseFiles);
-gulp.task('build-prod', series(mjsProcessing, cleanup));
+gulp.task('mjs-processing', series(mjsProcessing, cleanup));
 
 

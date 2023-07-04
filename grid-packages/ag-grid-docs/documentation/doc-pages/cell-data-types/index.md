@@ -54,7 +54,9 @@ Inferring cell data types only works for the Client-Side Row Model. For other ro
 
 Each of the pre-defined cell data types work by setting specific column definition properties with default values/callbacks. This enables the different grid features to work correctly for that data type.
 
-The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#custom-column-types), but will be overridden by any [Column Type](/column-definitions/#custom-column-types) properties as well as properties set directly on individual column definitions.
+The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#custom-column-types), but will be overridden by any [Column Type](/column-definitions/#custom-column-types) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
+
+If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](/column-definitions/#custom-column-types), and assigning the column type to the [Default Column Definition](/column-definitions/#custom-column-types).
 
 All the cell data types set the following (unless specified):
 - A [Value Parser](/value-parsers/) to convert from `string` to the relevant data type.

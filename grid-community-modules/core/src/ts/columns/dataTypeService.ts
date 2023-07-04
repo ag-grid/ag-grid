@@ -560,20 +560,27 @@ export class DataTypeService extends BeanStub {
         }
         const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();
+        const mergeFilterParams = (params: any) => {
+            const { filterParams } = colDef;
+            colDef.filterParams = typeof filterParams === 'object' ? {
+                ...filterParams,
+                ...params
+            } : params;
+        }
         colDef.useValueFormatterForExport = true;
         colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: (a: string, b: string) => {
                             const valA = a == null ? 0 : parseInt(a);
                             const valB = b == null ? 0 : parseInt(b);
                             if (valA === valB) return 0;
                             return valA > valB ? 1 : -1;
                         },
-                    };
+                    });
                 }
                 break;
             }
@@ -582,16 +589,16 @@ export class DataTypeService extends BeanStub {
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
                 colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) => !!params.colDef.editable && params.event.key === KeyCode.SPACE;
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             if (!exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
                         }
-                    };
+                    });
                 } else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         maxNumConditions: 1,
                         filterOptions: [
                             'empty',
@@ -608,7 +615,7 @@ export class DataTypeService extends BeanStub {
                                 numberOfInputs: 0,
                             },
                         ]
-                    };
+                    });
                 }
                 break;
             }
@@ -616,7 +623,7 @@ export class DataTypeService extends BeanStub {
                 colDef.cellEditor = 'agDateCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -629,7 +636,7 @@ export class DataTypeService extends BeanStub {
                             }
                             return pathKey ?? translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -638,7 +645,7 @@ export class DataTypeService extends BeanStub {
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
                 const convertToDate = this.getDateParserFunction();
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -655,16 +662,16 @@ export class DataTypeService extends BeanStub {
                             }
                             return pathKey ?? translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 } else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: (filterDate: Date, cellValue: string | undefined) => {
                             const cellAsDate = convertToDate(cellValue)!;
                             if (cellValue == null || cellAsDate < filterDate) { return -1; }
                             if (cellAsDate > filterDate) { return 1; }
                             return 0;
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -685,12 +692,12 @@ export class DataTypeService extends BeanStub {
                 };
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 } else {
                     colDef.filterValueGetter = (params: ValueGetterParams) => formatValue(
                         params.column,
