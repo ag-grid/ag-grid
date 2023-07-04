@@ -643,6 +643,7 @@ export interface ValueGetterParams<TData = any, TValue = any> extends BaseColDef
 export interface ValueGetterFunc<TData = any, TValue = any> {
     (params: ValueGetterParams<TData, TValue>): TValue | null | undefined;
 }
+export type HeaderLocation = 'chart' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | null;
 export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/
@@ -652,7 +653,7 @@ export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGr
     /** Original column group if applicable */
     providedColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
-    location: string | null;
+    location: HeaderLocation;
 }
 export interface HeaderValueGetterFunc<TData = any, TValue = any> {
     (params: HeaderValueGetterParams<TData, TValue>): string;
