@@ -484,7 +484,7 @@ export { ColumnApi } from "./columns/columnApi";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
-export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
+export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 
