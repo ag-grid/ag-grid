@@ -7,9 +7,11 @@ import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
 import { IRowNode } from '../interfaces/iRowNode';
 
+export type TooltipLocation = 'cell' | 'columnToolPanelColumn' | 'columnToolPanelColumnGroup' | 'filterToolPanelColumnGroup' | 'header' | 'headerGroup' | 'menu' | 'pivotColumnsList' | 'rowGroupColumnsList' | 'setFilterValue' | 'valueColumnsList' | 'UNKNOWN';
+
 export interface ITooltipParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
-    location: string;
+    location: TooltipLocation;
     /** The value to be rendered by the tooltip. */
     value?: TValue | null;
     /** The formatted value to be rendered by the tooltip. */
