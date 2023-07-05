@@ -5,7 +5,7 @@ import { Diamond } from './diamond';
 import { Heart } from './heart';
 import { Plus } from './plus';
 import { Triangle } from './triangle';
-import { Marker } from './marker';
+import type { Marker } from './marker';
 
 // This function is in its own file because putting it into SeriesMarker makes the Legend
 // suddenly aware of the series (it's an agnostic component), and putting it into Marker

@@ -1,10 +1,11 @@
-import { Chart, TransferableResources } from './chart';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { ChartAxis } from './chartAxis';
+import type { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
-import { BBox } from '../scene/bbox';
-import { AgCartesianAxisPosition } from './agChartOptions';
+import type { BBox } from '../scene/bbox';
+import type { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
 import { toRadians } from '../util/angle';
 
@@ -28,10 +29,8 @@ export class CartesianChart extends Chart {
         const { seriesRect, visibility, clipSeries } = this.updateAxes(shrinkRect);
         this.seriesRoot.visible = visibility.series;
         this.seriesRect = seriesRect;
-        this.series.forEach((series) => {
-            series.rootGroup.translationX = Math.floor(seriesRect.x);
-            series.rootGroup.translationY = Math.floor(seriesRect.y);
-        });
+        this.seriesRoot.translationX = Math.floor(seriesRect.x);
+        this.seriesRoot.translationY = Math.floor(seriesRect.y);
 
         const { seriesRoot, seriesAreaPadding } = this;
 
@@ -56,7 +55,7 @@ export class CartesianChart extends Chart {
         });
 
         if (clipSeries) {
-            seriesRoot.setClipRectInGroupCoordinateSpace(seriesPaddedRect);
+            seriesRoot.setClipRectInGroupCoordinateSpace(seriesRect);
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace();
         }

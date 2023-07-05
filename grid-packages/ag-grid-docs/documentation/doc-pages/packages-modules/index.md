@@ -23,6 +23,7 @@ If you want to minimize your bundle size then you should definitely use `modules
         justify-content: center;
         flex-wrap: wrap;
         gap: 1.5rem;
+        margin-bottom: 6rem;
     }
 
     .pm-outer .tile {
@@ -31,7 +32,6 @@ If you want to minimize your bundle size then you should definitely use `modules
         justify-content: center;
         align-items: center;
         width: 14rem;
-        height: 18rem;
         padding: 1rem;
         background-color: var(--ghost-blue);
         border-radius: var(--border-radius);
@@ -48,6 +48,10 @@ If you want to minimize your bundle size then you should definitely use `modules
         max-width: 6rem;
         margin-top: 3rem;
         margin-bottom: 3rem;
+    }
+
+    .pm-outer .button {
+        display: inline-block;
     }
 </style>
 

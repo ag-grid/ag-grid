@@ -312,7 +312,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
-export * from "./utils";
+export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
@@ -377,6 +377,7 @@ export {
     SuppressNavigableCallbackParams,
     HeaderCheckboxSelectionCallbackParams,
     HeaderCheckboxSelectionCallback,
+    HeaderLocation,
     ColumnsMenuParams,
     ColumnMenuTab,
     HeaderClassParams,
@@ -483,7 +484,7 @@ export { ColumnApi } from "./columns/columnApi";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
-export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
+export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 

@@ -135,7 +135,7 @@ export class TabbedLayout extends Component {
         const eHeaderButton = document.createElement('span');
 
         setAriaRole(eHeaderButton, 'tab');
-        eHeaderButton.setAttribute('tabIndex', '-1');
+        eHeaderButton.setAttribute('tabindex', '-1');
         eHeaderButton.appendChild(item.title);
         eHeaderButton.classList.add('ag-tab');
 

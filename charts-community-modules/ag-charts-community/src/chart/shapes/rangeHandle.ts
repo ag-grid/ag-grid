@@ -1,6 +1,6 @@
 import { Path } from '../../scene/shape/path';
 import { BBox } from '../../scene/bbox';
-import { ShapeLineCap } from '../../scene/shape/shape';
+import type { ShapeLineCap } from '../../scene/shape/shape';
 import { LINE_CAP, NUMBER, COLOR_STRING, Validate } from '../../util/validation';
 
 export class RangeHandle extends Path {

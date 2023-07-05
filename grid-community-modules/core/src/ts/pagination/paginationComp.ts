@@ -40,10 +40,15 @@ export class PaginationComp extends Component {
     protected postConstruct(): void {
         const isRtl = this.gridOptionsService.is('enableRtl');
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
-        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService)!);
-        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService)!);
-        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService)!);
+
+        const { btFirst, btPrevious, btNext, btLast } = this;
+
+        this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
+
+        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
+        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService)!);
+        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService)!);
+        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService)!);
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
@@ -141,16 +146,16 @@ export class PaginationComp extends Component {
                     <span id="ag-${compId}-row-count" ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel" role="presentation">
-                    <div ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}" tabindex="0"></div>
-                    <div ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}" tabindex="0"></div>
+                    <div ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
+                    <div ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
                     <span class="ag-paging-description" role="status">
                         <span id="ag-${compId}-start-page">${strPage}</span>
                         <span id="ag-${compId}-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>
                         <span id="ag-${compId}-of-page-number" ref="lbTotal" class="ag-paging-number"></span>
                     </span>
-                    <div ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}" tabindex="0"></div>
-                    <div ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}" tabindex="0"></div>
+                    <div ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}"></div>
+                    <div ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}"></div>
                 </span>
             </div>`;
     }

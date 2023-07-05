@@ -1,14 +1,13 @@
 import { BaseManager } from './baseManager';
-import { InteractionManager } from './interactionManager';
-import {
-    animate as baseAnimate,
+import type { InteractionManager } from './interactionManager';
+import type {
     AnimationControls,
     AnimationOptions as BaseAnimationOptions,
     Driver,
-    tween,
     TweenControls,
     TweenOptions,
 } from '../../motion/animate';
+import { animate as baseAnimate, tween } from '../../motion/animate';
 import { Logger } from '../../util/logger';
 
 type AnimationId = string;
@@ -141,6 +140,8 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     ): AnimationControls {
         const state = props.map((prop) => prop.from);
 
+        let playBatch = 0;
+        let stopBatch = 0;
         let updateBatch = 0;
         let completeBatch = 0;
 
@@ -152,6 +153,18 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             }
         };
 
+        const onPlay = () => {
+            if (++playBatch >= props.length) {
+                opts.onPlay?.();
+            }
+        };
+
+        const onStop = () => {
+            if (++stopBatch >= props.length) {
+                opts.onStop?.();
+            }
+        };
+
         const onComplete = () => {
             if (++completeBatch >= props.length) {
                 opts.onComplete?.();
@@ -160,7 +173,14 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
         const drivers = props.map((prop, index) => {
             const inner_id = `${id}-${index}`;
-            return this.animate(inner_id, { ...opts, ...prop, onUpdate: onUpdate(index), onComplete: onComplete });
+            return this.animate(inner_id, {
+                ...opts,
+                ...prop,
+                onUpdate: onUpdate(index),
+                onPlay,
+                onStop,
+                onComplete,
+            });
         });
 
         const controls = {
@@ -193,8 +213,31 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             return this.controllers[id];
         }
 
+        const onComplete = () => {
+            delete this.debouncers[id];
+            opts.onComplete?.();
+        };
+
         this.debouncers[id] = Date.now();
-        return this.animate(id, opts);
+        return this.animate(id, { ...opts, onComplete });
+    }
+
+    public debouncedAnimateMany<T>(
+        id: AnimationId,
+        props: Array<Pick<AnimationOptions<T>, 'from' | 'to'>>,
+        opts: AnimationManyOptions<T>
+    ): AnimationControls {
+        if (this.debouncers[id] && Date.now() - this.debouncers[id] < (opts.duration ?? DEBOUNCE_DELAY)) {
+            return this.controllers[id];
+        }
+
+        const onComplete = () => {
+            delete this.debouncers[id];
+            opts.onComplete?.();
+        };
+
+        this.debouncers[id] = Date.now();
+        return this.animateMany(id, props, { ...opts, onComplete });
     }
 
     public tween<T>(opts: TweenOptions<T>): TweenControls<T> {

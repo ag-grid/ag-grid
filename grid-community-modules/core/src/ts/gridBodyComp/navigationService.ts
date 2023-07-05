@@ -70,7 +70,7 @@ export class NavigationService extends BeanStub {
         });
     }
 
-    public handlePageScrollingKey(event: KeyboardEvent): boolean {
+    public handlePageScrollingKey(event: KeyboardEvent, fromFullWidth = false): boolean {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
@@ -103,19 +103,10 @@ export class NavigationService extends BeanStub {
                 }
                 break;
             case KeyCode.PAGE_DOWN:
-                if (!currentCell) { return false; }
-                // handle page up and page down when ctrl & alt are NOT pressed
-                if (!ctrl && !alt) {
-                    this.onPageDown(currentCell);
-                    processed = true;
-                }
-                break;
             case KeyCode.PAGE_UP:
-                if (!currentCell) { return false; }
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
-                    this.onPageUp(currentCell);
-                    processed = true;
+                    processed = this.handlePageUpDown(key, currentCell, fromFullWidth);
                 }
                 break;
         }
@@ -125,6 +116,26 @@ export class NavigationService extends BeanStub {
         }
 
         return processed;
+    }
+
+    private handlePageUpDown(
+        key: string,
+        currentCell: CellPosition | null,
+        fromFullWidth: boolean
+    ): boolean {
+        if (fromFullWidth) {
+            currentCell = this.focusService.getFocusedCell();
+        }
+
+        if (!currentCell) { return false; }
+
+        if (key === KeyCode.PAGE_UP) {
+            this.onPageUp(currentCell);
+        } else {
+            this.onPageDown(currentCell);
+        }
+
+        return true;
     }
 
     private navigateTo(navigateParams: NavigateParams): void {

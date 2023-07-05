@@ -1,16 +1,17 @@
-import { Path } from '../../../scene/shape/path';
+import type { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
+import type { Selection } from '../../../scene/selection';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
-import { Text } from '../../../scene/shape/text';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { Text } from '../../../scene/shape/text';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -19,9 +20,9 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { Marker } from '../../marker/marker';
+import type { Marker } from '../../marker/marker';
 import { NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_STRING, OPT_COLOR_STRING, Validate } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
@@ -29,9 +30,9 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { UngroupedDataItem } from '../../data/dataModel';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
+import type { UngroupedDataItem } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -132,8 +133,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
-                valueProperty(xKey, isContinuousX, { id: 'xValue' }),
-                valueProperty(yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
+                valueProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                valueProperty(this, yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
             ],
             dataVisible: this.visible,
         });
@@ -148,16 +149,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        const xDef = dataModel.resolveProcessedDataDefById(`xValue`);
+        const xDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
         if (direction === ChartAxisDirection.X) {
-            const domain = dataModel.getDomain(`xValue`, processedData);
-            if (xDef?.valueType === 'category') {
+            const domain = dataModel.getDomain(this, `xValue`, 'value', processedData);
+            if (xDef?.def.type === 'value' && xDef.def.valueType === 'category') {
                 return domain;
             }
 
             return this.fixNumericExtent(extent(domain), xAxis);
         } else {
-            const domain = dataModel.getDomain(`yValue`, processedData);
+            const domain = dataModel.getDomain(this, `yValue`, 'value', processedData);
             return this.fixNumericExtent(domain as any, yAxis);
         }
     }
@@ -186,8 +187,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const nodeData: LineNodeDatum[] = new Array(processedData.data.length);
         const size = markerEnabled ? markerSize : 0;
 
-        const xIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`)?.index ?? -1;
-        const yIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`)?.index ?? -1;
+        const xIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+        const yIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
@@ -206,6 +207,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 if (isNaN(x)) {
                     prevXInRange = undefined;
                     moveTo = true;
+                    nextPoint = undefined;
                     continue;
                 }
                 const tolerance = (xScale.bandwidth ?? markerSize * 0.5 + (strokeWidth ?? 0)) + 1;

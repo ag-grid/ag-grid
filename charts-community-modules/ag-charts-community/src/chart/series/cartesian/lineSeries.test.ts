@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChartOptions } from '../../agChartOptions';
+import type { AgChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
-import { Chart } from '../../chart';
+import type { Chart } from '../../chart';
 import {
     DATA_FRACTIONAL_LOG_AXIS,
     DATA_INVALID_DOMAIN_LOG_AXIS,
@@ -11,6 +11,7 @@ import {
     DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
+import type { TestCase } from '../../test/utils';
 import {
     repeat,
     waitForChartStability,
@@ -18,7 +19,6 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    TestCase,
     prepareTestOptions,
     spyOnAnimationManager,
 } from '../../test/utils';

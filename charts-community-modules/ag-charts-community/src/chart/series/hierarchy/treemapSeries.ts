@@ -1,6 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
+import type { SeriesNodeDatum } from '../series';
+import { SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -8,8 +9,8 @@ import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { ChartAxisDirection } from '../../chartAxisDirection';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { toFixed, isEqual } from '../../../util/number';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
@@ -27,7 +28,7 @@ import {
     Validate,
     TEXT_WRAP,
 } from '../../../util/validation';
-import {
+import type {
     AgTreemapSeriesLabelsOptions,
     AgTreemapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
@@ -791,8 +792,6 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let labelStyle: Label;
             let wrappedText = '';
             if (datum.isLeaf) {
-                labelStyle = labels.small;
-
                 const pickStyle = () => {
                     const availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
                     const labelStyles = [labels.large, labels.medium, labels.small];

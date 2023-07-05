@@ -65,4 +65,4 @@ agGrid.ModuleRegistry.register(SideBarModule.SideBarModule);
 agGrid.ModuleRegistry.register(SparklinesModule.SparklinesModule);
 agGrid.ModuleRegistry.register(StatusBarModule.StatusBarModule);
 agGrid.ModuleRegistry.register(ViewportRowModelModule.ViewportRowModelModule);
-agGrid.ModuleRegistry.setIsBundled();
+agGrid.ModuleRegistry.__setIsBundled();

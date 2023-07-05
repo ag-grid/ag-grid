@@ -1,11 +1,14 @@
-import { HdpiCanvas, Size } from '../canvas/hdpiCanvas';
-import { Node, RedrawType, RenderContext, ZIndexSubOrder } from './node';
+import type { Size } from '../canvas/hdpiCanvas';
+import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import type { Node, RenderContext, ZIndexSubOrder } from './node';
+import { RedrawType } from './node';
 import { createId } from '../util/id';
 import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
-import { SceneDebugLevel, SceneDebugOptions } from './sceneDebugOptions';
+import type { SceneDebugOptions } from './sceneDebugOptions';
+import { SceneDebugLevel } from './sceneDebugOptions';
 import { Logger } from '../util/logger';
 
 interface SceneOptions {
@@ -556,11 +559,21 @@ export class Scene {
                     const key = [
                         `${treeNodeName ?? '<unknown>'}`,
                         `z: ${zIndex}`,
-                        zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                        zIndexSubOrder &&
+                            `zo: ${zIndexSubOrder
+                                .map((v: any) => (typeof v === 'function' ? `${v()} (fn)` : v))
+                                .join(' / ')}`,
+                        childNode.parent?.isVirtual === true && `(virtual parent)`,
                     ]
                         .filter((v) => !!v)
                         .join(' ');
-                    result[key] = childTree;
+
+                    let selectedKey = key;
+                    let index = 1;
+                    while (result[selectedKey] != null && index < 100) {
+                        selectedKey = `${key} (${index++})`;
+                    }
+                    result[selectedKey] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };

@@ -12,7 +12,7 @@
         transpiler: "ts",
         typescriptOptions: {
             // Copy of compiler options in standard tsconfig.json
-            target: "es5",
+            target: "es2015",
             module: "system", //gets rid of console warning
             moduleResolution: "node",
             sourceMap: true,

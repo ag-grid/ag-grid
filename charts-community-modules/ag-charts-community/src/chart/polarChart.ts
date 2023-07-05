@@ -1,8 +1,10 @@
-import { Chart, TransferableResources } from './chart';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
 import { PolarSeries } from './series/polar/polarSeries';
+import { toRadians } from '../util/angle';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
-import { SeriesNodeDatum } from './series/series';
+import type { SeriesNodeDatum } from './series/series';
 import { PieSeries } from './series/polar/pieSeries';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { PolarAxis } from './axis/polarAxis';
@@ -42,7 +44,8 @@ export class PolarChart extends Chart {
     protected updateAxes(cx: number, cy: number, radius: number) {
         this.axes.forEach((axis) => {
             if (axis.direction === ChartAxisDirection.X) {
-                axis.range = [-Math.PI / 2, (3 * Math.PI) / 2];
+                const rotation = toRadians(axis.rotation ?? 0);
+                axis.range = [-Math.PI / 2 + rotation, (3 * Math.PI) / 2 + rotation];
                 axis.gridLength = radius;
                 axis.translation.x = cx;
                 axis.translation.y = cy;

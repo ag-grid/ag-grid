@@ -205,6 +205,20 @@ export class Component extends BeanStub {
         }
     }
 
+    protected activateTabIndex(elements?: Element[]): void {
+        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+
+        if (!elements) {
+            elements = [];
+        }
+
+        if (!elements.length) {
+            elements.push(this.getGui());
+        }
+
+        elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
+    }
+
     public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }): void {
         const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
@@ -244,7 +258,7 @@ export class Component extends BeanStub {
             // the element. otherwise no way of components putting ref=xxx on the top
             // level element as querySelector only looks at children.
             const topLevelRefMatch = querySelector.refSelector
-                && this.eGui.getAttribute('ref') === querySelector.refSelector;
+                && this.getAttribute('ref') === querySelector.refSelector;
             if (topLevelRefMatch) {
                 setResult(this.eGui);
             } else {

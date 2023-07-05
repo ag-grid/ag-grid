@@ -10,7 +10,7 @@ import {
     TEXT_WRAP,
     OPT_FUNCTION,
 } from '../../util/validation';
-import {
+import type {
     AgAxisCaptionFormatterParams,
     AgAxisCaptionOptions,
     FontStyle,

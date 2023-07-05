@@ -385,6 +385,10 @@ const CellComp = (props: {
         cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
+
+        if (cssClassManager.containsCssClass('ag-cell-focus')) {
+            eGui.current.focus({ preventScroll: true });
+        }
     });
 
     const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);

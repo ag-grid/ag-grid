@@ -1,5 +1,5 @@
 import { _ModuleSupport, _Util, _Scene } from 'ag-charts-community';
-import { BackgroundImage } from './backgroundImage';
+import type { BackgroundImage } from './backgroundImage';
 
 const { ActionOnSet, Validate, ProxyPropertyOnWrite, BOOLEAN, OPT_COLOR_STRING, Layers } = _ModuleSupport;
 const { Group, Rect } = _Scene;
@@ -34,14 +34,13 @@ export class Background extends _ModuleSupport.BaseModuleInstance implements _Mo
 
         this.updateService = ctx.updateService;
 
-        this.node = new Group({ name: 'background' });
-        this.node.zIndex = Layers.SERIES_BACKGROUND_ZINDEX;
+        this.node = new Group({ name: 'background', zIndex: Layers.SERIES_BACKGROUND_ZINDEX });
         this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
         this.fill = 'white';
         this.visible = true;
 
-        ctx.scene.root?.insertBefore(this.node, ctx.scene.root.children[0]);
+        ctx.scene.root?.appendChild(this.node);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.node));
 
         const layoutHandle = ctx.layoutService.addListener('layout-complete', this.onLayoutComplete);

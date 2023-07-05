@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll, beforeEach, afterEach, jest } from '@jest/globals';
-import { AgCartesianChartOptions, AgChartOptions, AgLineSeriesOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartOptions, AgLineSeriesOptions } from '../agChartOptions';
 import { setupModules } from '../factory/setupModules';
 import * as examples from '../test/examples';
 import { ChartTheme } from '../themes/chartTheme';

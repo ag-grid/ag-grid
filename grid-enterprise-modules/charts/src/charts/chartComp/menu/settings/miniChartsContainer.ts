@@ -29,7 +29,7 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
-} from "./miniCharts";
+} from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
 const miniChartMapping = {
     columnGroup: {

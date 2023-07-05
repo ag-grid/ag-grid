@@ -146,9 +146,10 @@ gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-//                                                               this,         skipFrameworks,   skipExampleFormatting, chartsOnly
-gulp.task('serve',                  require('./dev-server').bind(null, false,           true, false, false));
-gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true, false, false));
-gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false, false, false));
-gulp.task('serve-charts-core-only', require('./dev-server').bind(null, true,            true, true, false));
-gulp.task('serve-website-only',     require('./dev-server').bind(null, false,           true, false, true));
+//                                                                      skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration,
+gulp.task('serve',                  require('./dev-server').bind(null, false,           true,                  false,       false,                false));
+gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true,                  false,       false,                true));
+gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false,                 false,       false,                false));
+gulp.task('serve-charts-core-only', require('./dev-server').bind(null, true,            true,                  true,        false,                false));
+gulp.task('serve-website-only',     require('./dev-server').bind(null, false,           true,                  false,       true,                 false));
+gulp.task('serve-framework-only',   require('./dev-server').bind(null, false,           true,                  false,       true,                 true));

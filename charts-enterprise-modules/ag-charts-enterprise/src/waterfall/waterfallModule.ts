@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale } from 'ag-charts-community';
+import type { _ModuleSupport } from 'ag-charts-community';
+import { _Scale } from 'ag-charts-community';
 import { WaterfallColumnSeries, WaterfallBarSeries } from './waterfallSeries';
 import { WATERFALL_COLUMN_DEFAULTS, WATERFALL_BAR_DEFAULTS } from './waterfallDefaults';
 import { WATERFALL_SERIES_THEME } from './waterfallThemes';

@@ -1,13 +1,13 @@
 import { Group } from '../../scene/group';
-import { Node } from '../../scene/node';
-import { Marker } from '../marker/marker';
+import type { Node } from '../../scene/node';
+import type { Marker } from '../marker/marker';
 import { Triangle } from '../marker/triangle';
 import { Text } from '../../scene/shape/text';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { getMarker } from '../marker/util';
 import { createId } from '../../util/id';
-import { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
-import { CursorManager } from '../interaction/cursorManager';
+import type { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
+import type { CursorManager } from '../interaction/cursorManager';
 import { ChartUpdateType } from '../chartUpdateType';
 import {
     COLOR_STRING,
@@ -19,7 +19,7 @@ import {
     STRING,
     Validate,
 } from '../../util/validation';
-import { AgChartOrientation, FontStyle, FontWeight } from '../agChartOptions';
+import type { AgChartOrientation, FontStyle, FontWeight } from '../agChartOptions';
 
 class PaginationLabel {
     @Validate(COLOR_STRING)

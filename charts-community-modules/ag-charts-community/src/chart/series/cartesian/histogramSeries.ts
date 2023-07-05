@@ -1,24 +1,14 @@
-import { Selection } from '../../../scene/selection';
+import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text } from '../../../scene/shape/text';
-import { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesTooltip,
-    Series,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-    valueProperty,
-    keyProperty,
-} from '../series';
+import type { Text } from '../../../scene/shape/text';
+import type { DropShadow } from '../../../scene/dropShadow';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import {
-    CartesianSeries,
-    CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
-    CartesianSeriesNodeDoubleClickEvent,
-} from './cartesianSeries';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import ticks, { tickStep } from '../../../util/ticks';
@@ -35,7 +25,7 @@ import {
     predicateWithMessage,
     OPT_STRING,
 } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgTooltipRendererResult,
     AgHistogramSeriesOptions,
@@ -43,12 +33,13 @@ import {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
-import { AggregatePropertyDefinition, fixNumericExtent, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import type { AggregatePropertyDefinition, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import { fixNumericExtent } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/moduleContext';
-import { DataController } from '../../data/dataController';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -220,26 +211,26 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     async processData(dataController: DataController) {
         const { xKey, yKey, data, areaPlot, aggregation } = this;
 
-        const props: PropertyDefinition<any>[] = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
+        const props: PropertyDefinition<any>[] = [keyProperty(this, xKey, true), SORT_DOMAIN_GROUPS];
         if (yKey) {
-            let aggProp: AggregatePropertyDefinition<any, any, any> = groupCount();
+            let aggProp: AggregatePropertyDefinition<any, any, any> = groupCount(this, 'groupCount');
 
             if (aggregation === 'count') {
                 // Nothing to do.
             } else if (aggregation === 'sum') {
-                aggProp = groupSum([yKey]);
+                aggProp = groupSum(this, 'groupAgg');
             } else if (aggregation === 'mean') {
-                aggProp = groupAverage([yKey]);
+                aggProp = groupAverage(this, 'groupAgg');
             }
             if (areaPlot) {
-                aggProp = area([yKey], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
-            props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
+            props.push(valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
         } else {
-            let aggProp = groupCount();
+            let aggProp = groupCount(this, 'groupAgg');
 
             if (areaPlot) {
-                aggProp = area([], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
             props.push(aggProp);
         }
@@ -290,13 +281,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData } = this;
+        const { processedData, dataModel } = this;
 
-        if (!processedData) return [];
+        if (!processedData || !dataModel) return [];
 
-        const {
-            domain: { aggValues: [yDomain] = [] },
-        } = processedData;
+        const yDomain = dataModel.getDomain(this, `groupAgg`, 'aggregate', processedData);
         const xDomainMin = this.calculatedBins?.[0][0];
         const xDomainMax = this.calculatedBins?.[(this.calculatedBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
@@ -327,7 +316,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
+        if (!this.visible || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
         }
 

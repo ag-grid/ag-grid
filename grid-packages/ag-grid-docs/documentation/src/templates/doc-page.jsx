@@ -42,12 +42,19 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
     }
 
     const ast = page.htmlAst;
+    // Correctly handle the 'false' string
+    const parseBoolean = (value) => {
+        if (!!value) {
+            return value === 'true';
+        }
+        return undefined
+    };
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
         // Update casing of props
         exampleImportType: props.exampleimporttype ?? undefined,
-        useTypescript: props.usetypescript ?? undefined,
+        useTypescript: parseBoolean(props.usetypescript),
         framework,
         pageName,
         library,

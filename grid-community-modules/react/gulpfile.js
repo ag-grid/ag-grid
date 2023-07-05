@@ -15,6 +15,7 @@ const clean = require('gulp-clean');
 const link = require('lnk').sync;
 const os = require('os');
 const replace = require('gulp-replace');
+const rename = require('gulp-rename');
 
 const WINDOWS = /^win/.test(os.platform());
 
@@ -42,6 +43,18 @@ function tscTask() {
         tsResult.dts.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(replace(/(import|export)(.*['"]\..*)(['"].*)/gi, (line) => {
+                const regexp = /(import|export)(.*['"]\..*)(['"].*)/gi;
+                const matches = [...line.matchAll(regexp)][0];
+                return `${matches[1]}${matches[2]}.mjs${matches[3]}`
+            }))
+            .pipe(rename((path) => {
+                let { extname} = path;
+                if(extname === '.js') {
+                    path.extname = extname.replace('.js', '.mjs')
+                }
+                return path;
+            }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('lib'))
     ]);

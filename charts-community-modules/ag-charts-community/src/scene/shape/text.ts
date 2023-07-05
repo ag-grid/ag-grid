@@ -1,8 +1,9 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
-import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-import { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
+import type { RenderContext } from '../node';
+import { RedrawType, SceneChangeDetection } from '../node';
+import type { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
 
 export interface TextSizeProperties {
     fontFamily: string;

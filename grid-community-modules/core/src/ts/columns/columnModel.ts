@@ -1,6 +1,6 @@
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column, ColumnPinnedType } from '../entities/column';
-import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams } from '../entities/colDef';
+import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
 import { IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
@@ -281,6 +281,9 @@ export class ColumnModel extends BeanStub {
     }
 
     private onAutoGroupColumnDefChanged() {
+        // Possible for update to be called before columns are present in which case there is nothing to do here.
+        if (!this.columnDefs) { return; }
+
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
@@ -2647,7 +2650,7 @@ export class ColumnModel extends BeanStub {
         return columnMatches || colDefMatches || idMatches;
     }
 
-    public getDisplayNameForColumn(column: Column | null, location: string | null, includeAggFunc = false): string | null {
+    public getDisplayNameForColumn(column: Column | null, location: HeaderLocation, includeAggFunc = false): string | null {
         if (!column) { return null; }
 
         const headerName: string | null = this.getHeaderName(column.getColDef(), column, null, null, location);
@@ -2662,7 +2665,7 @@ export class ColumnModel extends BeanStub {
     public getDisplayNameForProvidedColumnGroup(
         columnGroup: ColumnGroup | null,
         providedColumnGroup: ProvidedColumnGroup | null,
-        location: string | null
+        location: HeaderLocation
     ): string | null {
         const colGroupDef = providedColumnGroup ? providedColumnGroup.getColGroupDef() : null;
 
@@ -2673,7 +2676,7 @@ export class ColumnModel extends BeanStub {
         return null;
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string | null {
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string | null {
         return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
     }
 
@@ -2683,7 +2686,7 @@ export class ColumnModel extends BeanStub {
         column: Column | null,
         columnGroup: ColumnGroup | null,
         providedColumnGroup: ProvidedColumnGroup | null,
-        location: string | null
+        location: HeaderLocation
     ): string | null {
         const headerValueGetter = colDef.headerValueGetter;
 

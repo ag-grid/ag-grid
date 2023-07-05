@@ -18,6 +18,7 @@ import {
     RefSelector,
     WithoutGridCommon
 } from "@ag-grid-community/core";
+import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";
 
@@ -36,18 +37,22 @@ export class ToolPanelColumnComp extends Component {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
+    private column: Column;
+    private columnDept: number;
     private eDragHandle: Element;
     private displayName: string | null;
     private processingColumnStateChange = false;
 
     constructor(
-        private readonly column: Column,
-        private readonly columnDept: number,
+        modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement
     ) {
         super();
+        this.column = modelItem.getColumn();
+        this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
     }
 
     @PostConstruct
@@ -63,7 +68,6 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 

@@ -1,4 +1,4 @@
-import { Component, Grid, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams } from "@ag-grid-community/core";
+import { Component, Grid, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
@@ -100,7 +100,8 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper
-            }
+            },
+            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
         });
 
         this.detailApi = gridOptions.api!;

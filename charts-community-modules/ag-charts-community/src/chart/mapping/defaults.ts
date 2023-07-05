@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import { NumberAxis } from '../axis/numberAxis';
 import { CategoryAxis } from '../axis/categoryAxis';
 

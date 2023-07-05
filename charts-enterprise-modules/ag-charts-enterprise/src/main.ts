@@ -1,13 +1,12 @@
-import {
-    AgChart,
-    AgChartOptions as AgCommunityChartOptions,
-    AgChartInstance,
-    _ModuleSupport,
-} from 'ag-charts-community';
+import type { AgChartOptions as AgCommunityChartOptions, AgChartInstance } from 'ag-charts-community';
+import { AgChart, _ModuleSupport } from 'ag-charts-community';
 
-import { AgAnimationOptions, AnimationModule } from './animation/main';
-import { AgChartBackgroundImage, BackgroundModule } from './background/main';
-import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
+import type { AgAnimationOptions } from './animation/main';
+import { AnimationModule } from './animation/main';
+import type { AgChartBackgroundImage } from './background/main';
+import { BackgroundModule } from './background/main';
+import type { AgContextMenuOptions } from './context-menu/main';
+import { ContextMenuModule } from './context-menu/main';
 import {
     AgCrosshairOptions,
     CrosshairModule,
@@ -25,23 +24,23 @@ import {
     AgHeatmapSeriesTooltipRendererParams,
     HeatmapModule,
 } from './heatmap/main';
-import { AgNavigatorOptions } from './navigator/main';
-import {
-    RadarLineModule,
-    AngleCategoryAxisModule,
-    RadiusNumberAxisModule,
-    AgRadarLineSeriesLabelFormatterParams,
-    AgRadarLineSeriesLabelOptions,
-    AgRadarLineSeriesMarker,
-    AgRadarLineSeriesMarkerFormat,
-    AgRadarLineSeriesMarkerFormatter,
-    AgRadarLineSeriesMarkerFormatterParams,
-    AgRadarLineSeriesOptions,
-    AgRadarLineSeriesTooltip,
-    AgRadarLineSeriesTooltipRendererParams,
-    AgAngleCategoryAxisOptions,
-    AgRadiusNumberAxisOptions,
-} from './radar-line/main';
+import type { AgNavigatorOptions } from './navigator/main';
+import { AngleCategoryAxisModule, AgAngleCategoryAxisOptions } from './polar-axes/angle-category/main';
+import { RadiusNumberAxisModule, AgRadiusNumberAxisOptions } from './polar-axes/radius-number/main';
+export { RadiusNumberAxisModule } from './polar-axes/radius-number/radiusNumberAxisModule';
+import type {
+    AgBaseRadarSeriesOptions,
+    AgRadarSeriesLabelFormatterParams,
+    AgRadarSeriesLabelOptions,
+    AgRadarSeriesMarker,
+    AgRadarSeriesMarkerFormat,
+    AgRadarSeriesMarkerFormatter,
+    AgRadarSeriesMarkerFormatterParams,
+    AgRadarSeriesTooltip,
+    AgRadarSeriesTooltipRendererParams,
+} from './polar-series/radar/typings';
+import { RadarLineModule, AgRadarLineSeriesOptions } from './polar-series/radar-line/main';
+import { RadarAreaModule, AgRadarAreaSeriesOptions } from './polar-series/radar-area/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 import {
     WaterfallBarModule,
@@ -62,6 +61,7 @@ _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
+_ModuleSupport.registerModule(RadarAreaModule);
 _ModuleSupport.registerModule(RadarLineModule);
 _ModuleSupport.registerModule(RadiusNumberAxisModule);
 _ModuleSupport.registerModule(WaterfallBarModule);
@@ -77,16 +77,19 @@ export {
     AgHeatmapSeriesTooltip,
     AgHeatmapSeriesTooltipRendererParams,
 };
+export { AgAngleCategoryAxisOptions, AgRadiusNumberAxisOptions };
 export {
-    AgRadarLineSeriesLabelFormatterParams,
-    AgRadarLineSeriesLabelOptions,
-    AgRadarLineSeriesMarker,
-    AgRadarLineSeriesMarkerFormat,
-    AgRadarLineSeriesMarkerFormatter,
-    AgRadarLineSeriesMarkerFormatterParams,
+    AgBaseRadarSeriesOptions,
     AgRadarLineSeriesOptions,
-    AgRadarLineSeriesTooltip,
-    AgRadarLineSeriesTooltipRendererParams,
+    AgRadarAreaSeriesOptions,
+    AgRadarSeriesLabelFormatterParams,
+    AgRadarSeriesLabelOptions,
+    AgRadarSeriesMarker,
+    AgRadarSeriesMarkerFormat,
+    AgRadarSeriesMarkerFormatter,
+    AgRadarSeriesMarkerFormatterParams,
+    AgRadarSeriesTooltip,
+    AgRadarSeriesTooltipRendererParams,
 };
 export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
 export {
@@ -136,8 +139,8 @@ import { LicenseManager } from './license/licenseManager';
 type CartesianAddonType = 'heatmap' | 'waterfall-bar' | 'waterfall-column';
 type CartesianAddonSeries = AgHeatmapSeriesOptions | AgWaterfallSeriesOptions;
 
-type PolarAddonType = 'radar-line';
-type PolarAddonSeries = AgRadarLineSeriesOptions;
+type PolarAddonType = 'radar-line' | 'radar-area';
+type PolarAddonSeries = AgRadarLineSeriesOptions | AgRadarAreaSeriesOptions;
 
 export type AgChartOptions = AgCommunityChartOptions<
     CartesianAddonType,

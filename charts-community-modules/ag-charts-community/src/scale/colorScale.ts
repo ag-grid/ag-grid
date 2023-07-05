@@ -1,4 +1,4 @@
-import { Scale } from './scale';
+import type { Scale } from './scale';
 import { Color } from '../util/color';
 import { Logger } from '../util/logger';
 import interpolateColor from '../interpolate/color';

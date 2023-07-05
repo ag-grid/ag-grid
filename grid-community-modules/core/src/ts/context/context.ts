@@ -269,7 +269,7 @@ export class Context {
 
         this.contextParams.providedBeanInstances = null;
 
-        ModuleRegistry.unRegisterGridModules(this.contextParams.gridId);
+        ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
 
         this.destroyed = true;
 

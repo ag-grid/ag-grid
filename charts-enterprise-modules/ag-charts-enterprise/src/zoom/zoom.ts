@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
 import * as ContextMenu from '../context-menu/main';
 
 import { ZoomAxisDragger } from './zoomAxisDragger';
@@ -6,7 +7,7 @@ import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
 import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, translateZoom } from './zoomTransformers';
-import { DefinedZoomState } from './zoomTypes';
+import type { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
 const { BOOLEAN, NUMBER, STRING_UNION, ChartAxisDirection, ChartUpdateType, Validate } = _ModuleSupport;
@@ -150,15 +151,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
-        if (
-            this.enablePanning &&
-            this.seriesRect &&
-            !this.isMaxZoom(zoom) &&
-            (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))
-        ) {
-            // Allow panning if not at the maximum zoom and either selection is disabled or the panning key is pressed.
-            const newZoom = this.panner.update(event, this.seriesRect, zoom);
-            this.updateZoom(newZoom);
+        // Allow panning if either selection is disabled or the panning key is pressed.
+        if (this.enablePanning && this.seriesRect && (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))) {
+            const newZooms = this.panner.update(event, this.seriesRect, this.zoomManager.getAxisZooms());
+            for (const [axisId, { direction, zoom: newZoom }] of Object.entries(newZooms)) {
+                this.updateAxisZoom(axisId, direction, newZoom);
+            }
             this.cursorManager.updateCursor(CURSOR_ID, 'grabbing');
             return;
         }
@@ -229,23 +227,22 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onHover() {
-        if (!this.axisDragger.isAxisDragging && !this.panner.isPanning) {
-            this.cursorManager.updateCursor(CURSOR_ID);
-        }
+        this.draggedAxis = undefined;
+        this.cursorManager.updateCursor(CURSOR_ID);
     }
 
     private onAxisHover(event: _ModuleSupport.AxisHoverChartEvent) {
+        if (!this.enableAxisDragging) return;
+
         this.draggedAxis = {
             id: event.axisId,
             direction: event.direction,
         };
 
-        if (this.enableAxisDragging) {
-            this.cursorManager.updateCursor(
-                CURSOR_ID,
-                event.direction === ChartAxisDirection.X ? 'ew-resize' : 'ns-resize'
-            );
-        }
+        this.cursorManager.updateCursor(
+            CURSOR_ID,
+            event.direction === ChartAxisDirection.X ? 'ew-resize' : 'ns-resize'
+        );
     }
 
     private onLayoutComplete({ series: { paddedRect } }: _ModuleSupport.LayoutCompleteEvent) {

@@ -1,12 +1,26 @@
-import { ChartAxis } from '../chart/chartAxis';
-import { Series } from '../chart/series/series';
-import { ChartLegend } from '../chart/legendDatum';
-import { JsonApplyParams } from './json';
-import { AxisContext, ModuleContext, ModuleContextWithParent } from './moduleContext';
+import type { ChartAxis } from '../chart/chartAxis';
+import type { Series } from '../chart/series/series';
+import type { ChartLegend } from '../chart/legendDatum';
+import type { JsonApplyParams } from './json';
+import type { AxisContext, ModuleContext, ModuleContextWithParent } from './moduleContext';
 
 export type AxisConstructor = new (moduleContext: ModuleContext) => ChartAxis;
 export type SeriesConstructor = new (moduleContext: ModuleContext) => Series<any>;
 export type LegendConstructor = new (moduleContext: ModuleContext) => ChartLegend;
+
+interface SeriesPaletteOptions {
+    stroke?: string;
+    fill?: string;
+    fills?: string[];
+    strokes?: string[];
+    marker?: { fill?: string; stroke?: string };
+}
+interface SeriesPaletteFactoryParams {
+    takeColors: (count: number) => { fills: string[]; strokes: string[] };
+    seriesCount: number;
+    colorsCount: number;
+}
+export type SeriesPaletteFactory = (params: SeriesPaletteFactoryParams) => SeriesPaletteOptions;
 
 export interface ModuleInstance {
     destroy(): void;
@@ -63,6 +77,7 @@ export interface SeriesModule extends BaseModule {
 
     seriesDefaults: {};
     themeTemplate: {};
+    paletteFactory?: SeriesPaletteFactory;
 }
 
 export type Module<M extends ModuleInstance = ModuleInstance> =

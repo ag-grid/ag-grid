@@ -354,7 +354,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
-    const moduleIsUmdLine = `ModuleRegistry.setIsBundled();`
+    const moduleIsUmdLine = `ModuleRegistry.__setIsBundled();`
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
@@ -442,9 +442,9 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 
 const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
-
-    const frameworks = ['angular', 'react', 'vue', 'vue3'];
-
+    const onlyFramework = process.env.AG_SERVE_FRAMEWORK;
+    const frameworks = onlyFramework ? [onlyFramework] : ['angular', 'react', 'vue', 'vue3'];
+    console.log(`Frameworks running: ${frameworks}`);
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
             lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName].filter(filter);
@@ -460,8 +460,8 @@ const getLernaChainBuildInfo = async (skipFrameworks, chartsOnly) => {
         // we also filter out ag-charts-community as it'll also be dealt with by TSC compilation
         // this will leave us with frameworks and "legacy" packages like ag-grid-community
         const includeFrameworksFilter = dependent => (
-            (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) ||
-            (dependent.startsWith('ag-') && dependent !== 'ag-charts-community')
+            (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion)))
+            || (!onlyFramework && dependent.startsWith('ag-') && frameworks.some(inclusion => dependent.includes(inclusion)) && dependent !== 'ag-charts-community')
         );
         filterBuildChain(includeFrameworksFilter);
     }
@@ -484,7 +484,9 @@ const rebuildPackagesBasedOnChangeState = async (chartsOnly = false, skipSelf = 
             }
             return true;
         })
-        .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
+        .filter(changedPackage => !['ag-grid-community', 'ag-grid-enterprise'].includes(changedPackage))
+        .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]))
+        .filter(changedPackage => !['ag-grid-community', 'ag-grid-enterprise'].includes(changedPackage))
 
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
@@ -518,15 +520,24 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
         }
     }));
 
+    const tsEsmWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch', "tsconfig-esm.json"], {
+        cwd: '../../',
+        stdio: 'inherit',
+        encoding: 'buffer'
+    });
+
+
     tsWatch.stderr.on('data', await processStdio(async (output) => {
         console.error("Core Typescript: " + output);
     }));
 
     process.on('exit', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
     process.on('SIGINT', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
 };
 
@@ -564,6 +575,12 @@ const buildCoreModules = async (exitOnError, chartsOnly) => {
 
         return;
     }
+
+    cp.spawnSync(tsc, ["--build", "tsconfig-esm.json", ], {
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
+    });
 
     // temp addition for AG-7340
     // future commits will make this more generic/flexible
@@ -631,7 +648,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
 
     const getModuleConfig = module => [
         `            '${module.publishedName}': {`,
-        `                main: './dist/esm/es6/main.js',`,
+        `                main: './dist/cjs/es5/main.js',`,
         `                defaultExtension: 'js'`,
         `            },`
     ].join(EOL);
@@ -687,7 +704,6 @@ const watchFrameworkModules = async () => {
         '**/node_modules/**/*',
         '**/dist/**/*',
         '**/bundles/**/*',
-        '**/lib/**/*',
         '.hash',
         '.AUTO.json',
     ];
@@ -780,7 +796,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -797,6 +813,10 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             process.on('SIGINT', () => {
                 console.log("Docs process killed. Safe to restart.");
                 process.exit(0);
+            });
+
+            console.log("Config", {
+                skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK
             });
 
             if (chartsOnly) {
@@ -840,7 +860,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks, chartsOnly);
 
-            if (!chartsOnly) {
+            if (!skipAutoDocGeneration) {
                 console.log("Watching Auto Doc Files");
                 await watchAutoDocFiles();
             }
@@ -853,8 +873,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             addWebpackMiddleware(app, chartsOnly);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
-            // spl todo - add this back post release (allow for different local, build and prod end points)
-            // updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);

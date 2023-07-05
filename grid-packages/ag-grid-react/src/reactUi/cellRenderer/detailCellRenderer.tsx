@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useRef, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
 import { CssClasses } from "../utils";
-import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi } from "ag-grid-community";
+import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi, ModuleRegistry } from "ag-grid-community";
 import { BeansContext } from "../beansContext";
 import { AgGridReactUi } from "../agGridReactUi";
-import { useEffectOnce, useLayoutEffectOnce } from "../useEffectOnce";
+import { useLayoutEffectOnce } from "../useEffectOnce";
 
 const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
@@ -17,6 +17,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
     const ctrlRef = useRef<IDetailCellRendererCtrl>();
     const eGuiRef = useRef<HTMLDivElement>(null);
 
+    const parentModules = useMemo(() => ModuleRegistry.__getGridRegisteredModules(props.api.getGridId()), [props]);
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
     const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 
@@ -98,7 +99,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         <div className={topClassName} ref={eGuiRef}>
             {
                 detailGridOptions &&
-                <AgGridReactUi className={gridClassName} {...detailGridOptions} rowData={detailRowData} setGridApi={ setGridApi }></AgGridReactUi> 
+                <AgGridReactUi className={gridClassName} {...detailGridOptions} modules={parentModules} rowData={detailRowData} setGridApi={setGridApi}></AgGridReactUi>
             }
         </div>
     );

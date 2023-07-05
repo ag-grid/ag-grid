@@ -148,7 +148,7 @@ export class UserComponentRegistry extends BeanStub {
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
+            ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         } else {
             doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
         }

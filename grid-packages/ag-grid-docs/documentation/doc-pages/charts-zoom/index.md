@@ -16,7 +16,8 @@ zoom: {
 A user will now be able to use the zooming features as in the following example, including:
 
 - Scroll in and out with the mouse wheel.
-- Clicking and dragging to pan around the zoomed in chart.
+- Click and drag to pan around the zoomed in chart.
+- Click and drag an axis to zoom in or out on only that axis.
 - Double click anywhere to reset the zoom.
 - Click and drag a box to select an area to zoom into (not enabled by default).
 
@@ -30,6 +31,7 @@ In the example below, we only enable selecting an area.
 
 ```ts
 zoom: {
+    enableAxisDragging: false,
     enablePanning: false,
     enableScrolling: false,
     enableSelecting: true,
@@ -51,6 +53,14 @@ zoom: {
 ```
 
 <chart-example title='Zoom Axes' name='zoom-axes' type='generated' options='{ "enterprise": true }'></chart-example>
+
+### Dragging an Axis
+
+By default, a user can click and drag on an axis to change the zoom of that axis and any series associated with it, independently of other axes and series. This ignores the `axes` property, so will either be enabled for all axes or none using the `enableAxisDragging` property.
+
+In the example below, we have series attached to different y-axes.
+
+<chart-example title='Zoom Axis Dragging' name='zoom-axis-dragging' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Scrolling Pivot
 

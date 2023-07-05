@@ -1,5 +1,6 @@
 import { expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { Canvas, createCanvas, PngConfig } from 'canvas';
+import type { PngConfig } from 'canvas';
+import { Canvas, createCanvas } from 'canvas';
 import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import * as fs from 'fs';
@@ -8,7 +9,7 @@ import { Chart } from '../chart';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
 import { AnimationManager } from '../interaction/animationManager';
 import { resetIds } from '../../util/id';
 import * as mockCanvas from './mock-canvas';
@@ -129,7 +130,7 @@ export function wheelEvent({
 }
 
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params ?? {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar', 'bar'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);

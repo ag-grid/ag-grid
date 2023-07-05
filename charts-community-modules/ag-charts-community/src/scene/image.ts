@@ -1,4 +1,5 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext } from './node';
+import type { RenderContext } from './node';
+import { Node, RedrawType, SceneChangeDetection } from './node';
 
 export class Image extends Node {
     private readonly sourceImage: HTMLImageElement;

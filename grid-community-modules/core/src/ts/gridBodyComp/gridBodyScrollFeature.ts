@@ -486,10 +486,10 @@ export class GridBodyScrollFeature extends BeanStub {
 
             if (newScrollPosition !== null) {
                 this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redrawAfterScroll();
+                this.rowRenderer.redraw();
             }
 
-            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the row can get shifted if during the rendering (during rowRenderer.redraw()),
             // the height of a row changes due to lazy calculation of row heights when using
             // colDef.autoHeight or gridOptions.getRowHeight.
             // if row was shifted, then the position we scrolled to is incorrect.

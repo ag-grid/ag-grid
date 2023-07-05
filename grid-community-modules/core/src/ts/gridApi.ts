@@ -297,14 +297,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
             return this.csvCreator.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
             this.csvCreator.exportDataAsCsv(params);
         }
     }
@@ -315,7 +315,7 @@ export class GridApi<TData = any> {
         return mergedParams.exportMode;
     }
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
         const exportMode = this.getExcelExportMode(params);
         if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
@@ -340,7 +340,7 @@ export class GridApi<TData = any> {
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
         const exportMode = this.getExcelExportMode(params);
         this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
 
@@ -349,14 +349,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -1012,7 +1012,7 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -1316,7 +1316,7 @@ export class GridApi<TData = any> {
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     }
 
     /** Returns `true` if the side bar is visible. */
@@ -1556,7 +1556,7 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
         return null;
     }
 
@@ -1566,7 +1566,7 @@ export class GridApi<TData = any> {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
     }
 
     /** Clears the selected ranges. */
@@ -1574,7 +1574,7 @@ export class GridApi<TData = any> {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();    
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
@@ -1596,119 +1596,119 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
             return this.chartService.getChartModels();
         }
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
             return this.chartService.getChartRef(chartId);
         }
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
             return this.chartService.downloadChart(params);
         }
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
             return this.chartService.openChartToolPanel(params);
         }
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
             return this.chartService.closeChartToolPanel(params.chartId);
         }
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
             return this.chartService.createRangeChart(params);
         }
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
             return this.chartService.createPivotChart(params);
         }
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
             return this.chartService.createCrossFilterChart(params);
         }
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
             this.chartService.updateChart(params);
         }
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
             return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
 
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
             this.clipboardService.copyToClipboard(params);
         }
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
             this.clipboardService.cutToClipboard(params, 'api');
         }
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRowsToClipboard(params);
         }
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRangeToClipboard(params);
         }
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
             this.clipboardService.copyRangeDown();
         }
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
             this.clipboardService.pasteFromClipboard();
         }
     }

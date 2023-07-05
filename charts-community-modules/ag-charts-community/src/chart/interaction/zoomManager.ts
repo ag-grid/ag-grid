@@ -83,6 +83,17 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         return this.axes[axisId]?.getZoom();
     }
 
+    public getAxisZooms(): Record<string, { direction: ChartAxisDirection; zoom: ZoomState | undefined }> {
+        const axes: Record<string, { direction: ChartAxisDirection; zoom: ZoomState | undefined }> = {};
+        for (const [axisId, axis] of Object.entries(this.axes)) {
+            axes[axisId] = {
+                direction: axis.direction,
+                zoom: axis.getZoom(),
+            };
+        }
+        return axes;
+    }
+
     private applyStates() {
         const changed = Object.values(this.axes)
             .map((axis) => axis.applyStates())

@@ -32,7 +32,7 @@ export class DropZoneColumnComp extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE = /* html */
-        `<span role="option" tabindex="0">
+        `<span role="option">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
@@ -94,6 +94,7 @@ export class DropZoneColumnComp extends Component {
         });
 
         this.setupTooltip();
+        this.activateTabIndex();
     }
 
     private setupAria() {

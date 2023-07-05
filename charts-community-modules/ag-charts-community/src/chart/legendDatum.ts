@@ -1,7 +1,7 @@
-import { Marker } from './marker/marker';
-import { Node } from '../scene/node';
-import { BBox } from '../scene/bbox';
-import { AgChartLegendListeners } from './agChartOptions';
+import type { Marker } from './marker/marker';
+import type { Node } from '../scene/node';
+import type { BBox } from '../scene/bbox';
+import type { AgChartLegendListeners } from './agChartOptions';
 
 export interface ChartLegend {
     computeBBox(): BBox;

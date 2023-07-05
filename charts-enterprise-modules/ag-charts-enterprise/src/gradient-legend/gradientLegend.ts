@@ -1,15 +1,12 @@
-import {
+import type {
     AgChartLegendPosition,
     AgChartLegendLabelFormatterParams,
     AgChartOrientation,
     FontStyle,
     FontWeight,
-    _ModuleSupport,
-    _Scale,
-    _Scene,
-    _Util,
 } from 'ag-charts-community';
-import { GradientLegendDatum } from './gradientLegendDatum';
+import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import type { GradientLegendDatum } from './gradientLegendDatum';
 
 const {
     Layers,

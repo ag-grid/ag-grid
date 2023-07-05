@@ -1,10 +1,13 @@
 import { Axis } from '../../axis';
-import { Scale } from '../../scale/scale';
-import { AxisContext } from '../../util/moduleContext';
+import type { Scale } from '../../scale/scale';
+import type { AxisContext } from '../../util/moduleContext';
 import { Validate, NUMBER, POSITION } from '../../util/validation';
-import { AgCartesianAxisPosition } from '../agChartOptions';
+import type { AgCartesianAxisPosition } from '../agChartOptions';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { TickInterval } from './axisTick';
+import { assignJsonApplyConstructedArray } from '../chartOptions';
+import { CartesianCrossLine } from '../crossline/cartesianCrossLine';
+import type { CrossLine } from '../crossline/crossLine';
+import type { TickInterval } from './axisTick';
 
 export abstract class CartesianAxis<
     S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>,
@@ -60,5 +63,9 @@ export abstract class CartesianAxis<
             ...super.createAxisContext(),
             position: this.position,
         };
+    }
+
+    protected assignCrossLineArrayConstructor(crossLines: CrossLine[]) {
+        assignJsonApplyConstructedArray(crossLines, CartesianCrossLine);
     }
 }

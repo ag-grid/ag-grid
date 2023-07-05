@@ -1,11 +1,11 @@
 import { LinearScale } from '../../scale/linearScale';
-import { LogScale } from '../../scale/logScale';
-import { extent } from '../../util/array';
+import type { LogScale } from '../../scale/logScale';
+import { normalisedExtent } from '../../util/array';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
-import { ModuleContext } from '../../module-support';
+import type { ModuleContext } from '../../module-support';
 import { AxisTick } from './axisTick';
 import { CartesianAxis } from './cartesianAxis';
 
@@ -26,21 +26,7 @@ export class NumberAxis extends CartesianAxis<LinearScale | LogScale, number> {
 
     normaliseDataDomain(d: number[]) {
         const { min, max } = this;
-
-        if (d.length > 2) {
-            d = extent(d) ?? [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            d = [min, d[1]];
-        }
-        if (!isNaN(max)) {
-            d = [d[0], max];
-        }
-        if (d[0] > d[1]) {
-            d = [];
-        }
-
-        return d;
+        return normalisedExtent(d, min, max);
     }
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))

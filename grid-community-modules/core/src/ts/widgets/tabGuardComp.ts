@@ -33,7 +33,7 @@ export class TabGuardComp extends Component {
 
         const compProxy: ITabGuard = {
             setTabIndex: tabIndex => {
-                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabIndex', tabIndex) : tabGuard.removeAttribute('tabIndex'));
+                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabindex', tabIndex) : tabGuard.removeAttribute('tabindex'));
             }
         };
 

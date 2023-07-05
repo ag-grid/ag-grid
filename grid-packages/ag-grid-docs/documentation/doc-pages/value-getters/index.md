@@ -53,7 +53,7 @@ The parameters for `headerValueGetter` differ from standard `valueGetter` as fol
 - Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
 - Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
 
-See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
+See the [Column Tool Panel Example](/tool-panel-columns/#columns-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
 
 ### Filter Value Getters
 

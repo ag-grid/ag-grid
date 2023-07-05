@@ -37,7 +37,7 @@ export class RowNodeSorter extends BeanStub {
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-        
+
         const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 

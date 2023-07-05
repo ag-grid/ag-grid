@@ -184,7 +184,7 @@ export class GridCoreCreator {
         beans.ctrlsService.whenReady(() => {
             this.setColumnsAndData(beans);
             this.dispatchGridReadyEvent(beans);
-            const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
+            const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
 
@@ -206,7 +206,7 @@ export class GridCoreCreator {
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
-        const registered = ModuleRegistry.getRegisteredModules(gridId);
+        const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
         const allModules: Module[] = [];
         const mapNames: { [name: string]: boolean; } = {};
@@ -217,7 +217,7 @@ export class GridCoreCreator {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    ModuleRegistry.register(currentModule, moduleBased, gridId);
+                    ModuleRegistry.__register(currentModule, moduleBased, gridId);
                 }
             }
 
@@ -232,7 +232,7 @@ export class GridCoreCreator {
         }
 
         if (registered) {
-            registered.forEach(m => addModule(!ModuleRegistry.isPackageBased(), m, undefined));
+            registered.forEach(m => addModule(!ModuleRegistry.__isPackageBased(), m, undefined));
         }
 
         return allModules;
@@ -319,7 +319,7 @@ export class GridCoreCreator {
             return;
         }
 
-        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
+        if (!ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
             return;
         }
 

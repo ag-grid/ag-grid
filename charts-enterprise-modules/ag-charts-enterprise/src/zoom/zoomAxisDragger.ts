@@ -1,7 +1,8 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
 
 import { constrainZoom, definedZoomState, pointToRatio } from './zoomTransformers';
-import { DefinedZoomState, ZoomCoords } from './zoomTypes';
+import type { DefinedZoomState, ZoomCoords } from './zoomTypes';
 
 export class ZoomAxisDragger {
     public isAxisDragging: boolean = false;
@@ -77,7 +78,7 @@ export class ZoomAxisDragger {
 
         const scaleY = target.y - origin.y;
 
-        newZoom.y.max += scaleY;
+        newZoom.y.max -= scaleY;
 
         newZoom.y.min = oldZoom.y.max - (newZoom.y.max - newZoom.y.min);
         newZoom.y.max = oldZoom.y.max;
