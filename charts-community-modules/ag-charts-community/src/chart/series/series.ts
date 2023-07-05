@@ -1,6 +1,7 @@
 import { Group } from '../../scene/group';
 import type { ChartLegendDatum } from '../legendDatum';
-import { Observable, TypedEvent } from '../../util/observable';
+import type { TypedEvent } from '../../util/observable';
+import { Observable } from '../../util/observable';
 import type { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum } from '../../util/value';
@@ -22,7 +23,8 @@ import type { ChartEventManager } from '../interaction/chartEventManager';
 import type { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import type { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, fixNumericExtent, ScopeProvider } from '../data/dataModel';
+import type { DatumPropertyDefinition, ScopeProvider } from '../data/dataModel';
+import { fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 import type { ModuleContext } from '../../util/moduleContext';

@@ -1,14 +1,13 @@
 import { BaseManager } from './baseManager';
 import type { InteractionManager } from './interactionManager';
-import {
-    animate as baseAnimate,
+import type {
     AnimationControls,
     AnimationOptions as BaseAnimationOptions,
     Driver,
-    tween,
     TweenControls,
     TweenOptions,
 } from '../../motion/animate';
+import { animate as baseAnimate, tween } from '../../motion/animate';
 import { Logger } from '../../util/logger';
 
 type AnimationId = string;

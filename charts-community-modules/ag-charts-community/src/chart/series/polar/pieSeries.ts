@@ -7,8 +7,8 @@ import type { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
+import type { SeriesNodeDatum } from './../series';
 import {
-    SeriesNodeDatum,
     HighlightStyle,
     SeriesTooltip,
     SeriesNodeBaseClickEvent,

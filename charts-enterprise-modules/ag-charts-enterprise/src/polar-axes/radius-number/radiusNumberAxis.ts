@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale, _Scene, _Util, AgAxisCaptionFormatterParams } from 'ag-charts-community';
+import type { AgAxisCaptionFormatterParams } from 'ag-charts-community';
+import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 import { RadiusCrossLine } from './radiusCrossLine';
 
 const {

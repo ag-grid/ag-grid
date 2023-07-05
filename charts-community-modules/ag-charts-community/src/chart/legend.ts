@@ -1,4 +1,5 @@
-import { Node, RedrawType } from '../scene/node';
+import type { Node } from '../scene/node';
+import { RedrawType } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -36,7 +37,8 @@ import {
 import { Layers } from './layers';
 import { ChartUpdateType } from './chartUpdateType';
 import type { InteractionEvent } from './interaction/interactionManager';
-import { gridLayout, Page } from './gridLayout';
+import type { Page } from './gridLayout';
+import { gridLayout } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { toTooltipHtml } from './tooltip/tooltip';
 import type { CategoryLegendDatum } from './legendDatum';

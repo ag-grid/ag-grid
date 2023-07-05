@@ -1,5 +1,6 @@
 import { expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { Canvas, createCanvas, PngConfig } from 'canvas';
+import type { PngConfig } from 'canvas';
+import { Canvas, createCanvas } from 'canvas';
 import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import * as fs from 'fs';

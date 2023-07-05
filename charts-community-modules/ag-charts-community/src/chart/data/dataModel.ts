@@ -2,7 +2,8 @@ import { Logger } from '../../util/logger';
 import { isNumber } from '../../util/value';
 import { windowValue } from '../../util/window';
 import { DataDomain } from './dataDomain';
-import { ContinuousDomain, extendDomain } from './utilFunctions';
+import type { ContinuousDomain } from './utilFunctions';
+import { extendDomain } from './utilFunctions';
 
 export type ScopeProvider = { id: string };
 

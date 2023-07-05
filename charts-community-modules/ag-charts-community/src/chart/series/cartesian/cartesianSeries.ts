@@ -1,11 +1,5 @@
-import {
-    Series,
-    SeriesNodeDataContext,
-    SeriesNodeDatum,
-    SeriesNodePickMode,
-    SeriesNodePickMatch,
-    SeriesNodeBaseClickEvent,
-} from '../series';
+import type { SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch } from '../series';
+import { Series, SeriesNodeBaseClickEvent } from '../series';
 import type { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';

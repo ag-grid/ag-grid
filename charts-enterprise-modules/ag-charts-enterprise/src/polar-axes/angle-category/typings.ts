@@ -1,4 +1,4 @@
-import { AgBaseAxisOptions, AgAxisCategoryTickOptions } from 'ag-charts-community';
+import type { AgBaseAxisOptions, AgAxisCategoryTickOptions } from 'ag-charts-community';
 
 export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
     type: 'angle-category';

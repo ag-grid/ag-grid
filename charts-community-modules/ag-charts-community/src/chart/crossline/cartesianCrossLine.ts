@@ -6,8 +6,8 @@ import type { Scale } from '../../scale/scale';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { ChartAxisDirection } from '../chartAxisDirection';
+import type { CrossLineLabelPosition } from './crossLineLabelPosition';
 import {
-    CrossLineLabelPosition,
     labeldDirectionHandling,
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,

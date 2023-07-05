@@ -3,7 +3,8 @@ import type { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
+import type { TextSizeProperties } from './scene/shape/text';
+import { measureText, Text, splitText } from './scene/shape/text';
 import type { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
@@ -13,7 +14,8 @@ import { areArrayNumbersEqual } from './util/equal';
 import type { CrossLine } from './chart/crossline/crossLine';
 import { Validate, BOOLEAN, ARRAY, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
-import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
+import type { PointLabelDatum } from './util/labelPlacement';
+import { axisLabelsOverlap } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
@@ -21,13 +23,13 @@ import type { AgAxisCaptionFormatterParams, AgAxisGridStyle, TextWrap } from './
 import { LogScale } from './scale/logScale';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
+import type { Flag } from './chart/label';
 import {
     calculateLabelRotation,
     calculateLabelBBox,
     getLabelSpacing,
     getTextAlign,
     getTextBaseline,
-    Flag,
 } from './chart/label';
 import { Logger } from './util/logger';
 import type { AxisLayout } from './chart/layout/layoutService';
@@ -36,7 +38,8 @@ import type { AxisContext, ModuleContext } from './util/moduleContext';
 import { AxisLabel } from './chart/axis/axisLabel';
 import { AxisLine } from './chart/axis/axisLine';
 import type { AxisTitle } from './chart/axis/axisTitle';
-import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
+import type { TickCount, TickInterval } from './chart/axis/axisTick';
+import { AxisTick } from './chart/axis/axisTick';
 import type { ChartAxis, BoundSeries } from './chart/chartAxis';
 import type { AnimationManager } from './chart/interaction/animationManager';
 import type { InteractionEvent } from './chart/interaction/interactionManager';

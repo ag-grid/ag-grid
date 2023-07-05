@@ -1,15 +1,12 @@
-import {
-    _ModuleSupport,
-    _Scale,
-    _Scene,
-    _Util,
+import type {
     AgPieSeriesFormatterParams,
     AgPieSeriesTooltipRendererParams,
     AgPieSeriesFormat,
     AgTooltipRendererResult,
 } from 'ag-charts-community';
+import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import {
+import type {
     AgRadarSeriesLabelFormatterParams,
     AgRadarSeriesMarkerFormat,
     AgRadarSeriesMarkerFormatterParams,

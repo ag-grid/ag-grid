@@ -5,18 +5,13 @@ import { PointerEvents } from '../../../scene/node';
 import type { CategoryLegendDatum } from '../../legendDatum';
 import type { Path } from '../../../scene/shape/path';
 import type { Marker } from '../../marker/marker';
-import {
-    SeriesTooltip,
-    SeriesNodeDataContext,
-    keyProperty,
-    valueProperty,
-    groupAccumulativeValueProperty,
-} from '../series';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, keyProperty, valueProperty, groupAccumulativeValueProperty } from '../series';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';

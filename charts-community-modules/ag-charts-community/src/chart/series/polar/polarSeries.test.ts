@@ -5,13 +5,13 @@ import { AgChart } from '../../agChartV2';
 import type { Chart } from '../../chart';
 import { ChartUpdateType } from '../../chartUpdateType';
 import * as examples from './test/examples';
+import type { PolarTestCase } from '../../test/utils';
 import {
     waitForChartStability,
     polarChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    PolarTestCase,
     toMatchImage,
     repeat,
     deproxy,

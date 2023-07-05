@@ -1,4 +1,4 @@
-import { _ModuleSupport } from 'ag-charts-community';
+import type { _ModuleSupport } from 'ag-charts-community';
 import { Zoom } from './zoom';
 
 export const ZoomModule: _ModuleSupport.Module = {

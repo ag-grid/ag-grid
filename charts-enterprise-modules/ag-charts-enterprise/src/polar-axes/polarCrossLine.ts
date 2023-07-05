@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale, _Scene, _Util, FontStyle, FontWeight } from 'ag-charts-community';
+import type { _Scale, FontStyle, FontWeight } from 'ag-charts-community';
+import { _ModuleSupport, _Scene, _Util } from 'ag-charts-community';
 
 const {
     ChartAxisDirection,

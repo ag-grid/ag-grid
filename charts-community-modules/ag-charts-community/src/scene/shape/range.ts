@@ -1,6 +1,7 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
-import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
+import type { RenderContext } from '../node';
+import { RedrawType, SceneChangeDetection } from '../node';
 
 export class Range extends Shape {
     static className = 'Range';

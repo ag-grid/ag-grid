@@ -2,23 +2,13 @@ import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import type { Text } from '../../../scene/shape/text';
 import type { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesTooltip,
-    Series,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-    valueProperty,
-    keyProperty,
-} from '../series';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import {
-    CartesianSeries,
-    CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
-    CartesianSeriesNodeDoubleClickEvent,
-} from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import ticks, { tickStep } from '../../../util/ticks';
@@ -43,7 +33,8 @@ import type {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
-import { AggregatePropertyDefinition, fixNumericExtent, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import type { AggregatePropertyDefinition, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import { fixNumericExtent } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';

@@ -1,7 +1,8 @@
 import { jsonDiff } from '../../util/json';
 import { Logger } from '../../util/logger';
 import { windowValue } from '../../util/window';
-import { DataModel, DataModelOptions, DatumPropertyDefinition, ProcessedData, PropertyDefinition } from './dataModel';
+import type { DataModelOptions, DatumPropertyDefinition, ProcessedData, PropertyDefinition } from './dataModel';
+import { DataModel } from './dataModel';
 
 interface RequestedProcessing<
     D extends object,

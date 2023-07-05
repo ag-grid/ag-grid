@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
 import * as ContextMenu from '../context-menu/main';
 
 import { ZoomAxisDragger } from './zoomAxisDragger';
@@ -6,7 +7,7 @@ import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
 import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, translateZoom } from './zoomTransformers';
-import { DefinedZoomState } from './zoomTypes';
+import type { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
 const { BOOLEAN, NUMBER, STRING_UNION, ChartAxisDirection, ChartUpdateType, Validate } = _ModuleSupport;

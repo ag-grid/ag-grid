@@ -1,5 +1,7 @@
-import { _Scene, _Util, _ModuleSupport, AgCartesianAxisPosition } from 'ag-charts-community';
-import { CrosshairLabel, LabelMeta } from './crosshairLabel';
+import type { AgCartesianAxisPosition } from 'ag-charts-community';
+import { _Scene, _Util, _ModuleSupport } from 'ag-charts-community';
+import type { LabelMeta } from './crosshairLabel';
+import { CrosshairLabel } from './crosshairLabel';
 
 type AgCrosshairLabelRendererResult = any;
 

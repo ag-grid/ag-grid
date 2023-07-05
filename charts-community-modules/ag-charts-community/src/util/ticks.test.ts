@@ -1,5 +1,6 @@
 import { expect, test } from '@jest/globals';
-import getTicks, { NumericTicks } from './ticks';
+import type { NumericTicks } from './ticks';
+import getTicks from './ticks';
 
 function compareTicks(ticks: NumericTicks, array: number[]) {
     expect(ticks).toHaveLength(array.length);

@@ -4,7 +4,8 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { AggregatePropertyDefinition, DataModel, GroupByFn, PropertyId } from './dataModel';
+import type { AggregatePropertyDefinition, GroupByFn, PropertyId } from './dataModel';
+import { DataModel } from './dataModel';
 import {
     area as actualArea,
     groupAverage as actualGroupAverage,

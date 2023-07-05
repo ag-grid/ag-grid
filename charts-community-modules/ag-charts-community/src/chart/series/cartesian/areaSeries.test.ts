@@ -11,6 +11,7 @@ import {
     DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
+import type { TestCase } from '../../test/utils';
 import {
     repeat,
     waitForChartStability,
@@ -18,7 +19,6 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    TestCase,
     prepareTestOptions,
     spyOnAnimationManager,
 } from '../../test/utils';

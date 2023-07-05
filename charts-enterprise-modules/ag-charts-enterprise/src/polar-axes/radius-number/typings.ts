@@ -1,4 +1,4 @@
-import { AgBaseAxisOptions, AgAxisCaptionOptions, AgAxisNumberTickOptions } from 'ag-charts-community';
+import type { AgBaseAxisOptions, AgAxisCaptionOptions, AgAxisNumberTickOptions } from 'ag-charts-community';
 
 export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     type: 'radius-number';

@@ -3,8 +3,8 @@ import { Rect } from '../../../scene/shape/rect';
 import type { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import type { DropShadow } from '../../../scene/dropShadow';
+import type { SeriesNodeDataContext } from '../series';
 import {
-    SeriesNodeDataContext,
     SeriesTooltip,
     SeriesNodePickMode,
     keyProperty,
@@ -14,12 +14,8 @@ import {
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import {
-    CartesianSeries,
-    CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
-    CartesianSeriesNodeDoubleClickEvent,
-} from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import type { ChartAxis } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -27,6 +23,7 @@ import { extent } from '../../../util/array';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import type { Point } from '../../../scene/point';
+import type { ValidatePredicate } from '../../../util/validation';
 import {
     BOOLEAN,
     NUMBER,
@@ -35,7 +32,6 @@ import {
     OPT_NUMBER,
     Validate,
     OPTIONAL,
-    ValidatePredicate,
     OPT_STRING,
     OPT_COLOR_STRING,
 } from '../../../util/validation';
@@ -54,7 +50,8 @@ import type {
 import { LogAxis } from '../../axis/logAxis';
 import { normaliseGroupTo, SMALLEST_KEY_INTERVAL, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
-import { createLabelData, getRectConfig, updateRect, RectConfig, checkCrisp, updateLabel } from './barUtil';
+import type { RectConfig } from './barUtil';
+import { createLabelData, getRectConfig, updateRect, checkCrisp, updateLabel } from './barUtil';
 import type { ModuleContext } from '../../../util/moduleContext';
 import type { DataController } from '../../data/dataController';
 

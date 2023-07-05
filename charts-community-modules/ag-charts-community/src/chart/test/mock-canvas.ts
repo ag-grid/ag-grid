@@ -1,4 +1,5 @@
-import { Canvas, createCanvas, Image } from 'canvas';
+import type { Canvas } from 'canvas';
+import { createCanvas, Image } from 'canvas';
 
 export class MockContext {
     realCreateElement: typeof document.createElement;

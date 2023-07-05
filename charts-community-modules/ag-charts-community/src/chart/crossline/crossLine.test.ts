@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import type { CartesianTestCase } from '../test/utils';
 import {
     cartesianChartAssertions,
-    CartesianTestCase,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
     prepareTestOptions,

@@ -7,15 +7,17 @@ import type {
     AgCrossLineOptions,
     AgTooltipPositionOptions,
 } from '../agChartOptions';
+import type { SeriesOptionsTypes } from './defaults';
 import {
-    SeriesOptionsTypes,
     DEFAULT_CARTESIAN_CHART_OVERRIDES,
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
 } from './defaults';
-import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
+import type { JsonMergeOptions } from '../../util/json';
+import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
 import { getChartTheme } from './themes';
-import { processSeriesOptions, SeriesOptions } from './prepareSeries';
+import type { SeriesOptions } from './prepareSeries';
+import { processSeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
 import type { SeriesPaletteFactory } from '../../util/module';
 import { AXIS_TYPES } from '../factory/axisTypes';

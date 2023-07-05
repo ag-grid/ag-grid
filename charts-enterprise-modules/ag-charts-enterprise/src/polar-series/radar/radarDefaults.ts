@@ -1,4 +1,4 @@
-import { AgPolarChartOptions } from 'ag-charts-community';
+import type { AgPolarChartOptions } from 'ag-charts-community';
 import { AngleCategoryAxis } from '../../polar-axes/angle-category/angleCategoryAxis';
 import { RadiusNumberAxis } from '../../polar-axes/radius-number/radiusNumberAxis';
 

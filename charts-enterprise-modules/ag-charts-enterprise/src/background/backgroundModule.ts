@@ -1,4 +1,4 @@
-import { _ModuleSupport, PixelSize, Opacity } from 'ag-charts-community';
+import type { _ModuleSupport, PixelSize, Opacity } from 'ag-charts-community';
 import { Background } from './background';
 import { BackgroundImage } from './backgroundImage';
 

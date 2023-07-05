@@ -4,13 +4,13 @@ import type { AgCartesianChartOptions, AgChartInstance, AgChartOptions } from '.
 import { AgChart } from './agChartV2';
 import type { Chart } from './chart';
 import * as examples from './test/examples';
+import type { TestCase } from './test/utils';
 import {
     waitForChartStability,
     cartesianChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    TestCase,
     toMatchImage,
     prepareTestOptions,
     repeat,
