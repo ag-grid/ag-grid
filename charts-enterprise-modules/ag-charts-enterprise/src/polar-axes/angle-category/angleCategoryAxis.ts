@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 import { AngleCrossLine } from './angleCrossLine';
 
-const { ChartAxisDirection, assignJsonApplyConstructedArray } = _ModuleSupport;
+const { assignJsonApplyConstructedArray, ChartAxisDirection, NUMBER, ProxyOnWrite, Validate } = _ModuleSupport;
 const { BandScale } = _Scale;
 const { Path, Text } = _Scene;
 const { isNumberEqual, toRadians } = _Util;
@@ -20,6 +20,10 @@ interface AngleCategoryAxisLabelDatum {
 export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     static className = 'AngleCategoryAxis';
     static type = 'angle-category' as const;
+
+    @Validate(NUMBER())
+    @ProxyOnWrite('rotation')
+    startAngle: number = 0;
 
     protected labelData: AngleCategoryAxisLabelDatum[] = [];
     protected radiusLine: _Scene.Path = this.axisGroup.appendChild(new Path());

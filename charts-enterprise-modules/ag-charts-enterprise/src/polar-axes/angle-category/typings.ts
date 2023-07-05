@@ -6,4 +6,6 @@ export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
     tick?: AgAxisCategoryTickOptions;
     /** Shape of axes. Default: `polygon` */
     shape?: 'polygon' | 'circle';
+    /** Angle in degrees to start ticks positioning from. */
+    startAngle?: number;
 }
