@@ -750,7 +750,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         paths: Array<Array<_Scene.Path>>;
         seriesRect?: _Scene.BBox;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
 
         contextData.forEach(({ pointData }, contextDataIndex) => {
             this.animateRects(datumSelections[contextDataIndex], duration);
@@ -767,7 +767,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     protected animateRects(datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>, duration: number) {
         datumSelection.each((rect, datum, index) => {
-            this.animationManager?.animateMany(
+            this.ctx.animationManager?.animateMany(
                 `${this.id}_empty-update-ready_${rect.id}`,
                 [
                     { from: datum.itemId === 'positive' ? datum.x : datum.x + datum.width, to: datum.x },
@@ -791,7 +791,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     protected animateLabels(labelSelection: _Scene.Selection<_Scene.Text, WaterfallNodeDatum>, duration: number) {
         labelSelection.each((label, _, index) => {
-            this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                 from: 0,
                 to: 1,
                 delay: duration - duration / 10 + 200 * index,
@@ -829,7 +829,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             disableInteractions: true,
         };
 
-        this.animationManager?.animate<number>(`${this.id}_empty-update-ready_connector-line`, {
+        this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_connector-line`, {
             ...connectorLineAnimationOptions,
             duration,
             onUpdate() {
@@ -878,7 +878,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         contextData: Array<WaterfallContext>;
         paths: Array<Array<_Scene.Path>>;
     }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.stop();
         this.resetConnectorLinesPath({ contextData, paths });
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
@@ -966,7 +966,7 @@ export class WaterfallColumnSeries extends WaterfallBarSeries {
 
     protected animateRects(datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>, duration: number) {
         datumSelection.each((rect, datum, index) => {
-            this.animationManager?.animateMany(
+            this.ctx.animationManager?.animateMany(
                 `${this.id}_empty-update-ready_${rect.id}`,
                 [
                     { from: datum.itemId === 'positive' ? datum.y + datum.height : datum.y, to: datum.y },

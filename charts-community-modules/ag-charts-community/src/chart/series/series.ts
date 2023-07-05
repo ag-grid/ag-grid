@@ -18,9 +18,6 @@ import type { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import type { SizedPoint, Point } from '../../scene/point';
 import type { BBox } from '../../scene/bbox';
-import type { AnimationManager } from '../interaction/animationManager';
-import type { ChartEventManager } from '../interaction/chartEventManager';
-import type { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import type { AgChartInteractionRange } from '../agChartOptions';
 import type { DatumPropertyDefinition, ScopeProvider } from '../data/dataModel';
@@ -280,9 +277,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
-    animationManager?: AnimationManager;
-    chartEventManager?: ChartEventManager;
-    highlightManager?: HighlightManager;
 
     axes: Record<ChartAxisDirection, ChartAxis | undefined> = {
         [ChartAxisDirection.X]: undefined,
@@ -560,7 +554,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected isItemIdHighlighted(datum?: {
         itemId?: any;
     }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const { series, itemId } = highlightedDatum ?? {};
         const highlighting = series != null;
 

@@ -182,8 +182,10 @@ export abstract class CartesianSeries<
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     destroy() {
@@ -225,7 +227,7 @@ export abstract class CartesianSeries<
 
     async update({ seriesRect }: { seriesRect?: BBox }) {
         const { visible } = this;
-        const { series } = this.highlightManager?.getActiveHighlight() ?? {};
+        const { series } = this.ctx.highlightManager?.getActiveHighlight() ?? {};
         const seriesHighlighted = series ? series === this : undefined;
 
         const newNodeDataDependencies = {
@@ -487,7 +489,7 @@ export abstract class CartesianSeries<
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
         const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData } = this;
 
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const item =
             seriesHighlighted && highlightedDatum?.datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
         this.highlightSelection = await this.updateHighlightSelectionItem({ item, highlightSelection });

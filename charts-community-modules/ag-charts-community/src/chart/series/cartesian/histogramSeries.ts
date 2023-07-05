@@ -265,7 +265,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             };
         };
 
-        if (!this.animationManager?.skipAnimations && this.processedData) {
+        if (!this.ctx.animationManager?.skipAnimations && this.processedData) {
             props.push(diff(this.processedData, false));
         }
 
@@ -592,7 +592,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
         labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let startingY = 0;
@@ -604,7 +604,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                this.animationManager?.animateMany(
+                this.ctx.animationManager?.animateMany(
                     `${this.id}_empty-update-ready_${rect.id}`,
                     [
                         { from: startingY, to: datum.y },
@@ -627,7 +627,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
@@ -651,7 +651,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.stop();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
         });
@@ -674,7 +674,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return;
         }
 
-        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const totalDuration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;
@@ -734,7 +734,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     cleanup = true;
                 }
 
-                this.animationManager?.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
+                this.ctx.animationManager?.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
                     disableInteractions: true,
                     delay,
                     duration: sectionDuration,
@@ -757,7 +757,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,

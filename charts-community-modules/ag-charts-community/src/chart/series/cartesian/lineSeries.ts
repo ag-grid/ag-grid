@@ -568,7 +568,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDash = this.lineDash;
             lineNode.lineDashOffset = this.lineDashOffset;
 
-            const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+            const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {
@@ -576,7 +576,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 to: lineLength,
             };
 
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
                 duration,
                 onUpdate(length) {
@@ -619,7 +619,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
@@ -632,7 +632,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             labelSelections[contextDataIndex].each((label, _, index) => {
                 const delay = (nodeLengths[index] / lineLength) * duration;
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay,
@@ -658,7 +658,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
     }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.stop();
         this.resetMarkersAndPaths(data);
     }
 

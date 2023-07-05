@@ -710,7 +710,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
 
         this.beforePathAnimation();
 
-        this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+        this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
             ...animationOptions,
             duration,
             onUpdate: (length) => this.updatePathAnimation(points, nodeLengths, length),
@@ -721,7 +721,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
             const format = this.animateFormatter(datum);
             const size = datum.point?.size ?? 0;
 
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                 ...animationOptions,
                 to: format?.size ?? size,
                 delay,
@@ -734,7 +734,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
 
         labelSelection.each((label, _, index) => {
             const delay = (nodeLengths[index] / lineLength) * duration;
-            this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                 from: 0,
                 to: 1,
                 delay,
@@ -751,7 +751,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     }
 
     animateReadyResize() {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.stop();
         this.resetMarkersAndPaths();
     }
 

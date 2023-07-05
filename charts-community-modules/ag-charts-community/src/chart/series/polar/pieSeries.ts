@@ -375,7 +375,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
 
     visibleChanged() {
@@ -675,10 +675,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             fillOpacity: seriesFillOpacity,
             formatter,
             id: seriesId,
-            ctx: { callbackCache },
+            ctx: { callbackCache, highlightManager },
         } = this;
 
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
 
@@ -870,7 +870,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateNodes(seriesRect: BBox) {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
@@ -1610,7 +1610,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     animateEmptyUpdateReady() {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         const rotation = Math.PI / -2 + toRadians(this.rotation);
@@ -1618,7 +1618,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
             const datum: PieNodeDatum = node.datum;
 
-            this.animationManager?.animateMany<number>(
+            this.ctx.animationManager?.animateMany<number>(
                 `${this.id}_empty-update-ready_${node.id}`,
                 [
                     { from: rotation, to: datum.startAngle },
@@ -1643,7 +1643,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         this.calloutLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1652,7 +1652,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.sectorLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1661,7 +1661,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.innerLabelsSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
