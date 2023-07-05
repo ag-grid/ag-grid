@@ -45,21 +45,21 @@ series: [
 
 ## Polar axes
 
-There are many ways to modify a look of polar grid lines and labels. For example it's possible to change the shape of grid lines from polygons to circles:
+There are many ways to modify a look of polar grid lines and labels. For example it's possible to change the shape of axes from polygons to circles:
 
 ```js
 series: [
     ...
 ],
 axes: [
-    { type: 'angle-category', shape: 'circle', label: { ... } },
-    { type: 'radius-number', gridStyle: [{ ... }] },
+    { type: 'angle-category', shape: 'circle' },
+    { type: 'radius-number', shape: 'circle' },
 ]
 ```
 
 <chart-example title='Polar Axes' name='polar-axes' type='generated' options='{ "enterprise": true }'></chart-example>
 
-Please see the API reference for more details.
+Please see the API reference for more polar axes style options.
 
 ### API Reference
 
@@ -170,7 +170,7 @@ export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
     type: 'angle-category';
     /** Configuration for the axis ticks. */
     tick?: AgAxisCategoryTickOptions;
-    /** Shape of grid lines. Default: `polygon` */
+    /** Shape of axes. Default: `polygon` */
     shape?: 'polygon' | 'circle';
 }
 
@@ -184,7 +184,7 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
-    /** Shape of grid lines. Default: `polygon` */
+    /** Shape of axes. Default: `polygon` */
     shape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
