@@ -71,16 +71,27 @@ export class SeriesLayerManager {
             return;
         }
 
-        this.releaseGroup({ id, seriesGrouping: oldGrouping, type });
+        this.releaseGroup({ id, seriesGrouping: oldGrouping, type, rootGroup });
         this.requestGroup({ id, seriesGrouping, type, rootGroup });
     }
 
-    public releaseGroup({ id, seriesGrouping, type }: { id: string; seriesGrouping?: SeriesGrouping; type: string }) {
+    public releaseGroup({
+        id,
+        seriesGrouping,
+        rootGroup,
+        type,
+    }: {
+        id: string;
+        seriesGrouping?: SeriesGrouping;
+        rootGroup: Group;
+        type: string;
+    }) {
         const { groupIndex = -1 } = seriesGrouping ?? {};
 
         const groupInfo = this.groups[type]?.[groupIndex];
         if (groupInfo) {
             groupInfo.seriesIds = groupInfo.seriesIds.filter((v) => v !== id);
+            groupInfo.group.removeChild(rootGroup);
         }
         if (groupInfo?.seriesIds.length === 0) {
             this.rootGroup.removeChild(groupInfo.group);

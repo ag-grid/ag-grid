@@ -36,7 +36,7 @@ export class SeriesStateManager {
         if (this.groups[type]) {
             delete this.groups[type][id];
         }
-        if (Object.keys(this.groups[type]).length === 0) {
+        if (this.groups[type] && Object.keys(this.groups[type]).length === 0) {
             delete this.groups[type];
         }
     }

@@ -328,14 +328,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     nodeClickRange: AgChartInteractionRange = 'exact';
 
     @ActionOnSet<Series>({
-        newValue: function (val) {
-            this.onSeriesGroupingChange(undefined, val);
-        },
         changeValue: function (newVal, oldVal) {
             this.onSeriesGroupingChange(oldVal, newVal);
-        },
-        oldValue: function (val) {
-            this.onSeriesGroupingChange(val);
         },
     })
     seriesGrouping?: SeriesGrouping = undefined;
@@ -349,7 +343,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (next) {
             this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
         }
-        this.ctx.seriesLayerManager.changeGroup({ id, seriesGrouping: next, rootGroup, type });
+        this.ctx.seriesLayerManager.changeGroup({ id, seriesGrouping: next, oldGrouping: prev, rootGroup, type });
     }
 
     getBandScalePadding() {
