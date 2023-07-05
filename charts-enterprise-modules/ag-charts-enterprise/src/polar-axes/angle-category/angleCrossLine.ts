@@ -2,8 +2,8 @@ import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 import { PolarCrossLine } from '../polarCrossLine';
 
 const { ChartAxisDirection } = _ModuleSupport;
-const { Path, Sector } = _Scene;
-
+const { Path, Sector, Text } = _Scene;
+const { normalizeAngle360, isNumberEqual } = _Util;
 export class AngleCrossLine extends PolarCrossLine {
     static className = 'AngleCrossLine';
 
@@ -12,6 +12,7 @@ export class AngleCrossLine extends PolarCrossLine {
     private polygonNode = new Path();
     private sectorNode = new Sector();
     private lineNode = new Path();
+    private labelNode = new Text();
 
     constructor() {
         super();
@@ -19,12 +20,14 @@ export class AngleCrossLine extends PolarCrossLine {
         this.group.append(this.polygonNode);
         this.group.append(this.sectorNode);
         this.group.append(this.lineNode);
+        this.group.append(this.labelNode);
     }
 
     update(visible: boolean) {
         this.updateLineNode(visible);
         this.updatePolygonNode(visible);
         this.updateSectorNode(visible);
+        this.updateLabelNode(visible);
     }
 
     private updateLineNode(visible: boolean) {
@@ -114,5 +117,75 @@ export class AngleCrossLine extends PolarCrossLine {
         sector.endAngle = angles[1];
 
         this.group.zIndex = AngleCrossLine.RANGE_LAYER_ZINDEX;
+    }
+
+    private updateLabelNode(visible: boolean) {
+        const { label, labelNode: node, range, scale, type } = this;
+        if (!visible || label.enabled === false || !label.text || !scale || (type === 'range' && !range)) {
+            node.visible = true;
+            return;
+        }
+
+        const radius = this.gridLength;
+
+        let labelX: number;
+        let labelY: number;
+        let rotation: number;
+        let textBaseline: CanvasTextBaseline;
+
+        if (this.type === 'line') {
+            const angle = normalizeAngle360(scale.convert(this.value));
+            const angle270 = (3 * Math.PI) / 2;
+            const isRightSide = isNumberEqual(angle, angle270) || angle > angle270 || angle < Math.PI / 2;
+            const midX = (radius / 2) * Math.cos(angle);
+            const midY = (radius / 2) * Math.sin(angle);
+
+            labelX = midX + label.padding * Math.cos(angle + Math.PI / 2);
+            labelY = midY + label.padding * Math.sin(angle + Math.PI / 2);
+            textBaseline = isRightSide ? 'top' : 'bottom';
+            rotation = isRightSide ? angle : angle - Math.PI;
+        } else {
+            const [startAngle, endAngle] = range!.map((value) => normalizeAngle360(scale.convert(value)));
+            let angle = (startAngle + endAngle) / 2;
+            if (startAngle > endAngle) {
+                angle -= Math.PI;
+            }
+            angle = normalizeAngle360(angle);
+            const isBottomSide = (isNumberEqual(angle, 0) || angle > 0) && angle < Math.PI;
+
+            let distance: number;
+            if (this.shape === 'circle') {
+                distance = radius - label.padding;
+            } else {
+                const tickCount = scale.ticks?.().length;
+                if (tickCount && tickCount > 2) {
+                    distance = radius * Math.cos(Math.PI / tickCount) - label.padding;
+                } else {
+                    distance = radius - label.padding;
+                }
+            }
+
+            labelX = distance * Math.cos(angle);
+            labelY = distance * Math.sin(angle);
+            textBaseline = isBottomSide ? 'bottom' : 'top';
+            rotation = isBottomSide ? angle - Math.PI / 2 : angle + Math.PI / 2;
+        }
+
+        node.x = labelX;
+        node.y = labelY;
+        node.text = label.text;
+        node.textAlign = 'center';
+        node.textBaseline = textBaseline;
+
+        node.rotation = rotation;
+        node.rotationCenterX = labelX;
+        node.rotationCenterY = labelY;
+
+        node.fill = label.color;
+        node.fontFamily = label.fontFamily;
+        node.fontSize = label.fontSize;
+        node.fontStyle = label.fontStyle;
+
+        node.visible = true;
     }
 }
