@@ -3,7 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
-import { CellPosition } from "./entities/cellPositionUtils";
+import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
@@ -34,6 +34,7 @@ export class FocusService extends BeanStub {
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
+    @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
     @Optional('rangeService') private readonly rangeService: IRangeService;
     @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
@@ -235,20 +236,14 @@ export class FocusService extends BeanStub {
         return false;
     }
 
-    public isCellRestoreFocused(cellPosition: CellPosition): boolean {
+    private isCellRestoreFocused(cellPosition: CellPosition): boolean {
         if (this.restoredFocusedCellPosition == null) { return false; }
 
-        return this.restoredFocusedCellPosition.column === cellPosition.column &&
-            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
-    }
-    public isRowRestoreFocused(rowIndex: number, floating?: string | null): boolean {
-        if (this.restoredFocusedCellPosition == null) { return false; }
-
-        return this.restoredFocusedCellPosition.rowIndex === rowIndex && this.restoredFocusedCellPosition.rowPinned === makeNull(floating);
+        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
     }
 
-    public setRestoreFocusedCell(params: CellPosition): void {
-        this.restoredFocusedCellPosition = params;
+    public setRestoreFocusedCell(cellPosition: CellPosition): void {
+        this.restoredFocusedCellPosition = cellPosition;
     }
 
     private getFocusEventParams(): CommonCellFocusParams {
@@ -323,8 +318,7 @@ export class FocusService extends BeanStub {
     public isCellFocused(cellPosition: CellPosition): boolean {
         if (this.focusedCellPosition == null) { return false; }
 
-        return this.focusedCellPosition.column === cellPosition.column &&
-            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
