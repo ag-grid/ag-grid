@@ -136,7 +136,7 @@ export class PrimaryColsListPanel extends Component {
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist, listItemElement);
+        const columnComp = new ToolPanelColumnComp(item, this.allowDragging, this.groupsExist, listItemElement);
         this.getContext().createBean(columnComp);
 
         return columnComp;

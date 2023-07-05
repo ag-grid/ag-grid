@@ -66,6 +66,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.modelItem = modelItem;
         this.columnGroup = modelItem.getColumnGroup();
         this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
         this.allowDragging = allowDragging;
     }
 
@@ -81,8 +82,6 @@ export class ToolPanelColumnGroupComp extends Component {
 
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-
-        this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.columnGroup, 'columnToolPanel');
 
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
