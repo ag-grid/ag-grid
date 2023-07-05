@@ -32,8 +32,13 @@ export class SeriesStateManager {
         this.groups[type][id] = { grouping: seriesGrouping, visible };
     }
 
-    public deregisterSeries({ id }: { id: string }) {
-        delete this.groups[id];
+    public deregisterSeries({ id, type }: { id: string; type: string }) {
+        if (this.groups[type]) {
+            delete this.groups[type][id];
+        }
+        if (Object.keys(this.groups[type]).length === 0) {
+            delete this.groups[type];
+        }
     }
 
     public getVisiblePeerGroupIndex({ type, seriesGrouping }: { type: string; seriesGrouping?: SeriesGrouping }): {

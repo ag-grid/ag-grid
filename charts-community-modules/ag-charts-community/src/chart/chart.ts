@@ -395,6 +395,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.interactionManager.destroy();
         this.animationManager.stop();
+        this.seriesLayerManager.destroy();
 
         if (keepTransferableResources) {
             this.scene.strip();
@@ -406,7 +407,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((s) => s.destroy());
         this.series = [];
-        this.seriesLayerManager.destroy();
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
@@ -630,7 +630,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (canAdd) {
             allSeries.push(series);
 
-            this.seriesLayerManager.requestGroup(series);
+            if (series.rootGroup.parent == null) {
+                this.seriesLayerManager.requestGroup(series);
+            }
             this.initSeries(series);
 
             return true;
@@ -639,7 +641,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return false;
     }
 
-    protected initSeries(series: Series<any>) {
+    private initSeries(series: Series<any>) {
         series.chart = this;
         if (!series.data) {
             series.data = this.data;
@@ -649,21 +651,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
         series.addChartEventListeners();
     }
 
-    protected freeSeries(series: Series<any>) {
-        series.chart = undefined;
-        series.removeEventListener('nodeClick', this.onSeriesNodeClick);
-        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-    }
-
-    removeAllSeries(): void {
+    private removeAllSeries(): void {
         this.series.forEach((series) => {
-            this.freeSeries(series);
-            this.seriesLayerManager.releaseGroup(series);
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+            series.destroy();
+
+            series.chart = undefined;
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     }
 
-    protected addSeriesListeners(series: Series<any>) {
+    private addSeriesListeners(series: Series<any>) {
         if (this.hasEventListener('seriesNodeClick')) {
             series.addEventListener('nodeClick', this.onSeriesNodeClick);
         }

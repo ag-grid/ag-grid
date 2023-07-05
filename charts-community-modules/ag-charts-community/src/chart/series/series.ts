@@ -329,13 +329,28 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     @ActionOnSet<Series>({
         newValue: function (val) {
-            if (val) {
-                const { id, type, visible } = this;
-                this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: val });
-            }
+            this.onSeriesGroupingChange(undefined, val);
+        },
+        changeValue: function (newVal, oldVal) {
+            this.onSeriesGroupingChange(oldVal, newVal);
+        },
+        oldValue: function (val) {
+            this.onSeriesGroupingChange(val);
         },
     })
     seriesGrouping?: SeriesGrouping = undefined;
+
+    private onSeriesGroupingChange(prev?: SeriesGrouping, next?: SeriesGrouping) {
+        const { id, type, visible, rootGroup } = this;
+
+        if (prev) {
+            this.ctx.seriesStateManager.deregisterSeries({ id, type });
+        }
+        if (next) {
+            this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
+        }
+        this.ctx.seriesLayerManager.changeGroup({ id, seriesGrouping: next, rootGroup, type });
+    }
 
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
@@ -438,6 +453,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     destroy(): void {
         this.ctx.seriesStateManager.deregisterSeries(this);
+        this.ctx.seriesLayerManager.releaseGroup(this);
     }
 
     private getDirectionValues(

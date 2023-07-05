@@ -51,11 +51,34 @@ export class SeriesLayerManager {
         return groupInfo.group;
     }
 
-    public releaseGroup({ id, seriesGrouping, type }: { id: string; seriesGrouping?: SeriesGrouping; type: string }) {
-        if (!seriesGrouping) return;
+    public changeGroup({
+        id,
+        seriesGrouping,
+        type,
+        rootGroup,
+        oldGrouping,
+    }: {
+        id: string;
+        seriesGrouping?: SeriesGrouping;
+        oldGrouping?: SeriesGrouping;
+        rootGroup: Group;
+        type: string;
+    }) {
+        const { groupIndex = -1 } = seriesGrouping ?? {};
 
-        const { groupIndex } = seriesGrouping;
-        const groupInfo = this.groups[type][groupIndex];
+        if (this.groups[type]?.[groupIndex]?.seriesIds.includes(id)) {
+            // Already in the right group, nothing to do.
+            return;
+        }
+
+        this.releaseGroup({ id, seriesGrouping: oldGrouping, type });
+        this.requestGroup({ id, seriesGrouping, type, rootGroup });
+    }
+
+    public releaseGroup({ id, seriesGrouping, type }: { id: string; seriesGrouping?: SeriesGrouping; type: string }) {
+        const { groupIndex = -1 } = seriesGrouping ?? {};
+
+        const groupInfo = this.groups[type]?.[groupIndex];
         if (groupInfo) {
             groupInfo.seriesIds = groupInfo.seriesIds.filter((v) => v !== id);
         }
