@@ -377,6 +377,7 @@ export {
     SuppressNavigableCallbackParams,
     HeaderCheckboxSelectionCallbackParams,
     HeaderCheckboxSelectionCallback,
+    HeaderLocation,
     ColumnsMenuParams,
     ColumnMenuTab,
     HeaderClassParams,
