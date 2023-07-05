@@ -20,6 +20,7 @@ import {
     TestCase,
     prepareTestOptions,
     spyOnAnimationManager,
+    repeat,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -42,11 +43,17 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('column', 4),
+        }),
     },
     GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('column', 4),
+        }),
     },
     BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
@@ -58,11 +65,17 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('bar', 4),
+        }),
     },
     GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('bar', 4),
+        }),
     },
     COLUMN_CATEGORY_X_AXIS_POSITIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_POSITIVE_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_NEGATIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_NEGATIVE_LOG_AXIS),

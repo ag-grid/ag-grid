@@ -129,7 +129,7 @@ export function wheelEvent({
 }
 
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params ?? {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar', 'bar'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);

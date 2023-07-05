@@ -187,25 +187,27 @@ describe('ChartTheme', () => {
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart.series[0].type).toBe('column');
-            expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((chart.series[0] as BarSeries).label.color).toBe('yellow');
-            expect((chart.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((chart.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
+            const fills = ['red', 'green', 'blue', 'red', 'green'];
+            const strokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 0; i < 5; i++) {
+                expect(chart.series[i].type).toBe('column');
+                expect((chart.series[i] as BarSeries).fill).toEqual(fills[i]);
+                expect((chart.series[i] as BarSeries).stroke).toEqual(strokes[i]);
+                expect((chart.series[i] as BarSeries).label.enabled).toBe(true);
+                expect((chart.series[i] as BarSeries).label.color).toBe('yellow');
+                expect((chart.series[i] as BarSeries).label.fontSize).toBe(18);
+                expect((chart.series[i] as BarSeries).tooltip.enabled).toBe(false);
+                expect((chart.series[i] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
+            }
 
-            expect(chart.series[1].type).toBe('area');
-            expect((chart.series[1] as unknown as AreaSeries).fills).toEqual(['blue', 'red', 'green', 'blue', 'red']);
-            expect((chart.series[1] as unknown as AreaSeries).strokes).toEqual([
-                'cyan',
-                'cyan',
-                'cyan',
-                'cyan',
-                'cyan',
-            ]);
-            expect((chart.series[1] as unknown as AreaSeries).marker.formatter).toBe(markerFormatter);
+            const areaFills = ['blue', 'red', 'green', 'blue', 'red'];
+            const areaStrokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 5; i < 10; i++) {
+                expect(chart.series[i].type).toBe('area');
+                expect((chart.series[i] as unknown as AreaSeries).fill).toEqual(areaFills[i - 5]);
+                expect((chart.series[i] as unknown as AreaSeries).stroke).toEqual(areaStrokes[i - 5]);
+                expect((chart.series[i] as unknown as AreaSeries).marker.formatter).toBe(markerFormatter);
+            }
         });
     });
 
@@ -428,14 +430,18 @@ describe('ChartTheme', () => {
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart.series[0].type).toBe('column');
-            expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((chart.series[0] as BarSeries).label.color).toBe('blue');
-            expect((chart.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((chart.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            const fills = ['red', 'green', 'blue', 'red', 'green'];
+            const strokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 0; i < 5; i++) {
+                expect(chart.series[i].type).toBe('column');
+                expect((chart.series[i] as BarSeries).fill).toEqual(fills[i]);
+                expect((chart.series[i] as BarSeries).stroke).toEqual(strokes[i]);
+                expect((chart.series[i] as BarSeries).label.enabled).toBe(true);
+                expect((chart.series[i] as BarSeries).label.color).toBe('blue');
+                expect((chart.series[i] as BarSeries).label.fontSize).toBe(18);
+                expect((chart.series[i] as BarSeries).tooltip.enabled).toBe(false);
+                expect((chart.series[i] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            }
         });
 
         test('Polar chart intstance properties', async () => {
@@ -865,11 +871,13 @@ describe('ChartTheme', () => {
             const { series } = chart;
 
             expect(series[0].type).toEqual('column');
-            expect(series[1].type).toEqual('line');
-            expect(series[2].type).toEqual('area');
+            expect(series[1].type).toEqual('column');
+            expect(series[2].type).toEqual('line');
+            expect(series[3].type).toEqual('area');
             expect((series[0] as BarSeries).strokeWidth).toEqual(16);
-            expect((series[1] as LineSeries).strokeWidth).toEqual(17);
-            expect((series[2] as unknown as AreaSeries).strokeWidth).toEqual(18);
+            expect((series[1] as BarSeries).strokeWidth).toEqual(16);
+            expect((series[2] as LineSeries).strokeWidth).toEqual(17);
+            expect((series[3] as unknown as AreaSeries).strokeWidth).toEqual(18);
         });
     });
 });

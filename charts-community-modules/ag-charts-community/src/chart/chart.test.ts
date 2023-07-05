@@ -147,7 +147,7 @@ describe('Chart', () => {
                 expect(nodeData.length).toBeGreaterThan(0);
                 for (const item of nodeData) {
                     const itemPoint = testParams.getNodePoint(item);
-                    const { x, y } = series.rootGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
+                    const { x, y } = series.contentGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
                     await hoverAction(x, y)(chart);
                     await waitForChartStability(chart);
                     await iterator({ series, item, x, y });
@@ -278,8 +278,8 @@ describe('Chart', () => {
             },
             getNodePoint: (item) => [item.point.x, item.point.y],
             getDatumValues: (item, series) => {
-                const xValue = item.datum[series['xKey']];
-                const yValue = item.datum[series.yKeys[0]];
+                const xValue = item.datum[series.xKey];
+                const yValue = item.datum[series.yKey];
                 return [xValue, yValue];
             },
         });
@@ -321,7 +321,7 @@ describe('Chart', () => {
             getNodePoint: (item) => [item.x + item.width / 2, item.y + item.height / 2],
             getDatumValues: (item, series) => {
                 const xValue = item.datum[series.xKey];
-                const yValue = item.datum[series.yKeys[0]];
+                const yValue = item.datum[series.yKey];
                 return [xValue, yValue];
             },
         });
