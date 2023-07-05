@@ -204,8 +204,10 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
@@ -366,7 +368,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         let selectionData: RadarNodeDatum[] = [];
         if (visible && shape && enabled) {
             if (highlight) {
-                const highlighted = this.highlightManager?.getActiveHighlight();
+                const highlighted = this.ctx.highlightManager?.getActiveHighlight();
                 if (highlighted?.datum) {
                     selectionData = [highlighted as RadarNodeDatum];
                 }

@@ -232,8 +232,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     async processData(dataController: _ModuleSupport.DataController) {
