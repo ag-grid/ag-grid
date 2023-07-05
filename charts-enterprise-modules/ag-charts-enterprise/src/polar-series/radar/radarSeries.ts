@@ -340,8 +340,14 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     async update() {
         this.maybeRefreshNodeData();
 
-        this.rootGroup.translationX = this.centerX;
-        this.rootGroup.translationY = this.centerY;
+        this.contentGroup.translationX = this.centerX;
+        this.contentGroup.translationY = this.centerY;
+        this.highlightGroup.translationX = this.centerX;
+        this.highlightGroup.translationY = this.centerY;
+        if (this.labelGroup) {
+            this.labelGroup.translationX = this.centerX;
+            this.labelGroup.translationY = this.centerY;
+        }
 
         this.updatePathSelections();
         this.updateMarkers(this.markerSelection, false);

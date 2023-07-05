@@ -227,19 +227,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             if (aggregation === 'count') {
                 // Nothing to do.
             } else if (aggregation === 'sum') {
-                aggProp = groupSum(this, 'groupAgg', [yKey]);
+                aggProp = groupSum(this, 'groupAgg');
             } else if (aggregation === 'mean') {
-                aggProp = groupAverage(this, 'groupAgg', [yKey]);
+                aggProp = groupAverage(this, 'groupAgg');
             }
             if (areaPlot) {
-                aggProp = area(this, 'groupAgg', [yKey], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
             props.push(valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
         } else {
             let aggProp = groupCount(this, 'groupAgg');
 
             if (areaPlot) {
-                aggProp = area(this, 'groupAgg', [], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
             props.push(aggProp);
         }
@@ -325,7 +325,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
+        if (!this.visible || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
         }
 

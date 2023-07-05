@@ -14,7 +14,7 @@ import { Selection } from '../../../scene/selection';
 import type { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
-import type { Node } from '../../../scene/node';
+import type { Node, ZIndexSubOrder } from '../../../scene/node';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import type { PointLabelDatum } from '../../../util/labelPlacement';
@@ -124,12 +124,6 @@ export abstract class CartesianSeries<
     protected animationState: CartesianStateMachine;
     protected datumSelectionGarbageCollection = true;
 
-    /**
-     * The assumption is that the values will be reset (to `true`)
-     * in the {@link yKeys} setter.
-     */
-    protected readonly seriesItemEnabled = new Map<string, boolean>();
-
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
 
@@ -137,15 +131,13 @@ export abstract class CartesianSeries<
         opts: Partial<SeriesOpts> & {
             moduleCtx: ModuleContext;
             pickModes?: SeriesNodePickMode[];
-            directionKeys?: { [key in ChartAxisDirection]?: string[] };
-            directionNames?: { [key in ChartAxisDirection]?: string[] };
         }
     ) {
         super({
             ...opts,
             useSeriesGroupLayer: true,
-            directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
-            directionNames: opts.directionNames ?? DEFAULT_DIRECTION_NAMES,
+            directionKeys: DEFAULT_DIRECTION_KEYS,
+            directionNames: DEFAULT_DIRECTION_NAMES,
         });
 
         const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
@@ -238,12 +230,9 @@ export abstract class CartesianSeries<
     }
 
     async update({ seriesRect }: { seriesRect?: BBox }) {
-        const { seriesItemEnabled, visible } = this;
+        const { visible } = this;
         const { series } = this.highlightManager?.getActiveHighlight() ?? {};
         const seriesHighlighted = series ? series === this : undefined;
-
-        const anySeriesItemEnabled =
-            (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some((v) => v === true);
 
         const newNodeDataDependencies = {
             seriesRectWidth: seriesRect?.width,
@@ -255,8 +244,8 @@ export abstract class CartesianSeries<
             this.markNodeDataDirty();
         }
 
-        await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
-        await this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
+        await this.updateSelections(seriesHighlighted, visible);
+        await this.updateNodes(seriesHighlighted, visible);
 
         if (resize) {
             this.animationState.transition('resize', {
@@ -329,7 +318,7 @@ export abstract class CartesianSeries<
             _contextNodeData: contextNodeData,
             contentGroup,
             subGroups,
-            opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset },
+            opts: { pathsPerSeries, hasMarkers },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
@@ -354,26 +343,25 @@ export abstract class CartesianSeries<
         while (totalGroups > subGroups.length) {
             const layer = false;
             const subGroupId = this.subGroupId++;
-            const subGroupZOffset = subGroupId;
             const dataNodeGroup = new Group({
                 name: `${this.id}-series-sub${subGroupId}-dataNodes`,
                 layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [() => this._declarationOrder, subGroupZOffset],
+                zIndexSubOrder: this.getGroupZIndexSubOrder('data', subGroupId),
             });
             const markerGroup = hasMarkers
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer,
                       zIndex: Layers.SERIES_LAYER_ZINDEX,
-                      zIndexSubOrder: [() => this._declarationOrder, 10000 + subGroupId],
+                      zIndexSubOrder: this.getGroupZIndexSubOrder('marker', subGroupId),
                   })
                 : undefined;
             const labelGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-labels`,
                 layer,
                 zIndex: Layers.SERIES_LABEL_ZINDEX,
-                zIndexSubOrder: [() => this._declarationOrder, subGroupId],
+                zIndexSubOrder: this.getGroupZIndexSubOrder('labels', subGroupId),
             });
 
             contentGroup.appendChild(dataNodeGroup);
@@ -386,10 +374,7 @@ export abstract class CartesianSeries<
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
                 paths[index].zIndex = Layers.SERIES_LAYER_ZINDEX;
-                paths[index].zIndexSubOrder = [
-                    () => this._declarationOrder,
-                    (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset,
-                ];
+                paths[index].zIndexSubOrder = this.getGroupZIndexSubOrder('paths', index);
                 contentGroup.appendChild(paths[index]);
             }
 
@@ -409,12 +394,26 @@ export abstract class CartesianSeries<
         }
     }
 
+    getGroupZIndexSubOrder(
+        type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
+        subIndex?: number
+    ): ZIndexSubOrder {
+        const result = super.getGroupZIndexSubOrder(type, subIndex);
+        switch (type) {
+            case 'paths':
+                if (typeof result[0] === 'number') {
+                    result[0] += this.opts.pathsZIndexSubOrderOffset[subIndex ?? 0] ?? 0;
+                }
+                break;
+        }
+        return result;
+    }
+
     protected async updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
         const {
             highlightSelection,
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
-            seriesItemEnabled,
             opts: { hasMarkers },
         } = this;
 
@@ -423,13 +422,10 @@ export abstract class CartesianSeries<
         this.contentGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
 
-        const seriesOpacity = this.getOpacity();
         const subGroupOpacities = this.subGroups.map((_, index) => {
             const { itemId } = contextNodeData[index];
             return this.getOpacity({ itemId });
         });
-        const isSubGroupOpacityDifferent = subGroupOpacities.some((subOp) => subOp !== seriesOpacity);
-        this.contentGroup.opacity = isSubGroupOpacityDifferent ? 1 : seriesOpacity;
 
         if (hasMarkers) {
             await this.updateMarkerNodes({
@@ -455,10 +451,9 @@ export abstract class CartesianSeries<
                     paths,
                     labelGroup,
                 } = subGroup;
-                const { itemId } = contextNodeData[seriesIdx];
 
-                const subGroupVisible = visible && (seriesItemEnabled.get(itemId) ?? true);
-                const subGroupOpacity = isSubGroupOpacityDifferent ? subGroupOpacities[seriesIdx] : 1;
+                const subGroupVisible = visible;
+                const subGroupOpacity = subGroupOpacities[seriesIdx];
 
                 dataNodeGroup.opacity = subGroupOpacity;
                 dataNodeGroup.visible = subGroupVisible;
@@ -676,28 +671,6 @@ export abstract class CartesianSeries<
         this.toggleSeriesItem(itemId, newEnabled);
     }
 
-    protected toggleSeriesItem(itemId: string, enabled: boolean): void {
-        if (this.seriesItemEnabled.size > 0) {
-            this.seriesItemEnabled.set(itemId, enabled);
-            this.nodeDataRefresh = true;
-        } else {
-            super.toggleSeriesItem(itemId, enabled);
-        }
-    }
-
-    isEnabled() {
-        if (this.seriesItemEnabled.size > 0) {
-            for (const [, enabled] of this.seriesItemEnabled) {
-                if (enabled) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        return super.isEnabled();
-    }
-
     protected isPathOrSelectionDirty(): boolean {
         // Override point to allow more sophisticated dirty selection detection.
         return false;
@@ -705,15 +678,6 @@ export abstract class CartesianSeries<
 
     getLabelData(): PointLabelDatum[] {
         return [];
-    }
-
-    protected isAnySeriesVisible() {
-        for (const visible of this.seriesItemEnabled.values()) {
-            if (visible) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected async updateHighlightSelectionItem(opts: {

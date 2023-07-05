@@ -297,10 +297,10 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.crossLineGroup.visible = visible;
     }
 
-    attachAxis(node: Node, nextNode?: Node | null) {
-        node.insertBefore(this.gridGroup, nextNode);
-        node.insertBefore(this.axisGroup, nextNode);
-        node.insertBefore(this.crossLineGroup, nextNode);
+    attachAxis(node: Node) {
+        node.appendChild(this.gridGroup);
+        node.appendChild(this.axisGroup);
+        node.appendChild(this.crossLineGroup);
     }
 
     detachAxis(node: Node) {

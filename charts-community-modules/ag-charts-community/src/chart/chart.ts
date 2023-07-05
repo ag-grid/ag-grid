@@ -41,6 +41,8 @@ import { getLegend } from './factory/legendTypes';
 import { CallbackCache } from '../util/callbackCache';
 import type { ModuleContext } from '../util/moduleContext';
 import { DataController } from './data/dataController';
+import { SeriesStateManager } from './series/seriesStateManager';
+import { SeriesLayerManager } from './series/seriesLayerManager';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -202,6 +204,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
     protected readonly callbackCache: CallbackCache;
+    protected readonly seriesStateManager: SeriesStateManager;
+    protected readonly seriesLayerManager: SeriesLayerManager;
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
     protected readonly legendModules: Record<string, { instance: ModuleInstance }> = {};
     private legendType: string | undefined;
@@ -246,6 +250,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.updateService = new UpdateService((type = ChartUpdateType.FULL, { forceNodeDataRefresh }) =>
             this.update(type, { forceNodeDataRefresh })
         );
+        this.seriesStateManager = new SeriesStateManager();
+        this.seriesLayerManager = new SeriesLayerManager(this.seriesRoot);
         this.callbackCache = new CallbackCache();
 
         this.animationManager = new AnimationManager(this.interactionManager);
@@ -334,6 +340,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             dataService,
             layoutService,
             updateService,
+            seriesStateManager,
+            seriesLayerManager,
             mode,
             callbackCache,
         } = this;
@@ -350,6 +358,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             layoutService,
             updateService,
             mode,
+            seriesStateManager,
+            seriesLayerManager,
             callbackCache,
         };
     }
@@ -390,6 +400,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((s) => s.destroy());
         this.series = [];
+        this.seriesLayerManager.destroy();
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
@@ -606,20 +617,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._series;
     }
 
-    addSeries(series: Series<any>, before?: Series<any>): boolean {
-        const { series: allSeries, seriesRoot } = this;
+    addSeries(series: Series<any>): boolean {
+        const { series: allSeries } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 
         if (canAdd) {
-            const beforeIndex = before ? allSeries.indexOf(before) : -1;
+            allSeries.push(series);
 
-            if (before && beforeIndex >= 0) {
-                allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.rootGroup, before.rootGroup);
-            } else {
-                allSeries.push(series);
-                seriesRoot.append(series.rootGroup);
-            }
+            this.seriesLayerManager.requestGroup(series);
             this.initSeries(series);
 
             return true;
@@ -650,7 +655,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     removeAllSeries(): void {
         this.series.forEach((series) => {
             this.freeSeries(series);
-            this.seriesRoot.removeChild(series.rootGroup);
+            this.seriesLayerManager.releaseGroup(series);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     }
@@ -1221,7 +1226,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;
             const { canvas } = this.scene;
-            const point = datum.series.rootGroup.inverseTransformPoint(x, y);
+            const point = datum.series.contentGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();
             return {
                 ...meta,

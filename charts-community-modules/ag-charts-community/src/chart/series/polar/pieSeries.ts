@@ -752,8 +752,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.updateRadiusScale();
         this.updateInnerCircleNodes();
 
-        this.rootGroup.translationX = this.centerX;
-        this.rootGroup.translationY = this.centerY;
+        this.contentGroup.translationX = this.centerX;
+        this.contentGroup.translationY = this.centerY;
+        this.highlightGroup.translationX = this.centerX;
+        this.highlightGroup.translationY = this.centerY;
+        this.backgroundGroup.translationX = this.centerX;
+        this.backgroundGroup.translationY = this.centerY;
+        if (this.labelGroup) {
+            this.labelGroup.translationX = this.centerX;
+            this.labelGroup.translationY = this.centerY;
+        }
 
         if (title) {
             const dy = this.getTitleTranslationY();
@@ -919,9 +927,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const isDatumHighlighted =
                 highlightedDatum?.series === this && node.datum.itemId === highlightedDatum.itemId;
 
-            node.visible = isDatumHighlighted;
-            if (node.visible) {
+            if (isDatumHighlighted) {
                 updateSectorFn(node, node.datum, index, isDatumHighlighted);
+            } else {
+                node.visible = false;
             }
         });
 
