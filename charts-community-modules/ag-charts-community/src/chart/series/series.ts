@@ -27,6 +27,8 @@ import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
 import type { ModuleContext } from '../../util/moduleContext';
 import type { DataController } from '../data/dataController';
+import { accumulateGroup } from '../data/processors';
+import { ActionOnSet } from '../../util/proxy';
 
 /**
  * Processed series datum used in node selections,
@@ -150,6 +152,17 @@ export function trailingAccumulatedValueProperty<K>(
         processor: trailingAccumulatedValue(),
     };
     return result;
+}
+
+export function groupAccumulativeValueProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    mode: 'normal' | 'trailing' | 'window' | 'window-trailing',
+    sum: 'current' | 'last' = 'current',
+    opts: Partial<DatumPropertyDefinition<K>> & { groupId: string }
+) {
+    return [valueProperty(scope, propName, continuous, opts), accumulateGroup(scope, opts.groupId, mode, sum)];
 }
 
 export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements TypedEvent {

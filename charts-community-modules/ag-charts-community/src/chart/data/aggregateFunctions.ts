@@ -19,11 +19,11 @@ function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<numbe
     return accumulator;
 }
 
-export function sum<K>(scope: ScopeProvider, id: string, props: K[]) {
+export function sum(scope: ScopeProvider, id: string, matchGroupId: string) {
     const result: AggregatePropertyDefinition<any, any> = {
         id,
         scopes: [scope.id],
-        properties: props,
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
     };
@@ -31,16 +31,16 @@ export function sum<K>(scope: ScopeProvider, id: string, props: K[]) {
     return result;
 }
 
-export function groupSum<K>(
+export function groupSum(
     scope: ScopeProvider,
     id: string,
-    props: K[]
+    matchGroupId?: string
 ): AggregatePropertyDefinition<any, any, [number, number]> {
     return {
         id,
         scopes: [scope.id],
         type: 'aggregate',
-        properties: props,
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         aggregateFunction: (values) => sumValues(values),
         groupAggregateFunction: (next, acc = [0, 0]) => {
             acc[0] += next?.[0] ?? 0;
@@ -50,11 +50,11 @@ export function groupSum<K>(
     };
 }
 
-export function range<K>(scope: ScopeProvider, id: string, props: K[]) {
+export function range(scope: ScopeProvider, id: string, matchGroupId: string) {
     const result: AggregatePropertyDefinition<any, any> = {
         id,
         scopes: [scope.id],
-        properties: props,
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => extendDomain(values),
     };
@@ -66,7 +66,6 @@ export function count(scope: ScopeProvider, id: string) {
     const result: AggregatePropertyDefinition<any, any> = {
         id,
         scopes: [scope.id],
-        properties: [],
         type: 'aggregate',
         aggregateFunction: () => [0, 1],
     };
@@ -79,7 +78,6 @@ export function groupCount(scope: ScopeProvider, id: string): AggregatePropertyD
         id,
         scopes: [scope.id],
         type: 'aggregate',
-        properties: [],
         aggregateFunction: () => [0, 1],
         groupAggregateFunction: (next, acc = [0, 0]) => {
             acc[0] += next?.[0] ?? 0;
@@ -89,11 +87,11 @@ export function groupCount(scope: ScopeProvider, id: string): AggregatePropertyD
     };
 }
 
-export function average<K>(scope: ScopeProvider, id: string, props: K[]) {
+export function average(scope: ScopeProvider, id: string, matchGroupId: string) {
     const result: AggregatePropertyDefinition<any, any> = {
         id,
         scopes: [scope.id],
-        properties: props,
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values).map((v) => v / values.length) as [number, number],
     };
@@ -101,11 +99,11 @@ export function average<K>(scope: ScopeProvider, id: string, props: K[]) {
     return result;
 }
 
-export function groupAverage<K>(scope: ScopeProvider, id: string, props: K[]) {
+export function groupAverage(scope: ScopeProvider, id: string, matchGroupId?: string) {
     const result: AggregatePropertyDefinition<any, any, [number, number], [number, number, number]> = {
         id,
         scopes: [scope.id],
-        properties: props,
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
         groupAggregateFunction: (next, acc = [0, 0, -1]) => {
@@ -126,11 +124,16 @@ export function groupAverage<K>(scope: ScopeProvider, id: string, props: K[]) {
     return result;
 }
 
-export function area<K>(scope: ScopeProvider, id: string, props: K[], aggFn: AggregatePropertyDefinition<any, any>) {
+export function area(
+    scope: ScopeProvider,
+    id: string,
+    aggFn: AggregatePropertyDefinition<any, any>,
+    matchGroupId?: string
+) {
     const result: AggregatePropertyDefinition<any, any> = {
         id,
         scopes: [scope.id],
-        properties: props,
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         type: 'aggregate',
         aggregateFunction: (values, keyRange = []) => {
             const keyWidth = keyRange[1] - keyRange[0];
