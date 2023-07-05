@@ -13,6 +13,7 @@ import {
     TestCase,
     toMatchImage,
     prepareTestOptions,
+    repeat,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -20,7 +21,10 @@ expect.extend({ toMatchImageSnapshot, toMatchImage });
 const EXAMPLES: Record<string, TestCase> = {
     TRUNCATED_LEGEND_ITEMS: {
         options: examples.TRUNCATED_LEGEND_ITEMS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('bar', 4),
+        }),
     },
 };
 

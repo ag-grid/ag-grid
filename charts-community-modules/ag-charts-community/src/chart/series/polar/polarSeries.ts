@@ -38,6 +38,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
             moduleCtx,
             useLabelLayer,
             pickModes,
+            contentGroupVirtual: false,
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],

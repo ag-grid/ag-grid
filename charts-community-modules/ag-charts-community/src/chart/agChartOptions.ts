@@ -1293,7 +1293,10 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
+    /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
+    /** An ID to be used to group stacked items. */
+    stackGroup?: string;
 }
 
 export type AgBarSeriesLabelPlacement = 'inside' | 'outside';

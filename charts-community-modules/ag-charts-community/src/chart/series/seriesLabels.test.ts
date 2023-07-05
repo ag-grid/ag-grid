@@ -26,11 +26,17 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_COLUMN_SERIES_LABELS: {
         options: examples.STACKED_COLUMN_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('column', 5),
+        }),
     },
     GROUPED_COLUMN_SERIES_LABELS: {
         options: examples.GROUPED_COLUMN_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('column', 5),
+        }),
     },
     BAR_SERIES_LABELS: {
         options: examples.BAR_SERIES_LABELS,
@@ -38,11 +44,17 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_BAR_SERIES_LABELS: {
         options: examples.STACKED_BAR_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('bar', 5),
+        }),
     },
     GROUPED_BAR_SERIES_LABELS: {
         options: examples.GROUPED_BAR_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('bar', 5),
+        }),
     },
     AREA_SERIES_LABELS: {
         options: examples.AREA_SERIES_LABELS,
@@ -50,7 +62,10 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_AREA_SERIES_LABELS: {
         options: examples.STACKED_AREA_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['area'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'category'],
+            seriesTypes: repeat('area', 4),
+        }),
     },
     GROUPED_AREA_SERIES_LABELS: {
         options: examples.GROUPED_AREA_SERIES_LABELS,
@@ -100,14 +115,14 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.LINE_COLUMN_COMBO_SERIES_LABELS,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['column', 'line'],
+            seriesTypes: ['column', 'column', 'line'],
         }),
     },
     AREA_COLUMN_COMBO_SERIES_LABELS: {
         options: examples.AREA_COLUMN_COMBO_SERIES_LABELS,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['area', 'column'],
+            seriesTypes: ['area', 'column', 'column'],
         }),
     },
     HISTOGRAM_SCATTER_COMBO_SERIES_LABELS: {

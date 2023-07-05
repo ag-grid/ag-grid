@@ -556,11 +556,21 @@ export class Scene {
                     const key = [
                         `${treeNodeName ?? '<unknown>'}`,
                         `z: ${zIndex}`,
-                        zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                        zIndexSubOrder &&
+                            `zo: ${zIndexSubOrder
+                                .map((v: any) => (typeof v === 'function' ? `${v()} (fn)` : v))
+                                .join(' / ')}`,
+                        childNode.parent?.isVirtual === true && `(virtual parent)`,
                     ]
                         .filter((v) => !!v)
                         .join(' ');
-                    result[key] = childTree;
+
+                    let selectedKey = key;
+                    let index = 1;
+                    while (result[selectedKey] != null && index < 100) {
+                        selectedKey = `${key} (${index++})`;
+                    }
+                    result[selectedKey] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };

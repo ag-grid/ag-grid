@@ -28,10 +28,10 @@ export class HierarchyChart extends Chart {
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
         this.hoverRect = hoverRect;
 
+        this.seriesRoot.translationX = Math.floor(shrinkRect.x);
+        this.seriesRoot.translationY = Math.floor(shrinkRect.y);
         await Promise.all(
             this.series.map(async (series) => {
-                series.rootGroup.translationX = Math.floor(shrinkRect.x);
-                series.rootGroup.translationY = Math.floor(shrinkRect.y);
                 await series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
             })
         );

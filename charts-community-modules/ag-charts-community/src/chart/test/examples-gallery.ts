@@ -11,23 +11,23 @@ type TestCase = {
 export const EXAMPLES: Record<string, TestCase> = {
     BAR_CHART_EXAMPLE: {
         options: examples.BAR_CHART_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 1) }),
     },
     GROUPED_BAR_CHART_EXAMPLE: {
         options: examples.GROUPED_BAR_CHART_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 2) }),
     },
     STACKED_BAR_CHART_EXAMPLE: {
         options: examples.STACKED_BAR_CHART_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 4) }),
     },
     ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: {
         options: examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 3) }),
     },
     BAR_CHART_WITH_LABELS_EXAMPLE: {
         options: examples.BAR_CHART_WITH_LABELS_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 1) }),
     },
     SIMPLE_COLUMN_CHART_EXAMPLE: {
         options: examples.SIMPLE_COLUMN_CHART_EXAMPLE,
@@ -35,19 +35,19 @@ export const EXAMPLES: Record<string, TestCase> = {
     },
     GROUPED_COLUMN_EXAMPLE: {
         options: examples.GROUPED_COLUMN_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 7) }),
     },
     STACKED_COLUMN_GRAPH_EXAMPLE: {
         options: examples.STACKED_COLUMN_GRAPH_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 5) }),
     },
     ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: {
         options: examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 6) }),
     },
     COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: {
         options: examples.COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 2) }),
     },
     SIMPLE_PIE_CHART_EXAMPLE: {
         options: examples.SIMPLE_PIE_CHART_EXAMPLE,
@@ -83,11 +83,11 @@ export const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_AREA_GRAPH_EXAMPLE: {
         options: examples.STACKED_AREA_GRAPH_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('area', 6) }),
     },
     ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: {
         options: examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['area'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('area', 7) }),
     },
     AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: {
         options: examples.AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE,
@@ -115,7 +115,7 @@ export const EXAMPLES: Record<string, TestCase> = {
     },
     CROSS_LINES_EXAMPLE: {
         options: examples.CROSS_LINES_EXAMPLE,
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 2) }),
     },
     ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
         options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,

@@ -184,14 +184,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 1,
-            directionKeys: {
-                [ChartAxisDirection.X]: ['xKey'],
-                [ChartAxisDirection.Y]: ['yKey'],
-            },
-            directionNames: {
-                [ChartAxisDirection.X]: ['xName'],
-                [ChartAxisDirection.Y]: ['yName'],
-            },
         });
 
         this.label.enabled = false;

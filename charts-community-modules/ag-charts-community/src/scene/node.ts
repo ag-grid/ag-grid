@@ -99,6 +99,13 @@ export abstract class Node extends ChangeDetectable {
      */
     protected isContainerNode: boolean = false;
 
+    /**
+     * Indicates if this node should be substituted for it's children when traversing the scene
+     * graph. This allows intermingling of child-nodes that are managed by different chart classes
+     * without breaking scene-graph encapsulation.
+     */
+    protected readonly isVirtual: boolean;
+
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
 
@@ -108,7 +115,10 @@ export abstract class Node extends ChangeDetectable {
         this._layerManager = value;
         this._debug = value?.debug;
 
-        for (const child of this.children) {
+        for (const child of this._children) {
+            child._setLayerManager(value);
+        }
+        for (const child of this._virtualChildren) {
             child._setLayerManager(value);
         }
     }
@@ -121,9 +131,24 @@ export abstract class Node extends ChangeDetectable {
         return this._parent;
     }
 
+    private _virtualChildren: Node[] = [];
     private _children: Node[] = [];
     get children(): Node[] {
-        return this._children;
+        if (this._virtualChildren.length === 0) return this._children;
+
+        const result = [...this._children];
+        for (const next of this._virtualChildren) {
+            result.push(...next.children);
+        }
+        return result;
+    }
+
+    protected get virtualChildren(): Node[] {
+        return this._virtualChildren;
+    }
+
+    hasVirtualChildren() {
+        return this._virtualChildren.length > 0;
     }
 
     // Used to check for duplicate nodes.
@@ -156,7 +181,11 @@ export abstract class Node extends ChangeDetectable {
                 throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
             }
 
-            this._children.push(node);
+            if (node.isVirtual) {
+                this._virtualChildren.push(node);
+            } else {
+                this._children.push(node);
+            }
             this.childSet[node.id] = true;
 
             node._parent = this;
@@ -174,56 +203,29 @@ export abstract class Node extends ChangeDetectable {
     }
 
     removeChild<T extends Node>(node: T): T {
-        if (node.parent === this) {
-            const i = this.children.indexOf(node);
-
-            if (i >= 0) {
-                this._children.splice(i, 1);
-                delete this.childSet[node.id];
-                node._parent = undefined;
-                node._setLayerManager();
-
-                this.dirtyZIndex = true;
-                this.markDirty(node, RedrawType.MAJOR);
-
-                return node;
-            }
-        }
-        throw new Error(`The node to be removed is not a child of this node.`);
-    }
-
-    /**
-     * Inserts the node `node` before the existing child node `nextNode`.
-     * If `nextNode` is null, insert `node` at the end of the list of children.
-     * If the `node` belongs to another parent, it is first removed.
-     * Returns the `node`.
-     * @param node
-     * @param nextNode
-     */
-    insertBefore<T extends Node>(node: T, nextNode?: Node | null): T {
-        const parent = node.parent;
-
-        if (node.parent) {
-            node.parent.removeChild(node);
+        const error = () => {
+            throw new Error(`The node to be removed is not a child of this node.`);
+        };
+        if (node.parent !== this) {
+            error();
         }
 
-        if (nextNode && nextNode.parent === this) {
-            const i = this.children.indexOf(nextNode);
-
-            if (i >= 0) {
-                this._children.splice(i, 0, node);
-                this.childSet[node.id] = true;
-                node._parent = this;
-                node._setLayerManager(this.layerManager);
-            } else {
-                throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
-            }
-
-            this.dirtyZIndex = true;
-            this.markDirty(node, RedrawType.MAJOR);
+        if (node.isVirtual) {
+            const i = this._virtualChildren.indexOf(node);
+            if (i < 0) error();
+            this._virtualChildren.splice(i, 1);
         } else {
-            this.append(node);
+            const i = this._children.indexOf(node);
+            if (i < 0) error();
+            this._children.splice(i, 1);
         }
+
+        delete this.childSet[node.id];
+        node._parent = undefined;
+        node._setLayerManager();
+
+        this.dirtyZIndex = true;
+        this.markDirty(node, RedrawType.MAJOR);
 
         return node;
     }
@@ -310,6 +312,11 @@ export abstract class Node extends ChangeDetectable {
 
     @SceneChangeDetection({ type: 'transform' })
     translationY: number = 0;
+
+    constructor({ isVirtual }: { isVirtual?: boolean } = {}) {
+        super();
+        this.isVirtual = isVirtual ?? false;
+    }
 
     containsPoint(_x: number, _y: number): boolean {
         return false;
@@ -473,8 +480,11 @@ export abstract class Node extends ChangeDetectable {
         this._dirty = RedrawType.NONE;
 
         if (recursive) {
-            for (const child of this.children) {
-                child.markClean();
+            for (const child of this._virtualChildren) {
+                child.markClean({ force });
+            }
+            for (const child of this._children) {
+                child.markClean({ force });
             }
         }
     }
@@ -507,11 +517,18 @@ export abstract class Node extends ChangeDetectable {
         let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
 
-        for (const child of this._children) {
+        const countChild = (child: Node) => {
             const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
             count += childCount;
             visibleCount += childVisibleCount;
             dirtyCount += childDirtyCount;
+        };
+
+        for (const child of this._children) {
+            countChild(child);
+        }
+        for (const child of this._virtualChildren) {
+            countChild(child);
         }
 
         return { count, visibleCount, dirtyCount };
