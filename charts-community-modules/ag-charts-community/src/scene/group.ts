@@ -221,7 +221,7 @@ export class Group extends Node {
             this.clipCtx(ctx, x, y, width, height);
 
             // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+            clipBBox = this.matrix.transformBBox(clipRect);
         }
 
         const hasVirtualChildren = this.hasVirtualChildren();
