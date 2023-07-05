@@ -890,7 +890,20 @@ export class FilterManager extends BeanStub {
             ? this.createFilterInstance(column)
             : { compDetails: null };
 
-        if (!compDetails || filterWrapper.compDetails?.componentClass !== compDetails.componentClass) {
+        const areFilterCompsDifferent = (oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean => {
+            if (!newCompDetails || !oldCompDetails) {
+                return true;
+            }
+            const { componentClass: oldComponentClass } = oldCompDetails;
+            const { componentClass: newComponentClass } = newCompDetails;
+            const isSameComponentClass = oldComponentClass === newComponentClass ||
+                // react hooks returns new wrappers, so check nested render method
+                (oldComponentClass?.render && newComponentClass?.render &&
+                    oldComponentClass.render === newComponentClass.render);
+            return !isSameComponentClass;
+        }
+
+        if (areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
         }
     }
