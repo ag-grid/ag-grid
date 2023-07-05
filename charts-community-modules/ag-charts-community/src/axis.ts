@@ -156,7 +156,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
     protected readonly tickLabelGroup = this.axisGroup.appendChild(
         new Group({ name: `${this.id}-Axis-tick-labels`, zIndex: Layers.AXIS_ZINDEX })
     );
-    private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
+    protected readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     readonly gridGroup = new Group({ name: `${this.id}-Axis-grid` });
     protected readonly gridLineGroup = this.gridGroup.appendChild(
@@ -170,9 +170,15 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
     protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text, false);
     protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line, false);
 
-    private _crossLines?: CrossLine[] = [];
+    protected abstract assignCrossLineArrayConstructor(crossLines: CrossLine[]): void;
+
+    private _crossLines?: CrossLine[];
     set crossLines(value: CrossLine[] | undefined) {
         this._crossLines?.forEach((crossLine) => this.detachCrossLine(crossLine));
+
+        if (value) {
+            this.assignCrossLineArrayConstructor(value);
+        }
 
         this._crossLines = value;
 
@@ -246,6 +252,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
                 },
             },
         });
+
+        this._crossLines = [];
+        this.assignCrossLineArrayConstructor(this._crossLines);
     }
 
     private attachCrossLine(crossLine: CrossLine) {
@@ -973,7 +982,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.tickLabelGroup.visible = this.label.enabled;
     }
 
-    private updateCrossLines({
+    protected updateCrossLines({
         rotation,
         parallelFlipRotation,
         regularFlipRotation,
