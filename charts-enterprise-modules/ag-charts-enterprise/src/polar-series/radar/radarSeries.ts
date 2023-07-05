@@ -219,7 +219,8 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
             return dataModel.getDomain(this, `angleValue`, 'value', processedData);
         } else {
             const domain = dataModel.getDomain(this, `radiusValue`, 'value', processedData);
-            return this.fixNumericExtent(extent([0].concat(domain)));
+            const ext = extent(domain.length === 0 ? domain : [0].concat(domain));
+            return this.fixNumericExtent(ext);
         }
     }
 
@@ -676,8 +677,10 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
 
         const nodeLengths: number[] = [0];
         const points = nodeData.map((datum) => datum.point!);
-        const first = points[0];
-        points.push(first); // connect the last point with the first
+        if (points.length > 0) {
+            const first = points[0];
+            points.push(first); // connect the last point with the first
+        }
 
         let lineLength = 0;
         points.forEach((point, index) => {
