@@ -217,7 +217,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     shadow?: _Scene.DropShadow = undefined;
 
-    private seriesItemTypes: SeriesItemType[] = ['positive', 'negative', 'total', 'subtotal'];
+    private seriesItemTypes: Set<SeriesItemType> = new Set(['positive', 'negative', 'total', 'subtotal']);
 
     protected readonly seriesItemEnabled = new Map<SeriesItemType, boolean>();
     private setSeriesItemEnabled() {
@@ -239,7 +239,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async processData(dataController: _ModuleSupport.DataController) {
-        const { xKey, yKey, seriesItemEnabled, data = [], typeKey = '' } = this;
+        const { xKey, yKey, seriesItemEnabled, data = [], typeKey = '', seriesItemTypes } = this;
 
         if (!yKey) return;
 
@@ -250,19 +250,23 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const positivesActive = !!seriesItemEnabled.get('positive');
         const negativesActive = !!seriesItemEnabled.get('negative');
 
-        const isActive = (v: any, datum: any) => {
+        seriesItemTypes.clear();
+
+        const validation = (v: any, datum: any) => {
             const type = datum[typeKey];
             if (type === 'total') {
+                seriesItemTypes.add('total');
                 return totalActive;
             } else if (type === 'subtotal') {
+                seriesItemTypes.add('subtotal');
                 return subtotalActive;
             } else if (v >= 0) {
-                return positivesActive;
+                seriesItemTypes.add('positive');
+                return positivesActive && checkDatum(v, true) != null;
             }
-            return negativesActive;
+            seriesItemTypes.add('negative');
+            return negativesActive && checkDatum(v, true) != null;
         };
-
-        const validation = (v: any, datum: any) => checkDatum(v, true) != null && isActive(v, datum);
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
@@ -461,7 +465,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             contexts[contextIndex].labelData.push(nodeDatum);
         });
 
-        contexts[0].pointData = pointData;
+        if (contexts.length > 0) {
+            contexts[0].pointData = pointData;
+        }
 
         return contexts;
     }
@@ -671,8 +677,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             return yName ?? yKey;
         }
 
-        for (let index = 0; index < seriesItemTypes.length; index++) {
-            const item = seriesItemTypes[index];
+        seriesItemTypes.forEach((item) => {
             const { fill, stroke, fillOpacity, strokeOpacity, name } = this.getItemConfig(item);
             const legendItemText = getLegendItemText(item, name);
             legendData.push({
@@ -691,7 +696,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                     strokeOpacity: strokeOpacity,
                 },
             });
-        }
+        });
 
         return legendData;
     }
