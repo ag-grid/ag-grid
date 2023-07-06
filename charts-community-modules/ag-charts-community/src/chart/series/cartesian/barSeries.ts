@@ -136,9 +136,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(OPT_STRING)
     xName?: string = undefined;
 
-    @Validate(BOOLEAN)
-    hideInLegend: boolean = false;
-
     @Validate(OPT_STRING)
     yKey?: string = undefined;
 
@@ -643,30 +640,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getLegendData(): ChartLegendDatum[] {
-        const {
-            id,
-            data,
-            xKey,
-            yKey,
-            yName,
-            legendItemName,
-            hideInLegend,
-            fill,
-            stroke,
-            fillOpacity,
-            strokeOpacity,
-            visible,
-        } = this;
+        const { id, data, xKey, yKey, yName, legendItemName, fill, stroke, fillOpacity, strokeOpacity, visible } = this;
 
         if (!data?.length || !xKey || !yKey) {
             return [];
         }
 
         const legendData: CategoryLegendDatum[] = [];
-
-        if (hideInLegend) {
-            return [];
-        }
 
         legendData.push({
             legendType: 'category',
