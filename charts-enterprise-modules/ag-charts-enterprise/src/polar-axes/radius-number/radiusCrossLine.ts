@@ -145,21 +145,6 @@ export class RadiusCrossLine extends PolarCrossLine {
             textBaseline = isBottomSide ? 'bottom' : 'top';
         }
 
-        node.x = labelX;
-        node.y = labelY;
-        node.text = label.text;
-        node.textAlign = 'center';
-        node.textBaseline = textBaseline;
-
-        node.rotation = rotation;
-        node.rotationCenterX = labelX;
-        node.rotationCenterY = labelY;
-
-        node.fill = label.color;
-        node.fontFamily = label.fontFamily;
-        node.fontSize = label.fontSize;
-        node.fontStyle = label.fontStyle;
-
-        node.visible = true;
+        this.setLabelNodeProps(node, labelX, labelY, textBaseline, rotation);
     }
 }

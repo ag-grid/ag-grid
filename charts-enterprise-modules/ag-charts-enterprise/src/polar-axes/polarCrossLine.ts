@@ -144,4 +144,31 @@ export abstract class PolarCrossLine implements _ModuleSupport.CrossLine {
     abstract update(visible: boolean): void;
 
     calculatePadding() {}
+
+    protected setLabelNodeProps(
+        node: _Scene.Text,
+        x: number,
+        y: number,
+        baseline: CanvasTextBaseline,
+        rotation: number
+    ) {
+        const { label } = this;
+
+        node.x = x;
+        node.y = y;
+        node.text = label.text;
+        node.textAlign = 'center';
+        node.textBaseline = baseline;
+
+        node.rotation = rotation;
+        node.rotationCenterX = x;
+        node.rotationCenterY = y;
+
+        node.fill = label.color;
+        node.fontFamily = label.fontFamily;
+        node.fontSize = label.fontSize;
+        node.fontStyle = label.fontStyle;
+
+        node.visible = true;
+    }
 }
