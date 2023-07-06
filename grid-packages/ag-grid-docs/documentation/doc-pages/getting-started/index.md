@@ -409,7 +409,7 @@ title: "Get Started with AG Grid"
 <tabs>
 
  <div tabs-links="true">
- <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" />
+ <open-in-cta type="codesandbox" href="https://codesandbox.io/p/sandbox/ag-grid-angular-example-zly6rt?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1-2%2C1" />
  </div>
 
 <div tab-label="app.component.ts">
@@ -942,7 +942,7 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>
 <tabs>
 
 <div tabs-links="true">
-<open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-react-hello-world" />
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-react-hello-world-9pnf3n?file=/src/App.js" />
 </div>
 
 <div tab-label="index.js">
