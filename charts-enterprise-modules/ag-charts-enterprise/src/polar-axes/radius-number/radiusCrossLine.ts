@@ -2,7 +2,8 @@ import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
 import { PolarCrossLine } from '../polarCrossLine';
 
 const { ChartAxisDirection } = _ModuleSupport;
-const { Path, Sector } = _Scene;
+const { Path, Sector, Text } = _Scene;
+const { normalizeAngle360, toRadians, isNumberEqual } = _Util;
 
 export class RadiusCrossLine extends PolarCrossLine {
     static className = 'RadiusCrossLine';
@@ -12,17 +13,20 @@ export class RadiusCrossLine extends PolarCrossLine {
 
     private polygonNode = new Path();
     private sectorNode = new Sector();
+    private labelNode = new Text();
 
     constructor() {
         super();
 
         this.group.append(this.polygonNode);
         this.group.append(this.sectorNode);
+        this.group.append(this.labelNode);
     }
 
     update(visible: boolean) {
         this.updatePolygonNode(visible);
         this.updateSectorNode(visible);
+        this.updateLabelNode(visible);
         this.group.translationY = this.getRadius();
         this.group.zIndex =
             this.type === 'line' ? RadiusCrossLine.LINE_LAYER_ZINDEX : RadiusCrossLine.RANGE_LAYER_ZINDEX;
@@ -105,5 +109,57 @@ export class RadiusCrossLine extends PolarCrossLine {
         sector.outerRadius = outerRadius;
 
         this.colorizeNode(sector);
+    }
+
+    private updateLabelNode(visible: boolean) {
+        const { label, labelNode: node, range, scale, type } = this;
+        if (!visible || label.enabled === false || !label.text || !scale || (type === 'range' && !range)) {
+            node.visible = true;
+            return;
+        }
+
+        const fullRadius = scale?.range[0] ?? 0;
+        const radius = fullRadius - scale!.convert(type === 'line' ? this.value : Math.max(...range!));
+
+        const angle = normalizeAngle360(toRadians((label.rotation ?? 0) - 90));
+        const isBottomSide = (isNumberEqual(angle, 0) || angle > 0) && angle < Math.PI;
+        const rotation = isBottomSide ? angle - Math.PI / 2 : angle + Math.PI / 2;
+
+        let distance: number;
+        const angles = this.gridAngles ?? [];
+        if (type === 'line') {
+            distance = radius + label.padding;
+        } else if (this.shape === 'circle' || angles.length < 3) {
+            distance = radius - label.padding;
+        } else {
+            distance = radius * Math.cos(Math.PI / angles.length) - label.padding;
+        }
+
+        const labelX = distance * Math.cos(angle);
+        const labelY = distance * Math.sin(angle);
+
+        let textBaseline: CanvasTextBaseline;
+        if (type === 'line') {
+            textBaseline = isBottomSide ? 'top' : 'bottom';
+        } else {
+            textBaseline = isBottomSide ? 'bottom' : 'top';
+        }
+
+        node.x = labelX;
+        node.y = labelY;
+        node.text = label.text;
+        node.textAlign = 'center';
+        node.textBaseline = textBaseline;
+
+        node.rotation = rotation;
+        node.rotationCenterX = labelX;
+        node.rotationCenterY = labelY;
+
+        node.fill = label.color;
+        node.fontFamily = label.fontFamily;
+        node.fontSize = label.fontSize;
+        node.fontStyle = label.fontStyle;
+
+        node.visible = true;
     }
 }

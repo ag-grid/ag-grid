@@ -133,7 +133,7 @@ export class AngleCrossLine extends PolarCrossLine {
         let rotation: number;
         let textBaseline: CanvasTextBaseline;
 
-        if (this.type === 'line') {
+        if (type === 'line') {
             const angle = normalizeAngle360(scale.convert(this.value));
             const angle270 = (3 * Math.PI) / 2;
             const isRightSide = isNumberEqual(angle, angle270) || angle > angle270 || angle < Math.PI / 2;
@@ -154,15 +154,11 @@ export class AngleCrossLine extends PolarCrossLine {
             const isBottomSide = (isNumberEqual(angle, 0) || angle > 0) && angle < Math.PI;
 
             let distance: number;
-            if (this.shape === 'circle') {
+            const ticks = scale.ticks?.() ?? [];
+            if (this.shape === 'circle' || ticks.length < 3) {
                 distance = radius - label.padding;
             } else {
-                const tickCount = scale.ticks?.().length;
-                if (tickCount && tickCount > 2) {
-                    distance = radius * Math.cos(Math.PI / tickCount) - label.padding;
-                } else {
-                    distance = radius - label.padding;
-                }
+                distance = radius * Math.cos(Math.PI / ticks.length) - label.padding;
             }
 
             labelX = distance * Math.cos(angle);
