@@ -903,6 +903,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         contextData: Array<WaterfallContext>;
         paths: Array<Array<_Scene.Path>>;
     }) {
+        if (paths.length === 0) {
+            return;
+        }
+
         const [lineNode] = paths[0];
 
         const { stroke, strokeWidth, strokeOpacity, lineDash, lineDashOffset } = this.line;
