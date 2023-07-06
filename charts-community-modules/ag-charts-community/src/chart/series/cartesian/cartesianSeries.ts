@@ -14,7 +14,7 @@ import { CategoryAxis } from '../../axis/categoryAxis';
 import type { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import type { Point } from '../../../scene/point';
-import { OPT_FUNCTION, Validate } from '../../../util/validation';
+import { OPT_FUNCTION, OPT_STRING, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import type { BBox } from '../../../scene/bbox';
 import type { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
@@ -98,6 +98,9 @@ export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
     N extends Node = Group
 > extends Series<C> {
+    @Validate(OPT_STRING)
+    legendItemName?: string = undefined;
+
     private _contextNodeData: C[] = [];
     get contextNodeData(): C[] {
         return this._contextNodeData?.slice();
@@ -654,21 +657,32 @@ export abstract class CartesianSeries<
     }
 
     onLegendItemClick(event: LegendItemClickChartEvent) {
-        const { enabled, itemId, series } = event;
+        const { enabled, itemId, series, legendItemName } = event;
 
-        if (series.id !== this.id) return;
-        this.toggleSeriesItem(itemId, enabled);
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        } else if (matchedLegendItemName) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
     }
 
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
-        const { enabled, itemId, series, numVisibleItems } = event;
+        const { enabled, itemId, series, numVisibleItems, legendItemName } = event;
 
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
 
-        const wasClicked = series.id === this.id;
-        const newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
-
-        this.toggleSeriesItem(itemId, newEnabled);
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id || matchedLegendItemName) {
+            // Double-clicked item should always become visible.
+            this.toggleSeriesItem(itemId, true);
+        } else if (enabled && totalVisibleItems === 1) {
+            // Other items should become visible if there is only one existing visible item.
+            this.toggleSeriesItem(itemId, true);
+        } else {
+            // Disable other items if not exactly one enabled.
+            this.toggleSeriesItem(itemId, false);
+        }
     }
 
     protected isPathOrSelectionDirty(): boolean {
