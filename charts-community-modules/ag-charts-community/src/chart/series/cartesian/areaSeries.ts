@@ -171,7 +171,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     async processData(dataController: DataController) {
-        const { xKey, yKey, axes, normalizedTo, data, visible, seriesGrouping: { groupIndex = -1 } = {} } = this;
+        const { xKey, yKey, axes, normalizedTo, data, visible, seriesGrouping: { groupIndex = this.id } = {} } = this;
 
         if (!xKey || !yKey || !data) return;
 

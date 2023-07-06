@@ -104,7 +104,7 @@ export abstract class Node extends ChangeDetectable {
      * graph. This allows intermingling of child-nodes that are managed by different chart classes
      * without breaking scene-graph encapsulation.
      */
-    protected readonly isVirtual: boolean;
+    readonly isVirtual: boolean;
 
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
@@ -470,7 +470,7 @@ export abstract class Node extends ChangeDetectable {
         return this._dirty;
     }
 
-    markClean(opts?: { force?: boolean; recursive?: boolean }) {
+    markClean(opts?: { force?: boolean; recursive?: boolean | 'virtual' }) {
         const { force = false, recursive = true } = opts ?? {};
 
         if (this._dirty === RedrawType.NONE && !force) {
@@ -479,10 +479,12 @@ export abstract class Node extends ChangeDetectable {
 
         this._dirty = RedrawType.NONE;
 
-        if (recursive) {
+        if (recursive !== false) {
             for (const child of this._virtualChildren) {
                 child.markClean({ force });
             }
+        }
+        if (recursive === true) {
             for (const child of this._children) {
                 child.markClean({ force });
             }

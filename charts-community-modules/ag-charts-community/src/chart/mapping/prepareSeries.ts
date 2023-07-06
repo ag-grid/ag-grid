@@ -1,9 +1,17 @@
 import { Logger } from '../../util/logger';
-import type { AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from '../agChartOptions';
+import type {
+    AgCartesianSeriesOptions,
+    AgPolarSeriesOptions,
+    AgHierarchySeriesOptions,
+    AgChartOptions,
+} from '../agChartOptions';
 import type { SeriesGrouping } from '../series/seriesStateManager';
 import { windowValue } from '../../util/window';
 
 export type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
+
+const STACKABLE_SERIES_TYPES = ['bar', 'column', 'area'];
+const GROUPABLE_SERIES_TYPES = ['bar', 'column'];
 
 /**
  * Groups the series options objects if they are of type `column` or `bar` and places them in an array at the index where the first instance of this series type was found.
@@ -17,21 +25,23 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
 
     const result = [];
     for (const s of seriesOptions) {
-        if (s.type !== 'column' && s.type !== 'bar' && s.type !== 'area') {
+        const type = s.type ?? 'line';
+
+        const stackable = STACKABLE_SERIES_TYPES.includes(type);
+        const groupable = GROUPABLE_SERIES_TYPES.includes(type);
+        if (!stackable && !groupable) {
             // No need to use index for these cases.
-            result.push({ type: 'group' as const, opts: [s] });
+            result.push({ type: 'ungrouped' as const, opts: [s] });
             continue;
         }
 
-        const stacked = s.stackGroup != null || s.stacked === true;
-        anyStacked[s.type] ??= false;
-        anyStacked[s.type] ||= stacked;
-        const grouped = (s as any).grouped === true;
-        const seriesType = s.type ?? 'line';
-        let groupingKey = [
-            s.stackGroup ?? (s.stacked === true ? 'stacked' : undefined),
-            grouped ? 'grouped' : undefined,
-        ]
+        const { stacked: sStacked, stackGroup: sStackGroup, grouped: sGrouped = undefined, xKey } = s as any;
+
+        const stacked = sStackGroup != null || sStacked === true;
+        anyStacked[type] ??= false;
+        anyStacked[type] ||= stacked;
+        const grouped = sGrouped === true;
+        let groupingKey = [sStackGroup ?? (sStacked === true ? 'stacked' : undefined), grouped ? 'grouped' : undefined]
             .filter((v) => v != null)
             .join('-');
 
@@ -39,15 +49,17 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
             groupingKey = defaultUnstackedGroup;
         }
 
-        const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
-        if (stacked) {
+        const indexKey = `${type}-${xKey}-${groupingKey}`;
+        if (stacked && stackable) {
             const updated = (stackMap[indexKey] ??= { type: 'stack', opts: [] });
             if (updated.opts.length === 0) result.push(updated);
             updated.opts.push(s);
-        } else {
+        } else if (grouped && groupable) {
             const updated = (groupMap[indexKey] ??= { type: 'group', opts: [] });
             if (updated.opts.length === 0) result.push(updated);
             updated.opts.push(s);
+        } else {
+            result.push({ type: 'ungrouped' as const, opts: [s] });
         }
     }
 
@@ -70,7 +82,7 @@ const DEBUG = () => [true, 'opts'].includes(windowValue('agChartsDebug') as any)
 /**
  * Transforms provided series options array into an array containing series options which are compatible with standalone charts series options.
  */
-export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
+export function processSeriesOptions(_opts: AgChartOptions, seriesOptions: SeriesOptions[]) {
     const result: SeriesOptions[] = [];
 
     const preprocessed = seriesOptions.map((series) => {
@@ -84,6 +96,8 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
 
     const grouped = groupSeriesByType(preprocessed);
     const groupCount = grouped.reduce((result, next) => {
+        if (next.type === 'ungrouped') return result;
+
         const seriesType = next.opts[0].type ?? 'line';
         result[seriesType] ??= 0;
         result[seriesType] += next.type === 'stack' ? 1 : next.opts.length;
@@ -91,7 +105,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
     }, {} as Record<string, number>);
 
     const groupIdx: Record<string, number> = {};
-    const addSeriesGroupingMeta = (group: { type: 'group' | 'stack'; opts: SeriesOptions[] }) => {
+    const addSeriesGroupingMeta = (group: { type: 'group' | 'stack' | 'ungrouped'; opts: SeriesOptions[] }) => {
         let stackIdx = 0;
         const seriesType = group.opts[0].type ?? 'line';
         groupIdx[seriesType] ??= 0;
@@ -106,7 +120,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
                 } as SeriesGrouping;
             }
             groupIdx[seriesType]++;
-        } else {
+        } else if (group.type === 'group') {
             for (const opts of group.opts) {
                 (opts as any).seriesGrouping = {
                     groupIndex: groupIdx[seriesType],
@@ -115,6 +129,10 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
                     stackCount: 0,
                 } as SeriesGrouping;
                 groupIdx[seriesType]++;
+            }
+        } else {
+            for (const opts of group.opts) {
+                (opts as any).seriesGrouping = undefined;
             }
         }
 

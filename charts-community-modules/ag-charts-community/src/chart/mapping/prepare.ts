@@ -174,6 +174,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
     mergedOptions.series = processSeriesOptions(
+        mergedOptions,
         ((mergedOptions.series as SeriesOptions[]) ?? []).map((s) => {
             let type = defaultSeriesType;
             if (s.type) {
@@ -296,7 +297,7 @@ function prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext
     const paletteOptions = calculateSeriesPalette(context, input);
 
     // Part of the options interface, but not directly consumed by the series implementations.
-    const removeOptions = { stacked: DELETE } as T;
+    const removeOptions = { stacked: DELETE, grouped: DELETE } as T;
     return jsonMerge([...defaults, paletteOptions, input, removeOptions], noDataCloneMergeOptions);
 }
 
