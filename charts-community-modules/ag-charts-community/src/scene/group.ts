@@ -271,7 +271,7 @@ export class Group extends Node {
         if (hasVirtualChildren) {
             // Mark virtual nodes as clean, but don't recurse (their children have already been updated).
             for (const child of this.virtualChildren) {
-                child.markClean({ recursive: false });
+                child.markClean({ recursive: 'virtual' });
             }
         }
 
