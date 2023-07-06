@@ -669,7 +669,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
     {
       "fill": "#c16068",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -729,7 +728,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
     {
       "fill": "#a2bf8a",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -3243,12 +3241,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 5,
-        "groupIndex": 0,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3314,12 +3307,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 5,
-        "groupIndex": 1,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3385,12 +3373,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 5,
-        "groupIndex": 2,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3456,12 +3439,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 5,
-        "groupIndex": 3,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3527,12 +3505,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 5,
-        "groupIndex": 4,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3809,7 +3782,6 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
     {
       "fill": "#f3622d",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -4096,7 +4068,6 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
     {
       "fill": "rgba(0, 117, 163, 0.9)",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "#0ab9ff",
@@ -4919,7 +4890,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
     {
       "fill": "#19A0AA",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -4979,7 +4949,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
     {
       "fill": "#F15F36",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5280,7 +5249,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
     {
       "fill": "rgba(0, 117, 163, 0.9)",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5341,7 +5309,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
     {
       "fill": "rgba(226, 188, 34, 0.9)",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5645,7 +5612,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#f3622d",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5706,7 +5672,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#fba71b",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5767,7 +5732,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#57b757",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5828,7 +5792,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#41a9c9",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5889,7 +5852,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#4258c9",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5950,7 +5912,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#9a42c8",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -6011,7 +5972,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
     {
       "fill": "#c84164",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -10103,12 +10063,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 4,
-        "groupIndex": 0,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -10173,12 +10128,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 4,
-        "groupIndex": 1,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -10243,12 +10193,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 4,
-        "groupIndex": 2,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -10313,12 +10258,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
-      "seriesGrouping": {
-        "groupCount": 4,
-        "groupIndex": 3,
-        "stackCount": 0,
-        "stackIndex": 0,
-      },
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -10576,7 +10516,6 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
     {
       "fill": "#0084e7",
       "fillOpacity": 1,
-      "grouped": true,
       "highlightStyle": {
         "item": {
           "fill": "yellow",

@@ -1293,7 +1293,7 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
-    /** An option indicating if the bars should be stacked. */
+    /** An option indicating if the areas should be stacked. */
     stacked?: boolean;
     /** An ID to be used to group stacked items. */
     stackGroup?: string;
@@ -1336,7 +1336,7 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for bar series. */
 export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'bar';
-    /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate bars. */
     grouped?: boolean;
     /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
@@ -1417,7 +1417,7 @@ export interface AgColumnSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for column series. */
 export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'column';
-    /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate columns. */
     grouped?: boolean;
     /** An option indicating if the columns should be stacked. */
     stacked?: boolean;

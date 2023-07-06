@@ -669,12 +669,16 @@ function applySeriesValues(
     }
 
     const seriesGrouping = (options as any).seriesGrouping;
-    if (seriesGrouping != null) {
-        const newSeriesGroup = Object.freeze({
-            ...(target.seriesGrouping ?? {}),
-            ...seriesGrouping,
-        });
-        target.seriesGrouping = newSeriesGroup;
+    if ('seriesGrouping' in (options ?? {})) {
+        if (seriesGrouping) {
+            const newSeriesGroup = Object.freeze({
+                ...(target.seriesGrouping ?? {}),
+                ...seriesGrouping,
+            });
+            target.seriesGrouping = newSeriesGroup;
+        } else {
+            target.seriesGrouping = seriesGrouping;
+        }
     }
 
     return result;

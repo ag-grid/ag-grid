@@ -18,18 +18,15 @@ export class SeriesLayerManager {
         this.rootGroup = rootGroup;
     }
 
-    public requestGroup({
-        id,
-        seriesGrouping,
-        type,
-        rootGroup,
-    }: {
+    public requestGroup(opts: {
         id: string;
         seriesGrouping?: SeriesGrouping;
         rootGroup: Group;
         type: string;
+        _declarationOrder: number;
     }) {
-        const { groupIndex = -1 } = seriesGrouping ?? {};
+        const { id, seriesGrouping, type, rootGroup } = opts;
+        const { groupIndex = id } = seriesGrouping ?? {};
 
         this.groups[type] ??= {};
         let groupInfo = this.groups[type][groupIndex];
@@ -41,6 +38,7 @@ export class SeriesLayerManager {
                         name: `${type}-content`,
                         layer: true,
                         zIndex: Layers.SERIES_LAYER_ZINDEX,
+                        zIndexSubOrder: [() => opts._declarationOrder, 0],
                     })
                 ),
             };
@@ -57,14 +55,16 @@ export class SeriesLayerManager {
         type,
         rootGroup,
         oldGrouping,
+        _declarationOrder,
     }: {
         id: string;
         seriesGrouping?: SeriesGrouping;
         oldGrouping?: SeriesGrouping;
         rootGroup: Group;
         type: string;
+        _declarationOrder: number;
     }) {
-        const { groupIndex = -1 } = seriesGrouping ?? {};
+        const { groupIndex = id } = seriesGrouping ?? {};
 
         if (this.groups[type]?.[groupIndex]?.seriesIds.includes(id)) {
             // Already in the right group, nothing to do.
@@ -72,7 +72,7 @@ export class SeriesLayerManager {
         }
 
         this.releaseGroup({ id, seriesGrouping: oldGrouping, type, rootGroup });
-        this.requestGroup({ id, seriesGrouping, type, rootGroup });
+        this.requestGroup({ id, seriesGrouping, type, rootGroup, _declarationOrder });
     }
 
     public releaseGroup({
@@ -86,7 +86,7 @@ export class SeriesLayerManager {
         rootGroup: Group;
         type: string;
     }) {
-        const { groupIndex = -1 } = seriesGrouping ?? {};
+        const { groupIndex = id } = seriesGrouping ?? {};
 
         const groupInfo = this.groups[type]?.[groupIndex];
         if (groupInfo) {

@@ -25,7 +25,6 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import type { Point } from '../../../scene/point';
 import type { ValidatePredicate } from '../../../util/validation';
 import {
-    BOOLEAN,
     NUMBER,
     OPT_FUNCTION,
     OPT_LINE_DASH,
@@ -167,9 +166,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return direction;
     }
 
-    @Validate(BOOLEAN)
-    grouped: boolean = false;
-
     @Validate(OPT_STRING)
     stackGroup?: string = undefined;
 
@@ -186,7 +182,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected smallestDataInterval?: { x: number; y: number } = undefined;
     async processData(dataController: DataController) {
-        const { xKey, yKey, normalizedTo, seriesGrouping: { groupIndex = -1 } = {}, data = [] } = this;
+        const { xKey, yKey, normalizedTo, seriesGrouping: { groupIndex = this.id } = {}, data = [] } = this;
         const normalizedToAbs = Math.abs(normalizedTo ?? NaN);
 
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;

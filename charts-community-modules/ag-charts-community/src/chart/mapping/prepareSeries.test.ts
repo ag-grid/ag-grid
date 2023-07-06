@@ -81,16 +81,8 @@ describe('transform series options', () => {
                     "yKey": "iphone",
                     "yName": "Iphone",
                   },
-                  {
-                    "fill": "red",
-                    "showInLegend": false,
-                    "type": "column",
-                    "xKey": "quarter",
-                    "yKey": "mac",
-                    "yName": "Mac",
-                  },
                 ],
-                "type": "group",
+                "type": "ungrouped",
               },
               {
                 "opts": [
@@ -101,7 +93,20 @@ describe('transform series options', () => {
                     "yName": "Mac",
                   },
                 ],
-                "type": "group",
+                "type": "ungrouped",
+              },
+              {
+                "opts": [
+                  {
+                    "fill": "red",
+                    "showInLegend": false,
+                    "type": "column",
+                    "xKey": "quarter",
+                    "yKey": "mac",
+                    "yName": "Mac",
+                  },
+                ],
+                "type": "ungrouped",
               },
               {
                 "opts": [
@@ -112,7 +117,7 @@ describe('transform series options', () => {
                     "yName": "iPhone",
                   },
                 ],
-                "type": "group",
+                "type": "ungrouped",
               },
               {
                 "opts": [
@@ -140,7 +145,7 @@ describe('transform series options', () => {
     });
 
     test('processSeriesOptions', () => {
-        const result = processSeriesOptions(seriesOptions);
+        const result = processSeriesOptions({}, seriesOptions);
 
         expect(result).toMatchInlineSnapshot(`
             [
@@ -220,6 +225,7 @@ describe('transform series options', () => {
 
     test('processSeriesOptions with grouped columns', () => {
         const result = processSeriesOptions(
+            {},
             seriesOptions.map((s) => (s.type === 'column' ? { ...s, grouped: true } : s))
         );
 
@@ -301,6 +307,7 @@ describe('transform series options', () => {
 
     test('processSeriesOptions with stacked columns', () => {
         const result = processSeriesOptions(
+            {},
             seriesOptions.map((s) => (s.type === 'column' ? { ...s, stacked: true, grouped: undefined } : s))
         );
 

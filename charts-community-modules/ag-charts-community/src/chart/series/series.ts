@@ -335,7 +335,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     seriesGrouping?: SeriesGrouping = undefined;
 
     private onSeriesGroupingChange(prev?: SeriesGrouping, next?: SeriesGrouping) {
-        const { id, type, visible, rootGroup } = this;
+        const { id, type, visible, rootGroup, _declarationOrder } = this;
 
         if (prev) {
             this.ctx.seriesStateManager.deregisterSeries({ id, type });
@@ -343,7 +343,14 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (next) {
             this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
         }
-        this.ctx.seriesLayerManager.changeGroup({ id, seriesGrouping: next, oldGrouping: prev, rootGroup, type });
+        this.ctx.seriesLayerManager.changeGroup({
+            id,
+            seriesGrouping: next,
+            oldGrouping: prev,
+            rootGroup,
+            type,
+            _declarationOrder,
+        });
     }
 
     getBandScalePadding() {
