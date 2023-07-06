@@ -15,7 +15,7 @@ export class Animation extends _ModuleSupport.BaseModuleInstance implements _Mod
     @Validate(NUMBER(0))
     @ActionOnSet<Animation>({
         newValue(value: number | undefined) {
-            if (!this.animationManager) return;
+            if (!this.animationManager || typeof value !== 'number' || isNaN(value) || value < 0) return;
             this.animationManager.defaultOptions.duration = value;
             this.animationManager.skipAnimations = value === 0;
         },
