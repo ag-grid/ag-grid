@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.3
+// ag-grid-react v30.0.4
 import { HeaderRowType, _ } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';

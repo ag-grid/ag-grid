@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.3
+// ag-grid-react v30.0.4
 import { VanillaFrameworkOverrides } from "ag-grid-community";
 export declare class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private frameworkComponents;

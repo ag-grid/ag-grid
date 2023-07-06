@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.3
+// @ag-grid-community/react v30.0.4
 class BaseReactComponent {
 }
 export class ReactComponent extends BaseReactComponent {
