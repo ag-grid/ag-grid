@@ -31,6 +31,31 @@ describe('Polar Axes', () => {
         expect(console.warn).not.toBeCalled();
     });
 
+    const RADAR_LINE_SERIES: AgChartOptions['series'] = [
+        {
+            type: 'radar-line',
+            angleKey: 'skill',
+            radiusKey: 'Bob',
+        },
+        {
+            type: 'radar-line',
+            angleKey: 'skill',
+            radiusKey: 'Collin',
+        },
+        {
+            type: 'radar-line',
+            angleKey: 'skill',
+            radiusKey: 'Giovanni',
+        },
+    ];
+    const RADAR_AREA_SERIES: AgChartOptions['series'] = RADAR_LINE_SERIES.map((series) => {
+        return {
+            ...series,
+            type: 'radar-area',
+            fillOpacity: 0.25,
+        };
+    });
+
     const EXAMPLE_OPTIONS: AgChartOptions = {
         data: [
             { skill: 'Communication', Bob: 7, Collin: 4, Giovanni: 10 },
@@ -43,26 +68,7 @@ describe('Polar Axes', () => {
         title: {
             text: 'Skill Analysis',
         },
-        series: [
-            {
-                type: 'radar-area',
-                angleKey: 'skill',
-                radiusKey: 'Bob',
-                fillOpacity: 0.25,
-            },
-            {
-                type: 'radar-area',
-                angleKey: 'skill',
-                radiusKey: 'Collin',
-                fillOpacity: 0.25,
-            },
-            {
-                type: 'radar-area',
-                angleKey: 'skill',
-                radiusKey: 'Giovanni',
-                fillOpacity: 0.25,
-            },
-        ],
+        series: RADAR_LINE_SERIES,
         legend: {
             enabled: true,
         },
@@ -76,7 +82,7 @@ describe('Polar Axes', () => {
     };
 
     it(`should render polar axes as expected`, async () => {
-        const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
+        const options: AgChartOptions = { ...EXAMPLE_OPTIONS, series: RADAR_AREA_SERIES };
         prepareTestOptions(options as any);
 
         chart = AgEnterpriseCharts.create(options);
@@ -86,7 +92,10 @@ describe('Polar Axes', () => {
     it(`should render polar axes with angle offset as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
-            axes: [{ type: 'angle-category', startAngle: -30 }, { type: 'radius-number' }],
+            axes: [
+                { type: 'angle-category', startAngle: -30 },
+                { type: 'radius-number', title: { text: 'Skill Score' } },
+            ],
         };
         prepareTestOptions(options as any);
 
@@ -97,6 +106,7 @@ describe('Polar Axes', () => {
     it(`should render polar axes with circle shape as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 { type: 'angle-category', shape: 'circle' },
                 { type: 'radius-number', shape: 'circle' },
@@ -111,6 +121,7 @@ describe('Polar Axes', () => {
     it(`should render angle cross line as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 {
                     type: 'angle-category',
@@ -139,6 +150,7 @@ describe('Polar Axes', () => {
     it(`should render angle cross line range as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 {
                     type: 'angle-category',
@@ -166,6 +178,7 @@ describe('Polar Axes', () => {
     it(`should render angle cross line range with circle shape as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 {
                     type: 'angle-category',
@@ -194,6 +207,7 @@ describe('Polar Axes', () => {
     it(`should render radius cross line as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 { type: 'angle-category' },
                 {
@@ -223,6 +237,7 @@ describe('Polar Axes', () => {
     it(`should render radius cross line with circle shape as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 { type: 'angle-category', shape: 'circle', startAngle: -30 },
                 {
@@ -253,6 +268,7 @@ describe('Polar Axes', () => {
     it(`should render radius cross line range as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 { type: 'angle-category' },
                 {
@@ -297,6 +313,7 @@ describe('Polar Axes', () => {
     it(`should render radius cross line range with circle shape as expected`, async () => {
         const options: AgChartOptions = {
             ...EXAMPLE_OPTIONS,
+            series: RADAR_AREA_SERIES,
             axes: [
                 { type: 'angle-category', shape: 'circle' },
                 {
