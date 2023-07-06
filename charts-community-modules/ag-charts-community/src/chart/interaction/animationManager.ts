@@ -281,6 +281,8 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     }
 
     private startAnimationCycle() {
+        if (this.updaters.length === 0) return;
+
         const frame = (time: number) => {
             this.requestId = requestAnimationFrame(frame);
 
