@@ -79,12 +79,12 @@ const BASE_THEME: AgChartTheme = {
     overrides: {},
 };
 
-function addToString({ id, ...others }) {
+function addToString({ value, ...others }) {
     return {
         toString() {
-            return id;
+            return value;
         },
-        id,
+        value,
         ...others,
     };
 }
@@ -1147,59 +1147,564 @@ const COMBO_AREA: AgCartesianChartOptions = {
     ],
 };
 
+const CROSSFILTER_COMMON = {
+    mode: 'integrated',
+};
+
+const CROSSFILTER_THEME = {
+    baseTheme: {
+        baseTheme: {
+            baseTheme: {
+                baseTheme: 'ag-default-dark',
+            },
+            overrides: {
+                common: {
+                    axes: {
+                        number: {
+                            title: {
+                                _enabledFromTheme: true,
+                            },
+                        },
+                        category: {
+                            title: {
+                                _enabledFromTheme: true,
+                            },
+                        },
+                        groupedCategory: {
+                            title: {
+                                _enabledFromTheme: true,
+                            },
+                        },
+                        log: {
+                            title: {
+                                _enabledFromTheme: true,
+                            },
+                        },
+                        time: {
+                            title: {
+                                _enabledFromTheme: true,
+                            },
+                        },
+                    },
+                    padding: {
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20,
+                    },
+                },
+                pie: {
+                    series: {
+                        title: {
+                            _enabledFromTheme: true,
+                        },
+                        calloutLabel: {
+                            _enabledFromTheme: true,
+                        },
+                        sectorLabel: {
+                            enabled: false,
+                            _enabledFromTheme: true,
+                        },
+                    },
+                },
+            },
+        },
+        overrides: {
+            cartesian: {
+                tooltip: {
+                    delay: 500,
+                },
+                legend: {
+                    listeners: {},
+                },
+                listeners: {},
+                series: {},
+            },
+        },
+    },
+    overrides: {
+        cartesian: {
+            axes: {
+                category: {
+                    label: {
+                        rotation: 0,
+                    },
+                },
+            },
+        },
+    },
+};
+
+const CROSSFILTER_BAR: AgCartesianChartOptions = {
+    ...CROSSFILTER_COMMON,
+    theme: {
+        baseTheme: {
+            baseTheme: CROSSFILTER_THEME,
+            overrides: {
+                common: {
+                    title: {
+                        enabled: true,
+                        text: 'Handsets Sold (Units)',
+                    },
+                    legend: {
+                        enabled: false,
+                    },
+                },
+            },
+        } as any,
+        overrides: {},
+    },
+    data: [
+        {
+            handset: addToString({
+                id: 0,
+                value: 'Apple iPhone 12',
+            }),
+            sale: 79,
+            'sale-filtered-out': 0,
+        },
+        {
+            handset: addToString({
+                id: 1,
+                value: 'Sony Xperia',
+            }),
+            sale: 73,
+            'sale-filtered-out': 0,
+        },
+        {
+            handset: addToString({
+                id: 2,
+                value: 'Huawei P40',
+            }),
+            sale: 88,
+            'sale-filtered-out': 0,
+        },
+        {
+            handset: addToString({
+                id: 3,
+                value: 'Google Pixel 5',
+            }),
+            sale: 88,
+            'sale-filtered-out': 0,
+        },
+        {
+            handset: addToString({
+                id: 4,
+                value: 'Motorola Edge',
+            }),
+            sale: 90,
+            'sale-filtered-out': 0,
+        },
+        {
+            handset: addToString({
+                id: 5,
+                value: 'Samsung Galaxy S10',
+            }),
+            sale: 82,
+            'sale-filtered-out': 0,
+        },
+    ],
+    axes: [
+        {
+            type: 'category',
+            position: 'left',
+        },
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+    ],
+    series: [
+        {
+            type: 'bar',
+            grouped: false,
+            stacked: false,
+            xKey: 'handset',
+            xName: 'Handset',
+            yKey: 'sale',
+            yName: 'Sale Price',
+            highlightStyle: {
+                item: {},
+            },
+            fill: '#f3622d',
+            stroke: '#aa4520',
+        },
+        {
+            type: 'bar',
+            grouped: false,
+            stacked: false,
+            xKey: 'handset',
+            xName: 'Handset',
+            yKey: 'sale-filtered-out',
+            yName: 'Sale Price',
+            highlightStyle: {
+                item: {},
+            },
+            fill: 'rgba(243, 98, 45, 0.3)',
+            stroke: 'rgba(170, 69, 32, 0.3)',
+            showInLegend: false,
+        },
+    ],
+};
+
+const CROSSFILTER_COLUMN: AgCartesianChartOptions = {
+    ...CROSSFILTER_COMMON,
+    theme: {
+        baseTheme: {
+            baseTheme: CROSSFILTER_THEME,
+            overrides: {
+                common: {
+                    title: {
+                        enabled: true,
+                        text: 'Quarterly Sales ($)',
+                    },
+                    legend: {
+                        enabled: false,
+                    },
+                    axes: {
+                        category: {
+                            label: {
+                                rotation: 0,
+                            },
+                        },
+                        number: {
+                            label: {},
+                        },
+                    },
+                },
+            },
+        } as any,
+        overrides: {},
+    },
+    data: [
+        {
+            quarter: addToString({
+                id: 0,
+                value: 'Q1',
+            }),
+            sale: 62949,
+            'sale-filtered-out': null,
+        },
+        {
+            quarter: addToString({
+                id: 1,
+                value: 'Q2',
+            }),
+            sale: 77933,
+            'sale-filtered-out': null,
+        },
+        {
+            quarter: addToString({
+                id: 2,
+                value: 'Q3',
+            }),
+            sale: 74555,
+            'sale-filtered-out': null,
+        },
+        {
+            quarter: addToString({
+                id: 3,
+                value: 'Q4',
+            }),
+            sale: 66873,
+            'sale-filtered-out': null,
+        },
+    ],
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'column',
+            grouped: false,
+            stacked: false,
+            xKey: 'quarter',
+            xName: 'Quarter',
+            yKey: 'sale',
+            yName: 'Sale Price',
+            highlightStyle: {
+                item: {},
+            },
+            fill: '#f3622d',
+            stroke: '#aa4520',
+            listeners: {},
+        },
+        {
+            type: 'column',
+            grouped: false,
+            stacked: false,
+            xKey: 'quarter',
+            xName: 'Quarter',
+            yKey: 'sale-filtered-out',
+            yName: 'Sale Price',
+            highlightStyle: {
+                item: {},
+            },
+            fill: 'rgba(243, 98, 45, 0.3)',
+            stroke: 'rgba(170, 69, 32, 0.3)',
+            listeners: {},
+            showInLegend: false,
+        },
+    ],
+};
+
+const CROSSFILTER_PIE_FILTERED: AgPolarChartOptions = {
+    ...CROSSFILTER_COMMON,
+    theme: {
+        baseTheme: {
+            baseTheme: CROSSFILTER_THEME,
+            overrides: {
+                common: {
+                    title: {
+                        enabled: true,
+                        text: 'Sales by Representative ($)',
+                    },
+                },
+                pie: {
+                    series: {
+                        title: {
+                            enabled: false,
+                        },
+                        calloutLabel: {
+                            enabled: false,
+                        },
+                    },
+                    legend: {
+                        position: 'right',
+                    },
+                },
+            },
+        } as any,
+        overrides: {},
+    },
+    data: [
+        {
+            salesRep: 'Alton Watson',
+            sale: 0.1653718693975118,
+            'sale-filtered-out': 1,
+            'sale-total': 36814,
+        },
+        {
+            salesRep: 'Cathy Wilkins',
+            sale: 0.23581589958158997,
+            'sale-filtered-out': 1,
+            'sale-total': 41825,
+        },
+        {
+            salesRep: 'Reis Vasquez',
+            sale: 0.265677188170497,
+            'sale-filtered-out': 1,
+            'sale-total': 45209,
+        },
+        {
+            salesRep: 'Caleb Scott',
+            sale: 0.2870173712803774,
+            'sale-filtered-out': 1,
+            'sale-total': 44729,
+        },
+        {
+            salesRep: 'Jermaine Price',
+            sale: 0.2268597643249078,
+            'sale-filtered-out': 1,
+            'sale-total': 33351,
+        },
+        {
+            salesRep: 'Charlie Dodd',
+            sale: 0.2306537428225254,
+            'sale-filtered-out': 1,
+            'sale-total': 37966,
+        },
+        {
+            salesRep: 'Aden Moreno',
+            sale: 0.2298660882685779,
+            'sale-filtered-out': 1,
+            'sale-total': 42416,
+        },
+    ],
+    series: [
+        {
+            type: 'pie',
+            angleKey: 'sale-total',
+            angleName: 'Sale Price',
+            sectorLabelKey: 'sale',
+            calloutLabelKey: 'salesRep',
+            calloutLabelName: 'Sales Rep',
+            calloutLabel: {
+                enabled: false,
+            },
+            highlightStyle: {
+                item: {},
+            },
+            radiusKey: 'sale-filtered-out',
+            radiusMin: 0,
+            radiusMax: 1,
+            listeners: {},
+            fills: [
+                '#f3622d4d',
+                '#fba71b4d',
+                '#57b7574d',
+                '#41a9c94d',
+                '#4258c94d',
+                '#9a42c84d',
+                '#c841644d',
+                '#8888884d',
+            ],
+            strokes: [
+                '#aa45204d',
+                '#b075134d',
+                '#3d803d4d',
+                '#2d768d4d',
+                '#2e3e8d4d',
+                '#6c2e8c4d',
+                '#8c2d464d',
+                '#5f5f5f4d',
+            ],
+            showInLegend: false,
+        },
+        {
+            type: 'pie',
+            angleKey: 'sale-total',
+            angleName: 'Sale Price',
+            sectorLabelKey: 'sale',
+            calloutLabelKey: 'salesRep',
+            calloutLabelName: 'Sales Rep',
+            calloutLabel: {
+                enabled: false,
+            },
+            highlightStyle: {
+                item: {},
+            },
+            radiusKey: 'sale',
+            radiusMin: 0,
+            radiusMax: 1,
+            listeners: {},
+        },
+    ],
+};
+
+const CROSSFILTER_BAR_FILTERED: AgCartesianChartOptions = {
+    ...CROSSFILTER_BAR,
+    data: [
+        {
+            handset: addToString({
+                id: 0,
+                value: 'Apple iPhone 12',
+            }),
+            sale: 22,
+            'sale-filtered-out': 57,
+        },
+        {
+            handset: addToString({
+                id: 1,
+                value: 'Sony Xperia',
+            }),
+            sale: 18,
+            'sale-filtered-out': 55,
+        },
+        {
+            handset: addToString({
+                id: 2,
+                value: 'Huawei P40',
+            }),
+            sale: 19,
+            'sale-filtered-out': 69,
+        },
+        {
+            handset: addToString({
+                id: 3,
+                value: 'Google Pixel 5',
+            }),
+            sale: 20,
+            'sale-filtered-out': 68,
+        },
+        {
+            handset: addToString({
+                id: 4,
+                value: 'Motorola Edge',
+            }),
+            sale: 21,
+            'sale-filtered-out': 69,
+        },
+        {
+            handset: addToString({
+                id: 5,
+                value: 'Samsung Galaxy S10',
+            }),
+            sale: 17,
+            'sale-filtered-out': 65,
+        },
+    ],
+};
+
+const CROSSFILTER_COLUMN_FILTERED: AgCartesianChartOptions = {
+    ...CROSSFILTER_COLUMN,
+    data: [
+        {
+            quarter: addToString({
+                id: 0,
+                value: 'Q1',
+            }),
+            sale: null,
+            'sale-filtered-out': 62949,
+        },
+        {
+            quarter: addToString({
+                id: 1,
+                value: 'Q2',
+            }),
+            sale: null,
+            'sale-filtered-out': 77933,
+        },
+        {
+            quarter: addToString({
+                id: 2,
+                value: 'Q3',
+            }),
+            sale: null,
+            'sale-filtered-out': 74555,
+        },
+        {
+            quarter: addToString({
+                id: 3,
+                value: 'Q4',
+            }),
+            sale: 66873,
+            'sale-filtered-out': null,
+        },
+    ],
+};
+
 type TestCase = {
     options: AgChartOptions;
 };
 export const EXAMPLES: Record<string, TestCase> = {
-    COLUMN_BASIC: {
-        options: COLUMN_BASIC,
-    },
-    COLUMN_STACKED: {
-        options: COLUMN_STACKED,
-    },
-    COLUMN_STACKED_NORMALISED: {
-        options: COLUMN_STACKED_NORMALISED,
-    },
-    BAR_BASIC: {
-        options: BAR_BASIC,
-    },
-    BAR_STACKED: {
-        options: BAR_STACKED,
-    },
-    BAR_STACKED_NORMALISED: {
-        options: BAR_STACKED_NORMALISED,
-    },
-    PIE_BASIC: {
-        options: PIE_BASIC,
-    },
-    DOUGHNUT_BASIC: {
-        options: DOUGHNUT_BASIC,
-    },
-    LINE_BASIC: {
-        options: LINE_BASIC,
-    },
-    SCATTER_BASIC: {
-        options: SCATTER_BASIC,
-    },
-    BUBBLE_BASIC: {
-        options: BUBBLE_BASIC,
-    },
-    AREA_BASIC: {
-        options: AREA_BASIC,
-    },
-    AREA_STACKED: {
-        options: AREA_STACKED,
-    },
-    AREA_STACKED_NORMALISED: {
-        options: AREA_STACKED_NORMALISED,
-    },
-    HISTOGRAM: {
-        options: HISTOGRAM,
-    },
-    COMBO_LINE: {
-        options: COMBO_LINE,
-    },
-    COMBO_AREA: {
-        options: COMBO_AREA,
-    },
+    COLUMN_BASIC: { options: COLUMN_BASIC },
+    COLUMN_STACKED: { options: COLUMN_STACKED },
+    COLUMN_STACKED_NORMALISED: { options: COLUMN_STACKED_NORMALISED },
+    BAR_BASIC: { options: BAR_BASIC },
+    BAR_STACKED: { options: BAR_STACKED },
+    BAR_STACKED_NORMALISED: { options: BAR_STACKED_NORMALISED },
+    PIE_BASIC: { options: PIE_BASIC },
+    DOUGHNUT_BASIC: { options: DOUGHNUT_BASIC },
+    LINE_BASIC: { options: LINE_BASIC },
+    SCATTER_BASIC: { options: SCATTER_BASIC },
+    BUBBLE_BASIC: { options: BUBBLE_BASIC },
+    AREA_BASIC: { options: AREA_BASIC },
+    AREA_STACKED: { options: AREA_STACKED },
+    AREA_STACKED_NORMALISED: { options: AREA_STACKED_NORMALISED },
+    HISTOGRAM: { options: HISTOGRAM },
+    COMBO_LINE: { options: COMBO_LINE },
+    COMBO_AREA: { options: COMBO_AREA },
+    CROSSFILTER_BAR: { options: CROSSFILTER_BAR },
+    CROSSFILTER_COLUMN: { options: CROSSFILTER_COLUMN },
+    CROSSFILTER_PIE_FILTERED: { options: CROSSFILTER_PIE_FILTERED },
+    CROSSFILTER_BAR_FILTERED: { options: CROSSFILTER_BAR_FILTERED },
+    CROSSFILTER_COLUMN_FILTERED: { options: CROSSFILTER_COLUMN_FILTERED },
 };
