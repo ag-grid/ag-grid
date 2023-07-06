@@ -45,7 +45,6 @@ export class SeriesLayerManager {
                         name: `${type}-content`,
                         layer: true,
                         zIndex: Layers.SERIES_LAYER_ZINDEX,
-                        // zIndexSubOrder: [() => opts._declarationOrder, 0],
                         zIndexSubOrder: opts.getGroupZIndexSubOrder('data'),
                     })
                 ),
