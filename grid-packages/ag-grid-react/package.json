@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "30.0.3",
+  "version": "30.0.4",
   "description": "AG Grid React Component",
   "main": "./lib/main.mjs",
   "typings": "./lib/main.d.ts",
