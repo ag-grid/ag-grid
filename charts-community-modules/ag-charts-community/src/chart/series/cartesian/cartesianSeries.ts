@@ -392,13 +392,17 @@ export abstract class CartesianSeries<
 
     getGroupZIndexSubOrder(
         type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
-        subIndex?: number
+        subIndex = 0
     ): ZIndexSubOrder {
         const result = super.getGroupZIndexSubOrder(type, subIndex);
         switch (type) {
             case 'paths':
-                if (typeof result[0] === 'number') {
-                    result[0] += this.opts.pathsZIndexSubOrderOffset[subIndex ?? 0] ?? 0;
+                const pathOffset = this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
+                const superFn = result[0];
+                if (typeof superFn === 'function') {
+                    result[0] = () => +superFn() + pathOffset;
+                } else {
+                    result[0] = +superFn + this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
                 }
                 break;
         }

@@ -350,6 +350,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             rootGroup,
             type,
             _declarationOrder,
+            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
         });
     }
 
@@ -425,27 +426,26 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     getGroupZIndexSubOrder(
         type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
-        subIndex?: number
+        subIndex = 0
     ): ZIndexSubOrder {
-        let main = 0;
+        let mainAdjust = 0;
         switch (type) {
             case 'data':
-                main = 0;
-                break;
             case 'paths':
-                main = 0;
                 break;
             case 'labels':
-                main += 20000;
-                break;
-            case 'highlight':
-                main += 15000;
+                mainAdjust += 20000;
                 break;
             case 'marker':
-                main += 10000;
+                mainAdjust += 10000;
+                break;
+            // Following cases are in their own layer, so need to be careful to respect declarationOrder.
+            case 'highlight':
+                subIndex += 15000;
                 break;
         }
-        return [main, () => this._declarationOrder + (subIndex ?? 0)];
+        const main = () => this._declarationOrder + mainAdjust;
+        return [main, subIndex];
     }
 
     addChartEventListeners(): void {
