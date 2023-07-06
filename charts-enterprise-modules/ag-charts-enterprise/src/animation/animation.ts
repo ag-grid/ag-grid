@@ -17,6 +17,7 @@ export class Animation extends _ModuleSupport.BaseModuleInstance implements _Mod
         newValue(value: number | undefined) {
             if (!this.animationManager) return;
             this.animationManager.defaultOptions.duration = value;
+            this.animationManager.skipAnimations = value === 0;
         },
     })
     public duration?: number;
