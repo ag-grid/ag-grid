@@ -107,7 +107,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <tabs>
 
 <div tabs-links="true">
-<open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" />
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-charts-react-example-w77z55" />
 </div>
 
 <div tab-label="index.js">
@@ -186,7 +186,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 <tabs>
 
 <div tabs-links="true">
-<open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" />
+<open-in-cta type="codesandbox" href="https://codesandbox.io/p/sandbox/ag-charts-example-w87ylv?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1" />
 </div>
 
 <div tab-label="app.component.ts">
