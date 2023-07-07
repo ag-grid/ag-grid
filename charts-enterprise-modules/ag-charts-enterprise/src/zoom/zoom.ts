@@ -15,6 +15,7 @@ const { BOOLEAN, NUMBER, STRING_UNION, ChartAxisDirection, ChartUpdateType, Vali
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
 const CONTEXT_PAN_ACTION_ID = 'pan-action';
 const CURSOR_ID = 'zoom-cursor';
+const TOOLTIP_ID = 'zoom-tooltip';
 const ZOOM_ID = 'zoom';
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -57,6 +58,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
     // Module context
     private readonly cursorManager: _ModuleSupport.CursorManager;
+    private readonly tooltipManager: _ModuleSupport.TooltipManager;
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
 
@@ -75,6 +77,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         this.scene = ctx.scene;
         this.cursorManager = ctx.cursorManager;
+        this.tooltipManager = ctx.tooltipManager;
         this.zoomManager = ctx.zoomManager;
         this.updateService = ctx.updateService;
 
@@ -140,6 +143,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         if (!isPrimaryMouseButton) return;
 
         this.isDragging = true;
+        this.tooltipManager.updateTooltip(TOOLTIP_ID);
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
 
@@ -204,6 +208,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         }
 
         this.isDragging = false;
+        this.tooltipManager.removeTooltip(TOOLTIP_ID);
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
