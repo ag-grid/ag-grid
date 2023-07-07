@@ -169,9 +169,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(OPT_STRING)
     stackGroup?: string = undefined;
 
-    @Validate(OPT_STRING)
-    legendItemName?: string = undefined;
-
     @Validate(OPT_NUMBER())
     normalizedTo?: number;
 
@@ -636,9 +633,22 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getLegendData(): ChartLegendDatum[] {
-        const { id, data, xKey, yKey, yName, legendItemName, fill, stroke, fillOpacity, strokeOpacity, visible } = this;
+        const {
+            id,
+            data,
+            xKey,
+            yKey,
+            yName,
+            legendItemName,
+            fill,
+            stroke,
+            fillOpacity,
+            strokeOpacity,
+            visible,
+            showInLegend,
+        } = this;
 
-        if (!data?.length || !xKey || !yKey) {
+        if (!showInLegend || !data?.length || !xKey || !yKey) {
             return [];
         }
 
@@ -653,6 +663,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             label: {
                 text: legendItemName ?? yName ?? yKey,
             },
+            legendItemName,
             marker: {
                 fill,
                 stroke,

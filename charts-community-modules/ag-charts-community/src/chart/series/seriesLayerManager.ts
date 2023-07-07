@@ -1,6 +1,19 @@
 import { Group } from '../../scene/group';
+import type { ZIndexSubOrder } from '../../scene/node';
 import { Layers } from '../layers';
 import type { SeriesGrouping } from './seriesStateManager';
+
+export type SeriesConfig = {
+    id: string;
+    seriesGrouping?: SeriesGrouping;
+    rootGroup: Group;
+    type: string;
+    _declarationOrder: number;
+    getGroupZIndexSubOrder(
+        type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
+        subIndex?: number
+    ): ZIndexSubOrder;
+};
 
 export class SeriesLayerManager {
     private readonly rootGroup: Group;
@@ -18,13 +31,7 @@ export class SeriesLayerManager {
         this.rootGroup = rootGroup;
     }
 
-    public requestGroup(opts: {
-        id: string;
-        seriesGrouping?: SeriesGrouping;
-        rootGroup: Group;
-        type: string;
-        _declarationOrder: number;
-    }) {
+    public requestGroup(opts: SeriesConfig) {
         const { id, seriesGrouping, type, rootGroup } = opts;
         const { groupIndex = id } = seriesGrouping ?? {};
 
@@ -38,7 +45,7 @@ export class SeriesLayerManager {
                         name: `${type}-content`,
                         layer: true,
                         zIndex: Layers.SERIES_LAYER_ZINDEX,
-                        zIndexSubOrder: [() => opts._declarationOrder, 0],
+                        zIndexSubOrder: opts.getGroupZIndexSubOrder('data'),
                     })
                 ),
             };
@@ -56,14 +63,8 @@ export class SeriesLayerManager {
         rootGroup,
         oldGrouping,
         _declarationOrder,
-    }: {
-        id: string;
-        seriesGrouping?: SeriesGrouping;
-        oldGrouping?: SeriesGrouping;
-        rootGroup: Group;
-        type: string;
-        _declarationOrder: number;
-    }) {
+        getGroupZIndexSubOrder,
+    }: SeriesConfig & { oldGrouping?: SeriesGrouping }) {
         const { groupIndex = id } = seriesGrouping ?? {};
 
         if (this.groups[type]?.[groupIndex]?.seriesIds.includes(id)) {
@@ -72,7 +73,7 @@ export class SeriesLayerManager {
         }
 
         this.releaseGroup({ id, seriesGrouping: oldGrouping, type, rootGroup });
-        this.requestGroup({ id, seriesGrouping, type, rootGroup, _declarationOrder });
+        this.requestGroup({ id, seriesGrouping, type, rootGroup, _declarationOrder, getGroupZIndexSubOrder });
     }
 
     public releaseGroup({
