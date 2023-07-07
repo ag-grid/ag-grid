@@ -915,7 +915,13 @@ export class DataModel<
             const isPath = def.property.indexOf('.') >= 0 || def.property.indexOf('[') >= 0;
             if (!isPath) continue;
 
-            result[def.property] = new Function('datum', `return datum.${def.property};`) as (d: any) => any;
+            let fnBody;
+            if (def.property.startsWith('[')) {
+                fnBody = `return datum${def.property};`;
+            } else {
+                fnBody = `return datum.${def.property};`;
+            }
+            result[def.property] = new Function('datum', fnBody) as (d: any) => any;
         }
         return result;
     }
