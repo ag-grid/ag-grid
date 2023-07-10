@@ -698,11 +698,11 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('quickFilterText', newFilter);
     }
 
-    public getFilterExpression(): IFilterExpression | null {
+    public getFilterExpression(): string | null {
         return this.filterManager.getFilterExpression();
     }
 
-    public setFilterExpression(expression: IFilterExpression | null): void {
+    public setFilterExpression(expression: string | null): void {
         this.filterManager.setFilterExpression(expression);
     }
 

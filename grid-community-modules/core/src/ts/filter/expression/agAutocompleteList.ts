@@ -8,6 +8,7 @@ import { debounce } from '../../utils/function';
 import { isEventFromPrintableCharacter } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 import { PostConstruct } from '../../context/context';
+import { AutocompleteEntry, AutocompleteListParams } from './agAutocomplete';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE = /* html */
@@ -22,18 +23,18 @@ export class AgAutocompleteList extends PopupComponent {
     private focusAfterAttached: boolean;
 
     // as the user moves the mouse, the selectedValue changes
-    private selectedValue: any;
+    private selectedValue: AutocompleteEntry;
     // the original selection, as if the edit is not confirmed, getValue() will
     // return back the selected value. 'not confirmed' can happen if the user
     // opens the dropdown, hovers the mouse over a new value (selectedValue will
     // change to the new value) but then click on another cell (which will stop
     // the editing). in this instance, selectedValue will be a new value, however
     // the editing was effectively cancelled.
-    private originalSelectedValue: any;
+    private originalSelectedValue: AutocompleteEntry;
     private selectionConfirmed = false;
     private searchString = '';
 
-    constructor(private values: string[]) {
+    constructor(private autocompleteEntries: AutocompleteEntry[]) {
         super(AgAutocompleteList.TEMPLATE);
     }
 
@@ -43,8 +44,8 @@ export class AgAutocompleteList extends PopupComponent {
 
     @PostConstruct
     protected init(): void {
-        this.selectedValue = undefined; // TODO
-        this.originalSelectedValue = undefined; // TODO
+        this.selectedValue = undefined as any; // TODO
+        this.originalSelectedValue = undefined as any; // TODO
         this.focusAfterAttached = false; // TODO
 
         this.virtualList = this.createManagedBean(new VirtualList('rich-select'));
@@ -56,8 +57,8 @@ export class AgAutocompleteList extends PopupComponent {
         // }
 
         this.virtualList.setModel({
-            getRowCount: () => this.values.length,
-            getRow: (index: number) => this.values[index]
+            getRowCount: () => this.autocompleteEntries.length,
+            getRow: (index: number) => this.autocompleteEntries[index]
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -110,11 +111,11 @@ export class AgAutocompleteList extends PopupComponent {
     private onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
-        const oldIndex = this.values.indexOf(this.selectedValue);
+        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
         const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
 
-        if (newIndex >= 0 && newIndex < this.values.length) {
-            const valueToSelect = this.values[newIndex];
+        if (newIndex >= 0 && newIndex < this.autocompleteEntries.length) {
+            const valueToSelect = this.autocompleteEntries[newIndex];
             this.setSelectedValue(valueToSelect);
         }
     }
@@ -144,21 +145,9 @@ export class AgAutocompleteList extends PopupComponent {
         this.clearSearchString();
     }
 
-    private formatValue(value: string): string {
-        return value; // TODO
-    }
-
     private runSearch() {
-        const values = this.values;
-        let searchStrings: string[] | undefined;
-
-        if (typeof values[0] === 'number' || typeof values[0] === 'string') {
-            searchStrings = values.map(v => this.formatValue(v));
-        }
-
-        if (!searchStrings) {
-            return;
-        }
+        const values = this.autocompleteEntries;
+        const searchStrings = values.map(v => v.displayValue ?? v.key);
 
         const topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
 
@@ -176,10 +165,10 @@ export class AgAutocompleteList extends PopupComponent {
         this.searchString = '';
     }
 
-    private setSelectedValue(value: any): void {
+    private setSelectedValue(value: AutocompleteEntry): void {
         if (this.selectedValue === value) { return; }
 
-        const index = this.values.indexOf(value);
+        const index = this.autocompleteEntries.indexOf(value);
 
         if (index === -1) { return; }
 
@@ -191,12 +180,11 @@ export class AgAutocompleteList extends PopupComponent {
         });
     }
 
-    private createRowComponent(value: any): Component {
-        const valueFormatted = this.formatValue(value);
+    private createRowComponent(value: AutocompleteEntry): Component {
         const row = new AgAutocompleteRow();
 
         this.getContext().createBean(row);
-        row.setState(value, valueFormatted, value === this.selectedValue);
+        row.setState(value.displayValue ?? value.key, value === this.selectedValue);
 
         return row;
     }
@@ -206,7 +194,7 @@ export class AgAutocompleteList extends PopupComponent {
         const scrollTop = this.virtualList.getScrollTop();
         const mouseY = mouseEvent.clientY - rect.top + scrollTop;
         const row = Math.floor(mouseY / this.virtualList.getRowHeight());
-        const value = this.values[row];
+        const value = this.autocompleteEntries[row];
 
         // not using utils.exist() as want empty string test to pass
         if (value !== undefined) {
@@ -221,7 +209,7 @@ export class AgAutocompleteList extends PopupComponent {
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     public afterGuiAttached(): void {
-        const selectedIndex = this.values.indexOf(this.selectedValue);
+        const selectedIndex = this.autocompleteEntries.indexOf(this.selectedValue);
 
         // we have to call this here to get the list to have the right height, ie
         // otherwise it would not have scrolls yet and ensureIndexVisible would do nothing
@@ -236,7 +224,7 @@ export class AgAutocompleteList extends PopupComponent {
 
         if (this.focusAfterAttached) {
             const indexToSelect = selectedIndex !== -1 ? selectedIndex : 0;
-            if (this.values.length) {
+            if (this.autocompleteEntries.length) {
                 this.virtualList.focusRow(indexToSelect);
             } else {
                 this.getGui().focus();
@@ -249,5 +237,9 @@ export class AgAutocompleteList extends PopupComponent {
         // set into the data. valueParser only really makese sense when the user is typing in text (not picking
         // form a set).
         return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
+    }
+
+    public updateList(autocompleteListParams: AutocompleteListParams): void {
+        // TODO
     }
 }

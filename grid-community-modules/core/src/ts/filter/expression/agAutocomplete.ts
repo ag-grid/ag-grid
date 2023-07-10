@@ -6,6 +6,20 @@ import { AgAutocompleteList } from './agAutocompleteList';
 import { PopupPositionParams, PopupService } from '../../widgets/popupService';
 import { exists } from '../../utils/generic';
 
+export interface AutocompleteListParams {
+    enabled: boolean;
+    type?: string;
+    entries?: AutocompleteEntry[];
+}
+
+export interface AutocompleteEntry {
+    key: string;
+    displayValue?: any;
+}
+export interface AgAutocompleteParams {
+    listGenerator: (value: string | null | undefined, position: number) => AutocompleteListParams;
+}
+
 export class AgAutocomplete extends Component {
     @Autowired('popupService') private popupService: PopupService;
 
@@ -15,8 +29,9 @@ export class AgAutocomplete extends Component {
     private shouldDisplayList = false;
     private autocompleteList: AgAutocompleteList | null;
     private hidePopup: () => void;
+    private autocompleteListParams: AutocompleteListParams;
 
-    constructor() {
+    constructor(private params?: AgAutocompleteParams) {
         super(/* html */`
             <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eAutocompleteInput"></ag-input-text-field>
@@ -36,10 +51,16 @@ export class AgAutocomplete extends Component {
     }
 
     private onValueChanged(value?: string | null): void {
+        const position = this.eAutocompleteInput.getInputElement().selectionStart;
+        const autocompleteListParams = this.params!.listGenerator(value, position ?? 0);
+        if (!autocompleteListParams.type || autocompleteListParams.type !== this.autocompleteListParams?.type) {
+            this.autocompleteListParams = autocompleteListParams;
+            this.autocompleteList?.updateList(autocompleteListParams);
+        }
         this.identifySubValue(value);
         if (this.shouldDisplayList) {
             if (!this.isListOpen) {
-               this.openList(['Athlete', 'Age']);
+               this.openList();
             }
             if (exists(value)) {
                 this.autocompleteList!.setSearch(value);
@@ -59,9 +80,9 @@ export class AgAutocomplete extends Component {
         }
     }
 
-    private openList(values: string[]): void {
+    private openList(): void {
         this.isListOpen = true;
-        this.autocompleteList = this.createBean(new AgAutocompleteList(values));
+        this.autocompleteList = this.createBean(new AgAutocompleteList(this.autocompleteListParams.entries!));
         const ePopupGui = this.autocompleteList.getGui();
 
         const positionParams: PopupPositionParams & { type: string, eventSource: HTMLElement } = {

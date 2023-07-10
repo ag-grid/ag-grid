@@ -6,8 +6,8 @@ export class AgAutocompleteRow extends Component {
         super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
-    public setState(value: any, valueFormatted: string, selected: boolean): void {
-        this.populateWithoutRenderer(value, valueFormatted);
+    public setState(value: string, selected: boolean): void {
+        this.populateWithoutRenderer(value);
 
         this.updateSelected(selected);
     }
@@ -16,14 +16,11 @@ export class AgAutocompleteRow extends Component {
         this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
     }
 
-    private populateWithoutRenderer(value: any, valueFormatted: string) {
-        const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-        const valueToRender = valueFormattedExits ? valueFormatted : value;
-
-        if (exists(valueToRender) && valueToRender !== '') {
+    private populateWithoutRenderer(value: string) {
+        if (exists(value) && value !== '') {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
-            this.getGui().textContent = valueToRender.toString();
+            this.getGui().textContent = value.toString();
         } else {
             // putting in blank, so if missing, at least the user can click on it
             this.getGui().innerHTML = '&nbsp;';

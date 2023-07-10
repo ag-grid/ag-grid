@@ -1,90 +1,69 @@
 import { Autowired, Bean } from '../../context/context';
 import { BeanStub } from '../../context/beanStub';
-import {
-    AndFilterExpression,
-    SingleValueFilterExpression,
-    FilterExpression,
-    FilterExpressionColumnValue,
-    NotFilterExpression,
-    OrFilterExpression,
-    SINGLE_VALUE_FILTER_EXPRESSIONS,
-    NoValueFilterExpression,
-    NO_VALUE_FILTER_EXPRESSIONS,
-    DoubleValueFilterExpression,
-    DOUBLE_VALUE_FILTER_EXPRESSIONS,
-} from './filterExpression';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { ValueService } from '../../valueService/valueService';
 import { ColumnModel } from '../../columns/columnModel';
-import { IFilterExpression } from './iFilterExpression';
+import { ExpressionParser } from './expressionParser';
+import { DataTypeService } from '../../columns/dataTypeService';
+import { AutocompleteListParams } from './agAutocomplete';
 
 @Bean('filterExpressionService')
 export class FilterExpressionService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
-    private expression: FilterExpression | null = null;
+    private expression: string | null = null;
+    private expressionFunction: Function | null;
+    private expressionParser: ExpressionParser;
 
     public isFilterPresent(): boolean {
-        return !!this.expression;
+        return !!this.expressionFunction;
     }
 
     public doesFilterPass(node: IRowNode): boolean {
-        return !!this.expression?.evaluate(node);
+        return this.expressionFunction!(this.valueService, this.columnModel, node);
     }
 
-    public getExpression(): IFilterExpression | null {
-        return this.expression ? this.expression.format() : null;
+    public getExpression(): string | null {
+        return this.expression;
     }
 
-    public setExpression(expression: IFilterExpression | null): void {
-        this.expression = expression ? this.parseExpression(expression) : null;
+    public setExpression(expression: string | null): void {
+        this.expression = expression;
+        this.expressionFunction = this.parseExpression(this.expression);
     }
 
-    private parseExpression(expression: IFilterExpression): FilterExpression {
-        switch (expression.operator) {
-            case 'and': {
-                return new AndFilterExpression(this.parseExpressions(expression.expressions));
-            }
-            case 'or': {
-                return new OrFilterExpression(this.parseExpressions(expression.expressions));
-            }
-            case 'not': {
-                return new NotFilterExpression(this.parseExpression(expression.expression));
-            }
-            case 'blank': {
-                return new NoValueFilterExpression(
-                    NO_VALUE_FILTER_EXPRESSIONS[expression.operator](),
-                    this.parseColumnValue(expression.colId),
-                ) as FilterExpression;
-            }
-            case 'equals':
-            case 'contains':
-            case 'startsWith':
-            case 'lessThan':
-            case 'greaterThan': {
-                return new SingleValueFilterExpression(
-                    SINGLE_VALUE_FILTER_EXPRESSIONS[expression.operator](),
-                    this.parseColumnValue(expression.colId),
-                    expression.value
-                ) as FilterExpression;
-            }
-            case 'inRange': {
-                return new DoubleValueFilterExpression(
-                    DOUBLE_VALUE_FILTER_EXPRESSIONS[expression.operator](),
-                    this.parseColumnValue(expression.colId),
-                    expression.value,
-                    expression.valueTo
-                ) as FilterExpression;
-            }
-        }
+    public getAutocompleteListParams(position: number): AutocompleteListParams {
+        return this.expressionParser.getAutocompleteListParams(position);
     }
 
-    private parseExpressions(expressions: IFilterExpression[]): FilterExpression[] {
-        return expressions.map((expression) => this.parseExpression(expression));
-    }
+    private parseExpression(expression: string | null): Function | null {
+        if (!expression) { return null; }
 
-    private parseColumnValue<TValue>(colId: string): FilterExpressionColumnValue<TValue> {
-        return new FilterExpressionColumnValue<TValue>(colId, this.valueService, this.columnModel);
+        this.expressionParser = new ExpressionParser({
+            expression,
+            columnModel: this.columnModel,
+            dataTypeService: this.dataTypeService,
+            columnAutocompleteTypeGenerator: () => ({ enabled: true, type: 'column', entries: [
+                {
+                    key: 'athlete',
+                    displayValue: 'Athlete'
+                },
+                {
+                    key: 'age',
+                    displayValue: 'Age'
+                }
+            ]})
+        });
+        this.expressionParser.parseExpression();
+        const isValid = this.expressionParser.isValid();
+
+        if (!isValid) { return null; }
+
+        const functionBody = this.expressionParser.getExpression();
+        console.log(functionBody);
+        const func = new Function('valueService', 'columnModel', 'node', functionBody);
+        return func;
     }
 }

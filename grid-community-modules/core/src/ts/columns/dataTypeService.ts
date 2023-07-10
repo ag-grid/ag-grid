@@ -9,6 +9,7 @@ import {
     ValueGetterParams,
 } from '../entities/colDef';
 import {
+    BaseCellDataType,
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DateStringDataTypeDefinition,
@@ -519,12 +520,21 @@ export class DataTypeService extends BeanStub {
         return this.getDateStringTypeDefinition().dateFormatter!;
     }
 
-    public checkType(column: Column, value: any): boolean {
+    public getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.getColDef();
-        if (!colDef.cellDataType || value == null) {
+        if (!colDef.cellDataType) { return undefined; }
+        return this.dataTypeDefinitions[colDef.cellDataType as string];
+    }
+
+    public getBaseDataType(column: Column): BaseCellDataType | undefined {
+        return this.getDataTypeDefinition(column)?.baseDataType;
+    }
+
+    public checkType(column: Column, value: any): boolean {
+        if (value == null) {
             return true;
         }
-        const dataTypeMatcher = this.dataTypeDefinitions[colDef.cellDataType as string]?.dataTypeMatcher;
+        const dataTypeMatcher = this.getDataTypeDefinition(column)?.dataTypeMatcher;
         if (!dataTypeMatcher) {
             return true;
         }

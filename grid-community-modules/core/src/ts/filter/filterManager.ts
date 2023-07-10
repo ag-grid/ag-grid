@@ -909,11 +909,11 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    public getFilterExpression(): IFilterExpression | null {
+    public getFilterExpression(): string | null {
         return this.filterExpressionService.getExpression();
     }
 
-    public setFilterExpression(expression: IFilterExpression | null): void {
+    public setFilterExpression(expression: string | null): void {
         this.filterExpressionService.setExpression(expression);
         this.onFilterChanged();
     }
