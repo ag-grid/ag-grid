@@ -497,7 +497,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const nodeRange: RowNode[] = [];
         const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a,b) => a - b);
-        this.forEachNode((node) => {
+        this.forEachNodeAfterFilterAndSort((node) => {
             const thisRowIndex = node.rowIndex;
             if (thisRowIndex == null || node.stub) {
                 return;
