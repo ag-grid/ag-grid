@@ -622,7 +622,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._series;
     }
 
-    addSeries(series: Series<any>): boolean {
+    private addSeries(series: Series<any>): boolean {
         const { series: allSeries } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 

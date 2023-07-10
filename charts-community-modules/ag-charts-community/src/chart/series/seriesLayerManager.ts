@@ -27,14 +27,14 @@ export class SeriesLayerManager {
             [id: string]: LayerState;
         };
     } = {};
-    private readonly series: { [id: string]: LayerState } = {};
+    private readonly series: { [id: string]: { layerState: LayerState; seriesConfig: SeriesConfig } } = {};
 
     constructor(rootGroup: Group) {
         this.rootGroup = rootGroup;
     }
 
-    public requestGroup(opts: SeriesConfig, seriesGrouping?: SeriesGrouping) {
-        const { id, type, rootGroup: seriesRootGroup } = opts;
+    public requestGroup(seriesConfig: SeriesConfig) {
+        const { id, type, rootGroup: seriesRootGroup, seriesGrouping } = seriesConfig;
         const { groupIndex = id } = seriesGrouping ?? {};
 
         if (this.series[id] != null) {
@@ -51,21 +51,21 @@ export class SeriesLayerManager {
                         name: `${type}-content`,
                         layer: true,
                         zIndex: Layers.SERIES_LAYER_ZINDEX,
-                        zIndexSubOrder: opts.getGroupZIndexSubOrder('data'),
+                        zIndexSubOrder: seriesConfig.getGroupZIndexSubOrder('data'),
                     })
                 ),
             };
         }
 
-        this.series[id] = groupInfo;
+        this.series[id] = { layerState: groupInfo, seriesConfig };
 
         groupInfo.seriesIds.push(id);
         groupInfo.group.appendChild(seriesRootGroup);
         return groupInfo.group;
     }
 
-    public changeGroup(opts: SeriesConfig & { oldGrouping?: SeriesGrouping }) {
-        const { id, seriesGrouping, type, rootGroup, oldGrouping } = opts;
+    public changeGroup(seriesConfig: SeriesConfig & { oldGrouping?: SeriesGrouping }) {
+        const { id, seriesGrouping, type, rootGroup, oldGrouping } = seriesConfig;
         const { groupIndex = id } = seriesGrouping ?? {};
 
         if (this.groups[type]?.[groupIndex]?.seriesIds.includes(id)) {
@@ -76,11 +76,11 @@ export class SeriesLayerManager {
         if (this.series[id] != null) {
             this.releaseGroup({ id, seriesGrouping: oldGrouping, type, rootGroup });
         }
-        this.requestGroup(opts);
+        this.requestGroup(seriesConfig);
     }
 
-    public releaseGroup(opts: { id: string; seriesGrouping?: SeriesGrouping; rootGroup: Group; type: string }) {
-        const { id, seriesGrouping, rootGroup, type } = opts;
+    public releaseGroup(seriesConfig: { id: string; seriesGrouping?: SeriesGrouping; rootGroup: Group; type: string }) {
+        const { id, seriesGrouping, rootGroup, type } = seriesConfig;
         const { groupIndex = id } = seriesGrouping ?? {};
 
         if (this.series[id] == null) {
@@ -92,10 +92,17 @@ export class SeriesLayerManager {
             groupInfo.seriesIds = groupInfo.seriesIds.filter((v) => v !== id);
             groupInfo.group.removeChild(rootGroup);
         }
+
         if (groupInfo?.seriesIds.length === 0) {
+            // Last member of the layer, cleanup.
             this.rootGroup.removeChild(groupInfo.group);
             delete this.groups[type][groupIndex];
             delete this.groups[type][id];
+        } else if (groupInfo?.seriesIds.length > 0) {
+            // Update zIndexSubOrder to avoid it becoming state as series are removed and re-added
+            // with the same groupIndex, but are otherwise unrelated.
+            const leadSeriesConfig = this.series[groupInfo.seriesIds[0]]?.seriesConfig;
+            groupInfo.group.zIndexSubOrder = leadSeriesConfig.getGroupZIndexSubOrder('data');
         }
 
         delete this.series[id];
