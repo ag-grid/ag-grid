@@ -1,5 +1,5 @@
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Autowired, PostConstruct } from '../context/context';
+import { PostConstruct } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
@@ -60,15 +60,8 @@ export class CheckboxSelectionComponent extends Component {
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
-    private onCheckedClicked(event: MouseEvent): number {
-        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-
-        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-    }
-
-    private onUncheckedClicked(event: MouseEvent): number {
-        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
+    private onClicked(newValue: boolean, groupSelectsFiltered: boolean | undefined, event: MouseEvent): number {
+        return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
 
     public init(params: {
@@ -96,12 +89,19 @@ export class CheckboxSelectionComponent extends Component {
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
 
+            const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
 
-            if (isSelected) {
-                this.onCheckedClicked(event);
+            if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
+                // try toggling children to determine action.
+                const result = this.onClicked(true, groupSelectsFiltered, event || {});
+                if (result === 0) {
+                    this.onClicked(false, groupSelectsFiltered, event);
+                }
+            } else if (isSelected) {
+                this.onClicked(false, groupSelectsFiltered, event);
             } else {
-                this.onUncheckedClicked(event || {});
+                this.onClicked(true, groupSelectsFiltered, event || {});
             }
         });
 
@@ -121,6 +121,14 @@ export class CheckboxSelectionComponent extends Component {
         }
 
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+    }
+
+    private shouldHandleIndeterminateState(isSelected: boolean | undefined, groupSelectsFiltered: boolean): boolean {
+        // for CSRM groupSelectsFiltered, we can get an indeterminate state where all filtered children are selected,
+        // and we would expect clicking to deselect all rather than select all
+        return groupSelectsFiltered &&
+            (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
+            this.gridOptionsService.isRowModelType('clientSide');
     }
 
     private showOrHideSelect(): void {
