@@ -31,11 +31,7 @@ export class TooltipManager {
             content = this.states[callerId]?.content;
         }
 
-        if (!content) {
-            delete this.states[callerId];
-        } else {
-            this.states[callerId] = { content, meta };
-        }
+        this.states[callerId] = { content, meta };
 
         this.applyStates();
     }

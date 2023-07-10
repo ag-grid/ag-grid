@@ -15,7 +15,13 @@ const { BOOLEAN, NUMBER, STRING_UNION, ChartAxisDirection, ChartUpdateType, Vali
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
 const CONTEXT_PAN_ACTION_ID = 'pan-action';
 const CURSOR_ID = 'zoom-cursor';
+const TOOLTIP_ID = 'zoom-tooltip';
 const ZOOM_ID = 'zoom';
+
+const round = (n: number, sf: number) => {
+    const pow = Math.pow(10, sf);
+    return Math.round(n * pow) / pow;
+};
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
@@ -57,6 +63,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
     // Module context
     private readonly cursorManager: _ModuleSupport.CursorManager;
+    private readonly tooltipManager: _ModuleSupport.TooltipManager;
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
 
@@ -75,6 +82,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         this.scene = ctx.scene;
         this.cursorManager = ctx.cursorManager;
+        this.tooltipManager = ctx.tooltipManager;
         this.zoomManager = ctx.zoomManager;
         this.updateService = ctx.updateService;
 
@@ -140,6 +148,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         if (!isPrimaryMouseButton) return;
 
         this.isDragging = true;
+        this.tooltipManager.updateTooltip(TOOLTIP_ID);
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
 
@@ -204,6 +213,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         }
 
         this.isDragging = false;
+        this.tooltipManager.removeTooltip(TOOLTIP_ID);
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
@@ -337,8 +347,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private updateZoom(zoom: DefinedZoomState) {
-        const dx = Math.round((zoom.x.max - zoom.x.min) * 100) / 100;
-        const dy = Math.round((zoom.y.max - zoom.y.min) * 100) / 100;
+        const dx = round(zoom.x.max - zoom.x.min, 2);
+        const dy = round(zoom.y.max - zoom.y.min, 2);
 
         // Discard the zoom update if it would take us below either min ratio
         if (dx < this.minXRatio || dy < this.minYRatio) {
@@ -369,7 +379,10 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     ) {
         if (!partialZoom) return;
 
-        const d = Math.round((partialZoom.max - partialZoom.min) * 100) / 100;
+        partialZoom.min = round(partialZoom.min, 3);
+        partialZoom.max = round(partialZoom.max, 3);
+
+        const d = round(partialZoom.max - partialZoom.min, 2);
 
         // Discard the zoom update if it would take us below either min ratio
         if ((direction === ChartAxisDirection.X && d < this.minXRatio) || d < this.minYRatio) {
