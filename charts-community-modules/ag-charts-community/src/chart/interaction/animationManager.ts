@@ -104,6 +104,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         }
     }
 
+    public reset() {
+        if (this.isPlaying) {
+            this.stop();
+            this.play();
+        } else {
+            this.stop();
+        }
+    }
+
     public animate<T>(
         id: AnimationId,
         { disableInteractions = true, ...opts }: AnimationOptions<T>
