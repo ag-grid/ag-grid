@@ -707,16 +707,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -796,16 +787,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             sectionDuration = Math.floor(totalDuration / 2);
         }
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         const datumIdKey = this.processedData?.defs.keys?.[0];
 
@@ -896,6 +878,49 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.height = datum.height;
         });
         selection.cleanup();
+    }
+
+    protected getDirectionStartingValues(datumSelections: Array<Selection<Rect, BarNodeDatum>>) {
+        const isColumnSeries = this.getBarDirection() === ChartAxisDirection.Y;
+
+        const xAxis = this.axes[ChartAxisDirection.X];
+        const yAxis = this.axes[ChartAxisDirection.Y];
+
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
+
+        let startingX = Infinity;
+        let startingY = 0;
+
+        if (yAxis && isColumnSeries) {
+            if (isContinuousY) {
+                startingY = yAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingY = Math.max(startingY, datum.height + datum.y);
+                        }
+                    })
+                );
+            }
+        }
+
+        if (xAxis && !isColumnSeries) {
+            if (isContinuousX) {
+                startingX = xAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingX = Math.min(startingX, datum.x);
+                        }
+                    })
+                );
+            }
+        }
+
+        return { startingX, startingY };
     }
 
     protected isLabelEnabled() {
