@@ -868,7 +868,11 @@ export class DataModel<
             let valueInDatum = false;
             let value;
             if (hasAccessor) {
-                value = accessors[def.property](datum);
+                try {
+                    value = accessors[def.property](datum);
+                } catch (error: any) {
+                    // Swallow errors - these get reported as missing values to the user later.
+                }
                 valueInDatum = value !== undefined;
             } else {
                 valueInDatum = def.property in datum;
