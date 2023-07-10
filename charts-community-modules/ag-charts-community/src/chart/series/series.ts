@@ -335,7 +335,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     seriesGrouping?: SeriesGrouping = undefined;
 
     private onSeriesGroupingChange(prev?: SeriesGrouping, next?: SeriesGrouping) {
-        const { id, type, visible, rootGroup, _declarationOrder } = this;
+        const { id, type, visible, rootGroup } = this;
 
         if (prev) {
             this.ctx.seriesStateManager.deregisterSeries({ id, type });
@@ -345,12 +345,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
         this.ctx.seriesLayerManager.changeGroup({
             id,
+            type,
+            rootGroup,
+            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
             seriesGrouping: next,
             oldGrouping: prev,
-            rootGroup,
-            type,
-            _declarationOrder,
-            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
         });
     }
 

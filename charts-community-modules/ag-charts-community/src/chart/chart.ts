@@ -395,7 +395,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.interactionManager.destroy();
         this.animationManager.stop();
-        this.seriesLayerManager.destroy();
 
         if (keepTransferableResources) {
             this.scene.strip();
@@ -405,8 +404,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.container = undefined;
         }
 
-        this.series.forEach((s) => s.destroy());
-        this.series = [];
+        this.removeAllSeries();
+        this.seriesLayerManager.destroy();
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
@@ -623,7 +622,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._series;
     }
 
-    addSeries(series: Series<any>): boolean {
+    private addSeries(series: Series<any>): boolean {
         const { series: allSeries } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 
