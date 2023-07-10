@@ -99,7 +99,7 @@ export class SeriesLayerManager {
             delete this.groups[type][groupIndex];
             delete this.groups[type][id];
         } else if (groupInfo?.seriesIds.length > 0) {
-            // Update zIndexSubOrder to avoid it becoming state as series are removed and re-added
+            // Update zIndexSubOrder to avoid it becoming stale as series are removed and re-added
             // with the same groupIndex, but are otherwise unrelated.
             const leadSeriesConfig = this.series[groupInfo?.seriesIds?.[0]]?.seriesConfig;
             groupInfo.group.zIndexSubOrder = leadSeriesConfig?.getGroupZIndexSubOrder('data');
