@@ -87,7 +87,7 @@ export class SeriesLayerManager {
             throw new Error(`AG Charts - series doesn't have an allocated layer: ${id}`);
         }
 
-        const groupInfo = this.groups[type]?.[groupIndex] ?? this.series[id];
+        const groupInfo = this.groups[type]?.[groupIndex] ?? this.series[id]?.layerState;
         if (groupInfo) {
             groupInfo.seriesIds = groupInfo.seriesIds.filter((v) => v !== id);
             groupInfo.group.removeChild(rootGroup);
@@ -101,8 +101,8 @@ export class SeriesLayerManager {
         } else if (groupInfo?.seriesIds.length > 0) {
             // Update zIndexSubOrder to avoid it becoming state as series are removed and re-added
             // with the same groupIndex, but are otherwise unrelated.
-            const leadSeriesConfig = this.series[groupInfo.seriesIds[0]]?.seriesConfig;
-            groupInfo.group.zIndexSubOrder = leadSeriesConfig.getGroupZIndexSubOrder('data');
+            const leadSeriesConfig = this.series[groupInfo?.seriesIds?.[0]]?.seriesConfig;
+            groupInfo.group.zIndexSubOrder = leadSeriesConfig?.getGroupZIndexSubOrder('data');
         }
 
         delete this.series[id];
