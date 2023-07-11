@@ -683,10 +683,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         delay: number = 0,
         onComplete?: () => void
     ) {
-        this.ctx.animationManager?.animateMany(id, props, {
+        this.ctx.animationManager?.animateManyWithThrottle(id, props, {
             delay,
             duration,
             ease: easing.easeOut,
+            throttleId: this.id,
             onUpdate([x, width, y, height]) {
                 rect.x = x;
                 rect.width = width;
@@ -736,11 +737,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animateWithThrottle(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
+                    throttleId: this.id,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -854,11 +856,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.ctx.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animateWithThrottle(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,
                     duration: labelDuration,
+                    throttleId: this.id,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

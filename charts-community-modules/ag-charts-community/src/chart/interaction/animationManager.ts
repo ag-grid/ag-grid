@@ -26,11 +26,13 @@ interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to
     onUpdate: (props: Array<T>) => void;
 }
 
-const DEBOUNCE_DELAY = 300;
+interface AnimationThrottleOptions {
+    throttleId?: string;
+}
 
 export class AnimationManager extends BaseManager<AnimationEventType, AnimationEvent<AnimationEventType>> {
     private readonly controllers: Record<AnimationId, AnimationControls> = {};
-    private debouncers: Record<AnimationId, number> = {};
+    private throttles: Record<AnimationId, number> = {};
 
     private updaters: Array<[AnimationId, FrameRequestCallback]> = [];
 
@@ -217,36 +219,35 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         return controls;
     }
 
-    public debouncedAnimate<T>(id: AnimationId, opts: AnimationOptions<T>): AnimationControls {
-        if (this.debouncers[id] && Date.now() - this.debouncers[id] < (opts.duration ?? DEBOUNCE_DELAY)) {
-            return this.controllers[id];
+    public animateWithThrottle<T>(
+        id: AnimationId,
+        opts: AnimationOptions<T> & AnimationThrottleOptions
+    ): AnimationControls {
+        const throttleId = opts.throttleId ?? id;
+
+        if (this.throttles[throttleId] && opts.duration && Date.now() - this.throttles[throttleId] < opts.duration) {
+            opts.delay = 0;
+            opts.duration = 1;
         }
 
-        const onComplete = () => {
-            delete this.debouncers[id];
-            opts.onComplete?.();
-        };
-
-        this.debouncers[id] = Date.now();
-        return this.animate(id, { ...opts, onComplete });
+        this.throttles[id] = Date.now();
+        return this.animate(id, { ...opts });
     }
 
-    public debouncedAnimateMany<T>(
+    public animateManyWithThrottle<T>(
         id: AnimationId,
         props: Array<Pick<AnimationOptions<T>, 'from' | 'to'>>,
-        opts: AnimationManyOptions<T>
+        opts: AnimationManyOptions<T> & AnimationThrottleOptions
     ): AnimationControls {
-        if (this.debouncers[id] && Date.now() - this.debouncers[id] < (opts.duration ?? DEBOUNCE_DELAY)) {
-            return this.controllers[id];
+        const throttleId = opts.throttleId ?? id;
+
+        if (this.throttles[throttleId] && opts.duration && Date.now() - this.throttles[throttleId] < opts.duration) {
+            opts.delay = 0;
+            opts.duration = 1;
         }
 
-        const onComplete = () => {
-            delete this.debouncers[id];
-            opts.onComplete?.();
-        };
-
-        this.debouncers[id] = Date.now();
-        return this.animateMany(id, props, { ...opts, onComplete });
+        this.throttles[throttleId] = Date.now();
+        return this.animateMany(id, props, { ...opts });
     }
 
     public tween<T>(opts: TweenOptions<T>): TweenControls<T> {
