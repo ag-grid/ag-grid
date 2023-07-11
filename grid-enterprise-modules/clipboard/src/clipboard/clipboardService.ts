@@ -329,7 +329,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             this.clientSideRowModel.doAggregate(changedPath);
         }
 
-        this.rowRenderer.refreshCells();
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
