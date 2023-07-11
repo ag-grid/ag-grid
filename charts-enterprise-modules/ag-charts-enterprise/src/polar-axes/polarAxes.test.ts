@@ -53,6 +53,9 @@ describe('Polar Axes', () => {
             ...series,
             type: 'radar-area',
             fillOpacity: 0.25,
+            marker: {
+                enabled: true,
+            },
         };
     });
 
