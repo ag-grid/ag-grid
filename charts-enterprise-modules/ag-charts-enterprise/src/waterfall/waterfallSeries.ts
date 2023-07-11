@@ -454,7 +454,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 return cumulativeValue;
             }
             if (isSubtotal) {
-                return Math.abs((cumulativeValue ?? 0) - (trailingValue ?? 0));
+                return (cumulativeValue ?? 0) - (trailingValue ?? 0);
             }
             return rawValue;
         }
@@ -739,10 +739,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         }
 
         const { formatter, tooltip, xName, yName, id: seriesId } = this;
-        const { datum, itemId, xValue, cumulativeValue } = nodeDatum;
+        const { datum, itemId, xValue, label } = nodeDatum;
 
-        const isTotalOrSubtotal = this.isTotal(itemId) || this.isSubtotal(itemId);
-        const yValue = isTotalOrSubtotal ? cumulativeValue : nodeDatum.yValue;
+        const yValue = label.text;
 
         let format: any | undefined = undefined;
 
@@ -766,10 +765,13 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
+        const isTotal = this.isTotal(itemId);
+        const isSubtotal = this.isSubtotal(itemId);
+        const ySubheading = isTotal ? 'Total' : isSubtotal ? 'Subtotal' : name ?? yName ?? yKey;
+
         const title = sanitizeHtml(yName);
         const content =
-            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` +
-            `<b>${sanitizeHtml(name ?? yName ?? yKey)}</b>: ${yString}`;
+            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` + `<b>${sanitizeHtml(ySubheading)}</b>: ${yString}`;
 
         const defaults: AgTooltipRendererResult = {
             title,
