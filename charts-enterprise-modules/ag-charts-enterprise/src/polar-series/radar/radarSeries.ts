@@ -361,6 +361,10 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         this.lineSelection.update(pathData);
     }
 
+    protected getMarkerFill(highlightedStyle?: _ModuleSupport.SeriesItemHighlightStyle) {
+        return highlightedStyle?.fill ?? this.marker.fill;
+    }
+
     protected updateMarkers(selection: _Scene.Selection<_Scene.Marker, RadarNodeDatum>, highlight: boolean) {
         const { marker, visible, ctx, angleKey, radiusKey, id: seriesId } = this;
         const { shape, enabled, formatter, size } = marker;
@@ -378,8 +382,8 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         }
         const highlightedStyle = highlight ? this.highlightStyle.item : undefined;
         selection.update(selectionData).each((node, datum) => {
-            const fill = highlightedStyle?.fill ?? marker.fill;
-            const stroke = highlightedStyle?.stroke ?? marker.stroke;
+            const fill = this.getMarkerFill(highlightedStyle);
+            const stroke = highlightedStyle?.stroke ?? marker.stroke ?? this.stroke;
             const strokeWidth = highlightedStyle?.strokeWidth ?? marker.strokeWidth ?? this.strokeWidth ?? 1;
             const format = formatter
                 ? callbackCache.call(formatter, {
@@ -529,7 +533,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill ?? marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
+                    fill: this.getMarkerFill() ?? marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
                     fillOpacity: marker.fillOpacity ?? 1,
                     strokeOpacity: marker.strokeOpacity ?? strokeOpacity ?? 1,
