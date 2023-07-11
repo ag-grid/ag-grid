@@ -315,10 +315,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         if (direction === this.getCategoryDirection()) {
             return keys;
         } else {
-            const { yCurrIndex } = this.getYIndices() ?? {};
-            if (yCurrIndex === undefined) {
-                return [];
-            }
+            const { yCurrIndex = 0 } = this.getYIndices() ?? {};
             const yExtent = values[yCurrIndex];
             const fixedYExtent = [yExtent[0] > 0 ? 0 : yExtent[0], yExtent[1] < 0 ? 0 : yExtent[1]];
             return this.fixNumericExtent(fixedYExtent as any);
@@ -412,26 +409,53 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
         const { yCurrIndex, yPrevIndex } = this.getYIndices() ?? {};
 
-        if (yCurrIndex === undefined || yPrevIndex === undefined) {
-            return contexts;
-        }
-
         const totalActive = !!seriesItemEnabled.get('total');
         const subtotalActive = !!seriesItemEnabled.get('subtotal');
+
+        function getValues(
+            isTotal: boolean,
+            isSubtotal: boolean,
+            values: any[]
+        ): { cumulativeValue: number | undefined; trailingValue: number | undefined } {
+            if (!isTotal && !isSubtotal && yCurrIndex !== undefined && yPrevIndex !== undefined) {
+                return {
+                    cumulativeValue: values[yCurrIndex],
+                    trailingValue: values[yPrevIndex],
+                };
+            }
+
+            if ((isTotal && totalActive) || (isSubtotal && subtotalActive)) {
+                if (yCurrIndex !== undefined) {
+                    return {
+                        cumulativeValue: values[yCurrIndex],
+                        trailingValue: 0,
+                    };
+                }
+                return {
+                    cumulativeValue: values[0],
+                    trailingValue: 0,
+                };
+            }
+
+            return {
+                cumulativeValue: undefined,
+                trailingValue: undefined,
+            };
+        }
 
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
             const datumType = values[typeKeyIndex];
 
-            const isSubtotal = subtotalActive && this.isSubtotal(datumType);
-            const isTotal = totalActive && this.isTotal(datumType);
+            const isSubtotal = this.isSubtotal(datumType);
+            const isTotal = this.isTotal(datumType);
             const isTotalOrSubtotal = isTotal || isSubtotal;
 
             const xDatum = keys[xIndex];
             const x = xScale.convert(xDatum);
 
             const rawValue = values[yRawIndex];
-            const cumulativeValue = values[yCurrIndex];
-            const trailingValue = isTotalOrSubtotal ? 0 : values[yPrevIndex];
+
+            const { cumulativeValue, trailingValue } = getValues(isTotal, isSubtotal, values);
 
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const trailY = yScale.convert(trailingValue, { strict: false });
@@ -494,7 +518,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 series: this,
                 itemId,
                 datum,
-                cumulativeValue,
+                cumulativeValue: cumulativeValue ?? 0,
                 xValue: xDatum,
                 yValue: rawValue,
                 yKey,
