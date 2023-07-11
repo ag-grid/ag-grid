@@ -880,7 +880,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         contextData: Array<WaterfallContext>;
         paths: Array<Array<_Scene.Path>>;
     }) {
-        this.ctx.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetConnectorLinesPath({ contextData, paths });
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);

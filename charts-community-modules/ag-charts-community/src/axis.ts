@@ -1485,11 +1485,12 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         const props = [translate, opacity];
 
-        this.animationManager.debouncedAnimateMany(`${this.id}_ready-update_${node.id}`, props, {
+        this.animationManager.animateManyWithThrottle(`${this.id}_ready-update_${node.id}`, props, {
             disableInteractions: false,
             delay,
             duration,
             ease: easing.easeOut,
+            throttleId: this.id,
             onUpdate([translationY, opacity]) {
                 node.translationY = translationY;
                 node.opacity = opacity;

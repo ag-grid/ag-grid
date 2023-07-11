@@ -683,10 +683,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         delay: number = 0,
         onComplete?: () => void
     ) {
-        this.ctx.animationManager?.animateMany(id, props, {
+        this.ctx.animationManager?.animateManyWithThrottle(id, props, {
             delay,
             duration,
             ease: easing.easeOut,
+            throttleId: this.id,
             onUpdate([x, width, y, height]) {
                 rect.x = x;
                 rect.width = width;
@@ -707,16 +708,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -745,11 +737,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animateWithThrottle(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
+                    throttleId: this.id,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -763,7 +756,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
-        this.ctx.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
         });
@@ -790,22 +783,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;
-        if (diff.added.length > 0 && diff.removed.length > 0) {
-            sectionDuration = Math.floor(totalDuration / 3);
-        } else if (diff.added.length > 0 || diff.removed.length > 0) {
+        if (diff.added.length > 0 || diff.removed.length > 0) {
             sectionDuration = Math.floor(totalDuration / 2);
         }
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         const datumIdKey = this.processedData?.defs.keys?.[0];
 
@@ -851,7 +833,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         { from: contextY, to: datum.y },
                         { from: contextHeight, to: datum.height },
                     ];
-                    delay += sectionDuration;
                     duration = sectionDuration;
                 } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
                     props = [
@@ -875,11 +856,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.ctx.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animateWithThrottle(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,
                     duration: labelDuration,
+                    throttleId: this.id,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -896,6 +878,49 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.height = datum.height;
         });
         selection.cleanup();
+    }
+
+    protected getDirectionStartingValues(datumSelections: Array<Selection<Rect, BarNodeDatum>>) {
+        const isColumnSeries = this.getBarDirection() === ChartAxisDirection.Y;
+
+        const xAxis = this.axes[ChartAxisDirection.X];
+        const yAxis = this.axes[ChartAxisDirection.Y];
+
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
+
+        let startingX = Infinity;
+        let startingY = 0;
+
+        if (yAxis && isColumnSeries) {
+            if (isContinuousY) {
+                startingY = yAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingY = Math.max(startingY, datum.height + datum.y);
+                        }
+                    })
+                );
+            }
+        }
+
+        if (xAxis && !isColumnSeries) {
+            if (isContinuousX) {
+                startingX = xAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingX = Math.min(startingX, datum.x);
+                        }
+                    })
+                );
+            }
+        }
+
+        return { startingX, startingY };
     }
 
     protected isLabelEnabled() {

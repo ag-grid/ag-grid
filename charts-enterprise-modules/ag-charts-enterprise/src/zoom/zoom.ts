@@ -95,8 +95,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             ctx.interactionManager.addListener('hover', () => this.onHover()),
         ].forEach((s) => this.destroyFns.push(() => ctx.interactionManager.removeListener(s)));
 
-        const axisClickHandle = ctx.chartEventManager.addListener('axis-hover', (event) => this.onAxisHover(event));
-        this.destroyFns.push(() => ctx.chartEventManager.removeListener(axisClickHandle));
+        const axisHoverHandle = ctx.chartEventManager.addListener('axis-hover', (event) => this.onAxisHover(event));
+        this.destroyFns.push(() => ctx.chartEventManager.removeListener(axisHoverHandle));
 
         // Add layout listener
         const layoutHandle = ctx.layoutService.addListener('layout-complete', (event) => this.onLayoutComplete(event));

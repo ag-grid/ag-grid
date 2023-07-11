@@ -658,7 +658,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
     }) {
-        this.ctx.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetMarkersAndPaths(data);
     }
 
