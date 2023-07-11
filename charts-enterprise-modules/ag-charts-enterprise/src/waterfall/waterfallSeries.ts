@@ -428,12 +428,12 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 if (yCurrIndex !== undefined) {
                     return {
                         cumulativeValue: values[yCurrIndex],
-                        trailingValue: 0,
+                        trailingValue: isSubtotal ? trailingSubtotal : 0,
                     };
                 }
                 return {
                     cumulativeValue: values[0],
-                    trailingValue: 0,
+                    trailingValue: isSubtotal ? trailingSubtotal : 0,
                 };
             }
 
@@ -443,6 +443,23 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             };
         }
 
+        function getLabelValue(
+            isTotal: boolean,
+            isSubtotal: boolean,
+            rawValue?: number,
+            cumulativeValue?: number,
+            trailingValue?: number
+        ) {
+            if (isTotal) {
+                return cumulativeValue;
+            }
+            if (isSubtotal) {
+                return Math.abs((cumulativeValue ?? 0) - (trailingValue ?? 0));
+            }
+            return rawValue;
+        }
+
+        let trailingSubtotal = 0;
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
             const datumType = values[typeKeyIndex];
 
@@ -456,6 +473,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const rawValue = values[yRawIndex];
 
             const { cumulativeValue, trailingValue } = getValues(isTotal, isSubtotal, values);
+
+            if (isSubtotal) {
+                trailingSubtotal = cumulativeValue ?? 0;
+            }
 
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const trailY = yScale.convert(trailingValue, { strict: false });
@@ -532,7 +553,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 stroke: stroke,
                 strokeWidth,
                 label: createLabelData({
-                    value: isTotalOrSubtotal ? cumulativeValue : rawValue,
+                    value: getLabelValue(isTotal, isSubtotal, rawValue, cumulativeValue, trailingValue),
                     rect,
                     placement,
                     seriesId: this.id,
