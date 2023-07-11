@@ -1,8 +1,8 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { constrainZoom, definedZoomState, pointToRatio, scaleZoom, translateZoom } from './zoomTransformers';
-import { DefinedZoomState, ZoomCoords } from './zoomTypes';
-import { ZoomRect } from './scenes/zoomRect';
+import type { DefinedZoomState, ZoomCoords } from './zoomTypes';
+import type { ZoomRect } from './scenes/zoomRect';
 
 // "Re-rewind, when the crowd say..."
 export class ZoomSelector {

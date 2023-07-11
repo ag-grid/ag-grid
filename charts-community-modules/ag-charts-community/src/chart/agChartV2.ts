@@ -23,7 +23,8 @@ import type { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
 import type { HistogramSeries } from './series/cartesian/histogramSeries';
 import type { LineSeries } from './series/cartesian/lineSeries';
 import type { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle } from './series/polar/pieSeries';
+import type { PieSeries } from './series/polar/pieSeries';
+import { PieTitle } from './series/polar/pieSeries';
 import type { TreemapSeries } from './series/hierarchy/treemapSeries';
 import type { ChartAxis } from './chartAxis';
 import type { Chart } from './chart';
@@ -642,7 +643,7 @@ function applySeriesValues(
     options?: SeriesOptionType<any>,
     { path, index }: { path?: string; index?: number } = {}
 ): Series<any> {
-    const skip: string[] = ['series[].listeners'];
+    const skip: string[] = ['series[].listeners', 'series[].seriesGrouping'];
     const jsonApplyOptions = getJsonApplyOptions();
     const ctrs = jsonApplyOptions.constructors ?? {};
     const seriesTypeOverrides = {
@@ -665,6 +666,19 @@ function applySeriesValues(
     const listeners = options?.listeners;
     if (listeners != null) {
         registerListeners(target, listeners as unknown as { [key: string]: Function });
+    }
+
+    const seriesGrouping = (options as any).seriesGrouping;
+    if ('seriesGrouping' in (options ?? {})) {
+        if (seriesGrouping) {
+            const newSeriesGroup = Object.freeze({
+                ...(target.seriesGrouping ?? {}),
+                ...seriesGrouping,
+            });
+            target.seriesGrouping = newSeriesGroup;
+        } else {
+            target.seriesGrouping = seriesGrouping;
+        }
     }
 
     return result;

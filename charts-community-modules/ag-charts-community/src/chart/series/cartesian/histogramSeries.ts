@@ -2,23 +2,13 @@ import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import type { Text } from '../../../scene/shape/text';
 import type { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesTooltip,
-    Series,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-    valueProperty,
-    keyProperty,
-} from '../series';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
-import {
-    CartesianSeries,
-    CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
-    CartesianSeriesNodeDoubleClickEvent,
-} from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import ticks, { tickStep } from '../../../util/ticks';
@@ -43,7 +33,8 @@ import type {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
-import { AggregatePropertyDefinition, fixNumericExtent, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import type { AggregatePropertyDefinition, GroupByFn, PropertyDefinition } from '../../data/dataModel';
+import { fixNumericExtent } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
@@ -227,19 +218,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             if (aggregation === 'count') {
                 // Nothing to do.
             } else if (aggregation === 'sum') {
-                aggProp = groupSum(this, 'groupAgg', [yKey]);
+                aggProp = groupSum(this, 'groupAgg');
             } else if (aggregation === 'mean') {
-                aggProp = groupAverage(this, 'groupAgg', [yKey]);
+                aggProp = groupAverage(this, 'groupAgg');
             }
             if (areaPlot) {
-                aggProp = area(this, 'groupAgg', [yKey], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
             props.push(valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
         } else {
             let aggProp = groupCount(this, 'groupAgg');
 
             if (areaPlot) {
-                aggProp = area(this, 'groupAgg', [], aggProp);
+                aggProp = area(this, 'groupAgg', aggProp);
             }
             props.push(aggProp);
         }
@@ -274,7 +265,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             };
         };
 
-        if (!this.animationManager?.skipAnimations && this.processedData) {
+        if (!this.ctx.animationManager?.skipAnimations && this.processedData) {
             props.push(diff(this.processedData, false));
         }
 
@@ -325,7 +316,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const xAxis = axes[ChartAxisDirection.X];
         const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
+        if (!this.visible || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
         }
 
@@ -601,7 +592,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
         labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let startingY = 0;
@@ -613,7 +604,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                this.animationManager?.animateMany(
+                this.ctx.animationManager?.animateMany(
                     `${this.id}_empty-update-ready_${rect.id}`,
                     [
                         { from: startingY, to: datum.y },
@@ -636,7 +627,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
@@ -660,7 +651,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
         });
@@ -683,7 +674,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return;
         }
 
-        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const totalDuration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;
@@ -743,7 +734,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     cleanup = true;
                 }
 
-                this.animationManager?.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
+                this.ctx.animationManager?.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
                     disableInteractions: true,
                     delay,
                     duration: sectionDuration,
@@ -766,7 +757,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,

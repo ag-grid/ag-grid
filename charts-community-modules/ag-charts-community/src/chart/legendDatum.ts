@@ -33,6 +33,8 @@ export interface CategoryLegendDatum extends ChartLegendDatum {
         fillOpacity: number;
         strokeOpacity: number;
     };
+    /** Optional deduplication id - used to coordinate synced toggling of multiple items. */
+    legendItemName?: string;
     label: {
         text: string; // display name for the sub-component
     };

@@ -1,6 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
+import type { SeriesNodeDatum } from '../series';
+import { SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -544,7 +545,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     private isDatumHighlighted(datum: TreemapNodeDatum) {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         return datum === highlightedDatum && (datum.isLeaf || this.highlightGroups);
     }
 

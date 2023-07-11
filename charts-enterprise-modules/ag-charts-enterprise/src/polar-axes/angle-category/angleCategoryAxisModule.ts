@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale } from 'ag-charts-community';
+import type { _ModuleSupport } from 'ag-charts-community';
+import { _Scale } from 'ag-charts-community';
 import { AngleCategoryAxis } from './angleCategoryAxis';
 import { ANGLE_CATEGORY_AXIS_THEME } from './angleCategoryAxisThemes';
 

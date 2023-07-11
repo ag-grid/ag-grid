@@ -1,16 +1,17 @@
 import type { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import type { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import type { Text } from '../../../scene/shape/text';
 import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -567,7 +568,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDash = this.lineDash;
             lineNode.lineDashOffset = this.lineDashOffset;
 
-            const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+            const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {
@@ -575,7 +576,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 to: lineLength,
             };
 
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
                 duration,
                 onUpdate(length) {
@@ -618,7 +619,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
@@ -631,7 +632,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             labelSelections[contextDataIndex].each((label, _, index) => {
                 const delay = (nodeLengths[index] / lineLength) * duration;
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay,
@@ -657,7 +658,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
     }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetMarkersAndPaths(data);
     }
 

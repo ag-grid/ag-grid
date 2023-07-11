@@ -1,14 +1,11 @@
 import type { Selection } from '../../../scene/selection';
-import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, valueProperty } from '../series';
 import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { ColorScale } from '../../../scale/colorScale';
 import { LinearScale } from '../../../scale/linearScale';
-import {
-    CartesianSeries,
-    CartesianSeriesMarker,
-    CartesianSeriesNodeBaseClickEvent,
-    CartesianSeriesNodeDatum,
-} from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -583,7 +580,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
         labelSelections: Array<Selection<Text, ScatterNodeDatum>>;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         markerSelections.forEach((markerSelection) => {
@@ -592,7 +589,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 const size = datum.point?.size ?? 0;
                 const to = format?.size ?? size;
 
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
                     from: 0,
                     to: to,
                     duration,
@@ -605,7 +602,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,

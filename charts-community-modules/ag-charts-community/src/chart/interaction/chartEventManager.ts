@@ -12,12 +12,14 @@ export interface LegendItemClickChartEvent extends ChartEvent<'legend-item-click
     series: any;
     itemId: any;
     enabled: boolean;
+    legendItemName?: string;
 }
 
 export interface LegendItemDoubleClickChartEvent extends ChartEvent<'legend-item-double-click'> {
     series: any;
     itemId: any;
     enabled: boolean;
+    legendItemName?: string;
     numVisibleItems: { [key: string]: number };
 }
 
@@ -27,23 +29,31 @@ export interface AxisHoverChartEvent extends ChartEvent<'axis-hover'> {
 }
 
 export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> {
-    legendItemClick(series: any, itemId: any, enabled: boolean) {
+    legendItemClick(series: any, itemId: any, enabled: boolean, legendItemName?: string) {
         const event: LegendItemClickChartEvent = {
             type: 'legend-item-click',
             series,
             itemId,
             enabled,
+            legendItemName,
         };
 
         this.listeners.dispatch('legend-item-click', event);
     }
 
-    legendItemDoubleClick(series: any, itemId: any, enabled: boolean, numVisibleItems: { [key: string]: number }) {
+    legendItemDoubleClick(
+        series: any,
+        itemId: any,
+        enabled: boolean,
+        numVisibleItems: { [key: string]: number },
+        legendItemName?: string
+    ) {
         const event: LegendItemDoubleClickChartEvent = {
             type: 'legend-item-double-click',
             series,
             itemId,
             enabled,
+            legendItemName,
             numVisibleItems,
         };
 

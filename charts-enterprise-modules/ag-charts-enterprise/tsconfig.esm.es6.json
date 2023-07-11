@@ -8,7 +8,8 @@
         },
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "strict": true
+        "strict": true,
+        "importsNotUsedAsValues": "error"
     },
     "include": ["src/**/*"],
     "exclude": ["**/*.test.ts", "**/test/*.ts"]

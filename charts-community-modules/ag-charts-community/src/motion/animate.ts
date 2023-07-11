@@ -1,4 +1,5 @@
-import { Easing, linear } from './easing';
+import type { Easing } from './easing';
+import { linear } from './easing';
 
 export interface KeyframesOptions<T> {
     duration: number;

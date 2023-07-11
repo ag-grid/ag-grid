@@ -1,7 +1,8 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
 
 import { definedZoomState, pointToRatio, constrainZoom, translateZoom } from './zoomTransformers';
-import { ZoomCoords } from './zoomTypes';
+import type { ZoomCoords } from './zoomTypes';
 
 export class ZoomPanner {
     public isPanning: boolean = false;

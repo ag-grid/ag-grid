@@ -1,4 +1,4 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import type { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 interface DefinedZoomState extends _ModuleSupport.AxisZoomState {
     x: { min: number; max: number };

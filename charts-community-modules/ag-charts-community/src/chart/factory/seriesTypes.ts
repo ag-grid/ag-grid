@@ -6,7 +6,8 @@ import { LineSeries } from '../series/cartesian/lineSeries';
 import { ScatterSeries } from '../series/cartesian/scatterSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { TreemapSeries } from '../series/hierarchy/treemapSeries';
-import { ChartType, registerChartSeriesType } from './chartTypes';
+import type { ChartType } from './chartTypes';
+import { registerChartSeriesType } from './chartTypes';
 import type { SeriesConstructor, SeriesPaletteFactory } from '../../util/module';
 import type { ModuleContext } from '../../util/moduleContext';
 

@@ -3,3 +3,4 @@ dist/
 typings/
 dev-server/
 jest.*.js
+gulpfile.js

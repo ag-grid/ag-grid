@@ -1,4 +1,4 @@
-import { AgBaseRadarSeriesOptions } from '../radar/typings';
+import type { AgBaseRadarSeriesOptions } from '../radar/typings';
 
 export interface AgRadarLineSeriesOptions<DatumType = any> extends AgBaseRadarSeriesOptions<DatumType> {
     type?: 'radar-line';

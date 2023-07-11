@@ -1,4 +1,5 @@
-import { Marker, MarkerPathMove } from './marker';
+import type { MarkerPathMove } from './marker';
+import { Marker } from './marker';
 
 export class Triangle extends Marker {
     static className = 'Triangle';

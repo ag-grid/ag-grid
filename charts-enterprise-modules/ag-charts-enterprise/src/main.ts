@@ -1,13 +1,12 @@
-import {
-    AgChart,
-    AgChartOptions as AgCommunityChartOptions,
-    AgChartInstance,
-    _ModuleSupport,
-} from 'ag-charts-community';
+import type { AgChartOptions as AgCommunityChartOptions, AgChartInstance } from 'ag-charts-community';
+import { AgChart, _ModuleSupport } from 'ag-charts-community';
 
-import { AgAnimationOptions, AnimationModule } from './animation/main';
-import { AgChartBackgroundImage, BackgroundModule } from './background/main';
-import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
+import type { AgAnimationOptions } from './animation/main';
+import { AnimationModule } from './animation/main';
+import type { AgChartBackgroundImage } from './background/main';
+import { BackgroundModule } from './background/main';
+import type { AgContextMenuOptions } from './context-menu/main';
+import { ContextMenuModule } from './context-menu/main';
 import {
     AgCrosshairOptions,
     CrosshairModule,
@@ -25,11 +24,11 @@ import {
     AgHeatmapSeriesTooltipRendererParams,
     HeatmapModule,
 } from './heatmap/main';
-import { AgNavigatorOptions } from './navigator/main';
+import type { AgNavigatorOptions } from './navigator/main';
 import { AngleCategoryAxisModule, AgAngleCategoryAxisOptions } from './polar-axes/angle-category/main';
 import { RadiusNumberAxisModule, AgRadiusNumberAxisOptions } from './polar-axes/radius-number/main';
 export { RadiusNumberAxisModule } from './polar-axes/radius-number/radiusNumberAxisModule';
-import {
+import type {
     AgBaseRadarSeriesOptions,
     AgRadarSeriesLabelFormatterParams,
     AgRadarSeriesLabelOptions,

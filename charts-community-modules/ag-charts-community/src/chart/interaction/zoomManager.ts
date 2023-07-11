@@ -1,3 +1,4 @@
+import type { ChartAxis } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { BaseManager } from './baseManager';
 
@@ -24,12 +25,12 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
     private axes: Record<string, AxisZoomManager> = {};
     private initialZoom?: { callerId: string; newZoom?: AxisZoomState };
 
-    public updateAxes(axes: Array<{ id: string; direction: ChartAxisDirection }>) {
+    public updateAxes(axes: Array<ChartAxis>) {
         const removedAxes = new Set(Object.keys(this.axes));
 
         axes.forEach((axis) => {
             removedAxes.delete(axis.id);
-            this.axes[axis.id] ??= new AxisZoomManager(axis.direction);
+            this.axes[axis.id] ??= new AxisZoomManager(axis);
         });
 
         removedAxes.forEach((axisId) => {
@@ -49,7 +50,7 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         }
 
         Object.values(this.axes).forEach((axis) => {
-            axis.updateZoom(callerId, newZoom?.[axis.direction]);
+            axis.updateZoom(callerId, newZoom?.[axis.getDirection()]);
         });
 
         this.applyStates();
@@ -67,9 +68,9 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
 
         // TODO: this only works when there is a single axis on each direction as it gets the last of each
         Object.values(this.axes).forEach((axis) => {
-            if (axis.direction === ChartAxisDirection.X) {
+            if (axis.getDirection() === ChartAxisDirection.X) {
                 x = axis.getZoom();
-            } else if (axis.direction === ChartAxisDirection.Y) {
+            } else if (axis.getDirection() === ChartAxisDirection.Y) {
                 y = axis.getZoom();
             }
         });
@@ -87,7 +88,7 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
         const axes: Record<string, { direction: ChartAxisDirection; zoom: ZoomState | undefined }> = {};
         for (const [axisId, axis] of Object.entries(this.axes)) {
             axes[axisId] = {
-                direction: axis.direction,
+                direction: axis.getDirection(),
                 zoom: axis.getZoom(),
             };
         }
@@ -122,10 +123,14 @@ class AxisZoomManager {
     private readonly states: Record<string, ZoomState> = {};
     private currentZoom?: ZoomState = undefined;
 
-    public direction: ChartAxisDirection;
+    private axis: ChartAxis;
 
-    constructor(direction: ChartAxisDirection) {
-        this.direction = direction;
+    constructor(axis: ChartAxis) {
+        this.axis = axis;
+    }
+
+    getDirection(): ChartAxisDirection {
+        return this.axis.direction;
     }
 
     public updateZoom(callerId: string, newZoom?: ZoomState) {

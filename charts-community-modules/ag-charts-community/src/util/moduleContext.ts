@@ -8,6 +8,8 @@ import type { InteractionManager } from '../chart/interaction/interactionManager
 import type { TooltipManager } from '../chart/interaction/tooltipManager';
 import type { ZoomManager } from '../chart/interaction/zoomManager';
 import type { LayoutService } from '../chart/layout/layoutService';
+import type { SeriesLayerManager } from '../chart/series/seriesLayerManager';
+import type { SeriesStateManager } from '../chart/series/seriesStateManager';
 import type { UpdateService } from '../chart/updateService';
 import type { Scene } from '../integrated-charts-scene';
 import type { CallbackCache } from './callbackCache';
@@ -26,6 +28,8 @@ export interface ModuleContext {
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
     callbackCache: CallbackCache;
+    seriesStateManager: SeriesStateManager;
+    seriesLayerManager: SeriesLayerManager;
 }
 
 export interface ModuleContextWithParent<P> extends ModuleContext {

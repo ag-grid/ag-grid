@@ -3,7 +3,8 @@ import type { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { measureText, Text, TextSizeProperties, splitText } from './scene/shape/text';
+import type { TextSizeProperties } from './scene/shape/text';
+import { measureText, Text, splitText } from './scene/shape/text';
 import type { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
@@ -13,7 +14,8 @@ import { areArrayNumbersEqual } from './util/equal';
 import type { CrossLine } from './chart/crossline/crossLine';
 import { Validate, BOOLEAN, ARRAY, STRING_ARRAY, predicateWithMessage } from './util/validation';
 import { Layers } from './chart/layers';
-import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
+import type { PointLabelDatum } from './util/labelPlacement';
+import { axisLabelsOverlap } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
@@ -21,13 +23,13 @@ import type { AgAxisCaptionFormatterParams, AgAxisGridStyle, TextWrap } from './
 import { LogScale } from './scale/logScale';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
+import type { Flag } from './chart/label';
 import {
     calculateLabelRotation,
     calculateLabelBBox,
     getLabelSpacing,
     getTextAlign,
     getTextBaseline,
-    Flag,
 } from './chart/label';
 import { Logger } from './util/logger';
 import type { AxisLayout } from './chart/layout/layoutService';
@@ -36,7 +38,8 @@ import type { AxisContext, ModuleContext } from './util/moduleContext';
 import { AxisLabel } from './chart/axis/axisLabel';
 import { AxisLine } from './chart/axis/axisLine';
 import type { AxisTitle } from './chart/axis/axisTitle';
-import { TickCount, TickInterval, AxisTick } from './chart/axis/axisTick';
+import type { TickCount, TickInterval } from './chart/axis/axisTick';
+import { AxisTick } from './chart/axis/axisTick';
 import type { ChartAxis, BoundSeries } from './chart/chartAxis';
 import type { AnimationManager } from './chart/interaction/animationManager';
 import type { InteractionEvent } from './chart/interaction/interactionManager';
@@ -156,7 +159,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
     protected readonly tickLabelGroup = this.axisGroup.appendChild(
         new Group({ name: `${this.id}-Axis-tick-labels`, zIndex: Layers.AXIS_ZINDEX })
     );
-    private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
+    protected readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     readonly gridGroup = new Group({ name: `${this.id}-Axis-grid` });
     protected readonly gridLineGroup = this.gridGroup.appendChild(
@@ -170,9 +173,15 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
     protected tickLabelGroupSelection = Selection.select(this.tickLabelGroup, Text, false);
     protected gridLineGroupSelection = Selection.select(this.gridLineGroup, Line, false);
 
-    private _crossLines?: CrossLine[] = [];
+    protected abstract assignCrossLineArrayConstructor(crossLines: CrossLine[]): void;
+
+    private _crossLines?: CrossLine[];
     set crossLines(value: CrossLine[] | undefined) {
         this._crossLines?.forEach((crossLine) => this.detachCrossLine(crossLine));
+
+        if (value) {
+            this.assignCrossLineArrayConstructor(value);
+        }
 
         this._crossLines = value;
 
@@ -246,6 +255,9 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
                 },
             },
         });
+
+        this._crossLines = [];
+        this.assignCrossLineArrayConstructor(this._crossLines);
     }
 
     private attachCrossLine(crossLine: CrossLine) {
@@ -288,10 +300,10 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.crossLineGroup.visible = visible;
     }
 
-    attachAxis(node: Node, nextNode?: Node | null) {
-        node.insertBefore(this.gridGroup, nextNode);
-        node.insertBefore(this.axisGroup, nextNode);
-        node.insertBefore(this.crossLineGroup, nextNode);
+    attachAxis(node: Node) {
+        node.appendChild(this.gridGroup);
+        node.appendChild(this.axisGroup);
+        node.appendChild(this.crossLineGroup);
     }
 
     detachAxis(node: Node) {
@@ -973,7 +985,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         this.tickLabelGroup.visible = this.label.enabled;
     }
 
-    private updateCrossLines({
+    protected updateCrossLines({
         rotation,
         parallelFlipRotation,
         regularFlipRotation,
@@ -1473,11 +1485,12 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         const props = [translate, opacity];
 
-        this.animationManager.debouncedAnimateMany(`${this.id}_ready-update_${node.id}`, props, {
+        this.animationManager.animateManyWithThrottle(`${this.id}_ready-update_${node.id}`, props, {
             disableInteractions: false,
             delay,
             duration,
             ease: easing.easeOut,
+            throttleId: this.id,
             onUpdate([translationY, opacity]) {
                 node.translationY = translationY;
                 node.opacity = opacity;

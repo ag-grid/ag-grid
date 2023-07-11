@@ -1,4 +1,4 @@
-import { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
+import type { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
 import { Navigator } from './navigator';
 
 export const CHART_NAVIGATOR_MODULE: _ModuleSupport.Module = {

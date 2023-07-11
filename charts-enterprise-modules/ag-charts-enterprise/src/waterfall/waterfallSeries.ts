@@ -1,13 +1,14 @@
-import {
-    _ModuleSupport,
-    _Scale,
-    _Scene,
-    _Util,
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
 } from 'ag-charts-community';
-import { AgWaterfallSeriesFormat, AgWaterfallSeriesLabelPlacement, AgWaterfallSeriesFormatterParams } from './typings';
+import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import type {
+    AgWaterfallSeriesFormat,
+    AgWaterfallSeriesLabelPlacement,
+    AgWaterfallSeriesFormatterParams,
+} from './typings';
 
 const {
     Validate,
@@ -184,14 +185,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 1,
-            directionKeys: {
-                [ChartAxisDirection.X]: ['xKey'],
-                [ChartAxisDirection.Y]: ['yKey'],
-            },
-            directionNames: {
-                [ChartAxisDirection.X]: ['xName'],
-                [ChartAxisDirection.Y]: ['yName'],
-            },
         });
 
         this.label.enabled = false;
@@ -239,8 +232,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     async processData(dataController: _ModuleSupport.DataController) {
@@ -757,7 +752,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         paths: Array<Array<_Scene.Path>>;
         seriesRect?: _Scene.BBox;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
 
         contextData.forEach(({ pointData }, contextDataIndex) => {
             this.animateRects(datumSelections[contextDataIndex], duration);
@@ -774,7 +769,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     protected animateRects(datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>, duration: number) {
         datumSelection.each((rect, datum, index) => {
-            this.animationManager?.animateMany(
+            this.ctx.animationManager?.animateMany(
                 `${this.id}_empty-update-ready_${rect.id}`,
                 [
                     { from: datum.itemId === 'positive' ? datum.x : datum.x + datum.width, to: datum.x },
@@ -798,7 +793,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     protected animateLabels(labelSelection: _Scene.Selection<_Scene.Text, WaterfallNodeDatum>, duration: number) {
         labelSelection.each((label, _, index) => {
-            this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                 from: 0,
                 to: 1,
                 delay: duration - duration / 10 + 200 * index,
@@ -836,7 +831,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             disableInteractions: true,
         };
 
-        this.animationManager?.animate<number>(`${this.id}_empty-update-ready_connector-line`, {
+        this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_connector-line`, {
             ...connectorLineAnimationOptions,
             duration,
             onUpdate() {
@@ -885,7 +880,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         contextData: Array<WaterfallContext>;
         paths: Array<Array<_Scene.Path>>;
     }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetConnectorLinesPath({ contextData, paths });
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
@@ -973,7 +968,7 @@ export class WaterfallColumnSeries extends WaterfallBarSeries {
 
     protected animateRects(datumSelection: _Scene.Selection<_Scene.Rect, WaterfallNodeDatum>, duration: number) {
         datumSelection.each((rect, datum, index) => {
-            this.animationManager?.animateMany(
+            this.ctx.animationManager?.animateMany(
                 `${this.id}_empty-update-ready_${rect.id}`,
                 [
                     { from: datum.itemId === 'positive' ? datum.y + datum.height : datum.y, to: datum.y },

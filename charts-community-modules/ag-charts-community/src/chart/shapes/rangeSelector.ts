@@ -2,7 +2,8 @@ import { Group } from '../../scene/group';
 import { RangeHandle } from './rangeHandle';
 import { RangeMask } from './rangeMask';
 import type { BBox } from '../../scene/bbox';
-import { RedrawType, RenderContext } from '../../scene/node';
+import type { RenderContext } from '../../scene/node';
+import { RedrawType } from '../../scene/node';
 
 export class RangeSelector extends Group {
     static className = 'Range';

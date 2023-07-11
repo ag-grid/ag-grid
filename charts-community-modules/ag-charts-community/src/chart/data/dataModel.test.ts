@@ -4,7 +4,8 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { AggregatePropertyDefinition, DataModel, GroupByFn, PropertyId } from './dataModel';
+import type { AggregatePropertyDefinition, GroupByFn, PropertyId } from './dataModel';
+import { DataModel } from './dataModel';
 import {
     area as actualArea,
     groupAverage as actualGroupAverage,
@@ -29,40 +30,41 @@ const categoryKey = (property: string) => ({
     type: 'key' as const,
     valueType: 'category' as const,
 });
-const scopedValue = (scope: string | undefined, property: string, id?: string) => ({
+const scopedValue = (scope: string | undefined, property: string, groupId?: string, id?: string) => ({
     scopes: scope ? [scope] : undefined,
     property,
     type: 'value' as const,
     valueType: 'range' as const,
+    groupId,
     id,
 });
-const value = (property: string, id?: string) => scopedValue('test', property, id);
+const value = (property: string, groupId?: string, id?: string) => scopedValue('test', property, groupId, id);
 const categoryValue = (property: string) => ({
     scopes: ['test'],
     property,
     type: 'value' as const,
     valueType: 'category' as const,
 });
-const accumulatedGroupValue = (property: string, id?: string) => ({
-    ...value(property, id),
+const accumulatedGroupValue = (property: string, groupId: string = property, id?: string) => ({
+    ...value(property, groupId, id),
     processor: () => (next, total) => next + (total ?? 0),
 });
-const accumulatedPropertyValue = (property: string, id?: string) => ({
-    ...value(property, id),
+const accumulatedPropertyValue = (property: string, groupId: string = property, id?: string) => ({
+    ...value(property, groupId, id),
     processor: accumulatedValue(),
 });
-const sum = (props: string[]) => actualSum({ id: 'test' }, `sum-${props.join('-')}`, props);
-const scopedSum = (scopes: string[] | undefined, props: string[]) => ({
-    ...actualSum({ id: 'test' }, `sum-${props.join('-')}`, props),
+const sum = (groupId: string) => actualSum({ id: 'test' }, `sum-${groupId}`, groupId);
+const scopedSum = (scopes: string[] | undefined, groupId: string) => ({
+    ...actualSum({ id: 'test' }, `sum-${groupId}`, groupId),
     scopes,
 });
-const range = (props: string[]) => actualRange({ id: 'test' }, `range-${props.join('-')}`, props);
-const groupAverage = (props: string[]) => actualGroupAverage({ id: 'test' }, `groupAverage-${props.join('-')}`, props);
+const range = (groupId: string) => actualRange({ id: 'test' }, `range-${groupId}`, groupId);
+const groupAverage = (groupId: string) => actualGroupAverage({ id: 'test' }, `groupAverage-${groupId}`, groupId);
 const groupCount = () => actualGroupCount({ id: 'test' }, `groupCount`);
-const area = (props: string[], aggFn: AggregatePropertyDefinition<any, any>) =>
-    actualArea({ id: 'test' }, `area-${props.join('-')}`, props, aggFn);
-const normaliseGroupTo = (props: string[], normaliseTo: number, mode?: 'sum' | 'range') =>
-    actualNormaliseGroupTo({ id: 'test' }, props, normaliseTo, mode);
+const area = (groupId: string, aggFn: AggregatePropertyDefinition<any, any>) =>
+    actualArea({ id: 'test' }, `area-${groupId}`, aggFn);
+const normaliseGroupTo = (groupId: string, normaliseTo: number, mode?: 'sum' | 'range') =>
+    actualNormaliseGroupTo({ id: 'test' }, [groupId], normaliseTo, mode);
 const normalisePropertyTo = (prop: PropertyId<any>, normaliseTo: [number, number]) =>
     actualNormalisePropertyTo({ id: 'test' }, prop, normaliseTo);
 
@@ -273,7 +275,7 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.GROUPED_BAR_CHART_EXAMPLE.data ?? [];
             const dataModel = new DataModel<any, any, true>({
-                props: [categoryKey('type'), value('total'), value('regular'), sum(['total', 'regular'])],
+                props: [categoryKey('type'), value('total', 'all'), value('regular', 'all'), sum('all')],
                 groupByKeys: true,
             });
 
@@ -338,7 +340,7 @@ describe('DataModel', () => {
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
+                    props: [categoryKey('kp'), value('vp1', 'all'), value('vp2', 'all'), sum('all')],
                     groupByKeys: true,
                 });
                 const data = [
@@ -462,7 +464,7 @@ describe('DataModel', () => {
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
+                    props: [categoryKey('kp'), value('vp1', 'all'), value('vp2', 'all'), sum('all')],
                     groupByKeys: true,
                 });
                 const data = [
@@ -487,11 +489,11 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
-                    value('ownerOccupied'),
-                    value('privateRented'),
-                    value('localAuthority'),
-                    value('housingAssociation'),
-                    sum(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    value('ownerOccupied', 'all'),
+                    value('privateRented', 'all'),
+                    value('localAuthority', 'all'),
+                    value('housingAssociation', 'all'),
+                    sum('all'),
                     AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
@@ -506,12 +508,12 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('kp'),
-                    value('vp1'),
-                    value('vp2'),
-                    value('vp3'),
-                    value('vp4'),
-                    sum(['vp1', 'vp2']),
-                    sum(['vp3', 'vp4']),
+                    value('vp1', 'group1'),
+                    value('vp2', 'group1'),
+                    value('vp3', 'group2'),
+                    value('vp4', 'group2'),
+                    sum('group1'),
+                    sum('group2'),
                 ],
                 groupByKeys: true,
             });
@@ -662,14 +664,14 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
-                    value('white'),
-                    value('mixed'),
-                    value('asian'),
-                    value('black'),
-                    value('chinese'),
-                    value('other'),
-                    sum(['white', 'mixed', 'asian', 'black', 'chinese', 'other']),
-                    normaliseGroupTo(['white', 'mixed', 'asian', 'black', 'chinese', 'other'], 100),
+                    value('white', 'all'),
+                    value('mixed', 'all'),
+                    value('asian', 'all'),
+                    value('black', 'all'),
+                    value('chinese', 'all'),
+                    value('other', 'all'),
+                    sum('all'),
+                    normaliseGroupTo('all', 100),
                     AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
@@ -685,17 +687,14 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('month'),
-                    value('petroleum'),
-                    value('naturalGas'),
-                    value('bioenergyWaste'),
-                    value('nuclear'),
-                    value('windSolarHydro'),
-                    value('imported'),
-                    sum(['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported']),
-                    normaliseGroupTo(
-                        ['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported'],
-                        100
-                    ),
+                    value('petroleum', 'all'),
+                    value('naturalGas', 'all'),
+                    value('bioenergyWaste', 'all'),
+                    value('nuclear', 'all'),
+                    value('windSolarHydro', 'all'),
+                    value('imported', 'all'),
+                    sum('all'),
+                    normaliseGroupTo('all', 100),
                     AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
@@ -713,14 +712,14 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('kp'),
-                    value('vp1'),
-                    value('vp2'),
-                    value('vp3'),
-                    value('vp4'),
-                    sum(['vp1', 'vp2']),
-                    sum(['vp3', 'vp4']),
-                    normaliseGroupTo(['vp1', 'vp2'], 100),
-                    normaliseGroupTo(['vp3', 'vp4'], 100),
+                    value('vp1', 'group1'),
+                    value('vp2', 'group1'),
+                    value('vp3', 'group2'),
+                    value('vp4', 'group2'),
+                    sum('group1'),
+                    sum('group2'),
+                    normaliseGroupTo('group1', 100),
+                    normaliseGroupTo('group2', 100),
                 ],
                 groupByKeys: true,
             });
@@ -769,17 +768,13 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('type'),
-                    accumulatedGroupValue('ownerOccupied'),
-                    accumulatedGroupValue('privateRented'),
-                    accumulatedGroupValue('localAuthority'),
-                    accumulatedGroupValue('housingAssociation'),
-                    range(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    accumulatedGroupValue('ownerOccupied', 'all'),
+                    accumulatedGroupValue('privateRented', 'all'),
+                    accumulatedGroupValue('localAuthority', 'all'),
+                    accumulatedGroupValue('housingAssociation', 'all'),
+                    range('all'),
                     AGG_VALUES_EXTENT,
-                    normaliseGroupTo(
-                        ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-                        100,
-                        'range'
-                    ),
+                    normaliseGroupTo('all', 100, 'range'),
                 ],
                 groupByKeys: true,
             });
@@ -793,13 +788,13 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('kp'),
-                    accumulatedGroupValue('vp1'),
-                    accumulatedGroupValue('vp2'),
-                    accumulatedGroupValue('vp3'),
-                    accumulatedGroupValue('vp4'),
-                    range(['vp1', 'vp2', 'vp3', 'vp4']),
+                    accumulatedGroupValue('vp1', 'all'),
+                    accumulatedGroupValue('vp2', 'all'),
+                    accumulatedGroupValue('vp3', 'all'),
+                    accumulatedGroupValue('vp4', 'all'),
+                    range('all'),
                     AGG_VALUES_EXTENT,
-                    normaliseGroupTo(['vp1', 'vp2', 'vp3', 'vp4'], 100, 'range'),
+                    normaliseGroupTo('all', 100, 'range'),
                 ],
                 groupByKeys: true,
             });
@@ -840,10 +835,10 @@ describe('DataModel', () => {
                 expect(result?.type).toEqual('grouped');
                 expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
                 expect(result?.domain.values).toEqual([
-                    [1, 6],
-                    [3, 15],
-                    [5, 19],
-                    [9, 21],
+                    [11.11111111111111, 28.571428571428573],
+                    [33.333333333333336, 71.42857142857143],
+                    [55.55555555555556, 90.47619047619048],
+                    [100, 100],
                 ]);
             });
         });
@@ -878,8 +873,8 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('engine-size'),
-                    value('highway-mpg'),
-                    groupAverage(['highway-mpg']),
+                    value('highway-mpg', 'mpg'),
+                    groupAverage('mpg'),
                     SORT_DOMAIN_GROUPS,
                 ],
                 groupByFn,
@@ -893,7 +888,12 @@ describe('DataModel', () => {
         it('should generated the expected results for simple histogram example with area bucket calculation', () => {
             const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data?.slice(0, 20) ?? [];
             const dataModel = new DataModel<any, any, true>({
-                props: [rangeKey('curb-weight'), value('curb-weight'), area([], groupCount()), SORT_DOMAIN_GROUPS],
+                props: [
+                    rangeKey('curb-weight'),
+                    value('curb-weight', 'weight'),
+                    area('weight', groupCount()),
+                    SORT_DOMAIN_GROUPS,
+                ],
                 groupByFn: () => {
                     return (item) => {
                         if (item.keys[0] < 2000) {
@@ -947,10 +947,10 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('kp'),
-                    { ...value('vp1'), ...validated },
-                    { ...value('vp2'), ...validated },
-                    { ...value('vp3'), ...defaults },
-                    sum(['vp1', 'vp2']),
+                    { ...value('vp1', 'group1'), ...validated },
+                    { ...value('vp2', 'group1'), ...validated },
+                    { ...value('vp3', 'group2'), ...defaults },
+                    sum('group1'),
                 ],
                 groupByKeys: true,
             });
@@ -1009,10 +1009,10 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     categoryKey('kp'),
-                    { ...scopedValue(undefined, 'vp1'), ...validated },
-                    { ...scopedValue('scope-1', 'vp2'), ...validated },
-                    { ...scopedValue('scope-2', 'vp3') },
-                    scopedSum(['scope-1'], ['vp1', 'vp2']),
+                    { ...scopedValue(undefined, 'vp1', 'group1'), ...validated },
+                    { ...scopedValue('scope-1', 'vp2', 'group1'), ...validated },
+                    { ...scopedValue('scope-2', 'vp3', 'group2') },
+                    scopedSum(['scope-1'], 'group1'),
                 ],
                 groupByKeys: true,
             });
@@ -1079,7 +1079,7 @@ describe('DataModel', () => {
             const data = [...(examples.PIE_IN_A_DOUGHNUT.series?.[0]?.data?.map((v) => ({ ...v })) ?? [])];
             const dataModel = new DataModel<any, any>({
                 props: [
-                    accumulatedPropertyValue('share', 'angle'),
+                    accumulatedPropertyValue('share', 'angleGroup', 'angle'),
                     rangedValueProperty({ id: 'test' }, 'share', { id: 'radius', min: 0.05, max: 0.7 }),
                     normalisePropertyTo({ id: 'angle' }, [0, 1]),
                 ],

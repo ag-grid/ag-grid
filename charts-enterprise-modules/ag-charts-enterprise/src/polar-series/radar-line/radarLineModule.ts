@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale } from 'ag-charts-community';
+import type { _ModuleSupport } from 'ag-charts-community';
+import { _Scale } from 'ag-charts-community';
 import { RadarLineSeries } from './radarLineSeries';
 import { RADAR_DEFAULTS } from '../radar/radarDefaults';
 import { RADAR_LINE_SERIES_THEME } from './radarLineThemes';

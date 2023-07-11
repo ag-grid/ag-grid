@@ -1,4 +1,5 @@
-import { _ModuleSupport, _Scale } from 'ag-charts-community';
+import type { _ModuleSupport } from 'ag-charts-community';
+import { _Scale } from 'ag-charts-community';
 import { RadarAreaSeries } from './radarAreaSeries';
 import { RADAR_DEFAULTS } from '../radar/radarDefaults';
 import { RADAR_AREA_SERIES_THEME } from './radarAreaThemes';
@@ -21,7 +22,6 @@ export const RadarAreaModule: _ModuleSupport.SeriesModule = {
         return {
             fill,
             stroke,
-            marker: { fill, stroke },
         };
     },
 };

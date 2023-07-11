@@ -40,6 +40,7 @@ export class BarChartProxy extends CartesianChartProxy {
             {
                 type: this.standaloneChartType,
                 grouped: isGrouped,
+                stacked: ['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar'].includes(this.chartType),
                 normalizedTo: this.isNormalised() ? 100 : undefined,
                 xKey: params.category.id,
                 xName: params.category.name,
@@ -73,7 +74,7 @@ export class BarChartProxy extends CartesianChartProxy {
                 yKey,
                 fill: hexToRGBA(seriesOptions.fill!, '0.3'),
                 stroke: hexToRGBA(seriesOptions.stroke!, '0.3'),
-                hideInLegend: [yKey],
+                showInLegend: false,
             }
         }
 

@@ -17,7 +17,8 @@ import type {
     AgTooltipPositionType,
 } from '../agChartOptions';
 import { AXIS_TYPES, getAxisThemeTemplate } from '../factory/axisTypes';
-import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
+import type { ChartType } from '../factory/chartTypes';
+import { CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 const palette: AgChartThemePalette = {

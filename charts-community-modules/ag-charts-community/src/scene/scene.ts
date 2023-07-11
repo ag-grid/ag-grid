@@ -1,11 +1,14 @@
-import { HdpiCanvas, Size } from '../canvas/hdpiCanvas';
-import { Node, RedrawType, RenderContext, ZIndexSubOrder } from './node';
+import type { Size } from '../canvas/hdpiCanvas';
+import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import type { Node, RenderContext, ZIndexSubOrder } from './node';
+import { RedrawType } from './node';
 import { createId } from '../util/id';
 import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
-import { SceneDebugLevel, SceneDebugOptions } from './sceneDebugOptions';
+import type { SceneDebugOptions } from './sceneDebugOptions';
+import { SceneDebugLevel } from './sceneDebugOptions';
 import { Logger } from '../util/logger';
 
 interface SceneOptions {
@@ -532,13 +535,19 @@ export class Scene {
         ctx.restore();
     }
 
-    buildTree(node: Node): { name?: string; node?: any; dirty?: string } {
+    buildTree(node: Node): { name?: string; node?: any; dirty?: string; virtualParent?: Node } {
         const name = (node instanceof Group ? node.name : null) ?? node.id;
 
         return {
             name,
             node,
             dirty: RedrawType[node.dirty],
+            ...(node.parent?.isVirtual
+                ? {
+                      virtualParentDirty: RedrawType[node.parent.dirty],
+                      virtualParent: node.parent,
+                  }
+                : {}),
             ...node.children
                 .map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
@@ -546,6 +555,7 @@ export class Scene {
                     const {
                         node: { visible, opacity, zIndex, zIndexSubOrder },
                         node: childNode,
+                        virtualParent,
                     } = childTree;
                     if (!visible || opacity <= 0) {
                         treeNodeName = `(${treeNodeName})`;
@@ -556,11 +566,21 @@ export class Scene {
                     const key = [
                         `${treeNodeName ?? '<unknown>'}`,
                         `z: ${zIndex}`,
-                        zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                        zIndexSubOrder &&
+                            `zo: ${zIndexSubOrder
+                                .map((v: any) => (typeof v === 'function' ? `${v()} (fn)` : v))
+                                .join(' / ')}`,
+                        virtualParent && `(virtual parent)`,
                     ]
                         .filter((v) => !!v)
                         .join(' ');
-                    result[key] = childTree;
+
+                    let selectedKey = key;
+                    let index = 1;
+                    while (result[selectedKey] != null && index < 100) {
+                        selectedKey = `${key} (${index++})`;
+                    }
+                    result[selectedKey] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };

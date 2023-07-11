@@ -4,6 +4,9 @@ import type { AxisContext } from '../../util/moduleContext';
 import { Validate, NUMBER, POSITION } from '../../util/validation';
 import type { AgCartesianAxisPosition } from '../agChartOptions';
 import { ChartAxisDirection } from '../chartAxisDirection';
+import { assignJsonApplyConstructedArray } from '../chartOptions';
+import { CartesianCrossLine } from '../crossline/cartesianCrossLine';
+import type { CrossLine } from '../crossline/crossLine';
 import type { TickInterval } from './axisTick';
 
 export abstract class CartesianAxis<
@@ -60,5 +63,9 @@ export abstract class CartesianAxis<
             ...super.createAxisContext(),
             position: this.position,
         };
+    }
+
+    protected assignCrossLineArrayConstructor(crossLines: CrossLine[]) {
+        assignJsonApplyConstructedArray(crossLines, CartesianCrossLine);
     }
 }

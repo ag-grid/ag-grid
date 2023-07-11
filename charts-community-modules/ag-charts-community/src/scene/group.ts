@@ -1,4 +1,5 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager, ZIndexSubOrder } from './node';
+import type { RenderContext, LayerManager, ZIndexSubOrder } from './node';
+import { Node, RedrawType, SceneChangeDetection } from './node';
 import { BBox } from './bbox';
 import type { HdpiCanvas } from '../canvas/hdpiCanvas';
 import type { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
@@ -34,10 +35,11 @@ export class Group extends Node {
             readonly layer?: boolean;
             readonly zIndex?: number;
             readonly zIndexSubOrder?: ZIndexSubOrder;
+            readonly isVirtual?: boolean;
             readonly name?: string;
         }
     ) {
-        super();
+        super({ isVirtual: opts?.isVirtual });
 
         const { zIndex, zIndexSubOrder } = opts ?? {};
 
@@ -101,6 +103,10 @@ export class Group extends Node {
     }
 
     markDirty(source: Node, type = RedrawType.TRIVIAL) {
+        if (this.isVirtual) {
+            super.markDirty(source, type);
+            return;
+        }
         const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
         super.markDirty(source, type, parentType);
     }
@@ -216,12 +222,15 @@ export class Group extends Node {
             this.clipCtx(ctx, x, y, width, height);
 
             // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+            clipBBox = this.matrix.transformBBox(clipRect);
         }
 
+        const hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
-            this.sortChildren();
+            this.sortChildren(children);
             forceRender = true;
+        } else if (hasVirtualChildren) {
+            this.sortChildren(children);
         }
 
         // Reduce churn if renderCtx is identical.
@@ -259,6 +268,14 @@ export class Group extends Node {
             ctx.restore();
         }
 
+        if (hasVirtualChildren) {
+            // Mark virtual nodes as clean and their virtual children - all other nodes have already
+            // been visited and marked clean.
+            for (const child of this.virtualChildren) {
+                child.markClean({ recursive: 'virtual' });
+            }
+        }
+
         if (layer) {
             if (stats) stats.layersRendered++;
             ctx.restore();
@@ -274,9 +291,9 @@ export class Group extends Node {
         }
     }
 
-    private sortChildren() {
+    private sortChildren(children: Node[]) {
         this.dirtyZIndex = false;
-        this.children.sort((a, b) => {
+        children.sort((a, b) => {
             return compoundAscending(
                 [a.zIndex, ...(a.zIndexSubOrder ?? [undefined, undefined]), a.serialNumber],
                 [b.zIndex, ...(b.zIndexSubOrder ?? [undefined, undefined]), b.serialNumber],

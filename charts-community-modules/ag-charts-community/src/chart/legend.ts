@@ -1,4 +1,5 @@
-import { Node, RedrawType } from '../scene/node';
+import type { Node } from '../scene/node';
+import { RedrawType } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -36,7 +37,8 @@ import {
 import { Layers } from './layers';
 import { ChartUpdateType } from './chartUpdateType';
 import type { InteractionEvent } from './interaction/interactionManager';
-import { gridLayout, Page } from './gridLayout';
+import type { Page } from './gridLayout';
+import { gridLayout } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { toTooltipHtml } from './tooltip/tooltip';
 import type { CategoryLegendDatum } from './legendDatum';
@@ -742,7 +744,7 @@ export class Legend {
         let newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled);
+            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled, datum.legendItemName);
         }
 
         if (!newEnabled) {
@@ -791,7 +793,7 @@ export class Legend {
         event.consume();
 
         if (toggleSeriesVisible) {
-            const legendData: CategoryLegendDatum[] = chartSeries.reduce(
+            const legendData = chartSeries.reduce(
                 (ls, s) => [
                     ...ls,
                     ...s.getLegendData().filter((d): d is CategoryLegendDatum => d.legendType === 'category'),
@@ -810,7 +812,8 @@ export class Legend {
                 series,
                 itemId,
                 clickedItem?.enabled ?? false,
-                numVisibleItems
+                numVisibleItems,
+                clickedItem?.legendItemName
             );
         }
 

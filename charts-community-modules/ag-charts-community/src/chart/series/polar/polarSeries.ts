@@ -1,4 +1,5 @@
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { Series, SeriesNodePickMode } from '../series';
 import type { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import type { PointLabelDatum } from '../../../util/labelPlacement';
@@ -38,6 +39,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
             moduleCtx,
             useLabelLayer,
             pickModes,
+            contentGroupVirtual: false,
             directionKeys: {
                 [ChartAxisDirection.X]: ['angleKey'],
                 [ChartAxisDirection.Y]: ['radiusKey'],

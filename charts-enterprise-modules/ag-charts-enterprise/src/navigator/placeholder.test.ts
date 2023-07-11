@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartOptions } from 'ag-charts-community';
+import type { AgChartOptions } from 'ag-charts-community';
+import { AgChart } from 'ag-charts-community';
 import {
     waitForChartStability,
     setupMockCanvas,

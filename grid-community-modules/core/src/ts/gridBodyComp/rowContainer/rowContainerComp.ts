@@ -101,6 +101,11 @@ export class RowContainerComp extends Component {
                 delete oldRows[instanceId];
                 this.ensureDomOrder(existingRowComp.getGui());
             } else {
+                // don't create new row comps for rows which are not displayed. still want the existing components
+                // as they may be animating out.
+                if (!rowCon.getRowNode().displayed) {
+                    return;
+                }
                 const rowComp = new RowComp(rowCon, this.beans, this.type);
                 this.rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());

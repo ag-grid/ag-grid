@@ -1293,7 +1293,10 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
+    /** An option indicating if the areas should be stacked. */
     stacked?: boolean;
+    /** An ID to be used to group stacked items. */
+    stackGroup?: string;
 }
 
 export type AgBarSeriesLabelPlacement = 'inside' | 'outside';
@@ -1333,7 +1336,7 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for bar series. */
 export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'bar';
-    /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate bars. */
     grouped?: boolean;
     /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
@@ -1414,7 +1417,7 @@ export interface AgColumnSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for column series. */
 export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'column';
-    /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate columns. */
     grouped?: boolean;
     /** An option indicating if the columns should be stacked. */
     stacked?: boolean;
@@ -1524,6 +1527,8 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     offset?: PixelSize;
     /** Minimum angle in degrees required for a sector to show a label. */
     minAngle?: number;
+    /** Avoid callout label collision and overflow by automatically moving colliding labels or reducing the pie radius. If set to `false`, axis labels may collide and the pie radius will not adopt to displaying as many labels as possible. */
+    avoidCollisions?: boolean;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }

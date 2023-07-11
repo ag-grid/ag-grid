@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
+import { ColDef, ColGroupDef, HeaderLocation, IAggFunc } from "../entities/colDef";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -37,9 +37,9 @@ export class ColumnApi {
     public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
+    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
     /** Returns the display name for a column group (when grouping columns). */
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     public getColumn(key: any): Column | null { return this.columnModel.getPrimaryColumn(key); }
