@@ -21,8 +21,8 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
     static className = 'AngleCategoryAxis';
     static type = 'angle-category' as const;
 
-    @Validate(NUMBER())
     @ProxyOnWrite('rotation')
+    @Validate(NUMBER())
     startAngle: number = 0;
 
     protected labelData: AngleCategoryAxisLabelDatum[] = [];
