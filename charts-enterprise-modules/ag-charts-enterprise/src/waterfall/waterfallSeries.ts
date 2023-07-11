@@ -568,7 +568,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             contexts[contextIndex].labelData.push(nodeDatum);
         });
 
-        if (contexts.length > 0) {
+        if (contexts.length > 0 && yCurrIndex !== undefined) {
             contexts[0].pointData = pointData;
         }
 
@@ -854,10 +854,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const { enabled, itemId, series: maybeSeries } = event;
 
         if (maybeSeries.type !== this.type) return;
-
-        if (this.isTotal(itemId) || this.isSubtotal(itemId)) {
-            return;
-        }
 
         const { seriesItemEnabled } = this;
 
