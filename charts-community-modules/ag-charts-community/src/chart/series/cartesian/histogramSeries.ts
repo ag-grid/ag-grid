@@ -651,7 +651,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
-        this.ctx.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
         });
