@@ -15,7 +15,7 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
-    /** Shape of axes. Default: `polygon` */
+    /** Shape of axis. Default: `polygon` */
     shape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;
