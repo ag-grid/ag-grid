@@ -175,7 +175,7 @@ export class AngleCategoryAxis extends _ModuleSupport.PolarAxis {
         }
 
         const ticks = this.getVisibleTicks();
-        this.gridLineGroupSelection.update(tick.enabled ? ticks : []).each((line, { value }, index) => {
+        this.gridLineGroupSelection.update(tick.enabled ? ticks : []).each((line, value, index) => {
             const style = gridStyle[index % gridStyle.length];
             const angle = scale.convert(value);
             line.x1 = 0;
