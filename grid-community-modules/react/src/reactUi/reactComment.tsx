@@ -2,7 +2,7 @@ import { RefObject, useEffect } from 'react';
 import { useEffectOnce } from './useEffectOnce';
 
 const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLElement>) => {
-    useEffectOnce( () => {
+    useEffect(() => {
         const eForComment = eForCommentRef.current!;
         const eParent = eForComment.parentElement;
         if (!eParent) { return; }
@@ -12,7 +12,7 @@ const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLEl
         return () => {
             eParent.removeChild(eComment);
         };
-    });
+    }, []);
 };
 
 export default useReactCommentEffect;

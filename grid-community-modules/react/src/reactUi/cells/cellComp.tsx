@@ -137,15 +137,16 @@ const CellComp = (props: {
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
 
-    const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
+    //const [renderDetails, setRenderDetails] = useState<RenderDetails>();
+    const [renderDetails, setRenderDetails] = useState<RenderDetails>({ compDetails: undefined, value: cellCtrl.getInitialFormattedValue(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
     const [userStyles, setUserStyles] = useState<CellStyle>();
 
-    const [tabIndex, setTabIndex] = useState<number>();
-    const [role, setRole] = useState<string>();
-    const [colId, setColId] = useState<string>();
+    const [tabIndex, setTabIndex] = useState<number | undefined>(cellCtrl.getTabIndex());
+    const [role, setRole] = useState<string>('gridcell');
+    const [colId, setColId] = useState<string | null>(cellCtrl.getColId());
     const [title, setTitle] = useState<string | undefined>();
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
@@ -154,7 +155,7 @@ const CellComp = (props: {
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), []);
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
@@ -316,10 +317,21 @@ const CellComp = (props: {
 
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
-    // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-    useLayoutEffectOnce(() => {
+    //console.debug('cell render', cellCtrl.getCellPosition());
+    const setRef = useCallback((ref: any) => {
+        // console.log('setRef', showCellWrapper, ref)
+        eGui.current = ref;
+
         if (!cellCtrl) { return; }
+
+        if (!ref) {
+            // maybe some cleanup needed here?
+            return;
+        }
+
+        if (showCellWrapper && !eCellWrapper.current) {
+            console.warn('eCellWrapper not found');
+        }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
@@ -332,41 +344,50 @@ const CellComp = (props: {
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
-            
+
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
-            setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails({
-                    value,
-                    compDetails,
-                    force
-                });
-            },
-            
-            setEditDetails: (compDetails, popup, popupPosition) => {
-                if (compDetails) {
-                    // start editing
-                    setEditDetails({
-                        compDetails: compDetails!,
-                        popup,
-                        popupPosition
+                setRenderDetails: (compDetails, value, force) => {
+                    setRenderDetails(prev => {
+
+
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force
+                            }
+                        } else {
+                            return prev;
+                        }
                     });
-                    if (!popup) {
-                        setRenderDetails(undefined);
+                },
+
+                setEditDetails: (compDetails, popup, popupPosition) => {
+                    if (compDetails) {
+                        // start editing
+                        setEditDetails({
+                            compDetails: compDetails!,
+                            popup,
+                            popupPosition
+                        });
+                        if (!popup) {
+                            setRenderDetails(undefined);
+                        }
+                    } else {
+                        // stop editing
+                        setEditDetails(undefined);
                     }
-                } else {
-                    // stop editing
-                    setEditDetails(undefined);
                 }
-            }
-        };
+            };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
 
         cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
-    });
+
+    }, []);
 
     const reactCellRendererStateless = useMemo(() => {
         const res =
@@ -421,7 +442,7 @@ const CellComp = (props: {
 
     return (
         <div
-            ref={ eGui }
+            ref={setRef}
             style={ userStyles }
             tabIndex={ tabIndex }
             role={ role }

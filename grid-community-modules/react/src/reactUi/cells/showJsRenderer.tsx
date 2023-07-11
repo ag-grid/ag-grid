@@ -12,7 +12,7 @@ const useJsCellRenderer = (
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
 
-        const {context, userComponentFactory} = useContext(BeansContext);
+    const { context } = useContext(BeansContext);
 
         const destroyCellRenderer = useCallback(() => {
             const comp = jsCellRendererRef.current;
@@ -71,14 +71,22 @@ const useJsCellRenderer = (
 
             jsCellRendererRef.current = comp;
 
+            return () => {
+                //console.debug('destroying js cell renderer 1')
+                destroyCellRenderer();
+            }
+
         }, [showDetails, showTools, cellValueVersion]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
         // is a change in state
-        useEffectOnce(() => {
-            return destroyCellRenderer;
-        });
+    /*  useEffectOnce(() => {
+         return () => {
+             // console.debug('destroying js cell renderer 2')
+             destroyCellRenderer();
+         }
+     }); */
 }
 
 export default useJsCellRenderer;

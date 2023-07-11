@@ -44,11 +44,12 @@ export interface IRowComp {
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
     setTransform(transform: string): void;
+    // could probably become direct setting on element for updates
     setRowIndex(rowIndex: string): void;
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: RowStyle): void;
+    setUserStyles(styles: RowStyle | undefined): void;
     setRole(role: string): void;
 }
 
@@ -152,6 +153,8 @@ export class RowCtrl extends BeanStub {
         this.setRowType();
 
         this.addListeners();
+
+        this.updateColumnLists(!this.useAnimationFrameForCreate, false, false);
     }
 
     private initRowBusinessKey(): void {
@@ -163,6 +166,9 @@ export class RowCtrl extends BeanStub {
         if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
+    }
+    public getRowBusinessKey(): string | null {
+        return this.businessKeySanitised;
     }
 
     public isSticky(): boolean {
@@ -225,6 +231,13 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(rg => rg.element.style.display = displayValue);
     }
 
+    public getTabIndex(): number | undefined {
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            return -1;
+        }
+    }
+
+    // we would need to be able to make sure this is re-runnable for StrictMode
     private initialiseRowComp(gui: RowGui): void {
         const gos = this.gridOptionsService;
 
@@ -232,32 +245,35 @@ export class RowCtrl extends BeanStub {
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
-        this.setStylesFromGridOptions(gui);
+       // this.setStylesFromGridOptions(gui);
 
+       // Maybe we should have a method that gets all the classes and then adds them all at once?
+       // Then the initial render of the row could be complete?? Would include methods above too
         if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate);
+        //  this.updateColumnLists(!this.useAnimationFrameForCreate);
 
         const comp = gui.rowComp;
-        comp.setRole('row');
+       //comp.setRole('row');
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
 
+        // Fine to do this here
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        this.setRowCompRowId(comp);
-        this.setRowCompRowBusinessKey(comp);
+        //this.setRowCompRowId(comp);
+       // this.setRowCompRowBusinessKey(comp);
 
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+/*         if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
-        }
+        } */
 
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
@@ -278,10 +294,12 @@ export class RowCtrl extends BeanStub {
         }
 
         if (this.isFullWidth()) {
+            // Callback passes the html elements so this does need to be here
             this.setupFullWidth(gui);
         }
 
         if (gos.is('rowDragEntireRow')) {
+            // needs the element 
             this.addRowDraggerToRow(gui);
         }
 
@@ -301,20 +319,25 @@ export class RowCtrl extends BeanStub {
         this.executeProcessRowPostCreateFunc();
     }
 
-    private setRowCompRowBusinessKey(comp: IRowComp): void {
+    private setRowCompRowBusinessKey(element: HTMLElement): void {
         if (this.businessKeySanitised == null) { return; }
-            comp.setRowBusinessKey(this.businessKeySanitised);
+        element.setAttribute('row-business-key', this.businessKeySanitised)
     }
 
-    private setRowCompRowId(comp: IRowComp) {
+    public getRowCompRowId(): string | null {
         const rowId = escapeString(this.rowNode.id);
+        return rowId;
+    }
+    private setRowCompRowId(element: HTMLElement) {
+        const rowId = this.getRowCompRowId();
         if (rowId == null) { return; }
 
-        comp.setRowId(rowId);
+        //comp.setRowId(rowId);
+        element.setAttribute('row-id', rowId);
     }
 
     private executeSlideAndFadeAnimations(gui: RowGui): void {
-        const {containerType} = gui;
+        const { containerType } = gui;
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
@@ -443,7 +466,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false, updateGuis = true): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -451,8 +474,8 @@ export class RowCtrl extends BeanStub {
             || this.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
 
-        if (noAnimation) {
-            this.updateColumnListsImpl(useFlushSync);
+        this.updateColumnListsImpl(useFlushSync, updateGuis);
+        if (noAnimation || updateGuis) {
             return;
         }
 
@@ -460,7 +483,8 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl(true);
+                //this.updateColumnListsImpl(true, true);
+                this.updateGuisWithCtrls(true);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -507,7 +531,7 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(useFlushSync = false): void {
+    private updateColumnListsImpl(useFlushSync: boolean, updatedGuis: boolean): void {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -525,6 +549,12 @@ export class RowCtrl extends BeanStub {
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
 
+        if (updatedGuis) {
+            this.updateGuisWithCtrls(useFlushSync);
+        }
+    }
+
+    private updateGuisWithCtrls(useFlushSync: boolean) {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
@@ -556,15 +586,18 @@ export class RowCtrl extends BeanStub {
         return REMOVE_CELL;
     }
 
+    public getDomOrder(): boolean {
+        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        return isEnsureDomOrder || isPrintLayout;
+    }
     private listenOnDomOrder(gui: RowGui): void {
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+            gui.rowComp.setDomOrder(this.getDomOrder());
         };
 
         this.addManagedPropertyListener('domLayout', listener);
-        listener();
+      //  listener(); already set on first render in RowComp
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -702,9 +735,9 @@ export class RowCtrl extends BeanStub {
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp);
+            this.setRowCompRowId(gui.element);
             this.updateRowBusinessKey();
-            this.setRowCompRowBusinessKey(gui.rowComp);
+            this.setRowCompRowBusinessKey(gui.element);
         });
 
         // check for selected also, as this could be after lazy loading of the row data, in which case
@@ -1183,6 +1216,9 @@ export class RowCtrl extends BeanStub {
         );
     }
 
+    public getUserStyles() {
+        return this.processStylesFromGridOptions() ?? {};
+    }
     private setStylesFromGridOptions(gui?: RowGui): void {
         const rowStyles = this.processStylesFromGridOptions();
         this.forEachGui(gui, gui => gui.rowComp.setUserStyles(rowStyles));
@@ -1216,7 +1252,7 @@ export class RowCtrl extends BeanStub {
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }
 
-    public processStylesFromGridOptions(): any {
+    private processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
         const rowStyle = this.gridOptionsService.get('rowStyle');
 
@@ -1227,7 +1263,7 @@ export class RowCtrl extends BeanStub {
 
         // part 1 - rowStyleFunc
         const rowStyleFunc = this.gridOptionsService.getCallback('getRowStyle');
-        let rowStyleFuncResult: any;
+        let rowStyleFuncResult: RowStyle | undefined;
 
         if (rowStyleFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
@@ -1583,6 +1619,11 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    public getRowIndexString(): string | null {
+        return this.rowNode.getRowIndexString();
+    }
+
+    // Could be called by the rowComp 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
@@ -1590,7 +1631,8 @@ export class RowCtrl extends BeanStub {
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 
         this.forEachGui(gui, c => {
-            c.rowComp.setRowIndex(rowIndexStr);
+            //c.rowComp.setRowIndex(rowIndexStr);
+            c.element.setAttribute('row-index', rowIndexStr)
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
             setAriaRowIndex(c.element, ariaRowIndex);

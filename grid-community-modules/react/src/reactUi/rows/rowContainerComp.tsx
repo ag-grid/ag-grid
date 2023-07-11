@@ -52,10 +52,12 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                 // if dom order not important, we don't want to change the order
                 // of the elements in the dom, as this would break transition styles
                 const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
+                if (oldRows.length === prev.length && oldRows.length == rowCtrls.length) {
+                    return prev;
+                }
                 const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
                 return [...oldRows, ...newRows];
             });
-
         })
 
 
@@ -72,6 +74,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             },
             setRowCtrls: (rowCtrls, useFlushSync) => {
                 if(rowCtrlsRef.current !== rowCtrls){
+
+                    if (rowCtrls.length === 0 && rowCtrlsRef.current.length === 0) {
+                        return;
+                    }
+
                     const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
                     updateRowCtrlsOrdered(useFlush);

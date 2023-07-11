@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless, agFlushSync } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
-import { useLayoutEffectOnce } from '../useEffectOnce';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -57,22 +56,23 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const { context } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
-    const [rowIndex, setRowIndex] = useState<string>();
-    const [rowId, setRowId] = useState<string>();
-    const [role, setRole] = useState<string>();
-    const [rowBusinessKey, setRowBusinessKey] = useState<string>();
-    const [tabIndex, setTabIndex] = useState<number>();
-    const [userStyles, setUserStyles] = useState<RowStyle>();
-    const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
+    // These could become useMemo to get the initial values and then have updates directly applied to the DOM
+    const rowIndex = useMemo(() => rowCtrl.getRowIndexString(), []);
+    const rowId = useMemo(() => rowCtrl.getRowCompRowId(), []);
+    const rowBusinessKey = useMemo(() => rowCtrl.getRowBusinessKey(), []);
+    const tabIndex = useMemo(() => rowCtrl.getTabIndex(), []);
+
+    const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getUserStyles());
+    const [cellCtrls, setCellCtrls] = useState<CellCtrls>(maintainOrderOnColumns({ list: [], instanceIdMap: new Map() }, rowCtrl.getAllCellCtrls(), rowCtrl.getDomOrder()));
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
-    const [domOrder, setDomOrder] = useState<boolean>(false);
+    const [domOrder, setDomOrder] = useState<boolean>(rowCtrl.getDomOrder());
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
     const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop(containerType));
     const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform(containerType));
 
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
 
     const autoHeightSetup = useRef<boolean>(false);
@@ -100,13 +100,17 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-    // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!e) {
+            rowCtrl.unsetComp(containerType)
+            return;
+        }
+
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) {  return; }
+        if (!rowCtrl.isAlive()) { return; }
         const compProxy: IRowComp = {
             // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
             // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
@@ -118,28 +122,25 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
 
             setDomOrder: domOrder => setDomOrder(domOrder),
-            setRowIndex: value => setRowIndex(value),
-            setRowId: value => setRowId(value),
-            setRowBusinessKey: value => setRowBusinessKey(value),
-            setTabIndex: value => setTabIndex(value),
             setUserStyles: (styles: RowStyle) => setUserStyles(styles),
-            setRole: value => setRole(value),
+            setRowIndex: value => console.error('AG Grid: should never call setRowIndex on row comp'),
+            setRowId: value => console.error('AG Grid: should never call setRowId on row comp'),
+            setRowBusinessKey: value => console.error('AG Grid: should never call setRowBusinessKey on row comp'),
+            setTabIndex: value => console.error('AG Grid: should never call setTabIndex on row comp'),
+            setRole: value => console.error('AG Grid: should never call setRole on row comp'),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-                agFlushSync(useFlushSync, () => {
+                //agFlushSync(useFlushSync, () => {
                     setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder));
-                });
+                //}); 
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
-            getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
+            getFullWidthCellRenderer: () => fullWidthCompRef.current,
         };
         rowCtrl.setComp(compProxy, eGui.current!, containerType);
-        return () => {
-            rowCtrl.unsetComp(containerType);
-        };
-    });
 
+    }, []);
     useLayoutEffect(() => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef), [fullWidthCompDetails]);
 
     const rowStyles = useMemo(() => {
@@ -184,8 +185,8 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     return (
         <div
-            ref={ eGui }
-            role={ role }
+            ref={setRef}
+            role={'row'}
             style={ rowStyles }
             row-index={ rowIndex }
             row-id={ rowId }

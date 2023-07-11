@@ -195,7 +195,12 @@ export class RowRenderer extends BeanStub {
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+
+        if (zombieList.length > 0 || cachedList.length > 0) {
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        } else {
+            this.allRowCtrls = liveList;
+        }
     }
 
     private onCellFocusChanged(event?: CellFocusedEvent) {
