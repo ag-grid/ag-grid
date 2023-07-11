@@ -229,6 +229,8 @@ export class FocusService extends BeanStub {
         if (this.isCellRestoreFocused(cell)) {
 
             setTimeout(() => {
+                // Clear the restore focused cell position after the timeout to avoid
+                // the cell being focused again and stealing focus from another part of the app.
                 this.restoredFocusedCellPosition = null;
             }, 0);
             return true;
@@ -243,7 +245,11 @@ export class FocusService extends BeanStub {
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        this.restoredFocusedCellPosition = cellPosition;
+        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
+            // to support restoring focus after an async rendering.
+            this.restoredFocusedCellPosition = cellPosition;
+        }
     }
 
     private getFocusEventParams(): CommonCellFocusParams {

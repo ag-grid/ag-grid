@@ -8,6 +8,8 @@ const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
+    public renderingEngine: 'vanilla' | 'react' = "vanilla";
+
     // for Vanilla JS, we use simple timeout
     public setTimeout(action: any, timeout?: any): void {
         window.setTimeout(action, timeout);
