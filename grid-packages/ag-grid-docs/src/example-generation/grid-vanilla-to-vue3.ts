@@ -361,6 +361,8 @@ const VueExample = {
     }
 }
 
+${utilFunctions.map(snippet => `${snippet.trim()}`).join('\n\n')}
+
 createApp(VueExample)
     .mount("#app")
 
