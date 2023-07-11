@@ -497,7 +497,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const nodeRange: RowNode[] = [];
         const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a,b) => a - b);
-        this.forEachNodeAfterFilterAndSort((node) => {
+        this.forEachNode((node) => {
             const thisRowIndex = node.rowIndex;
             if (thisRowIndex == null || node.stub) {
                 return;
@@ -508,15 +508,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             }
         });
 
-        const rowsAreContiguous = nodeRange.every((node, idx, all) => {
-            if (idx === 0) {
-                return node.rowIndex === firstIndex;
-            }
-            return all[idx - 1].rowIndex! === (node.rowIndex! - 1);
-        });
-
         // don't allow range selection if we don't have the full range of rows
-        if (!rowsAreContiguous || nodeRange.length !== (lastIndex - firstIndex + 1)) {
+        if (nodeRange.length !== (lastIndex - firstIndex + 1)) {
             return [firstInRange];
         }
 
