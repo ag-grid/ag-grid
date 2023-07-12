@@ -23,6 +23,7 @@ const {
     OPTIONAL,
     NUMBER,
     OPT_NUMBER,
+    BOOLEAN,
     OPT_STRING,
     OPT_FUNCTION,
     OPT_COLOR_STRING,
@@ -134,6 +135,9 @@ class WaterfallSeriesItem {
 }
 
 class WaterfallSeriesConnectorLine {
+    @Validate(BOOLEAN)
+    enabled = true;
+
     @Validate(OPT_COLOR_STRING)
     stroke: string = 'black';
 
@@ -570,7 +574,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             contexts[contextIndex].labelData.push(nodeDatum);
         });
 
-        if (contexts.length > 0 && yCurrIndex !== undefined) {
+        const connectorLinesEnabled = this.line.enabled;
+        if (contexts.length > 0 && yCurrIndex !== undefined && connectorLinesEnabled) {
             contexts[0].pointData = pointData;
         }
 
