@@ -23,7 +23,6 @@ import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
 import { FilterExpressionService } from './expression/filterExpressionService';
-import { IFilterExpression } from './expression/iFilterExpression';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 

@@ -23,13 +23,16 @@ class SpaceOperator implements Operator {
     }
 }
 
-
+function getSearchString(value: string, position: number, endPosition: number): string {
+    const numChars = endPosition - position;
+    return numChars ? value.slice(0, value.length - numChars) : value;
+}
 
 interface ExpressionParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
-    columnAutocompleteTypeGenerator: () => AutocompleteListParams;
+    columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
 }
 
 export class ExpressionParser {
@@ -122,19 +125,20 @@ class JoinExpressionParser {
     }
 
     public getExpression(): string {
-        let expression = '(';
+        const hasMultipleExpressions = this.expressionParsers.length > 1;
+        let expression = hasMultipleExpressions ? '(' : '';
         this.expressionParsers.forEach((expressionParser, index) => {
             expression += expressionParser.getExpression();
             if (index < this.expressionParsers.length - 1 && index < this.operators.length) {
                 expression += ` ${this.operators[index]} `;
             }
         });
-        return expression + ')';
+        return hasMultipleExpressions ? expression + ')' : expression;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams {
         if (!this.expressionParsers.length) {
-            return this.params.columnAutocompleteTypeGenerator();
+            return this.params.columnAutocompleteTypeGenerator('');
         }
         
         let expressionParser: JoinExpressionParser | ColExpressionParser | undefined;
@@ -151,7 +155,7 @@ class JoinExpressionParser {
 
         if (!expressionParser) {
             // positioned before the expression, so new expression
-            return this.params.columnAutocompleteTypeGenerator();
+            return this.params.columnAutocompleteTypeGenerator('');
         }
 
         const autocompleteType = expressionParser.getAutocompleteListParams(position);
@@ -162,8 +166,9 @@ class JoinExpressionParser {
                 // in the middle of two expressions
                 return this.getJoinOperatorAutocompleteType();
             }
+            // TODO - need a check here whether the last character is an operator
             return this.expressionParsers.length === this.operators.length
-                ? this.params.columnAutocompleteTypeGenerator()
+                ? this.params.columnAutocompleteTypeGenerator('')
                 : this.getJoinOperatorAutocompleteType();
         }
 
@@ -190,14 +195,20 @@ class JoinExpressionParser {
 
     private getJoinOperatorAutocompleteType(): AutocompleteListParams {
         // TODO
-        return {enabled: true, type: 'join', entries:[
-            {
-                key: 'and',
-            },
-            {
-                key: 'or',
-            }
-        ]};
+        return {
+            enabled: true,
+            type: 'join',
+            // TODO
+            searchString: '',
+            entries: [
+                {
+                    key: 'and',
+                },
+                {
+                    key: 'or',
+                }
+            ]
+        };
     }
 }
 
@@ -319,9 +330,11 @@ class ColExpressionParser {
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
-        if (this.columnEndPosition == null || position <= this.columnEndPosition) { return this.params.columnAutocompleteTypeGenerator(); }
-        if (this.operatorEndPosition == null || position <= this.operatorEndPosition) { return this.getOperatorAutocompleteType(); }
-        if (this.endPosition != null && position > this.endPosition) { return undefined; }
+        if (this.columnEndPosition == null || position <= this.columnEndPosition) {
+            return this.params.columnAutocompleteTypeGenerator(getSearchString(this.colId, position, this.columnEndPosition ?? this.params.expression.length));
+        }
+        if (this.operatorEndPosition == null || position <= this.operatorEndPosition) { return this.getOperatorAutocompleteType(position); }
+        if (this.complete && this.endPosition != null && position > this.endPosition && this.endPosition + 1 < this.params.expression.length) { return undefined; }
         return { enabled: false };
     }
 
@@ -399,7 +412,7 @@ class ColExpressionParser {
         return returnPosition;
     }
 
-    private getOperatorAutocompleteType(): AutocompleteListParams {
+    private getOperatorAutocompleteType(position: number): AutocompleteListParams {
         let entries: AutocompleteEntry[];
         let type: string | undefined;
         if (this.baseCellDataType === 'number') {
@@ -420,6 +433,7 @@ class ColExpressionParser {
         return {
             enabled: true,
             type,
+            searchString: getSearchString(this.operator, position, this.operatorEndPosition ?? this.params.expression.length),
             entries
         };
     }

@@ -15,7 +15,6 @@ export class FilterExpressionService extends BeanStub {
 
     private expression: string | null = null;
     private expressionFunction: Function | null;
-    private expressionParser: ExpressionParser;
 
     public isFilterPresent(): boolean {
         return !!this.expressionFunction;
@@ -34,18 +33,24 @@ export class FilterExpressionService extends BeanStub {
         this.expressionFunction = this.parseExpression(this.expression);
     }
 
-    public getAutocompleteListParams(position: number): AutocompleteListParams {
-        return this.expressionParser.getAutocompleteListParams(position);
-    }
-
-    private parseExpression(expression: string | null): Function | null {
+    public createExpressionParser(expression: string | null): ExpressionParser | null {
         if (!expression) { return null; }
 
-        this.expressionParser = new ExpressionParser({
+        return new ExpressionParser({
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
-            columnAutocompleteTypeGenerator: () => ({ enabled: true, type: 'column', entries: [
+            columnAutocompleteTypeGenerator: searchString => this.getDefaultAutocompleteListParams(searchString)
+        });
+    }
+
+    public getDefaultAutocompleteListParams(searchString: string): AutocompleteListParams {
+        return {
+            enabled: true,
+            type: 'column',
+            searchString,
+            // TODO - generate column list
+            entries: [
                 {
                     key: 'athlete',
                     displayValue: 'Athlete'
@@ -54,14 +59,50 @@ export class FilterExpressionService extends BeanStub {
                     key: 'age',
                     displayValue: 'Age'
                 }
-            ]})
-        });
-        this.expressionParser.parseExpression();
-        const isValid = this.expressionParser.isValid();
+            ]
+        };
+    }
+
+    public updateExpression(expression: string, position: number, updatedValuePart: string): { updatedValue: string, updatedPosition: number } {
+        let i = position - 1;
+        let startPosition = 0;
+
+        while (i >= 0) {
+            const char = expression[i];
+            if (char === ' ' || char === '(') {
+                startPosition = i + 1;
+                break;
+            }
+            i--;
+        }
+
+        i = position;
+        let endPosition = expression.length - 1;
+
+        while (i < expression.length) {
+            const char = expression[i];
+            if (char === ' ' || char === ')') {
+                endPosition = i - 1;
+                break;
+            }
+            i++;
+        }
+
+        const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(endPosition + 1);
+        return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
+    }
+
+    private parseExpression(expression: string | null): Function | null {
+        const expressionParser = this.createExpressionParser(expression);
+
+        if (!expressionParser) { return null; }
+
+        expressionParser.parseExpression();
+        const isValid = expressionParser.isValid();
 
         if (!isValid) { return null; }
 
-        const functionBody = this.expressionParser.getExpression();
+        const functionBody = expressionParser.getExpression();
         console.log(functionBody);
         const func = new Function('valueService', 'columnModel', 'node', functionBody);
         return func;

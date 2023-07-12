@@ -100,6 +100,7 @@ import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
 import { FilterExpressionService } from "./filter/expression/filterExpressionService";
 import { AgAutocomplete } from "./filter/expression/agAutocomplete";
+import { FilterExpressionBarComp } from "./filter/expression/filterExpressionBarComp";
 
 export interface GridParams {
     // used by Web Components
@@ -290,7 +291,8 @@ export class GridCoreCreator {
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
-            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete }
+            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
+            { componentName: 'AgFilterExpressionBar', componentClass: FilterExpressionBarComp }
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,

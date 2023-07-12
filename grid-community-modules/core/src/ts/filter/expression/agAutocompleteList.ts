@@ -4,11 +4,10 @@ import { VirtualList } from '../../widgets/virtualList';
 import { KeyCode } from '../../constants/keyCode';
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import { fuzzySuggestions } from '../../utils/fuzzyMatch';
-import { debounce } from '../../utils/function';
-import { isEventFromPrintableCharacter } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 import { PostConstruct } from '../../context/context';
-import { AutocompleteEntry, AutocompleteListParams } from './agAutocomplete';
+import { AutocompleteEntry } from './agAutocomplete';
+import { exists } from '../../utils/generic';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE = /* html */
@@ -24,17 +23,10 @@ export class AgAutocompleteList extends PopupComponent {
 
     // as the user moves the mouse, the selectedValue changes
     private selectedValue: AutocompleteEntry;
-    // the original selection, as if the edit is not confirmed, getValue() will
-    // return back the selected value. 'not confirmed' can happen if the user
-    // opens the dropdown, hovers the mouse over a new value (selectedValue will
-    // change to the new value) but then click on another cell (which will stop
-    // the editing). in this instance, selectedValue will be a new value, however
-    // the editing was effectively cancelled.
-    private originalSelectedValue: AutocompleteEntry;
-    private selectionConfirmed = false;
+
     private searchString = '';
 
-    constructor(private autocompleteEntries: AutocompleteEntry[]) {
+    constructor(private autocompleteEntries: AutocompleteEntry[], private onConfirmed: () => void) {
         super(AgAutocompleteList.TEMPLATE);
     }
 
@@ -45,7 +37,6 @@ export class AgAutocompleteList extends PopupComponent {
     @PostConstruct
     protected init(): void {
         this.selectedValue = undefined as any; // TODO
-        this.originalSelectedValue = undefined as any; // TODO
         this.focusAfterAttached = false; // TODO
 
         this.virtualList = this.createManagedBean(new VirtualList('rich-select'));
@@ -67,17 +58,6 @@ export class AgAutocompleteList extends PopupComponent {
 
         this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-
-        const debounceDelay = 300;
-
-        this.clearSearchString = debounce(this.clearSearchString, debounceDelay);
-
-        // if (params.eventKey?.length === 1) {
-        //     this.searchText(params.eventKey);
-        // }
-    }
-
-    public onParentModelChanged(parentModel: any): void {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -86,7 +66,7 @@ export class AgAutocompleteList extends PopupComponent {
 
         switch (key) {
             case KeyCode.ENTER:
-                this.onEnterKeyDown();
+                this.confirmSelection();
                 break;
             case KeyCode.TAB:
                 this.confirmSelection();
@@ -95,20 +75,14 @@ export class AgAutocompleteList extends PopupComponent {
             case KeyCode.UP:
                 this.onNavigationKeyDown(event, key);
                 break;
-            default:
-                this.searchText(event);
         }
     }
 
     private confirmSelection(): void {
-        this.selectionConfirmed = true;
+        this.onConfirmed();
     }
 
-    private onEnterKeyDown(): void {
-        this.confirmSelection();
-    }
-
-    private onNavigationKeyDown(event: any, key: string): void {
+    public onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
@@ -122,27 +96,10 @@ export class AgAutocompleteList extends PopupComponent {
 
     public setSearch(searchString: string): void {
         this.searchString = searchString;
-        this.runSearch();
-    }
-
-    private searchText(key: KeyboardEvent | string) {
-        if (typeof key !== 'string') {
-            let keyString = key.key;
-
-            if (keyString === KeyCode.BACKSPACE) {
-                this.searchString = this.searchString.slice(0, -1);
-                keyString = '';
-            } else if (!isEventFromPrintableCharacter(key)) {
-                return;
-            }
-
-            this.searchText(keyString);
-            return;
+        if (exists(searchString)) {
+            this.runSearch();
         }
-
-        this.searchString += key;
-        this.runSearch();
-        this.clearSearchString();
+        this.updateSearchInList();
     }
 
     private runSearch() {
@@ -161,8 +118,8 @@ export class AgAutocompleteList extends PopupComponent {
         this.setSelectedValue(topValue);
     }
 
-    private clearSearchString(): void {
-        this.searchString = '';
+    private updateSearchInList(): void {
+        this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
     }
 
     private setSelectedValue(value: AutocompleteEntry): void {
@@ -219,7 +176,7 @@ export class AgAutocompleteList extends PopupComponent {
             this.virtualList.ensureIndexVisible(selectedIndex);
         }
 
-        // we call refresh again, as the list could of moved, and we need to render the new rows
+        // we call refresh again, as the list could have moved, and we need to render the new rows
         this.virtualList.refresh();
 
         if (this.focusAfterAttached) {
@@ -232,14 +189,7 @@ export class AgAutocompleteList extends PopupComponent {
         }
     }
 
-    public getValue(): any {
-        // NOTE: we don't use valueParser for Set Filter. The user should provide values that are to be
-        // set into the data. valueParser only really makese sense when the user is typing in text (not picking
-        // form a set).
-        return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
-    }
-
-    public updateList(autocompleteListParams: AutocompleteListParams): void {
-        // TODO
+    public getSelectedValue(): string | null {
+        return this.selectedValue?.key ?? null;
     }
 }

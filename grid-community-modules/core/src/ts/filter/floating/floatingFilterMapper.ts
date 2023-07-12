@@ -4,7 +4,7 @@ export class FloatingFilterMapper {
         agSetColumnFilter: 'agSetColumnFloatingFilter',
 
         multi: 'agMultiColumnFloatingFilter',
-        agMultiColumnFilter: 'agFakeFloatingFilter',
+        agMultiColumnFilter: 'agMultiColumnFloatingFilter',
 
         group: 'agGroupColumnFloatingFilter',
         agGroupColumnFilter: 'agGroupColumnFloatingFilter',
