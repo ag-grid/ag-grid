@@ -9,6 +9,7 @@ export class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     constructor(reactUi: boolean) {
         super();
         this.reactUi = reactUi;
+        this.renderingEngine = reactUi ? 'react' : 'vanilla';
     }
 
     private frameworkComponents: any = {
