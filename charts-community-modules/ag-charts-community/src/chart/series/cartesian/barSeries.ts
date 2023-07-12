@@ -146,6 +146,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
+            hasHighlightedLabels: true,
         });
 
         this.label.enabled = false;
