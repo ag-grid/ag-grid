@@ -2,7 +2,7 @@
 @use '../../design-system/' as *;
 
 .alert {
-    --alert-background-color: var(--bright-blue-gray);
+    --alert-background-color: var(--background-300);
     --icon-size: 3em;
 
     display: flex;
@@ -11,6 +11,7 @@
     padding: $size-2;
     background-color: var(--alert-background-color);
     border-radius: var(--border-radius);
+    color: var(--text-color);
 
     :global(.icon) {
         align-self: flex-start;
@@ -25,12 +26,18 @@
     kbd {
         margin: 0;
     }
+
+    [data-color-mode='dark'] & {
+        --alert-background-color: var(--background-600);
+    }
 }
 
 .alert.info {
     --text-color: var(--dark-blue-300);
 
-    color: var(--text-color);
+    [data-color-mode='dark'] & {
+        --text-color: var(--white);
+    }
 }
 
 .alert.idea {
@@ -45,9 +52,16 @@
     --alert-background-color: var(--warning-background);
     --text-color: var(--warning-text);
 
-    color: var(--text-color);
-
     :global(.icon) {
         --text-color: var(--orange-700);
+    }
+
+    [data-color-mode='dark'] & {
+        --alert-background-color: var(--orange-800);
+        --text-color: var(--white);
+
+        :global(.icon) {
+            --text-color: var(--white);
+        }
     }
 }
