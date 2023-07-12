@@ -1527,7 +1527,7 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     offset?: PixelSize;
     /** Minimum angle in degrees required for a sector to show a label. */
     minAngle?: number;
-    /** Avoid callout label collision and overflow by automatically moving colliding labels or reducing the pie radius. If set to `false`, axis labels may collide and the pie radius will not adopt to displaying as many labels as possible. */
+    /** Avoid callout label collision and overflow by automatically moving colliding labels or reducing the pie radius. If set to `false`, callout labels may collide with each other and the pie radius will not change to prevent clipping of callout labels. */
     avoidCollisions?: boolean;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
