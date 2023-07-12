@@ -133,6 +133,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDoubleClick(event: _ModuleSupport.InteractionEvent<'dblclick'>) {
+        if (!this.enabled) return;
+
         if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
             return;
         }
@@ -142,6 +144,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
+        if (!this.enabled) return;
+
         const sourceEvent = event.sourceEvent as DragEvent;
 
         const isPrimaryMouseButton = sourceEvent.button === 0;
@@ -196,7 +200,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
     private onDragEnd() {
         // Stop single clicks from triggering drag end and resetting the zoom
-        if (!this.isDragging) return;
+        if (!this.enabled || !this.isDragging) return;
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
 
@@ -217,7 +221,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
-        if (!this.enableScrolling || !this.seriesRect) return;
+        if (!this.enabled || !this.enableScrolling || !this.seriesRect) return;
 
         event.consume();
         event.sourceEvent.preventDefault();
@@ -242,7 +246,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onAxisHover(event: _ModuleSupport.AxisHoverChartEvent) {
-        if (!this.enableAxisDragging) return;
+        if (!this.enabled || !this.enableAxisDragging) return;
 
         this.draggedAxis = {
             id: event.axisId,
@@ -256,11 +260,13 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onLayoutComplete({ series: { paddedRect } }: _ModuleSupport.LayoutCompleteEvent) {
+        if (!this.enabled) return;
+
         this.seriesRect = paddedRect;
     }
 
     private onContextMenuZoomToHere({ event }: ContextMenu.ContextMenuActionParams) {
-        if (!this.seriesRect || !event || !event.target) return;
+        if (!this.enabled || !this.seriesRect || !event || !event.target) return;
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
         const origin = pointToRatio(this.seriesRect, event.clientX, event.clientY);
@@ -284,7 +290,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onContextMenuPanToHere({ event }: ContextMenu.ContextMenuActionParams) {
-        if (!this.seriesRect || !event || !event.target) return;
+        if (!this.enabled || !this.seriesRect || !event || !event.target) return;
 
         const zoom = definedZoomState(this.zoomManager.getZoom());
         const origin = pointToRatio(this.seriesRect, event.clientX, event.clientY);
