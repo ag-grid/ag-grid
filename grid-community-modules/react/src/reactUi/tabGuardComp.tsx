@@ -5,7 +5,6 @@ import {
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
 import { useLayoutEffectOnce } from './useEffectOnce';
-import { agFlushSync } from './utils';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;

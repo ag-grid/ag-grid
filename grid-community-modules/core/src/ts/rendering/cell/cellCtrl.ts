@@ -122,6 +122,10 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.addFeatures();
+
+        this.updateAndFormatValue();
+       // this.showValue();
+
     }
 
     public shouldRestoreFocus(): boolean {
@@ -200,6 +204,15 @@ export class CellCtrl extends BeanStub {
         this.addDestroyFunc(() => { this.tooltipFeature?.destroy(); this.tooltipFeature = null; });
     }
 
+    public getTabIndex(): number | undefined {
+        return !this.beans.gridOptionsService.is('suppressCellFocus') ? -1 : undefined;
+    }
+
+    public getColId(): string | null {
+        const colIdSanitised = escapeString(this.column.getId());
+        return colIdSanitised;
+    }
+
     public setComp(
         comp: ICellComp,
         eGui: HTMLElement,
@@ -232,13 +245,13 @@ export class CellCtrl extends BeanStub {
 
         this.setAriaColIndex();
 
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
+       /*  if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
             this.cellComp.setTabIndex(-1);
-        }
+        } */
 
-        const colIdSanitised = escapeString(this.column.getId());
-        this.cellComp.setColId(colIdSanitised!);
-        this.cellComp.setRole('gridcell');
+     //   const colIdSanitised = escapeString(this.column.getId());
+       // this.cellComp.setColId(colIdSanitised!);
+        //this.cellComp.setRole('gridcell');
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
@@ -314,6 +327,17 @@ export class CellCtrl extends BeanStub {
 
     public getInstanceId(): string {
         return this.instanceId;
+    }
+
+    public getInitialRenderDetails() {
+        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
+        const params = this.createCellRendererParams();
+        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        return {
+            compDetails,
+            value: valueToDisplay,
+            force: true
+        }
     }
 
     private showValue(forceNewCellRendererInstance = false): void {
@@ -718,6 +742,12 @@ export class CellCtrl extends BeanStub {
 
     private callValueFormatter(value: any): any {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
+    }
+
+    getInitialFormattedValue(): string | null {
+
+        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
+        return valueToDisplay;
     }
 
     private updateAndFormatValue(force = false): boolean {
