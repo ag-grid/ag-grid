@@ -34,7 +34,7 @@ const {
     updateLabel,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
-const { sanitizeHtml } = _Util;
+const { sanitizeHtml, isContinuous } = _Util;
 
 const WATERFALL_LABEL_PLACEMENTS: AgWaterfallSeriesLabelPlacement[] = ['start', 'end', 'inside'];
 const OPT_WATERFALL_LABEL_PLACEMENT: _ModuleSupport.ValidatePredicate = (v: any, ctx) =>
@@ -246,49 +246,49 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
 
         const positiveNumber = (v: any) => {
-            return _Util.isContinuous(v) && v >= 0;
+            return isContinuous(v) && v >= 0;
         };
 
         const negativeNumber = (v: any) => {
-            return _Util.isContinuous(v) && v < 0;
+            return isContinuous(v) && v < 0;
+        };
+
+        const propertyDefinition = {
+            missingValue: 0,
+            invalidValue: undefined,
         };
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 keyProperty(this, xKey, isContinuousX, { id: `xKey` }),
                 accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yCurrent`,
-                    missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yCurrentPositive`,
                     validation: positiveNumber,
-                    missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yCurrentNegative`,
                     validation: negativeNumber,
-                    missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yPrevious`,
                     missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yPreviousPositive`,
                     validation: positiveNumber,
-                    missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
                     id: `yPreviousNegative`,
                     validation: negativeNumber,
-                    missingValue: 0,
-                    invalidValue: undefined,
                 }),
                 valueProperty(this, yKey, true, { id: `yRaw` }), // Raw value pass-through.
                 ...(typeKey ? [valueProperty(this, typeKey, false, { id: `typeValue`, missingValue: undefined })] : []),
@@ -334,6 +334,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
         let yCurrSearchId;
         let yPrevSearchId;
+
         if (positivesActive && negativesActive) {
             yCurrSearchId = 'yCurrent';
             yPrevSearchId = 'yPrevious';
@@ -344,6 +345,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             yCurrSearchId = 'yCurrentNegative';
             yPrevSearchId = 'yPreviousNegative';
         }
+
         if (!(yCurrSearchId && yPrevSearchId)) {
             return;
         }
