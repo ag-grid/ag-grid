@@ -101,7 +101,7 @@ export class DropZoneColumnComp extends Component {
         const translate = this.localeService.getLocaleTextFunc();
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
 
-        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
         const sortDirection =  {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),

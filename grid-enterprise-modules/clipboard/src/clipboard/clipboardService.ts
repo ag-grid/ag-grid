@@ -325,11 +325,20 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
+        const nodesToRefresh: RowNode[] = [...updatedRowNodes];
         if (changedPath) {
             this.clientSideRowModel.doAggregate(changedPath);
+
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst(rowNode => {
+                nodesToRefresh.push(rowNode);
+            });
         }
 
-        this.rowRenderer.refreshCells();
+        // clipboardService has to do changeDetection itself, to prevent repeat logic in favour of batching.
+        // changeDetectionService is disabled for this action.
+        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
+
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 

@@ -11,6 +11,11 @@ export const WATERFALL_COLUMN_DEFAULTS: AgCartesianChartOptions = {
             position: 'bottom',
         },
     ],
+    legend: {
+        item: {
+            toggleSeriesVisible: false,
+        },
+    },
 };
 
 export const WATERFALL_BAR_DEFAULTS: AgCartesianChartOptions = {
@@ -24,4 +29,9 @@ export const WATERFALL_BAR_DEFAULTS: AgCartesianChartOptions = {
             position: 'bottom',
         },
     ],
+    legend: {
+        item: {
+            toggleSeriesVisible: false,
+        },
+    },
 };

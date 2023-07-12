@@ -12,7 +12,8 @@ import {
     EventService,
     ColumnState,
     _,
-    WithoutGridCommon
+    WithoutGridCommon,
+    IAggFunc
 } from "@ag-grid-community/core";
 
 @Bean('modelItemUtils')
@@ -207,4 +208,46 @@ export class ModelItemUtils {
         }
     }
 
+    public updateColumns(params: {
+        columns: Column[];
+        visibleState?: { [key: string]: boolean };
+        pivotState?: { [key: string]: {
+            pivot?: boolean;
+            rowGroup?: boolean;
+            aggFunc?: string | IAggFunc | null;
+        } };
+        eventType: ColumnEventType;
+    }): void {
+        const { columns, visibleState, pivotState, eventType } = params;
+        const state: ColumnState[] = columns.map(column => {
+            const colId = column.getColId();
+            if (this.columnModel.isPivotMode()) {
+                const pivotStateForColumn = pivotState?.[colId];
+                return {
+                    colId,
+                    pivot: pivotStateForColumn?.pivot,
+                    rowGroup: pivotStateForColumn?.rowGroup,
+                    aggFunc: pivotStateForColumn?.aggFunc,
+                };
+            } else {
+                return {
+                    colId,
+                    hide: !visibleState?.[colId]
+                }
+            }
+        });
+        this.columnModel.applyColumnState({ state }, eventType);
+    }
+
+    public createPivotState(column: Column): {
+        pivot?: boolean;
+        rowGroup?: boolean;
+        aggFunc?: string | IAggFunc | null;
+    } {
+        return {
+            pivot: column.isPivotActive(),
+            rowGroup: column.isRowGroupActive(),
+            aggFunc: column.isValueActive() ? column.getAggFunc() : undefined
+        }
+    }
 }

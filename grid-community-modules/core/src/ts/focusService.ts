@@ -3,7 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
-import { CellPosition } from "./entities/cellPositionUtils";
+import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
@@ -34,6 +34,7 @@ export class FocusService extends BeanStub {
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
+    @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
     @Optional('rangeService') private readonly rangeService: IRangeService;
     @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
@@ -42,6 +43,7 @@ export class FocusService extends BeanStub {
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
+    private restoredFocusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
 
     private static keyboardModeActive: boolean = false;
@@ -223,6 +225,33 @@ export class FocusService extends BeanStub {
         return this.focusedCellPosition;
     }
 
+    public shouldRestoreFocus(cell: CellPosition): boolean {
+        if (this.isCellRestoreFocused(cell)) {
+
+            setTimeout(() => {
+                // Clear the restore focused cell position after the timeout to avoid
+                // the cell being focused again and stealing focus from another part of the app.
+                this.restoredFocusedCellPosition = null;
+            }, 0);
+            return true;
+        }
+        return false;
+    }
+
+    private isCellRestoreFocused(cellPosition: CellPosition): boolean {
+        if (this.restoredFocusedCellPosition == null) { return false; }
+
+        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+    }
+
+    public setRestoreFocusedCell(cellPosition: CellPosition): void {
+        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
+            // to support restoring focus after an async rendering.
+            this.restoredFocusedCellPosition = cellPosition;
+        }
+    }
+
     private getFocusEventParams(): CommonCellFocusParams {
         const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
 
@@ -243,6 +272,7 @@ export class FocusService extends BeanStub {
     }
 
     public clearFocusedCell(): void {
+        this.restoredFocusedCellPosition = null;
         if (this.focusedCellPosition == null) { return; }
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
@@ -294,8 +324,7 @@ export class FocusService extends BeanStub {
     public isCellFocused(cellPosition: CellPosition): boolean {
         if (this.focusedCellPosition == null) { return false; }
 
-        return this.focusedCellPosition.column === cellPosition.column &&
-            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {

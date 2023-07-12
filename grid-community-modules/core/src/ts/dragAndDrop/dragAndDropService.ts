@@ -13,6 +13,7 @@ import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom";
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
+import { IAggFunc } from "../entities/colDef";
 
 export interface DragItem {
     /**
@@ -29,6 +30,13 @@ export interface DragItem {
 
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
+
+    /** When dragging columns, this contains the pivot state of the columns. This is only populated/used in column tool panel */
+    pivotState?: { [key: string]: {
+        pivot?: boolean;
+        rowGroup?: boolean;
+        aggFunc?: string | IAggFunc | null;
+    } };
 }
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }

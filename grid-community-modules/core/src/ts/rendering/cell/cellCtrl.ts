@@ -128,6 +128,11 @@ export class CellCtrl extends BeanStub {
 
     }
 
+    public shouldRestoreFocus(): boolean {
+        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
+    }
+
+
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => { this.cellPositionFeature?.destroy(); this.cellPositionFeature = null; });

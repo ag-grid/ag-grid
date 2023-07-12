@@ -31,4 +31,9 @@ export interface IFrameworkOverrides {
      * Allows framework to identify if a class is a component from that framework.
      */
     isFrameworkComponent(comp: any): boolean;
+
+    /**
+     * Which rendering engine is used for the grid components. Can be either 'vanilla' or 'react'.
+     */
+    renderingEngine: 'vanilla' | 'react';
 }
