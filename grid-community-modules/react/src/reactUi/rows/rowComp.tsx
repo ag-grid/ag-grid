@@ -63,7 +63,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const tabIndex = useMemo(() => rowCtrl.getTabIndex(), []);
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getUserStyles());
-    const [cellCtrls, setCellCtrls] = useState<CellCtrls>(maintainOrderOnColumns({ list: [], instanceIdMap: new Map() }, rowCtrl.getAllCellCtrls(), rowCtrl.getDomOrder()));
+    const [cellCtrls, setCellCtrls] = useState<CellCtrls>(maintainOrderOnColumns({ list: [], instanceIdMap: new Map() }, rowCtrl.getCellCtrls(containerType), rowCtrl.getDomOrder()));
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(rowCtrl.getDomOrder());
 
