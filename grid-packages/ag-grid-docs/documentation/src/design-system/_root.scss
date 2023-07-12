@@ -51,7 +51,7 @@
     --icon-size: #{$icon-size};
 }
 
-html[data-theme='dark'] {
+html[data-color-mode='dark'] {
     @each $name, $scale in $dark-scales {
         @each $key, $value in map.get($dark-scales, $name) {
             --#{$name}-#{unquote($key)}: #{$value};
@@ -65,7 +65,7 @@ html[data-theme='dark'] {
 }
 
 @media (prefers-color-scheme: dark) {
-    #{$css-variables-root} {
+    #{$css-variables-root}:not([data-color-mode='light']) {
         @each $name, $scale in $dark-scales {
             @each $key, $value in map.get($dark-scales, $name) {
                 --#{$name}-#{unquote($key)}: #{$value};

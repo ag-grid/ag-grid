@@ -1,0 +1,21 @@
+button.toggle {
+    width: 30px;
+    height: 30px;
+    margin-right: -8px;
+    border-radius: 50%;
+    transition: box-shadow 0.25s ease-in-out;
+
+    &:hover {
+        box-shadow: 0 0 0 3px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
+    }
+
+    svg {
+        --icon-size: 30px;
+        --button-text-color: var(--link-color);
+    }
+}
+
+:global(.no-transitions),
+:global(.no-transitions) * {
+    transition: none !important;
+}
