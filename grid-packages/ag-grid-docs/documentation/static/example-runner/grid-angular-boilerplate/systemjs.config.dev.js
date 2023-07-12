@@ -160,8 +160,7 @@
             },
             'ag-charts-community': {
                 main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js',
-                "format": "cjs"
+                defaultExtension: 'js'
             },
             '@ag-grid-enterprise/all-modules': {
                 main: './dist/cjs/es5/main.js',
