@@ -86,8 +86,6 @@ function countryHeaderValueGetter(params: HeaderValueGetterParams) {
   switch (params.location) {
     case 'csv':
       return 'CSV Country'
-    case 'clipboard':
-      return 'CLIP Country'
     case 'columnToolPanel':
       return 'TP Country'
     case 'columnDrop':
