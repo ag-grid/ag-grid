@@ -35,7 +35,7 @@ function getOnGridReadyCode(bindings: any): string {
         const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
+            callback.replace("params.api.setRowData(data);", "rowData.value = data;") :
             callback;
 
         additionalLines.push(`
@@ -48,20 +48,29 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     return `const onGridReady = (params) => {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
+        gridApi.value = params.api;
+        gridColumnApi.value = params.columnApi;
         ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
+
+const replaceApiThisReference = (code) => code.replace("this.gridApi", 'gridApi.value')
+    .replace("this.gridColumnApi", 'gridColumnApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
         .filter(event => event.name != 'onGridReady')
         .map(event => event.handler)
+        .map(replaceApiThisReference)
         .map(convertFunctionToConstProperty);
 
-    const externalEventHandlers = bindings.externalEventHandlers.map(event => event.body).map(convertFunctionToConstProperty);
-    const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty);
+    const externalEventHandlers = bindings.externalEventHandlers
+        .map(event => event.body)
+        .map(replaceApiThisReference)
+        .map(convertFunctionToConstProperty);
+    const instanceMethods = bindings.instanceMethods
+        .map(replaceApiThisReference)
+        .map(convertFunctionToConstProperty);
 
     const utilFunctions = bindings.utils.map(body => {
         const funcName = getFunctionName(body);
@@ -173,14 +182,14 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toRef(property));
-                propertyAssignments.push(`this.${property.name} = ${newValue}`);
+                propertyAssignments.push(`${property.name}.value = ${newValue}`);
                 propertyNames.push(property.name);
             } else if (GRID_WIDE_COMPONENTS.includes(property.name)) {
                 const parsedValue = `${property.value.replace('AG_LITERAL_', '')}`;
 
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toRef(property));
-                propertyAssignments.push(`this.${property.name} = '${parsedValue}'`);
+                propertyAssignments.push(`${property.name}.value = '${parsedValue}'`);
                 propertyNames.push(property.name);
                 if (isExternalVueFile(componentFileNames, parsedValue)) {
                     if (!vueComponents.includes(parsedValue)) {
@@ -335,7 +344,7 @@ const VueExample = {
     setup(props) {
         const columnDefs = ref(${columnDefs});
         const gridApi = ref();
-        const columnApi = ref();
+        const gridColumnApi = ref();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         
@@ -353,7 +362,7 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            columnApi,
+            gridColumnApi,
             ${propertyNames.join(',\n')},
             onGridReady,
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
