@@ -23,6 +23,12 @@ pre.code code {
     -moz-hyphens: none;
     -ms-hyphens: none;
     hyphens: none;
+
+    [data-color-mode='dark'] & {
+        -webkit-font-smoothing: subpixel-antialiased;
+
+        color: var(--neutral-900);
+    }
 }
 
 pre.code {
@@ -30,6 +36,7 @@ pre.code {
     --tag-color: #a31515;
     --string-color: #a31515;
     --punctuation-color: #393a34;
+    --keyword-color: #0000ff;
     --symbol-color: #36acaa;
     --function-color: #393a34;
     --deleted-color: #9a050f;
@@ -44,6 +51,23 @@ pre.code {
     border: 2px solid var(--background-300);
     overflow: visible;
     overflow-y: auto !important;
+
+    [data-color-mode='dark'] & {
+        --comment-color: hsl(120, 30%, 40%);
+        --tag-color: var(--red-500);
+        --string-color: var(--pink-700);
+        --punctuation-color: var(--neutral-800);
+        --keyword-color: var(--primary-500);
+        --symbol-color: #36acaa;
+        --function-color: var(--neutral-800);
+        --deleted-color: #9a050f;
+        --selector-color: #00009f;
+        --important-color: #e90;
+        --class-name-color: #2b91af;
+        --property-color: var(--primary-700);
+
+        border: none;
+    }
 }
 
 pre.code > code {
@@ -53,7 +77,7 @@ pre.code > code {
     padding: $vertical-padding $size-2;
     font-size: 0.9375em;
     background-color: var(--default-background-color);
-    background-image: linear-gradient(transparent 50%, var(--background-100) 50%);
+    background-image: linear-gradient(transparent 50%, var(--background-200) 50%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
@@ -62,6 +86,11 @@ pre.code > code {
     box-shadow: inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
     overflow-x: auto !important;
+
+    [data-color-mode='dark'] & {
+        --default-background-color: var(--background-100);
+        --default-text-color: var(--neutral-900);
+    }
 }
 
 pre.code.line-numbers.line-numbers code {
@@ -165,7 +194,7 @@ pre.code.line-numbers > code {
 .language-json .token.boolean,
 .language-json .token.number,
 code[class*='language-css'] {
-    color: #0000ff;
+    color: var(--keyword-color);
 }
 
 .token.function {
