@@ -34,7 +34,7 @@ const {
     updateLabel,
 } = _ModuleSupport;
 const { toTooltipHtml, ContinuousScale, Rect } = _Scene;
-const { sanitizeHtml, checkDatum } = _Util;
+const { sanitizeHtml, isContinuous } = _Util;
 
 const WATERFALL_LABEL_PLACEMENTS: AgWaterfallSeriesLabelPlacement[] = ['start', 'end', 'inside'];
 const OPT_WATERFALL_LABEL_PLACEMENT: _ModuleSupport.ValidatePredicate = (v: any, ctx) =>
@@ -217,7 +217,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
     shadow?: _Scene.DropShadow = undefined;
 
-    private seriesItemTypes: SeriesItemType[] = ['positive', 'negative', 'total', 'subtotal'];
+    private seriesItemTypes: Set<SeriesItemType> = new Set(['positive', 'negative', 'total', 'subtotal']);
 
     protected readonly seriesItemEnabled = new Map<SeriesItemType, boolean>();
     private setSeriesItemEnabled() {
@@ -239,36 +239,57 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async processData(dataController: _ModuleSupport.DataController) {
-        const { xKey, yKey, seriesItemEnabled, data = [], typeKey = '' } = this;
+        const { xKey, yKey, data = [], typeKey = '' } = this;
 
         if (!yKey) return;
 
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
 
-        const totalActive = !!seriesItemEnabled.get('total');
-        const subtotalActive = !!seriesItemEnabled.get('subtotal');
-        const positivesActive = !!seriesItemEnabled.get('positive');
-        const negativesActive = !!seriesItemEnabled.get('negative');
-
-        const isActive = (v: any, datum: any) => {
-            const type = datum[typeKey];
-            if (type === 'total') {
-                return totalActive;
-            } else if (type === 'subtotal') {
-                return subtotalActive;
-            } else if (v >= 0) {
-                return positivesActive;
-            }
-            return negativesActive;
+        const positiveNumber = (v: any) => {
+            return isContinuous(v) && v >= 0;
         };
 
-        const validation = (v: any, datum: any) => checkDatum(v, true) != null && isActive(v, datum);
+        const negativeNumber = (v: any) => {
+            return isContinuous(v) && v < 0;
+        };
+
+        const propertyDefinition = {
+            missingValue: 0,
+            invalidValue: undefined,
+        };
 
         const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
                 keyProperty(this, xKey, isContinuousX, { id: `xKey` }),
-                accumulativeValueProperty(this, yKey, true, { id: `yCurrent`, validation }),
-                trailingAccumulatedValueProperty(this, yKey, true, { id: `yPrevious`, validation }),
+                accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yCurrent`,
+                }),
+                accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yCurrentPositive`,
+                    validation: positiveNumber,
+                }),
+                accumulativeValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yCurrentNegative`,
+                    validation: negativeNumber,
+                }),
+                trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yPrevious`,
+                    missingValue: 0,
+                }),
+                trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yPreviousPositive`,
+                    validation: positiveNumber,
+                }),
+                trailingAccumulatedValueProperty(this, yKey, true, {
+                    ...propertyDefinition,
+                    id: `yPreviousNegative`,
+                    validation: negativeNumber,
+                }),
                 valueProperty(this, yKey, true, { id: `yRaw` }), // Raw value pass-through.
                 ...(typeKey ? [valueProperty(this, typeKey, false, { id: `typeValue`, missingValue: undefined })] : []),
             ],
@@ -276,6 +297,8 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         });
         this.dataModel = dataModel;
         this.processedData = processedData;
+
+        this.updateSeriesItemTypes();
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
@@ -285,17 +308,52 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const {
             domain: {
                 keys: [keys],
-                values: [yExtent],
+                values,
             },
         } = processedData;
 
         if (direction === this.getCategoryDirection()) {
             return keys;
         } else {
-            const extent = this.fixNumericExtent(yExtent as any);
-            const min = extent[0];
-            return [min > 0 ? 0 : min, extent[1]];
+            const { yCurrIndex = 0 } = this.getYIndices() ?? {};
+            const yExtent = values[yCurrIndex];
+            const fixedYExtent = [yExtent[0] > 0 ? 0 : yExtent[0], yExtent[1] < 0 ? 0 : yExtent[1]];
+            return this.fixNumericExtent(fixedYExtent as any);
         }
+    }
+
+    private getYIndices(): { yCurrIndex: number; yPrevIndex: number } | undefined {
+        const { seriesItemEnabled, dataModel } = this;
+
+        if (!dataModel) {
+            return;
+        }
+
+        const positivesActive = !!seriesItemEnabled.get('positive');
+        const negativesActive = !!seriesItemEnabled.get('negative');
+
+        let yCurrSearchId;
+        let yPrevSearchId;
+
+        if (positivesActive && negativesActive) {
+            yCurrSearchId = 'yCurrent';
+            yPrevSearchId = 'yPrevious';
+        } else if (positivesActive) {
+            yCurrSearchId = 'yCurrentPositive';
+            yPrevSearchId = 'yPreviousPositive';
+        } else if (negativesActive) {
+            yCurrSearchId = 'yCurrentNegative';
+            yPrevSearchId = 'yPreviousNegative';
+        }
+
+        if (!(yCurrSearchId && yPrevSearchId)) {
+            return;
+        }
+
+        const yCurrIndex = dataModel.resolveProcessedDataIndexById(this, yCurrSearchId).index;
+        const yPrevIndex = dataModel.resolveProcessedDataIndexById(this, yPrevSearchId).index;
+
+        return { yCurrIndex, yPrevIndex };
     }
 
     protected getNodeClickEvent(
@@ -329,9 +387,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             return [];
         }
 
-        const totalActive = !!seriesItemEnabled.get('total');
-        const subtotalActive = !!seriesItemEnabled.get('subtotal');
-
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
 
@@ -349,14 +404,64 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
 
         const yRawIndex = dataModel.resolveProcessedDataIndexById(this, `yRaw`).index;
         const xIndex = dataModel.resolveProcessedDataIndexById(this, `xKey`).index;
-        const yCurrIndex = dataModel.resolveProcessedDataIndexById(this, 'yCurrent').index;
-        const yPrevIndex = dataModel.resolveProcessedDataIndexById(this, 'yPrevious').index;
         const typeKeyIndex = this.typeKey ? dataModel.resolveProcessedDataIndexById(this, `typeValue`).index : -1;
-
         const contextIndexMap = new Map<SeriesItemType, number>();
 
         const pointData: WaterfallNodePointDatum[] = [];
 
+        const { yCurrIndex, yPrevIndex } = this.getYIndices() ?? {};
+
+        const totalActive = !!seriesItemEnabled.get('total');
+        const subtotalActive = !!seriesItemEnabled.get('subtotal');
+
+        function getValues(
+            isTotal: boolean,
+            isSubtotal: boolean,
+            values: any[]
+        ): { cumulativeValue: number | undefined; trailingValue: number | undefined } {
+            if (!isTotal && !isSubtotal && yCurrIndex !== undefined && yPrevIndex !== undefined) {
+                return {
+                    cumulativeValue: values[yCurrIndex],
+                    trailingValue: values[yPrevIndex],
+                };
+            }
+
+            if ((isTotal && totalActive) || (isSubtotal && subtotalActive)) {
+                if (yCurrIndex !== undefined) {
+                    return {
+                        cumulativeValue: values[yCurrIndex],
+                        trailingValue: isSubtotal ? trailingSubtotal : 0,
+                    };
+                }
+                return {
+                    cumulativeValue: values[0],
+                    trailingValue: isSubtotal ? trailingSubtotal : 0,
+                };
+            }
+
+            return {
+                cumulativeValue: undefined,
+                trailingValue: undefined,
+            };
+        }
+
+        function getLabelValue(
+            isTotal: boolean,
+            isSubtotal: boolean,
+            rawValue?: number,
+            cumulativeValue?: number,
+            trailingValue?: number
+        ) {
+            if (isTotal) {
+                return cumulativeValue;
+            }
+            if (isSubtotal) {
+                return (cumulativeValue ?? 0) - (trailingValue ?? 0);
+            }
+            return rawValue;
+        }
+
+        let trailingSubtotal = 0;
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
             const datumType = values[typeKeyIndex];
 
@@ -368,8 +473,12 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             const x = xScale.convert(xDatum);
 
             const rawValue = values[yRawIndex];
-            const cumulativeValue = values[yCurrIndex];
-            const trailingValue = isTotalOrSubtotal ? 0 : values[yPrevIndex];
+
+            const { cumulativeValue, trailingValue } = getValues(isTotal, isSubtotal, values);
+
+            if (isSubtotal) {
+                trailingSubtotal = cumulativeValue ?? 0;
+            }
 
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const trailY = yScale.convert(trailingValue, { strict: false });
@@ -432,7 +541,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 series: this,
                 itemId,
                 datum,
-                cumulativeValue,
+                cumulativeValue: cumulativeValue ?? 0,
                 xValue: xDatum,
                 yValue: rawValue,
                 yKey,
@@ -446,7 +555,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                 stroke: stroke,
                 strokeWidth,
                 label: createLabelData({
-                    value: isTotalOrSubtotal ? cumulativeValue : rawValue,
+                    value: getLabelValue(isTotal, isSubtotal, rawValue, cumulativeValue, trailingValue),
                     rect,
                     placement,
                     seriesId: this.id,
@@ -461,9 +570,48 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             contexts[contextIndex].labelData.push(nodeDatum);
         });
 
-        contexts[0].pointData = pointData;
+        if (contexts.length > 0 && yCurrIndex !== undefined) {
+            contexts[0].pointData = pointData;
+        }
 
         return contexts;
+    }
+
+    private updateSeriesItemTypes() {
+        const { dataModel, seriesItemTypes, processedData } = this;
+
+        if (!dataModel || !processedData) {
+            return;
+        }
+
+        seriesItemTypes.clear();
+
+        const yPositiveIndex = dataModel.resolveProcessedDataIndexById(this, 'yCurrentPositive').index;
+        const yNegativeIndex = dataModel.resolveProcessedDataIndexById(this, 'yCurrentNegative').index;
+        const typeKeyIndex = this.typeKey ? dataModel.resolveProcessedDataIndexById(this, `typeValue`).index : -1;
+
+        const positiveDomain = processedData.domain.values[yPositiveIndex] ?? [];
+        const negativeDomain = processedData.domain.values[yNegativeIndex] ?? [];
+
+        if (positiveDomain.length > 0) {
+            seriesItemTypes.add('positive');
+        }
+
+        if (negativeDomain.length > 0) {
+            seriesItemTypes.add('negative');
+        }
+
+        const itemTypes = processedData?.domain.values[typeKeyIndex];
+        if (!itemTypes) {
+            return;
+        }
+
+        itemTypes.forEach((type) => {
+            if (type === undefined) {
+                return;
+            }
+            seriesItemTypes.add(type);
+        });
     }
 
     private isSubtotal(datumType?: 'total' | 'subtotal') {
@@ -593,10 +741,9 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         }
 
         const { formatter, tooltip, xName, yName, id: seriesId } = this;
-        const { datum, itemId, xValue, cumulativeValue } = nodeDatum;
+        const { datum, itemId, xValue, label } = nodeDatum;
 
-        const isTotalOrSubtotal = this.isTotal(itemId) || this.isSubtotal(itemId);
-        const yValue = isTotalOrSubtotal ? cumulativeValue : nodeDatum.yValue;
+        const yValue = label.text;
 
         let format: any | undefined = undefined;
 
@@ -620,10 +767,13 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
+        const isTotal = this.isTotal(itemId);
+        const isSubtotal = this.isSubtotal(itemId);
+        const ySubheading = isTotal ? 'Total' : isSubtotal ? 'Subtotal' : name ?? yName ?? yKey;
+
         const title = sanitizeHtml(yName);
         const content =
-            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` +
-            `<b>${sanitizeHtml(name ?? yName ?? yKey)}</b>: ${yString}`;
+            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` + `<b>${sanitizeHtml(ySubheading)}</b>: ${yString}`;
 
         const defaults: AgTooltipRendererResult = {
             title,
@@ -671,8 +821,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
             return yName ?? yKey;
         }
 
-        for (let index = 0; index < seriesItemTypes.length; index++) {
-            const item = seriesItemTypes[index];
+        seriesItemTypes.forEach((item) => {
             const { fill, stroke, fillOpacity, strokeOpacity, name } = this.getItemConfig(item);
             const legendItemText = getLegendItemText(item, name);
             legendData.push({
@@ -691,7 +840,7 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
                     strokeOpacity: strokeOpacity,
                 },
             });
-        }
+        });
 
         return legendData;
     }
@@ -709,10 +858,6 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         const { enabled, itemId, series: maybeSeries } = event;
 
         if (maybeSeries.type !== this.type) return;
-
-        if (this.isTotal(itemId) || this.isSubtotal(itemId)) {
-            return;
-        }
 
         const { seriesItemEnabled } = this;
 
@@ -903,6 +1048,10 @@ export class WaterfallBarSeries extends _ModuleSupport.CartesianSeries<
         contextData: Array<WaterfallContext>;
         paths: Array<Array<_Scene.Path>>;
     }) {
+        if (paths.length === 0) {
+            return;
+        }
+
         const [lineNode] = paths[0];
 
         const { stroke, strokeWidth, strokeOpacity, lineDash, lineDashOffset } = this.line;
