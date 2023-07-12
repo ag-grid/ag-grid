@@ -12,5 +12,5 @@ The following page provides information that is relevant when using older versio
 | React Version | AG Grid Versions |
 | ------------- | ---------------- |
 | 15.x          | 18 - 21.2        |
-| 16.3+ / 17+   | 22 - 29          |
+| 16.3+ / 17+   | 22 - 30          |
 | 18+           | 27.2+            |
