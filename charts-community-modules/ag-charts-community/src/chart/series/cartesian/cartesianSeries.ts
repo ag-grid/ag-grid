@@ -93,6 +93,14 @@ export class CartesianSeriesNodeDoubleClickEvent<
 type CartesianAnimationState = 'empty' | 'ready' | 'waiting';
 type CartesianAnimationEvent = 'update' | 'updateData' | 'highlight' | 'highlightMarkers' | 'resize';
 class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {}
+interface CartesianAnimationData<C extends SeriesNodeDataContext<any, any>, N extends Node = Group> {
+    datumSelections: Array<NodeDataSelection<N, C>>;
+    markerSelections: Array<NodeDataSelection<Marker, C>>;
+    labelSelections: Array<LabelDataSelection<Text, C>>;
+    contextData: Array<C>;
+    paths: Array<Array<Path>>;
+    seriesRect?: BBox;
+}
 
 export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
@@ -120,6 +128,7 @@ export abstract class CartesianSeries<
 
     protected animationState: CartesianStateMachine;
     protected datumSelectionGarbageCollection = true;
+    protected markerSelectionGarbageCollection = true;
 
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
@@ -388,7 +397,9 @@ export abstract class CartesianSeries<
                     () => this.nodeFactory(),
                     this.datumSelectionGarbageCollection
                 ),
-                markerSelection: markerGroup ? Selection.select(markerGroup, () => this.markerFactory()) : undefined,
+                markerSelection: markerGroup
+                    ? Selection.select(markerGroup, () => this.markerFactory(), this.markerSelectionGarbageCollection)
+                    : undefined,
             });
         }
     }
@@ -766,17 +777,11 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
     }
 
-    protected animateReadyUpdate(_data: {
-        datumSelections: Array<NodeDataSelection<N, C>>;
-        markerSelections: Array<NodeDataSelection<Marker, C>>;
-        contextData: Array<C>;
-        paths: Array<Array<Path>>;
-        seriesRect?: BBox;
-    }) {
+    protected animateReadyUpdate(_data: CartesianAnimationData<C, N>) {
         // Override point for sub-classes.
     }
 
-    protected animateWaitingUpdateReady(_data: { datumSelections: Array<NodeDataSelection<N, C>> }) {
+    protected animateWaitingUpdateReady(_data: CartesianAnimationData<C, N>) {
         // Override point for sub-classes.
     }
 

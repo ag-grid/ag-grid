@@ -255,4 +255,32 @@ export class Path2D {
 
         return intersectionCount % 2 === 1;
     }
+
+    getPoints(): Array<{ x: number; y: number }> {
+        const { commands, params } = this;
+
+        const coords: Array<{ x: number; y: number }> = [];
+        let pi = 0;
+
+        for (let ci = 0; ci < commands.length; ci++) {
+            switch (commands[ci]) {
+                case Command.Move:
+                case Command.Line:
+                    coords.push({ x: params[pi++], y: params[pi++] });
+                    break;
+                case Command.Curve:
+                    pi += 4;
+                    coords.push({ x: params[pi++], y: params[pi++] });
+                    break;
+                case Command.Arc:
+                    coords.push({ x: params[pi++], y: params[pi++] });
+                    pi += 4;
+                    break;
+                case Command.ClosePath:
+                    break;
+            }
+        }
+
+        return coords;
+    }
 }

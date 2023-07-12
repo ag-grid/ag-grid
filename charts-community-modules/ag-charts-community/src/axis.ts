@@ -1483,6 +1483,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             delay = 0;
         }
 
+        delay = 0;
+
         const props = [translate, opacity];
 
         this.animationManager.animateManyWithThrottle(`${this.id}_ready-update_${node.id}`, props, {

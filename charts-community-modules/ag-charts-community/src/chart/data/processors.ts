@@ -249,11 +249,17 @@ export function diff(
                 added: [] as any[],
                 updated: [] as any[],
                 removed: [] as any[],
+                addedIndices: [] as number[],
+                updatedIndices: [] as number[],
+                removedIndices: [] as number[],
             };
 
             const added = new Map<string, any>();
             const updated = new Map<string, any>();
             const removed = new Map<string, any>();
+            const addedIndices = new Map<string, number>();
+            const updatedIndices = new Map<string, number>();
+            const removedIndices = new Map<string, number>();
             const sep = '___';
 
             for (let i = 0; i < Math.max(previousData.data.length, processedData.data.length); i++) {
@@ -266,6 +272,7 @@ export function diff(
                 if (prevId === datumId) {
                     if (!arraysEqual(prev.values, datum.values)) {
                         updated.set(datumId, datum);
+                        updatedIndices.set(datumId, i);
                     }
                     continue;
                 }
@@ -273,25 +280,34 @@ export function diff(
                 if (removed.has(datumId)) {
                     if (updateMovedDatums || !arraysEqual(removed.get(datumId).values, datum.values)) {
                         updated.set(datumId, datum);
+                        updatedIndices.set(datumId, i);
                     }
                     removed.delete(datumId);
+                    removedIndices.delete(datumId);
                 } else if (datum) {
                     added.set(datumId, datum);
+                    addedIndices.set(datumId, i);
                 }
 
                 if (added.has(prevId)) {
                     if (updateMovedDatums || !arraysEqual(added.get(prevId).values, prev.values)) {
                         updated.set(prevId, prev);
+                        updatedIndices.set(datumId, i);
                     }
                     added.delete(prevId);
+                    addedIndices.delete(prevId);
                 } else if (prev) {
                     removed.set(prevId, prev);
+                    removedIndices.set(prevId, i);
                 }
             }
 
-            diff.added = Array.from(added.values()).map((datum) => datum.keys);
-            diff.updated = Array.from(updated.values()).map((datum) => datum.keys);
-            diff.removed = Array.from(removed.values()).map((datum) => datum.keys);
+            diff.added = Array.from(added.keys());
+            diff.updated = Array.from(updated.keys());
+            diff.removed = Array.from(removed.keys());
+            diff.addedIndices = Array.from(addedIndices.values());
+            diff.updatedIndices = Array.from(updatedIndices.values());
+            diff.removedIndices = Array.from(removedIndices.values());
 
             diff.changed = diff.added.length > 0 || diff.updated.length > 0 || diff.removed.length > 0;
 
