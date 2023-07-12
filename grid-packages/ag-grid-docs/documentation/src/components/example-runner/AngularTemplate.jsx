@@ -1,7 +1,6 @@
 import React from 'react';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import { LoadingSpinner } from './LoadingSpinner';
 import MetaData from './MetaData';
 import Scripts from './Scripts';
 import Styles from './Styles';
@@ -36,8 +35,6 @@ const AngularTemplate = ({
         </head>
         <body>
             <div id="app" dangerouslySetInnerHTML={{ __html: `<my-app></my-app>` }}></div>
-
-            <LoadingSpinner />
 
             <script
                 dangerouslySetInnerHTML={{ __html: `document.write('<base href="' + document.location + '" />');` }}
