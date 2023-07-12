@@ -123,6 +123,8 @@ export interface AgWaterfallSeriesItemOptions {
 }
 
 export interface AgWaterfallSeriesLineOptions {
+    /** Whether or not the connector lines should be shown. */
+    enabled?: boolean;
     /** The colour to use for the connector lines. */
     stroke?: CssColor;
     /** The width in pixels of the connector lines. */
