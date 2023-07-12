@@ -47,6 +47,8 @@ input[type='email'],
 input[type='checkbox'],
 input[type='number'],
 select {
+    color: var(--default-text-color);
+
     &:disabled,
     &[readonly] {
         background-color: var(--neutral-100);

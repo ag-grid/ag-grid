@@ -248,7 +248,7 @@ $dark-scales: (
                 'position': 100,
             ),
             (
-                'color': hsl(210, 9%, 74%),
+                'color': hsl(210, 9%, 82%),
                 'position': 900,
             )
         ),
@@ -378,11 +378,11 @@ $dark-semantic-colors: (
     'input-secondary-background-color': neutral-300,
     'input-secondary-border-color': neutral-500,
     'input-primary-color': primary-600,
-    'input-focus-border-color': primary-200,
-    'input-focus-box-shadow-color': primary-100,
-    'input-error-color': red-600,
+    'input-focus-border-color': primary-500,
+    'input-focus-box-shadow-color': background-900,
+    'input-error-color': red-500,
     // Table
-    'table-odd-row-background-color': background-100,
+    'table-odd-row-background-color': background-200,
     // Site header
     'site-header-background': dark-blue-400,
     'site-nav-background': dark-blue-800,
