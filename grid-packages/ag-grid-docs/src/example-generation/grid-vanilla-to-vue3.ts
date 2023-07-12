@@ -158,7 +158,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
-                propertyNames.push(property.name);
+                // propertyNames.push(property.name);
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
                 propertyNames.push(property.name);
