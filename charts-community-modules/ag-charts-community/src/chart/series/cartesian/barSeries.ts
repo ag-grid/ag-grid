@@ -676,29 +676,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
-    animateRect(
-        id: string,
-        rect: Rect,
-        props: Array<{ from: number; to: number }>,
-        duration: number,
-        delay: number = 0,
-        onComplete?: () => void
-    ) {
-        this.ctx.animationManager?.animateManyWithThrottle(id, props, {
-            delay,
-            duration,
-            ease: easing.easeOut,
-            throttleId: this.id,
-            onUpdate([x, width, y, height]) {
-                rect.x = x;
-                rect.width = width;
-                rect.y = y;
-                rect.height = height;
-            },
-            onComplete,
-        });
-    }
-
     animateEmptyUpdateReady({
         datumSelections,
         labelSelections,
@@ -732,18 +709,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     { from: contextHeight, to: datum.height },
                 ];
 
-                this.animateRect(`${this.id}_empty-update-ready_${rect.id}`, rect, props, duration);
+                this.ctx.animationManager?.animateMany(`${this.id}_empty-update-ready_${rect.id}`, props, {
+                    duration,
+                    ease: easing.easeOut,
+                    onUpdate([x, width, y, height]) {
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                });
             });
         });
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.ctx.animationManager?.animateWithThrottle(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    throttleId: this.id,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -801,6 +786,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             removedIds[d[0]] = true;
         });
 
+        const rectThrottleGroup = `${this.id}_${Math.random()}`;
+        const labelThrottleGroup = `${this.id}_${Math.random()}`;
+
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
                 let props = [
@@ -827,7 +815,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     contextHeight = 0;
                 }
 
-                if (datumId !== undefined && addedIds[datumId] !== undefined) {
+                const isAdded = datumId !== undefined && addedIds[datumId] !== undefined;
+                const isRemoved = datumId !== undefined && removedIds[datumId] !== undefined;
+
+                if (isAdded) {
                     props = [
                         { from: contextX, to: datum.x },
                         { from: contextWidth, to: datum.width },
@@ -835,7 +826,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         { from: contextHeight, to: datum.height },
                     ];
                     duration = sectionDuration;
-                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
+                } else if (isRemoved) {
                     props = [
                         { from: datum.x, to: contextX },
                         { from: datum.width, to: contextWidth },
@@ -847,9 +838,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     cleanup = true;
                 }
 
-                this.animateRect(`${this.id}_waiting-update-ready_${rect.id}`, rect, props, duration, delay, () => {
-                    if (cleanup) datumSelection.cleanup();
-                });
+                this.ctx.animationManager?.animateManyWithThrottle(
+                    `${this.id}_waiting-update-ready_${rect.id}`,
+                    props,
+                    {
+                        delay,
+                        duration,
+                        ease: easing.easeOut,
+                        throttleId: `${this.id}_rects`,
+                        throttleGroup: rectThrottleGroup,
+                        onUpdate([x, width, y, height]) {
+                            rect.x = x;
+                            rect.width = width;
+                            rect.y = y;
+                            rect.height = height;
+                        },
+                        onComplete() {
+                            if (cleanup) datumSelection.cleanup();
+                        },
+                    }
+                );
             });
         });
 
@@ -862,7 +870,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     to: 1,
                     delay: totalDuration,
                     duration: labelDuration,
-                    throttleId: this.id,
+                    throttleId: `${this.id}_labels`,
+                    throttleGroup: labelThrottleGroup,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

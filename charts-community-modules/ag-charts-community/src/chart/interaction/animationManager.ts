@@ -27,12 +27,19 @@ interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to
 }
 
 interface AnimationThrottleOptions {
+    // Animations that share this throttleId will cause each other to be throttled if triggered within the duration of
+    // a previous animation.
     throttleId?: string;
+
+    // Animations within a throttleGroup will not cause each other to be throttled. Used in combination with a
+    // throttleId this allows batches of animations to run normally but throttle later batches.
+    throttleGroup?: string;
 }
 
 export class AnimationManager extends BaseManager<AnimationEventType, AnimationEvent<AnimationEventType>> {
     private readonly controllers: Record<AnimationId, AnimationControls> = {};
-    private throttles: Record<AnimationId, number> = {};
+    private throttles: Record<string, number> = {};
+    private throttleGroups: Set<string> = new Set();
 
     private updaters: Array<[AnimationId, FrameRequestCallback]> = [];
 
@@ -239,15 +246,34 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         props: Array<Pick<AnimationOptions<T>, 'from' | 'to'>>,
         opts: AnimationManyOptions<T> & AnimationThrottleOptions
     ): AnimationControls {
+        const { throttleGroup } = opts;
         const throttleId = opts.throttleId ?? id;
 
-        if (this.throttles[throttleId] && opts.duration && Date.now() - this.throttles[throttleId] < opts.duration) {
+        const now = Date.now();
+
+        const isThrottled =
+            this.throttles[throttleId] && opts.duration && now - this.throttles[throttleId] < opts.duration;
+        const inGroup = throttleGroup && this.throttleGroups.has(throttleGroup);
+
+        if (isThrottled && !inGroup) {
             opts.delay = 0;
             opts.duration = 1;
         }
 
-        this.throttles[throttleId] = Date.now();
-        return this.animateMany(id, props, { ...opts });
+        if (!isThrottled && throttleGroup) {
+            this.throttleGroups.add(throttleGroup);
+        }
+
+        const onStop = () => {
+            if (throttleGroup) {
+                this.throttleGroups.delete(throttleGroup);
+            }
+            opts.onStop?.();
+        };
+
+        this.throttles[throttleId] = now;
+
+        return this.animateMany(id, props, { ...opts, onStop });
     }
 
     public tween<T>(opts: TweenOptions<T>): TweenControls<T> {

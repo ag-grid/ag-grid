@@ -1446,16 +1446,18 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             duration: sectionDuration,
         };
 
+        const animationGroup = `${this.id}_${Math.random()}`;
+
         tickLabelGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum, animationGroup);
         });
 
         gridLineGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum, animationGroup);
         });
 
         tickLineGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum, animationGroup);
         });
     }
 
@@ -1464,7 +1466,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         diff: AxisUpdateDiff,
         options: { delay: number; duration: number },
         node: Text | Line,
-        datum: TickDatum
+        datum: TickDatum,
+        animationGroup: string
     ) {
         const roundedTranslationY = Math.round(datum.translationY);
         let translate = { from: node.translationY, to: roundedTranslationY };
@@ -1491,6 +1494,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             duration,
             ease: easing.easeOut,
             throttleId: this.id,
+            throttleGroup: animationGroup,
             onUpdate([translationY, opacity]) {
                 node.translationY = translationY;
                 node.opacity = opacity;
