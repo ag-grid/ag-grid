@@ -11,7 +11,6 @@ import styles from './ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
 import { getIndexHtml } from './index-html-helper';
-import { LoadingSpinner } from './LoadingSpinner';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
 
@@ -621,9 +620,6 @@ const ExampleRunnerInner = ({
                                 );
                             }}
                         </VisibilitySensor>
-
-                        <LoadingSpinner />
-
                         <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
                 </div>

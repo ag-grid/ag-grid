@@ -1,6 +1,7 @@
 import React from 'react';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
+import { LoadingSpinner } from './LoadingSpinner';
 import MetaData from './MetaData';
 import Scripts from './Scripts';
 import Styles from './Styles';
@@ -36,6 +37,8 @@ const ReactTemplate = ({
         </head>
         <body>
             <div id="root"></div>
+
+            <LoadingSpinner />
 
             <Scripts files={scriptFiles} />
             <SystemJs
