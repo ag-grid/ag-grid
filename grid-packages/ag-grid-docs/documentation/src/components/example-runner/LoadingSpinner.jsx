@@ -1,5 +1,4 @@
 import React from 'react';
-import LogoMarkLoading from '../../images/inline-svgs/ag-grid-logomark-loading.svg';
 
 const loadingStyles = {
     position: 'absolute',
@@ -24,7 +23,12 @@ const loadingScript = `(function() {
 export const LoadingSpinner = () => {
     return (
         <>
-            <LogoMarkLoading id="loading-spinner" style={loadingStyles} />
+            <object
+                id="loading-spinner"
+                style={loadingStyles}
+                type="image/svg+xml"
+                data="https://ag-grid.com/images/ag-grid-loading-spinner.svg"
+            ></object>
             <script id="loading-script" dangerouslySetInnerHTML={{ __html: loadingScript }}></script>
         </>
     );
