@@ -82,7 +82,7 @@
     bottom: 0;
     padding: $size-8 $size-2 $size-2;
     text-align: center;
-    background-image: linear-gradient(transparent, white 75%);
+    background-image: linear-gradient(transparent, var(--default-background-color) 75%);
     border-radius: var(--border-radius);
     color: var(--link-color);
     transition: color $default-transition-timing;

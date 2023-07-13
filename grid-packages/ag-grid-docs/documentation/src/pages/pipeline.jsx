@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
+import GlobalContextConsumer from '../components/GlobalContext';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
@@ -191,25 +192,32 @@ const Pipeline = ({ location }) => {
                         </span>
                     </div>
 
-                    <Grid
-                        gridHeight={'78vh'}
-                        columnDefs={COLUMN_DEFS}
-                        isRowMaster={isRowMaster}
-                        detailRowAutoHeight={true}
-                        components={{
-                            myDetailCellRenderer: DetailCellRenderer,
-                            paddingCellRenderer: PaddingCellRenderer,
-                            chevronButtonRenderer: ChevronButtonCellRenderer,
-                            issueTypeCellRenderer: IssueTypeCellRenderer,
+                    <GlobalContextConsumer>
+                        {({ colorMode }) => {
+                            return (
+                                <Grid
+                                    gridHeight={'78vh'}
+                                    columnDefs={COLUMN_DEFS}
+                                    isRowMaster={isRowMaster}
+                                    detailRowAutoHeight={true}
+                                    components={{
+                                        myDetailCellRenderer: DetailCellRenderer,
+                                        paddingCellRenderer: PaddingCellRenderer,
+                                        chevronButtonRenderer: ChevronButtonCellRenderer,
+                                        issueTypeCellRenderer: IssueTypeCellRenderer,
+                                    }}
+                                    defaultColDef={defaultColDef}
+                                    enableCellTextSelection={true}
+                                    detailCellRendererParams={detailCellRendererParams}
+                                    detailCellRenderer={'myDetailCellRenderer'}
+                                    masterDetail={true}
+                                    rowData={rowData}
+                                    onGridReady={gridReady}
+                                    theme={colorMode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
+                                ></Grid>
+                            );
                         }}
-                        defaultColDef={defaultColDef}
-                        enableCellTextSelection={true}
-                        detailCellRendererParams={detailCellRendererParams}
-                        detailCellRenderer={'myDetailCellRenderer'}
-                        masterDetail={true}
-                        rowData={rowData}
-                        onGridReady={gridReady}
-                    ></Grid>
+                    </GlobalContextConsumer>
                 </div>
             )}
         </>

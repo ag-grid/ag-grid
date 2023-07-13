@@ -3,15 +3,15 @@ import { LocalStorage } from 'utils/local-storage';
 
 // bypasses local storage
 const storageOverrides = {
-    enableVue3: true       // enables Vue 3 functionality in docs
-}
+    enableVue3: true, // enables Vue 3 functionality in docs
+};
 
 const defaultContextValue = {
     exampleImportType: 'packages',
     useFunctionalReact: true,
-    useVue3: false,         // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
-    set: () => { },
-    ...storageOverrides
+    useVue3: false, // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
+    set: () => {},
+    ...storageOverrides,
 };
 
 const { Provider, Consumer } = React.createContext(defaultContextValue);
@@ -38,7 +38,7 @@ class GlobalContextProvider extends React.PureComponent {
                 contextValue = {
                     ...contextValue,
                     ...storedContext,
-                    ...storageOverrides
+                    ...storageOverrides,
                 };
             }
         }
@@ -49,7 +49,7 @@ class GlobalContextProvider extends React.PureComponent {
         };
     }
 
-    setData = newData => {
+    setData = (newData) => {
         this.setState(newData, () => LocalStorage.set(contextStorageKey, JSON.stringify(this.state)));
     };
 

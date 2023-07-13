@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import LocalStorage from '../../utils/local-storage';
+import GlobalContextConsumer from '../GlobalContext';
 import { Icon } from '../Icon';
 import styles from './ColorModeToggle.module.scss';
 
@@ -15,36 +16,35 @@ const startingColorMode = () => {
 };
 
 export const ColorModeToggle = () => {
-    const [colorMode, setColorMode] = useState(startingColorMode());
-
-    const toggleColorMode = () => {
-        setColorMode(colorMode === 'light' ? 'dark' : 'light');
-    };
-
-    useEffect(() => {
-        const htmlEl = document.querySelector('html');
-
-        LocalStorage.set('colorMode', colorMode);
-
-        // Using .no-transitions class so that there are no animations between light/dark modes
-        htmlEl.classList.add('no-transitions');
-        htmlEl.dataset.colorMode = colorMode;
-        htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
-        htmlEl.classList.remove('no-transitions');
-    }, [colorMode]);
-
     return (
-        <li>
-            <button
-                className={classNames(
-                    styles.toggle,
-                    colorMode === 'light' ? styles.light : styles.dark,
-                    'button-style-none'
-                )}
-                onClick={toggleColorMode}
-            >
-                {colorMode === 'dark' ? <Icon name="sun" /> : <Icon name="moon" />}
-            </button>
-        </li>
+        <GlobalContextConsumer>
+            {({ colorMode, set }) => {
+                // [REVIEW] Don't think this is the right place for this global stuff, but it works
+                const htmlEl = document.querySelector('html');
+
+                // Using .no-transitions class so that there are no animations between light/dark modes
+                htmlEl.classList.add('no-transitions');
+                htmlEl.dataset.colorMode = colorMode;
+                htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+                htmlEl.classList.remove('no-transitions');
+
+                return (
+                    <li>
+                        <button
+                            className={classNames(
+                                styles.toggle,
+                                colorMode === 'light' ? styles.light : styles.dark,
+                                'button-style-none'
+                            )}
+                            onClick={() => {
+                                set({ colorMode: colorMode === 'light' ? 'dark' : 'light' });
+                            }}
+                        >
+                            {colorMode === 'dark' ? <Icon name="sun" /> : <Icon name="moon" />}
+                        </button>
+                    </li>
+                );
+            }}
+        </GlobalContextConsumer>
     );
 };
