@@ -55,6 +55,7 @@ interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     hasMarkers: boolean;
+    hasHighlightedLabels: boolean;
 }
 
 const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
@@ -137,8 +138,13 @@ export abstract class CartesianSeries<
             directionNames: DEFAULT_DIRECTION_NAMES,
         });
 
-        const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
-        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
+        const {
+            pathsPerSeries = 1,
+            hasMarkers = false,
+            hasHighlightedLabels = false,
+            pathsZIndexSubOrderOffset = [],
+        } = opts;
+        this.opts = { pathsPerSeries, hasMarkers, hasHighlightedLabels, pathsZIndexSubOrderOffset };
 
         this.animationState = new CartesianStateMachine('empty', {
             empty: {
@@ -417,7 +423,7 @@ export abstract class CartesianSeries<
             highlightSelection,
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
-            opts: { hasMarkers },
+            opts: { hasMarkers, hasHighlightedLabels },
         } = this;
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
@@ -441,7 +447,10 @@ export abstract class CartesianSeries<
             await this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
             this.animationState.transition('highlight', highlightSelection);
         }
-        await this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+
+        if (hasHighlightedLabels) {
+            await this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+        }
 
         await Promise.all(
             this.subGroups.map(async (subGroup, seriesIdx) => {
