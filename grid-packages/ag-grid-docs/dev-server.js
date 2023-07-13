@@ -644,14 +644,14 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-ts-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'];
+        './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'
+    ];
 
     const getModuleConfig = module => [
-        `            '${module.publishedName}': {`,
-        `                main: './dist/cjs/es5/main.js',`,
-        `                defaultExtension: 'js'`,
-        `            },`
-    ].join(EOL);
+`            '${module.publishedName}': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'${module.publishedName === 'ag-charts-community' ? ",\n                format: 'cjs'" : ""}
+            },`].join(EOL);
 
     systemJsFiles.forEach(systemJsFile => {
         const fileLines = fs.readFileSync(systemJsFile, 'UTF-8');
