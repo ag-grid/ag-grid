@@ -231,6 +231,11 @@ gatsby-fast-refresh {
         @media screen and (min-width: 640px) {
             height: $size-1 * 10;
         }
+
+        // WIP darkmode adjustment for customer logos
+        [data-color-mode='dark'] & {
+            filter: grayscale(100%) invert(1) brightness(1.25);
+        }
     }
 }
 
@@ -302,6 +307,11 @@ gatsby-fast-refresh {
     a {
         grid-area: link;
     }
+}
+
+// Invert plunker logo for darkmode
+[data-color-mode='dark'] .projectPlunker img {
+    filter: invert(1);
 }
 
 .automatedExampleDebugPanel {

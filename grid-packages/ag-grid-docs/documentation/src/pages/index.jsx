@@ -180,7 +180,7 @@ const Default = () => {
                             </a>
                         </li>
 
-                        <li className={styles.project}>
+                        <li className={classNames(styles.project, styles.projectPlunker)}>
                             <img src="images/fw-logos/plunker.svg" alt="Plunker" />
 
                             <h3>Plunker</h3>
