@@ -15,6 +15,7 @@ button.toggle {
     }
 }
 
+// [REVIEW] Don't think this is the right place for this global stuff, but it works
 :global(.no-transitions),
 :global(.no-transitions) * {
     transition: none !important;

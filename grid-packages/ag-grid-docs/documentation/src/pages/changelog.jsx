@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
+import GlobalContextConsumer from '../components/GlobalContext';
 import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
@@ -329,23 +330,30 @@ const Changelog = ({ location }) => {
                         </span>
                     </div>
 
-                    <Grid
-                        gridHeight={'70.5vh'}
-                        columnDefs={COLUMN_DEFS}
-                        rowData={rowData}
-                        components={components}
-                        defaultColDef={defaultColDef}
-                        detailRowAutoHeight={true}
-                        enableCellTextSelection={true}
-                        detailCellRendererParams={detailCellRendererParams}
-                        detailCellRenderer={'myDetailCellRenderer'}
-                        isRowMaster={isRowMaster}
-                        masterDetail
-                        onGridReady={gridReady}
-                        onFirstDataRendered={() => {
-                            applyFixVersionFilter();
+                    <GlobalContextConsumer>
+                        {({ colorMode }) => {
+                            return (
+                                <Grid
+                                    gridHeight={'70.5vh'}
+                                    columnDefs={COLUMN_DEFS}
+                                    rowData={rowData}
+                                    components={components}
+                                    defaultColDef={defaultColDef}
+                                    detailRowAutoHeight={true}
+                                    enableCellTextSelection={true}
+                                    detailCellRendererParams={detailCellRendererParams}
+                                    detailCellRenderer={'myDetailCellRenderer'}
+                                    isRowMaster={isRowMaster}
+                                    masterDetail
+                                    onGridReady={gridReady}
+                                    onFirstDataRendered={() => {
+                                        applyFixVersionFilter();
+                                    }}
+                                    theme={colorMode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
+                                ></Grid>
+                            );
                         }}
-                    ></Grid>
+                    </GlobalContextConsumer>
                 </div>
             )}
         </>
