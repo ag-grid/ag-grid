@@ -1,22 +1,13 @@
 import classNames from 'classnames';
 import React from 'react';
-import LocalStorage from '../../utils/local-storage';
 import GlobalContextConsumer from '../GlobalContext';
 import { Icon } from '../Icon';
 import styles from './ColorModeToggle.module.scss';
 
-// Get starting color mode
-// If localstorage color is set use that, otherwise check for browser default.
-const startingColorMode = () => {
-    if (LocalStorage.get('colorMode')) {
-        return LocalStorage.get('colorMode');
-    } else {
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-};
+const IS_SSR = typeof window === 'undefined';
 
 export const ColorModeToggle = () => {
-    return (
+    return IS_SSR ? null : (
         <GlobalContextConsumer>
             {({ colorMode, set }) => {
                 // [REVIEW] Don't think this is the right place for this global stuff, but it works
