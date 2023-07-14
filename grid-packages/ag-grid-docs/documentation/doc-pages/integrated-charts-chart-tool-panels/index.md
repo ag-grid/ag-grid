@@ -160,13 +160,13 @@ The following example shows how the Chart Tool Panels can be omitted and ordered
 
 <grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Chart Tool Panels API
+## Chart Tool Panel API
 
 The Chart Tool Panels can be opened and closed programmatically using the following grid APIs:
 
 <api-documentation source='grid-api/api.json' section='charts' names='["openChartToolPanel", "closeChartToolPanel"]'></api-documentation>
 
-The example below demonstrates how you can open and close Chart Tool Panels.
+The example below demonstrates how you can open and close the Chart Tool Panels.
 
 - Click **Open Chart Tool Panel** to open the default `Settings` tab via `openChartToolPanel()`
 - Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
