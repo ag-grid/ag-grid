@@ -1,10 +1,13 @@
 import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { setFixedWidth } from "../utils/dom";
+import { isVisible, setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
+import { waitUntil } from "../utils/function";
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
+
+    private intervalCheck = 0;
 
     private static TEMPLATE = /* html */
         `<div class="ag-body-vertical-scroll" aria-hidden="true">
@@ -48,5 +51,19 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
             this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
         }
+    }
+
+    private attemptSettingScrollTop(value: number) {
+        const viewport = this.getViewport();
+        waitUntil(() => isVisible(viewport), () => viewport.scrollTop = value, 100);
+    }
+
+    public getScrollPosition(): number {
+        return this.getViewport().scrollTop;
+    }
+
+    public setScrollPosition(value: number): void {
+        if (!isVisible(this.getViewport())) { this.attemptSettingScrollTop(value); }
+        this.getViewport().scrollTop = value;
     }
 }

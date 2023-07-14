@@ -20,6 +20,8 @@ export abstract class AbstractFakeScrollComp extends Component {
     protected hideTimeout: number | null = null;
 
     protected abstract setScrollVisible(): void;
+    public abstract getScrollPosition(): number;
+    public abstract setScrollPosition(value: number): void;
 
     constructor(template: string, private readonly direction: 'horizontal' | 'vertical') {
         super(template);
@@ -88,11 +90,16 @@ export abstract class AbstractFakeScrollComp extends Component {
         });
     }
 
-    public getViewport(): HTMLElement {
+    protected getViewport(): HTMLElement {
         return this.eViewport;
     }
 
     public getContainer(): HTMLElement {
         return this.eContainer;
     }
+
+    public onScrollCallback(fn: () => void): void {
+        this.addManagedListener(this.getViewport(), 'scroll', fn);
+    }
+
 }
