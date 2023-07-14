@@ -16,6 +16,7 @@ export class Group extends Node {
     readonly name?: string;
 
     @SceneChangeDetection({
+        redraw: RedrawType.MAJOR,
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
     })
     opacity: number = 1;
@@ -104,10 +105,19 @@ export class Group extends Node {
 
     markDirty(source: Node, type = RedrawType.TRIVIAL) {
         if (this.isVirtual) {
+            // Always percolate directly for virtual nodes - they don't exist for rendering purposes.
             super.markDirty(source, type);
             return;
         }
-        const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
+
+        // Downgrade dirty-ness percolated to parent in special cases.
+        let parentType = type;
+        if (type <= RedrawType.MINOR) {
+            parentType = RedrawType.TRIVIAL;
+        } else if (this.layer != null) {
+            parentType = RedrawType.TRIVIAL;
+        }
+
         super.markDirty(source, type, parentType);
     }
 
@@ -138,7 +148,15 @@ export class Group extends Node {
         const canvasCtxTransform = ctx.getTransform();
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
-        const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
+        let isChildDirty = isDirty;
+        let isChildLayerDirty = false;
+        for (const child of children) {
+            isChildDirty ||= child.layerManager == null && child.dirty >= RedrawType.TRIVIAL;
+            isChildLayerDirty ||= child.layerManager != null && child.dirty >= RedrawType.TRIVIAL;
+            if (isChildDirty) {
+                break;
+            }
+        }
 
         if (name && consoleLog) {
             Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
@@ -159,7 +177,7 @@ export class Group extends Node {
             }
         }
 
-        if (!isDirty && !isChildDirty && !forceRender) {
+        if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
                 Logger.debug({ name, result: 'skipping', renderCtx, counts, group: this });
@@ -183,8 +201,8 @@ export class Group extends Node {
             ctx.save();
             ctx.resetTransform();
 
-            forceRender = true;
-            layer.clear();
+            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender) layer.clear();
 
             if (clipBBox) {
                 // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
@@ -279,7 +297,8 @@ export class Group extends Node {
         if (layer) {
             if (stats) stats.layersRendered++;
             ctx.restore();
-            layer.snapshot();
+
+            if (forceRender) layer.snapshot();
 
             // Check for save/restore depth of zero!
             layer.context.verifyDepthZero?.();
