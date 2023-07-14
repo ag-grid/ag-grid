@@ -3,7 +3,6 @@ import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { isVisible, setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
-import { waitUntil } from "../utils/function";
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
 
@@ -53,17 +52,12 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         }
     }
 
-    private attemptSettingScrollTop(value: number) {
-        const viewport = this.getViewport();
-        waitUntil(() => isVisible(viewport), () => viewport.scrollTop = value, 100);
-    }
-
     public getScrollPosition(): number {
         return this.getViewport().scrollTop;
     }
 
     public setScrollPosition(value: number): void {
-        if (!isVisible(this.getViewport())) { this.attemptSettingScrollTop(value); }
+        if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
         this.getViewport().scrollTop = value;
     }
 }

@@ -4,6 +4,8 @@ import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
+import { isVisible } from "../utils/dom";
+import { waitUntil } from "../utils/function";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { ScrollVisibleService } from "./scrollVisibleService";
@@ -88,6 +90,11 @@ export abstract class AbstractFakeScrollComp extends Component {
                 this.hideTimeout = null;
             }, 400);
         });
+    }
+
+    protected  attemptSettingScrollPosition(value: number) {
+        const viewport = this.getViewport();
+        waitUntil(() => isVisible(viewport), () => this.setScrollPosition(value), 100);
     }
 
     protected getViewport(): HTMLElement {
