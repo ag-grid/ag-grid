@@ -1,5 +1,5 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
-import React, { useMemo, useRef, useState, memo, useContext } from 'react';
+import React, { useMemo, useRef, useState, memo, useContext, useSyncExternalStore, useCallback } from 'react';
 import { classesList, agFlushSync } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
@@ -10,7 +10,16 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
+    const ctrl = useMemo(() => context.createBean(new RowContainerCtrl(params.name)), []);
+
+    const sub = useCallback((callback: any) => {
+        const s = ctrl.subscribe.bind(ctrl);
+        return s(callback);
+    }, []);
+
+    const rowCtrlsOrdered: RowCtrl[] = useSyncExternalStore(sub, ctrl.getSnapshot.bind(ctrl));
+
+  // const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
 
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
@@ -40,7 +49,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered(useFlushSync: boolean) {
+   /*  function updateRowCtrlsOrdered(useFlushSync: boolean) {
 
         agFlushSync(useFlushSync, () => {
             setRowCtrlsOrdered(prev => {
@@ -59,7 +68,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         })
 
 
-    }
+    } */
 
     useLayoutEffectOnce(() => {
         const beansToDestroy: any[] = [];
@@ -74,13 +83,13 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                 if(rowCtrlsRef.current !== rowCtrls){
                     const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlush);
+                   // updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: domOrder => {
                 if(domOrderRef.current != domOrder){
                     domOrderRef.current = domOrder;
-                    updateRowCtrlsOrdered(false);
+                   // updateRowCtrlsOrdered(false);
                 }
             },
             setContainerWidth: width => {
@@ -90,7 +99,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             }
         };
 
-        const ctrl = context.createBean(new RowContainerCtrl(name));
         beansToDestroy.push(ctrl);
 
         ctrl.setComp(compProxy, eContainer.current!, eViewport.current!, eWrapper.current!);

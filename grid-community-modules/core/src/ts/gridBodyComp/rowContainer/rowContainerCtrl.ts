@@ -118,6 +118,8 @@ export interface IRowContainerComp {
     setContainerWidth(width: string): void;
 }
 
+let nextId = 1;
+
 export class RowContainerCtrl extends BeanStub {
 
     public static getRowContainerCssClasses(name: RowContainerName): {container?: string, viewport?: string, wrapper?: string} {
@@ -167,15 +169,71 @@ export class RowContainerCtrl extends BeanStub {
     private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
     private EMPTY_CTRLS = [];
-
+    private id = nextId++;
     constructor(name: RowContainerName) {
         super();
+
         this.name = name;
         this.isFullWithContainer =
             this.name === RowContainerName.TOP_FULL_WIDTH
             || this.name === RowContainerName.STICKY_TOP_FULL_WIDTH
             || this.name === RowContainerName.BOTTOM_FULL_WIDTH
             || this.name === RowContainerName.FULL_WIDTH;
+    }
+
+    private lastRows: any = this.EMPTY_CTRLS;
+
+
+    getSnapshot1() {
+        if (this.visible) {
+            const printLayout = this.gridOptionsService.isDomLayout('print');
+            // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
+            // row renderer, so should not block them as they still need to animate -  the row renderer
+            // will clean these up when they finish animating
+            const doesRowMatch = (rowCtrl: RowCtrl) => {
+                const fullWidthRow = rowCtrl.isFullWidth();
+                const embedFW = this.embedFullWidthRows || printLayout;
+
+                const match = this.isFullWithContainer ?
+                    !embedFW && fullWidthRow
+                    : embedFW || !fullWidthRow;
+
+                return match;
+            };
+            // this list contains either all pinned top, center or pinned bottom rows
+            // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
+            const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
+            this.lastRows = rowsThisContainer;
+        } else {
+            this.lastRows = this.EMPTY_CTRLS;
+        }
+    }
+
+    subscribe(callback: any) {
+        console.log(this.id, this.name, ' subscribing');
+
+        const updateSnapshot = () => {
+            const wasEmpty = this.lastRows.length === 0;
+            this.getSnapshot1();
+            const isEmpty = this.lastRows.length === 0;
+            if (wasEmpty && isEmpty) {
+                return;
+            }
+            console.log(this.id, this.name, ' updating snapshot', this.lastRows.length);
+            callback();
+        };
+
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, updateSnapshot);
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, updateSnapshot);
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, updateSnapshot);
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, updateSnapshot);
+        return () => {
+            console.log(this.id, this.name, ' unsubscribing');
+        };
+    }
+
+    getSnapshot(): RowCtrl[] {
+        return this?.lastRows ?? [];
     }
 
     @PostConstruct
