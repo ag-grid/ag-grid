@@ -20,4 +20,4 @@ Notice from the demonstration above that all data is charted when using the Pivo
 
 ## Next Up
 
-Continue to the next section to learn about the: [Chart Tool Panels](/integrated-charts-chart-tool-panels/).
+Continue to the next section to learn about: [Application Created Charts](/integrated-charts-application-created/).
