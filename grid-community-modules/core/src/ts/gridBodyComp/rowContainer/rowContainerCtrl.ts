@@ -11,6 +11,7 @@ import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
+import { areEqual } from "../../utils/array";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
@@ -181,7 +182,7 @@ export class RowContainerCtrl extends BeanStub {
             || this.name === RowContainerName.FULL_WIDTH;
     }
 
-    private lastRows: any = this.EMPTY_CTRLS;
+    private lastRows: RowCtrl[] = this.EMPTY_CTRLS;
 
 
     getSnapshot1() {
@@ -214,10 +215,17 @@ export class RowContainerCtrl extends BeanStub {
 
         const updateSnapshot = () => {
             const wasEmpty = this.lastRows.length === 0;
+            const rowIds = this.lastRows.map(r => r.getInstanceId());
             this.getSnapshot1();
             const isEmpty = this.lastRows.length === 0;
+            const rowIdsAfter = this.lastRows.map(r => r.getInstanceId());
+
             if (wasEmpty && isEmpty) {
                 return;
+            }
+            if (areEqual(rowIds, rowIdsAfter)) {
+                //console.log(this.id, this.name, 'rows not changed');
+                return
             }
             console.log(this.id, this.name, ' updating snapshot', this.lastRows.length);
             callback();
