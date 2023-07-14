@@ -54,8 +54,8 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replace("this.gridApi", 'gridApi.value')
-    .replace("this.gridColumnApi", 'gridColumnApi.value');
+const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value')
+    .replaceAll("this.gridColumnApi", 'gridColumnApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
