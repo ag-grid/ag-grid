@@ -202,6 +202,40 @@
     }
 
     ////////////////////////////////////////
+    // Autocomplete
+    ////////////////////////////////////////
+    .ag-autocomplete {
+        width: 100%;
+    }
+
+    .ag-autocomplete-list {
+        width: 100%;
+        min-width: 200px;
+        height: calc(var(--ag-row-height) * 6.5); // intentional
+    }
+
+    .ag-autocomplete-virtual-list-item {
+        cursor: default;
+        height: var(--ag-list-item-height);
+
+        .ag-keyboard-focus &:focus::after {
+            content: none
+        }
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-autocomplete-row-label {
+        margin: 0px var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-autocomplete-row-selected {
+        background-color: var(--ag-selected-row-background-color);
+    }
+
+    ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
 

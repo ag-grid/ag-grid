@@ -126,7 +126,6 @@ import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
-import { IFilterExpression } from "./filter/expression/iFilterExpression";
 
 export interface DetailGridInfo {
     /**

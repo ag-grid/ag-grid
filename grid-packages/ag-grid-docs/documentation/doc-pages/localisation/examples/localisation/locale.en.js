@@ -334,6 +334,7 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelSubMenu: 'SubMenu',
     ariaLabelAggregationFunction: 'Aggregation Function',
+    ariaLabelFilterExpressionAutocomplete: 'Filter Expression Autocomplete',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

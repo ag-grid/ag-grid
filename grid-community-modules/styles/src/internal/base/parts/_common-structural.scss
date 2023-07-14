@@ -1257,6 +1257,46 @@
 
     // /**
     //  ****************************
+    //  * Autocomplete
+    //  ****************************
+    // */
+    .ag-autocomplete {
+        align-items: center;
+        display: flex;
+
+        > * {
+            flex: 1 1 auto;
+        }
+    }
+
+    .ag-autocomplete-list-popup {
+        position: absolute;
+        @include ag.selectable(none);
+    }
+
+    .ag-autocomplete-list {
+        position: relative;
+    }
+
+    .ag-autocomplete-virtual-list-item {
+        display: flex;
+    }
+    
+    .ag-autocomplete-row {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .ag-autocomplete-row-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    // /**
+    //  ****************************
     //  * Pagination
     //  ****************************
     // */

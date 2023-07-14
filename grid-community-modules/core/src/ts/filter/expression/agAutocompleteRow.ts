@@ -7,7 +7,7 @@ export class AgAutocompleteRow extends Component {
     private hasHighlighting = false;
 
     constructor() {
-        super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
+        super(/* html */`<div class="ag-autocomplete-row" role="presentation"><div class="ag-autocomplete-row-label"></div></div>`);
     }
 
     public setState(value: string, selected: boolean): void {
@@ -19,13 +19,13 @@ export class AgAutocompleteRow extends Component {
     }
 
     public updateSelected(selected: boolean): void {
-        this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
+        this.addOrRemoveCssClass('ag-autocomplete-row-selected', selected);
     }
 
     public setSearchString(searchString: string): void {
         if (exists(searchString) && this.value?.toLocaleLowerCase().startsWith(searchString.toLocaleLowerCase())) {
             this.hasHighlighting = true;
-            this.getGui().innerHTML = `<b>${escapeString(this.value.slice(0, searchString.length))}</b>${escapeString(this.value.slice(searchString.length))}`;
+            this.getGui().lastElementChild!.innerHTML = `<b>${escapeString(this.value.slice(0, searchString.length))}</b>${escapeString(this.value.slice(searchString.length))}`;
         } else if (this.hasHighlighting) {
             this.hasHighlighting = false;
             this.render();
@@ -33,7 +33,7 @@ export class AgAutocompleteRow extends Component {
     }
 
     private render() {
-        // putting in blank, so if missing, at least the user can click on it
-        this.getGui().innerHTML = escapeString(this.value) ?? '&nbsp;';
+        // putting in blank if missing, so at least the user can click on it
+        this.getGui().lastElementChild!.innerHTML = escapeString(this.value) ?? '&nbsp;';
     }
 }

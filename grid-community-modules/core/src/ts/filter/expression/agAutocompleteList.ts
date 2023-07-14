@@ -6,27 +6,29 @@ import { AgAutocompleteRow } from './agAutocompleteRow';
 import { fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { PopupComponent } from '../../widgets/popupComponent';
 import { PostConstruct } from '../../context/context';
-import { AutocompleteEntry } from './agAutocomplete';
+import { AutocompleteEntry } from './autocompleteParams';
 import { exists } from '../../utils/generic';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE = /* html */
-        `<div class="ag-popup-editor ag-ltr ag-popup-child"><div class="ag-rich-select" tabindex="-1">
-            <div ref="eList" class="ag-rich-select-list"></div>
-        </div><div>`;
+        `<div class="ag-autocomplete-list-popup">
+            <div ref="eList" class="ag-autocomplete-list"></div>
+        <div>`;
 
     @RefSelector('eList') private eList: HTMLElement;
 
     private virtualList: VirtualList;
-
-    private focusAfterAttached: boolean;
 
     // as the user moves the mouse, the selectedValue changes
     private selectedValue: AutocompleteEntry;
 
     private searchString = '';
 
-    constructor(private autocompleteEntries: AutocompleteEntry[], private onConfirmed: () => void) {
+    constructor(private params: {
+        autocompleteEntries: AutocompleteEntry[];
+        onConfirmed: () => void;
+        onCancelled: () => void;
+    }) {
         super(AgAutocompleteList.TEMPLATE);
     }
 
@@ -36,28 +38,23 @@ export class AgAutocompleteList extends PopupComponent {
 
     @PostConstruct
     protected init(): void {
-        this.selectedValue = undefined as any; // TODO
-        this.focusAfterAttached = false; // TODO
-
-        this.virtualList = this.createManagedBean(new VirtualList('rich-select'));
+        this.virtualList = this.createManagedBean(new VirtualList('autocomplete'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
 
-        // if (exists(this.params.cellHeight)) {
-            //     this.virtualList.setRowHeight(this.params.cellHeight);
-        // }
-
         this.virtualList.setModel({
-            getRowCount: () => this.autocompleteEntries.length,
-            getRow: (index: number) => this.autocompleteEntries[index]
+            getRowCount: () => this.params.autocompleteEntries.length,
+            getRow: (index: number) => this.params.autocompleteEntries[index]
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 
         const virtualListGui = this.virtualList.getGui();
 
-        this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
+        this.addManagedListener(virtualListGui, 'click', () => this.params.onConfirmed());
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+
+        this.setSelectedValue(0);
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -66,10 +63,13 @@ export class AgAutocompleteList extends PopupComponent {
 
         switch (key) {
             case KeyCode.ENTER:
-                this.confirmSelection();
+                this.params.onConfirmed();
                 break;
             case KeyCode.TAB:
-                this.confirmSelection();
+                this.params.onConfirmed();
+                break;
+            case KeyCode.ESCAPE:
+                this.params.onCancelled();
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
@@ -78,20 +78,13 @@ export class AgAutocompleteList extends PopupComponent {
         }
     }
 
-    private confirmSelection(): void {
-        this.onConfirmed();
-    }
-
     public onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
-        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
+        const oldIndex = this.params.autocompleteEntries.indexOf(this.selectedValue);
         const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
 
-        if (newIndex >= 0 && newIndex < this.autocompleteEntries.length) {
-            const valueToSelect = this.autocompleteEntries[newIndex];
-            this.setSelectedValue(valueToSelect);
-        }
+        this.checkSetSelectedValue(newIndex);
     }
 
     public setSearch(searchString: string): void {
@@ -103,7 +96,7 @@ export class AgAutocompleteList extends PopupComponent {
     }
 
     private runSearch() {
-        const values = this.autocompleteEntries;
+        const values = this.params.autocompleteEntries;
         const searchStrings = values.map(v => v.displayValue ?? v.key);
 
         const topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
@@ -113,21 +106,24 @@ export class AgAutocompleteList extends PopupComponent {
         }
 
         const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
-        const topValue = values[topSuggestionIndex];
 
-        this.setSelectedValue(topValue);
+        this.setSelectedValue(topSuggestionIndex);
     }
 
     private updateSearchInList(): void {
         this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
     }
 
-    private setSelectedValue(value: AutocompleteEntry): void {
+    private checkSetSelectedValue(index: number): void {
+        if (index >= 0 && index < this.params.autocompleteEntries.length) {
+            this.setSelectedValue(index);
+        }
+    }
+
+    private setSelectedValue(index: number): void {
+        const value = this.params.autocompleteEntries[index];
+
         if (this.selectedValue === value) { return; }
-
-        const index = this.autocompleteEntries.indexOf(value);
-
-        if (index === -1) { return; }
 
         this.selectedValue = value;
         this.virtualList.ensureIndexVisible(index);
@@ -151,45 +147,15 @@ export class AgAutocompleteList extends PopupComponent {
         const scrollTop = this.virtualList.getScrollTop();
         const mouseY = mouseEvent.clientY - rect.top + scrollTop;
         const row = Math.floor(mouseY / this.virtualList.getRowHeight());
-        const value = this.autocompleteEntries[row];
 
-        // not using utils.exist() as want empty string test to pass
-        if (value !== undefined) {
-            this.setSelectedValue(value);
-        }
+        this.checkSetSelectedValue(row);
     }
 
-    private onClick(): void {
-        this.confirmSelection();
-    }
-
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
     public afterGuiAttached(): void {
-        const selectedIndex = this.autocompleteEntries.indexOf(this.selectedValue);
-
-        // we have to call this here to get the list to have the right height, ie
-        // otherwise it would not have scrolls yet and ensureIndexVisible would do nothing
         this.virtualList.refresh();
-
-        if (selectedIndex >= 0) {
-            this.virtualList.ensureIndexVisible(selectedIndex);
-        }
-
-        // we call refresh again, as the list could have moved, and we need to render the new rows
-        this.virtualList.refresh();
-
-        if (this.focusAfterAttached) {
-            const indexToSelect = selectedIndex !== -1 ? selectedIndex : 0;
-            if (this.autocompleteEntries.length) {
-                this.virtualList.focusRow(indexToSelect);
-            } else {
-                this.getGui().focus();
-            }
-        }
     }
 
-    public getSelectedValue(): string | null {
-        return this.selectedValue?.key ?? null;
+    public getSelectedValue(): AutocompleteEntry | null {
+        return this.selectedValue ?? null;
     }
 }
