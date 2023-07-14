@@ -28,6 +28,7 @@ export const LoadingSpinner = () => {
                 style={loadingStyles}
                 type="image/svg+xml"
                 data="https://ag-grid.com/images/ag-grid-loading-spinner.svg"
+                aria-label="loading"
             ></object>
             <script id="loading-script" dangerouslySetInnerHTML={{ __html: loadingScript }}></script>
         </>
