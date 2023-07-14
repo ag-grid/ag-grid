@@ -6,8 +6,6 @@ import { Events } from "../eventKeys";
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
 
-    private intervalCheck = 0;
-
     private static TEMPLATE = /* html */
         `<div class="ag-body-vertical-scroll" aria-hidden="true">
             <div class="ag-body-vertical-scroll-viewport" ref="eViewport">
