@@ -141,7 +141,7 @@ export class Group extends Node {
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect, dirtyTransform } = this;
         let { ctx, forceRender, clipBBox } = renderCtx;
         const { resized, stats } = renderCtx;
 
@@ -159,13 +159,15 @@ export class Group extends Node {
         }
 
         if (name && consoleLog) {
-            Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+            Logger.debug({ name, group: this, isDirty, isChildDirty, dirtyTransform, renderCtx, forceRender });
         }
 
-        if (layer) {
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        } else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
-            if (this.dirtyTransform || this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
+            if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
                 forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
             }
@@ -242,7 +244,7 @@ export class Group extends Node {
         const hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
             this.sortChildren(children);
-            forceRender = true;
+            if (forceRender !== 'dirtyTransform') forceRender = true;
         } else if (hasVirtualChildren) {
             this.sortChildren(children);
         }

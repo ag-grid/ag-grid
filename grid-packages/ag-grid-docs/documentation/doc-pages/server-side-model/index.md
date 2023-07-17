@@ -54,16 +54,16 @@ You may benefit from the combination of all these features or just be interested
 - **Infinite Scrolling:** Rows are read back from the server in blocks to provide the experience of infinite scrolling. This allows viewing very large datasets in the browser by only bringing back data one block of data at a time.
 
 - **Server-Side Grouping, Pivot and Aggregation:** Because the data is coming back from the server one group level at
-a time, this allows you to do aggregation on the server, returning the aggregated results for the top level parent
-rows. For example, you could include 'employee count' as an attribute on the returned manager record, to say how many
-employees a manager manages.
+    a time, this allows you to do aggregation on the server, returning the aggregated results for the top level parent
+    rows. For example, you could include 'employee count' as an attribute on the returned manager record, to say how many
+    employees a manager manages.
 
 - **Slice and Dice:** Assuming your server-side can build the data query, you can allow the user to use the Grid UI
-to drag columns around to select what columns you want to group by and aggregate on. What the user selects will then
-be forwarded to your datasource as part of the request. This feature is advanced and will require some difficult
-server-side coding from you, however when done your users will have an experience of slicing and dicing large data in
-real time, something previously only available in expensive reporting tools, which you can now embed into your
-JavaScript application.
+    to drag columns around to select what columns you want to group by and aggregate on. What the user selects will then
+    be forwarded to your datasource as part of the request. This feature is advanced and will require some difficult
+    server-side coding from you, however when done your users will have an experience of slicing and dicing large data in
+    real time, something previously only available in expensive reporting tools, which you can now embed into your
+    JavaScript application.
 
 ## Full Stack Examples
 

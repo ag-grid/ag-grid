@@ -514,6 +514,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
     private async performUpdate(count: number) {
         const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+        const seriesToUpdate = [...this.seriesToUpdate];
+
+        // Clear state immediately so that side-effects can be detected prior to SCENE_RENDER.
+        this._performUpdateType = ChartUpdateType.NONE;
+        this.seriesToUpdate.clear();
+
         this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
         const splits = [performance.now()];
 
@@ -535,8 +541,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SERIES_UPDATE:
                 const { seriesRect } = this;
-                const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
-                this.seriesToUpdate.clear();
+                const seriesUpdates = [...seriesToUpdate].map((series) => series.update({ seriesRect }));
                 await Promise.all(seriesUpdates);
 
                 splits.push(performance.now());
@@ -549,6 +554,11 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SCENE_RENDER:
+                if (this.performUpdateType <= ChartUpdateType.SERIES_UPDATE) {
+                    // A previous step modified series state, and we need to re-run SERIES_UPDATE
+                    // before rendering.
+                    break;
+                }
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.extraDebugStats = {};
             // eslint-disable-next-line no-fallthrough
