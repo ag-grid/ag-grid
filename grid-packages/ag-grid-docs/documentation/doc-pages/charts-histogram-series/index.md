@@ -108,7 +108,3 @@ series: [{
 ## API Reference
 
 <interface-documentation interfaceName='AgHistogramSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [area series](/charts-area-series/).
