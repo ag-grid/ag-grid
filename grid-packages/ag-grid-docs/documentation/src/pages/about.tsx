@@ -273,18 +273,6 @@ const AboutPage = () => {
                                     Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
                                 </p>
                             </div>
-
-                            <div>
-                                <h3>Want to work with us?</h3>
-                                <p>
-                                    {' '}
-                                    We are always looking for Javascript Developers with Enterprise Applications
-                                    experience.{' '}
-                                </p>
-                                <p>
-                                    Check the <a href="/ag-grid-jobs-board/">jobs board</a>.
-                                </p>
-                            </div>
                         </article>
                     </section>
                 </div>
