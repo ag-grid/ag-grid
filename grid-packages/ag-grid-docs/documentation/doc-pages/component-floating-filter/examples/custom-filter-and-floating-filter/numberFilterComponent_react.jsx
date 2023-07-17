@@ -28,7 +28,7 @@ export default class NumberFilterComponent extends Component {
             node,
         });        
 
-        if (!value) return false;
+        if (value == null) return false;
         return Number(value) > Number(this.state.filterText);
     }
 

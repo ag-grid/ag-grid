@@ -112,7 +112,7 @@ export class Group extends Node {
 
         // Downgrade dirty-ness percolated to parent in special cases.
         let parentType = type;
-        if (type <= RedrawType.MINOR) {
+        if (type < RedrawType.MINOR) {
             parentType = RedrawType.TRIVIAL;
         } else if (this.layer != null) {
             parentType = RedrawType.TRIVIAL;
@@ -165,15 +165,9 @@ export class Group extends Node {
         if (layer) {
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
-            if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+            if (this.dirtyTransform || this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
-            } else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
             }
         }
 
@@ -201,7 +195,9 @@ export class Group extends Node {
             ctx.save();
             ctx.resetTransform();
 
-            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
             if (forceRender) layer.clear();
 
             if (clipBBox) {

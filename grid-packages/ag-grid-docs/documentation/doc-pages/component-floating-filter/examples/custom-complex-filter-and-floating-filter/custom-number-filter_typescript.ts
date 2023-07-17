@@ -60,7 +60,7 @@ export class CustomNumberFilter implements IFilterComp {
 
         var filterValue = this.filterText;
 
-        if (!value) return false;
+        if (value == null) return false;
         return Number(value) > Number(filterValue);
     }
 

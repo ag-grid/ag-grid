@@ -19,7 +19,7 @@ export enum PointerEvents {
 
 export type RenderContext = {
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    forceRender: boolean;
+    forceRender: boolean | 'dirtyTransform';
     resized: boolean;
     clipBBox?: BBox;
     stats?: {
@@ -269,9 +269,9 @@ export abstract class Node extends ChangeDetectable {
         return matrix.transformBBox(bbox);
     }
 
-    private _dirtyTransform = false;
+    protected dirtyTransform = false;
     markDirtyTransform() {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
 
@@ -401,7 +401,7 @@ export abstract class Node extends ChangeDetectable {
     }
 
     computeTransformMatrix() {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
 
@@ -427,7 +427,7 @@ export abstract class Node extends ChangeDetectable {
 
         matrix.inverseTo(this.inverseMatrix);
 
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     }
 
     render(renderCtx: RenderContext): void {
@@ -516,7 +516,7 @@ export abstract class Node extends ChangeDetectable {
 
     get nodeCount() {
         let count = 1;
-        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
 
         const countChild = (child: Node) => {

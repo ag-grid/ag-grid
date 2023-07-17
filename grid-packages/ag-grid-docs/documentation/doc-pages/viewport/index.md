@@ -6,7 +6,8 @@ enterprise: true
 A Viewport is a row model that allows showing a 'window' of data in your client. Typically all the data will reside on the server and the server will know what data is displayed in the client. This is again useful for the server to push changes out to the client as it knows what data is currently displayed.
 
 <note>
-|Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.<br/><br/>
+|Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.
+|
 |We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
 |complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
 |[Server-Side Row Model](../server-side-model/), as an alternative.

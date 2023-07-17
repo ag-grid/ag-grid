@@ -29,7 +29,7 @@ export default {
             const value = this.params.valueGetter(params);
 
             if (this.isFilterActive()) {
-                if (!value) return false;
+                if (value == null) return false;
                 return Number(value) > Number(this.filterText);
             }
         },

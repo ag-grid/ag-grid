@@ -404,16 +404,14 @@ export abstract class CartesianSeries<
         subIndex = 0
     ): ZIndexSubOrder {
         const result = super.getGroupZIndexSubOrder(type, subIndex);
-        switch (type) {
-            case 'paths':
-                const pathOffset = this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
-                const superFn = result[0];
-                if (typeof superFn === 'function') {
-                    result[0] = () => +superFn() + pathOffset;
-                } else {
-                    result[0] = +superFn + this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
-                }
-                break;
+        if (type === 'paths') {
+            const pathOffset = this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
+            const superFn = result[0];
+            if (typeof superFn === 'function') {
+                result[0] = () => +superFn() + pathOffset;
+            } else {
+                result[0] = +superFn + pathOffset;
+            }
         }
         return result;
     }
