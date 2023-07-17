@@ -53,7 +53,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 ## Contributing
 
-AG Charts is developed by a team of co-located developers in London. If you want to join the team check send your application to info@ag-grid.com.
+AG Charts is developed by a team of co-located developers in London. If you want to join the team send your application to info@ag-grid.com.
 
 ## License
 
