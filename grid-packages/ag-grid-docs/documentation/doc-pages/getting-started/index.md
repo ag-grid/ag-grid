@@ -112,12 +112,13 @@ title: "Get Started with AG Grid"
 
 <framework-specific-section frameworks="javascript">
 | ## Getting Started with AG Grid Community
-|
-| Below we provide code for a simple AG Grid application. To get this working locally,
-| create a new application with one `index.html` page and have it served from a local web
-| server. If you are not able to set up a web server, then you can start with a new
-| JS project from [Plunker](https://plnkr.co/)
-|
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<p>Below we provide code for a simple AG Grid application. To get this working locally, create a new application with one <code>index.html</code> page and have it served from a local web server. If you are not able to set up a web server, then you can start with a new JS project from <a href="https://plnkr.co/">Plunker</a>.</p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 | ### Copy in Application Code
 |
 | Copy the content below into the file `index.html`:
@@ -524,8 +525,8 @@ title: "Get Started with AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-If everything goes well, `npm run start` has started the web server and conveniently opened a browser
-pointing to <a href="http://localhost:4200">localhost:4200</a>
+<p>If everything goes well, <code>npm run start</code> has started the web server and conveniently opened a browser
+pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 </framework-specific-section>
 <framework-specific-section frameworks="angular">
 |### Grid Dependencies
@@ -1043,17 +1044,17 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="bash">
-| npx create-react-app hello
-| cd hello
-| npm install --save ag-grid-community
-| npm install --save ag-grid-react
-| npm start
+|npx create-react-app hello
+|cd hello
+|npm install --save ag-grid-community
+|npm install --save ag-grid-react
+|npm start
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-If everything goes well, `npm start` has started the web server and conveniently opened a browser
-pointing to <a href="http://localhost:3000">localhost:3000</a>
+<p>If everything goes well, <code>npm start</code> has started the web server and conveniently opened a browser
+pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 </framework-specific-section>
 <framework-specific-section frameworks="react">
 | ### Grid Dependencies
@@ -1524,18 +1525,18 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="bash">
-| npx -p @vue/cli vue create this-place
-| cd this-place
-| npm install --save ag-grid-community
-| npm install --save ag-grid-vue3
-| npm run serve
+|npx -p @vue/cli vue create this-place
+|cd this-place
+|npm install --save ag-grid-community
+|npm install --save ag-grid-vue3
+|npm run serve
 </snippet>
 </framework-specific-section> 
 
 <framework-specific-section frameworks="vue">
-If everything went well `npm run serve` started the web server and conveniently opened a browser
+<p>If everything went well <code>npm run serve</code> started the web server and conveniently opened a browser
 pointing to <a href="http://localhost:8080">localhost:8080</a> (if the browser wasn't automatically launched simply navigate to <a href="http://localhost:8080">localhost:8080</a>
-in your browser of choice.
+in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
