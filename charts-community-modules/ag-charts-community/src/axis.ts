@@ -862,8 +862,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         const ticks: TickDatum[] = [];
 
         let labelCount = 0;
-        let prevTickId;
-        let prevTickIdIndex = 0;
+        const tickIds = new Set<string>();
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
@@ -872,12 +871,11 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             let tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = `${prevTickId}_${i - prevTickIdIndex}`;
-            } else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+            let j = 0;
+            while (tickIds.has(tickId)) {
+                tickId = `${tickLabel}_${++j}`;
             }
+            tickIds.add(tickId);
 
             ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
 
