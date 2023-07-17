@@ -88,7 +88,7 @@ class Group extends node_1.Node {
         }
         // Downgrade dirty-ness percolated to parent in special cases.
         let parentType = type;
-        if (type <= node_1.RedrawType.MINOR) {
+        if (type < node_1.RedrawType.MINOR) {
             parentType = node_1.RedrawType.TRIVIAL;
         }
         else if (this.layer != null) {
@@ -111,7 +111,7 @@ class Group extends node_1.Node {
         var _a, _b;
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect, dirtyTransform } = this;
         let { ctx, forceRender, clipBBox } = renderCtx;
         const { resized, stats } = renderCtx;
         const canvasCtxTransform = ctx.getTransform();
@@ -126,21 +126,17 @@ class Group extends node_1.Node {
             }
         }
         if (name && consoleLog) {
-            logger_1.Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+            logger_1.Logger.debug({ name, group: this, isDirty, isChildDirty, dirtyTransform, renderCtx, forceRender });
         }
-        if (layer) {
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
-            }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
             }
         }
         if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
@@ -162,7 +158,9 @@ class Group extends node_1.Node {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
             if (forceRender)
                 layer.clear();
             if (clipBBox) {
@@ -199,7 +197,8 @@ class Group extends node_1.Node {
         const hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
             this.sortChildren(children);
-            forceRender = true;
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
         }
         else if (hasVirtualChildren) {
             this.sortChildren(children);

@@ -1310,7 +1310,7 @@ var Node = /** @class */ (function (_super) {
         // for performance optimization purposes.
         _this.matrix = new Matrix();
         _this.inverseMatrix = new Matrix();
-        _this._dirtyTransform = false;
+        _this.dirtyTransform = false;
         _this.scalingX = 1;
         _this.scalingY = 1;
         /**
@@ -1543,7 +1543,7 @@ var Node = /** @class */ (function (_super) {
         return matrix.transformBBox(bbox);
     };
     Node.prototype.markDirtyTransform = function () {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     };
     Node.prototype.containsPoint = function (_x, _y) {
@@ -1630,7 +1630,7 @@ var Node = /** @class */ (function (_super) {
         return bbox;
     };
     Node.prototype.computeTransformMatrix = function () {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         var _a = this, matrix = _a.matrix, scalingX = _a.scalingX, scalingY = _a.scalingY, rotation = _a.rotation, translationX = _a.translationX, translationY = _a.translationY, scalingCenterX = _a.scalingCenterX, scalingCenterY = _a.scalingCenterY, rotationCenterX = _a.rotationCenterX, rotationCenterY = _a.rotationCenterY;
@@ -1641,7 +1641,7 @@ var Node = /** @class */ (function (_super) {
             rotationCenterY: rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     };
     Node.prototype.render = function (renderCtx) {
         var stats = renderCtx.stats;
@@ -1728,7 +1728,7 @@ var Node = /** @class */ (function (_super) {
         get: function () {
             var e_8, _a, e_9, _b;
             var count = 1;
-            var dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+            var dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
             var visibleCount = this.visible ? 1 : 0;
             var countChild = function (child) {
                 var _a = child.nodeCount, childCount = _a.count, childVisibleCount = _a.visibleCount, childDirtyCount = _a.dirtyCount;
@@ -2073,7 +2073,7 @@ var Group = /** @class */ (function (_super) {
         }
         // Downgrade dirty-ness percolated to parent in special cases.
         var parentType = type;
-        if (type <= RedrawType.MINOR) {
+        if (type < RedrawType.MINOR) {
             parentType = RedrawType.TRIVIAL;
         }
         else if (this.layer != null) {
@@ -2097,7 +2097,7 @@ var Group = /** @class */ (function (_super) {
         var _d, _e;
         var _f = this.opts, _g = _f === void 0 ? {} : _f, _h = _g.name, name = _h === void 0 ? undefined : _h;
         var _j = this._debug, _k = _j === void 0 ? {} : _j, _l = _k.consoleLog, consoleLog = _l === void 0 ? false : _l;
-        var _m = this, dirty = _m.dirty, dirtyZIndex = _m.dirtyZIndex, layer = _m.layer, children = _m.children, clipRect = _m.clipRect;
+        var _m = this, dirty = _m.dirty, dirtyZIndex = _m.dirtyZIndex, layer = _m.layer, children = _m.children, clipRect = _m.clipRect, dirtyTransform = _m.dirtyTransform;
         var ctx = renderCtx.ctx, forceRender = renderCtx.forceRender, clipBBox = renderCtx.clipBBox;
         var resized = renderCtx.resized, stats = renderCtx.stats;
         var canvasCtxTransform = ctx.getTransform();
@@ -2122,21 +2122,17 @@ var Group = /** @class */ (function (_super) {
             finally { if (e_1) throw e_1.error; }
         }
         if (name && consoleLog) {
-            Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, renderCtx: renderCtx, forceRender: forceRender });
+            Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, dirtyTransform: dirtyTransform, renderCtx: renderCtx, forceRender: forceRender });
         }
-        if (layer) {
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             var currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
-            }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
             }
         }
         if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
@@ -2158,7 +2154,9 @@ var Group = /** @class */ (function (_super) {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
             if (forceRender)
                 layer.clear();
             if (clipBBox) {
@@ -2195,7 +2193,8 @@ var Group = /** @class */ (function (_super) {
         var hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
             this.sortChildren(children);
-            forceRender = true;
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
         }
         else if (hasVirtualChildren) {
             this.sortChildren(children);
@@ -13047,7 +13046,7 @@ var SeriesStateManager = /** @class */ (function () {
             return result;
         }, new Set())
             .values()));
-        visibleGroups.sort();
+        visibleGroups.sort(function (a, b) { return a - b; });
         return { visibleGroupCount: visibleGroups.length, index: visibleGroups.indexOf(seriesGrouping.groupIndex) };
     };
     return SeriesStateManager;
@@ -13666,11 +13665,15 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.performUpdate = function (count) {
         var _a;
         return __awaiter$c(this, void 0, void 0, function () {
-            var _b, performUpdateType, extraDebugStats, splits, _c, seriesRect_1, seriesUpdates, tooltipMeta, end;
+            var _b, performUpdateType, extraDebugStats, seriesToUpdate, splits, _c, seriesRect_1, seriesUpdates, tooltipMeta, end;
             return __generator$c(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         _b = this, performUpdateType = _b._performUpdateType, extraDebugStats = _b.extraDebugStats;
+                        seriesToUpdate = __spreadArray$m([], __read$F(this.seriesToUpdate));
+                        // Clear state immediately so that side-effects can be detected prior to SCENE_RENDER.
+                        this._performUpdateType = ChartUpdateType.NONE;
+                        this.seriesToUpdate.clear();
                         this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
                         splits = [performance.now()];
                         _c = performUpdateType;
@@ -13702,8 +13705,7 @@ var Chart = /** @class */ (function (_super) {
                         _d.label = 5;
                     case 5:
                         seriesRect_1 = this.seriesRect;
-                        seriesUpdates = __spreadArray$m([], __read$F(this.seriesToUpdate)).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
-                        this.seriesToUpdate.clear();
+                        seriesUpdates = __spreadArray$m([], __read$F(seriesToUpdate)).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
                         return [4 /*yield*/, Promise.all(seriesUpdates)];
                     case 6:
                         _d.sent();
@@ -13715,7 +13717,13 @@ var Chart = /** @class */ (function (_super) {
                             this.handlePointer(tooltipMeta.event);
                         }
                         _d.label = 8;
-                    case 8: return [4 /*yield*/, this.scene.render({ debugSplitTimes: splits, extraDebugStats: extraDebugStats })];
+                    case 8:
+                        if (this.performUpdateType <= ChartUpdateType.SERIES_UPDATE) {
+                            // A previous step modified series state, and we need to re-run SERIES_UPDATE
+                            // before rendering.
+                            return [3 /*break*/, 11];
+                        }
+                        return [4 /*yield*/, this.scene.render({ debugSplitTimes: splits, extraDebugStats: extraDebugStats })];
                     case 9:
                         _d.sent();
                         this.extraDebugStats = {};
@@ -17331,20 +17339,20 @@ var Axis = /** @class */ (function () {
         var halfBandwidth = ((_b = this.scale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
         var ticks = [];
         var labelCount = 0;
-        var prevTickId;
-        var prevTickIdIndex = 0;
+        var tickIdCounts = new Map();
         for (var i = 0; i < rawTicks.length; i++) {
             var rawTick = rawTicks[i];
             var translationY = scale.convert(rawTick) + halfBandwidth;
             var tickLabel = this.formatTick(rawTick, i);
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             var tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = prevTickId + "_" + (i - prevTickIdIndex);
+            if (tickIdCounts.has(tickId)) {
+                var count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = tickId + "_" + count;
             }
             else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+                tickIdCounts.set(tickId, 1);
             }
             ticks.push({ tick: rawTick, tickId: tickId, tickLabel: tickLabel, translationY: translationY });
             if (tickLabel === '' || tickLabel == undefined) {
@@ -23349,20 +23357,18 @@ var CartesianSeries = /** @class */ (function (_super) {
         });
     };
     CartesianSeries.prototype.getGroupZIndexSubOrder = function (type, subIndex) {
-        var _a, _b;
+        var _a;
         if (subIndex === void 0) { subIndex = 0; }
         var result = _super.prototype.getGroupZIndexSubOrder.call(this, type, subIndex);
-        switch (type) {
-            case 'paths':
-                var pathOffset_1 = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
-                var superFn_1 = result[0];
-                if (typeof superFn_1 === 'function') {
-                    result[0] = function () { return +superFn_1() + pathOffset_1; };
-                }
-                else {
-                    result[0] = (_b = +superFn_1 + this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _b !== void 0 ? _b : 0;
-                }
-                break;
+        if (type === 'paths') {
+            var pathOffset_1 = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            var superFn_1 = result[0];
+            if (typeof superFn_1 === 'function') {
+                result[0] = function () { return +superFn_1() + pathOffset_1; };
+            }
+            else {
+                result[0] = +superFn_1 + pathOffset_1;
+            }
         }
         return result;
     };

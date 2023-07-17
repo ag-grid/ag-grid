@@ -309,19 +309,17 @@ class CartesianSeries extends series_1.Series {
         });
     }
     getGroupZIndexSubOrder(type, subIndex = 0) {
-        var _a, _b;
+        var _a;
         const result = super.getGroupZIndexSubOrder(type, subIndex);
-        switch (type) {
-            case 'paths':
-                const pathOffset = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
-                const superFn = result[0];
-                if (typeof superFn === 'function') {
-                    result[0] = () => +superFn() + pathOffset;
-                }
-                else {
-                    result[0] = (_b = +superFn + this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _b !== void 0 ? _b : 0;
-                }
-                break;
+        if (type === 'paths') {
+            const pathOffset = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            const superFn = result[0];
+            if (typeof superFn === 'function') {
+                result[0] = () => +superFn() + pathOffset;
+            }
+            else {
+                result[0] = +superFn + pathOffset;
+            }
         }
         return result;
     }

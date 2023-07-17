@@ -1147,7 +1147,7 @@ class Node extends ChangeDetectable {
         // for performance optimization purposes.
         this.matrix = new Matrix();
         this.inverseMatrix = new Matrix();
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
         this.scalingX = 1;
         this.scalingY = 1;
         /**
@@ -1316,7 +1316,7 @@ class Node extends ChangeDetectable {
         return matrix.transformBBox(bbox);
     }
     markDirtyTransform() {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
     containsPoint(_x, _y) {
@@ -1392,7 +1392,7 @@ class Node extends ChangeDetectable {
         return bbox;
     }
     computeTransformMatrix() {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         const { matrix, scalingX, scalingY, rotation, translationX, translationY, scalingCenterX, scalingCenterY, rotationCenterX, rotationCenterY, } = this;
@@ -1403,7 +1403,7 @@ class Node extends ChangeDetectable {
             rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     }
     render(renderCtx) {
         const { stats } = renderCtx;
@@ -1461,7 +1461,7 @@ class Node extends ChangeDetectable {
     }
     get nodeCount() {
         let count = 1;
-        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
         const countChild = (child) => {
             const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
@@ -1680,7 +1680,7 @@ class Group extends Node {
         }
         // Downgrade dirty-ness percolated to parent in special cases.
         let parentType = type;
-        if (type <= RedrawType.MINOR) {
+        if (type < RedrawType.MINOR) {
             parentType = RedrawType.TRIVIAL;
         }
         else if (this.layer != null) {
@@ -1703,7 +1703,7 @@ class Group extends Node {
         var _a, _b;
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect, dirtyTransform } = this;
         let { ctx, forceRender, clipBBox } = renderCtx;
         const { resized, stats } = renderCtx;
         const canvasCtxTransform = ctx.getTransform();
@@ -1718,21 +1718,17 @@ class Group extends Node {
             }
         }
         if (name && consoleLog) {
-            Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+            Logger.debug({ name, group: this, isDirty, isChildDirty, dirtyTransform, renderCtx, forceRender });
         }
-        if (layer) {
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
-            }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
             }
         }
         if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
@@ -1754,7 +1750,9 @@ class Group extends Node {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
             if (forceRender)
                 layer.clear();
             if (clipBBox) {
@@ -1791,7 +1789,8 @@ class Group extends Node {
         const hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
             this.sortChildren(children);
-            forceRender = true;
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
         }
         else if (hasVirtualChildren) {
             this.sortChildren(children);
@@ -10300,7 +10299,7 @@ class SeriesStateManager {
             }, new Set())
                 .values(),
         ];
-        visibleGroups.sort();
+        visibleGroups.sort((a, b) => a - b);
         return { visibleGroupCount: visibleGroups.length, index: visibleGroups.indexOf(seriesGrouping.groupIndex) };
     }
 }
@@ -10711,6 +10710,10 @@ class Chart extends Observable {
         var _a;
         return __awaiter$c(this, void 0, void 0, function* () {
             const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+            const seriesToUpdate = [...this.seriesToUpdate];
+            // Clear state immediately so that side-effects can be detected prior to SCENE_RENDER.
+            this._performUpdateType = ChartUpdateType.NONE;
+            this.seriesToUpdate.clear();
             this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
             const splits = [performance.now()];
             switch (performUpdateType) {
@@ -10730,8 +10733,7 @@ class Chart extends Observable {
                 // eslint-disable-next-line no-fallthrough
                 case ChartUpdateType.SERIES_UPDATE:
                     const { seriesRect } = this;
-                    const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
-                    this.seriesToUpdate.clear();
+                    const seriesUpdates = [...seriesToUpdate].map((series) => series.update({ seriesRect }));
                     yield Promise.all(seriesUpdates);
                     splits.push(performance.now());
                 // eslint-disable-next-line no-fallthrough
@@ -10742,6 +10744,11 @@ class Chart extends Observable {
                     }
                 // eslint-disable-next-line no-fallthrough
                 case ChartUpdateType.SCENE_RENDER:
+                    if (this.performUpdateType <= ChartUpdateType.SERIES_UPDATE) {
+                        // A previous step modified series state, and we need to re-run SERIES_UPDATE
+                        // before rendering.
+                        break;
+                    }
                     yield this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                     this.extraDebugStats = {};
                 // eslint-disable-next-line no-fallthrough
@@ -13874,20 +13881,20 @@ class Axis {
         const halfBandwidth = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
         const ticks = [];
         let labelCount = 0;
-        let prevTickId;
-        let prevTickIdIndex = 0;
+        const tickIdCounts = new Map();
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
             const tickLabel = this.formatTick(rawTick, i);
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             let tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = `${prevTickId}_${i - prevTickIdIndex}`;
+            if (tickIdCounts.has(tickId)) {
+                const count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = `${tickId}_${count}`;
             }
             else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+                tickIdCounts.set(tickId, 1);
             }
             ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
             if (tickLabel === '' || tickLabel == undefined) {
@@ -18798,19 +18805,17 @@ class CartesianSeries extends Series {
         });
     }
     getGroupZIndexSubOrder(type, subIndex = 0) {
-        var _a, _b;
+        var _a;
         const result = super.getGroupZIndexSubOrder(type, subIndex);
-        switch (type) {
-            case 'paths':
-                const pathOffset = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
-                const superFn = result[0];
-                if (typeof superFn === 'function') {
-                    result[0] = () => +superFn() + pathOffset;
-                }
-                else {
-                    result[0] = (_b = +superFn + this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _b !== void 0 ? _b : 0;
-                }
-                break;
+        if (type === 'paths') {
+            const pathOffset = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            const superFn = result[0];
+            if (typeof superFn === 'function') {
+                result[0] = () => +superFn() + pathOffset;
+            }
+            else {
+                result[0] = +superFn + pathOffset;
+            }
         }
         return result;
     }

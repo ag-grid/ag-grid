@@ -497,20 +497,18 @@ var CartesianSeries = /** @class */ (function (_super) {
         });
     };
     CartesianSeries.prototype.getGroupZIndexSubOrder = function (type, subIndex) {
-        var _a, _b;
+        var _a;
         if (subIndex === void 0) { subIndex = 0; }
         var result = _super.prototype.getGroupZIndexSubOrder.call(this, type, subIndex);
-        switch (type) {
-            case 'paths':
-                var pathOffset_1 = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
-                var superFn_1 = result[0];
-                if (typeof superFn_1 === 'function') {
-                    result[0] = function () { return +superFn_1() + pathOffset_1; };
-                }
-                else {
-                    result[0] = (_b = +superFn_1 + this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _b !== void 0 ? _b : 0;
-                }
-                break;
+        if (type === 'paths') {
+            var pathOffset_1 = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            var superFn_1 = result[0];
+            if (typeof superFn_1 === 'function') {
+                result[0] = function () { return +superFn_1() + pathOffset_1; };
+            }
+            else {
+                result[0] = +superFn_1 + pathOffset_1;
+            }
         }
         return result;
     };

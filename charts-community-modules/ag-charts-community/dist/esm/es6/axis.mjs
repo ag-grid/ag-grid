@@ -621,20 +621,20 @@ export class Axis {
         const halfBandwidth = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
         const ticks = [];
         let labelCount = 0;
-        let prevTickId;
-        let prevTickIdIndex = 0;
+        const tickIdCounts = new Map();
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
             const tickLabel = this.formatTick(rawTick, i);
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             let tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = `${prevTickId}_${i - prevTickIdIndex}`;
+            if (tickIdCounts.has(tickId)) {
+                const count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = `${tickId}_${count}`;
             }
             else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+                tickIdCounts.set(tickId, 1);
             }
             ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
             if (tickLabel === '' || tickLabel == undefined) {

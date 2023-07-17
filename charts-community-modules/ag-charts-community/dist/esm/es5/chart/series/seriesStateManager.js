@@ -59,7 +59,7 @@ var SeriesStateManager = /** @class */ (function () {
             return result;
         }, new Set())
             .values()));
-        visibleGroups.sort();
+        visibleGroups.sort(function (a, b) { return a - b; });
         return { visibleGroupCount: visibleGroups.length, index: visibleGroups.indexOf(seriesGrouping.groupIndex) };
     };
     return SeriesStateManager;

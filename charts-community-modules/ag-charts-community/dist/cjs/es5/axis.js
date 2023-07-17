@@ -760,20 +760,20 @@ var Axis = /** @class */ (function () {
         var halfBandwidth = ((_b = this.scale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
         var ticks = [];
         var labelCount = 0;
-        var prevTickId;
-        var prevTickIdIndex = 0;
+        var tickIdCounts = new Map();
         for (var i = 0; i < rawTicks.length; i++) {
             var rawTick = rawTicks[i];
             var translationY = scale.convert(rawTick) + halfBandwidth;
             var tickLabel = this.formatTick(rawTick, i);
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             var tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = prevTickId + "_" + (i - prevTickIdIndex);
+            if (tickIdCounts.has(tickId)) {
+                var count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = tickId + "_" + count;
             }
             else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+                tickIdCounts.set(tickId, 1);
             }
             ticks.push({ tick: rawTick, tickId: tickId, tickLabel: tickLabel, translationY: translationY });
             if (tickLabel === '' || tickLabel == undefined) {

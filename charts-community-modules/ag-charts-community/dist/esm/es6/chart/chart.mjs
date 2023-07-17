@@ -358,6 +358,10 @@ export class Chart extends Observable {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+            const seriesToUpdate = [...this.seriesToUpdate];
+            // Clear state immediately so that side-effects can be detected prior to SCENE_RENDER.
+            this._performUpdateType = ChartUpdateType.NONE;
+            this.seriesToUpdate.clear();
             this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
             const splits = [performance.now()];
             switch (performUpdateType) {
@@ -377,8 +381,7 @@ export class Chart extends Observable {
                 // eslint-disable-next-line no-fallthrough
                 case ChartUpdateType.SERIES_UPDATE:
                     const { seriesRect } = this;
-                    const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
-                    this.seriesToUpdate.clear();
+                    const seriesUpdates = [...seriesToUpdate].map((series) => series.update({ seriesRect }));
                     yield Promise.all(seriesUpdates);
                     splits.push(performance.now());
                 // eslint-disable-next-line no-fallthrough
@@ -389,6 +392,11 @@ export class Chart extends Observable {
                     }
                 // eslint-disable-next-line no-fallthrough
                 case ChartUpdateType.SCENE_RENDER:
+                    if (this.performUpdateType <= ChartUpdateType.SERIES_UPDATE) {
+                        // A previous step modified series state, and we need to re-run SERIES_UPDATE
+                        // before rendering.
+                        break;
+                    }
                     yield this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                     this.extraDebugStats = {};
                 // eslint-disable-next-line no-fallthrough

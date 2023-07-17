@@ -36,7 +36,7 @@ class SeriesStateManager {
             }, new Set())
                 .values(),
         ];
-        visibleGroups.sort();
+        visibleGroups.sort((a, b) => a - b);
         return { visibleGroupCount: visibleGroups.length, index: visibleGroups.indexOf(seriesGrouping.groupIndex) };
     }
 }

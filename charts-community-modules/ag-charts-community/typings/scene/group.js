@@ -150,7 +150,7 @@ var Group = /** @class */ (function (_super) {
         }
         // Downgrade dirty-ness percolated to parent in special cases.
         var parentType = type;
-        if (type <= node_1.RedrawType.MINOR) {
+        if (type < node_1.RedrawType.MINOR) {
             parentType = node_1.RedrawType.TRIVIAL;
         }
         else if (this.layer != null) {
@@ -174,7 +174,7 @@ var Group = /** @class */ (function (_super) {
         var _d, _e;
         var _f = this.opts, _g = _f === void 0 ? {} : _f, _h = _g.name, name = _h === void 0 ? undefined : _h;
         var _j = this._debug, _k = _j === void 0 ? {} : _j, _l = _k.consoleLog, consoleLog = _l === void 0 ? false : _l;
-        var _m = this, dirty = _m.dirty, dirtyZIndex = _m.dirtyZIndex, layer = _m.layer, children = _m.children, clipRect = _m.clipRect;
+        var _m = this, dirty = _m.dirty, dirtyZIndex = _m.dirtyZIndex, layer = _m.layer, children = _m.children, clipRect = _m.clipRect, dirtyTransform = _m.dirtyTransform;
         var ctx = renderCtx.ctx, forceRender = renderCtx.forceRender, clipBBox = renderCtx.clipBBox;
         var resized = renderCtx.resized, stats = renderCtx.stats;
         var canvasCtxTransform = ctx.getTransform();
@@ -199,21 +199,17 @@ var Group = /** @class */ (function (_super) {
             finally { if (e_1) throw e_1.error; }
         }
         if (name && consoleLog) {
-            logger_1.Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, renderCtx: renderCtx, forceRender: forceRender });
+            logger_1.Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, dirtyTransform: dirtyTransform, renderCtx: renderCtx, forceRender: forceRender });
         }
-        if (layer) {
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             var currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
-            }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
             }
         }
         if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
@@ -235,7 +231,9 @@ var Group = /** @class */ (function (_super) {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = isChildDirty || dirtyZIndex;
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
             if (forceRender)
                 layer.clear();
             if (clipBBox) {
@@ -272,7 +270,8 @@ var Group = /** @class */ (function (_super) {
         var hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
             this.sortChildren(children);
-            forceRender = true;
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
         }
         else if (hasVirtualChildren) {
             this.sortChildren(children);

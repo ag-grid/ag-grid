@@ -532,11 +532,15 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.performUpdate = function (count) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, performUpdateType, extraDebugStats, splits, _c, seriesRect_1, seriesUpdates, tooltipMeta, end;
+            var _b, performUpdateType, extraDebugStats, seriesToUpdate, splits, _c, seriesRect_1, seriesUpdates, tooltipMeta, end;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         _b = this, performUpdateType = _b._performUpdateType, extraDebugStats = _b.extraDebugStats;
+                        seriesToUpdate = __spreadArray([], __read(this.seriesToUpdate));
+                        // Clear state immediately so that side-effects can be detected prior to SCENE_RENDER.
+                        this._performUpdateType = ChartUpdateType.NONE;
+                        this.seriesToUpdate.clear();
                         this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
                         splits = [performance.now()];
                         _c = performUpdateType;
@@ -568,8 +572,7 @@ var Chart = /** @class */ (function (_super) {
                         _d.label = 5;
                     case 5:
                         seriesRect_1 = this.seriesRect;
-                        seriesUpdates = __spreadArray([], __read(this.seriesToUpdate)).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
-                        this.seriesToUpdate.clear();
+                        seriesUpdates = __spreadArray([], __read(seriesToUpdate)).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
                         return [4 /*yield*/, Promise.all(seriesUpdates)];
                     case 6:
                         _d.sent();
@@ -581,7 +584,13 @@ var Chart = /** @class */ (function (_super) {
                             this.handlePointer(tooltipMeta.event);
                         }
                         _d.label = 8;
-                    case 8: return [4 /*yield*/, this.scene.render({ debugSplitTimes: splits, extraDebugStats: extraDebugStats })];
+                    case 8:
+                        if (this.performUpdateType <= ChartUpdateType.SERIES_UPDATE) {
+                            // A previous step modified series state, and we need to re-run SERIES_UPDATE
+                            // before rendering.
+                            return [3 /*break*/, 11];
+                        }
+                        return [4 /*yield*/, this.scene.render({ debugSplitTimes: splits, extraDebugStats: extraDebugStats })];
                     case 9:
                         _d.sent();
                         this.extraDebugStats = {};

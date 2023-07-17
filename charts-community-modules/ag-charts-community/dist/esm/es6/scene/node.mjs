@@ -51,7 +51,7 @@ export class Node extends ChangeDetectable {
         // for performance optimization purposes.
         this.matrix = new Matrix();
         this.inverseMatrix = new Matrix();
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
         this.scalingX = 1;
         this.scalingY = 1;
         /**
@@ -220,7 +220,7 @@ export class Node extends ChangeDetectable {
         return matrix.transformBBox(bbox);
     }
     markDirtyTransform() {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
     containsPoint(_x, _y) {
@@ -296,7 +296,7 @@ export class Node extends ChangeDetectable {
         return bbox;
     }
     computeTransformMatrix() {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         const { matrix, scalingX, scalingY, rotation, translationX, translationY, scalingCenterX, scalingCenterY, rotationCenterX, rotationCenterY, } = this;
@@ -307,7 +307,7 @@ export class Node extends ChangeDetectable {
             rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     }
     render(renderCtx) {
         const { stats } = renderCtx;
@@ -365,7 +365,7 @@ export class Node extends ChangeDetectable {
     }
     get nodeCount() {
         let count = 1;
-        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
         const countChild = (child) => {
             const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;

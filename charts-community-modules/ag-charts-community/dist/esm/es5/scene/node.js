@@ -100,7 +100,7 @@ var Node = /** @class */ (function (_super) {
         // for performance optimization purposes.
         _this.matrix = new Matrix();
         _this.inverseMatrix = new Matrix();
-        _this._dirtyTransform = false;
+        _this.dirtyTransform = false;
         _this.scalingX = 1;
         _this.scalingY = 1;
         /**
@@ -333,7 +333,7 @@ var Node = /** @class */ (function (_super) {
         return matrix.transformBBox(bbox);
     };
     Node.prototype.markDirtyTransform = function () {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     };
     Node.prototype.containsPoint = function (_x, _y) {
@@ -420,7 +420,7 @@ var Node = /** @class */ (function (_super) {
         return bbox;
     };
     Node.prototype.computeTransformMatrix = function () {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         var _a = this, matrix = _a.matrix, scalingX = _a.scalingX, scalingY = _a.scalingY, rotation = _a.rotation, translationX = _a.translationX, translationY = _a.translationY, scalingCenterX = _a.scalingCenterX, scalingCenterY = _a.scalingCenterY, rotationCenterX = _a.rotationCenterX, rotationCenterY = _a.rotationCenterY;
@@ -431,7 +431,7 @@ var Node = /** @class */ (function (_super) {
             rotationCenterY: rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     };
     Node.prototype.render = function (renderCtx) {
         var stats = renderCtx.stats;
@@ -518,7 +518,7 @@ var Node = /** @class */ (function (_super) {
         get: function () {
             var e_8, _a, e_9, _b;
             var count = 1;
-            var dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+            var dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
             var visibleCount = this.visible ? 1 : 0;
             var countChild = function (child) {
                 var _a = child.nodeCount, childCount = _a.count, childVisibleCount = _a.visibleCount, childDirtyCount = _a.dirtyCount;

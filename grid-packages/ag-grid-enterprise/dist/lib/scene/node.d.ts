@@ -13,7 +13,7 @@ export declare enum PointerEvents {
 }
 export declare type RenderContext = {
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    forceRender: boolean;
+    forceRender: boolean | 'dirtyTransform';
     resized: boolean;
     clipBBox?: BBox;
     stats?: {
@@ -111,7 +111,7 @@ export declare abstract class Node extends ChangeDetectable {
     };
     transformBBox(bbox: BBox): BBox;
     inverseTransformBBox(bbox: BBox): BBox;
-    private _dirtyTransform;
+    protected dirtyTransform: boolean;
     markDirtyTransform(): void;
     scalingX: number;
     scalingY: number;
