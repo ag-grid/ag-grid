@@ -5,7 +5,7 @@ const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     let imports = [
-        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
@@ -41,7 +41,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     const { gridSettings } = bindings;
 
     const imports = [
-        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState, StrictMode} from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from 'ag-grid-react';"
     ];
@@ -309,7 +309,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 }
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(<StrictMode><GridExample /></StrictMode>);
 `;
 
 

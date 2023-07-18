@@ -38,10 +38,10 @@
             css: {
             },
             react: {
-                main: './umd/react.profiling.min.js'
+                main: './umd/react.development.js'
             },
             'react-dom': {
-                main: './umd/react-dom.profiling.min.js'
+                main: './umd/react-dom.development.js'
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js'
