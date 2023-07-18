@@ -15,6 +15,7 @@ const validation_1 = require("../../util/validation");
 const bbox_1 = require("../../scene/bbox");
 class Navigator extends module_1.BaseModuleInstance {
     constructor(ctx) {
+        var _a;
         super();
         this.ctx = ctx;
         this.rs = new rangeSelector_1.RangeSelector();
@@ -39,7 +40,7 @@ class Navigator extends module_1.BaseModuleInstance {
             ctx.layoutService.addListener('before-series', (event) => this.layout(event)),
             ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
         ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
-        ctx.scene.root.appendChild(this.rs);
+        (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.appendChild(this.rs);
         this.destroyFns.push(() => { var _a; return (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.removeChild(this.rs); });
         this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
         this.updateGroupVisibility();

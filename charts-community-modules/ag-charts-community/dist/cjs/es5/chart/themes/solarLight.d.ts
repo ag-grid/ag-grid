@@ -1,6 +1,5 @@
 import { ChartTheme } from './chartTheme';
-import { AgChartThemePalette } from '../agChartOptions';
+import type { AgChartThemePalette } from '../agChartOptions';
 export declare class SolarLight extends ChartTheme {
     protected getPalette(): AgChartThemePalette;
 }
-//# sourceMappingURL=solarLight.d.ts.map

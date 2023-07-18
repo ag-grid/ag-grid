@@ -24,7 +24,7 @@ class NumberFilter implements IFilterComp {
         this.gui.innerHTML =
             '<div style="padding: 4px;">' +
             '<div style="font-weight: bold;">Greater than: </div>' +
-            '<div><input style="margin: 4px 0px 4px 0px;" type="number" id="filterText" placeholder="Number of medals..."/></div>' +
+        '<div><input style="margin: 4px 0px 4px 0px;" type="number" id="filterText" min="0" placeholder="Number of medals..."/></div>' +
             '</div>'
 
         this.onFilterChanged = () => {
@@ -64,7 +64,7 @@ class NumberFilter implements IFilterComp {
 
         const filterValue = this.filterText;
 
-        if (!value) return false;
+        if (value == null) return false;
         return Number(value) > Number(filterValue);
     }
 

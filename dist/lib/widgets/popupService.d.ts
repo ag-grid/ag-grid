@@ -32,8 +32,8 @@ export interface AgPopup {
     wrapper: HTMLElement;
     hideFunc: () => void;
     isAnchored: boolean;
-    stopAnchoringPromise: AgPromise<Function>;
     instanceId: number;
+    stopAnchoringPromise?: AgPromise<() => void>;
 }
 export interface AddPopupParams {
     modal?: boolean;
@@ -49,7 +49,6 @@ export interface AddPopupParams {
 }
 export interface AddPopupResult {
     hideFunc: () => void;
-    stopAnchoringPromise: AgPromise<Function>;
 }
 export declare class PopupService extends BeanStub {
     private focusService;
@@ -79,8 +78,14 @@ export declare class PopupService extends BeanStub {
     getPopupList(): AgPopup[];
     private getParentRect;
     private keepXYWithinBounds;
-    private keepPopupPositionedRelativeTo;
     addPopup(params: AddPopupParams): AddPopupResult;
+    private initialisePopupPosition;
+    private createPopupWrapper;
+    private addEventListenersToPopup;
+    private addPopupToPopupList;
+    setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined;
+    private removePopupFromPopupList;
+    private keepPopupPositionedRelativeTo;
     hasAnchoredPopup(): boolean;
     private isEventFromCurrentPopup;
     isElementWithinCustomPopup(el: HTMLElement): boolean;

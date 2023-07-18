@@ -18,4 +18,8 @@ export interface IFrameworkOverrides {
     dispatchEvent(eventType: string, listener: () => {}, global: boolean): void;
     frameworkComponent(name: string, components?: any): any;
     isFrameworkComponent(comp: any): boolean;
+    /**
+     * Which rendering engine is used for the grid components. Can be either 'vanilla' or 'react'.
+     */
+    renderingEngine: 'vanilla' | 'react';
 }

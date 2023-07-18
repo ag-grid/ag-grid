@@ -403,8 +403,7 @@ const GridExample = () => {
                         animateRows={true}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
-                    >
-                    </AgGridReact>
+                    />
                 </div>
             </div>
 

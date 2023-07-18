@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -31,6 +31,27 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -267,10 +288,17 @@ var ClipboardService = /** @class */ (function (_super) {
         var updatedRowNodes = [];
         var focusedCell = this.focusService.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+        var nodesToRefresh = __spreadArray([], __read(updatedRowNodes));
         if (changedPath) {
             this.clientSideRowModel.doAggregate(changedPath);
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst(function (rowNode) {
+                nodesToRefresh.push(rowNode);
+            });
         }
-        this.rowRenderer.refreshCells();
+        // clipboardService has to do changeDetection itself, to prevent repeat logic in favour of batching.
+        // changeDetectionService is disabled for this action.
+        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
         // if using the clipboard hack with a temp element, then the focus has been lost,
@@ -961,7 +989,7 @@ var ClipboardService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var ClipboardModule = {
     version: VERSION,

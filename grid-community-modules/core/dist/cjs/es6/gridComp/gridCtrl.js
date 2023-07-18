@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -52,16 +46,16 @@ class GridCtrl extends beanStub_1.BeanStub {
         return ((_a = el === null || el === void 0 ? void 0 : el.getAttribute('row-id')) === null || _a === void 0 ? void 0 : _a.startsWith('detail')) || false;
     }
     showDropZones() {
-        return moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.context.getGridId());
+        return moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.context.getGridId());
     }
     showSideBar() {
-        return moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SideBarModule, this.context.getGridId());
+        return moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.SideBarModule, this.context.getGridId());
     }
     showStatusBar() {
-        return moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.StatusBarModule, this.context.getGridId());
+        return moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.StatusBarModule, this.context.getGridId());
     }
     showWatermark() {
-        return moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        return moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     }
     onGridSizeChanged() {
         const event = {

@@ -1,5 +1,5 @@
-import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
-import { InteractionEvent } from '../interaction/interactionManager';
+import type { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
+import type { InteractionEvent } from '../interaction/interactionManager';
 export interface TooltipMeta {
     pageX: number;
     pageY: number;

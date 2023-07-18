@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -45,7 +45,6 @@ export declare class TabGuardCtrl extends BeanStub {
     private onFocusIn;
     private onFocusOut;
     onTabKeyDown(e: KeyboardEvent): void;
-    getGridTabIndex(): string;
     focusInnerElement(fromBottom?: boolean): void;
     getNextFocusableElement(backwards?: boolean): HTMLElement | null;
     forceFocusOutOfContainer(up?: boolean): void;

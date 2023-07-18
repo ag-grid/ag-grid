@@ -35,8 +35,7 @@ const App = () => {
                 comps={{
                     cellRenderer: CellRenderer
                 }}
-                modules={[ClientSideRowModelModule]}>
-            </AgGridReact>
+                modules={[ClientSideRowModelModule]} />
         </div>
     );
 };

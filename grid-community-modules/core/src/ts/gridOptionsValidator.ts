@@ -56,13 +56,6 @@ export class GridOptionsValidator {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
 
-        if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            if (!this.gridOptionsService.is('pagination')) {
-                console.warn(`AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.`);
-                this.gridOptions.domLayout = 'normal';
-            }
-        }
-
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
@@ -79,12 +72,12 @@ export class GridOptionsValidator {
         }
 
         if (this.gridOptionsService.is('enableRangeSelection')) {
-            ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection', this.gridOptionsService.getGridId());
+            ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection', this.gridOptionsService.getGridId());
         } else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
-        const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop, this.gridOptionsService.getGridId());
+        const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.__assertRegistered(module, prop, this.gridOptionsService.getGridId());
 
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
         // It is possible to use the SideBar only with your own custom tool panels.

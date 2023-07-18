@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -83,6 +77,9 @@ var CellCtrl = /** @class */ (function (_super) {
         _this.addFeatures();
         return _this;
     }
+    CellCtrl.prototype.shouldRestoreFocus = function () {
+        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
+    };
     CellCtrl.prototype.addFeatures = function () {
         var _this = this;
         this.cellPositionFeature = new cellPositionFeature_1.CellPositionFeature(this, this.beans);

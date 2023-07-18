@@ -61,7 +61,7 @@ var Text = /** @class */ (function (_super) {
     };
     Object.defineProperty(Text.prototype, "font", {
         get: function () {
-            if (this._dirtyFont) {
+            if (this._font == null || this._dirtyFont) {
                 this._dirtyFont = false;
                 this._font = getFont(this);
             }
@@ -413,6 +413,16 @@ var Text = /** @class */ (function (_super) {
             finally { if (e_3) throw e_3.error; }
         }
         return lines;
+    };
+    Text.prototype.setFont = function (props) {
+        this.fontFamily = props.fontFamily;
+        this.fontSize = props.fontSize;
+        this.fontStyle = props.fontStyle;
+        this.fontWeight = props.fontWeight;
+    };
+    Text.prototype.setAlign = function (props) {
+        this.textAlign = props.textAlign;
+        this.textBaseline = props.textBaseline;
     };
     Text.className = 'Text';
     // The default line spacing for document editors is usually 1.15

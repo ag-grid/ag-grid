@@ -9,8 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryAxis = void 0;
 const validation_1 = require("../../util/validation");
 const bandScale_1 = require("../../scale/bandScale");
-const chartAxis_1 = require("../chartAxis");
-class CategoryAxis extends chartAxis_1.ChartAxis {
+const cartesianAxis_1 = require("./cartesianAxis");
+class CategoryAxis extends cartesianAxis_1.CartesianAxis {
     constructor(moduleCtx) {
         super(moduleCtx, new bandScale_1.BandScale());
         this._paddingOverrideEnabled = false;
@@ -32,9 +32,14 @@ class CategoryAxis extends chartAxis_1.ChartAxis {
         return this.scale.paddingOuter;
     }
     normaliseDataDomain(d) {
+        var _a;
+        var _b;
         // Prevent duplicate categories.
-        const valuesSet = new Set(d);
-        return new Array(...valuesSet.values());
+        const valuesSet = {};
+        for (const next of d) {
+            (_a = valuesSet[_b = String(next)]) !== null && _a !== void 0 ? _a : (valuesSet[_b] = next);
+        }
+        return Object.values(valuesSet);
     }
     calculateDomain() {
         if (!this._paddingOverrideEnabled) {

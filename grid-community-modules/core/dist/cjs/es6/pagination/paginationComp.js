@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32,10 +26,12 @@ class PaginationComp extends component_1.Component {
     postConstruct() {
         const isRtl = this.gridOptionsService.is('enableRtl');
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
-        this.btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
-        this.btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
-        this.btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
+        const { btFirst, btPrevious, btNext, btLast } = this;
+        this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
+        btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
+        btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
+        btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
+        btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
         this.onPaginationChanged();
@@ -115,16 +111,16 @@ class PaginationComp extends component_1.Component {
                     <span id="ag-${compId}-row-count" ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel" role="presentation">
-                    <div ref="btFirst" class="ag-paging-button" role="button" aria-label="${strFirst}"></div>
-                    <div ref="btPrevious" class="ag-paging-button" role="button" aria-label="${strPrevious}"></div>
+                    <div ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
+                    <div ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
                     <span class="ag-paging-description" role="status">
                         <span id="ag-${compId}-start-page">${strPage}</span>
                         <span id="ag-${compId}-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>
                         <span id="ag-${compId}-of-page-number" ref="lbTotal" class="ag-paging-number"></span>
                     </span>
-                    <div ref="btNext" class="ag-paging-button" role="button" aria-label="${strNext}"></div>
-                    <div ref="btLast" class="ag-paging-button" role="button" aria-label="${strLast}"></div>
+                    <div ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}"></div>
+                    <div ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}"></div>
                 </span>
             </div>`;
     }
@@ -160,12 +156,6 @@ class PaginationComp extends component_1.Component {
     toggleButtonDisabled(button, disabled) {
         aria_1.setAriaDisabled(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
-        if (disabled) {
-            button.removeAttribute('tabindex');
-        }
-        else {
-            button.setAttribute('tabindex', '0');
-        }
     }
     updateRowLabels() {
         const currentPage = this.paginationProxy.getCurrentPage();

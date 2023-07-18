@@ -64,15 +64,16 @@ function parseFormatter(formatter) {
 }
 function format(formatter) {
     const options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
-    const { fill, align, sign = '-', symbol, zero, width, comma, type, prefix = '', suffix = '' } = options;
-    let { precision, trim } = options;
+    const { fill, align, sign = '-', symbol, zero, width, comma, type, prefix = '', suffix = '', precision } = options;
+    let { trim } = options;
+    const precisionIsNaN = precision === undefined || isNaN(precision);
     let formatBody;
     if (!type) {
         formatBody = decimalTypes['g'];
         trim = true;
     }
     else if (type in decimalTypes && type in integerTypes) {
-        formatBody = isNaN(precision) ? integerTypes[type] : decimalTypes[type];
+        formatBody = precisionIsNaN ? integerTypes[type] : decimalTypes[type];
     }
     else if (type in decimalTypes) {
         formatBody = decimalTypes[type];
@@ -83,11 +84,15 @@ function format(formatter) {
     else {
         throw new Error(`The number formatter type is invalid: ${type}`);
     }
-    if (isNaN(precision)) {
-        precision = type ? 6 : 12;
+    let formatterPrecision;
+    if (precision == null || precisionIsNaN) {
+        formatterPrecision = type ? 6 : 12;
+    }
+    else {
+        formatterPrecision = precision;
     }
     return (n) => {
-        let result = formatBody(n, precision);
+        let result = formatBody(n, formatterPrecision);
         if (trim) {
             result = removeTrailingZeros(result);
         }
@@ -107,7 +112,7 @@ function format(formatter) {
         if (type === '%' || type === 'p') {
             result = `${result}%`;
         }
-        if (!isNaN(width)) {
+        if (width != null && !isNaN(width)) {
             result = addPadding(result, width, fill !== null && fill !== void 0 ? fill : zero, align);
         }
         result = `${prefix}${result}${suffix}`;
@@ -235,7 +240,8 @@ function addPadding(numString, width, fill = ' ', align = '>') {
 }
 function tickFormat(ticks, formatter) {
     const options = parseFormatter(formatter !== null && formatter !== void 0 ? formatter : ',f');
-    if (isNaN(options.precision)) {
+    const { precision } = options;
+    if (precision == null || isNaN(precision)) {
         if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max(...ticks.map((x) => {
                 if (typeof x !== 'number' || x === 0) {

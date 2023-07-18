@@ -1,18 +1,19 @@
 import { Group } from '../../scene/group';
-import { ChartLegendDatum } from '../legendDatum';
-import { Observable, TypedEvent } from '../../util/observable';
-import { ChartAxis } from '../chartAxis';
-import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
-import { SizedPoint, Point } from '../../scene/point';
-import { BBox } from '../../scene/bbox';
-import { AnimationManager } from '../interaction/animationManager';
-import { ChartEventManager } from '../interaction/chartEventManager';
-import { HighlightManager } from '../interaction/highlightManager';
+import type { ChartLegendDatum } from '../legendDatum';
+import type { TypedEvent } from '../../util/observable';
+import { Observable } from '../../util/observable';
+import type { ChartAxis } from '../chartAxis';
+import type { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
+import type { SizedPoint, Point } from '../../scene/point';
+import type { BBox } from '../../scene/bbox';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition } from '../data/dataModel';
+import type { AgChartInteractionRange } from '../agChartOptions';
+import type { DatumPropertyDefinition, ScopeProvider } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
+import type { DataController } from '../data/dataController';
+import type { SeriesGrouping } from './seriesStateManager';
+import type { ZIndexSubOrder } from '../../scene/node';
 /**
  * Processed series datum used in node selections,
  * contains information used to render pie sectors, bars, markers, etc.
@@ -39,14 +40,17 @@ export declare type SeriesNodePickMatch = {
     datum: SeriesNodeDatum;
     distance: number;
 };
-export declare function keyProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
-export declare function valueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
-export declare function rangedValueProperty<K>(propName: K, opts?: Partial<DatumPropertyDefinition<K>> & {
+export declare function keyProperty<K>(scope: ScopeProvider, propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function valueProperty<K>(scope: ScopeProvider, propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function rangedValueProperty<K>(scope: ScopeProvider, propName: K, opts?: Partial<DatumPropertyDefinition<K>> & {
     min?: number | undefined;
     max?: number | undefined;
 }): DatumPropertyDefinition<K>;
-export declare function accumulativeValueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
-export declare function trailingAccumulatedValueProperty<K>(propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function accumulativeValueProperty<K>(scope: ScopeProvider, propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function trailingAccumulatedValueProperty<K>(scope: ScopeProvider, propName: K, continuous: boolean, opts?: Partial<DatumPropertyDefinition<K>>): DatumPropertyDefinition<K>;
+export declare function groupAccumulativeValueProperty<K>(scope: ScopeProvider, propName: K, continuous: boolean, mode: 'normal' | 'trailing' | 'window' | 'window-trailing', sum: "current" | "last" | undefined, opts: Partial<DatumPropertyDefinition<K>> & {
+    groupId: string;
+}): (import("../data/dataModel").GroupValueProcessorDefinition<any, any> | DatumPropertyDefinition<K>)[];
 export declare class SeriesNodeBaseClickEvent<Datum extends {
     datum: any;
 }> implements TypedEvent {
@@ -110,14 +114,11 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     readonly labelGroup?: Group;
     chart?: {
         mode: 'standalone' | 'integrated';
+        debug: boolean;
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
-    animationManager?: AnimationManager;
-    chartEventManager?: ChartEventManager;
-    highlightManager?: HighlightManager;
-    xAxis?: ChartAxis;
-    yAxis?: ChartAxis;
+    axes: Record<ChartAxisDirection, ChartAxis | undefined>;
     directions: ChartAxisDirection[];
     private directionKeys;
     private directionNames;
@@ -134,17 +135,20 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     pickModes: SeriesNodePickMode[];
     cursor: string;
     nodeClickRange: AgChartInteractionRange;
+    seriesGrouping?: SeriesGrouping;
+    private onSeriesGroupingChange;
     getBandScalePadding(): {
         inner: number;
         outer: number;
     };
     _declarationOrder: number;
     protected readonly ctx: ModuleContext;
-    constructor(opts: {
+    constructor(seriesOpts: {
         moduleCtx: ModuleContext;
         useSeriesGroupLayer?: boolean;
         useLabelLayer?: boolean;
         pickModes?: SeriesNodePickMode[];
+        contentGroupVirtual?: boolean;
         directionKeys?: {
             [key in ChartAxisDirection]?: string[];
         };
@@ -152,6 +156,7 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
             [key in ChartAxisDirection]?: string[];
         };
     });
+    getGroupZIndexSubOrder(type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths', subIndex?: number): ZIndexSubOrder;
     addChartEventListeners(): void;
     destroy(): void;
     private getDirectionValues;
@@ -159,7 +164,7 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     getNames(direction: ChartAxisDirection): (string | undefined)[];
     protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection;
     abstract getDomain(direction: ChartAxisDirection): any[];
-    abstract processData(): Promise<void>;
+    abstract processData(dataController: DataController): Promise<void>;
     abstract createNodeData(): Promise<C[]>;
     markNodeDataDirty(): void;
     visibleChanged(): void;

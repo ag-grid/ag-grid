@@ -1,7 +1,6 @@
-import {
+import type {
     AgChartOptions,
     AgCartesianChartOptions,
-    AgCartesianAxisOptions,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
@@ -16,24 +15,21 @@ import {
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
-import { Series } from './series/series';
+import type { Series } from './series/series';
+import { getAxis } from './factory/axisTypes';
 import { getSeries } from './factory/seriesTypes';
-import { AreaSeries } from './series/cartesian/areaSeries';
-import { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
-import { HistogramSeries } from './series/cartesian/histogramSeries';
-import { LineSeries } from './series/cartesian/lineSeries';
-import { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle } from './series/polar/pieSeries';
-import { TreemapSeries } from './series/hierarchy/treemapSeries';
-import { ChartAxis } from './chartAxis';
-import { LogAxis } from './axis/logAxis';
-import { NumberAxis } from './axis/numberAxis';
-import { CategoryAxis } from './axis/categoryAxis';
-import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { TimeAxis } from './axis/timeAxis';
-import { Chart } from './chart';
+import type { AreaSeries } from './series/cartesian/areaSeries';
+import type { BarSeries, ColumnSeries } from './series/cartesian/barSeries';
+import type { HistogramSeries } from './series/cartesian/histogramSeries';
+import type { LineSeries } from './series/cartesian/lineSeries';
+import type { ScatterSeries } from './series/cartesian/scatterSeries';
+import type { PieSeries } from './series/polar/pieSeries';
+import { PieTitle } from './series/polar/pieSeries';
+import type { TreemapSeries } from './series/hierarchy/treemapSeries';
+import type { ChartAxis } from './chartAxis';
+import type { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
-import { TypedEventListener } from '../util/observable';
+import type { TypedEventListener } from '../util/observable';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import {
     prepareOptions,
@@ -43,9 +39,9 @@ import {
     optionsType,
     noDataCloneMergeOptions,
 } from './mapping/prepare';
-import { SeriesOptionsTypes } from './mapping/defaults';
+import type { SeriesOptionsTypes } from './mapping/defaults';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, RootModule } from '../util/module';
+import type { AxisOptionModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { getJsonApplyOptions } from './chartOptions';
 
@@ -231,7 +227,7 @@ abstract class AgChartInternal {
     ) {
         AgChartInternal.initialiseModules();
 
-        debug('>>> createOrUpdate() user options', userOptions);
+        debug('>>> AgChartV2.createOrUpdate() user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG() === true) {
             mixinOpts['debug'] = true;
@@ -286,8 +282,8 @@ abstract class AgChartInternal {
 
         const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? chart.userOptions;
         const userOptions = jsonMerge([lastUpdateOptions, deltaOptions]);
-        debug('>>> updateUserDelta() user delta', deltaOptions);
-        debug('base options', lastUpdateOptions);
+        debug('>>> AgChartV2.updateUserDelta() user delta', deltaOptions);
+        debug('AgChartV2.updateUserDelta() - base options', lastUpdateOptions);
         AgChartInternal.createOrUpdate(userOptions as any, proxy);
     }
 
@@ -393,7 +389,7 @@ abstract class AgChartInternal {
 
         if (chart.destroyed) return;
 
-        debug('applying delta', processedOptions);
+        debug('AgChartV2.updateDelta() - applying delta', processedOptions);
         applyChartOptions(chart, processedOptions, userOptions);
     }
 }
@@ -409,10 +405,10 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const modulesChanged = applyModules(chart, completeOptions);
 
     const skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
-    if (isAgCartesianChartOptions(processedOptions)) {
+    if (isAgCartesianChartOptions(processedOptions) || isAgPolarChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
-    } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
+    } else if (isAgHierarchyChartOptions(processedOptions)) {
         // Use defaults.
     } else {
         throw new Error(
@@ -432,7 +428,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         applySeries(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if (isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
+    if ('axes' in processedOptions && Array.isArray(processedOptions.axes)) {
         const axesPresent = applyAxes(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
@@ -457,7 +453,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
 
     const majorChange = forceNodeDataRefresh || modulesChanged;
     const updateType = majorChange ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
-    debug('chart update type', { updateType: ChartUpdateType[updateType] });
+    debug('AgChartV2.applyChartOptions() - update type', ChartUpdateType[updateType]);
     chart.update(updateType, { forceNodeDataRefresh });
 }
 
@@ -508,7 +504,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
                 return;
             }
 
-            debug(`applying series diff idx ${i}`, seriesDiff);
+            debug(`AgChartV2.applySeries() - applying series diff idx ${i}`, seriesDiff);
 
             applySeriesValues(s as any, seriesDiff, { path: `series[${i}]`, index: i });
             s.markNodeDataDirty();
@@ -537,7 +533,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
                 const previousOpts = oldOpts.axes?.[i] ?? {};
                 const axisDiff = jsonDiff(previousOpts, optAxes[i]) as any;
 
-                debug(`applying axis diff idx ${i}`, axisDiff);
+                debug(`AgChartV2.applyAxes() - applying axis diff idx ${i}`, axisDiff);
 
                 const path = `axes[${i}]`;
                 const skip = ['axes[].type'];
@@ -556,7 +552,7 @@ function applyLegend(chart: Chart, options: AgChartOptions) {
     chart.setLegendInit((legend) => {
         applyOptionValues(legend, options.legend ?? {}, { skip });
         if (options.legend?.listeners) {
-            Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
+            Object.assign(chart.legend?.listeners, options.legend.listeners ?? {});
         }
     });
 }
@@ -568,7 +564,7 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     let index = 0;
     for (const seriesOptions of options ?? []) {
         const path = `series[${index++}]`;
-        const seriesInstance = getSeries(seriesOptions.type!, moduleContext);
+        const seriesInstance = getSeries(seriesOptions.type ?? 'unknown', moduleContext);
         applySeriesValues(seriesInstance, seriesOptions, { path, index });
         series.push(seriesInstance);
     }
@@ -576,34 +572,14 @@ function createSeries(chart: Chart, options: SeriesOptionsTypes[]): Series[] {
     return series;
 }
 
-function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[] {
-    const axes: ChartAxis<any>[] = [];
+function createAxis(chart: Chart, options: AgBaseAxisOptions[]): ChartAxis[] {
+    const axes: ChartAxis[] = [];
     const skip = ['axes[].type'];
     const moduleContext = chart.getModuleContext();
 
     let index = 0;
     for (const axisOptions of options ?? []) {
-        let axis;
-        switch (axisOptions.type) {
-            case 'number':
-                axis = new NumberAxis(moduleContext);
-                break;
-            case LogAxis.type:
-                axis = new LogAxis(moduleContext);
-                break;
-            case CategoryAxis.type:
-                axis = new CategoryAxis(moduleContext);
-                break;
-            case GroupedCategoryAxis.type:
-                axis = new GroupedCategoryAxis(moduleContext);
-                break;
-            case TimeAxis.type:
-                axis = new TimeAxis(moduleContext);
-                break;
-            default:
-                throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
-        }
-
+        const axis = getAxis(axisOptions.type, moduleContext);
         const path = `axes[${index++}]`;
         applyAxisModules(axis, axisOptions);
         applyOptionValues(axis, axisOptions, { path, skip });
@@ -614,9 +590,9 @@ function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[
     return axes;
 }
 
-function applyAxisModules(axis: ChartAxis<any>, options: AgBaseAxisOptions) {
+function applyAxisModules(axis: ChartAxis, options: AgBaseAxisOptions) {
     let modulesChanged = false;
-    const rootModules = REGISTERED_MODULES.filter((m): m is AxisModule => m.type === 'axis');
+    const rootModules = REGISTERED_MODULES.filter((m): m is AxisOptionModule => m.type === 'axis-option');
 
     for (const next of rootModules) {
         const shouldBeEnabled = (options as any)[next.optionsKey] != null;
@@ -649,7 +625,11 @@ function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) 
     }
 }
 
-function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {
+function applyOptionValues<T extends object, S>(
+    target: T,
+    options?: S,
+    { skip, path }: { skip?: string[]; path?: string } = {}
+): T {
     const applyOpts = {
         ...getJsonApplyOptions(),
         skip,
@@ -663,7 +643,7 @@ function applySeriesValues(
     options?: SeriesOptionType<any>,
     { path, index }: { path?: string; index?: number } = {}
 ): Series<any> {
-    const skip: string[] = ['series[].listeners'];
+    const skip: string[] = ['series[].listeners', 'series[].seriesGrouping'];
     const jsonApplyOptions = getJsonApplyOptions();
     const ctrs = jsonApplyOptions.constructors ?? {};
     const seriesTypeOverrides = {
@@ -686,6 +666,19 @@ function applySeriesValues(
     const listeners = options?.listeners;
     if (listeners != null) {
         registerListeners(target, listeners as unknown as { [key: string]: Function });
+    }
+
+    const seriesGrouping = (options as any).seriesGrouping;
+    if ('seriesGrouping' in (options ?? {})) {
+        if (seriesGrouping) {
+            const newSeriesGroup = Object.freeze({
+                ...(target.seriesGrouping ?? {}),
+                ...seriesGrouping,
+            });
+            target.seriesGrouping = newSeriesGroup;
+        } else {
+            target.seriesGrouping = seriesGrouping;
+        }
     }
 
     return result;

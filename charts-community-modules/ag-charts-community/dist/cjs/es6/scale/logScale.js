@@ -142,9 +142,9 @@ class LogScale extends continuousScale_1.ContinuousScale {
     tickFormat({ count, ticks, specifier, }) {
         const { base } = this;
         if (specifier == null) {
-            specifier = (base === 10 ? '.0e' : ',');
+            specifier = base === 10 ? '.0e' : ',';
         }
-        if (typeof specifier !== 'function') {
+        if (typeof specifier === 'string') {
             specifier = numberFormat_1.format(specifier);
         }
         if (count === Infinity) {

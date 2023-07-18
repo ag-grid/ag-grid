@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { Logger } from '../../util/logger';
 
-import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
     DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
     DATA_INTERNET_EXPLORER_MARKET_SHARE_BAD_Y_VALUE,
@@ -57,13 +57,14 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const dataFileContent = dataFileExists ? cleanJs(fs.readFileSync(dataFile)) : [];
     const exampleFileLines = cleanJs(fs.readFileSync(exampleFile));
 
-    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; return ${evalFn};`;
     // @ts-ignore - used in the eval() call.
     const agCharts = require('../../main');
     // @ts-ignore - used in the eval() call.
     const { AgChart, time, Marker } = agCharts;
     try {
-        return eval(evalExpr);
+        const exampleRunFn = new Function('agCharts', 'AgChart', 'time', 'Marker', evalExpr);
+        return exampleRunFn(agCharts, AgChart, time, Marker);
     } catch (error) {
         Logger.error(`unable to read example data for [${name}]; error: ${error.message}`);
         Logger.debug(evalExpr);
@@ -1058,6 +1059,78 @@ export const BAR_TIME_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
         {
             type: 'number',
             position: 'bottom',
+        },
+    ],
+};
+
+export const COLUMN_SINGLE_DATE_CATEGORY_AXIS: AgCartesianChartOptions = {
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'column',
+            grouped: false,
+            xKey: 'Created',
+            yKey: 'IncidentID',
+            yName: 'Incident ID',
+        },
+    ],
+    data: [
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 3,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 4,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 5,
+        },
+    ],
+};
+
+export const COLUMN_SINGLE_DATE_TIME_AXIS: AgCartesianChartOptions = {
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'column',
+            grouped: false,
+            xKey: 'Created',
+            yKey: 'IncidentID',
+            yName: 'Incident ID',
+        },
+    ],
+    data: [
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 3,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 4,
+        },
+        {
+            Created: new Date('2023-06-09T13:36:28.668Z'),
+            IncidentID: 5,
         },
     ],
 };

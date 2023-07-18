@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -85,6 +79,11 @@ class RowContainerComp extends component_1.Component {
                 this.ensureDomOrder(existingRowComp.getGui());
             }
             else {
+                // don't create new row comps for rows which are not displayed. still want the existing components
+                // as they may be animating out.
+                if (!rowCon.getRowNode().displayed) {
+                    return;
+                }
                 const rowComp = new rowComp_1.RowComp(rowCon, this.beans, this.type);
                 this.rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());

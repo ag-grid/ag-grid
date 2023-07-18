@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -247,7 +247,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.isModuleLoaded = function (menuTabName) {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return core.ModuleRegistry.isRegistered(core.ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
+            return core.ModuleRegistry.__isRegistered(core.ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
         }
         return true;
     };
@@ -566,7 +566,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions = [];
-        if (core._.exists(node) && core.ModuleRegistry.isRegistered(core.ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (core._.exists(node) && core.ModuleRegistry.__isRegistered(core.ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gridOptionsService.is('suppressCutToClipboard')) {
@@ -575,7 +575,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && core.ModuleRegistry.isRegistered(core.ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.is('enableCharts') && core.ModuleRegistry.__isRegistered(core.ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -585,8 +585,8 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         }
         if (core._.exists(node)) {
             // if user clicks a cell
-            var csvModuleMissing = !core.ModuleRegistry.isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
-            var excelModuleMissing = !core.ModuleRegistry.isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
+            var csvModuleMissing = !core.ModuleRegistry.__isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
+            var excelModuleMissing = !core.ModuleRegistry.__isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
             var suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
             var suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             var onIPad = core._.isIOSUserAgent();
@@ -874,7 +874,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
                     if (!(column === null || column === void 0 ? void 0 : column.isPrimary()) && !(column === null || column === void 0 ? void 0 : column.getColDef().pivotValueColumn)) {
                         return null;
                     }
@@ -927,7 +927,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -939,7 +939,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -951,7 +951,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -963,7 +963,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'cut':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
                     var focusedCell = this.focusService.getFocusedCell();
                     var rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     var isEditable = rowNode ? focusedCell === null || focusedCell === void 0 ? void 0 : focusedCell.column.isCellEditable(rowNode) : false;
@@ -979,7 +979,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'paste':
-                if (core.ModuleRegistry.assertRegistered(core.ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
+                if (core.ModuleRegistry.__assertRegistered(core.ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
@@ -993,8 +993,8 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 }
             case 'export':
                 var exportSubMenuItems = [];
-                var csvModuleLoaded = core.ModuleRegistry.isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
-                var excelModuleLoaded = core.ModuleRegistry.isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
+                var csvModuleLoaded = core.ModuleRegistry.__isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
+                var excelModuleLoaded = core.ModuleRegistry.__isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
                 if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
@@ -1093,7 +1093,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -1152,7 +1152,7 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     ChartMenuItemMapper.prototype.getChartItems = function (key) {
         var _a, _b;
         if (!this.chartService) {
-            core.ModuleRegistry.assertRegistered(core.ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
+            core.ModuleRegistry.__assertRegistered(core.ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
             return undefined;
         }
         var builder = key === 'pivotChart'

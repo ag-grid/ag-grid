@@ -4,6 +4,7 @@ import { Column } from '../entities/column';
 export declare class DataTypeService extends BeanStub {
     private rowModel;
     private columnModel;
+    private columnUtils;
     private valueService;
     private valueFormatterService;
     private dataTypeDefinitions;
@@ -12,6 +13,10 @@ export declare class DataTypeService extends BeanStub {
     private hasObjectValueParser;
     private hasObjectValueFormatter;
     private groupHideOpenParents;
+    private initialData;
+    private isColumnTypeOverrideInDataTypeDefinitions;
+    private columnStateUpdatesPendingInference;
+    private columnStateUpdateListenerDestroyFuncs;
     init(): void;
     private processDataTypeDefinitions;
     private mergeDataTypeDefinitions;
@@ -20,11 +25,15 @@ export declare class DataTypeService extends BeanStub {
     private createGroupSafeValueFormatter;
     private updateColDefAndGetDataTypeDefinitionColumnType;
     updateColDefAndGetColumnType(colDef: ColDef, userColDef: ColDef, colId: string): string[] | undefined;
+    addColumnListeners(column: Column): void;
     private canInferCellDataType;
     private doColDefPropsPreventInference;
     private doesColDefPropPreventInference;
     private inferCellDataType;
+    private getInitialData;
     private initWaitForRowData;
+    private processColumnsPendingInference;
+    private getUpdatedColumnState;
     private checkObjectValueHandlers;
     convertColumnTypes(type: string | string[]): string[];
     private getDateStringTypeDefinition;

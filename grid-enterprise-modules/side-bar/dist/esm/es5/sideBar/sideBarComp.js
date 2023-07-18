@@ -193,13 +193,13 @@ var SideBarComp = /** @class */ (function (_super) {
         }
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            var moduleMissing = !ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }
         }
         if (def.toolPanel === 'agFiltersToolPanel') {
-            var moduleMissing = !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            var moduleMissing = !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }

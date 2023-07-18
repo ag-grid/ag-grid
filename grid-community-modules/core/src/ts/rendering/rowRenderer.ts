@@ -134,7 +134,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
@@ -499,12 +499,12 @@ export class RowRenderer extends BeanStub {
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
-        const rowsToRecycle = recycleRows ? this.recycleRows() : null;
+        const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
         }
 
-        this.redraw(rowsToRecycle, animate);
+        this.recycleRows(rowsToRecycle, animate);
 
         this.gridBodyCtrl.updateRowCount();
 
@@ -582,6 +582,8 @@ export class RowRenderer extends BeanStub {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
+            this.focusService.setRestoreFocusedCell(cellPosition);
+
             this.onCellFocusChanged({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
@@ -808,7 +810,7 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(rowIndexesToRemove);
     }
 
-    private recycleRows(): RowCtrlMap {
+    private getRowsToRecycle(): RowCtrlMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
         iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
@@ -846,14 +848,14 @@ export class RowRenderer extends BeanStub {
 
     private onBodyScroll(e: BodyScrollEvent) {
         if (e.direction !== 'vertical') { return; }
-        this.redrawAfterScroll();
+        this.redraw();
     }
 
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redrawAfterScroll() {
+    public redraw(afterScroll = true) {
         let cellFocused: CellPosition | undefined;
 
         // only try to refocus cells shifting in and out of sticky container
@@ -863,9 +865,9 @@ export class RowRenderer extends BeanStub {
         }
 
         this.getLockOnRefresh();
-        this.redraw(null, false, true);
+        this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged(true);
+        this.dispatchDisplayedRowsChanged(afterScroll);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
@@ -918,7 +920,7 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
-    private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
+    private recycleRows(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
@@ -1003,7 +1005,7 @@ export class RowRenderer extends BeanStub {
 
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redrawAfterScroll();
+        this.redraw();
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
@@ -1050,7 +1052,7 @@ export class RowRenderer extends BeanStub {
         }
 
         if (redraw) {
-            this.redrawAfterScroll();
+            this.redraw(false);
         }
     }
 

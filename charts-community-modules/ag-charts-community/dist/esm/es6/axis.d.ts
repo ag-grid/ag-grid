@@ -1,15 +1,24 @@
-import { Scale } from './scale/scale';
-import { Node } from './scene/node';
+import type { Scale } from './scale/scale';
+import type { Node } from './scene/node';
 import { Group } from './scene/group';
+import { Selection } from './scene/selection';
+import { Line } from './scene/shape/line';
+import { Text } from './scene/shape/text';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
-import { TimeInterval } from './util/time/interval';
-import { CrossLine } from './chart/crossline/crossLine';
-import { TimeScale } from './scale/timeScale';
-import { AgAxisCaptionFormatterParams, AgAxisCaptionOptions, AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
-import { Flag } from './chart/label';
-import { AxisLayout } from './chart/layout/layoutService';
-import { ModuleContext } from './util/module';
+import type { CrossLine } from './chart/crossline/crossLine';
+import type { AgAxisGridStyle } from './chart/agChartOptions';
+import { ChartAxisDirection } from './chart/chartAxisDirection';
+import type { Flag } from './chart/label';
+import type { AxisLayout } from './chart/layout/layoutService';
+import type { AxisOptionModule, ModuleInstance } from './util/module';
+import type { AxisContext, ModuleContext } from './util/moduleContext';
+import { AxisLabel } from './chart/axis/axisLabel';
+import { AxisLine } from './chart/axis/axisLine';
+import type { AxisTitle } from './chart/axis/axisTitle';
+import type { TickInterval } from './chart/axis/axisTick';
+import { AxisTick } from './chart/axis/axisTick';
+import type { ChartAxis, BoundSeries } from './chart/chartAxis';
 export declare enum Tags {
     TickLine = 0,
     TickLabel = 1,
@@ -29,10 +38,10 @@ declare enum TickGenerationType {
     FILTER = 2,
     VALUES = 3
 }
-declare type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
 declare type TickDatum = {
     tickLabel: string;
     tick: any;
+    tickId: string;
     translationY: number;
 };
 declare type TickData = {
@@ -40,134 +49,16 @@ declare type TickData = {
     ticks: TickDatum[];
     labelCount: number;
 };
-export declare type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
-export declare class AxisLine {
-    width: number;
-    color?: string;
-}
-export declare class BaseAxisTick<S extends Scale<D, number, I>, D = any, I = any> {
-    enabled: boolean;
-    /**
-     * The line width to be used by axis ticks.
-     */
-    width: number;
-    /**
-     * The line length to be used by axis ticks.
-     */
-    size: number;
-    /**
-     * The color of the axis ticks.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
-    color?: string;
-    /**
-     * A hint of how many ticks to use (the exact number of ticks might differ),
-     * a `TimeInterval` or a `CountableTimeInterval`.
-     * For example:
-     *
-     *     axis.tick.count = 5;
-     *     axis.tick.count = year;
-     *     axis.tick.count = month.every(6);
-     */
-    count?: TickCount<S>;
-    interval?: TickInterval<S>;
-    values?: any[];
-    minSpacing: number;
-    maxSpacing?: number;
-}
-export declare class AxisLabel {
-    enabled: boolean;
-    /** If set to `false`, axis labels will not be wrapped on multiple lines. */
-    autoWrap: boolean;
-    /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-    maxWidth?: number;
-    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-    maxHeight?: number;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize: number;
-    fontFamily: string;
-    /**
-     * The padding between the labels and the ticks.
-     */
-    padding: number;
-    /**
-     * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
-     */
-    minSpacing: number;
-    /**
-     * The color of the labels.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-     */
-    color?: string;
-    /**
-     * Custom label rotation in degrees.
-     * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallel} is set to `true`.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    rotation?: number;
-    /**
-     * If specified and axis labels may collide, they are rotated to reduce collisions. If the
-     * `rotation` property is specified, it takes precedence.
-     */
-    autoRotate: boolean | undefined;
-    /**
-     * Rotation angle to use when autoRotate is applied.
-     */
-    autoRotateAngle: number;
-    /**
-     * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
-     */
-    avoidCollisions: boolean;
-    /**
-     * By default labels and ticks are positioned to the left of the axis line.
-     * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, it's easier to think in terms
-     * of this side or the opposite side, rather than left and right.
-     * We use the term `mirror` for conciseness, although it's not
-     * true mirroring - for example, when a label is rotated, so that
-     * it is inclined at the 45 degree angle, text flowing from north-west
-     * to south-east, ending at the tick to the left of the axis line,
-     * and then we set this config to `true`, the text will still be flowing
-     * from north-west to south-east, _starting_ at the tick to the right
-     * of the axis line.
-     */
-    mirrored: boolean;
-    /**
-     * The side of the axis line to position the labels on.
-     * -1 = left (default)
-     * 1 = right
-     */
-    getSideFlag(): Flag;
-    /**
-     * Labels are rendered perpendicular to the axis line by default.
-     * Setting this config to `true` makes labels render parallel to the axis line
-     * and center aligns labels' text at the ticks.
-     */
-    parallel: boolean;
-    /**
-     * In case {@param value} is a number, the {@param fractionDigits} parameter will
-     * be provided as well. The `fractionDigits` corresponds to the number of fraction
-     * digits used by the tick step. For example, if the tick step is `0.0005`,
-     * the `fractionDigits` is 4.
-     */
-    formatter?: (params: AgAxisLabelFormatterParams) => string;
-    format: string | undefined;
-    getFont(): string;
-}
-export declare class AxisTitle implements AgAxisCaptionOptions {
-    enabled: boolean;
-    text?: string;
-    fontStyle: FontStyle | undefined;
-    fontWeight: FontWeight | undefined;
-    fontSize: number;
-    fontFamily: string;
-    color: string | undefined;
-    wrapping: TextWrap;
-    formatter?: (params: AgAxisCaptionFormatterParams) => string;
-}
+declare type AxisUpdateDiff = {
+    changed: boolean;
+    tickCount: number;
+    added: {
+        [key: string]: true;
+    };
+    removed: {
+        [key: string]: true;
+    };
+};
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -177,7 +68,7 @@ export declare class AxisTitle implements AgAxisCaptionOptions {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> implements ChartAxis {
     protected readonly moduleCtx: ModuleContext;
     static readonly defaultTickMinSpacing = 50;
     readonly id: string;
@@ -185,23 +76,28 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
     dataDomain: D[];
     protected _scale: S;
     get scale(): S;
+    keys: string[];
+    get type(): string;
+    abstract get direction(): ChartAxisDirection;
+    boundSeries: BoundSeries[];
+    linkedTo?: Axis<any, any>;
+    includeInvisibleDomains: boolean;
     readonly axisGroup: Group;
-    private lineNode;
+    protected lineNode: Line;
     protected readonly tickLineGroup: Group;
     protected readonly tickLabelGroup: Group;
-    private readonly crossLineGroup;
+    protected readonly crossLineGroup: Group;
     readonly gridGroup: Group;
     protected readonly gridLineGroup: Group;
-    protected readonly gridArcGroup: Group;
-    private tickLineGroupSelection;
-    private tickLabelGroupSelection;
-    private gridLineGroupSelection;
-    private gridArcGroupSelection;
+    protected tickLineGroupSelection: Selection<Line, any>;
+    protected tickLabelGroupSelection: Selection<Text, any>;
+    protected gridLineGroupSelection: Selection<Line, any>;
+    protected abstract assignCrossLineArrayConstructor(crossLines: CrossLine[]): void;
     private _crossLines?;
     set crossLines(value: CrossLine[] | undefined);
     get crossLines(): CrossLine[] | undefined;
     readonly line: AxisLine;
-    readonly tick: BaseAxisTick<S>;
+    readonly tick: AxisTick<S>;
     readonly label: AxisLabel;
     readonly translation: {
         x: number;
@@ -209,14 +105,21 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
     };
     rotation: number;
     protected readonly layout: Pick<AxisLayout, 'label'>;
+    protected axisContext?: AxisContext;
+    protected readonly modules: Record<string, {
+        instance: ModuleInstance;
+    }>;
+    private animationManager;
+    private animationState;
+    private destroyFns;
+    constructor(moduleCtx: ModuleContext, scale: S);
     private attachCrossLine;
     private detachCrossLine;
-    constructor(moduleCtx: ModuleContext, scale: S);
     destroy(): void;
     protected refreshScale(): void;
     protected updateRange(): void;
     setCrossLinesVisible(visible: boolean): void;
-    attachAxis(node: Node, nextNode?: Node | null): void;
+    attachAxis(node: Node): void;
     detachAxis(node: Node): void;
     /**
      * Checks if a point or an object is in range.
@@ -250,14 +153,6 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
      * have the same style.
      */
     gridStyle: AgAxisGridStyle[];
-    /**
-     * `false` - render grid as lines of {@link gridLength} that extend the ticks
-     *           on the opposite side of the axis
-     * `true` - render grid as concentric circles that go through the ticks
-     */
-    private _radialGrid;
-    set radialGrid(value: boolean);
-    get radialGrid(): boolean;
     private fractionDigits;
     /**
      * The distance between the grid ticks and the axis ticks.
@@ -267,13 +162,14 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
      * Is used to avoid collisions between axis labels and series.
      */
     seriesAreaPadding: number;
-    protected createTick(): BaseAxisTick<S>;
+    protected createTick(): AxisTick<S>;
+    private checkAxisHover;
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined;
     private updateLayoutState;
-    private updateScale;
+    updateScale(): void;
     private calculateRotations;
     private generateTicks;
     private getTickStrategies;
@@ -286,8 +182,13 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
     private createTicks;
     private estimateTickCount;
     private updateVisibility;
-    private updateCrossLines;
-    private updateTickLines;
+    protected updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation, sideFlag, }: {
+        rotation: number;
+        parallelFlipRotation: number;
+        regularFlipRotation: number;
+        sideFlag: Flag;
+    }): void;
+    protected updateTickLines(sideFlag: Flag): void;
     private calculateAvailableRange;
     protected calculateDomain(): void;
     updatePosition({ rotation, sideFlag }: {
@@ -296,22 +197,43 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>>, 
     }): void;
     updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[];
     private updateSelections;
-    private updateGridLines;
-    private updateLabels;
+    protected updateGridLines(sideFlag: Flag): void;
+    protected updateLabels({ tickLabelGroupSelection, combinedRotation, textBaseline, textAlign, labelX, }: {
+        tickLabelGroupSelection: Selection<Text, any>;
+        combinedRotation: number;
+        textBaseline: CanvasTextBaseline;
+        textAlign: CanvasTextAlign;
+        labelX: number;
+    }): void;
     private wrapLabels;
     private updateLine;
-    private updateTitle;
+    protected updateTitle({ anyTickVisible, sideFlag }: {
+        anyTickVisible: boolean;
+        sideFlag: Flag;
+    }): void;
     formatTick(datum: any, index: number): string;
     formatDatum(datum: any): string;
-    thickness: number;
     maxThickness: number;
     computeBBox(): BBox;
     initCrossLine(crossLine: CrossLine): void;
     isAnySeriesActive(): boolean;
     clipTickLines(x: number, y: number, width: number, height: number): void;
     clipGrid(x: number, y: number, width: number, height: number): void;
-    calculatePadding(min: number, _max: number): number;
-    protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
+    calculatePadding(min: number, _max: number): [number, number];
+    protected getTitleFormatterParams(): {
+        direction: ChartAxisDirection;
+        boundSeries: import("./chart/agChartOptions").AgAxisBoundSeries[];
+        defaultValue: string | undefined;
+    };
+    normaliseDataDomain(d: D[]): D[];
+    getLayoutState(): AxisLayout;
+    protected createAxisContext(): AxisContext;
+    addModule(module: AxisOptionModule): void;
+    removeModule(module: AxisOptionModule): void;
+    isModuleEnabled(module: AxisOptionModule): boolean;
+    animateReadyUpdate(diff: AxisUpdateDiff): void;
+    private animateSelectionNode;
+    private resetSelectionNodes;
+    private calculateUpdateDiff;
 }
 export {};
-//# sourceMappingURL=axis.d.ts.map

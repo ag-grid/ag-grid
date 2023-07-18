@@ -93,9 +93,6 @@
 .ag-theme-material .ag-has-focus .ag-cell-inline-editing {
   border-color: var(--ag-input-focus-border-color) !important;
 }
-.ag-theme-material .ag-side-button-button {
-  color: var(--ag-foreground-color);
-}
 .ag-theme-material .ag-column-drop-vertical {
   border-bottom: solid 1px;
   border-bottom-color: var(--ag-border-color);

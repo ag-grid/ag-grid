@@ -1,10 +1,4 @@
 /**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
-/**
  * `True` if the event is close to the original event by X pixels either vertically or horizontally.
  * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
  * @param {MouseEvent | TouchEvent} e1

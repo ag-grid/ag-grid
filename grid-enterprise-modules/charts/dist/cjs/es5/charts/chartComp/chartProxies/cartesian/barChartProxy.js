@@ -62,6 +62,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         var series = params.fields.map(function (f) { return ({
             type: _this.standaloneChartType,
             grouped: isGrouped,
+            stacked: ['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar'].includes(_this.chartType),
             normalizedTo: _this.isNormalised() ? 100 : undefined,
             xKey: params.category.id,
             xName: params.category.name,
@@ -80,7 +81,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         };
         var updateFilteredOutSeries = function (seriesOptions) {
             var yKey = seriesOptions.yKey + '-filtered-out';
-            return __assign(__assign({}, object_1.deepMerge({}, seriesOptions)), { yKey: yKey, fill: color_1.hexToRGBA(seriesOptions.fill, '0.3'), stroke: color_1.hexToRGBA(seriesOptions.stroke, '0.3'), hideInLegend: [yKey] });
+            return __assign(__assign({}, object_1.deepMerge({}, seriesOptions)), { yKey: yKey, fill: color_1.hexToRGBA(seriesOptions.fill, '0.3'), stroke: color_1.hexToRGBA(seriesOptions.stroke, '0.3'), showInLegend: false });
         };
         var allSeries = [];
         for (var i = 0; i < series.length; i++) {

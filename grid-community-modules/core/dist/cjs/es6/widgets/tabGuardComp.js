@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabGuardComp = void 0;
@@ -19,7 +13,7 @@ class TabGuardComp extends component_1.Component {
         const tabGuards = [this.eTopGuard, this.eBottomGuard];
         const compProxy = {
             setTabIndex: tabIndex => {
-                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabIndex', tabIndex) : tabGuard.removeAttribute('tabIndex'));
+                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabindex', tabIndex) : tabGuard.removeAttribute('tabindex'));
             }
         };
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);

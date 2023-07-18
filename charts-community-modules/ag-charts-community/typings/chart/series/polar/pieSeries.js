@@ -112,7 +112,6 @@ var sector_2 = require("../../../util/sector");
 var validation_1 = require("../../../util/validation");
 var states_1 = require("../../../motion/states");
 var easing = require("../../../motion/easing");
-var dataModel_1 = require("../../data/dataModel");
 var processors_1 = require("../../data/processors");
 var PieSeriesNodeBaseClickEvent = /** @class */ (function (_super) {
     __extends(PieSeriesNodeBaseClickEvent, _super);
@@ -159,6 +158,7 @@ var PieSeriesCalloutLabel = /** @class */ (function (_super) {
         _this.formatter = undefined;
         _this.minSpacing = 4;
         _this.maxCollisionOffset = 50;
+        _this.avoidCollisions = true;
         return _this;
     }
     __decorate([
@@ -176,6 +176,9 @@ var PieSeriesCalloutLabel = /** @class */ (function (_super) {
     __decorate([
         validation_1.Validate(validation_1.NUMBER(0))
     ], PieSeriesCalloutLabel.prototype, "maxCollisionOffset", void 0);
+    __decorate([
+        validation_1.Validate(validation_1.BOOLEAN)
+    ], PieSeriesCalloutLabel.prototype, "avoidCollisions", void 0);
     return PieSeriesCalloutLabel;
 }(label_1.Label));
 var PieSeriesSectorLabel = /** @class */ (function (_super) {
@@ -281,6 +284,7 @@ var PieStateMachine = /** @class */ (function (_super) {
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
     function PieSeries(moduleCtx) {
+        var _a, _b, _c;
         var _this = _super.call(this, { moduleCtx: moduleCtx, useLabelLayer: true }) || this;
         _this.radiusScale = new linearScale_1.LinearScale();
         _this.groupSelection = selection_1.Selection.select(_this.contentGroup, group_1.Group);
@@ -347,9 +351,9 @@ var PieSeries = /** @class */ (function (_super) {
         var pieCalloutLabels = new group_1.Group({ name: 'pieCalloutLabels' });
         var pieSectorLabels = new group_1.Group({ name: 'pieSectorLabels' });
         var innerLabels = new group_1.Group({ name: 'innerLabels' });
-        _this.labelGroup.append(pieCalloutLabels);
-        _this.labelGroup.append(pieSectorLabels);
-        _this.labelGroup.append(innerLabels);
+        (_a = _this.labelGroup) === null || _a === void 0 ? void 0 : _a.append(pieCalloutLabels);
+        (_b = _this.labelGroup) === null || _b === void 0 ? void 0 : _b.append(pieSectorLabels);
+        (_c = _this.labelGroup) === null || _c === void 0 ? void 0 : _c.append(innerLabels);
         _this.calloutLabelSelection = selection_1.Selection.select(pieCalloutLabels, group_1.Group);
         _this.sectorLabelSelection = selection_1.Selection.select(pieSectorLabels, text_1.Text);
         _this.innerLabelsSelection = selection_1.Selection.select(innerLabels, text_1.Text);
@@ -387,7 +391,7 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.addChartEventListeners = function () {
         var _this = this;
         var _a;
-        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
+        (_a = this.ctx.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
     };
     PieSeries.prototype.visibleChanged = function () {
         this.processSeriesItemEnabled();
@@ -405,34 +409,53 @@ var PieSeries = /** @class */ (function (_super) {
             return this.radiusScale.domain;
         }
     };
-    PieSeries.prototype.processData = function () {
+    PieSeries.prototype.processData = function (dataController) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var _c, data, _d, angleKey, radiusKey, seriesItemEnabled, extraProps;
-            return __generator(this, function (_e) {
-                _c = this.data, data = _c === void 0 ? [] : _c;
-                _d = this, angleKey = _d.angleKey, radiusKey = _d.radiusKey, seriesItemEnabled = _d.seriesItemEnabled;
-                if (!angleKey)
-                    return [2 /*return*/];
-                extraProps = [];
-                if (radiusKey) {
-                    extraProps.push(series_1.rangedValueProperty(radiusKey, { id: 'radiusValue', min: (_a = this.radiusMin) !== null && _a !== void 0 ? _a : 0, max: this.radiusMax }), series_1.valueProperty(radiusKey, true, { id: "radiusRaw" }), // Raw value pass-through.
-                    processors_1.normalisePropertyTo({ id: 'radiusValue' }, [0, 1], (_b = this.radiusMin) !== null && _b !== void 0 ? _b : 0, this.radiusMax));
-                    extraProps.push();
+            var _c, data, _d, angleKey, radiusKey, calloutLabelKey, sectorLabelKey, legendItemKey, seriesItemEnabled, extraProps, _e, dataModel, processedData;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
+                    case 0:
+                        _c = this.data, data = _c === void 0 ? [] : _c;
+                        _d = this, angleKey = _d.angleKey, radiusKey = _d.radiusKey, calloutLabelKey = _d.calloutLabelKey, sectorLabelKey = _d.sectorLabelKey, legendItemKey = _d.legendItemKey, seriesItemEnabled = _d.seriesItemEnabled;
+                        if (!angleKey)
+                            return [2 /*return*/];
+                        extraProps = [];
+                        if (radiusKey) {
+                            extraProps.push(series_1.rangedValueProperty(this, radiusKey, {
+                                id: 'radiusValue',
+                                min: (_a = this.radiusMin) !== null && _a !== void 0 ? _a : 0,
+                                max: this.radiusMax,
+                            }), series_1.valueProperty(this, radiusKey, true, { id: "radiusRaw" }), // Raw value pass-through.
+                            processors_1.normalisePropertyTo(this, { id: 'radiusValue' }, [0, 1], (_b = this.radiusMin) !== null && _b !== void 0 ? _b : 0, this.radiusMax));
+                            extraProps.push();
+                        }
+                        if (calloutLabelKey) {
+                            extraProps.push(series_1.valueProperty(this, calloutLabelKey, false, { id: "calloutLabelValue" }));
+                        }
+                        if (sectorLabelKey) {
+                            extraProps.push(series_1.valueProperty(this, sectorLabelKey, false, { id: "sectorLabelValue" }));
+                        }
+                        if (legendItemKey) {
+                            extraProps.push(series_1.valueProperty(this, legendItemKey, false, { id: "legendItemValue" }));
+                        }
+                        data = data.map(function (d, idx) {
+                            var _a;
+                            return (seriesItemEnabled[idx] ? d : __assign(__assign({}, d), (_a = {}, _a[angleKey] = 0, _a)));
+                        });
+                        return [4 /*yield*/, dataController.request(this.id, data, {
+                                props: __spreadArray([
+                                    series_1.accumulativeValueProperty(this, angleKey, true, { id: "angleValue" }),
+                                    series_1.valueProperty(this, angleKey, true, { id: "angleRaw" }),
+                                    processors_1.normalisePropertyTo(this, { id: 'angleValue' }, [0, 1], 0)
+                                ], __read(extraProps)),
+                            })];
+                    case 1:
+                        _e = _f.sent(), dataModel = _e.dataModel, processedData = _e.processedData;
+                        this.dataModel = dataModel;
+                        this.processedData = processedData;
+                        return [2 /*return*/];
                 }
-                data = data.map(function (d, idx) {
-                    var _a;
-                    return (seriesItemEnabled[idx] ? d : __assign(__assign({}, d), (_a = {}, _a[angleKey] = 0, _a)));
-                });
-                this.dataModel = new dataModel_1.DataModel({
-                    props: __spreadArray([
-                        series_1.accumulativeValueProperty(angleKey, true, { id: "angleValue" }),
-                        series_1.valueProperty(angleKey, true, { id: "angleRaw" }),
-                        processors_1.normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0)
-                    ], __read(extraProps)),
-                });
-                this.processedData = this.dataModel.processData(data);
-                return [2 /*return*/];
             });
         });
     };
@@ -450,16 +473,26 @@ var PieSeries = /** @class */ (function (_super) {
             });
         });
     };
+    PieSeries.prototype.getProcessedDataIndexes = function (dataModel) {
+        var angleIdx = dataModel.resolveProcessedDataIndexById(this, "angleValue").index;
+        var radiusIdx = this.radiusKey ? dataModel.resolveProcessedDataIndexById(this, "radiusValue").index : -1;
+        var calloutLabelIdx = this.calloutLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, "calloutLabelValue").index
+            : -1;
+        var sectorLabelIdx = this.sectorLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, "sectorLabelValue").index
+            : -1;
+        var legendItemIdx = this.legendItemKey
+            ? dataModel.resolveProcessedDataIndexById(this, "legendItemValue").index
+            : -1;
+        return { angleIdx: angleIdx, radiusIdx: radiusIdx, calloutLabelIdx: calloutLabelIdx, sectorLabelIdx: sectorLabelIdx, legendItemIdx: legendItemIdx };
+    };
     PieSeries.prototype._createNodeData = function () {
         var _this = this;
-        var _a, _b, _c, _d;
-        var _e = this, seriesId = _e.id, processedData = _e.processedData, dataModel = _e.dataModel, rotation = _e.rotation, angleScale = _e.angleScale;
+        var _a = this, seriesId = _a.id, processedData = _a.processedData, dataModel = _a.dataModel, rotation = _a.rotation, angleScale = _a.angleScale;
         if (!processedData || !dataModel || processedData.type !== 'ungrouped')
             return [];
-        var angleIdx = (_b = (_a = dataModel.resolveProcessedDataIndexById("angleValue")) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1;
-        var radiusIdx = (_d = (_c = dataModel.resolveProcessedDataIndexById("radiusValue")) === null || _c === void 0 ? void 0 : _c.index) !== null && _d !== void 0 ? _d : -1;
-        if (angleIdx < 0)
-            return [];
+        var _b = this.getProcessedDataIndexes(dataModel), angleIdx = _b.angleIdx, radiusIdx = _b.radiusIdx, calloutLabelIdx = _b.calloutLabelIdx, sectorLabelIdx = _b.sectorLabelIdx, legendItemIdx = _b.legendItemIdx;
         var currentStart = 0;
         var nodeData = processedData.data.map(function (group, index) {
             var _a;
@@ -473,9 +506,10 @@ var PieSeries = /** @class */ (function (_super) {
             var angleValue = values[angleIdx + 1];
             var radius = radiusIdx >= 0 ? (_a = values[radiusIdx]) !== null && _a !== void 0 ? _a : 1 : 1;
             var radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
-            var labels = _this.getLabels(datum, midAngle, span, true);
+            var legendItemValue = legendItemIdx >= 0 ? values[legendItemIdx] : undefined;
+            var labels = _this.getLabels(datum, midAngle, span, true, currentValue, radiusValue, values[calloutLabelIdx], values[sectorLabelIdx], legendItemValue);
             var sectorFormat = _this.getSectorFormat(datum, index, index, false);
-            return __assign({ itemId: index, series: _this, datum: datum, index: index, angleValue: angleValue, midAngle: midAngle, midCos: Math.cos(midAngle), midSin: Math.sin(midAngle), startAngle: startAngle, endAngle: endAngle, sectorFormat: sectorFormat, radius: radius, radiusValue: radiusValue }, labels);
+            return __assign({ itemId: index, series: _this, datum: datum, index: index, angleValue: angleValue, midAngle: midAngle, midCos: Math.cos(midAngle), midSin: Math.sin(midAngle), startAngle: startAngle, endAngle: endAngle, sectorFormat: sectorFormat, radius: radius, radiusValue: radiusValue, legendItemValue: legendItemValue }, labels);
         });
         return [
             {
@@ -485,13 +519,13 @@ var PieSeries = /** @class */ (function (_super) {
             },
         ];
     };
-    PieSeries.prototype.getLabels = function (datum, midAngle, span, skipDisabled) {
+    PieSeries.prototype.getLabels = function (datum, midAngle, span, skipDisabled, angleValue, radiusValue, calloutLabelValue, sectorLabelValue, legendItemValue) {
         var _a = this, calloutLabel = _a.calloutLabel, sectorLabel = _a.sectorLabel, legendItemKey = _a.legendItemKey, callbackCache = _a.ctx.callbackCache;
         var calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
         var sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
         if (!calloutLabelKey && !sectorLabelKey && !legendItemKey)
             return {};
-        var labelFormatterParams = this.getLabelFormatterParams(datum);
+        var labelFormatterParams = this.getLabelFormatterParams(datum, angleValue, radiusValue, calloutLabelValue, sectorLabelValue);
         var calloutLabelText;
         if (calloutLabelKey) {
             var calloutLabelMinAngle = angle_1.toRadians(calloutLabel.minAngle);
@@ -503,7 +537,7 @@ var PieSeries = /** @class */ (function (_super) {
                 calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
             }
             else {
-                calloutLabelText = String(datum[calloutLabelKey]);
+                calloutLabelText = String(calloutLabelValue);
             }
         }
         var sectorLabelText;
@@ -512,36 +546,32 @@ var PieSeries = /** @class */ (function (_super) {
                 sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
             }
             else {
-                sectorLabelText = String(datum[sectorLabelKey]);
+                sectorLabelText = String(sectorLabelValue);
             }
-        }
-        var legendItemText;
-        if (legendItemKey) {
-            legendItemText = String(datum[legendItemKey]);
         }
         return __assign(__assign(__assign({}, (calloutLabelText != null
             ? {
                 calloutLabel: __assign(__assign({}, this.getTextAlignment(midAngle)), { text: calloutLabelText, hidden: false, collisionTextAlign: undefined, collisionOffsetY: 0, box: undefined }),
             }
-            : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemText != null
-            ? { legendItem: { key: legendItemKey, text: legendItemText } }
+            : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemValue != null
+            ? { legendItem: { key: legendItemKey, text: legendItemValue } }
             : {}));
     };
-    PieSeries.prototype.getLabelFormatterParams = function (datum) {
+    PieSeries.prototype.getLabelFormatterParams = function (datum, angleValue, radiusValue, calloutLabelValue, sectorLabelValue) {
         var _a = this, seriesId = _a.id, radiusKey = _a.radiusKey, radiusName = _a.radiusName, angleKey = _a.angleKey, angleName = _a.angleName, calloutLabelKey = _a.calloutLabelKey, calloutLabelName = _a.calloutLabelName, sectorLabelKey = _a.sectorLabelKey, sectorLabelName = _a.sectorLabelName;
         return {
             datum: datum,
             angleKey: angleKey,
-            angleValue: datum[angleKey],
+            angleValue: angleValue,
             angleName: angleName,
             radiusKey: radiusKey,
-            radiusValue: radiusKey ? datum[radiusKey] : undefined,
+            radiusValue: radiusValue,
             radiusName: radiusName,
             calloutLabelKey: calloutLabelKey,
-            calloutLabelValue: calloutLabelKey ? datum[calloutLabelKey] : undefined,
+            calloutLabelValue: calloutLabelValue,
             calloutLabelName: calloutLabelName,
             sectorLabelKey: sectorLabelKey,
-            sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+            sectorLabelValue: sectorLabelValue,
             sectorLabelName: sectorLabelName,
             seriesId: seriesId,
         };
@@ -562,15 +592,15 @@ var PieSeries = /** @class */ (function (_super) {
         return quadrantTextOpts[quadrantIndex];
     };
     PieSeries.prototype.getSectorFormat = function (datum, itemId, index, highlight) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-        var _k = this, angleKey = _k.angleKey, radiusKey = _k.radiusKey, fills = _k.fills, strokes = _k.strokes, seriesFillOpacity = _k.fillOpacity, formatter = _k.formatter, seriesId = _k.id, callbackCache = _k.ctx.callbackCache;
-        var highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _j = this, angleKey = _j.angleKey, radiusKey = _j.radiusKey, fills = _j.fills, strokes = _j.strokes, seriesFillOpacity = _j.fillOpacity, formatter = _j.formatter, seriesId = _j.id, _k = _j.ctx, callbackCache = _k.callbackCache, highlightManager = _k.highlightManager;
+        var highlightedDatum = highlightManager === null || highlightManager === void 0 ? void 0 : highlightManager.getActiveHighlight();
         var isDatumHighlighted = highlight && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this && itemId === highlightedDatum.itemId;
         var highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
-        var fill = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) !== null && _b !== void 0 ? _b : fills[index % fills.length];
-        var fillOpacity = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _c !== void 0 ? _c : seriesFillOpacity;
-        var stroke = (_d = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) !== null && _d !== void 0 ? _d : strokes[index % strokes.length];
-        var strokeWidth = (_e = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _e !== void 0 ? _e : this.getStrokeWidth(this.strokeWidth);
+        var fill = (_a = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) !== null && _a !== void 0 ? _a : fills[index % fills.length];
+        var fillOpacity = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _b !== void 0 ? _b : seriesFillOpacity;
+        var stroke = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) !== null && _c !== void 0 ? _c : strokes[index % strokes.length];
+        var strokeWidth = (_d = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _d !== void 0 ? _d : this.getStrokeWidth(this.strokeWidth);
         var format;
         if (formatter) {
             format = callbackCache.call(formatter, {
@@ -585,10 +615,10 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
         return {
-            fill: (_f = format === null || format === void 0 ? void 0 : format.fill) !== null && _f !== void 0 ? _f : fill,
-            fillOpacity: (_g = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _g !== void 0 ? _g : fillOpacity,
-            stroke: (_h = format === null || format === void 0 ? void 0 : format.stroke) !== null && _h !== void 0 ? _h : stroke,
-            strokeWidth: (_j = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _j !== void 0 ? _j : strokeWidth,
+            fill: (_e = format === null || format === void 0 ? void 0 : format.fill) !== null && _e !== void 0 ? _e : fill,
+            fillOpacity: (_f = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _f !== void 0 ? _f : fillOpacity,
+            stroke: (_g = format === null || format === void 0 ? void 0 : format.stroke) !== null && _g !== void 0 ? _g : stroke,
+            strokeWidth: (_h = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _h !== void 0 ? _h : strokeWidth,
         };
     };
     PieSeries.prototype.getInnerRadius = function () {
@@ -635,8 +665,16 @@ var PieSeries = /** @class */ (function (_super) {
                         this.updateTitleNodes();
                         this.updateRadiusScale();
                         this.updateInnerCircleNodes();
-                        this.rootGroup.translationX = this.centerX;
-                        this.rootGroup.translationY = this.centerY;
+                        this.contentGroup.translationX = this.centerX;
+                        this.contentGroup.translationY = this.centerY;
+                        this.highlightGroup.translationX = this.centerX;
+                        this.highlightGroup.translationY = this.centerY;
+                        this.backgroundGroup.translationX = this.centerX;
+                        this.backgroundGroup.translationY = this.centerY;
+                        if (this.labelGroup) {
+                            this.labelGroup.translationX = this.centerX;
+                            this.labelGroup.translationY = this.centerY;
+                        }
                         if (title) {
                             dy = this.getTitleTranslationY();
                             titleBox = title.node.computeBBox();
@@ -751,13 +789,15 @@ var PieSeries = /** @class */ (function (_super) {
             var highlightedDatum, isVisible, radiusScale, innerRadius, updateSectorFn;
             var _this = this;
             return __generator(this, function (_b) {
-                highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+                highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
                 isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
                 this.rootGroup.visible = isVisible;
                 this.backgroundGroup.visible = isVisible;
                 this.contentGroup.visible = isVisible;
                 this.highlightGroup.visible = isVisible && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this;
-                this.labelGroup.visible = isVisible;
+                if (this.labelGroup) {
+                    this.labelGroup.visible = isVisible;
+                }
                 this.contentGroup.opacity = this.getOpacity();
                 this.updateInnerCircle();
                 radiusScale = this.radiusScale;
@@ -794,9 +834,11 @@ var PieSeries = /** @class */ (function (_super) {
                     .forEach(function (node, index) { return updateSectorFn(node, node.datum, index, false); });
                 this.highlightSelection.selectByTag(PieNodeTag.Sector).forEach(function (node, index) {
                     var isDatumHighlighted = (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === _this && node.datum.itemId === highlightedDatum.itemId;
-                    node.visible = isDatumHighlighted;
-                    if (node.visible) {
+                    if (isDatumHighlighted) {
                         updateSectorFn(node, node.datum, index, isDatumHighlighted);
+                    }
+                    else {
+                        node.visible = false;
                     }
                 });
                 this.animationState.transition('update');
@@ -829,7 +871,8 @@ var PieSeries = /** @class */ (function (_super) {
                 var y1 = datum.midSin * outerRadius;
                 var x2 = datum.midCos * (outerRadius + calloutLength);
                 var y2 = datum.midSin * (outerRadius + calloutLength);
-                if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
+                var isMoved = label.collisionTextAlign || label.collisionOffsetY !== 0;
+                if (isMoved && label.box != null) {
                     // Get the closest point to the text bounding box
                     var box = label.box;
                     var cx = x2;
@@ -880,9 +923,9 @@ var PieSeries = /** @class */ (function (_super) {
             visibleTextPart = (seriesRight - box.x) / box.width;
         }
         var hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
-        var textLength = Math.floor(text.length * visibleTextPart) - 1;
+        var textLength = visibleTextPart === 1 ? text.length : Math.floor(text.length * visibleTextPart) - 1;
         var hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
-        return { visibleTextPart: visibleTextPart, textLength: textLength, hasVerticalOverflow: hasVerticalOverflow, hasSurroundingSeriesOverflow: hasSurroundingSeriesOverflow };
+        return { textLength: textLength, hasVerticalOverflow: hasVerticalOverflow, hasSurroundingSeriesOverflow: hasSurroundingSeriesOverflow };
     };
     PieSeries.prototype.bboxIntersectsSurroundingSeries = function (box, dx, dy) {
         if (dx === void 0) { dx = 0; }
@@ -912,9 +955,11 @@ var PieSeries = /** @class */ (function (_super) {
             return !label || outerRadius === 0;
         };
         var fullData = this.nodeData;
-        var data = this.nodeData.filter(function (text) { return !shouldSkip(text); });
+        var data = this.nodeData.filter(function (t) { return !shouldSkip(t); });
         data.forEach(function (datum) {
             var label = datum.calloutLabel;
+            if (label == null)
+                return;
             label.hidden = false;
             label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
@@ -925,20 +970,30 @@ var PieSeries = /** @class */ (function (_super) {
         var leftLabels = data.filter(function (d) { return d.midCos < 0; }).sort(function (a, b) { return a.midSin - b.midSin; });
         var rightLabels = data.filter(function (d) { return d.midCos >= 0; }).sort(function (a, b) { return a.midSin - b.midSin; });
         var topLabels = data
-            .filter(function (d) { return d.midSin < 0 && d.calloutLabel.textAlign === 'center'; })
+            .filter(function (d) { var _a; return d.midSin < 0 && ((_a = d.calloutLabel) === null || _a === void 0 ? void 0 : _a.textAlign) === 'center'; })
             .sort(function (a, b) { return a.midCos - b.midCos; });
         var bottomLabels = data
-            .filter(function (d) { return d.midSin >= 0 && d.calloutLabel.textAlign === 'center'; })
+            .filter(function (d) { var _a; return d.midSin >= 0 && ((_a = d.calloutLabel) === null || _a === void 0 ? void 0 : _a.textAlign) === 'center'; })
             .sort(function (a, b) { return a.midCos - b.midCos; });
         var tempTextNode = new text_1.Text();
         var getTextBBox = function (datum) {
+            var _a;
             var label = datum.calloutLabel;
+            if (label == null)
+                return new bbox_1.BBox(0, 0, 0, 0);
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius);
             var labelRadius = outerRadius + calloutLine.length + offset;
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius + label.collisionOffsetY;
-            _this.setTextDimensionalProps(tempTextNode, x, y, _this.calloutLabel, label);
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(_this.calloutLabel);
+            tempTextNode.setAlign({
+                textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign,
+                textBaseline: label.textBaseline,
+            });
             return tempTextNode.computeBBox();
         };
         var avoidNeighbourYCollision = function (label, next, direction) {
@@ -996,13 +1051,13 @@ var PieSeries = /** @class */ (function (_super) {
                 return;
             }
             labels
-                .filter(function (datum) { return datum.calloutLabel.textAlign === 'center'; })
-                .forEach(function (datum) {
-                var label = datum.calloutLabel;
-                if (datum.midCos < 0) {
+                .filter(function (d) { return d.calloutLabel.textAlign === 'center'; })
+                .forEach(function (d) {
+                var label = d.calloutLabel;
+                if (d.midCos < 0) {
                     label.collisionTextAlign = 'right';
                 }
-                else if (datum.midCos > 0) {
+                else if (d.midCos > 0) {
                     label.collisionTextAlign = 'left';
                 }
                 else {
@@ -1022,6 +1077,7 @@ var PieSeries = /** @class */ (function (_super) {
         var offset = calloutLabel.offset, color = calloutLabel.color;
         var tempTextNode = new text_1.Text();
         this.calloutLabelSelection.selectByTag(PieNodeTag.Label).forEach(function (text) {
+            var _a;
             var datum = text.datum;
             var label = datum.calloutLabel;
             var radius = radiusScale.convert(datum.radius);
@@ -1034,13 +1090,27 @@ var PieSeries = /** @class */ (function (_super) {
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius + label.collisionOffsetY;
             // Detect text overflow
-            _this.setTextDimensionalProps(tempTextNode, x, y, _this.calloutLabel, label);
+            var align = { textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign, textBaseline: label.textBaseline };
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(_this.calloutLabel);
+            tempTextNode.setAlign(align);
             var box = tempTextNode.computeBBox();
-            var _a = _this.getLabelOverflow(label.text, box, seriesRect), visibleTextPart = _a.visibleTextPart, textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
-            var displayText = visibleTextPart === 1 ? label.text : label.text.substring(0, textLength) + "\u2026";
-            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, __assign(__assign({}, label), { text: displayText }));
+            var displayText = label.text;
+            var visible = true;
+            if (calloutLabel.avoidCollisions) {
+                var _b = _this.getLabelOverflow(label.text, box, seriesRect), textLength = _b.textLength, hasVerticalOverflow = _b.hasVerticalOverflow;
+                displayText = label.text.length === textLength ? label.text : label.text.substring(0, textLength) + "\u2026";
+                visible = !hasVerticalOverflow;
+            }
+            text.text = displayText;
+            text.x = x;
+            text.y = y;
+            text.setFont(_this.calloutLabel);
+            text.setAlign(align);
             text.fill = color;
-            text.visible = !hasVerticalOverflow;
+            text.visible = visible;
         });
     };
     PieSeries.prototype.computeLabelsBBox = function (options, seriesRect) {
@@ -1049,6 +1119,9 @@ var PieSeries = /** @class */ (function (_super) {
         var _b = this, radiusScale = _b.radiusScale, calloutLabel = _b.calloutLabel, calloutLine = _b.calloutLine;
         var calloutLength = calloutLine.length;
         var offset = calloutLabel.offset, maxCollisionOffset = calloutLabel.maxCollisionOffset, minSpacing = calloutLabel.minSpacing;
+        if (!calloutLabel.avoidCollisions) {
+            return null;
+        }
         this.maybeRefreshNodeData();
         this.updateRadiusScale();
         this.computeCalloutLabelCollisionOffsets();
@@ -1058,19 +1131,20 @@ var PieSeries = /** @class */ (function (_super) {
         if (((_a = this.title) === null || _a === void 0 ? void 0 : _a.text) && this.title.enabled) {
             var dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
-                this.setTextDimensionalProps(text, 0, dy, this.title, {
-                    text: this.title.text,
+                text.text = this.title.text;
+                text.x = 0;
+                text.y = dy;
+                text.setFont(this.title);
+                text.setAlign({
                     textBaseline: 'bottom',
                     textAlign: 'center',
-                    hidden: false,
-                    collisionTextAlign: undefined,
-                    collisionOffsetY: 0,
                 });
                 titleBox = text.computeBBox();
                 textBoxes.push(titleBox);
             }
         }
         this.nodeData.forEach(function (datum) {
+            var _a;
             var label = datum.calloutLabel;
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius);
@@ -1080,10 +1154,14 @@ var PieSeries = /** @class */ (function (_super) {
             var labelRadius = outerRadius + calloutLength + offset;
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius + label.collisionOffsetY;
-            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, label);
+            text.text = label.text;
+            text.x = x;
+            text.y = y;
+            text.setFont(_this.calloutLabel);
+            text.setAlign({ textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign, textBaseline: label.textBaseline });
             var box = text.computeBBox();
             label.box = box;
-            // Hide labels that where pushed to far by the collision avoidance algorithm
+            // Hide labels that where pushed too far by the collision avoidance algorithm
             if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
                 label.hidden = true;
                 return;
@@ -1098,7 +1176,7 @@ var PieSeries = /** @class */ (function (_super) {
                 }
             }
             if (options.hideWhenNecessary) {
-                var _a = _this.getLabelOverflow(label.text, box, seriesRect), textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow, hasSurroundingSeriesOverflow = _a.hasSurroundingSeriesOverflow;
+                var _b = _this.getLabelOverflow(label.text, box, seriesRect), textLength = _b.textLength, hasVerticalOverflow = _b.hasVerticalOverflow, hasSurroundingSeriesOverflow = _b.hasSurroundingSeriesOverflow;
                 var isTooShort = label.text.length > 2 && textLength < 2;
                 if (hasVerticalOverflow || isTooShort || hasSurroundingSeriesOverflow) {
                     label.hidden = true;
@@ -1112,19 +1190,6 @@ var PieSeries = /** @class */ (function (_super) {
             return null;
         }
         return bbox_1.BBox.merge(textBoxes);
-    };
-    PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, style, label) {
-        var _a, _b;
-        var fontStyle = style.fontStyle, fontWeight = style.fontWeight, fontSize = style.fontSize, fontFamily = style.fontFamily;
-        textNode.fontStyle = fontStyle;
-        textNode.fontWeight = fontWeight;
-        textNode.fontSize = fontSize;
-        textNode.fontFamily = fontFamily;
-        textNode.text = label.text;
-        textNode.x = x;
-        textNode.y = y;
-        textNode.textAlign = (_b = (_a = label === null || label === void 0 ? void 0 : label.collisionTextAlign) !== null && _a !== void 0 ? _a : label === null || label === void 0 ? void 0 : label.textAlign) !== null && _b !== void 0 ? _b : 'center';
-        textNode.textBaseline = label.textBaseline;
     };
     PieSeries.prototype.updateSectorLabelNodes = function () {
         var radiusScale = this.radiusScale;
@@ -1274,20 +1339,21 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.prototype.getLegendData = function () {
         var _a, _b, _c;
-        var _d = this, calloutLabelKey = _d.calloutLabelKey, legendItemKey = _d.legendItemKey, id = _d.id, data = _d.data;
-        if (!data || data.length === 0)
+        var _d = this, processedData = _d.processedData, calloutLabelKey = _d.calloutLabelKey, legendItemKey = _d.legendItemKey, id = _d.id, dataModel = _d.dataModel;
+        if (!dataModel || !processedData || processedData.data.length === 0)
             return [];
         if (!legendItemKey && !calloutLabelKey)
             return [];
+        var _e = this.getProcessedDataIndexes(dataModel), angleIdx = _e.angleIdx, radiusIdx = _e.radiusIdx, calloutLabelIdx = _e.calloutLabelIdx, sectorLabelIdx = _e.sectorLabelIdx, legendItemIdx = _e.legendItemIdx;
         var titleText = ((_a = this.title) === null || _a === void 0 ? void 0 : _a.showInLegend) && this.title.text;
         var legendData = [];
-        for (var index = 0; index < data.length; index++) {
-            var datum = data[index];
+        for (var index = 0; index < processedData.data.length; index++) {
+            var _f = processedData.data[index], datum = _f.datum, values = _f.values;
             var labelParts = [];
             if (titleText) {
                 labelParts.push(titleText);
             }
-            var labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
+            var labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false, values[angleIdx], values[radiusIdx], values[calloutLabelIdx], values[sectorLabelIdx], values[legendItemIdx]);
             if (legendItemKey && labels.legendItem !== undefined) {
                 labelParts.push(labels.legendItem.text);
             }
@@ -1332,34 +1398,35 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.toggleOtherSeriesItems = function (series, itemId, enabled) {
         var _this = this;
         var _a, _b;
-        var legendItemKey = this.legendItemKey;
-        if (!legendItemKey)
+        var _c = this, legendItemKey = _c.legendItemKey, dataModel = _c.dataModel;
+        if (!legendItemKey || !dataModel)
             return;
         var datumToggledLegendItemValue = series.legendItemKey && ((_a = series.data) === null || _a === void 0 ? void 0 : _a.find(function (_, index) { return index === itemId; })[series.legendItemKey]);
         if (!datumToggledLegendItemValue)
             return;
-        (_b = this.data) === null || _b === void 0 ? void 0 : _b.forEach(function (datum, datumItemId) {
-            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+        var legendItemIdx = dataModel.resolveProcessedDataIndexById(this, "legendItemValue").index;
+        (_b = this.processedData) === null || _b === void 0 ? void 0 : _b.data.forEach(function (_a, datumItemId) {
+            var values = _a.values;
+            if (values[legendItemIdx] === datumToggledLegendItemValue) {
                 _this.toggleSeriesItem(datumItemId, enabled);
             }
         });
     };
     PieSeries.prototype.animateEmptyUpdateReady = function () {
         var _this = this;
-        var duration = 1000;
+        var _a, _b;
+        var duration = (_b = (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
         var labelDuration = 200;
         var rotation = Math.PI / -2 + angle_1.toRadians(this.rotation);
         this.groupSelection.selectByTag(PieNodeTag.Sector).forEach(function (node) {
             var _a;
             var datum = node.datum;
-            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + node.id, [
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + node.id, [
                 { from: rotation, to: datum.startAngle },
                 { from: rotation, to: datum.endAngle },
             ], {
-                disableInteractions: true,
                 duration: duration,
                 ease: easing.easeOut,
-                repeat: 0,
                 onUpdate: function (_a) {
                     var _b = __read(_a, 2), startAngle = _b[0], endAngle = _b[1];
                     node.startAngle = startAngle;
@@ -1372,24 +1439,22 @@ var PieSeries = /** @class */ (function (_super) {
             to: 1,
             delay: duration,
             duration: labelDuration,
-            ease: easing.linear,
-            repeat: 0,
         };
         this.calloutLabelSelection.each(function (label) {
             var _a;
-            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.sectorLabelSelection.each(function (label) {
             var _a;
-            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.innerLabelsSelection.each(function (label) {
             var _a;
-            (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign(__assign({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });

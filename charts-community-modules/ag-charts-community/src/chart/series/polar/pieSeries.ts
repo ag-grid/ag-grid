@@ -3,12 +3,12 @@ import { Line } from '../../../scene/shape/line';
 import { Text } from '../../../scene/shape/text';
 import { Circle } from '../../marker/circle';
 import { Selection } from '../../../scene/selection';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
+import type { SeriesNodeDatum } from './../series';
 import {
-    SeriesNodeDatum,
     HighlightStyle,
     SeriesTooltip,
     SeriesNodeBaseClickEvent,
@@ -21,7 +21,7 @@ import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -40,19 +40,21 @@ import {
     Validate,
     COLOR_STRING,
 } from '../../../util/validation';
-import {
+import type {
     AgPieSeriesLabelFormatterParams,
     AgPieSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import type { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 import { StateMachine } from '../../../motion/states';
 import * as easing from '../../../motion/easing';
-import { DataModel } from '../../data/dataModel';
 import { normalisePropertyTo } from '../../data/processors';
-import { ModuleContext } from '../../../util/module';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { Has } from '../../../util/types';
+import type { DataController } from '../../data/dataController';
+import type { DataModel } from '../../data/dataModel';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -112,6 +114,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
 
     readonly sectorFormat: Required<AgPieSeriesFormat>;
     readonly legendItemKey?: string;
+    readonly legendItemValue?: string;
 }
 
 enum PieNodeTag {
@@ -135,6 +138,9 @@ class PieSeriesCalloutLabel extends Label {
 
     @Validate(NUMBER(0))
     maxCollisionOffset = 50;
+
+    @Validate(BOOLEAN)
+    avoidCollisions = true;
 }
 
 class PieSeriesSectorLabel extends Label {
@@ -344,9 +350,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const pieCalloutLabels = new Group({ name: 'pieCalloutLabels' });
         const pieSectorLabels = new Group({ name: 'pieSectorLabels' });
         const innerLabels = new Group({ name: 'innerLabels' });
-        this.labelGroup!.append(pieCalloutLabels);
-        this.labelGroup!.append(pieSectorLabels);
-        this.labelGroup!.append(innerLabels);
+        this.labelGroup?.append(pieCalloutLabels);
+        this.labelGroup?.append(pieSectorLabels);
+        this.labelGroup?.append(innerLabels);
         this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
         this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         this.innerLabelsSelection = Selection.select(innerLabels, Text);
@@ -372,7 +378,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
 
     visibleChanged() {
@@ -392,33 +398,47 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
     }
 
-    async processData() {
+    async processData(dataController: DataController) {
         let { data = [] } = this;
-        const { angleKey, radiusKey, seriesItemEnabled } = this;
+        const { angleKey, radiusKey, calloutLabelKey, sectorLabelKey, legendItemKey, seriesItemEnabled } = this;
 
         if (!angleKey) return;
 
         const extraProps = [];
         if (radiusKey) {
             extraProps.push(
-                rangedValueProperty(radiusKey, { id: 'radiusValue', min: this.radiusMin ?? 0, max: this.radiusMax }),
-                valueProperty(radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
-                normalisePropertyTo({ id: 'radiusValue' }, [0, 1], this.radiusMin ?? 0, this.radiusMax)
+                rangedValueProperty(this, radiusKey, {
+                    id: 'radiusValue',
+                    min: this.radiusMin ?? 0,
+                    max: this.radiusMax,
+                }),
+                valueProperty(this, radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
+                normalisePropertyTo(this, { id: 'radiusValue' }, [0, 1], this.radiusMin ?? 0, this.radiusMax)
             );
             extraProps.push();
+        }
+        if (calloutLabelKey) {
+            extraProps.push(valueProperty(this, calloutLabelKey, false, { id: `calloutLabelValue` }));
+        }
+        if (sectorLabelKey) {
+            extraProps.push(valueProperty(this, sectorLabelKey, false, { id: `sectorLabelValue` }));
+        }
+        if (legendItemKey) {
+            extraProps.push(valueProperty(this, legendItemKey, false, { id: `legendItemValue` }));
         }
 
         data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : { ...d, [angleKey]: 0 }));
 
-        this.dataModel = new DataModel<any, any, true>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data, {
             props: [
-                accumulativeValueProperty(angleKey, true, { id: `angleValue` }),
-                valueProperty(angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
-                normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0),
+                accumulativeValueProperty(this, angleKey, true, { id: `angleValue` }),
+                valueProperty(this, angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
+                normalisePropertyTo(this, { id: 'angleValue' }, [0, 1], 0),
                 ...extraProps,
             ],
         });
-        this.processedData = this.dataModel.processData(data);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     maybeRefreshNodeData() {
@@ -432,15 +452,29 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return this._createNodeData();
     }
 
+    private getProcessedDataIndexes(dataModel: DataModel<any>) {
+        const angleIdx = dataModel.resolveProcessedDataIndexById(this, `angleValue`).index;
+        const radiusIdx = this.radiusKey ? dataModel.resolveProcessedDataIndexById(this, `radiusValue`).index : -1;
+        const calloutLabelIdx = this.calloutLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `calloutLabelValue`).index
+            : -1;
+        const sectorLabelIdx = this.sectorLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `sectorLabelValue`).index
+            : -1;
+        const legendItemIdx = this.legendItemKey
+            ? dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index
+            : -1;
+
+        return { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx };
+    }
+
     private _createNodeData() {
         const { id: seriesId, processedData, dataModel, rotation, angleScale } = this;
 
         if (!processedData || !dataModel || processedData.type !== 'ungrouped') return [];
 
-        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
-        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
-
-        if (angleIdx < 0) return [];
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } =
+            this.getProcessedDataIndexes(dataModel);
 
         let currentStart = 0;
         const nodeData = processedData.data.map((group, index): PieNodeDatum => {
@@ -456,8 +490,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const angleValue = values[angleIdx + 1];
             const radius = radiusIdx >= 0 ? values[radiusIdx] ?? 1 : 1;
             const radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
+            const legendItemValue = legendItemIdx >= 0 ? values[legendItemIdx] : undefined;
 
-            const labels = this.getLabels(datum, midAngle, span, true);
+            const labels = this.getLabels(
+                datum,
+                midAngle,
+                span,
+                true,
+                currentValue,
+                radiusValue,
+                values[calloutLabelIdx],
+                values[sectorLabelIdx],
+                legendItemValue
+            );
             const sectorFormat = this.getSectorFormat(datum, index, index, false);
 
             return {
@@ -474,6 +519,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 sectorFormat,
                 radius,
                 radiusValue,
+                legendItemValue,
                 ...labels,
             };
         });
@@ -491,7 +537,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         datum: any,
         midAngle: number,
         span: number,
-        skipDisabled: boolean
+        skipDisabled: boolean,
+        angleValue: any,
+        radiusValue: any,
+        calloutLabelValue: string,
+        sectorLabelValue: string,
+        legendItemValue?: string
     ): {
         calloutLabel?: any;
         legendItem?: {
@@ -512,7 +563,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (!calloutLabelKey && !sectorLabelKey && !legendItemKey) return {};
 
-        const labelFormatterParams = this.getLabelFormatterParams(datum);
+        const labelFormatterParams = this.getLabelFormatterParams(
+            datum,
+            angleValue,
+            radiusValue,
+            calloutLabelValue,
+            sectorLabelValue
+        );
 
         let calloutLabelText;
         if (calloutLabelKey) {
@@ -524,7 +581,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             } else if (calloutLabel.formatter) {
                 calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
             } else {
-                calloutLabelText = String(datum[calloutLabelKey]);
+                calloutLabelText = String(calloutLabelValue);
             }
         }
 
@@ -533,13 +590,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (sectorLabel.formatter) {
                 sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
             } else {
-                sectorLabelText = String(datum[sectorLabelKey]);
+                sectorLabelText = String(sectorLabelValue);
             }
-        }
-
-        let legendItemText;
-        if (legendItemKey) {
-            legendItemText = String(datum[legendItemKey]);
         }
 
         return {
@@ -556,13 +608,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                   }
                 : {}),
             ...(sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {}),
-            ...(legendItemKey != null && legendItemText != null
-                ? { legendItem: { key: legendItemKey, text: legendItemText } }
+            ...(legendItemKey != null && legendItemValue != null
+                ? { legendItem: { key: legendItemKey, text: legendItemValue } }
                 : {}),
         };
     }
 
-    private getLabelFormatterParams(datum: any): AgPieSeriesLabelFormatterParams<any> {
+    private getLabelFormatterParams(
+        datum: any,
+        angleValue: any,
+        radiusValue: any,
+        calloutLabelValue: any,
+        sectorLabelValue: any
+    ): AgPieSeriesLabelFormatterParams<any> {
         const {
             id: seriesId,
             radiusKey,
@@ -577,16 +635,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return {
             datum,
             angleKey,
-            angleValue: datum[angleKey],
+            angleValue,
             angleName,
             radiusKey,
-            radiusValue: radiusKey ? datum[radiusKey] : undefined,
+            radiusValue,
             radiusName,
             calloutLabelKey,
-            calloutLabelValue: calloutLabelKey ? datum[calloutLabelKey] : undefined,
+            calloutLabelValue,
             calloutLabelName,
             sectorLabelKey,
-            sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+            sectorLabelValue,
             sectorLabelName,
             seriesId,
         };
@@ -620,10 +678,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             fillOpacity: seriesFillOpacity,
             formatter,
             id: seriesId,
-            ctx: { callbackCache },
+            ctx: { callbackCache, highlightManager },
         } = this;
 
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
 
@@ -697,8 +755,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.updateRadiusScale();
         this.updateInnerCircleNodes();
 
-        this.rootGroup.translationX = this.centerX;
-        this.rootGroup.translationY = this.centerY;
+        this.contentGroup.translationX = this.centerX;
+        this.contentGroup.translationY = this.centerY;
+        this.highlightGroup.translationX = this.centerX;
+        this.highlightGroup.translationY = this.centerY;
+        this.backgroundGroup.translationX = this.centerX;
+        this.backgroundGroup.translationY = this.centerY;
+        if (this.labelGroup) {
+            this.labelGroup.translationX = this.centerX;
+            this.labelGroup.translationY = this.centerY;
+        }
 
         if (title) {
             const dy = this.getTitleTranslationY();
@@ -807,13 +873,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateNodes(seriesRect: BBox) {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
         this.contentGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && highlightedDatum?.series === this;
-        this.labelGroup!.visible = isVisible;
+        if (this.labelGroup) {
+            this.labelGroup.visible = isVisible;
+        }
 
         this.contentGroup.opacity = this.getOpacity();
 
@@ -862,9 +930,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const isDatumHighlighted =
                 highlightedDatum?.series === this && node.datum.itemId === highlightedDatum.itemId;
 
-            node.visible = isDatumHighlighted;
-            if (node.visible) {
+            if (isDatumHighlighted) {
                 updateSectorFn(node, node.datum, index, isDatumHighlighted);
+            } else {
+                node.visible = false;
             }
         });
 
@@ -900,9 +969,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 let x2 = datum.midCos * (outerRadius + calloutLength);
                 let y2 = datum.midSin * (outerRadius + calloutLength);
 
-                if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
+                const isMoved = label.collisionTextAlign || label.collisionOffsetY !== 0;
+                if (isMoved && label.box != null) {
                     // Get the closest point to the text bounding box
-                    const box = label.box!;
+                    const box = label.box;
                     let cx = x2;
                     let cy = y2;
                     if (x2 < box.x) {
@@ -950,9 +1020,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
-        const textLength = Math.floor(text.length * visibleTextPart) - 1;
+        const textLength = visibleTextPart === 1 ? text.length : Math.floor(text.length * visibleTextPart) - 1;
         const hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
-        return { visibleTextPart, textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
+        return { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
     }
 
     private bboxIntersectsSurroundingSeries(box: BBox, dx = 0, dy = 0) {
@@ -983,9 +1053,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         const fullData = this.nodeData;
-        const data = this.nodeData.filter((text) => !shouldSkip(text));
+        const data = this.nodeData.filter((t): t is Has<'calloutLabel', PieNodeDatum> => !shouldSkip(t));
         data.forEach((datum) => {
-            const label = datum.calloutLabel!;
+            const label = datum.calloutLabel;
+            if (label == null) return;
+
             label.hidden = false;
             label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
@@ -998,15 +1070,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const leftLabels = data.filter((d) => d.midCos < 0).sort((a, b) => a.midSin - b.midSin);
         const rightLabels = data.filter((d) => d.midCos >= 0).sort((a, b) => a.midSin - b.midSin);
         const topLabels = data
-            .filter((d) => d.midSin < 0 && d.calloutLabel!.textAlign === 'center')
+            .filter((d) => d.midSin < 0 && d.calloutLabel?.textAlign === 'center')
             .sort((a, b) => a.midCos - b.midCos);
         const bottomLabels = data
-            .filter((d) => d.midSin >= 0 && d.calloutLabel!.textAlign === 'center')
+            .filter((d) => d.midSin >= 0 && d.calloutLabel?.textAlign === 'center')
             .sort((a, b) => a.midCos - b.midCos);
 
         const tempTextNode = new Text();
-        const getTextBBox = (datum: PieNodeDatum) => {
-            const label = datum.calloutLabel!;
+        const getTextBBox = (datum: (typeof data)[number]) => {
+            const label = datum.calloutLabel;
+            if (label == null) return new BBox(0, 0, 0, 0);
+
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
@@ -1014,13 +1088,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign({
+                textAlign: label.collisionTextAlign ?? label.textAlign,
+                textBaseline: label.textBaseline,
+            });
             return tempTextNode.computeBBox();
         };
 
         const avoidNeighbourYCollision = (
-            label: PieNodeDatum,
-            next: PieNodeDatum,
+            label: (typeof data)[number],
+            next: (typeof data)[number],
             direction: 'to-top' | 'to-bottom'
         ) => {
             const box = getTextBBox(label).grow(minSpacing / 2);
@@ -1033,11 +1114,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 (direction === 'to-top' ? box.y < other.y + other.height : box.y + box.height > other.y);
             if (collidesOrBehind) {
                 const dy = direction === 'to-top' ? box.y - other.y - other.height : box.y + box.height - other.y;
-                next.calloutLabel!.collisionOffsetY = dy;
+                next.calloutLabel.collisionOffsetY = dy;
             }
         };
 
-        const avoidYCollisions = (labels: PieNodeDatum[]) => {
+        const avoidYCollisions = (labels: typeof data) => {
             const midLabel = labels.slice().sort((a, b) => Math.abs(a.midSin) - Math.abs(b.midSin))[0];
             const midIndex = labels.indexOf(midLabel);
             for (let i = midIndex - 1; i >= 0; i--) {
@@ -1052,8 +1133,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         };
 
-        const avoidXCollisions = (labels: PieNodeDatum[]) => {
-            const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel!.collisionOffsetY !== 0);
+        const avoidXCollisions = (labels: typeof data) => {
+            const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel.collisionOffsetY !== 0);
 
             const boxes = labels.map((label) => getTextBBox(label));
             const paddedBoxes = boxes.map((box) => box.clone().grow(minSpacing / 2));
@@ -1085,12 +1166,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             labels
-                .filter((datum) => datum.calloutLabel!.textAlign === 'center')
-                .forEach((datum) => {
-                    const label = datum.calloutLabel!;
-                    if (datum.midCos < 0) {
+                .filter((d) => d.calloutLabel.textAlign === 'center')
+                .forEach((d) => {
+                    const label = d.calloutLabel;
+                    if (d.midCos < 0) {
                         label.collisionTextAlign = 'right';
-                    } else if (datum.midCos > 0) {
+                    } else if (d.midCos > 0) {
                         label.collisionTextAlign = 'left';
                     } else {
                         label.collisionTextAlign = 'center';
@@ -1127,18 +1208,29 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             // Detect text overflow
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            const align = { textAlign: label.collisionTextAlign ?? label.textAlign, textBaseline: label.textBaseline };
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign(align);
             const box = tempTextNode.computeBBox();
-            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(
-                label.text,
-                box,
-                seriesRect
-            );
-            const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, { ...label, text: displayText });
+            let displayText = label.text;
+            let visible = true;
+            if (calloutLabel.avoidCollisions) {
+                const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
+                displayText = label.text.length === textLength ? label.text : `${label.text.substring(0, textLength)}…`;
+                visible = !hasVerticalOverflow;
+            }
+
+            text.text = displayText;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign(align);
             text.fill = color;
-            text.visible = !hasVerticalOverflow;
+            text.visible = visible;
         });
     }
 
@@ -1146,6 +1238,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset, minSpacing } = calloutLabel;
+
+        if (!calloutLabel.avoidCollisions) {
+            return null;
+        }
 
         this.maybeRefreshNodeData();
 
@@ -1159,13 +1255,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (this.title?.text && this.title.enabled) {
             const dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
-                this.setTextDimensionalProps(text, 0, dy, this.title, {
-                    text: this.title.text,
+                text.text = this.title.text;
+                text.x = 0;
+                text.y = dy;
+                text.setFont(this.title);
+                text.setAlign({
                     textBaseline: 'bottom',
                     textAlign: 'center',
-                    hidden: false,
-                    collisionTextAlign: undefined,
-                    collisionOffsetY: 0,
                 });
                 titleBox = text.computeBBox();
                 textBoxes.push(titleBox);
@@ -1183,11 +1279,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const labelRadius = outerRadius + calloutLength + offset;
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
+            text.text = label.text;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign({ textAlign: label.collisionTextAlign ?? label.textAlign, textBaseline: label.textBaseline });
             const box = text.computeBBox();
             label.box = box;
 
-            // Hide labels that where pushed to far by the collision avoidance algorithm
+            // Hide labels that where pushed too far by the collision avoidance algorithm
             if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
                 label.hidden = true;
                 return;
@@ -1229,25 +1329,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return null;
         }
         return BBox.merge(textBoxes);
-    }
-
-    private setTextDimensionalProps(
-        textNode: Text,
-        x: number,
-        y: number,
-        style: Caption | Label,
-        label: PieNodeDatum['calloutLabel']
-    ) {
-        const { fontStyle, fontWeight, fontSize, fontFamily } = style;
-        textNode.fontStyle = fontStyle;
-        textNode.fontWeight = fontWeight;
-        textNode.fontSize = fontSize!;
-        textNode.fontFamily = fontFamily!;
-        textNode.text = label!.text;
-        textNode.x = x;
-        textNode.y = y;
-        textNode.textAlign = label?.collisionTextAlign ?? label?.textAlign ?? 'center';
-        textNode.textBaseline = label!.textBaseline;
     }
 
     private updateSectorLabelNodes() {
@@ -1443,23 +1524,36 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     getLegendData(): ChartLegendDatum[] {
-        const { calloutLabelKey, legendItemKey, id, data } = this;
+        const { processedData, calloutLabelKey, legendItemKey, id, dataModel } = this;
 
-        if (!data || data.length === 0) return [];
+        if (!dataModel || !processedData || processedData.data.length === 0) return [];
 
         if (!legendItemKey && !calloutLabelKey) return [];
+
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } =
+            this.getProcessedDataIndexes(dataModel);
 
         const titleText = this.title?.showInLegend && this.title.text;
         const legendData: CategoryLegendDatum[] = [];
 
-        for (let index = 0; index < data.length; index++) {
-            const datum = data[index];
+        for (let index = 0; index < processedData.data.length; index++) {
+            const { datum, values } = processedData.data[index];
 
             const labelParts = [];
             if (titleText) {
                 labelParts.push(titleText);
             }
-            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
+            const labels = this.getLabels(
+                datum,
+                2 * Math.PI,
+                2 * Math.PI,
+                false,
+                values[angleIdx],
+                values[radiusIdx],
+                values[calloutLabelIdx],
+                values[sectorLabelIdx],
+                values[legendItemIdx]
+            );
             if (legendItemKey && labels.legendItem !== undefined) {
                 labelParts.push(labels.legendItem.text);
             } else if (calloutLabelKey && labels.calloutLabel?.text !== undefined) {
@@ -1507,24 +1601,25 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     toggleOtherSeriesItems(series: PieSeries, itemId: number, enabled: boolean): void {
-        const { legendItemKey } = this;
+        const { legendItemKey, dataModel } = this;
 
-        if (!legendItemKey) return;
+        if (!legendItemKey || !dataModel) return;
 
         const datumToggledLegendItemValue =
             series.legendItemKey && series.data?.find((_, index) => index === itemId)[series.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 
-        this.data?.forEach((datum, datumItemId) => {
-            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+        const legendItemIdx = dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index;
+        this.processedData?.data.forEach(({ values }, datumItemId) => {
+            if (values[legendItemIdx] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);
             }
         });
     }
 
     animateEmptyUpdateReady() {
-        const duration = 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         const rotation = Math.PI / -2 + toRadians(this.rotation);
@@ -1532,17 +1627,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
             const datum: PieNodeDatum = node.datum;
 
-            this.animationManager?.animateMany<number>(
+            this.ctx.animationManager?.animateMany<number>(
                 `${this.id}_empty-update-ready_${node.id}`,
                 [
                     { from: rotation, to: datum.startAngle },
                     { from: rotation, to: datum.endAngle },
                 ],
                 {
-                    disableInteractions: true,
                     duration,
                     ease: easing.easeOut,
-                    repeat: 0,
                     onUpdate([startAngle, endAngle]) {
                         node.startAngle = startAngle;
                         node.endAngle = endAngle;
@@ -1556,12 +1649,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             to: 1,
             delay: duration,
             duration: labelDuration,
-            ease: easing.linear,
-            repeat: 0,
         };
 
         this.calloutLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1570,7 +1661,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.sectorLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1579,7 +1670,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.innerLabelsSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;

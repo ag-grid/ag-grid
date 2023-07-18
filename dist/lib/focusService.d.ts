@@ -15,12 +15,14 @@ export declare class FocusService extends BeanStub {
     private readonly headerNavigationService;
     private readonly rowRenderer;
     private readonly rowPositionUtils;
+    private readonly cellPositionUtils;
     private readonly rangeService;
     navigationService: NavigationService;
     ctrlsService: CtrlsService;
     static AG_KEYBOARD_FOCUS: string;
     private gridCtrl;
     private focusedCellPosition;
+    private restoredFocusedCellPosition;
     private focusedHeaderPosition;
     private static keyboardModeActive;
     private static instancesMonitored;
@@ -47,7 +49,7 @@ export declare class FocusService extends BeanStub {
      *
      * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
      */
-    private static toggleKeyboardMode;
+    static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void;
     private init;
     unregisterGridCompController(gridCompController: GridCtrl): void;
     onColumnEverythingChanged(): void;
@@ -56,6 +58,9 @@ export declare class FocusService extends BeanStub {
     getFocusHeaderToUseAfterRefresh(): HeaderPosition | null;
     private isDomDataMissingInHierarchy;
     getFocusedCell(): CellPosition | null;
+    shouldRestoreFocus(cell: CellPosition): boolean;
+    private isCellRestoreFocused;
+    setRestoreFocusedCell(cellPosition: CellPosition): void;
     private getFocusEventParams;
     clearFocusedCell(): void;
     setFocusedCell(params: CellFocusedParams): void;

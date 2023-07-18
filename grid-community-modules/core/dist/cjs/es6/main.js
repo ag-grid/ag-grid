@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
+ * @version v30.0.5
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -350,7 +350,7 @@ var templateService_1 = require("./templateService");
 Object.defineProperty(exports, "TemplateService", { enumerable: true, get: function () { return templateService_1.TemplateService; } });
 var localeService_1 = require("./localeService");
 Object.defineProperty(exports, "LocaleService", { enumerable: true, get: function () { return localeService_1.LocaleService; } });
-__exportStar(require("./utils"), exports);
+__exportStar(require("./utils/index"), exports); // please leave this as is - we want it to be explicit for build reasons
 var valueService_1 = require("./valueService/valueService");
 Object.defineProperty(exports, "ValueService", { enumerable: true, get: function () { return valueService_1.ValueService; } });
 var valueCache_1 = require("./valueService/valueCache");

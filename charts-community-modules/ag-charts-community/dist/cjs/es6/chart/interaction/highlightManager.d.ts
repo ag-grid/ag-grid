@@ -1,4 +1,4 @@
-import { SizedPoint, Point } from '../../scene/point';
+import type { SizedPoint, Point } from '../../scene/point';
 import { BaseManager } from './baseManager';
 interface HighlightNodeDatum {
     readonly series: any;
@@ -30,4 +30,3 @@ export declare class HighlightManager extends BaseManager<'highlight-change', Hi
     private applyStates;
 }
 export {};
-//# sourceMappingURL=highlightManager.d.ts.map

@@ -11,15 +11,20 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getJsonApplyOptions = exports.JSON_APPLY_PLUGINS = void 0;
-var axis_1 = require("../axis");
+exports.getJsonApplyOptions = exports.assignJsonApplyConstructedArray = exports.JSON_APPLY_PLUGINS = void 0;
+var axisTitle_1 = require("./axis/axisTitle");
 var caption_1 = require("../caption");
 var dropShadow_1 = require("../scene/dropShadow");
-var crossLine_1 = require("./crossline/crossLine");
 var pieSeries_1 = require("./series/polar/pieSeries");
 exports.JSON_APPLY_PLUGINS = {
     constructors: {},
+    constructedArrays: new WeakMap(),
 };
+function assignJsonApplyConstructedArray(array, ctor) {
+    var _a;
+    (_a = exports.JSON_APPLY_PLUGINS.constructedArrays) === null || _a === void 0 ? void 0 : _a.set(array, ctor);
+}
+exports.assignJsonApplyConstructedArray = assignJsonApplyConstructedArray;
 var JSON_APPLY_OPTIONS = {
     constructors: {
         title: caption_1.Caption,
@@ -27,8 +32,7 @@ var JSON_APPLY_OPTIONS = {
         footnote: caption_1.Caption,
         shadow: dropShadow_1.DropShadow,
         innerCircle: pieSeries_1.DoughnutInnerCircle,
-        'axes[].crossLines[]': crossLine_1.CrossLine,
-        'axes[].title': axis_1.AxisTitle,
+        'axes[].title': axisTitle_1.AxisTitle,
         'series[].innerLabels[]': pieSeries_1.DoughnutInnerLabel,
     },
     allowedTypes: {
@@ -40,6 +44,7 @@ var JSON_APPLY_OPTIONS = {
 function getJsonApplyOptions() {
     return {
         constructors: __assign(__assign({}, JSON_APPLY_OPTIONS.constructors), exports.JSON_APPLY_PLUGINS.constructors),
+        constructedArrays: exports.JSON_APPLY_PLUGINS.constructedArrays,
         allowedTypes: __assign({}, JSON_APPLY_OPTIONS.allowedTypes),
     };
 }

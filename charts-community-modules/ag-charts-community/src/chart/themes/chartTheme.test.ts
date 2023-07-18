@@ -1,19 +1,21 @@
 import { describe, expect, test, beforeEach, afterEach } from '@jest/globals';
-import {
+import type {
     AgCartesianChartOptions,
     AgCartesianSeriesMarkerFormatter,
+    AgChartInstance,
     AgChartTheme,
     AgPolarChartOptions,
 } from '../agChartOptions';
-import { AreaSeries } from '../series/cartesian/areaSeries';
-import { BarSeries } from '../series/cartesian/barSeries';
-import { PieSeries } from '../series/polar/pieSeries';
+import type { AreaSeries } from '../series/cartesian/areaSeries';
+import type { BarSeries } from '../series/cartesian/barSeries';
+import type { PieSeries } from '../series/polar/pieSeries';
 import { ChartTheme } from './chartTheme';
 import { AgChart } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
-import { LineSeries } from '../series/cartesian/lineSeries';
+import type { LineSeries } from '../series/cartesian/lineSeries';
 import { deproxy, waitForChartStability } from '../test/utils';
+import { fail } from 'assert';
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -24,6 +26,15 @@ const data = [
 ];
 
 describe('ChartTheme', () => {
+    let chart: AgChartInstance;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as any) = null;
+        }
+    });
+
     describe('cartesian overrides', () => {
         const tooltipRenderer = () => 'testing';
         const markerFormatter: AgCartesianSeriesMarkerFormatter<any> = () => {
@@ -159,14 +170,8 @@ describe('ChartTheme', () => {
         };
 
         const serializedOptions = JSON.stringify(cartesianChartOptions);
-        let chart: CartesianChart;
-
         beforeEach(() => {
             chart = deproxy(AgChart.create(cartesianChartOptions)) as CartesianChart;
-        });
-        afterEach(() => {
-            chart.destroy();
-            (chart as any) = null;
         });
 
         test('Options are not mutated after AgChart.create', () => {
@@ -174,31 +179,35 @@ describe('ChartTheme', () => {
         });
 
         test('Cartesian chart instance properties', () => {
-            expect(chart.title && chart.title.enabled).toBe(true);
-            expect(chart.title && chart.title.fontSize).toBe(24);
-            expect(chart.title && chart.title.fontWeight).toBe('normal');
+            if (!(chart instanceof CartesianChart)) fail();
+
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart.series[0].type).toBe('column');
-            expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((chart.series[0] as BarSeries).label.color).toBe('yellow');
-            expect((chart.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((chart.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
+            const fills = ['red', 'green', 'blue', 'red', 'green'];
+            const strokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 0; i < 5; i++) {
+                expect(chart.series[i].type).toBe('column');
+                expect((chart.series[i] as BarSeries).fill).toEqual(fills[i]);
+                expect((chart.series[i] as BarSeries).stroke).toEqual(strokes[i]);
+                expect((chart.series[i] as BarSeries).label.enabled).toBe(true);
+                expect((chart.series[i] as BarSeries).label.color).toBe('yellow');
+                expect((chart.series[i] as BarSeries).label.fontSize).toBe(18);
+                expect((chart.series[i] as BarSeries).tooltip.enabled).toBe(false);
+                expect((chart.series[i] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
+            }
 
-            expect(chart.series[1].type).toBe('area');
-            expect((chart.series[1] as unknown as AreaSeries).fills).toEqual(['blue', 'red', 'green', 'blue', 'red']);
-            expect((chart.series[1] as unknown as AreaSeries).strokes).toEqual([
-                'cyan',
-                'cyan',
-                'cyan',
-                'cyan',
-                'cyan',
-            ]);
-            expect((chart.series[1] as unknown as AreaSeries).marker.formatter).toBe(markerFormatter);
+            const areaFills = ['blue', 'red', 'green', 'blue', 'red'];
+            const areaStrokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 5; i < 10; i++) {
+                expect(chart.series[i].type).toBe('area');
+                expect((chart.series[i] as unknown as AreaSeries).fill).toEqual(areaFills[i - 5]);
+                expect((chart.series[i] as unknown as AreaSeries).stroke).toEqual(areaStrokes[i - 5]);
+                expect((chart.series[i] as unknown as AreaSeries).marker.formatter).toBe(markerFormatter);
+            }
         });
     });
 
@@ -256,24 +265,21 @@ describe('ChartTheme', () => {
         };
 
         const serializedOptions = JSON.stringify(polarChartOptions);
-        let chart: PolarChart;
 
         beforeEach(() => {
             chart = deproxy(AgChart.create(polarChartOptions)) as PolarChart;
-        });
-        afterEach(() => {
-            chart.destroy();
-            (chart as any) = null;
         });
 
         test('Options are not mutated after AgChart.create', () => {
             expect(JSON.stringify(polarChartOptions)).toBe(serializedOptions);
         });
 
-        test('Polar chart intstance properties', () => {
-            expect(chart.title && chart.title.enabled).toBe(true);
-            expect(chart.title && chart.title.fontSize).toBe(24);
-            expect(chart.title && chart.title.fontWeight).toBe('normal');
+        test('Polar chart instance properties', () => {
+            if (!(chart instanceof PolarChart)) fail();
+
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
             expect((chart as any).background.fill).toBe('red');
 
@@ -413,43 +419,51 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            const cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
-            await waitForChartStability(cartesianChart);
+            chart = deproxy(AgChart.create(cartesianChartOptions));
+            if (!(chart instanceof CartesianChart)) fail();
 
-            expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
-            expect(cartesianChart!.title && cartesianChart!.title.fontSize).toBe(24);
-            expect(cartesianChart!.title && cartesianChart!.title.fontWeight).toBe('normal');
+            await waitForChartStability(chart);
 
-            expect((cartesianChart as any).background.fill).toBe('red');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
-            expect(cartesianChart!.series[0].type).toBe('column');
-            expect((cartesianChart!.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((cartesianChart!.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((cartesianChart!.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((cartesianChart!.series[0] as BarSeries).label.color).toBe('blue');
-            expect((cartesianChart!.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((cartesianChart!.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((cartesianChart!.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            expect((chart as any).background.fill).toBe('red');
+
+            const fills = ['red', 'green', 'blue', 'red', 'green'];
+            const strokes = ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+            for (let i = 0; i < 5; i++) {
+                expect(chart.series[i].type).toBe('column');
+                expect((chart.series[i] as BarSeries).fill).toEqual(fills[i]);
+                expect((chart.series[i] as BarSeries).stroke).toEqual(strokes[i]);
+                expect((chart.series[i] as BarSeries).label.enabled).toBe(true);
+                expect((chart.series[i] as BarSeries).label.color).toBe('blue');
+                expect((chart.series[i] as BarSeries).label.fontSize).toBe(18);
+                expect((chart.series[i] as BarSeries).tooltip.enabled).toBe(false);
+                expect((chart.series[i] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            }
         });
 
         test('Polar chart intstance properties', async () => {
-            const polarChart = deproxy(AgChart.create(polarChartOptions));
-            await waitForChartStability(polarChart);
+            chart = deproxy(AgChart.create(polarChartOptions));
+            if (!(chart instanceof PolarChart)) fail();
 
-            expect(polarChart!.title && polarChart!.title.enabled).toBe(true);
-            expect(polarChart!.title && polarChart!.title.fontSize).toBe(24);
-            expect(polarChart!.title && polarChart!.title.fontWeight).toBe('normal');
+            await waitForChartStability(chart);
 
-            expect((polarChart as any).background.fill).toBe('red');
+            expect(chart.title?.enabled).toBe(true);
+            expect(chart.title?.fontSize).toBe(24);
+            expect(chart.title?.fontWeight).toBe('normal');
 
-            expect(polarChart!.series[0].type).toBe('pie');
-            expect((polarChart!.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
-            expect((polarChart!.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
-            expect((polarChart!.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
-            expect((polarChart!.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
-            expect((polarChart!.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
-            expect((polarChart!.series[0] as PieSeries).tooltip.enabled).toBe(false);
-            expect((polarChart!.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
+            expect((chart as any).background.fill).toBe('red');
+
+            expect(chart.series[0].type).toBe('pie');
+            expect((chart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
+            expect((chart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
+            expect((chart.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
+            expect((chart.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
+            expect((chart.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
+            expect((chart.series[0] as PieSeries).tooltip.enabled).toBe(false);
+            expect((chart.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
         });
     });
 
@@ -520,7 +534,7 @@ describe('ChartTheme', () => {
         });
 
         test('Themed bottom category, unthemed left number', async () => {
-            const chart = deproxy(
+            chart = deproxy(
                 AgChart.create({
                     theme,
                     data,
@@ -553,21 +567,24 @@ describe('ChartTheme', () => {
                     ],
                 } as AgCartesianChartOptions)
             );
+            if (!(chart instanceof CartesianChart)) fail();
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('left');
-            expect(chart.axes[0].line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
-            expect(chart.axes[0].label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('left');
+            expect(axis0.line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
+            expect(axis0.label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].label.fontSize).toBe(18);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.label.fontSize).toBe(18);
         });
 
         test('Specialized chart type themed bottom category, unthemed left number', async () => {
-            const chart = deproxy(
+            chart = deproxy(
                 AgChart.create({
                     type: 'area',
                     theme,
@@ -596,21 +613,24 @@ describe('ChartTheme', () => {
                     ],
                 } as AgCartesianChartOptions)
             );
+            if (!(chart instanceof CartesianChart)) fail();
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('left');
-            expect(chart.axes[0].line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
-            expect(chart.axes[0].label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('left');
+            expect(axis0.line.color).toBe(defaultTheme.config.cartesian.axes.number.line.color);
+            expect(axis0.label.fontSize).toBe(defaultTheme.config.cartesian.axes.number.label.fontSize);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].label.fontSize).toBe(18);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.label.fontSize).toBe(18);
         });
 
         test('Themed right number, unthemed top category', async () => {
-            const chart = deproxy(
+            chart = deproxy(
                 AgChart.create({
                     theme,
                     data,
@@ -653,21 +673,24 @@ describe('ChartTheme', () => {
                     ],
                 } as AgCartesianChartOptions)
             );
+            if (!(chart instanceof CartesianChart)) fail();
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('right');
-            expect(chart.axes[0].line.color).toBe('blue');
-            expect(chart.axes[0].label.fontSize).toBe(18);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('right');
+            expect(axis0.line.color).toBe('blue');
+            expect(axis0.label.fontSize).toBe(18);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('top');
-            expect(chart.axes[1].line.color).toBe('red');
-            expect(chart.axes[1].label.fontSize).toBe(12);
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('top');
+            expect(axis1.line.color).toBe('red');
+            expect(axis1.label.fontSize).toBe(12);
         });
 
         test('Partially themed axes', async () => {
-            const chart = deproxy(
+            chart = deproxy(
                 AgChart.create({
                     theme,
                     data,
@@ -727,31 +750,34 @@ describe('ChartTheme', () => {
                     ],
                 } as AgCartesianChartOptions)
             );
+            if (!(chart instanceof CartesianChart)) fail();
             await waitForChartStability(chart);
 
-            expect(chart.axes[0].type).toBe('number');
-            expect(chart.axes[0].position).toBe('right');
-            expect(chart.axes[0].line.color).toBe('red');
-            expect(chart.axes[0].label.fontSize).toBe(18);
-            expect(chart.axes[0].label.fontStyle).toBe('italic');
-            expect(chart.axes[0].label.fontFamily).toBe('Tahoma');
-            expect(chart.axes[0].label.fontWeight).toBe(defaultTheme.config.cartesian.axes.number.label.fontWeight);
-            expect(chart.axes[0].label.padding).toBe(defaultTheme.config.cartesian.axes.number.label.padding);
-            expect(chart.axes[0].label.rotation).toBe(defaultTheme.config.cartesian.axes.number.label.rotation);
+            const axis0 = chart.axes[0] as any;
+            expect(axis0.type).toBe('number');
+            expect(axis0.position).toBe('right');
+            expect(axis0.line.color).toBe('red');
+            expect(axis0.label.fontSize).toBe(18);
+            expect(axis0.label.fontStyle).toBe('italic');
+            expect(axis0.label.fontFamily).toBe('Tahoma');
+            expect(axis0.label.fontWeight).toBe(defaultTheme.config.cartesian.axes.number.label.fontWeight);
+            expect(axis0.label.padding).toBe(defaultTheme.config.cartesian.axes.number.label.padding);
+            expect(axis0.label.rotation).toBe(defaultTheme.config.cartesian.axes.number.label.rotation);
 
-            expect(chart.axes[1].type).toBe('category');
-            expect(chart.axes[1].position).toBe('bottom');
-            expect(chart.axes[1].line.color).toBe('blue');
-            expect(chart.axes[1].line.width).toBe(5);
-            expect(chart.axes[1].label.fontSize).toBe(18);
-            expect(chart.axes[1].label.fontStyle).toBe(defaultTheme.config.cartesian.axes.category.label.fontStyle);
-            expect(chart.axes[1].label.fontFamily).toBe(defaultTheme.config.cartesian.axes.category.label.fontFamily);
-            expect(chart.axes[1].label.fontWeight).toBe('bold');
-            expect(chart.axes[1].label.rotation).toBe(45);
-            expect(chart.axes[1].title && chart.axes[1].title.text).toBe('Test');
+            const axis1 = chart.axes[1] as any;
+            expect(axis1.type).toBe('category');
+            expect(axis1.position).toBe('bottom');
+            expect(axis1.line.color).toBe('blue');
+            expect(axis1.line.width).toBe(5);
+            expect(axis1.label.fontSize).toBe(18);
+            expect(axis1.label.fontStyle).toBe(defaultTheme.config.cartesian.axes.category.label.fontStyle);
+            expect(axis1.label.fontFamily).toBe(defaultTheme.config.cartesian.axes.category.label.fontFamily);
+            expect(axis1.label.fontWeight).toBe('bold');
+            expect(axis1.label.rotation).toBe(45);
+            expect(axis1.title && axis1.title.text).toBe('Test');
             // Since config is provided, the `enabled` should be auto-set to `true`,
             // even though theme's default is `false`.
-            expect(chart.axes[1].title && chart.axes[1].title.enabled).toBe(true);
+            expect(axis1.title && axis1.title.enabled).toBe(true);
         });
     });
 
@@ -839,16 +865,19 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            const cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
-            await waitForChartStability(cartesianChart);
-            const { series } = cartesianChart;
+            chart = deproxy(AgChart.create(cartesianChartOptions));
+            if (!(chart instanceof CartesianChart)) fail();
+            await waitForChartStability(chart);
+            const { series } = chart;
 
             expect(series[0].type).toEqual('column');
-            expect(series[1].type).toEqual('line');
-            expect(series[2].type).toEqual('area');
+            expect(series[1].type).toEqual('column');
+            expect(series[2].type).toEqual('line');
+            expect(series[3].type).toEqual('area');
             expect((series[0] as BarSeries).strokeWidth).toEqual(16);
-            expect((series[1] as LineSeries).strokeWidth).toEqual(17);
-            expect((series[2] as unknown as AreaSeries).strokeWidth).toEqual(18);
+            expect((series[1] as BarSeries).strokeWidth).toEqual(16);
+            expect((series[2] as LineSeries).strokeWidth).toEqual(17);
+            expect((series[3] as unknown as AreaSeries).strokeWidth).toEqual(18);
         });
     });
 });

@@ -43,6 +43,7 @@ class ClientSideNodeManager {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.dispatchRowDataUpdateStartedEvent(rowData);
         const rootNode = this.rootNode;
         const sibling = this.rootNode.sibling;
         rootNode.childrenAfterFilter = null;
@@ -73,6 +74,7 @@ class ClientSideNodeManager {
         }
     }
     updateRowData(rowDataTran, rowNodeOrder) {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
         const rowNodeTransaction = {
             remove: [],
             update: [],
@@ -87,6 +89,13 @@ class ClientSideNodeManager {
             core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    }
+    dispatchRowDataUpdateStartedEvent(rowData) {
+        const event = {
+            type: core_1.Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            firstRowData: (rowData === null || rowData === void 0 ? void 0 : rowData.length) ? rowData[0] : null
+        };
+        this.eventService.dispatchEvent(event);
     }
     updateSelection(nodesToUnselect, source) {
         const selectionChanged = nodesToUnselect.length > 0;

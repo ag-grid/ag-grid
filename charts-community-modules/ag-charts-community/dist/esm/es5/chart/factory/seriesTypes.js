@@ -19,10 +19,14 @@ var BUILT_IN_SERIES_FACTORIES = {
 var SERIES_FACTORIES = {};
 var SERIES_DEFAULTS = {};
 var SERIES_THEME_TEMPLATES = {};
-export function registerSeries(seriesType, chartType, cstr, defaults, theme) {
+var SERIES_PALETTE_FACTORIES = {};
+export function registerSeries(seriesType, chartType, cstr, defaults, theme, paletteFactory) {
     SERIES_FACTORIES[seriesType] = cstr;
     SERIES_DEFAULTS[seriesType] = defaults;
     SERIES_THEME_TEMPLATES[seriesType] = theme;
+    if (paletteFactory) {
+        addSeriesPaletteFactory(seriesType, paletteFactory);
+    }
     registerChartSeriesType(seriesType, chartType);
 }
 export function getSeries(chartType, moduleCtx) {
@@ -38,4 +42,10 @@ export function getSeriesDefaults(chartType) {
 }
 export function getSeriesThemeTemplate(chartType) {
     return SERIES_THEME_TEMPLATES[chartType];
+}
+export function addSeriesPaletteFactory(seriesType, factory) {
+    SERIES_PALETTE_FACTORIES[seriesType] = factory;
+}
+export function getSeriesPaletteFactory(seriesType) {
+    return SERIES_PALETTE_FACTORIES[seriesType];
 }

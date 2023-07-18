@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import type { CartesianTestCase } from '../test/utils';
 import {
     cartesianChartAssertions,
-    CartesianTestCase,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
     prepareTestOptions,
@@ -10,10 +10,10 @@ import {
     setupMockCanvas,
     waitForChartStability,
 } from '../test/utils';
-import { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition } from '../agChartOptions';
+import type { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
 import * as examples from './test/examples';
-import { Chart } from '../chart';
+import type { Chart } from '../chart';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -234,11 +234,11 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
     },
     COLUMN_CROSSLINES: {
         options: examples.COLUMN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('column', 7) }),
     },
     BAR_CROSSLINES: {
         options: examples.BAR_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('bar', 2) }),
     },
     HISTOGRAM_CROSSLINES: {
         options: examples.HISTOGRAM_CROSSLINES,

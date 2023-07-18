@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19,6 +13,7 @@ const eventKeys_1 = require("../eventKeys");
 const object_1 = require("../utils/object");
 const moduleRegistry_1 = require("../modules/moduleRegistry");
 const moduleNames_1 = require("../modules/moduleNames");
+const column_1 = require("../entities/column");
 const function_1 = require("../utils/function");
 const keyCode_1 = require("../constants/keyCode");
 const generic_1 = require("../utils/generic");
@@ -43,6 +38,10 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
         super(...arguments);
         this.dataTypeDefinitions = {};
         this.isWaitingForRowData = false;
+        this.isColumnTypeOverrideInDataTypeDefinitions = false;
+        // keep track of any column state updates whilst waiting for data types to be inferred
+        this.columnStateUpdatesPendingInference = {};
+        this.columnStateUpdateListenerDestroyFuncs = [];
     }
     init() {
         this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
@@ -98,6 +97,9 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
     processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions, alreadyProcessedDataTypes, defaultDataTypes) {
         let mergedDataTypeDefinition;
         const extendsCellDataType = dataTypeDefinition.extendsDataType;
+        if (dataTypeDefinition.columnTypes) {
+            this.isColumnTypeOverrideInDataTypeDefinitions = true;
+        }
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
             const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
@@ -183,7 +185,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
             cellDataType = colDef.cellDataType;
         }
         if ((cellDataType == null || cellDataType === true)) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field) : false;
+            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
         if (!cellDataType) {
             colDef.cellDataType = false;
@@ -210,7 +212,22 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
         var _a, _b;
         const dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(colDef, userColDef, colId);
         const columnTypes = (_b = (_a = userColDef.type) !== null && _a !== void 0 ? _a : dataTypeDefinitionColumnType) !== null && _b !== void 0 ? _b : colDef.type;
+        colDef.type = columnTypes;
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
+    }
+    addColumnListeners(column) {
+        if (!this.isWaitingForRowData) {
+            return;
+        }
+        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
+        if (!columnStateUpdates) {
+            return;
+        }
+        const columnListener = (event) => {
+            columnStateUpdates.add(event.key);
+        };
+        column.addEventListener(column_1.Column.EVENT_STATE_UPDATED, columnListener);
+        this.columnStateUpdateListenerDestroyFuncs.push(() => column.removeEventListener(column_1.Column.EVENT_STATE_UPDATED, columnListener));
     }
     canInferCellDataType(colDef, userColDef) {
         var _a;
@@ -252,27 +269,19 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
             return comparisonValue === undefined ? !!value : value === comparisonValue;
         }
     }
-    inferCellDataType(field) {
+    inferCellDataType(field, colId) {
         var _a;
         if (!field) {
             return undefined;
         }
-        const rowData = this.gridOptionsService.get('rowData');
         let value;
-        const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
-        if (rowData === null || rowData === void 0 ? void 0 : rowData.length) {
-            value = object_1.getValueUsingField(rowData[0], field, fieldContainsDots);
+        const initialData = this.getInitialData();
+        if (initialData) {
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            value = object_1.getValueUsingField(initialData, field, fieldContainsDots);
         }
         else {
-            const rowNodes = this.rowModel
-                .getRootNode()
-                .allLeafChildren;
-            if (rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.length) {
-                value = object_1.getValueUsingField(rowNodes[0].data, field, fieldContainsDots);
-            }
-            else {
-                this.initWaitForRowData();
-            }
+            this.initWaitForRowData(colId);
         }
         if (value == null) {
             return undefined;
@@ -280,19 +289,97 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
         const [cellDataType] = (_a = Object.entries(this.dataTypeMatchers).find(([_cellDataType, dataTypeMatcher]) => dataTypeMatcher(value))) !== null && _a !== void 0 ? _a : ['object'];
         return cellDataType;
     }
-    initWaitForRowData() {
+    getInitialData() {
+        const rowData = this.gridOptionsService.get('rowData');
+        if (rowData === null || rowData === void 0 ? void 0 : rowData.length) {
+            return rowData[0];
+        }
+        else if (this.initialData) {
+            return this.initialData;
+        }
+        else {
+            const rowNodes = this.rowModel
+                .getRootNode()
+                .allLeafChildren;
+            if (rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.length) {
+                return rowNodes[0].data;
+            }
+        }
+        return null;
+    }
+    initWaitForRowData(colId) {
+        this.columnStateUpdatesPendingInference[colId] = new Set();
         if (this.isWaitingForRowData) {
             return;
         }
         this.isWaitingForRowData = true;
-        const destroyFunc = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_DATA_UPDATED, () => {
+        const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
+        if (columnTypeOverridesExist) {
+            this.columnModel.queueResizeOperations();
+        }
+        const destroyFunc = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_DATA_UPDATE_STARTED, (event) => {
+            const { firstRowData } = event;
+            if (!firstRowData) {
+                return;
+            }
             destroyFunc === null || destroyFunc === void 0 ? void 0 : destroyFunc();
             this.isWaitingForRowData = false;
-            setTimeout(() => {
-                // ensure event handled async
-                this.columnModel.recreateColumnDefs('rowDataUpdated');
-            });
+            this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
+            this.columnStateUpdatesPendingInference = {};
+            if (columnTypeOverridesExist) {
+                this.columnModel.processResizeOperations();
+            }
         });
+    }
+    processColumnsPendingInference(firstRowData, columnTypeOverridesExist) {
+        this.initialData = firstRowData;
+        const state = [];
+        this.columnStateUpdateListenerDestroyFuncs.forEach(destroyFunc => destroyFunc());
+        this.columnStateUpdateListenerDestroyFuncs = [];
+        const newRowGroupColumnStateWithoutIndex = {};
+        const newPivotColumnStateWithoutIndex = {};
+        Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
+            const column = this.columnModel.getGridColumn(colId);
+            if (!column) {
+                return;
+            }
+            const oldColDef = column.getColDef();
+            if (!this.columnModel.resetColumnDefIntoColumn(column)) {
+                return;
+            }
+            const newColDef = column.getColDef();
+            if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
+                const updatedColumnState = this.getUpdatedColumnState(column, columnStateUpdates);
+                if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
+                    newRowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
+                    newPivotColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                state.push(updatedColumnState);
+            }
+        });
+        if (columnTypeOverridesExist) {
+            state.push(...this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
+        }
+        if (state.length) {
+            this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
+        }
+        this.initialData = null;
+    }
+    getUpdatedColumnState(column, columnStateUpdates) {
+        const columnState = this.columnModel.getColumnStateFromColDef(column);
+        columnStateUpdates.forEach(key => {
+            // if the column state has been updated, don't update again
+            delete columnState[key];
+            if (key === 'rowGroup') {
+                delete columnState.rowGroupIndex;
+            }
+            else if (key === 'pivot') {
+                delete columnState.pivotIndex;
+            }
+        });
+        return columnState;
     }
     checkObjectValueHandlers(defaultDataTypes) {
         const resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
@@ -358,15 +445,19 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
             }
             return this.valueFormatterService.formatValue(column, node, value, valueFormatter);
         };
-        const usingSetFilter = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId());
+        const usingSetFilter = moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();
+        const mergeFilterParams = (params) => {
+            const { filterParams } = colDef;
+            colDef.filterParams = typeof filterParams === 'object' ? Object.assign(Object.assign({}, filterParams), params) : params;
+        };
         colDef.useValueFormatterForExport = true;
         colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: (a, b) => {
                             const valA = a == null ? 0 : parseInt(a);
                             const valB = b == null ? 0 : parseInt(b);
@@ -374,7 +465,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                                 return 0;
                             return valA > valB ? 1 : -1;
                         },
-                    };
+                    });
                 }
                 break;
             }
@@ -383,17 +474,17 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
                 colDef.suppressKeyboardEvent = (params) => !!params.colDef.editable && params.event.key === keyCode_1.KeyCode.SPACE;
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params) => {
                             if (!generic_1.exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
                         }
-                    };
+                    });
                 }
                 else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         maxNumConditions: 1,
                         filterOptions: [
                             'empty',
@@ -410,7 +501,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                                 numberOfInputs: 0,
                             },
                         ]
-                    };
+                    });
                 }
                 break;
             }
@@ -418,7 +509,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                 colDef.cellEditor = 'agDateCellEditor';
                 colDef.keyCreator = (params) => formatValue(params.column, params.node, params.value);
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -431,7 +522,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                             }
                             return pathKey !== null && pathKey !== void 0 ? pathKey : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -440,7 +531,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                 colDef.keyCreator = (params) => formatValue(params.column, params.node, params.value);
                 const convertToDate = this.getDateParserFunction();
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -457,10 +548,10 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                             }
                             return pathKey !== null && pathKey !== void 0 ? pathKey : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: (filterDate, cellValue) => {
                             const cellAsDate = convertToDate(cellValue);
                             if (cellValue == null || cellAsDate < filterDate) {
@@ -471,7 +562,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                             }
                             return 0;
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -493,12 +584,12 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                 };
                 colDef.keyCreator = (params) => formatValue(params.column, params.node, params.value);
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 else {
                     colDef.filterValueGetter = (params) => formatValue(params.column, params.node, this.valueService.getValue(params.column, params.node));
@@ -508,7 +599,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
         }
     }
     getDefaultDataTypes() {
-        const defaultDateFormatMatcher = (value) => !!value.match('\\d{4}-\\d{2}-\\d{2}');
+        const defaultDateFormatMatcher = (value) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
         const translate = this.localeService.getLocaleTextFunc();
         return {
             number: {
@@ -573,6 +664,9 @@ __decorate([
 __decorate([
     context_1.Autowired('columnModel')
 ], DataTypeService.prototype, "columnModel", void 0);
+__decorate([
+    context_1.Autowired('columnUtils')
+], DataTypeService.prototype, "columnUtils", void 0);
 __decorate([
     context_1.Autowired('valueService')
 ], DataTypeService.prototype, "valueService", void 0);

@@ -1,5 +1,6 @@
 import { BBox } from '../scene/bbox';
-import { Chart, TransferableResources } from './chart';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
 
 export class HierarchyChart extends Chart {
     static className = 'HierarchyChart';
@@ -28,10 +29,10 @@ export class HierarchyChart extends Chart {
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
         this.hoverRect = hoverRect;
 
+        this.seriesRoot.translationX = Math.floor(shrinkRect.x);
+        this.seriesRoot.translationY = Math.floor(shrinkRect.y);
         await Promise.all(
             this.series.map(async (series) => {
-                series.rootGroup.translationX = Math.floor(shrinkRect.x);
-                series.rootGroup.translationY = Math.floor(shrinkRect.y);
                 await series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
             })
         );

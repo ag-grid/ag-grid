@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -206,15 +200,15 @@ class Column {
             }, key);
         }
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
+        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             const rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             const itemsUsed = rowGroupingItems.filter(x => generic_1.exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
-                moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
+                moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
             }
         }
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
         if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
@@ -229,7 +223,7 @@ class Column {
                 const enterpriseMenuTabs = ['columnsMenuTab', 'generalMenuTab'];
                 const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
                 if (itemsUsed.length > 0) {
-                    moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
+                    moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
                 }
                 colDefAny.menuTabs.forEach((tab) => {
                     if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
@@ -242,10 +236,10 @@ class Column {
             }
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
@@ -360,6 +354,7 @@ class Column {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
+        this.dispatchStateUpdatedEvent('sort');
     }
     setMenuVisible(visible, source = "api") {
         if (this.menuVisible !== visible) {
@@ -387,9 +382,11 @@ class Column {
     }
     setSortIndex(sortOrder) {
         this.sortIndex = sortOrder;
+        this.dispatchStateUpdatedEvent('sortIndex');
     }
     setAggFunc(aggFunc) {
         this.aggFunc = aggFunc;
+        this.dispatchStateUpdatedEvent('aggFunc');
     }
     /** If aggregation is set for the column, returns the aggregation function. */
     getAggFunc() {
@@ -441,6 +438,7 @@ class Column {
         else {
             this.pinned = null;
         }
+        this.dispatchStateUpdatedEvent('pinned');
     }
     setFirstRightPinned(firstRightPinned, source = "api") {
         if (this.firstRightPinned !== firstRightPinned) {
@@ -478,6 +476,7 @@ class Column {
             this.visible = newValue;
             this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
+        this.dispatchStateUpdatedEvent('hide');
     }
     isVisible() {
         return this.visible;
@@ -581,6 +580,7 @@ class Column {
                 this.fireColumnWidthChangedEvent(source);
             }
         }
+        this.dispatchStateUpdatedEvent('width');
     }
     fireColumnWidthChangedEvent(source) {
         this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
@@ -606,6 +606,7 @@ class Column {
         if (this.flex !== flex) {
             this.flex = flex;
         }
+        this.dispatchStateUpdatedEvent('flex');
     }
     setMinimum(source = "api") {
         if (generic_1.exists(this.minWidth)) {
@@ -617,6 +618,7 @@ class Column {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
+        this.dispatchStateUpdatedEvent('rowGroup');
     }
     /** Returns `true` if row group is currently active for this column. */
     isRowGroupActive() {
@@ -627,6 +629,7 @@ class Column {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
+        this.dispatchStateUpdatedEvent('pivot');
     }
     /** Returns `true` if pivot is currently active for this column. */
     isPivotActive() {
@@ -664,6 +667,12 @@ class Column {
         }
         return menuTabs;
     }
+    dispatchStateUpdatedEvent(key) {
+        this.eventService.dispatchEvent({
+            type: Column.EVENT_STATE_UPDATED,
+            key
+        });
+    }
 }
 // + renderedHeaderCell - for making header cell transparent when moving
 Column.EVENT_MOVING_CHANGED = 'movingChanged';
@@ -691,6 +700,8 @@ Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
 Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
 // + toolpanel, for gui updates
 Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
+// + dataTypeService - when waiting to infer cell data types
+Column.EVENT_STATE_UPDATED = 'columnStateUpdated';
 __decorate([
     context_1.Autowired('gridOptionsService')
 ], Column.prototype, "gridOptionsService", void 0);

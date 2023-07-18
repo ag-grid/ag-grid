@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -57,8 +51,9 @@ let AutoWidthCalculator = class AutoWidthCalculator extends beanStub_1.BeanStub 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
         const eBodyContainer = this.centerRowContainerCtrl.getContainerElement();
-        eBodyContainer.appendChild(eDummyContainer);
         elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));
+        // only append the dummyContainer to the DOM after it contains all the necessary items
+        eBodyContainer.appendChild(eDummyContainer);
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
         const dummyContainerWidth = eDummyContainer.offsetWidth;

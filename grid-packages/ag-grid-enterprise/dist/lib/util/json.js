@@ -186,7 +186,12 @@ function jsonMerge(json, opts) {
     var props = new Set(json.map(function (v) { return (v != null ? Object.keys(v) : []); }).reduce(function (r, n) { return r.concat(n); }, []));
     var _loop_2 = function (nextProp) {
         var values = json
-            .map(function (j) { return (j != null && nextProp in j ? j[nextProp] : NOT_SPECIFIED); })
+            .map(function (j) {
+            if (j != null && typeof j === 'object' && nextProp in j) {
+                return j[nextProp];
+            }
+            return NOT_SPECIFIED;
+        })
             .filter(function (v) { return v !== NOT_SPECIFIED; });
         if (values.length === 0) {
             return "continue";
@@ -242,12 +247,14 @@ exports.jsonMerge = jsonMerge;
  * @param params.skip property names to skip from the source
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
+ * @param params.constructedArrays map stores arrays which items should be initialised
+ *                                 using a class constructor
  * @param params.allowedTypes overrides by path for allowed property types
  */
 function jsonApply(target, source, params) {
-    var _a, _b;
+    var _a, _b, _c;
     if (params === void 0) { params = {}; }
-    var _c = params.path, path = _c === void 0 ? undefined : _c, _d = params.matcherPath, matcherPath = _d === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _d, _e = params.skip, skip = _e === void 0 ? [] : _e, _f = params.constructors, constructors = _f === void 0 ? {} : _f, _g = params.allowedTypes, allowedTypes = _g === void 0 ? {} : _g, idx = params.idx;
+    var _d = params.path, path = _d === void 0 ? undefined : _d, _e = params.matcherPath, matcherPath = _e === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _e, _f = params.skip, skip = _f === void 0 ? [] : _f, _g = params.constructors, constructors = _g === void 0 ? {} : _g, _h = params.constructedArrays, constructedArrays = _h === void 0 ? new WeakMap() : _h, _j = params.allowedTypes, allowedTypes = _j === void 0 ? {} : _j, idx = params.idx;
     if (target == null) {
         throw new Error("AG Charts - target is uninitialised: " + (path !== null && path !== void 0 ? path : '<root>'));
     }
@@ -286,7 +293,7 @@ function jsonApply(target, source, params) {
                 return "continue";
             }
             if (newValueType === 'array') {
-                ctr = ctr !== null && ctr !== void 0 ? ctr : constructors[propertyMatcherPath + "[]"];
+                ctr = (_c = ctr !== null && ctr !== void 0 ? ctr : constructedArrays.get(currentValue)) !== null && _c !== void 0 ? _c : constructors[propertyMatcherPath + "[]"];
                 if (ctr != null) {
                     var newValueArray = newValue;
                     targetAny[property] = newValueArray.map(function (v, idx) {
@@ -316,8 +323,7 @@ function jsonApply(target, source, params) {
             }
         }
         catch (error) {
-            var err = error;
-            logger_1.Logger.warn("unable to set [" + propertyPath + "] in [" + (targetClass === null || targetClass === void 0 ? void 0 : targetClass.name) + "]; nested error is: " + err.message);
+            logger_1.Logger.warn("unable to set [" + propertyPath + "] in [" + (targetClass === null || targetClass === void 0 ? void 0 : targetClass.name) + "]; nested error is: " + error.message);
             return "continue";
         }
     };

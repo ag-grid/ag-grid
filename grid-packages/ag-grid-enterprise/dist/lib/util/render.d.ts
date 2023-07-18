@@ -7,11 +7,11 @@ declare type Callback = (params: {
  * animation callback executes.
  */
 export declare function debouncedAnimationFrame(cb: Callback): {
-    schedule(): void;
+    schedule(delayMs?: number): void;
     await(): Promise<void>;
 };
 export declare function debouncedCallback(cb: Callback): {
-    schedule(): void;
+    schedule(delayMs?: number): void;
     await(): Promise<void>;
 };
 export {};

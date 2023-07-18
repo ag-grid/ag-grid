@@ -38,13 +38,16 @@ var __values = (this && this.__values) || function(o) {
 };
 import { jsonMerge, jsonWalk } from '../../util/json';
 import { deepMerge } from '../../util/object';
-import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
+import { AXIS_TYPES, getAxisThemeTemplate } from '../factory/axisTypes';
 import { CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 var palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
     strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
+export var EXTENDS_AXES_DEFAULTS = Symbol('extends-axes-defaults');
+export var EXTENDS_AXES_LABEL_DEFAULTS = Symbol('extends-axes-label-defaults');
+export var EXTENDS_AXES_LINE_DEFAULTS = Symbol('extends-axes-line-defaults');
 export var EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
 export var OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
 export var DEFAULT_FONT_FAMILY = Symbol('default-font');
@@ -95,7 +98,6 @@ var ChartTheme = /** @class */ (function () {
             right: {},
             bottom: {},
             left: {},
-            thickness: 0,
             title: {
                 enabled: false,
                 text: 'Axis Title',
@@ -348,8 +350,8 @@ var ChartTheme = /** @class */ (function () {
                 }
                 return obj;
             }, {});
-            if (chartType === 'cartesian') {
-                result.axes = CHART_AXES_TYPES.axesTypes.reduce(function (obj, axisType) {
+            if (chartType === 'cartesian' || chartType === 'polar') {
+                result.axes = AXIS_TYPES.axesTypes.reduce(function (obj, axisType) {
                     var template = getAxisThemeTemplate(axisType);
                     if (template) {
                         obj[axisType] = _this.templateTheme(template);
@@ -374,11 +376,15 @@ var ChartTheme = /** @class */ (function () {
             var e_1, _a;
             if (node['__extends__']) {
                 var key = node['__extends__'];
-                var source = extensions.get(key);
-                if (source == null) {
+                var source_1 = extensions.get(key);
+                if (source_1 == null) {
                     throw new Error('AG Charts - no template variable provided for: ' + key);
                 }
-                Object.assign(node, source, node);
+                Object.keys(source_1).forEach(function (key) {
+                    if (!(key in node)) {
+                        node[key] = source_1[key];
+                    }
+                });
                 delete node['__extends__'];
             }
             if (node['__overrides__']) {
@@ -410,6 +416,9 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.prototype.getTemplateParameters = function () {
         var extensions = new Map();
+        extensions.set(EXTENDS_AXES_DEFAULTS, ChartTheme.getAxisDefaults());
+        extensions.set(EXTENDS_AXES_LABEL_DEFAULTS, ChartTheme.getAxisDefaults().label);
+        extensions.set(EXTENDS_AXES_LINE_DEFAULTS, ChartTheme.getAxisDefaults().line);
         extensions.set(EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
         extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, {});
         var properties = new Map();

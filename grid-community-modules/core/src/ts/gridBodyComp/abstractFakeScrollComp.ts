@@ -4,6 +4,8 @@ import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
+import { isVisible } from "../utils/dom";
+import { waitUntil } from "../utils/function";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { ScrollVisibleService } from "./scrollVisibleService";
@@ -20,6 +22,8 @@ export abstract class AbstractFakeScrollComp extends Component {
     protected hideTimeout: number | null = null;
 
     protected abstract setScrollVisible(): void;
+    public abstract getScrollPosition(): number;
+    public abstract setScrollPosition(value: number): void;
 
     constructor(template: string, private readonly direction: 'horizontal' | 'vertical') {
         super(template);
@@ -88,11 +92,21 @@ export abstract class AbstractFakeScrollComp extends Component {
         });
     }
 
-    public getViewport(): HTMLElement {
+    protected  attemptSettingScrollPosition(value: number) {
+        const viewport = this.getViewport();
+        waitUntil(() => isVisible(viewport), () => this.setScrollPosition(value), 100);
+    }
+
+    protected getViewport(): HTMLElement {
         return this.eViewport;
     }
 
     public getContainer(): HTMLElement {
         return this.eContainer;
     }
+
+    public onScrollCallback(fn: () => void): void {
+        this.addManagedListener(this.getViewport(), 'scroll', fn);
+    }
+
 }

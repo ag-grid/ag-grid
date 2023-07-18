@@ -1,71 +1,42 @@
-import { Group } from '../../scene/group';
-import { Scale } from '../../scale/scale';
-import { ChartAxisDirection } from '../chartAxisDirection';
-import { CrossLineLabelPosition } from './crossLineLabelPosition';
-import { Layers } from '../layers';
-import { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
-declare class CrossLineLabel {
+import type { Group } from '../../scene/group';
+import type { Scale } from '../../scale/scale';
+import type { ChartAxisDirection } from '../chartAxisDirection';
+import type { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
+export interface CrossLineLabel {
     enabled?: boolean;
     text?: string;
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
     fontSize: number;
     fontFamily: string;
-    /**
-     * The padding between the label and the line.
-     */
     padding: number;
-    /**
-     * The color of the labels.
-     */
     color?: string;
-    position?: CrossLineLabelPosition;
+    position?: AgCrossLineLabelPosition;
     rotation?: number;
     parallel?: boolean;
 }
-declare type CrossLineType = 'line' | 'range';
-export declare class CrossLine {
-    protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
-    protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
-    static className: string;
-    readonly id: string;
+export declare type CrossLineType = 'line' | 'range';
+export interface CrossLine {
+    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>): void;
+    clippedRange: [number, number];
+    direction: ChartAxisDirection;
     enabled?: boolean;
-    type?: CrossLineType;
-    range?: [any, any];
-    value?: any;
     fill?: string;
     fillOpacity?: number;
-    stroke?: string;
-    strokeWidth?: number;
-    strokeOpacity?: number;
-    lineDash?: [];
-    label: CrossLineLabel;
-    scale?: Scale<any, number>;
-    clippedRange: [number, number];
     gridLength: number;
-    sideFlag: 1 | -1;
+    group: Group;
+    id: string;
+    label: CrossLineLabel;
+    lineDash?: number[];
     parallelFlipRotation: number;
+    range?: [any, any];
     regularFlipRotation: number;
-    direction: ChartAxisDirection;
-    readonly group: Group;
-    private crossLineRange;
-    private crossLineLabel;
-    private labelPoint?;
-    private data;
-    private startLine;
-    private endLine;
-    private isRange;
-    constructor();
+    scale?: Scale<any, number>;
+    sideFlag: 1 | -1;
+    stroke?: string;
+    strokeOpacity?: number;
+    strokeWidth?: number;
+    type?: CrossLineType;
     update(visible: boolean): void;
-    private updateNodes;
-    private createNodeData;
-    private updateRangeNode;
-    private updateLabel;
-    private positionLabel;
-    protected getZIndex(isRange?: boolean): number;
-    private getRange;
-    private computeLabelBBox;
-    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>): void;
+    value?: any;
 }
-export {};
-//# sourceMappingURL=crossLine.d.ts.map

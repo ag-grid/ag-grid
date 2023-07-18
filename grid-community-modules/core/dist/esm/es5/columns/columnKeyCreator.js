@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 // class returns a unique id to use for the column. it checks the existing columns, and if the requested
 // id is already taken, it will start appending numbers until it gets a unique id.
 // eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}

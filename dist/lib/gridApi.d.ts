@@ -5,15 +5,15 @@ import { Context } from "./context/context";
 import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Column } from "./entities/column";
-import { ChartRef, DomLayoutType, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowIdFunc, GetRowNodeIdFunc, GetServerSideGroupKey, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroup, RowClassParams, RowGroupingDisplayType, ServerSideGroupLevelParams } from "./entities/gridOptions";
+import { ChartRef, DomLayoutType, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowIdFunc, GetServerSideGroupKey, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroup, RowClassParams, RowGroupingDisplayType, ServerSideGroupLevelParams } from "./entities/gridOptions";
 import { GetGroupRowAggParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessRowParams, RowHeightParams, TabToNextCellParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
-import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { ICellEditor } from "./interfaces/iCellEditor";
-import { ChartDownloadParams, ChartModel, CloseChartToolPanelParams, GetChartImageDataUrlParams, OpenChartToolPanelParams, CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from './interfaces/IChartService';
+import { ChartDownloadParams, ChartModel, CloseChartToolPanelParams, CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams, GetChartImageDataUrlParams, OpenChartToolPanelParams, UpdateChartParams } from './interfaces/IChartService';
 import { ClientSideRowModelStep } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
@@ -37,6 +37,7 @@ import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams } from "./rendering/rowRenderer";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
 export interface DetailGridInfo {
     /**
      * Id of the detail grid, the format is `detail_{ROW-ID}`,
@@ -57,8 +58,6 @@ export interface StartEditingCellParams {
     rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
-    /** The charPress to pass to the cell editor */
-    charPress?: string;
 }
 export declare function unwrapUserComp<T>(comp: T): T;
 export declare class GridApi<TData = any> {
@@ -112,6 +111,8 @@ export declare class GridApi<TData = any> {
     private getSetterMethod;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): void;
+    /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
+    getGridId(): string;
     /** Register a detail grid with the master grid when it is created. */
     addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void;
     /** Unregister a detail grid from the master grid when it is destroyed. */
@@ -169,7 +170,7 @@ export declare class GridApi<TData = any> {
     getPinnedBottomRowCount(): number;
     /** Gets the top pinned row with the specified index. */
     getPinnedTopRow(index: number): IRowNode | undefined;
-    /** Gets the top pinned row with the specified index. */
+    /** Gets the bottom pinned row with the specified index. */
     getPinnedBottomRow(index: number): IRowNode | undefined;
     /**
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
@@ -275,30 +276,41 @@ export declare class GridApi<TData = any> {
     /** Pass a Quick Filter text into the grid for filtering. */
     setQuickFilter(newFilter: string): void;
     /**
-     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
-     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
-     * This can give a significant performance improvement when there are a large number of hidden columns,
-     * and you are only interested in filtering on what's visible.
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     setExcludeHiddenColumnsFromQuickFilter(value: boolean): void;
     /**
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInQuickFilter(value: boolean): void;
+    /**
+     * Set all of the provided nodes selection state to the provided value.
+     */
+    setNodesSelected(params: {
+        nodes: IRowNode[];
+        newValue: boolean;
+        source?: SelectionEventSourceType;
+    }): void;
+    /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     selectAll(source?: SelectionEventSourceType): void;
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     deselectAll(source?: SelectionEventSourceType): void;
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     selectAllFiltered(source?: SelectionEventSourceType): void;
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     deselectAllFiltered(source?: SelectionEventSourceType): void;
     /**
@@ -317,16 +329,18 @@ export declare class GridApi<TData = any> {
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     selectAllOnCurrentPage(source?: SelectionEventSourceType): void;
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     deselectAllOnCurrentPage(source?: SelectionEventSourceType): void;
     /**
-     * Sets columns to adjust in size to fit the grid horizontally.
+     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
     sizeColumnsToFit(params?: ISizeColumnsToFitParams): void;
     /** Show the 'loading' overlay. */
@@ -405,7 +419,7 @@ export declare class GridApi<TData = any> {
     destroyFilter(key: string | Column): void;
     /** Gets the status panel instance corresponding to the supplied `id`. */
     getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined;
-    getColumnDef(key: string | Column): ColDef<TData> | null;
+    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
     /**
      * Returns the current column definitions.
     */
@@ -469,23 +483,15 @@ export declare class GridApi<TData = any> {
     setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void;
     setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void;
     setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void;
-    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
-    setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: IRowNode[]) => any): void;
     setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void;
     setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: IRowNode) => string): void;
     setGetChildCount(getChildCountFunc: (dataItem: any) => number): void;
     setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void;
-    /** @deprecated v27.1 Use `setGetRowId` instead  */
-    setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void;
     setGetRowId(getRowIdFunc: GetRowIdFunc): void;
     setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void;
-    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
-    setIsFullWidthCell(isFullWidthCellFunc: (rowNode: IRowNode) => boolean): void;
     setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void;
     setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void;
     setIsRowMaster(isRowMasterFunc: IsRowMaster): void;
-    /** @deprecated v27.2 Use `setPostSortRows` instead */
-    setPostSort(postSortFunc: (nodes: IRowNode[]) => void): void;
     setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void;
     setGetDocument(getDocumentFunc: () => Document): void;
     setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void;
@@ -502,8 +508,6 @@ export declare class GridApi<TData = any> {
     setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void;
     setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void;
     setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void;
-    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
-    setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: IRowNode, nodeB: IRowNode) => number): void;
     setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void;
     setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void;
     setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void;
@@ -563,7 +567,7 @@ export declare class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    getValue(colKey: string | Column, rowNode: IRowNode): any;
+    getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined;
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     addEventListener(eventType: string, listener: Function): void;
     /** Add an event listener for all event types coming from the grid. */
@@ -607,12 +611,14 @@ export declare class GridApi<TData = any> {
     closeChartToolPanel(params: CloseChartToolPanelParams): void;
     /** Used to programmatically create charts from a range. */
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
-    /** Used to programmatically create cross filter charts from a range. */
-    createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
-    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
-    restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     /** Used to programmatically create pivot charts from a grid. */
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
+    /** Used to programmatically create cross filter charts from a range. */
+    createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
+    /** Used to programmatically update a chart. */
+    updateChart(params: UpdateChartParams): void;
+    /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
+    restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     copyToClipboard(params?: IClipboardCopyParams): void;
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
@@ -623,6 +629,8 @@ export declare class GridApi<TData = any> {
     copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     copySelectedRangeDown(): void;
+    /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
+    pasteFromClipboard(): void;
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
     showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void;
     /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
@@ -709,6 +717,10 @@ export declare class GridApi<TData = any> {
     getDisplayedRowAtIndex(index: number): IRowNode<TData> | undefined;
     /** Returns the total number of displayed rows. */
     getDisplayedRowCount(): number;
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void;
     /**
      * Set whether the grid paginates the data or not.
      *  - `true` to enable pagination

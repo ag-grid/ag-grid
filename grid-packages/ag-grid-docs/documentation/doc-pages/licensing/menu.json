@@ -1511,7 +1511,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "User Created",
+            "title": "User Created Charts",
             "url": "/integrated-charts-user-created/",
             "enterprise": true,
             "showInCollapsed": true,
@@ -1527,28 +1527,11 @@
                 "url": "/integrated-charts-pivot-chart/",
                 "enterprise": true,
                 "showInCollapsed": true
-              },
-              {
-                "title": "Chart Tool Panels",
-                "url": "/integrated-charts-chart-tool-panels/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Chart Toolbar",
-                "url": "/integrated-charts-toolbar/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Chart Container",
-                "url": "/integrated-charts-container/",
-                "enterprise": true
               }
             ]
           },
           {
-            "title": "Application Created",
+            "title": "Application Created Charts",
             "url": "/integrated-charts-application-created/",
             "enterprise": true,
             "showInCollapsed": true,
@@ -1569,28 +1552,25 @@
                 "title": "Cross Filter API",
                 "url": "/integrated-charts-api-cross-filter-chart/",
                 "enterprise": true
-              },
-              {
-                "title": "Time Series Chart",
-                "url": "/integrated-charts-time-series/",
-                "enterprise": true
-              },
-              {
-                "title": "Save / Restore Charts",
-                "url": "/integrated-charts-api-save-restore-charts/",
-                "enterprise": true
-              },
-              {
-                "title": "Downloading Chart Image",
-                "url": "/integrated-charts-api-downloading-image/",
-                "enterprise": true
-              },
-              {
-                "title": "Open/Close Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/",
-                "enterprise": true
               }
             ]
+          },
+          {
+            "title": "Chart Tool Panels",
+            "url": "/integrated-charts-chart-tool-panels/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Toolbar",
+            "url": "/integrated-charts-toolbar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Container",
+            "url": "/integrated-charts-container/",
+            "enterprise": true
           },
           {
             "title": "Customisation",
@@ -1601,6 +1581,21 @@
           {
             "title": "Chart Events",
             "url": "/integrated-charts-events/",
+            "enterprise": true
+          },
+          {
+            "title": "Time Series",
+            "url": "/integrated-charts-time-series/",
+            "enterprise": true
+          },
+          {
+            "title": "Save / Restore Charts",
+            "url": "/integrated-charts-api-save-restore-charts/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Image Export",
+            "url": "/integrated-charts-api-downloading-image/",
             "enterprise": true
           }
         ]
@@ -1933,6 +1928,11 @@
               {
                 "title": "Heatmap",
                 "url": "/charts-heatmap-series/",
+                "enterprise": "charts"
+              },
+              {
+                "title": "Radar",
+                "url": "/charts-radar-series/",
                 "enterprise": "charts"
               },
               {

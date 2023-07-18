@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -72,6 +72,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.dispatchRowDataUpdateStartedEvent(rowData);
         var rootNode = this.rootNode;
         var sibling = this.rootNode.sibling;
         rootNode.childrenAfterFilter = null;
@@ -102,6 +103,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
         var rowNodeTransaction = {
             remove: [],
             update: [],
@@ -116,6 +118,13 @@ var ClientSideNodeManager = /** @class */ (function () {
             core._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    };
+    ClientSideNodeManager.prototype.dispatchRowDataUpdateStartedEvent = function (rowData) {
+        var event = {
+            type: core.Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            firstRowData: (rowData === null || rowData === void 0 ? void 0 : rowData.length) ? rowData[0] : null
+        };
+        this.eventService.dispatchEvent(event);
     };
     ClientSideNodeManager.prototype.updateSelection = function (nodesToUnselect, source) {
         var selectionChanged = nodesToUnselect.length > 0;
@@ -1997,7 +2006,7 @@ var ImmutableService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var ClientSideRowModelModule = {
     version: VERSION,

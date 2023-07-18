@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -42,9 +36,11 @@ var HorizontalResizeService = /** @class */ (function (_super) {
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
-            onDragging: this.onDragging.bind(this, params)
+            onDragging: this.onDragging.bind(this, params),
+            includeTouch: true,
+            stopPropagationForTouch: true
         };
-        this.dragService.addDragSource(dragSource, true);
+        this.dragService.addDragSource(dragSource);
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
         var finishedWithResizeFunc = function () { return _this.dragService.removeDragSource(dragSource); };

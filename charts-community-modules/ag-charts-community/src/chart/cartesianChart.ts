@@ -1,10 +1,11 @@
-import { Chart, TransferableResources } from './chart';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { ChartAxis } from './chartAxis';
+import type { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
-import { BBox } from '../scene/bbox';
-import { AgCartesianAxisPosition } from './agChartOptions';
+import type { BBox } from '../scene/bbox';
+import type { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
 import { toRadians } from '../util/angle';
 
@@ -28,14 +29,18 @@ export class CartesianChart extends Chart {
         const { seriesRect, visibility, clipSeries } = this.updateAxes(shrinkRect);
         this.seriesRoot.visible = visibility.series;
         this.seriesRect = seriesRect;
-        this.series.forEach((series) => {
-            series.rootGroup.translationX = Math.floor(seriesRect.x);
-            series.rootGroup.translationY = Math.floor(seriesRect.y);
-        });
+        this.seriesRoot.translationX = Math.floor(seriesRect.x);
+        this.seriesRoot.translationY = Math.floor(seriesRect.y);
 
         const { seriesRoot, seriesAreaPadding } = this;
 
-        const seriesPaddedRect = seriesRect.clone().grow(seriesAreaPadding);
+        // Recreate padding object to prevent issues with getters in `BBox.shrink()`
+        const seriesPaddedRect = seriesRect.clone().grow({
+            top: seriesAreaPadding.top,
+            right: seriesAreaPadding.right,
+            bottom: seriesAreaPadding.bottom,
+            left: seriesAreaPadding.left,
+        });
 
         const hoverRectPadding = 20;
         const hoverRect = seriesPaddedRect.clone().grow(hoverRectPadding);
@@ -50,7 +55,7 @@ export class CartesianChart extends Chart {
         });
 
         if (clipSeries) {
-            seriesRoot.setClipRectInGroupCoordinateSpace(seriesPaddedRect);
+            seriesRoot.setClipRectInGroupCoordinateSpace(seriesRect);
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace();
         }
@@ -207,7 +212,7 @@ export class CartesianChart extends Chart {
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
         axes.forEach((axis) => {
-            const { position } = axis;
+            const { position = 'left' } = axis;
 
             const {
                 clipSeries: newClipSeries,
@@ -338,9 +343,9 @@ export class CartesianChart extends Chart {
         const { axis, seriesRect, paddedBounds, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } =
             opts;
         let { clipSeries } = opts;
-        const { position, direction } = axis;
+        const { position = 'left', direction } = axis;
 
-        const axisLeftRightRange = (axis: ChartAxis<any>) => {
+        const axisLeftRightRange = (axis: ChartAxis) => {
             if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                 return [0, seriesRect.height];
             }
@@ -361,7 +366,7 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        const zoom = this.zoomManager.getZoom()?.[axis.direction];
+        const zoom = this.zoomManager.getAxisZoom(axis.id);
         const { min = 0, max = 1 } = zoom ?? {};
         axis.visibleRange = [min, max];
 
@@ -372,7 +377,7 @@ export class CartesianChart extends Chart {
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
         const paddedBoundsCoefficient = 0.3;
 
-        if (axis.thickness > 0) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axis.maxThickness = axis.thickness;
         } else if (direction === ChartAxisDirection.Y) {
             axis.maxThickness = paddedBounds.width * paddedBoundsCoefficient;
@@ -384,7 +389,7 @@ export class CartesianChart extends Chart {
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
         let axisThickness = 0;
-        if (axis.thickness) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axisThickness = axis.thickness;
         } else {
             const bbox = axis.computeBBox();

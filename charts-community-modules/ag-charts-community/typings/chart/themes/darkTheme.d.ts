@@ -1,4 +1,4 @@
-import { AgChartThemeOptions } from '../agChartOptions';
+import type { AgChartThemeOptions } from '../agChartOptions';
 import { ChartTheme } from './chartTheme';
 export declare class DarkTheme extends ChartTheme {
     static fontColor: string;

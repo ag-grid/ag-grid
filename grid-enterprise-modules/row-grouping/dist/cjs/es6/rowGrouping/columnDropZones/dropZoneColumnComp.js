@@ -39,11 +39,12 @@ class DropZoneColumnComp extends core_1.Component {
             this.setupAria();
         });
         this.setupTooltip();
+        this.activateTabIndex();
     }
     setupAria() {
         const translate = this.localeService.getLocaleTextFunc();
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
-        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
         const sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
@@ -192,12 +193,21 @@ class DropZoneColumnComp extends core_1.Component {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        // ePopup.style.height = this.gridOptionsService.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = `${eGui.clientWidth}px`;
-        const popupHiddenFunc = () => {
+        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e) => {
+            if (!ePopup.contains(e.relatedTarget) && addPopupRes) {
+                addPopupRes.hideFunc();
+            }
+        });
+        const popupHiddenFunc = (callbackEvent) => {
             this.destroyBean(virtualList);
             this.popupShowing = false;
-            eGui.focus();
+            if ((callbackEvent === null || callbackEvent === void 0 ? void 0 : callbackEvent.key) === 'Escape') {
+                eGui.focus();
+            }
+            if (focusoutListener) {
+                focusoutListener();
+            }
         };
         const translate = this.localeService.getLocaleTextFunc();
         const addPopupRes = this.popupService.addPopup({
@@ -271,7 +281,7 @@ class DropZoneColumnComp extends core_1.Component {
     }
 }
 DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-DropZoneColumnComp.TEMPLATE = `<span role="option" tabindex="0">
+DropZoneColumnComp.TEMPLATE = `<span role="option">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>

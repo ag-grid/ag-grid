@@ -1,4 +1,4 @@
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 export declare class Overlay {
     constructor(className: string, parent: HTMLElement);
     renderer: (() => string) | undefined;

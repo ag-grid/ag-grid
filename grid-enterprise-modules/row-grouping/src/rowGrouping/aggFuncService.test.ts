@@ -186,13 +186,13 @@ describe('aggCount', () => {
     it('returns count of elements', () => {
         const result = count(createParams([12, 'foo', 921, -43, null]));
 
-        expect(result).toBe(5);
+        expect(result.value).toBe(5);
     });
 
     it('sums count from group aggregation objects', () => {
         const result = count(createParams([14, { value: 12 }, { value: 3 }]));
 
-        expect(result).toBe(16);
+        expect(result.value).toBe(16);
     });
 });
 

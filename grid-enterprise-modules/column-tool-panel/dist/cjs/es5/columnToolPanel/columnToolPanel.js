@@ -200,7 +200,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         }
     };
     ColumnToolPanel.prototype.isRowGroupingModuleLoaded = function () {
-        return core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
+        return core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
     };
     ColumnToolPanel.prototype.expandColumnGroups = function (groupIds) {
         this.primaryColsPanel.expandGroups(groupIds);

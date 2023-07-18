@@ -2,8 +2,6 @@ import { IComponent } from "./iComponent";
 import { AgGridCommon } from "./iCommon";
 export interface StatusPanelDef {
     statusPanel?: any;
-    /** @deprecated As of v27, you can use statusPanel instead for Framework Components.  */
-    statusPanelFramework?: any;
     align?: string;
     key?: string;
     statusPanelParams?: any;

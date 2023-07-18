@@ -162,4 +162,5 @@ export declare class Events {
     static EVENT_MOUSE_FOCUS: 'mouseFocus';
     static EVENT_STORE_UPDATED: 'storeUpdated';
     static EVENT_FILTER_DESTROYED: 'filterDestroyed';
+    static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted';
 }

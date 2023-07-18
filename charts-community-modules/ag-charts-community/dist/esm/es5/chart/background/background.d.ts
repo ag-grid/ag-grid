@@ -1,4 +1,6 @@
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
+import type { ModuleInstance } from '../../util/module';
+import { BaseModuleInstance } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 export declare class Background extends BaseModuleInstance implements ModuleInstance {
     private node;
     private rectNode;
@@ -7,4 +9,3 @@ export declare class Background extends BaseModuleInstance implements ModuleInst
     fill: string | undefined;
     private onLayoutComplete;
 }
-//# sourceMappingURL=background.d.ts.map

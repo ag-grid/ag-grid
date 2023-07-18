@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FullWidthDetail = exports.FullWidthGroup = exports.FullWidthLoading = exports.FullWidth = exports.StatusPanelComponent = exports.ToolPanelComponent = exports.FloatingFilterComponent = exports.FilterComponent = exports.TooltipComponent = exports.NoRowsOverlayComponent = exports.LoadingOverlayComponent = exports.InnerRendererComponent = exports.CellEditorComponent = exports.CellRendererComponent = exports.HeaderGroupComponent = exports.HeaderComponent = exports.DateComponent = void 0;

@@ -43,7 +43,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions = [];
-        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gridOptionsService.is('suppressCutToClipboard')) {
@@ -52,7 +52,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -62,8 +62,8 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         }
         if (_.exists(node)) {
             // if user clicks a cell
-            var csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
-            var excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
+            var csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
+            var excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
             var suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
             var suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             var onIPad = _.isIOSUserAgent();

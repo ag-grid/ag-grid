@@ -71,6 +71,8 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     xKey?: string;
     /** The key to use to retrieve y-values from the data. */
     yKey?: string;
+    /** The key to use to retrieve type-values from the data. */
+    typeKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
@@ -83,6 +85,12 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     negativeItem?: AgWaterfallSeriesItemOptions;
     /** Configuration for the positive series items. */
     positiveItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the total series items. */
+    totalItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the subtotal series items. */
+    subtotalItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the connector lines. */
+    line?: AgWaterfallSeriesLineOptions;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */
@@ -108,4 +116,23 @@ export interface AgWaterfallSeriesItemOptions {
     strokeWidth?: PixelSize;
     /** Opacity of the bars. */
     strokeOpacity?: Opacity;
+    /** Defines how the strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    lineDash?: PixelSize[];
+    /** The initial offset of the dashed line in pixels. */
+    lineDashOffset?: PixelSize;
+}
+
+export interface AgWaterfallSeriesLineOptions {
+    /** Whether or not the connector lines should be shown. */
+    enabled?: boolean;
+    /** The colour to use for the connector lines. */
+    stroke?: CssColor;
+    /** The width in pixels of the connector lines. */
+    strokeWidth?: PixelSize;
+    /** Opacity of the line stroke. */
+    strokeOpacity?: Opacity;
+    /** Defines how the strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    lineDash?: PixelSize[];
+    /** The initial offset of the dashed line in pixels. */
+    lineDashOffset?: PixelSize;
 }

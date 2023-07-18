@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeFromArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = exports.firstExistingValue = void 0;

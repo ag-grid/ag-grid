@@ -63,4 +63,5 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     protected createCondition(position: number): NumberFilterModel;
     protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField>;
     getModelAsString(model: ISimpleFilterModel): string;
+    protected hasInvalidInputs(): boolean;
 }

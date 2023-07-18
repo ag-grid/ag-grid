@@ -38,6 +38,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private ariaDescriptionProperties;
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void;
+    private addMouseDownListenerIfNeeded;
     private setupUserComp;
     private setCompDetails;
     private lookupUserCompDetails;
@@ -45,7 +46,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupSelectAll;
     getSelectAllGui(): HTMLElement;
     protected handleKeyDown(e: KeyboardEvent): void;
-    private onEnterKeyPressed;
+    private onEnterKeyDown;
     isMenuEnabled(): boolean;
     private onFocusIn;
     private onFocusOut;

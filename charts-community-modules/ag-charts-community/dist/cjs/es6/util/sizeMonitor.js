@@ -19,9 +19,19 @@ class SizeMonitor {
                     this.checkClientSize(element, entry);
                 });
             };
-            window.setInterval(step, 100);
+            this.pollerHandler = window.setInterval(step, 100);
         }
         this.ready = true;
+    }
+    static destroy() {
+        var _a;
+        if (this.pollerHandler != null) {
+            clearInterval(this.pollerHandler);
+            this.pollerHandler = undefined;
+        }
+        (_a = this.resizeObserver) === null || _a === void 0 ? void 0 : _a.disconnect();
+        this.resizeObserver = undefined;
+        this.ready = false;
     }
     static checkSize(entry, element, width, height) {
         if (entry) {
@@ -36,7 +46,7 @@ class SizeMonitor {
         if (!this.ready) {
             this.init();
         }
-        this.unobserve(element);
+        this.unobserve(element, false);
         if (this.resizeObserver) {
             this.resizeObserver.observe(element);
         }
@@ -44,11 +54,14 @@ class SizeMonitor {
         // Ensure first size callback happens synchronously.
         this.checkClientSize(element, { cb });
     }
-    static unobserve(element) {
+    static unobserve(element, cleanup = true) {
         if (this.resizeObserver) {
             this.resizeObserver.unobserve(element);
         }
         this.elements.delete(element);
+        if (cleanup && this.elements.size === 0) {
+            this.destroy();
+        }
     }
     static checkClientSize(element, entry) {
         const width = element.clientWidth ? element.clientWidth : 0;

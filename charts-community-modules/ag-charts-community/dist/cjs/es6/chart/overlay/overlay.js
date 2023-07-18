@@ -18,7 +18,7 @@ class Overlay {
     show(rect) {
         var _a, _b;
         let element = this.element;
-        if (!this.element) {
+        if (!element) {
             element = document.createElement('div');
             element.className = this.className;
             this.element = element;
@@ -29,7 +29,7 @@ class Overlay {
         element.style.width = `${rect.width}px`;
         element.style.height = `${rect.height}px`;
         if (this.renderer) {
-            this.element.innerHTML = this.renderer();
+            element.innerHTML = this.renderer();
         }
         else {
             const content = document.createElement('div');

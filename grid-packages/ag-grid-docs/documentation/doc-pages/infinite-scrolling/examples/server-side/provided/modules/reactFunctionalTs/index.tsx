@@ -206,8 +206,7 @@ const GridExample = () => {
                     maxBlocksInCache={2}
                     getRowId={getRowId}
                     onGridReady={onGridReady}
-                >
-                </AgGridReact>
+                />
             </div>
 
         </div>

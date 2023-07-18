@@ -12,7 +12,7 @@ import {
     TEXT_WRAP,
     Validate,
 } from './util/validation';
-import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
+import type { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
 import { ProxyPropertyOnWrite } from './util/proxy';
 
 export class Caption {

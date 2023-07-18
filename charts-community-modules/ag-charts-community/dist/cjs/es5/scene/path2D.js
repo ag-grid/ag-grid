@@ -143,8 +143,10 @@ var Path2D = /** @class */ (function () {
         }
         this.commands.push(Command.Curve);
         this.params.push(cx1, cy1, cx2, cy2, x, y);
-        this.xy[0] = x;
-        this.xy[1] = y;
+        if (this.xy) {
+            this.xy[0] = x;
+            this.xy[1] = y;
+        }
     };
     Object.defineProperty(Path2D.prototype, "closedPath", {
         get: function () {

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -1861,12 +1861,27 @@ var sharedStrings = {
     }
 };
 
+function prepareString(str) {
+    var split = str.split(/(\[[^\]]*\])/);
+    for (var i = 0; i < split.length; i++) {
+        // excel formulas require symbols to be escaped. Excel also requires $ to be 
+        // placed in quotes but only when the $ is not wrapped inside of square brackets.
+        var currentString = split[i];
+        if (!currentString.length) {
+            continue;
+        }
+        if (!currentString.startsWith('[')) {
+            currentString = currentString.replace(/\$/g, '"$"');
+        }
+        split[i] = core._.escapeString(currentString);
+    }
+    return split.join('');
+}
 var numberFormatFactory = {
     getTemplate: function (numberFormat) {
         var formatCode = numberFormat.formatCode, numFmtId = numberFormat.numFmtId;
-        // excel formulas requires $ to be placed between quotes and symbols to be escaped
         if (formatCode.length) {
-            formatCode = core._.escapeString(formatCode.replace(/\$/g, '"$"'));
+            formatCode = prepareString(formatCode);
         }
         return {
             name: "numFmt",
@@ -3756,7 +3771,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(csvExport.BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var ExcelExportModule = {
     version: VERSION,

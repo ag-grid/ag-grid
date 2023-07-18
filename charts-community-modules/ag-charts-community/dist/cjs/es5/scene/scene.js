@@ -87,6 +87,7 @@ var group_1 = require("./group");
 var hdpiOffscreenCanvas_1 = require("../canvas/hdpiOffscreenCanvas");
 var window_1 = require("../util/window");
 var compare_1 = require("../util/compare");
+var sceneDebugOptions_1 = require("./sceneDebugOptions");
 var logger_1 = require("../util/logger");
 function buildSceneNodeHighlight() {
     var _a;
@@ -119,12 +120,16 @@ var Scene = /** @class */ (function () {
             stats: false,
             renderBoundingBoxes: false,
             consoleLog: false,
+            level: sceneDebugOptions_1.SceneDebugLevel.SUMMARY,
             sceneNodeHighlight: [],
         };
         var _d = opts.document, document = _d === void 0 ? window.document : _d, _e = opts.mode, mode = _e === void 0 ? (_a = window_1.windowValue('agChartsSceneRenderModel')) !== null && _a !== void 0 ? _a : 'adv-composite' : _e, width = opts.width, height = opts.height, _f = opts.overrideDevicePixelRatio, overrideDevicePixelRatio = _f === void 0 ? undefined : _f;
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
         this.opts = { document: document, mode: mode };
-        this.debug.consoleLog = window_1.windowValue('agChartsDebug') === true;
+        this.debug.consoleLog = [true, 'scene'].includes(window_1.windowValue('agChartsDebug'));
+        this.debug.level = ['scene'].includes(window_1.windowValue('agChartsDebug'))
+            ? sceneDebugOptions_1.SceneDebugLevel.DETAILED
+            : sceneDebugOptions_1.SceneDebugLevel.SUMMARY;
         this.debug.stats = (_b = window_1.windowValue('agChartsSceneStats')) !== null && _b !== void 0 ? _b : false;
         this.debug.dirtyTree = (_c = window_1.windowValue('agChartsSceneDirtyTree')) !== null && _c !== void 0 ? _c : false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
@@ -223,7 +228,7 @@ var Scene = /** @class */ (function () {
             lastLayer.element.insertAdjacentElement('afterend', canvas.element);
         }
         if (this.debug.consoleLog) {
-            logger_1.Logger.debug({ layers: this.layers });
+            logger_1.Logger.debug('Scene.addLayer() - layers', this.layers);
         }
         return newLayer.canvas;
     };
@@ -234,7 +239,7 @@ var Scene = /** @class */ (function () {
             canvas.destroy();
             this.markDirty();
             if (this.debug.consoleLog) {
-                logger_1.Logger.debug({ layers: this.layers });
+                logger_1.Logger.debug('Scene.removeLayer() -  layers', this.layers);
             }
         }
     };
@@ -246,7 +251,7 @@ var Scene = /** @class */ (function () {
             this.sortLayers();
             this.markDirty();
             if (this.debug.consoleLog) {
-                logger_1.Logger.debug({ layers: this.layers });
+                logger_1.Logger.debug('Scene.moveLayer() -  layers', this.layers);
             }
         }
     };
@@ -271,6 +276,7 @@ var Scene = /** @class */ (function () {
             return this._root;
         },
         set: function (node) {
+            var _this = this;
             if (node === this._root) {
                 return;
             }
@@ -283,7 +289,26 @@ var Scene = /** @class */ (function () {
                 if (node.parent === null && node.layerManager && node.layerManager !== this) {
                     node.layerManager.root = null;
                 }
-                node._setLayerManager(this);
+                node._setLayerManager({
+                    addLayer: function (opts) { return _this.addLayer(opts); },
+                    moveLayer: function () {
+                        var opts = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            opts[_i] = arguments[_i];
+                        }
+                        return _this.moveLayer.apply(_this, __spreadArray([], __read(opts)));
+                    },
+                    removeLayer: function () {
+                        var opts = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            opts[_i] = arguments[_i];
+                        }
+                        return _this.removeLayer.apply(_this, __spreadArray([], __read(opts)));
+                    },
+                    markDirty: function () { return _this.markDirty(); },
+                    canvas: this.canvas,
+                    debug: __assign(__assign({}, this.debug), { consoleLog: this.debug.level >= sceneDebugOptions_1.SceneDebugLevel.DETAILED }),
+                });
             }
             this.markDirty();
         },
@@ -341,7 +366,7 @@ var Scene = /** @class */ (function () {
                 }
                 if (root && !this.dirty) {
                     if (this.debug.consoleLog) {
-                        logger_1.Logger.debug('no-op', {
+                        logger_1.Logger.debug('Scene.render() - no-op', {
                             redrawType: node_1.RedrawType[root.dirty],
                             tree: this.buildTree(root),
                         });
@@ -366,11 +391,11 @@ var Scene = /** @class */ (function () {
                 }
                 if (root && this.debug.dirtyTree) {
                     _f = this.buildDirtyTree(root), dirtyTree = _f.dirtyTree, paths = _f.paths;
-                    logger_1.Logger.debug({ dirtyTree: dirtyTree, paths: paths });
+                    logger_1.Logger.debug('Scene.render() - dirtyTree', { dirtyTree: dirtyTree, paths: paths });
                 }
                 if (root && canvasCleared) {
                     if (this.debug.consoleLog) {
-                        logger_1.Logger.debug('before', {
+                        logger_1.Logger.debug('Scene.render() - before', {
                             redrawType: node_1.RedrawType[root.dirty],
                             canvasCleared: canvasCleared,
                             tree: this.buildTree(root),
@@ -402,7 +427,11 @@ var Scene = /** @class */ (function () {
                 this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
                 this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
                 if (root && this.debug.consoleLog) {
-                    logger_1.Logger.debug('after', { redrawType: node_1.RedrawType[root.dirty], canvasCleared: canvasCleared, tree: this.buildTree(root) });
+                    logger_1.Logger.debug('Scene.render() - after', {
+                        redrawType: node_1.RedrawType[root.dirty],
+                        canvasCleared: canvasCleared,
+                        tree: this.buildTree(root),
+                    });
                 }
                 return [2 /*return*/];
             });
@@ -493,7 +522,7 @@ var Scene = /** @class */ (function () {
                 var predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
                 var nodes = (_d = this.root) === null || _d === void 0 ? void 0 : _d.findNodes(predicate);
                 if (!nodes || nodes.length === 0) {
-                    logger_1.Logger.debug("no debugging node with id [" + next + "] in scene graph.");
+                    logger_1.Logger.debug("Scene.render() - no debugging node with id [" + next + "] in scene graph.");
                     continue;
                 }
                 try {
@@ -529,7 +558,7 @@ var Scene = /** @class */ (function () {
                 var _g = __read(_f.value, 2), name_1 = _g[0], node = _g[1];
                 var bbox = node.computeTransformedBBox();
                 if (!bbox) {
-                    logger_1.Logger.debug("no bbox for debugged node [" + name_1 + "].");
+                    logger_1.Logger.debug("Scene.render() - no bbox for debugged node [" + name_1 + "].");
                     continue;
                 }
                 ctx.globalAlpha = 0.8;
@@ -557,13 +586,18 @@ var Scene = /** @class */ (function () {
     };
     Scene.prototype.buildTree = function (node) {
         var _this = this;
-        var _a;
+        var _a, _b;
         var name = (_a = (node instanceof group_1.Group ? node.name : null)) !== null && _a !== void 0 ? _a : node.id;
-        return __assign({ name: name, node: node, dirty: node_1.RedrawType[node.dirty] }, node.children
+        return __assign(__assign({ name: name, node: node, dirty: node_1.RedrawType[node.dirty] }, (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.isVirtual)
+            ? {
+                virtualParentDirty: node_1.RedrawType[node.parent.dirty],
+                virtualParent: node.parent,
+            }
+            : {})), node.children
             .map(function (c) { return _this.buildTree(c); })
             .reduce(function (result, childTree) {
             var treeNodeName = childTree.name;
-            var _a = childTree.node, visible = _a.visible, opacity = _a.opacity, zIndex = _a.zIndex, zIndexSubOrder = _a.zIndexSubOrder, childNode = childTree.node;
+            var _a = childTree.node, visible = _a.visible, opacity = _a.opacity, zIndex = _a.zIndex, zIndexSubOrder = _a.zIndexSubOrder, childNode = childTree.node, virtualParent = childTree.virtualParent;
             if (!visible || opacity <= 0) {
                 treeNodeName = "(" + treeNodeName + ")";
             }
@@ -573,11 +607,20 @@ var Scene = /** @class */ (function () {
             var key = [
                 "" + (treeNodeName !== null && treeNodeName !== void 0 ? treeNodeName : '<unknown>'),
                 "z: " + zIndex,
-                zIndexSubOrder && "zo: " + zIndexSubOrder.join(' / '),
+                zIndexSubOrder &&
+                    "zo: " + zIndexSubOrder
+                        .map(function (v) { return (typeof v === 'function' ? v() + " (fn)" : v); })
+                        .join(' / '),
+                virtualParent && "(virtual parent)",
             ]
                 .filter(function (v) { return !!v; })
                 .join(' ');
-            result[key] = childTree;
+            var selectedKey = key;
+            var index = 1;
+            while (result[selectedKey] != null && index < 100) {
+                selectedKey = key + " (" + index++ + ")";
+            }
+            result[selectedKey] = childTree;
             return result;
         }, {}));
     };

@@ -39,7 +39,6 @@ exports[`prepare #prepareOptions for ADV_CHART_CUSTOMISATION it should prepare o
       },
       "nice": false,
       "position": "top",
-      "thickness": 0,
       "tick": {
         "color": "#3f7cbf",
         "interval": TimeInterval {
@@ -89,7 +88,6 @@ exports[`prepare #prepareOptions for ADV_CHART_CUSTOMISATION it should prepare o
       },
       "nice": false,
       "position": "right",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 10,
@@ -463,7 +461,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -511,7 +508,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -558,7 +554,6 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "width": 1,
       },
       "position": "right",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -672,13 +667,8 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
   },
   "series": [
     {
+      "fill": "#c16068",
       "fillOpacity": 1,
-      "fills": [
-        "#c16068",
-        "#a2bf8a",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -707,6 +697,12 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -714,35 +710,79 @@ exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it sho
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#c16068",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#c16068",
-        "#a2bf8a",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "year",
-      "yKeys": [
-        [
-          "male",
-        ],
-        [
-          "female",
-        ],
-      ],
-      "yNames": {
-        "female": "Female cattle",
-        "male": "Male cattle",
+      "yKey": "male",
+      "yName": "Male cattle",
+    },
+    {
+      "fill": "#a2bf8a",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 1,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#a2bf8a",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "female",
+      "yName": "Female cattle",
     },
     {
       "highlightStyle": {
@@ -894,7 +934,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -938,7 +977,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1556,7 +1594,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1600,7 +1637,6 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1714,18 +1750,8 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
   },
   "series": [
     {
+      "fill": "#f3622d",
       "fillOpacity": 1,
-      "fills": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-        "#4258c9",
-        "#9a42c8",
-        "#c84164",
-        "#888888",
-      ],
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -1754,6 +1780,12 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -1761,57 +1793,433 @@ exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepa
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-        "#2e3e8d",
-        "#6c2e8c",
-        "#8c2d46",
-        "#5f5f5f",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": [Function],
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        [
-          "largeHousehold",
-          "smallHousehold",
-          "itTelecomms",
-          "consumer",
-          "tools",
-          "displays",
-          "cooling",
-          "gasLampsLed",
-        ],
-      ],
-      "yNames": {
-        "consumer": "Consumer equipment",
-        "cooling": "Cooling appliances containing refrigerants",
-        "displays": "Display equipment",
-        "gasLampsLed": "Gas discharge lamps and LED light sources",
-        "itTelecomms": "IT and telecomms equipment",
-        "largeHousehold": "Large household appliances",
-        "smallHousehold": "Small household appliances",
-        "tools": "Electrical and electronic tools",
+      "yKey": "largeHousehold",
+      "yName": "Large household appliances",
+    },
+    {
+      "fill": "#fba71b",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b07513",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "smallHousehold",
+      "yName": "Small household appliances",
+    },
+    {
+      "fill": "#57b757",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#3d803d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "itTelecomms",
+      "yName": "IT and telecomms equipment",
+    },
+    {
+      "fill": "#41a9c9",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2d768d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "consumer",
+      "yName": "Consumer equipment",
+    },
+    {
+      "fill": "#4258c9",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 4,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2e3e8d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "tools",
+      "yName": "Electrical and electronic tools",
+    },
+    {
+      "fill": "#9a42c8",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 5,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#6c2e8c",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "displays",
+      "yName": "Display equipment",
+    },
+    {
+      "fill": "#c84164",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 6,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#8c2d46",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "cooling",
+      "yName": "Cooling appliances containing refrigerants",
+    },
+    {
+      "fill": "#888888",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 8,
+        "stackIndex": 7,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#5f5f5f",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "quarter",
+      "yKey": "gasLampsLed",
+      "yName": "Gas discharge lamps and LED light sources",
     },
   ],
   "subtitle": {
@@ -1888,7 +2296,6 @@ exports[`prepare #prepareOptions for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it sho
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -1932,7 +2339,6 @@ exports[`prepare #prepareOptions for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it sho
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2164,7 +2570,6 @@ exports[`prepare #prepareOptions for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it s
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2208,7 +2613,6 @@ exports[`prepare #prepareOptions for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it s
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2641,7 +3045,6 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2685,7 +3088,6 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -2799,10 +3201,8 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
   },
   "series": [
     {
+      "fill": "#FA7921",
       "fillOpacity": 0.6,
-      "fills": [
-        "#FA7921",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -2841,6 +3241,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -2849,11 +3250,9 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#af5517",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#af5517",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -2862,22 +3261,14 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        "naturalGas",
-      ],
-      "yNames": [
-        "Natural gas",
-      ],
+      "yKey": "naturalGas",
+      "yName": "Natural gas",
     },
     {
+      "fill": "#5BC0EB",
       "fillOpacity": 0.6,
-      "fills": [
-        "#5BC0EB",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -2916,6 +3307,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -2924,11 +3316,9 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#4086a4",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#4086a4",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -2937,22 +3327,14 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        "coal",
-      ],
-      "yNames": [
-        "Coal",
-      ],
+      "yKey": "coal",
+      "yName": "Coal",
     },
     {
+      "fill": "#9BC53D",
       "fillOpacity": 0.6,
-      "fills": [
-        "#9BC53D",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -2991,6 +3373,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -2999,11 +3382,9 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#6c8a2b",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#6c8a2b",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -3012,22 +3393,14 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        "primaryOil",
-      ],
-      "yNames": [
-        "Primary oil",
-      ],
+      "yKey": "primaryOil",
+      "yName": "Primary oil",
     },
     {
+      "fill": "#E55934",
       "fillOpacity": 0.6,
-      "fills": [
-        "#E55934",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -3066,6 +3439,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3074,11 +3448,9 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#a03e24",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#a03e24",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -3087,22 +3459,14 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        "petroleum",
-      ],
-      "yNames": [
-        "Petroleum",
-      ],
+      "yKey": "petroleum",
+      "yName": "Petroleum",
     },
     {
+      "fill": "#FDE74C",
       "fillOpacity": 0.6,
-      "fills": [
-        "#FDE74C",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -3141,6 +3505,7 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3149,11 +3514,9 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#b1a235",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#b1a235",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -3162,16 +3525,10 @@ exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it 
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "quarter",
-      "yKeys": [
-        "manufacturedFuels",
-      ],
-      "yNames": [
-        "Manufactured fuels",
-      ],
+      "yKey": "manufacturedFuels",
+      "yName": "Manufactured fuels",
     },
   ],
   "subtitle": {
@@ -3267,7 +3624,6 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3311,7 +3667,6 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3425,12 +3780,8 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
   },
   "series": [
     {
+      "fill": "#f3622d",
       "fillOpacity": 1,
-      "fills": [
-        "#f3622d",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -3459,6 +3810,12 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3466,26 +3823,19 @@ exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#aa4520",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "bar",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "type",
-      "yKeys": [
-        [
-          "earnings",
-        ],
-      ],
+      "yKey": "earnings",
     },
   ],
   "subtitle": {
@@ -3560,7 +3910,6 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3604,7 +3953,6 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -3718,12 +4066,8 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
   },
   "series": [
     {
+      "fill": "rgba(0, 117, 163, 0.9)",
       "fillOpacity": 1,
-      "fills": [
-        "rgba(0, 117, 163, 0.9)",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "#0ab9ff",
@@ -3752,6 +4096,12 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -3759,26 +4109,19 @@ exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should pre
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "rgba(0, 117, 163, 0.9)",
       "strokeOpacity": 1,
       "strokeWidth": 1,
-      "strokes": [
-        "rgba(0, 117, 163, 0.9)",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "bar",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "job",
-      "yKeys": [
-        [
-          "change",
-        ],
-      ],
+      "yKey": "change",
     },
   ],
   "subtitle": {
@@ -3847,7 +4190,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it sho
       "paddingInner": 0.2,
       "paddingOuter": 0.3,
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "black",
         "size": 6,
@@ -3886,7 +4228,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it sho
       "paddingInner": 0.2,
       "paddingOuter": 0.3,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "black",
         "size": 6,
@@ -4116,7 +4457,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE i
       "min": -180,
       "nice": false,
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4163,7 +4503,6 @@ exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE i
       "min": -90,
       "nice": false,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4393,7 +4732,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4437,7 +4775,6 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4551,13 +4888,8 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
   },
   "series": [
     {
+      "fill": "#19A0AA",
       "fillOpacity": 1,
-      "fills": [
-        "#19A0AA",
-        "#F15F36",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -4586,6 +4918,12 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -4593,35 +4931,79 @@ exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE i
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#19A0AA",
       "strokeOpacity": 1,
       "strokeWidth": 1,
-      "strokes": [
-        "#19A0AA",
-        "#F15F36",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "month",
-      "yKeys": [
-        [
-          "menDelta",
-        ],
-        [
-          "womenDelta",
-        ],
-      ],
-      "yNames": {
-        "menDelta": "Male",
-        "womenDelta": "Female",
+      "yKey": "menDelta",
+      "yName": "Male",
+    },
+    {
+      "fill": "#F15F36",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 1,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#F15F36",
+      "strokeOpacity": 1,
+      "strokeWidth": 1,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "womenDelta",
+      "yName": "Female",
     },
   ],
   "subtitle": {
@@ -4709,7 +5091,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4753,7 +5134,6 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -4867,13 +5247,8 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
   },
   "series": [
     {
+      "fill": "rgba(0, 117, 163, 0.9)",
       "fillOpacity": 1,
-      "fills": [
-        "rgba(0, 117, 163, 0.9)",
-        "rgba(226, 188, 34, 0.9)",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -4903,6 +5278,12 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -4910,35 +5291,80 @@ exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "rgba(0, 117, 163, 0.9)",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "rgba(0, 117, 163, 0.9)",
-        "rgba(226, 188, 34, 0.9)",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "bar",
-      "visibles": [
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "type",
-      "yKeys": [
-        [
-          "total",
-        ],
-        [
-          "regular",
-        ],
-      ],
-      "yNames": {
-        "regular": "Annual growth in regular pay",
-        "total": "Annual growth in total pay",
+      "yKey": "total",
+      "yName": "Annual growth in total pay",
+    },
+    {
+      "fill": "rgba(226, 188, 34, 0.9)",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 2,
+        "groupIndex": 1,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "rgba(226, 188, 34, 0.9)",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "regular",
+      "yName": "Annual growth in regular pay",
     },
   ],
   "subtitle": {
@@ -5028,7 +5454,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5072,7 +5497,6 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5186,18 +5610,8 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
   },
   "series": [
     {
+      "fill": "#f3622d",
       "fillOpacity": 1,
-      "fills": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-        "#4258c9",
-        "#9a42c8",
-        "#c84164",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -5228,6 +5642,12 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -5235,56 +5655,379 @@ exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare op
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-        "#2e3e8d",
-        "#6c2e8c",
-        "#8c2d46",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "year",
-      "yKeys": [
-        [
-          "16-24",
-        ],
-        [
-          "25-34",
-        ],
-        [
-          "35-44",
-        ],
-        [
-          "45-54",
-        ],
-        [
-          "55-64",
-        ],
-        [
-          "65-74",
-        ],
-        [
-          "75+",
-        ],
+      "yKey": "16-24",
+    },
+    {
+      "fill": "#fba71b",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
       ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 1,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b07513",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "25-34",
+    },
+    {
+      "fill": "#57b757",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 2,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#3d803d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "35-44",
+    },
+    {
+      "fill": "#41a9c9",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 3,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2d768d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "45-54",
+    },
+    {
+      "fill": "#4258c9",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 4,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2e3e8d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "55-64",
+    },
+    {
+      "fill": "#9a42c8",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 5,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#6c2e8c",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "65-74",
+    },
+    {
+      "fill": "#c84164",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+          "strokeWidth": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 7,
+        "groupIndex": 6,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#8c2d46",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "year",
+      "yKey": "75+",
     },
   ],
   "subtitle": {
@@ -5366,7 +6109,6 @@ exports[`prepare #prepareOptions for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it sh
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 500,
@@ -5411,7 +6153,6 @@ exports[`prepare #prepareOptions for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it sh
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5652,7 +6393,6 @@ exports[`prepare #prepareOptions for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -5699,7 +6439,6 @@ exports[`prepare #prepareOptions for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prep
       "min": 0.2,
       "nice": false,
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -6876,7 +7615,6 @@ exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -6920,7 +7658,6 @@ exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7366,7 +8103,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7411,7 +8147,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7525,16 +8260,8 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
   },
   "series": [
     {
+      "fill": "#f3622d",
       "fillOpacity": 0.8,
-      "fills": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-        "#4258c9",
-        "#9a42c8",
-        "#c84164",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -7573,6 +8300,12 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
       },
       "nodeClickRange": "nearest",
       "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -7581,17 +8314,9 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-        "#2e3e8d",
-        "#6c2e8c",
-        "#8c2d46",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -7600,34 +8325,436 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAM
         "renderer": undefined,
       },
       "type": "area",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "month",
-      "yKeys": [
-        "coal",
-        "petroleum",
-        "naturalGas",
-        "bioenergyWaste",
-        "nuclear",
-        "windSolarHydro",
-        "imported",
+      "yKey": "coal",
+      "yName": "Coal",
+    },
+    {
+      "fill": "#fba71b",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
       ],
-      "yNames": [
-        "Coal",
-        "Petroleum",
-        "Natural gas",
-        "Bioenergy & waste",
-        "Nuclear",
-        "Wind, solar & hydro",
-        "Imported",
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b07513",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "petroleum",
+      "yName": "Petroleum",
+    },
+    {
+      "fill": "#57b757",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
       ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#3d803d",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "naturalGas",
+      "yName": "Natural gas",
+    },
+    {
+      "fill": "#41a9c9",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2d768d",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "bioenergyWaste",
+      "yName": "Bioenergy & waste",
+    },
+    {
+      "fill": "#4258c9",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 4,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2e3e8d",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "nuclear",
+      "yName": "Nuclear",
+    },
+    {
+      "fill": "#9a42c8",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 5,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#6c2e8c",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "windSolarHydro",
+      "yName": "Wind, solar & hydro",
+    },
+    {
+      "fill": "#c84164",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 4,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": false,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 7,
+        "stackIndex": 6,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#8c2d46",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": undefined,
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "month",
+      "yKey": "imported",
+      "yName": "Imported",
     },
   ],
   "subtitle": {
@@ -7706,7 +8833,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7751,7 +8877,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -7865,13 +8990,8 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
   },
   "series": [
     {
+      "fill": "#00c851",
       "fillOpacity": 1,
-      "fills": [
-        "#00c851",
-        "#ffbb33",
-        "#ff4444",
-      ],
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -7901,6 +9021,12 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": 1,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 3,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -7908,37 +9034,140 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it 
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#006428",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#006428",
-        "#996500",
-        "#a10000",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "bar",
-      "visibles": [
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "area",
-      "yKeys": [
-        [
-          "usedInLast3Months",
-          "usedOver3MonthsAgo",
-          "neverUsed",
-        ],
-      ],
-      "yNames": {
-        "neverUsed": "Never used",
-        "usedInLast3Months": "Used in last 3 months",
-        "usedOver3MonthsAgo": "Used over 3 months ago",
+      "yKey": "usedInLast3Months",
+      "yName": "Used in last 3 months",
+    },
+    {
+      "fill": "#ffbb33",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 1,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 3,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#996500",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "area",
+      "yKey": "usedOver3MonthsAgo",
+      "yName": "Used over 3 months ago",
+    },
+    {
+      "fill": "#ff4444",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 1,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 3,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#a10000",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "area",
+      "yKey": "neverUsed",
+      "yName": "Never used",
     },
   ],
   "subtitle": {
@@ -8030,7 +9259,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8075,7 +9303,6 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8189,16 +9416,8 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
   },
   "series": [
     {
+      "fill": "#f1c40f",
       "fillOpacity": 1,
-      "fills": [
-        "#f1c40f",
-        "#e67e22",
-        "#2ecc71",
-        "#3498db",
-        "#9b59b6",
-        "#34495e",
-      ],
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -8227,6 +9446,12 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8234,49 +9459,315 @@ exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#f39c12",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#f39c12",
-        "#d35400",
-        "#27ae60",
-        "#2980b9",
-        "#8e44ad",
-        "#2c3e50",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "type",
-      "yKeys": [
-        [
-          "white",
-          "mixed",
-          "asian",
-          "black",
-          "chinese",
-          "other",
-        ],
-      ],
-      "yNames": {
-        "asian": "Asian",
-        "black": "Black",
-        "chinese": "Chinese",
-        "mixed": "Mixed",
-        "other": "Other",
-        "white": "White",
+      "yKey": "white",
+      "yName": "White",
+    },
+    {
+      "fill": "#e67e22",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#d35400",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "mixed",
+      "yName": "Mixed",
+    },
+    {
+      "fill": "#2ecc71",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#27ae60",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "asian",
+      "yName": "Asian",
+    },
+    {
+      "fill": "#3498db",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2980b9",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "black",
+      "yName": "Black",
+    },
+    {
+      "fill": "#9b59b6",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 4,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#8e44ad",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "chinese",
+      "yName": "Chinese",
+    },
+    {
+      "fill": "#34495e",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": 100,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 5,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2c3e50",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "other",
+      "yName": "Other",
     },
   ],
   "subtitle": {
@@ -8372,7 +9863,6 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": TimeInterval {
@@ -8421,7 +9911,6 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8535,10 +10024,8 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
   },
   "series": [
     {
+      "fill": "#c16068",
       "fillOpacity": 0.8,
-      "fills": [
-        "#c16068",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -8576,6 +10063,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8584,11 +10072,9 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#874349",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#874349",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -8597,22 +10083,14 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "renderer": [Function],
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "date",
-      "yKeys": [
-        "Tate Modern",
-      ],
-      "yNames": [
-        "Tate Modern",
-      ],
+      "yKey": "Tate Modern",
+      "yName": "Tate Modern",
     },
     {
+      "fill": "#a2bf8a",
       "fillOpacity": 0.8,
-      "fills": [
-        "#a2bf8a",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -8650,6 +10128,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8658,11 +10137,9 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#718661",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#718661",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -8671,22 +10148,14 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "renderer": [Function],
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "date",
-      "yKeys": [
-        "Tate Britain",
-      ],
-      "yNames": [
-        "Tate Britain",
-      ],
+      "yKey": "Tate Britain",
+      "yName": "Tate Britain",
     },
     {
+      "fill": "#ebcc87",
       "fillOpacity": 0.8,
-      "fills": [
-        "#ebcc87",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -8724,6 +10193,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8732,11 +10202,9 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#a48f5f",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#a48f5f",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -8745,22 +10213,14 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "renderer": [Function],
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "date",
-      "yKeys": [
-        "Tate Liverpool",
-      ],
-      "yNames": [
-        "Tate Liverpool",
-      ],
+      "yKey": "Tate Liverpool",
+      "yName": "Tate Liverpool",
     },
     {
+      "fill": "#80a0c3",
       "fillOpacity": 0.8,
-      "fills": [
-        "#80a0c3",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -8798,6 +10258,7 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": undefined,
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8806,11 +10267,9 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#5a7088",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#5a7088",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -8819,16 +10278,10 @@ exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare
         "renderer": [Function],
       },
       "type": "area",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "date",
-      "yKeys": [
-        "Tate St Ives",
-      ],
-      "yNames": [
-        "Tate St Ives",
-      ],
+      "yKey": "Tate St Ives",
+      "yName": "Tate St Ives",
     },
   ],
   "subtitle": {
@@ -8905,7 +10358,6 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -8949,7 +10401,6 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -9063,12 +10514,8 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
   },
   "series": [
     {
+      "fill": "#0084e7",
       "fillOpacity": 1,
-      "fills": [
-        "#0084e7",
-      ],
-      "grouped": true,
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -9097,6 +10544,12 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 0,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -9104,26 +10557,19 @@ exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepa
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#aa4520",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": [Function],
       },
       "type": "column",
-      "visibles": [
-        true,
-      ],
+      "visible": true,
       "xKey": "year",
-      "yKeys": [
-        [
-          "visitors",
-        ],
-      ],
+      "yKey": "visitors",
     },
   ],
   "subtitle": {
@@ -9412,7 +10858,6 @@ exports[`prepare #prepareOptions for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should pr
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 20,
@@ -9457,7 +10902,6 @@ exports[`prepare #prepareOptions for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should pr
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -9684,7 +11128,6 @@ exports[`prepare #prepareOptions for SIMPLE_LINE_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": TimeInterval {
@@ -9733,7 +11176,6 @@ exports[`prepare #prepareOptions for SIMPLE_LINE_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10241,7 +11683,6 @@ exports[`prepare #prepareOptions for SIMPLE_SCATTER_CHART_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10285,7 +11726,6 @@ exports[`prepare #prepareOptions for SIMPLE_SCATTER_CHART_EXAMPLE it should prep
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10510,7 +11950,6 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": CountableTimeInterval {
@@ -10559,7 +11998,6 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10673,15 +12111,8 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
   },
   "series": [
     {
+      "fill": "#5BC0EB",
       "fillOpacity": 0.8,
-      "fills": [
-        "#5BC0EB",
-        "#FDE74C",
-        "#9BC53D",
-        "#E55934",
-        "#FA7921",
-        "#fa3081",
-      ],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -10719,6 +12150,12 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
       },
       "nodeClickRange": "nearest",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -10727,16 +12164,9 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "yOffset": 3,
       },
       "showInLegend": true,
+      "stroke": "#4086a4",
       "strokeOpacity": 1,
       "strokeWidth": 2,
-      "strokes": [
-        "#4086a4",
-        "#b1a235",
-        "#6c8a2b",
-        "#a03e24",
-        "#af5517",
-        "#af225a",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {
@@ -10745,31 +12175,360 @@ exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepar
         "renderer": [Function],
       },
       "type": "area",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "date",
-      "yKeys": [
-        "Science Museum",
-        "National Media Museum",
-        "National Railway Museum",
-        "Locomotion",
-        "Museum of Science and Industry, Manchester",
-        "National Coal Mining Museum for England",
+      "yKey": "Science Museum",
+      "yName": "Science Museum",
+    },
+    {
+      "fill": "#FDE74C",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
       ],
-      "yNames": [
-        "Science Museum",
-        "National Media Museum",
-        "National Railway Museum",
-        "Locomotion",
-        "Museum of Science and Industry, Manchester",
-        "National Coal Mining Museum for England",
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": true,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b1a235",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": [Function],
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "date",
+      "yKey": "National Media Museum",
+      "yName": "National Media Museum",
+    },
+    {
+      "fill": "#9BC53D",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
       ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": true,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#6c8a2b",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": [Function],
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "date",
+      "yKey": "National Railway Museum",
+      "yName": "National Railway Museum",
+    },
+    {
+      "fill": "#E55934",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": true,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#a03e24",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": [Function],
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "date",
+      "yKey": "Locomotion",
+      "yName": "Locomotion",
+    },
+    {
+      "fill": "#FA7921",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": true,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 4,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#af5517",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": [Function],
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "date",
+      "yKey": "Museum of Science and Industry, Manchester",
+      "yName": "Museum of Science and Industry, Manchester",
+    },
+    {
+      "fill": "#fa3081",
+      "fillOpacity": 0.8,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.2,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "marker": {
+        "enabled": true,
+        "fillOpacity": 1,
+        "formatter": undefined,
+        "maxSize": 30,
+        "shape": "circle",
+        "size": 6,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+      },
+      "nodeClickRange": "nearest",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 6,
+        "stackIndex": 5,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#af225a",
+      "strokeOpacity": 1,
+      "strokeWidth": 2,
+      "tooltip": {
+        "enabled": true,
+        "position": {
+          "type": "node",
+        },
+        "renderer": [Function],
+      },
+      "type": "area",
+      "visible": true,
+      "xKey": "date",
+      "yKey": "National Coal Mining Museum for England",
+      "yName": "National Coal Mining Museum for England",
     },
   ],
   "subtitle": {
@@ -10871,7 +12630,6 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -10916,7 +12674,6 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
       },
       "nice": false,
       "position": "top",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11030,14 +12787,8 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
   },
   "series": [
     {
+      "fill": "#f3622d",
       "fillOpacity": 1,
-      "fills": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-      ],
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -11067,6 +12818,12 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 4,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -11074,41 +12831,200 @@ exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#aa4520",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": undefined,
       },
       "type": "bar",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "type",
-      "yKeys": [
-        [
-          "ownerOccupied",
-          "privateRented",
-          "localAuthority",
-          "housingAssociation",
-        ],
-      ],
-      "yNames": {
-        "housingAssociation": "Housing association",
-        "localAuthority": "Local authority",
-        "ownerOccupied": "Owner occupied",
-        "privateRented": "Private rented",
+      "yKey": "ownerOccupied",
+      "yName": "Owner occupied",
+    },
+    {
+      "fill": "#fba71b",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 4,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b07513",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "privateRented",
+      "yName": "Private rented",
+    },
+    {
+      "fill": "#57b757",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 4,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#3d803d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "localAuthority",
+      "yName": "Local authority",
+    },
+    {
+      "fill": "#41a9c9",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 4,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#2d768d",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": undefined,
+      },
+      "type": "bar",
+      "visible": true,
+      "xKey": "type",
+      "yKey": "housingAssociation",
+      "yName": "Housing association",
     },
   ],
   "subtitle": {
@@ -11188,7 +13104,6 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11232,7 +13147,6 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,
@@ -11346,15 +13260,8 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
   },
   "series": [
     {
+      "fill": "#5BC0EB",
       "fillOpacity": 1,
-      "fills": [
-        "#5BC0EB",
-        "#FDE74C",
-        "#9BC53D",
-        "#E55934",
-        "#FA7921",
-      ],
-      "hideInLegend": [],
       "highlightStyle": {
         "item": {
           "fill": "yellow",
@@ -11384,6 +13291,12 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
       "lineDashOffset": 0,
       "nodeClickRange": "exact",
       "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 5,
+        "stackIndex": 0,
+      },
       "shadow": {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -11391,45 +13304,260 @@ exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prep
         "xOffset": 3,
         "yOffset": 3,
       },
+      "showInLegend": true,
+      "stroke": "#4086a4",
       "strokeOpacity": 1,
       "strokeWidth": 0,
-      "strokes": [
-        "#4086a4",
-        "#b1a235",
-        "#6c8a2b",
-        "#a03e24",
-        "#af5517",
-      ],
       "tooltip": {
         "enabled": true,
         "position": {},
         "renderer": [Function],
       },
       "type": "column",
-      "visibles": [
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      "visible": true,
       "xKey": "station",
-      "yKeys": [
-        [
-          "early",
-          "morningPeak",
-          "interPeak",
-          "afternoonPeak",
-          "evening",
-        ],
-      ],
-      "yNames": {
-        "afternoonPeak": "Afternoon peak",
-        "early": "Early",
-        "evening": "Evening",
-        "interPeak": "Between peak",
-        "morningPeak": "Morning peak",
+      "yKey": "early",
+      "yName": "Early",
+    },
+    {
+      "fill": "#FDE74C",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
       },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 5,
+        "stackIndex": 1,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#b1a235",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "station",
+      "yKey": "morningPeak",
+      "yName": "Morning peak",
+    },
+    {
+      "fill": "#9BC53D",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 5,
+        "stackIndex": 2,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#6c8a2b",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "station",
+      "yKey": "interPeak",
+      "yName": "Between peak",
+    },
+    {
+      "fill": "#E55934",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 5,
+        "stackIndex": 3,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#a03e24",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "station",
+      "yKey": "afternoonPeak",
+      "yName": "Afternoon peak",
+    },
+    {
+      "fill": "#FA7921",
+      "fillOpacity": 1,
+      "highlightStyle": {
+        "item": {
+          "fill": "yellow",
+          "fillOpacity": 1,
+        },
+        "series": {
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
+        },
+        "text": {
+          "color": "black",
+        },
+      },
+      "label": {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "formatter": undefined,
+        "placement": "inside",
+      },
+      "lineDash": [
+        0,
+      ],
+      "lineDashOffset": 0,
+      "nodeClickRange": "exact",
+      "normalizedTo": undefined,
+      "seriesGrouping": {
+        "groupCount": 1,
+        "groupIndex": 0,
+        "stackCount": 5,
+        "stackIndex": 4,
+      },
+      "shadow": {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
+      },
+      "showInLegend": true,
+      "stroke": "#af5517",
+      "strokeOpacity": 1,
+      "strokeWidth": 0,
+      "tooltip": {
+        "enabled": true,
+        "position": {},
+        "renderer": [Function],
+      },
+      "type": "column",
+      "visible": true,
+      "xKey": "station",
+      "yKey": "evening",
+      "yName": "Evening",
     },
   ],
   "subtitle": {
@@ -11523,7 +13651,6 @@ exports[`prepare #prepareOptions for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should pr
         "width": 1,
       },
       "position": "bottom",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "interval": 500,
@@ -11568,7 +13695,6 @@ exports[`prepare #prepareOptions for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should pr
         "width": 1,
       },
       "position": "left",
-      "thickness": 0,
       "tick": {
         "color": "rgb(195, 195, 195)",
         "size": 6,

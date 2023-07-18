@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -69,16 +63,16 @@ var GridCtrl = /** @class */ (function (_super) {
         return ((_a = el === null || el === void 0 ? void 0 : el.getAttribute('row-id')) === null || _a === void 0 ? void 0 : _a.startsWith('detail')) || false;
     };
     GridCtrl.prototype.showDropZones = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
     };
     GridCtrl.prototype.showSideBar = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
     };
     GridCtrl.prototype.showStatusBar = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
     };
     GridCtrl.prototype.showWatermark = function () {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     };
     GridCtrl.prototype.onGridSizeChanged = function () {
         var event = {

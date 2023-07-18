@@ -440,7 +440,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 colorScale.range = colorRange;
                 colorScale.update();
                 createTreeNodeDatum = function (datum, depth, parent) {
-                    var _a, _b, _c;
+                    var _a, _b, _c, _d;
                     if (depth === void 0) { depth = 0; }
                     var label;
                     if (labelFormatter) {
@@ -480,7 +480,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                         nodeDatum.value = sizeKey ? (_c = datum[sizeKey]) !== null && _c !== void 0 ? _c : 1 : 1;
                     }
                     else {
-                        datum.children.forEach(function (child) {
+                        (_d = datum.children) === null || _d === void 0 ? void 0 : _d.forEach(function (child) {
                             var childNodeDatum = createTreeNodeDatum(child, depth + 1, nodeDatum);
                             var value = childNodeDatum.value;
                             if (isNaN(value) || !isFinite(value) || value === 0) {
@@ -544,7 +544,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                     descendants.push(datum);
                     (_a = datum.children) === null || _a === void 0 ? void 0 : _a.forEach(traverse);
                 };
-                traverse(this.dataRoot);
+                traverse(dataRoot);
                 _b = this, groupSelection = _b.groupSelection, highlightSelection = _b.highlightSelection;
                 update = function (selection) {
                     return selection.update(descendants, function (group) {
@@ -564,7 +564,7 @@ var TreemapSeries = /** @class */ (function (_super) {
     };
     TreemapSeries.prototype.isDatumHighlighted = function (datum) {
         var _a;
-        var highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+        var highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
         return datum === highlightedDatum && (datum.isLeaf || this.highlightGroups);
     };
     TreemapSeries.prototype.getTileFormat = function (datum, isHighlighted) {
@@ -594,17 +594,18 @@ var TreemapSeries = /** @class */ (function (_super) {
     };
     TreemapSeries.prototype.updateNodes = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, gradient, _b, _c, highlightedFill, highlightedFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, highlightedTextColor, tileStroke, tileStrokeWidth, groupStroke, groupStrokeWidth, tileShadow, labelShadow, seriesRect, boxes, labelMeta, highlightedSubtree, updateRectFn, updateLabelFn;
+            var _a, gradient, _b, _c, highlightedFill, highlightedFillOpacity, highlightedStroke, highlightedDatumStrokeWidth, highlightedTextColor, tileStroke, tileStrokeWidth, groupStroke, groupStrokeWidth, tileShadow, labelShadow, dataRoot, seriesRect, boxes, labelMeta, highlightedSubtree, updateRectFn, updateLabelFn;
             var _this = this;
             return __generator(this, function (_d) {
-                if (!this.chart) {
+                if (!this.chart)
                     return [2 /*return*/];
-                }
-                _a = this, gradient = _a.gradient, _b = _a.highlightStyle, _c = _b.item, highlightedFill = _c.fill, highlightedFillOpacity = _c.fillOpacity, highlightedStroke = _c.stroke, highlightedDatumStrokeWidth = _c.strokeWidth, highlightedTextColor = _b.text.color, tileStroke = _a.tileStroke, tileStrokeWidth = _a.tileStrokeWidth, groupStroke = _a.groupStroke, groupStrokeWidth = _a.groupStrokeWidth, tileShadow = _a.tileShadow, labelShadow = _a.labelShadow;
+                _a = this, gradient = _a.gradient, _b = _a.highlightStyle, _c = _b.item, highlightedFill = _c.fill, highlightedFillOpacity = _c.fillOpacity, highlightedStroke = _c.stroke, highlightedDatumStrokeWidth = _c.strokeWidth, highlightedTextColor = _b.text.color, tileStroke = _a.tileStroke, tileStrokeWidth = _a.tileStrokeWidth, groupStroke = _a.groupStroke, groupStrokeWidth = _a.groupStrokeWidth, tileShadow = _a.tileShadow, labelShadow = _a.labelShadow, dataRoot = _a.dataRoot;
+                if (!dataRoot)
+                    return [2 /*return*/];
                 seriesRect = this.chart.getSeriesRect();
-                boxes = this.squarify(this.dataRoot, new BBox(0, 0, seriesRect.width, seriesRect.height));
+                boxes = this.squarify(dataRoot, new BBox(0, 0, seriesRect.width, seriesRect.height));
                 labelMeta = this.buildLabelMeta(boxes);
-                highlightedSubtree = this.getHighlightedSubtree();
+                highlightedSubtree = this.getHighlightedSubtree(dataRoot);
                 this.updateNodeMidPoint(boxes);
                 updateRectFn = function (rect, datum, isDatumHighlighted) {
                     var _a, _b, _c, _d, _e, _f;
@@ -709,7 +710,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             };
         });
     };
-    TreemapSeries.prototype.getHighlightedSubtree = function () {
+    TreemapSeries.prototype.getHighlightedSubtree = function (dataRoot) {
         var _this = this;
         var items = new Set();
         var traverse = function (datum) {
@@ -719,7 +720,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             }
             (_a = datum.children) === null || _a === void 0 ? void 0 : _a.forEach(traverse);
         };
-        traverse(this.dataRoot);
+        traverse(dataRoot);
         return items;
     };
     TreemapSeries.prototype.buildLabelMeta = function (boxes) {
@@ -757,7 +758,6 @@ var TreemapSeries = /** @class */ (function (_super) {
             var labelStyle;
             var wrappedText = '';
             if (datum.isLeaf) {
-                labelStyle = labels.small;
                 var pickStyle = function () {
                     var e_1, _a;
                     var availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
@@ -879,7 +879,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             if (valueFormatter) {
                 valueText = callbackCache.call(valueFormatter, { datum: datum });
             }
-            else {
+            else if (valueKey != null) {
                 var value = datum[valueKey];
                 if (typeof value === 'number' && isFinite(value)) {
                     valueText = toFixed(value);

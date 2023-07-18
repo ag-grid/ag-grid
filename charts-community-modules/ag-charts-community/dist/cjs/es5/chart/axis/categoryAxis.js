@@ -20,6 +20,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -45,7 +56,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryAxis = void 0;
 var validation_1 = require("../../util/validation");
 var bandScale_1 = require("../../scale/bandScale");
-var chartAxis_1 = require("../chartAxis");
+var cartesianAxis_1 = require("./cartesianAxis");
 var CategoryAxis = /** @class */ (function (_super) {
     __extends(CategoryAxis, _super);
     function CategoryAxis(moduleCtx) {
@@ -78,9 +89,25 @@ var CategoryAxis = /** @class */ (function (_super) {
         configurable: true
     });
     CategoryAxis.prototype.normaliseDataDomain = function (d) {
+        var e_1, _a;
+        var _b;
+        var _c;
         // Prevent duplicate categories.
-        var valuesSet = new Set(d);
-        return new (Array.bind.apply(Array, __spreadArray([void 0], __read(valuesSet.values()))))();
+        var valuesSet = {};
+        try {
+            for (var d_1 = __values(d), d_1_1 = d_1.next(); !d_1_1.done; d_1_1 = d_1.next()) {
+                var next = d_1_1.value;
+                (_b = valuesSet[_c = String(next)]) !== null && _b !== void 0 ? _b : (valuesSet[_c] = next);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (d_1_1 && !d_1_1.done && (_a = d_1.return)) _a.call(d_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return Object.values(valuesSet);
     };
     CategoryAxis.prototype.calculateDomain = function () {
         if (!this._paddingOverrideEnabled) {
@@ -99,5 +126,5 @@ var CategoryAxis = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.NUMBER(0, 1))
     ], CategoryAxis.prototype, "groupPaddingInner", void 0);
     return CategoryAxis;
-}(chartAxis_1.ChartAxis));
+}(cartesianAxis_1.CartesianAxis));
 exports.CategoryAxis = CategoryAxis;

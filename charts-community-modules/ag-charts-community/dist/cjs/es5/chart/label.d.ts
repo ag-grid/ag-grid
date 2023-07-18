@@ -1,7 +1,7 @@
-import { FontStyle, FontWeight } from './agChartOptions';
+import type { FontStyle, FontWeight } from './agChartOptions';
 import { BBox } from '../scene/bbox';
-import { Matrix } from '../scene/matrix';
-import { PointLabelDatum } from '../util/labelPlacement';
+import type { Matrix } from '../scene/matrix';
+import type { PointLabelDatum } from '../util/labelPlacement';
 export declare class Label {
     enabled: boolean;
     fontSize: number;
@@ -27,4 +27,3 @@ export declare function getLabelSpacing(minSpacing: number, rotated?: boolean): 
 export declare function getTextBaseline(parallel: boolean, labelRotation: number, sideFlag: Flag, parallelFlipFlag: Flag): CanvasTextBaseline;
 export declare function getTextAlign(parallel: boolean, labelRotation: number, labelAutoRotation: number, sideFlag: Flag, regularFlipFlag: Flag): CanvasTextAlign;
 export declare function calculateLabelBBox(text: string, bbox: BBox, labelX: number, labelY: number, labelMatrix: Matrix): PointLabelDatum;
-//# sourceMappingURL=label.d.ts.map

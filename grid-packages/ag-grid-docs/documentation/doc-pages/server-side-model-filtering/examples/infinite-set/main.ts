@@ -10,6 +10,7 @@ const columnDefs: ColDef[] = [
       values: getCountryValuesAsync,
       keyCreator: countryCodeKeyCreator,
       valueFormatter: countryValueFormatter,
+      comparator: countryComparator,
     },
     menuTabs: ['filterMenuTab'],
   },
@@ -30,6 +31,16 @@ function countryCodeKeyCreator(params: KeyCreatorParams): string {
 
 function countryValueFormatter(params: ValueFormatterParams): string {
   return params.value.name;
+}
+
+function countryComparator(a: { name: string, code: string }, b:  { name: string, code: string }): number {
+  // for complex objects, need to provide a comparator to choose what to sort by
+  if (a.name < b.name) {
+    return -1;
+  } else if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
 }
 
 const gridOptions: GridOptions<IOlympicData> = {

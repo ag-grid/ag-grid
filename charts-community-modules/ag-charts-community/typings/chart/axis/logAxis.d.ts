@@ -1,5 +1,5 @@
 import { NumberAxis } from './numberAxis';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 export declare class LogAxis extends NumberAxis {
     static className: string;
     static type: "log";

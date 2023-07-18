@@ -9,6 +9,7 @@ class PolarSeries extends series_1.Series {
             moduleCtx,
             useLabelLayer,
             pickModes,
+            contentGroupVirtual: false,
             directionKeys: {
                 [chartAxisDirection_1.ChartAxisDirection.X]: ['angleKey'],
                 [chartAxisDirection_1.ChartAxisDirection.Y]: ['radiusKey'],

@@ -1,13 +1,11 @@
-import { durationWeek, durationDay } from './duration';
+import { durationWeek } from './duration';
 import { CountableTimeInterval } from './interval';
-var baseSunday = new Date(2023, 0, 1);
 // Set date to n-th day of the week.
 function weekday(n) {
-    // Use UTC for weeks calculation to get into account time zone shifts
-    var base = Date.UTC(baseSunday.getFullYear(), baseSunday.getMonth(), baseSunday.getDate()) + n * durationDay;
+    var base = new Date(2023, 0, 1 + n).getTime();
     function encode(date) {
-        var utc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-        return Math.floor((utc - base) / durationWeek);
+        var dateMs = date.getTime();
+        return Math.floor((dateMs - base) / durationWeek);
     }
     function decode(encoded) {
         var d = new Date(base);

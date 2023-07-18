@@ -1,4 +1,4 @@
-import { Scale } from './scale';
+import type { Scale } from './scale';
 export declare class ColorScale implements Scale<number, string, number> {
     domain: number[];
     range: string[];

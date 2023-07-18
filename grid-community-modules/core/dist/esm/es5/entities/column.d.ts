@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
@@ -10,7 +10,7 @@ import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
 export declare type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
-export declare type ColumnEventName = 'movingChanged' | 'leftChanged' | 'widthChanged' | 'lastLeftPinnedChanged' | 'firstRightPinnedChanged' | 'visibleChanged' | 'filterChanged' | 'filterActiveChanged' | 'sortChanged' | 'colDefChanged' | 'menuVisibleChanged' | 'columnRowGroupChanged' | 'columnPivotChanged' | 'columnValueChanged';
+export declare type ColumnEventName = 'movingChanged' | 'leftChanged' | 'widthChanged' | 'lastLeftPinnedChanged' | 'firstRightPinnedChanged' | 'visibleChanged' | 'filterChanged' | 'filterActiveChanged' | 'sortChanged' | 'colDefChanged' | 'menuVisibleChanged' | 'columnRowGroupChanged' | 'columnPivotChanged' | 'columnValueChanged' | 'columnStateUpdated';
 export declare function getNextColInstanceId(): number;
 export declare class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
     static EVENT_MOVING_CHANGED: ColumnEventName;
@@ -27,6 +27,7 @@ export declare class Column<TValue = any> implements IHeaderColumn<TValue>, IPro
     static EVENT_ROW_GROUP_CHANGED: ColumnEventName;
     static EVENT_PIVOT_CHANGED: ColumnEventName;
     static EVENT_VALUE_CHANGED: ColumnEventName;
+    static EVENT_STATE_UPDATED: ColumnEventName;
     private readonly gridOptionsService;
     private readonly columnUtils;
     private readonly columnHoverService;
@@ -202,4 +203,5 @@ export declare class Column<TValue = any> implements IHeaderColumn<TValue>, IPro
     isAllowValue(): boolean;
     isAllowRowGroup(): boolean;
     getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[];
+    private dispatchStateUpdatedEvent;
 }

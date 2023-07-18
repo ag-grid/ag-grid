@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -13,8 +13,7 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private rowRenderer;
     private columnModel;
     private enableRtl;
-    private eLastHScroll;
-    private eLastVScroll;
+    private lastScrollSource;
     private eBodyViewport;
     private scrollLeft;
     private nextScrollTop;
@@ -28,8 +27,7 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private addScrollListener;
     private onDisplayedColumnsWidthChanged;
     horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void;
-    private isControllingHScroll;
-    private isControllingVScroll;
+    private isControllingScroll;
     private onFakeHScroll;
     private onHScroll;
     private onHScrollCommon;
@@ -45,7 +43,7 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private onHorizontalViewportChanged;
     checkScrollLeft(): void;
     scrollGridIfNeeded(): boolean;
-    setHorizontalScrollPosition(hScrollPosition: number): void;
+    setHorizontalScrollPosition(hScrollPosition: number, fromAlignedGridsService?: boolean): void;
     setVerticalScrollPosition(vScrollPosition: number): void;
     getVScrollPosition(): {
         top: number;

@@ -6,7 +6,7 @@
         transpiler: "ts",
         typescriptOptions: {
             // Copy of compiler options in standard tsconfig.json
-            target: "es5",
+            target: "es2015",
             module: "system", //gets rid of console warning
             moduleResolution: "node",
             sourceMap: true,
@@ -45,11 +45,12 @@
                 defaultExtension: "ts",
             },
             'ag-charts-community': {
-                main: './dist/esm/es6/main.js',
-                defaultExtension: 'js'
+                main: './dist/ag-charts-community.cjs.js',
+                defaultExtension: 'js',
+                "format": "cjs"
             },
             'ag-charts-enterprise': {
-                main: './dist/esm/es6/main.js',
+                main: './dist/ag-charts-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
         }

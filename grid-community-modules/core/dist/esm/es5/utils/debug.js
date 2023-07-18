@@ -1,10 +1,4 @@
 /**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
-/**
  * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
  * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
  * it is intended the AG Grid developer calls this to troubleshoot, but then takes out the calls before

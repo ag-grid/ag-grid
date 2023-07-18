@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17,7 +11,13 @@ const context_1 = require("../context/context");
 const utils_1 = require("../utils");
 const gridOptionsValidator_1 = require("../gridOptionsValidator");
 let ColumnApi = class ColumnApi {
-    /** Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead. */
+    /**
+     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
+     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
+     * If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     sizeColumnsToFit(gridWidth) {
         // AG-3403 validate that gridWidth is provided because this method has the same name as
         // a method on the grid API that takes no arguments, and it's easy to confuse the two
@@ -158,13 +158,25 @@ let ColumnApi = class ColumnApi {
     getRightDisplayedColumnGroups() { return this.columnModel.getDisplayedTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
     getAllDisplayedColumnGroups() { return this.columnModel.getAllDisplayedTrees(); }
-    /** Auto-sizes a column based on its contents. */
+    /**
+     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
+     * set `cellDataType = false` on the default column definition.
+     */
     autoSizeColumn(key, skipHeader) { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
-    /** Same as `autoSizeColumn`, but provide a list of column keys. */
+    /**
+     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     autoSizeColumns(keys, skipHeader) {
         this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader });
     }
-    /** Calls `autoSizeColumns` on all displayed columns. */
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     autoSizeAllColumns(skipHeader) { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
     /** Set the pivot result columns. */
     setPivotResultColumns(colDefs) { this.columnModel.setSecondaryColumns(colDefs, 'api'); }

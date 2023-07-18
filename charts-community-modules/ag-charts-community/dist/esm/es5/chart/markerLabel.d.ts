@@ -1,7 +1,7 @@
 import { Group } from '../scene/group';
-import { Marker } from './marker/marker';
-import { RenderContext } from '../scene/node';
-import { FontStyle, FontWeight } from './agChartOptions';
+import type { Marker } from './marker/marker';
+import type { RenderContext } from '../scene/node';
+import type { FontStyle, FontWeight } from './agChartOptions';
 export declare class MarkerLabel extends Group {
     static className: string;
     private label;
@@ -29,4 +29,3 @@ export declare class MarkerLabel extends Group {
     private update;
     render(renderCtx: RenderContext): void;
 }
-//# sourceMappingURL=markerLabel.d.ts.map

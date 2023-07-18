@@ -17,7 +17,7 @@ function testDev {
     export FONTCONFIG_PATH=$FONTDIR
     export FONTCONFIG_FILE=$FONTDIR/fonts.conf
     export PANGOCAIRO_BACKEND=fontconfig
-    npx jest ${PROJECTS} ${1:-}
+    npx jest ${PROJECTS} --detectOpenHandles ${1:-}
 }
 
 function testCI {

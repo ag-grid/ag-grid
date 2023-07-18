@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -1699,6 +1699,7 @@ function aggMax(params) {
     return result;
 }
 function aggCount(params) {
+    var _a, _b;
     var values = params.values;
     var result = 0;
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
@@ -1707,7 +1708,23 @@ function aggCount(params) {
         // check if the value is from a group, in which case use the group's count
         result += value != null && typeof value.value === 'number' ? value.value : 1;
     }
-    return result;
+    // the previous aggregation data
+    var existingAggData = (_b = (_a = params.rowNode) === null || _a === void 0 ? void 0 : _a.aggData) === null || _b === void 0 ? void 0 : _b[params.column.getColId()];
+    if (existingAggData && existingAggData.value === result) {
+        // the underlying values haven't changed, return the old object to avoid triggering change detection
+        return existingAggData;
+    }
+    // it's important to wrap it in the object so we can determine if this is a group level
+    return {
+        value: result,
+        toString: function () {
+            return this.value.toString();
+        },
+        // used for sorting
+        toNumber: function () {
+            return this.value;
+        }
+    };
 }
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
@@ -1835,11 +1852,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             _this.setupAria();
         });
         this.setupTooltip();
+        this.activateTabIndex();
     };
     DropZoneColumnComp.prototype.setupAria = function () {
         var translate = this.localeService.getLocaleTextFunc();
         var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
-        var aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        var aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
         var sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
@@ -1993,12 +2011,21 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        // ePopup.style.height = this.gridOptionsService.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = eGui.clientWidth + "px";
-        var popupHiddenFunc = function () {
+        var focusoutListener = this.addManagedListener(ePopup, 'focusout', function (e) {
+            if (!ePopup.contains(e.relatedTarget) && addPopupRes) {
+                addPopupRes.hideFunc();
+            }
+        });
+        var popupHiddenFunc = function (callbackEvent) {
             _this.destroyBean(virtualList);
             _this.popupShowing = false;
-            eGui.focus();
+            if ((callbackEvent === null || callbackEvent === void 0 ? void 0 : callbackEvent.key) === 'Escape') {
+                eGui.focus();
+            }
+            if (focusoutListener) {
+                focusoutListener();
+            }
         };
         var translate = this.localeService.getLocaleTextFunc();
         var addPopupRes = this.popupService.addPopup({
@@ -2072,7 +2099,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return this.dropZonePurpose === 'rowGroup';
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span role=\"option\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
     __decorate$8([
         core.Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);
@@ -2983,7 +3010,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var __extends$2 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {

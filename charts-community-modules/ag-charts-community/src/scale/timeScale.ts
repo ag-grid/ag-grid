@@ -16,7 +16,8 @@ import {
     durationMonth,
     durationYear,
 } from '../util/time/duration';
-import { CountableTimeInterval, TimeInterval } from '../util/time/interval';
+import type { CountableTimeInterval } from '../util/time/interval';
+import { TimeInterval } from '../util/time/interval';
 import { tickStep } from '../util/ticks';
 import { buildFormatter } from '../util/timeFormat';
 

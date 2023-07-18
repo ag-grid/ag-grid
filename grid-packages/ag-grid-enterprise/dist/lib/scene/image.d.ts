@@ -1,4 +1,5 @@
-import { Node, RenderContext } from './node';
+import type { RenderContext } from './node';
+import { Node } from './node';
 export declare class Image extends Node {
     private readonly sourceImage;
     constructor(sourceImage: HTMLImageElement);

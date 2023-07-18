@@ -204,8 +204,7 @@ const GridExample = () => {
 
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
-                    onGridReady={(params) => onGridReady(params, id)}>
-                </AgGridReact>
+                    onGridReady={(params) => onGridReady(params, id)} />
             </div>
         </div>
     )

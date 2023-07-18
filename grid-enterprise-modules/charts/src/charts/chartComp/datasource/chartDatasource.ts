@@ -255,7 +255,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
             dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 
                 if (params.crossFiltering) {
@@ -283,7 +283,7 @@ export class ChartDatasource extends BeanStub {
                     const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
                     let aggResult: any = 0;
 
-                    if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+                    if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
                         aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
                     }
 

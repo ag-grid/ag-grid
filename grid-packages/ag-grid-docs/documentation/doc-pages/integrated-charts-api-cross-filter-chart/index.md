@@ -82,4 +82,4 @@ The following examples show the different chart types that support cross-filteri
 
 ## Next Up
 
-Continue to the next section to learn about: [Time Series Chart](/integrated-charts-time-series/).
+Continue to the next section to learn about: [Chart Tool Panels](/integrated-charts-chart-tool-panels/).

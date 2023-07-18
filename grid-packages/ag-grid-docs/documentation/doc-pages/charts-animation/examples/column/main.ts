@@ -1,4 +1,8 @@
-import { AgChartOptions, AgEnterpriseCharts } from "ag-charts-enterprise"
+import {
+  AgChart,
+  AgChartOptions,
+  AgEnterpriseCharts,
+} from "ag-charts-enterprise"
 import { getData } from "./data"
 
 const options: AgChartOptions = {
@@ -25,6 +29,9 @@ const options: AgChartOptions = {
       yKey: "mac",
       yName: "Mac",
       stackGroup: "Devices",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "column",
@@ -32,12 +39,18 @@ const options: AgChartOptions = {
       yKey: "ipad",
       yName: "iPad",
       stackGroup: "Devices",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "wearables",
       yName: "Wearables",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "column",
@@ -51,4 +64,31 @@ const options: AgChartOptions = {
   ],
 }
 
-AgEnterpriseCharts.create(options)
+const chart = AgEnterpriseCharts.create(options)
+
+function reset() {
+  options.data = getData()
+  AgChart.update(chart, options as any)
+}
+
+function randomise() {
+  options.data = [
+    ...getData().map((d: any) => ({
+      ...d,
+      iphone: d.iphone + Math.floor(Math.random() * 50 - 25),
+    })),
+  ]
+  AgChart.update(chart, options as any)
+}
+
+function remove() {
+  options.data = [
+    ...getData().filter(
+      (d: any) =>
+        !d.quarter.startsWith("Q1'19") &&
+        !d.quarter.startsWith("Q3'19") &&
+        !d.quarter.startsWith("Q4'18")
+    ),
+  ]
+  AgChart.update(chart, options as any)
+}

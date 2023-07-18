@@ -8,6 +8,8 @@ const gulpif = require('gulp-if');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
+const replace = require('gulp-replace');
+const rename = require('gulp-rename');
 
 const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -29,56 +31,102 @@ const cleanDist = () => {
         .pipe(clean());
 };
 
-const tscTask = async (tsConfigFile, destination, sourceMaps) => {
-    const tsProject = gulpTypescript.createProject(tsConfigFile, {typescript: typescript});
+const tscTask = async (tsConfigFile, destination, sourceMaps, mjsProcessing = false) => {
+    await new Promise((resolve, reject) => {
+        const tsProject = gulpTypescript.createProject(tsConfigFile, {typescript: typescript});
 
-    const tsResult = gulp
-        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
-        .pipe(gulpif(sourceMaps, sourcemaps.init()))
-        .pipe(tsProject());
+        const tsResult = gulp
+            .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
+            .pipe(gulpif(sourceMaps, sourcemaps.init()))
+            .pipe(tsProject());
 
-    return await merge([
-        tsResult.dts
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest(destination)),
-        tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulpif(sourceMaps, sourcemaps.write('.')))
-            .pipe(gulp.dest(destination))
-    ]);
+        let stream = null;
+        // let stream = tsResult.js.pipe(header(headerTemplate, {pkg: pkg}));
+        if (mjsProcessing) {
+            stream = tsResult.js
+                .pipe(replace(/(import|export)(.*['"]\..*)(['"].*)/gi, (line) => {
+                    if (line.startsWith("import") && (line.endsWith('./utils";') || line.endsWith('./utils\';'))) {
+                        return line.replace('./utils', './utils/index.mjs');
+                    }
 
+                    const regexp = /(import|export)(.*['"]\..*)(['"].*)/gi;
+                    const matches = [...line.matchAll(regexp)][0];
+                    return `${matches[1]}${matches[2]}.mjs${matches[3]}`
+                }))
+                .pipe(rename((path) => {
+                    let {extname} = path;
+                    if (extname === '.js') {
+                        path.extname = extname.replace('.js', '.mjs')
+                    }
+                    return path;
+                }))
+        }
+        stream = (stream ? stream : tsResult.js).pipe(gulpif(sourceMaps, sourcemaps.write('.')))
+            .pipe(gulp.dest(destination));
+
+
+        merge([
+            tsResult.dts
+                .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+                .pipe(gulp.dest(destination)), stream])
+            .on('finish', resolve)
+            .on('error', reject)
+    })
 }
 
-const tscSrcCjsEs5Task = async () => {
-    return await tscTask('tsconfig.cjs.es5.json', 'dist/cjs/es5', true);
+const addHeader = async (sourceDir, mjsProcessing) => {
+    await new Promise((resolve, reject) => {
+        gulp.src([`${sourceDir}/main.${mjsProcessing ? 'mjs' : 'js'}`])
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(gulp.dest(sourceDir))
+            .on('finish', resolve)
+            .on('error', reject)
+    });
+}
+
+const tscWithHeader = async (config, dir, sourceMaps, mjsProcessing = false) => {
+    await tscTask(config, dir, sourceMaps, mjsProcessing);
+    await addHeader(dir, mjsProcessing);
+}
+
+const tscSrcCjsEs5Task = async (done) => {
+    await tscWithHeader('tsconfig.cjs.es5.json', 'dist/cjs/es5', true);
+    done();
 };
 
-const tscSrcCjsEs6Task = async () => {
-    return await tscTask('tsconfig.cjs.es6.json', 'dist/cjs/es6', true);
+const tscSrcCjsEs6Task = async (done) => {
+    await tscWithHeader('tsconfig.cjs.es6.json', 'dist/cjs/es6', true);
+    done();
 };
 
-const tscSrcEsModulesEs6Task = async () => {
-    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', true);
+const tscSrcEsModulesEs6Task = async (done) => {
+    await tscWithHeader('tsconfig.esm.es6.json', 'dist/esm/es6', true, true);
+    done();
 };
 
-const tscSrcEsModulesEs5Task = async () => {
-    return await tscTask('tsconfig.esm.es5.json', 'dist/esm/es5', true);
+const tscSrcEsModulesEs5Task = async (done) => {
+    await tscWithHeader('tsconfig.esm.es5.json', 'dist/esm/es5', true);
+    done();
 };
 
-const tscSrcCjsEs5ProdTask = async () => {
-    return await tscTask('tsconfig.cjs.es5.json', 'dist/cjs/es5', false);
+const tscSrcCjsEs5ProdTask = async (done) => {
+    await tscWithHeader('tsconfig.cjs.es5.json', 'dist/cjs/es5', false);
+    done();
 };
 
-const tscSrcCjsEs6ProdTask = async () => {
-    return await tscTask('tsconfig.cjs.es6.json', 'dist/cjs/es6', false);
+const tscSrcCjsEs6ProdTask = async (done) => {
+    await tscWithHeader('tsconfig.cjs.es6.json', 'dist/cjs/es6', false);
+    done();
 };
 
-const tscSrcEsModulesEs6ProdTask = async () => {
-    return await tscTask('tsconfig.esm.es6.json', 'dist/esm/es6', false);
+const tscSrcEsModulesEs6ProdTask = async (done) => {
+    await tscWithHeader('tsconfig.esm.es6.json', 'dist/esm/es6', false, true);
+    done();
 };
 
-const tscSrcEsModulesEs5ProdTask = async () => {
-    return await tscTask('tsconfig.esm.es5.json', 'dist/esm/es5', false);
+const tscSrcEsModulesEs5ProdTask = async (done) => {
+    await tscWithHeader('tsconfig.esm.es5.json', 'dist/esm/es5', false);
+    done();
 };
 
 const watch = () => {
@@ -100,7 +148,6 @@ gulp.task('tsc-no-clean-esm-prod', parallel(tscSrcEsModulesEs5ProdTask, tscSrcEs
 gulp.task('tsc-no-clean', parallel('tsc-no-clean-cjs', 'tsc-no-clean-esm'));
 gulp.task('tsc-no-clean-prod', parallel('tsc-no-clean-cjs-prod', 'tsc-no-clean-esm-prod'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
-gulp.task('test', tscSrcCjsEs5ProdTask)
 
 // tsc related tasks
 gulp.task('tsc-es6-watch', series('tsc-no-clean-esm', watch));

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -49,10 +43,12 @@ var PaginationComp = /** @class */ (function (_super) {
     PaginationComp.prototype.postConstruct = function () {
         var isRtl = this.gridOptionsService.is('enableRtl');
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
-        this.btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
-        this.btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
-        this.btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
+        var _a = this, btFirst = _a.btFirst, btPrevious = _a.btPrevious, btNext = _a.btNext, btLast = _a.btLast;
+        this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
+        btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
+        btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
+        btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
+        btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
         this.onPaginationChanged();
@@ -124,7 +120,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var strNext = localeTextFunc('nextPage', 'Next Page');
         var strLast = localeTextFunc('lastPage', 'Last Page');
         var compId = this.getCompId();
-        return /* html */ "<div class=\"ag-paging-panel ag-unselectable\" id=\"ag-" + compId + "\">\n                <span class=\"ag-paging-row-summary-panel\" role=\"status\">\n                    <span id=\"ag-" + compId + "-first-row\" ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-to\">" + strTo + "</span>\n                    <span id=\"ag-" + compId + "-last-row\" ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-of\">" + strOf + "</span>\n                    <span id=\"ag-" + compId + "-row-count\" ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\" role=\"presentation\">\n                    <div ref=\"btFirst\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strFirst + "\"></div>\n                    <div ref=\"btPrevious\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strPrevious + "\"></div>\n                    <span class=\"ag-paging-description\" role=\"status\">\n                        <span id=\"ag-" + compId + "-start-page\">" + strPage + "</span>\n                        <span id=\"ag-" + compId + "-start-page-number\" ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        <span id=\"ag-" + compId + "-of-page\">" + strOf + "</span>\n                        <span id=\"ag-" + compId + "-of-page-number\" ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <div ref=\"btNext\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strNext + "\"></div>\n                    <div ref=\"btLast\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strLast + "\"></div>\n                </span>\n            </div>";
+        return /* html */ "<div class=\"ag-paging-panel ag-unselectable\" id=\"ag-" + compId + "\">\n                <span class=\"ag-paging-row-summary-panel\" role=\"status\">\n                    <span id=\"ag-" + compId + "-first-row\" ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-to\">" + strTo + "</span>\n                    <span id=\"ag-" + compId + "-last-row\" ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-of\">" + strOf + "</span>\n                    <span id=\"ag-" + compId + "-row-count\" ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\" role=\"presentation\">\n                    <div ref=\"btFirst\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strFirst + "\"></div>\n                    <div ref=\"btPrevious\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strPrevious + "\"></div>\n                    <span class=\"ag-paging-description\" role=\"status\">\n                        <span id=\"ag-" + compId + "-start-page\">" + strPage + "</span>\n                        <span id=\"ag-" + compId + "-start-page-number\" ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        <span id=\"ag-" + compId + "-of-page\">" + strOf + "</span>\n                        <span id=\"ag-" + compId + "-of-page-number\" ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <div ref=\"btNext\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strNext + "\"></div>\n                    <div ref=\"btLast\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strLast + "\"></div>\n                </span>\n            </div>";
     };
     PaginationComp.prototype.onBtNext = function () {
         if (!this.nextButtonDisabled) {
@@ -158,12 +154,6 @@ var PaginationComp = /** @class */ (function (_super) {
     PaginationComp.prototype.toggleButtonDisabled = function (button, disabled) {
         aria_1.setAriaDisabled(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
-        if (disabled) {
-            button.removeAttribute('tabindex');
-        }
-        else {
-            button.setAttribute('tabindex', '0');
-        }
     };
     PaginationComp.prototype.updateRowLabels = function () {
         var currentPage = this.paginationProxy.getCurrentPage();

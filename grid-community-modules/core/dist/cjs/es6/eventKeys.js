@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Events = void 0;
@@ -180,3 +174,4 @@ Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
 Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
 Events.EVENT_STORE_UPDATED = 'storeUpdated';
 Events.EVENT_FILTER_DESTROYED = 'filterDestroyed';
+Events.EVENT_ROW_DATA_UPDATE_STARTED = 'rowDataUpdateStarted';

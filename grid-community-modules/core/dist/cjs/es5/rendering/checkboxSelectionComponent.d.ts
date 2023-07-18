@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from '../entities/column';
@@ -17,8 +17,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private onDataChanged;
     private onSelectableChanged;
     private onSelectionChanged;
-    private onCheckedClicked;
-    private onUncheckedClicked;
+    private onClicked;
     init(params: {
         rowNode: RowNode;
         column?: Column;
@@ -28,6 +27,7 @@ export declare class CheckboxSelectionComponent extends Component {
             removeHidden: boolean;
         };
     }): void;
+    private shouldHandleIndeterminateState;
     private showOrHideSelect;
     private getIsVisible;
 }

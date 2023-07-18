@@ -13,4 +13,3 @@ export declare function ActionOnSet<T>(opts: {
     oldValue?: (this: T, oldValue: any) => void;
     changeValue?: (this: T, newValue?: any, oldValue?: any) => void;
 }): PropertyDecorator;
-//# sourceMappingURL=proxy.d.ts.map

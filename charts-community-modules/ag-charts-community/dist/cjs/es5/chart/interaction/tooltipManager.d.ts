@@ -1,6 +1,6 @@
-import { BBox } from '../../scene/bbox';
-import { Tooltip, TooltipMeta } from '../tooltip/tooltip';
-import { InteractionManager } from './interactionManager';
+import type { BBox } from '../../scene/bbox';
+import type { Tooltip, TooltipMeta } from '../tooltip/tooltip';
+import type { InteractionManager } from './interactionManager';
 /**
  * Manages the tooltip HTML an element. Tracks the requested HTML from distinct dependents and
  * handles conflicting tooltip requests.
@@ -21,4 +21,3 @@ export declare class TooltipManager {
     private checkExclusiveRects;
     private applyStates;
 }
-//# sourceMappingURL=tooltipManager.d.ts.map

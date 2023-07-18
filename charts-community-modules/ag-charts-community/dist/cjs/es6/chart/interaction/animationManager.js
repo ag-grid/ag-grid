@@ -1,18 +1,32 @@
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnimationManager = void 0;
 const baseManager_1 = require("./baseManager");
 const animate_1 = require("../../motion/animate");
-const DEBOUNCE_DELAY = 300;
+const logger_1 = require("../../util/logger");
 class AnimationManager extends baseManager_1.BaseManager {
     constructor(interactionManager) {
         super();
         this.controllers = {};
-        this.debouncers = {};
+        this.throttles = {};
+        this.throttleGroups = new Set();
         this.updaters = [];
         this.isPlaying = false;
         this.readyToPlay = false;
+        this.defaultOptions = {};
         this.skipAnimations = false;
+        this.debug = false;
         this.interactionManager = interactionManager;
         window.addEventListener('DOMContentLoaded', () => {
             this.readyToPlay = true;
@@ -26,6 +40,9 @@ class AnimationManager extends baseManager_1.BaseManager {
         if (this.isPlaying)
             return;
         this.isPlaying = true;
+        if (this.debug) {
+            logger_1.Logger.debug('AnimationManager.play()');
+        }
         for (const id in this.controllers) {
             this.controllers[id].play();
         }
@@ -36,6 +53,9 @@ class AnimationManager extends baseManager_1.BaseManager {
             return;
         this.isPlaying = false;
         this.cancelAnimationFrame();
+        if (this.debug) {
+            logger_1.Logger.debug('AnimationManager.pause()');
+        }
         for (const id in this.controllers) {
             this.controllers[id].pause();
         }
@@ -43,32 +63,51 @@ class AnimationManager extends baseManager_1.BaseManager {
     stop() {
         this.isPlaying = false;
         this.cancelAnimationFrame();
+        if (this.debug) {
+            logger_1.Logger.debug('AnimationManager.stop()');
+        }
         for (const id in this.controllers) {
             this.controllers[id].stop();
         }
     }
-    animate(id, opts) {
-        var _a, _b;
-        const optsExtra = Object.assign(Object.assign({}, opts), { autoplay: this.isPlaying ? opts.autoplay : false, driver: this.createDriver(id, opts.disableInteractions) });
-        const controller = animate_1.animate(optsExtra);
-        if (this.controllers[id]) {
-            this.controllers[id].stop();
-            delete this.controllers[id];
-        }
-        this.controllers[id] = controller;
-        if (this.skipAnimations) {
-            // Initialise the animation with the final values immediately and then stop the animation
-            (_a = opts.onUpdate) === null || _a === void 0 ? void 0 : _a.call(opts, opts.to);
-            controller.stop();
+    reset() {
+        if (this.isPlaying) {
+            this.stop();
+            this.play();
         }
         else {
-            // Initialise the animation immediately without requesting a frame to prevent flashes
-            (_b = opts.onUpdate) === null || _b === void 0 ? void 0 : _b.call(opts, opts.from);
+            this.stop();
         }
+    }
+    animate(id, _a) {
+        var _b, _c;
+        var { disableInteractions = true } = _a, opts = __rest(_a, ["disableInteractions"]);
+        if (this.skipAnimations) {
+            // Initialise the animation with the final values immediately and then stop the animation
+            (_b = opts.onUpdate) === null || _b === void 0 ? void 0 : _b.call(opts, opts.to);
+            return;
+        }
+        const optsExtra = Object.assign(Object.assign({}, opts), { autoplay: this.isPlaying ? opts.autoplay : false, driver: this.createDriver(id, disableInteractions) });
+        if (this.controllers[id]) {
+            this.controllers[id].stop();
+        }
+        const controller = animate_1.animate(optsExtra);
+        this.controllers[id] = controller;
+        // Initialise the animation immediately without requesting a frame to prevent flashes
+        (_c = opts.onUpdate) === null || _c === void 0 ? void 0 : _c.call(opts, opts.from);
         return controller;
     }
     animateMany(id, props, opts) {
+        var _a;
+        if (this.skipAnimations) {
+            const state = props.map((prop) => prop.to);
+            opts.onUpdate(state);
+            (_a = opts.onComplete) === null || _a === void 0 ? void 0 : _a.call(opts);
+            return;
+        }
         const state = props.map((prop) => prop.from);
+        let playBatch = 0;
+        let stopBatch = 0;
         let updateBatch = 0;
         let completeBatch = 0;
         const onUpdate = (index) => (v) => {
@@ -79,46 +118,66 @@ class AnimationManager extends baseManager_1.BaseManager {
                 updateBatch = 0;
             }
         };
+        const onPlay = () => {
+            var _a;
+            if (++playBatch >= props.length) {
+                (_a = opts.onPlay) === null || _a === void 0 ? void 0 : _a.call(opts);
+            }
+        };
+        const onStop = () => {
+            var _a;
+            if (++stopBatch >= props.length) {
+                (_a = opts.onStop) === null || _a === void 0 ? void 0 : _a.call(opts);
+            }
+        };
         const onComplete = () => {
             var _a;
             if (++completeBatch >= props.length) {
                 (_a = opts.onComplete) === null || _a === void 0 ? void 0 : _a.call(opts);
             }
         };
-        const drivers = props.map((prop, index) => {
+        let index = 0;
+        for (const prop of props) {
             const inner_id = `${id}-${index}`;
-            return this.animate(inner_id, Object.assign(Object.assign(Object.assign({}, opts), prop), { onUpdate: onUpdate(index), onComplete: onComplete }));
-        });
-        const controls = {
-            get isPlaying() {
-                return drivers.some((driver) => driver.isPlaying);
-            },
-            play() {
-                drivers.forEach((driver) => driver.play());
-                return controls;
-            },
-            pause() {
-                drivers.forEach((driver) => driver.pause());
-                return controls;
-            },
-            stop() {
-                drivers.forEach((driver) => driver.stop());
-                return controls;
-            },
-            reset() {
-                drivers.forEach((driver) => driver.reset());
-                return controls;
-            },
-        };
-        return controls;
-    }
-    debouncedAnimate(id, opts) {
-        var _a;
-        if (this.debouncers[id] && Date.now() - this.debouncers[id] < ((_a = opts.duration) !== null && _a !== void 0 ? _a : DEBOUNCE_DELAY)) {
-            return this.controllers[id];
+            this.animate(inner_id, Object.assign(Object.assign(Object.assign({}, opts), prop), { onUpdate: onUpdate(index), onPlay,
+                onStop,
+                onComplete }));
+            index++;
         }
-        this.debouncers[id] = Date.now();
-        return this.animate(id, opts);
+    }
+    animateWithThrottle(id, opts) {
+        var _a;
+        const throttleId = (_a = opts.throttleId) !== null && _a !== void 0 ? _a : id;
+        if (this.throttles[throttleId] && opts.duration && Date.now() - this.throttles[throttleId] < opts.duration) {
+            opts.delay = 0;
+            opts.duration = 1;
+        }
+        this.throttles[id] = Date.now();
+        this.animate(id, Object.assign({}, opts));
+    }
+    animateManyWithThrottle(id, props, opts) {
+        var _a;
+        const { throttleGroup } = opts;
+        const throttleId = (_a = opts.throttleId) !== null && _a !== void 0 ? _a : id;
+        const now = Date.now();
+        const isThrottled = this.throttles[throttleId] && opts.duration && now - this.throttles[throttleId] < opts.duration;
+        const inGroup = throttleGroup && this.throttleGroups.has(throttleGroup);
+        if (isThrottled && !inGroup) {
+            opts.delay = 0;
+            opts.duration = 1;
+        }
+        if (!isThrottled && throttleGroup) {
+            this.throttleGroups.add(throttleGroup);
+        }
+        const onStop = () => {
+            var _a;
+            if (throttleGroup) {
+                this.throttleGroups.delete(throttleGroup);
+            }
+            (_a = opts.onStop) === null || _a === void 0 ? void 0 : _a.call(opts);
+        };
+        this.throttles[throttleId] = now;
+        return this.animateMany(id, props, Object.assign(Object.assign({}, opts), { onStop }));
     }
     tween(opts) {
         const id = `tween-${btoa(JSON.stringify(opts))}`;
@@ -138,6 +197,7 @@ class AnimationManager extends baseManager_1.BaseManager {
                     }
                 },
                 stop: () => {
+                    delete this.controllers[id];
                     this.updaters = this.updaters.filter(([uid]) => uid !== id);
                     if (this.updaters.length <= 0) {
                         this.cancelAnimationFrame();
@@ -151,18 +211,20 @@ class AnimationManager extends baseManager_1.BaseManager {
         };
     }
     startAnimationCycle() {
+        if (this.updaters.length === 0)
+            return;
         const frame = (time) => {
             this.requestId = requestAnimationFrame(frame);
-            if (!this.readyToPlay) {
+            if (!this.readyToPlay)
                 return;
-            }
             if (this.lastTime === undefined)
                 this.lastTime = time;
             const deltaMs = time - this.lastTime;
             this.lastTime = time;
-            this.updaters.forEach(([_, update]) => {
-                update(deltaMs);
-            });
+            if (this.debug) {
+                logger_1.Logger.debug('AnimationManager - frame()', { updaterCount: this.updaters.length });
+            }
+            this.updaters.forEach(([_, update]) => update(deltaMs));
             this.listeners.dispatch('animation-frame', { type: 'animation-frame', deltaMs });
         };
         this.requestId = requestAnimationFrame(frame);
@@ -172,6 +234,7 @@ class AnimationManager extends baseManager_1.BaseManager {
             return;
         cancelAnimationFrame(this.requestId);
         this.requestId = undefined;
+        this.lastTime = undefined;
     }
 }
 exports.AnimationManager = AnimationManager;

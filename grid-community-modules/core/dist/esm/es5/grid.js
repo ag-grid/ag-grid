@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -176,7 +170,7 @@ var GridCoreCreator = /** @class */ (function () {
         beans.ctrlsService.whenReady(function () {
             _this.setColumnsAndData(beans);
             _this.dispatchGridReadyEvent(beans);
-            var isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
+            var isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
             logger.log("initialised successfully, enterprise = " + isEnterprise);
         });
         if (acceptChanges) {
@@ -196,7 +190,7 @@ var GridCoreCreator = /** @class */ (function () {
     };
     GridCoreCreator.prototype.getRegisteredModules = function (params, gridId) {
         var passedViaConstructor = params ? params.modules : null;
-        var registered = ModuleRegistry.getRegisteredModules(gridId);
+        var registered = ModuleRegistry.__getRegisteredModules(gridId);
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
@@ -205,7 +199,7 @@ var GridCoreCreator = /** @class */ (function () {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    ModuleRegistry.register(currentModule, moduleBased, gridId);
+                    ModuleRegistry.__register(currentModule, moduleBased, gridId);
                 }
             };
             addIndividualModule(mod);
@@ -217,7 +211,7 @@ var GridCoreCreator = /** @class */ (function () {
             passedViaConstructor.forEach(function (m) { return addModule(true, m, gridId); });
         }
         if (registered) {
-            registered.forEach(function (m) { return addModule(!ModuleRegistry.isPackageBased(), m, undefined); });
+            registered.forEach(function (m) { return addModule(!ModuleRegistry.__isPackageBased(), m, undefined); });
         }
         return allModules;
     };
@@ -286,7 +280,7 @@ var GridCoreCreator = /** @class */ (function () {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
             return;
         }
-        if (!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], "rowModelType = '" + rowModelType + "'", gridId)) {
+        if (!ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], "rowModelType = '" + rowModelType + "'", gridId)) {
             return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS

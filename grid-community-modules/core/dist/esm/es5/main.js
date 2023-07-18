@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
+ * @version v30.0.5
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -172,7 +172,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
-export * from "./utils";
+export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";

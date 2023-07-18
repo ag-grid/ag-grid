@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -43,6 +37,8 @@ var hoverFeature_1 = require("../hoverFeature");
 var resizeFeature_1 = require("./resizeFeature");
 var selectAllFeature_1 = require("./selectAllFeature");
 var dom_1 = require("../../../utils/dom");
+var browser_1 = require("../../../utils/browser");
+var focusService_1 = require("../../../focusService");
 var HeaderCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderCellCtrl, _super);
     function HeaderCellCtrl(column, parentRowCtrl) {
@@ -84,11 +80,31 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             onFocusIn: this.onFocusIn.bind(this),
             onFocusOut: this.onFocusOut.bind(this)
         }));
+        this.addMouseDownListenerIfNeeded(eGui);
         this.addManagedListener(this.column, column_1.Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+    };
+    HeaderCellCtrl.prototype.addMouseDownListenerIfNeeded = function (eGui) {
+        var _this = this;
+        // we add a preventDefault in the DragService for Safari only
+        // so we need to make sure we don't prevent focus on mousedown
+        if (!browser_1.isBrowserSafari()) {
+            return;
+        }
+        var events = ['mousedown', 'touchstart'];
+        var eDocument = this.gridOptionsService.getDocument();
+        events.forEach(function (eventName) {
+            _this.addManagedListener(eGui, eventName, function (e) {
+                var activeEl = eDocument.activeElement;
+                if (activeEl !== eGui && !eGui.contains(activeEl)) {
+                    eGui.focus();
+                    focusService_1.FocusService.toggleKeyboardMode(e);
+                }
+            });
+        });
     };
     HeaderCellCtrl.prototype.setupUserComp = function () {
         var compDetails = this.lookupUserCompDetails();

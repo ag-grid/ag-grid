@@ -1,9 +1,9 @@
-import { Node } from '../scene/node';
+import type { Node } from '../scene/node';
 import { BBox } from '../scene/bbox';
-import { Marker } from './marker/marker';
-import { AgChartLegendClickEvent, AgChartLegendDoubleClickEvent, AgChartLegendListeners, AgChartLegendLabelFormatterParams, AgChartLegendPosition, FontStyle, FontWeight, AgChartOrientation } from './agChartOptions';
-import { CategoryLegendDatum } from './legendDatum';
-import { ModuleContext } from '../util/module';
+import type { Marker } from './marker/marker';
+import type { AgChartLegendClickEvent, AgChartLegendDoubleClickEvent, AgChartLegendListeners, AgChartLegendLabelFormatterParams, AgChartLegendPosition, FontStyle, FontWeight, AgChartOrientation } from './agChartOptions';
+import type { CategoryLegendDatum } from './legendDatum';
+import type { ModuleContext } from '../util/moduleContext';
 declare class LegendLabel {
     maxLength?: number;
     color: string;

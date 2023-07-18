@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -174,7 +168,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         }
         var moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.assertRegistered(moduleForComponent, "AG Grid '" + propertyName + "' component: " + name, this.context.getGridId());
+            ModuleRegistry.__assertRegistered(moduleForComponent, "AG Grid '" + propertyName + "' component: " + name, this.context.getGridId());
         }
         else {
             doOnce(function () { _this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);

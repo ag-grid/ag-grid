@@ -161,6 +161,7 @@ function aggMax(params) {
     return result;
 }
 function aggCount(params) {
+    var _a, _b;
     var values = params.values;
     var result = 0;
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
@@ -169,7 +170,23 @@ function aggCount(params) {
         // check if the value is from a group, in which case use the group's count
         result += value != null && typeof value.value === 'number' ? value.value : 1;
     }
-    return result;
+    // the previous aggregation data
+    var existingAggData = (_b = (_a = params.rowNode) === null || _a === void 0 ? void 0 : _a.aggData) === null || _b === void 0 ? void 0 : _b[params.column.getColId()];
+    if (existingAggData && existingAggData.value === result) {
+        // the underlying values haven't changed, return the old object to avoid triggering change detection
+        return existingAggData;
+    }
+    // it's important to wrap it in the object so we can determine if this is a group level
+    return {
+        value: result,
+        toString: function () {
+            return this.value.toString();
+        },
+        // used for sorting
+        toNumber: function () {
+            return this.value;
+        }
+    };
 }
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.

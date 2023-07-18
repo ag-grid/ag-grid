@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -201,7 +195,8 @@ var ComponentUtil = /** @class */ (function () {
         Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
         Events.EVENT_CELL_FOCUS_CLEARED,
         Events.EVENT_GRID_STYLES_CHANGED,
-        Events.EVENT_FILTER_DESTROYED
+        Events.EVENT_FILTER_DESTROYED,
+        Events.EVENT_ROW_DATA_UPDATE_STARTED
     ];
     // events that are available for use by users of AG Grid and so should be documented
     /** EVENTS that should be exposed via code generation for the framework components.  */

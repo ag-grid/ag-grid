@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -163,7 +157,9 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
                 switch (key) {
                     case keyCode_1.KeyCode.PAGE_HOME:
                     case keyCode_1.KeyCode.PAGE_END:
-                        this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    case keyCode_1.KeyCode.PAGE_UP:
+                    case keyCode_1.KeyCode.PAGE_DOWN:
+                        this.navigationService.handlePageScrollingKey(keyboardEvent, true);
                         break;
                     case keyCode_1.KeyCode.UP:
                     case keyCode_1.KeyCode.DOWN:

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -102,10 +96,23 @@ class PositionableFeature extends beanStub_1.BeanStub {
         else if (x || y) {
             this.offsetElement(x, y);
         }
-        else if (isVisible && forcePopupParentAsOffsetParent && this.boundaryEl) {
-            const top = parseFloat(this.boundaryEl.style.top);
-            const left = parseFloat(this.boundaryEl.style.left);
-            this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top);
+        else if (isVisible && forcePopupParentAsOffsetParent) {
+            let boundaryEl = this.boundaryEl;
+            let initialisedDuringPositioning = true;
+            if (!boundaryEl) {
+                boundaryEl = this.findBoundaryElement();
+                initialisedDuringPositioning = false;
+            }
+            if (boundaryEl) {
+                const top = parseFloat(boundaryEl.style.top);
+                const left = parseFloat(boundaryEl.style.left);
+                if (initialisedDuringPositioning) {
+                    this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top);
+                }
+                else {
+                    this.setPosition(left, top);
+                }
+            }
         }
         this.positioned = !!this.offsetParent;
     }
@@ -301,7 +308,11 @@ class PositionableFeature extends beanStub_1.BeanStub {
         }
     }
     offsetElement(x = 0, y = 0) {
-        const ePopup = this.config.forcePopupParentAsOffsetParent ? this.boundaryEl : this.element;
+        const { forcePopupParentAsOffsetParent } = this.config;
+        const ePopup = forcePopupParentAsOffsetParent ? this.boundaryEl : this.element;
+        if (!ePopup) {
+            return;
+        }
         this.popupService.positionPopup({
             ePopup,
             keepWithinBounds: true,

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModuleRegistry = void 0;
@@ -11,7 +5,22 @@ const moduleNames_1 = require("./moduleNames");
 const function_1 = require("../utils/function");
 const generic_1 = require("../utils/generic");
 class ModuleRegistry {
-    static register(module, moduleBased = true, gridId = undefined) {
+    /**
+     * Globally register the given module for all grids.
+     * @param module - module to register
+     */
+    static register(module) {
+        ModuleRegistry.__register(module, true, undefined);
+    }
+    /**
+     * Globally register the given modules for all grids.
+     * @param modules - modules to register
+     */
+    static registerModules(modules) {
+        ModuleRegistry.__registerModules(modules, true, undefined);
+    }
+    /** AG GRID INTERNAL - Module registration helper. */
+    static __register(module, moduleBased, gridId) {
         ModuleRegistry.runVersionChecks(module);
         if (gridId !== undefined) {
             ModuleRegistry.areGridScopedModules = true;
@@ -25,15 +34,17 @@ class ModuleRegistry {
         }
         ModuleRegistry.setModuleBased(moduleBased);
     }
-    static unRegisterGridModules(gridId) {
+    /** AG GRID INTERNAL - Unregister grid scoped module. */
+    static __unRegisterGridModules(gridId) {
         delete ModuleRegistry.gridModulesMap[gridId];
     }
-    static registerModules(modules, moduleBased = true, gridId = undefined) {
+    /** AG GRID INTERNAL - Module registration helper. */
+    static __registerModules(modules, moduleBased, gridId) {
         ModuleRegistry.setModuleBased(moduleBased);
         if (!modules) {
             return;
         }
-        modules.forEach(module => ModuleRegistry.register(module, moduleBased, gridId));
+        modules.forEach(module => ModuleRegistry.__register(module, moduleBased, gridId));
     }
     static isValidModuleVersion(module) {
         const [moduleMajor, moduleMinor] = module.version.split('.') || [];
@@ -72,14 +83,15 @@ class ModuleRegistry {
         }
     }
     /**
-     * INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
+     * AG GRID INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
      */
-    static setIsBundled() {
+    static __setIsBundled() {
         ModuleRegistry.isBundled = true;
     }
-    static assertRegistered(moduleName, reason, gridId) {
+    /** AG GRID INTERNAL - Assert a given module has been register, globally or individually with this grid. */
+    static __assertRegistered(moduleName, reason, gridId) {
         var _a;
-        if (this.isRegistered(moduleName, gridId)) {
+        if (this.__isRegistered(moduleName, gridId)) {
             return true;
         }
         const warningKey = reason + moduleName;
@@ -119,14 +131,22 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         }, warningKey);
         return false;
     }
-    static isRegistered(moduleName, gridId) {
+    /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
+    static __isRegistered(moduleName, gridId) {
         var _a;
         return !!ModuleRegistry.globalModulesMap[moduleName] || !!((_a = ModuleRegistry.gridModulesMap[gridId]) === null || _a === void 0 ? void 0 : _a[moduleName]);
     }
-    static getRegisteredModules(gridId) {
+    /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */
+    static __getRegisteredModules(gridId) {
         return [...generic_1.values(ModuleRegistry.globalModulesMap), ...generic_1.values(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
-    static isPackageBased() {
+    /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
+    static __getGridRegisteredModules(gridId) {
+        var _a;
+        return generic_1.values((_a = ModuleRegistry.gridModulesMap[gridId]) !== null && _a !== void 0 ? _a : {}) || [];
+    }
+    /** INTERNAL */
+    static __isPackageBased() {
         return !ModuleRegistry.moduleBased;
     }
 }

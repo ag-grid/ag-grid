@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -28,6 +22,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired } from "../context/context";
 import { Events } from "../eventKeys";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
+import { isVisible } from "../utils/dom";
+import { waitUntil } from "../utils/function";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 var AbstractFakeScrollComp = /** @class */ (function (_super) {
@@ -89,11 +85,19 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
             }, 400);
         });
     };
+    AbstractFakeScrollComp.prototype.attemptSettingScrollPosition = function (value) {
+        var _this = this;
+        var viewport = this.getViewport();
+        waitUntil(function () { return isVisible(viewport); }, function () { return _this.setScrollPosition(value); }, 100);
+    };
     AbstractFakeScrollComp.prototype.getViewport = function () {
         return this.eViewport;
     };
     AbstractFakeScrollComp.prototype.getContainer = function () {
         return this.eContainer;
+    };
+    AbstractFakeScrollComp.prototype.onScrollCallback = function (fn) {
+        this.addManagedListener(this.getViewport(), 'scroll', fn);
     };
     __decorate([
         RefSelector('eViewport')

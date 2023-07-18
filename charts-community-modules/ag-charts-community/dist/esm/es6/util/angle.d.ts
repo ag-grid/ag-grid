@@ -11,4 +11,3 @@ export declare function normalizeAngle360Inclusive(radians: number): number;
 export declare function normalizeAngle180(radians: number): number;
 export declare function toRadians(degrees: number): number;
 export declare function toDegrees(radians: number): number;
-//# sourceMappingURL=angle.d.ts.map

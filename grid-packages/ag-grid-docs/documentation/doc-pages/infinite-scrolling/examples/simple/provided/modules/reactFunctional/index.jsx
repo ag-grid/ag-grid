@@ -97,8 +97,7 @@ const GridExample = () => {
                     infiniteInitialRowCount={1000}
                     maxBlocksInCache={10}
                     onGridReady={onGridReady}
-                >
-                </AgGridReact>
+                />
             </div>
 
         </div>

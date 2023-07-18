@@ -1,5 +1,5 @@
 import { NumberAxis } from './numberAxis';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 export declare class LogAxis extends NumberAxis {
     static className: string;
     static type: "log";
@@ -10,4 +10,3 @@ export declare class LogAxis extends NumberAxis {
     get base(): number;
     constructor(moduleCtx: ModuleContext);
 }
-//# sourceMappingURL=logAxis.d.ts.map

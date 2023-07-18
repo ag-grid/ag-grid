@@ -1,9 +1,9 @@
-import { Node } from '../../scene/node';
-import { Marker } from '../marker/marker';
-import { InteractionManager } from '../interaction/interactionManager';
-import { CursorManager } from '../interaction/cursorManager';
+import type { Node } from '../../scene/node';
+import type { Marker } from '../marker/marker';
+import type { InteractionManager } from '../interaction/interactionManager';
+import type { CursorManager } from '../interaction/cursorManager';
 import { ChartUpdateType } from '../chartUpdateType';
-import { AgChartOrientation, FontStyle, FontWeight } from '../agChartOptions';
+import type { AgChartOrientation, FontStyle, FontWeight } from '../agChartOptions';
 declare class PaginationLabel {
     color: string;
     fontStyle?: FontStyle;

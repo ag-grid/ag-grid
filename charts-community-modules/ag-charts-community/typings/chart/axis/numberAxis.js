@@ -40,12 +40,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberAxis = void 0;
 var linearScale_1 = require("../../scale/linearScale");
 var array_1 = require("../../util/array");
-var chartAxis_1 = require("../chartAxis");
 var validation_1 = require("../../util/validation");
 var default_1 = require("../../util/default");
 var secondaryAxisTicks_1 = require("../../util/secondaryAxisTicks");
 var logger_1 = require("../../util/logger");
-var axis_1 = require("../../axis");
+var axisTick_1 = require("./axisTick");
+var cartesianAxis_1 = require("./cartesianAxis");
 var NumberAxisTick = /** @class */ (function (_super) {
     __extends(NumberAxisTick, _super);
     function NumberAxisTick() {
@@ -58,7 +58,7 @@ var NumberAxisTick = /** @class */ (function (_super) {
         default_1.Default(NaN)
     ], NumberAxisTick.prototype, "maxSpacing", void 0);
     return NumberAxisTick;
-}(axis_1.BaseAxisTick));
+}(axisTick_1.AxisTick));
 var NumberAxis = /** @class */ (function (_super) {
     __extends(NumberAxis, _super);
     function NumberAxis(moduleCtx, scale) {
@@ -70,21 +70,8 @@ var NumberAxis = /** @class */ (function (_super) {
         return _this;
     }
     NumberAxis.prototype.normaliseDataDomain = function (d) {
-        var _a;
-        var _b = this, min = _b.min, max = _b.max;
-        if (d.length > 2) {
-            d = (_a = array_1.extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            d = [min, d[1]];
-        }
-        if (!isNaN(max)) {
-            d = [d[0], max];
-        }
-        if (d[0] > d[1]) {
-            d = [];
-        }
-        return d;
+        var _a = this, min = _a.min, max = _a.max;
+        return array_1.normalisedExtent(d, min, max);
     };
     NumberAxis.prototype.formatDatum = function (datum) {
         if (typeof datum === 'number') {
@@ -119,6 +106,6 @@ var NumberAxis = /** @class */ (function (_super) {
         default_1.Default(NaN)
     ], NumberAxis.prototype, "max", void 0);
     return NumberAxis;
-}(chartAxis_1.ChartAxis));
+}(cartesianAxis_1.CartesianAxis));
 exports.NumberAxis = NumberAxis;
 //# sourceMappingURL=numberAxis.js.map

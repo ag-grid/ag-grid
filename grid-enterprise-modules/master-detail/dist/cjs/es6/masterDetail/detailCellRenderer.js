@@ -84,7 +84,8 @@ class DetailCellRenderer extends core_1.Component {
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper
-            }
+            },
+            modules: core_1.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
         });
         this.detailApi = gridOptions.api;
         this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);

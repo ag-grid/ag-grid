@@ -129,7 +129,8 @@ class MultiFilter extends core_1.TabGuardComp {
         if (filter.afterGuiAttached) {
             group.addManagedListener(group, core_1.AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached({
                 container: this.lastOpenedInContainer,
-                suppressFocus: true
+                suppressFocus: true,
+                hidePopup: this.hidePopup
             }));
         }
         return group;
@@ -222,7 +223,11 @@ class MultiFilter extends core_1.TabGuardComp {
     }
     afterGuiAttached(params) {
         if (params) {
+            this.hidePopup = params.hidePopup;
             this.refreshGui(params.container);
+        }
+        else {
+            this.hidePopup = undefined;
         }
         const { filters } = this.params;
         const suppressFocus = filters && filters.some(filter => filter.display && filter.display !== 'inline');
@@ -255,6 +260,7 @@ class MultiFilter extends core_1.TabGuardComp {
         });
         this.filters.length = 0;
         this.destroyChildren();
+        this.hidePopup = undefined;
         super.destroy();
     }
     executeFunctionIfExists(name, ...params) {

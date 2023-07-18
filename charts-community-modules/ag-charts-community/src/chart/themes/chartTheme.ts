@@ -1,6 +1,6 @@
 import { jsonMerge, jsonWalk } from '../../util/json';
 import { deepMerge } from '../../util/object';
-import {
+import type {
     FontWeight,
     AgPolarSeriesTheme,
     AgChartThemePalette,
@@ -16,8 +16,9 @@ import {
     AgChartInteractionRange,
     AgTooltipPositionType,
 } from '../agChartOptions';
-import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
-import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
+import { AXIS_TYPES, getAxisThemeTemplate } from '../factory/axisTypes';
+import type { ChartType } from '../factory/chartTypes';
+import { CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 const palette: AgChartThemePalette = {
@@ -34,6 +35,9 @@ type ChartThemeDefaults = {
     [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions;
 } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
+export const EXTENDS_AXES_DEFAULTS = Symbol('extends-axes-defaults');
+export const EXTENDS_AXES_LABEL_DEFAULTS = Symbol('extends-axes-label-defaults');
+export const EXTENDS_AXES_LINE_DEFAULTS = Symbol('extends-axes-line-defaults');
 export const EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
 export const OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
 export const DEFAULT_FONT_FAMILY = Symbol('default-font');
@@ -58,7 +62,6 @@ export class ChartTheme {
             right: {},
             bottom: {},
             left: {},
-            thickness: 0,
             title: {
                 enabled: false,
                 text: 'Axis Title',
@@ -698,8 +701,8 @@ export class ChartTheme {
                 return obj;
             }, {} as Record<string, any>);
 
-            if (chartType === 'cartesian') {
-                result.axes = CHART_AXES_TYPES.axesTypes.reduce((obj, axisType) => {
+            if (chartType === 'cartesian' || chartType === 'polar') {
+                result.axes = AXIS_TYPES.axesTypes.reduce((obj, axisType) => {
                     const template = getAxisThemeTemplate(axisType);
                     if (template) {
                         obj[axisType] = this.templateTheme(template);
@@ -732,7 +735,11 @@ export class ChartTheme {
                     if (source == null) {
                         throw new Error('AG Charts - no template variable provided for: ' + key);
                     }
-                    Object.assign(node, source, node);
+                    Object.keys(source).forEach((key) => {
+                        if (!(key in node)) {
+                            node[key] = source[key];
+                        }
+                    });
                     delete node['__extends__'];
                 }
                 if (node['__overrides__']) {
@@ -758,6 +765,9 @@ export class ChartTheme {
 
     protected getTemplateParameters() {
         const extensions = new Map();
+        extensions.set(EXTENDS_AXES_DEFAULTS, ChartTheme.getAxisDefaults());
+        extensions.set(EXTENDS_AXES_LABEL_DEFAULTS, ChartTheme.getAxisDefaults().label);
+        extensions.set(EXTENDS_AXES_LINE_DEFAULTS, ChartTheme.getAxisDefaults().line);
         extensions.set(EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
         extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, {});
 

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -75,12 +69,6 @@ let GridOptionsValidator = class GridOptionsValidator {
         if (this.gridOptionsService.is('groupRemoveSingleChildren') && this.gridOptionsService.is('groupHideOpenParents')) {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
-        if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            if (!this.gridOptionsService.is('pagination')) {
-                console.warn(`AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.`);
-                this.gridOptions.domLayout = 'normal';
-            }
-        }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop, alt) => (`AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : ''));
             if (this.gridOptionsService.exists('groupDefaultExpanded')) {
@@ -94,12 +82,12 @@ let GridOptionsValidator = class GridOptionsValidator {
             }
         }
         if (this.gridOptionsService.is('enableRangeSelection')) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, 'enableRangeSelection', this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, 'enableRangeSelection', this.gridOptionsService.getGridId());
         }
         else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        const validateRegistered = (prop, module) => this.gridOptionsService.exists(prop) && moduleRegistry_1.ModuleRegistry.assertRegistered(module, prop, this.gridOptionsService.getGridId());
+        const validateRegistered = (prop, module) => this.gridOptionsService.exists(prop) && moduleRegistry_1.ModuleRegistry.__assertRegistered(module, prop, this.gridOptionsService.getGridId());
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
         // It is possible to use the SideBar only with your own custom tool panels.
         validateRegistered('sideBar', moduleNames_1.ModuleNames.SideBarModule);

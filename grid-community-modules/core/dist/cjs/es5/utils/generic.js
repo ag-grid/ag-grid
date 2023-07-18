@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.values = exports.defaultComparator = exports.jsonEquals = exports.referenceCompare = exports.attrToString = exports.attrToBoolean = exports.attrToNumber = exports.toStringOrNull = exports.missingOrEmpty = exports.missing = exports.exists = exports.makeNull = void 0;

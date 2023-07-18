@@ -70,7 +70,7 @@ var Group = /** @class */ (function (_super) {
     __extends(Group, _super);
     function Group(opts) {
         var _a;
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, { isVirtual: opts === null || opts === void 0 ? void 0 : opts.isVirtual }) || this;
         _this.opts = opts;
         _this.opacity = 1;
         _this.lastBBox = undefined;
@@ -140,7 +140,19 @@ var Group = /** @class */ (function (_super) {
     };
     Group.prototype.markDirty = function (source, type) {
         if (type === void 0) { type = RedrawType.TRIVIAL; }
-        var parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
+        if (this.isVirtual) {
+            // Always percolate directly for virtual nodes - they don't exist for rendering purposes.
+            _super.prototype.markDirty.call(this, source, type);
+            return;
+        }
+        // Downgrade dirty-ness percolated to parent in special cases.
+        var parentType = type;
+        if (type < RedrawType.MINOR) {
+            parentType = RedrawType.TRIVIAL;
+        }
+        else if (this.layer != null) {
+            parentType = RedrawType.TRIVIAL;
+        }
         _super.prototype.markDirty.call(this, source, type, parentType);
     };
     // We consider a group to be boundless, thus any point belongs to it.
@@ -155,35 +167,49 @@ var Group = /** @class */ (function (_super) {
         return this.computeBBox();
     };
     Group.prototype.render = function (renderCtx) {
-        var e_1, _a;
-        var _b, _c;
-        var _d = this.opts, _e = _d === void 0 ? {} : _d, _f = _e.name, name = _f === void 0 ? undefined : _f;
-        var _g = this._debug, _h = _g === void 0 ? {} : _g, _j = _h.consoleLog, consoleLog = _j === void 0 ? false : _j;
-        var _k = this, dirty = _k.dirty, dirtyZIndex = _k.dirtyZIndex, layer = _k.layer, children = _k.children, clipRect = _k.clipRect;
+        var e_1, _a, e_2, _b, e_3, _c;
+        var _d, _e;
+        var _f = this.opts, _g = _f === void 0 ? {} : _f, _h = _g.name, name = _h === void 0 ? undefined : _h;
+        var _j = this._debug, _k = _j === void 0 ? {} : _j, _l = _k.consoleLog, consoleLog = _l === void 0 ? false : _l;
+        var _m = this, dirty = _m.dirty, dirtyZIndex = _m.dirtyZIndex, layer = _m.layer, children = _m.children, clipRect = _m.clipRect, dirtyTransform = _m.dirtyTransform;
         var ctx = renderCtx.ctx, forceRender = renderCtx.forceRender, clipBBox = renderCtx.clipBBox;
         var resized = renderCtx.resized, stats = renderCtx.stats;
         var canvasCtxTransform = ctx.getTransform();
         var isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
-        var isChildDirty = isDirty || children.some(function (n) { return n.dirty >= RedrawType.TRIVIAL; });
-        if (name && consoleLog) {
-            Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, renderCtx: renderCtx, forceRender: forceRender });
+        var isChildDirty = isDirty;
+        var isChildLayerDirty = false;
+        try {
+            for (var children_1 = __values(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
+                var child = children_1_1.value;
+                isChildDirty || (isChildDirty = child.layerManager == null && child.dirty >= RedrawType.TRIVIAL);
+                isChildLayerDirty || (isChildLayerDirty = child.layerManager != null && child.dirty >= RedrawType.TRIVIAL);
+                if (isChildDirty) {
+                    break;
+                }
+            }
         }
-        if (layer) {
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (children_1_1 && !children_1_1.done && (_a = children_1.return)) _a.call(children_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        if (name && consoleLog) {
+            Logger.debug({ name: name, group: this, isDirty: isDirty, isChildDirty: isChildDirty, dirtyTransform: dirtyTransform, renderCtx: renderCtx, forceRender: forceRender });
+        }
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             var currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
             }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
-            }
         }
-        if (!isDirty && !isChildDirty && !forceRender) {
+        if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 var counts = this.nodeCount;
                 Logger.debug({ name: name, result: 'skipping', renderCtx: renderCtx, counts: counts, group: this });
@@ -202,8 +228,11 @@ var Group = /** @class */ (function (_super) {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = true;
-            layer.clear();
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
+            if (forceRender)
+                layer.clear();
             if (clipBBox) {
                 // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
                 var width = clipBBox.width, height = clipBBox.height, x = clipBBox.x, y = clipBBox.y;
@@ -233,11 +262,16 @@ var Group = /** @class */ (function (_super) {
             }
             this.clipCtx(ctx, x, y, width, height);
             // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+            clipBBox = this.matrix.transformBBox(clipRect);
         }
+        var hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
-            this.sortChildren();
-            forceRender = true;
+            this.sortChildren(children);
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
+        }
+        else if (hasVirtualChildren) {
+            this.sortChildren(children);
         }
         // Reduce churn if renderCtx is identical.
         var renderContextChanged = forceRender !== renderCtx.forceRender || clipBBox !== renderCtx.clipBBox || ctx !== renderCtx.ctx;
@@ -245,8 +279,8 @@ var Group = /** @class */ (function (_super) {
         // Render visible children.
         var skipped = 0;
         try {
-            for (var children_1 = __values(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
-                var child = children_1_1.value;
+            for (var children_2 = __values(children), children_2_1 = children_2.next(); !children_2_1.done; children_2_1 = children_2.next()) {
+                var child = children_2_1.value;
                 if (!child.visible || !groupVisible) {
                     // Skip invisible children, but make sure their dirty flag is reset.
                     child.markClean();
@@ -266,12 +300,12 @@ var Group = /** @class */ (function (_super) {
                 ctx.restore();
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
-                if (children_1_1 && !children_1_1.done && (_a = children_1.return)) _a.call(children_1);
+                if (children_2_1 && !children_2_1.done && (_b = children_2.return)) _b.call(children_2);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         if (stats)
             stats.nodesSkipped += skipped;
@@ -280,22 +314,40 @@ var Group = /** @class */ (function (_super) {
         if (clipRect) {
             ctx.restore();
         }
+        if (hasVirtualChildren) {
+            try {
+                // Mark virtual nodes as clean and their virtual children - all other nodes have already
+                // been visited and marked clean.
+                for (var _o = __values(this.virtualChildren), _p = _o.next(); !_p.done; _p = _o.next()) {
+                    var child = _p.value;
+                    child.markClean({ recursive: 'virtual' });
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (_p && !_p.done && (_c = _o.return)) _c.call(_o);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+        }
         if (layer) {
             if (stats)
                 stats.layersRendered++;
             ctx.restore();
-            layer.snapshot();
+            if (forceRender)
+                layer.snapshot();
             // Check for save/restore depth of zero!
-            (_c = (_b = layer.context).verifyDepthZero) === null || _c === void 0 ? void 0 : _c.call(_b);
+            (_e = (_d = layer.context).verifyDepthZero) === null || _e === void 0 ? void 0 : _e.call(_d);
         }
         if (name && consoleLog && stats) {
             var counts = this.nodeCount;
             Logger.debug({ name: name, result: 'rendered', skipped: skipped, renderCtx: renderCtx, counts: counts, group: this });
         }
     };
-    Group.prototype.sortChildren = function () {
+    Group.prototype.sortChildren = function (children) {
         this.dirtyZIndex = false;
-        this.children.sort(function (a, b) {
+        children.sort(function (a, b) {
             var _a, _b;
             return compoundAscending(__spreadArray(__spreadArray([a.zIndex], __read(((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]))), [a.serialNumber]), __spreadArray(__spreadArray([b.zIndex], __read(((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]))), [b.serialNumber]), ascendingStringNumberUndefined);
         });
@@ -350,6 +402,7 @@ var Group = /** @class */ (function (_super) {
     Group.className = 'Group';
     __decorate([
         SceneChangeDetection({
+            redraw: RedrawType.MAJOR,
             convertor: function (v) { return Math.min(1, Math.max(0, v)); },
         })
     ], Group.prototype, "opacity", void 0);

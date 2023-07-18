@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -80,7 +74,8 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         return false;
     };
     TabGuardCtrl.prototype.activateTabGuards = function () {
-        this.comp.setTabIndex(this.getGridTabIndex());
+        var tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        this.comp.setTabIndex(tabIndex.toString());
     };
     TabGuardCtrl.prototype.deactivateTabGuards = function () {
         this.comp.setTabIndex();
@@ -136,9 +131,6 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         }
         nextRoot.focus();
         e.preventDefault();
-    };
-    TabGuardCtrl.prototype.getGridTabIndex = function () {
-        return (this.gridOptionsService.getNum('tabIndex') || 0).toString();
     };
     TabGuardCtrl.prototype.focusInnerElement = function (fromBottom) {
         if (fromBottom === void 0) { fromBottom = false; }

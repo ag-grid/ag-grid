@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -228,15 +222,15 @@ var Column = /** @class */ (function () {
             }, key);
         }
         var usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
+        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             var itemsUsed = rowGroupingItems.filter(function (x) { return generic_1.exists(colDefAny[x]); });
             if (itemsUsed.length > 0) {
-                moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(function (i) { return 'colDef.' + i; }).join(', '), this.gridOptionsService.getGridId());
+                moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(function (i) { return 'colDef.' + i; }).join(', '), this.gridOptionsService.getGridId());
             }
         }
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
         if (this.gridOptionsService.isTreeData()) {
             var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
@@ -251,7 +245,7 @@ var Column = /** @class */ (function () {
                 var enterpriseMenuTabs_1 = ['columnsMenuTab', 'generalMenuTab'];
                 var itemsUsed = enterpriseMenuTabs_1.filter(function (x) { return colDefAny.menuTabs.includes(x); });
                 if (itemsUsed.length > 0) {
-                    moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, "menuTab(s): " + itemsUsed.map(function (t) { return "'" + t + "'"; }).join(), this.gridOptionsService.getGridId());
+                    moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, "menuTab(s): " + itemsUsed.map(function (t) { return "'" + t + "'"; }).join(), this.gridOptionsService.getGridId());
                 }
                 colDefAny.menuTabs.forEach(function (tab) {
                     if (!enterpriseMenuTabs_1.includes(tab) && !communityMenuTabs_1.includes(tab)) {
@@ -264,10 +258,10 @@ var Column = /** @class */ (function () {
             }
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
+            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
         if (generic_1.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
@@ -384,6 +378,7 @@ var Column = /** @class */ (function () {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
+        this.dispatchStateUpdatedEvent('sort');
     };
     Column.prototype.setMenuVisible = function (visible, source) {
         if (source === void 0) { source = "api"; }
@@ -412,9 +407,11 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.setSortIndex = function (sortOrder) {
         this.sortIndex = sortOrder;
+        this.dispatchStateUpdatedEvent('sortIndex');
     };
     Column.prototype.setAggFunc = function (aggFunc) {
         this.aggFunc = aggFunc;
+        this.dispatchStateUpdatedEvent('aggFunc');
     };
     /** If aggregation is set for the column, returns the aggregation function. */
     Column.prototype.getAggFunc = function () {
@@ -468,6 +465,7 @@ var Column = /** @class */ (function () {
         else {
             this.pinned = null;
         }
+        this.dispatchStateUpdatedEvent('pinned');
     };
     Column.prototype.setFirstRightPinned = function (firstRightPinned, source) {
         if (source === void 0) { source = "api"; }
@@ -508,6 +506,7 @@ var Column = /** @class */ (function () {
             this.visible = newValue;
             this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
+        this.dispatchStateUpdatedEvent('hide');
     };
     Column.prototype.isVisible = function () {
         return this.visible;
@@ -613,6 +612,7 @@ var Column = /** @class */ (function () {
                 this.fireColumnWidthChangedEvent(source);
             }
         }
+        this.dispatchStateUpdatedEvent('width');
     };
     Column.prototype.fireColumnWidthChangedEvent = function (source) {
         this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
@@ -638,6 +638,7 @@ var Column = /** @class */ (function () {
         if (this.flex !== flex) {
             this.flex = flex;
         }
+        this.dispatchStateUpdatedEvent('flex');
     };
     Column.prototype.setMinimum = function (source) {
         if (source === void 0) { source = "api"; }
@@ -651,6 +652,7 @@ var Column = /** @class */ (function () {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
+        this.dispatchStateUpdatedEvent('rowGroup');
     };
     /** Returns `true` if row group is currently active for this column. */
     Column.prototype.isRowGroupActive = function () {
@@ -662,6 +664,7 @@ var Column = /** @class */ (function () {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
+        this.dispatchStateUpdatedEvent('pivot');
     };
     /** Returns `true` if pivot is currently active for this column. */
     Column.prototype.isPivotActive = function () {
@@ -700,6 +703,12 @@ var Column = /** @class */ (function () {
         }
         return menuTabs;
     };
+    Column.prototype.dispatchStateUpdatedEvent = function (key) {
+        this.eventService.dispatchEvent({
+            type: Column.EVENT_STATE_UPDATED,
+            key: key
+        });
+    };
     // + renderedHeaderCell - for making header cell transparent when moving
     Column.EVENT_MOVING_CHANGED = 'movingChanged';
     // + renderedCell - changing left position
@@ -726,6 +735,8 @@ var Column = /** @class */ (function () {
     Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
     // + toolpanel, for gui updates
     Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
+    // + dataTypeService - when waiting to infer cell data types
+    Column.EVENT_STATE_UPDATED = 'columnStateUpdated';
     __decorate([
         context_1.Autowired('gridOptionsService')
     ], Column.prototype, "gridOptionsService", void 0);

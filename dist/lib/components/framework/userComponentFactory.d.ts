@@ -60,5 +60,5 @@ export declare class UserComponentFactory extends BeanStub {
     private newAgStackInstance;
     mergeParamsWithApplicationProvidedParams(defObject: DefinitionObject, type: ComponentType, paramsFromGrid: any, paramsFromSelector?: any): any;
     private initComponent;
-    getDefaultFloatingFilterType(def: IFilterDef): string | null;
+    getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null;
 }

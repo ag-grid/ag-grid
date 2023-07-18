@@ -43,6 +43,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
+        this.addDestroyFunc(function () { var _a; return (_a = _this.destroyCellRendererComponent) === null || _a === void 0 ? void 0 : _a.call(_this); });
         this.render();
         this.eCheckbox.setLabelEllipsis(true);
         this.eCheckbox.setValue(this.isSelected, true);
@@ -167,7 +168,14 @@ var SetFilterListItem = /** @class */ (function (_super) {
                 this.renderCellWithoutCellRenderer();
             }
         }
-        (_b = (_a = this.cellRendererComponent) === null || _a === void 0 ? void 0 : _a.refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+        if (this.cellRendererComponent) {
+            var success = (_b = (_a = this.cellRendererComponent).refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+            if (!success) {
+                var oldComponent = this.cellRendererComponent;
+                this.renderCell();
+                this.destroyBean(oldComponent);
+            }
+        }
     };
     SetFilterListItem.prototype.render = function () {
         var column = this.params.column;
@@ -228,7 +236,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             if (component) {
                 _this.cellRendererComponent = component;
                 _this.eCheckbox.setLabel(component.getGui());
-                _this.addDestroyFunc(function () { return _this.destroyBean(component); });
+                _this.destroyCellRendererComponent = function () { return _this.destroyBean(component); };
             }
         });
     };

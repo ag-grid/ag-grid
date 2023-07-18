@@ -85,15 +85,16 @@ function parseFormatter(formatter: string): FormatterOptions {
 
 export function format(formatter: string | FormatterOptions) {
     const options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
-    const { fill, align, sign = '-', symbol, zero, width, comma, type, prefix = '', suffix = '' } = options;
-    let { precision, trim } = options;
+    const { fill, align, sign = '-', symbol, zero, width, comma, type, prefix = '', suffix = '', precision } = options;
+    let { trim } = options;
 
+    const precisionIsNaN = precision === undefined || isNaN(precision);
     let formatBody: (n: number, f: number) => string;
     if (!type) {
         formatBody = decimalTypes['g'];
         trim = true;
     } else if (type in decimalTypes && type in integerTypes) {
-        formatBody = isNaN(precision!) ? integerTypes[type] : decimalTypes[type];
+        formatBody = precisionIsNaN ? integerTypes[type] : decimalTypes[type];
     } else if (type in decimalTypes) {
         formatBody = decimalTypes[type];
     } else if (type in integerTypes) {
@@ -102,12 +103,15 @@ export function format(formatter: string | FormatterOptions) {
         throw new Error(`The number formatter type is invalid: ${type}`);
     }
 
-    if (isNaN(precision!)) {
-        precision = type ? 6 : 12;
+    let formatterPrecision: number;
+    if (precision == null || precisionIsNaN) {
+        formatterPrecision = type ? 6 : 12;
+    } else {
+        formatterPrecision = precision;
     }
 
     return (n: number) => {
-        let result = formatBody(n, precision!);
+        let result = formatBody(n, formatterPrecision);
         if (trim) {
             result = removeTrailingZeros(result);
         }
@@ -127,8 +131,8 @@ export function format(formatter: string | FormatterOptions) {
         if (type === '%' || type === 'p') {
             result = `${result}%`;
         }
-        if (!isNaN(width!)) {
-            result = addPadding(result, width!, fill ?? zero, align);
+        if (width != null && !isNaN(width)) {
+            result = addPadding(result, width, fill ?? zero, align);
         }
         result = `${prefix}${result}${suffix}`;
         return result;
@@ -265,7 +269,8 @@ function addPadding(numString: string, width: number, fill = ' ', align = '>') {
 
 export function tickFormat(ticks: any[], formatter?: string): (n: number | { valueOf(): number }) => string {
     const options = parseFormatter(formatter ?? ',f');
-    if (isNaN(options.precision!)) {
+    const { precision } = options;
+    if (precision == null || isNaN(precision!)) {
         if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max(
                 ...ticks.map((x) => {

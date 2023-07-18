@@ -19,7 +19,7 @@ var RepeatType;
     RepeatType["Reverse"] = "reverse";
 })(RepeatType = exports.RepeatType || (exports.RepeatType = {}));
 function animate(_a) {
-    var driver = _a.driver, duration = _a.duration, from = _a.from, to = _a.to, _b = _a.autoplay, autoplay = _b === void 0 ? true : _b, _c = _a.delay, delay = _c === void 0 ? 0 : _c, _d = _a.ease, ease = _d === void 0 ? easing_1.linear : _d, _e = _a.repeat, repeatMax = _e === void 0 ? Infinity : _e, _f = _a.repeatType, repeatType = _f === void 0 ? RepeatType.Loop : _f, onComplete = _a.onComplete, onPlay = _a.onPlay, onRepeat = _a.onRepeat, onStop = _a.onStop, onUpdate = _a.onUpdate;
+    var driver = _a.driver, duration = _a.duration, from = _a.from, to = _a.to, _b = _a.autoplay, autoplay = _b === void 0 ? true : _b, _c = _a.delay, delay = _c === void 0 ? 0 : _c, _d = _a.ease, ease = _d === void 0 ? easing_1.linear : _d, _e = _a.repeat, repeatMax = _e === void 0 ? 0 : _e, _f = _a.repeatType, repeatType = _f === void 0 ? RepeatType.Loop : _f, onComplete = _a.onComplete, onPlay = _a.onPlay, onRepeat = _a.onRepeat, onStop = _a.onStop, onUpdate = _a.onUpdate;
     var state;
     var delayElapsed = 0;
     var elapsed = 0;
@@ -99,7 +99,7 @@ function animate(_a) {
 exports.animate = animate;
 function tween(opts) {
     var handleUpdate;
-    var animateOpts = __assign(__assign({}, opts), { repeat: 0, autoplay: false, onUpdate: function (value) {
+    var animateOpts = __assign(__assign({}, opts), { autoplay: false, onUpdate: function (value) {
             handleUpdate === null || handleUpdate === void 0 ? void 0 : handleUpdate(value);
         } });
     var animationControls = animate(animateOpts);

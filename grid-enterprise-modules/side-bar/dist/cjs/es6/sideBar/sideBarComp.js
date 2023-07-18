@@ -156,13 +156,13 @@ class SideBarComp extends core_1.Component {
         }
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            const moduleMissing = !core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            const moduleMissing = !core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }
         }
         if (def.toolPanel === 'agFiltersToolPanel') {
-            const moduleMissing = !core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            const moduleMissing = !core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }

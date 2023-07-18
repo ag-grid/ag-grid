@@ -1524,14 +1524,20 @@
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          text-overflow: ellipsis;
-          white-space: nowrap;
           height: 100%;
         }
         .ag-column-select-column > *,
         .ag-column-select-column-group > *,
         .ag-select-agg-func-item > * {
           flex: none;
+        }
+        
+        .ag-select-agg-func-item,
+        .ag-column-select-column-label {
+          flex: 1 1 auto;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         
         .ag-column-select-checkbox {
@@ -8407,14 +8413,20 @@
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          text-overflow: ellipsis;
-          white-space: nowrap;
           height: 100%;
         }
         .ag-column-select-column > *,
         .ag-column-select-column-group > *,
         .ag-select-agg-func-item > * {
           flex: none;
+        }
+        
+        .ag-select-agg-func-item,
+        .ag-column-select-column-label {
+          flex: 1 1 auto;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         
         .ag-column-select-checkbox {

@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as ts from 'typescript';
-import { Events } from '../../../../grid-community-modules/core/src/ts/eventKeys';
-import { PropertyKeys } from '../../../../grid-community-modules/core/src/ts/propertyKeys';
+import {Events} from '../../../../grid-community-modules/core/src/ts/eventKeys';
+import {PropertyKeys} from '../../../../grid-community-modules/core/src/ts/propertyKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -120,17 +120,32 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
 }
 
 export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
-    const bindings = internalParser(examplePath, { fileName, srcFile, includeTypes: false }, html, exampleSettings, exampleType, providedExamples);
-    const typedBindings = internalParser(examplePath, { fileName, srcFile, includeTypes: true }, html, exampleSettings, exampleType, providedExamples);
-    return { bindings, typedBindings };
+    const bindings = internalParser(examplePath, {
+        fileName,
+        srcFile,
+        includeTypes: false
+    }, html, exampleSettings, exampleType, providedExamples);
+    const typedBindings = internalParser(examplePath, {
+        fileName,
+        srcFile,
+        includeTypes: true
+    }, html, exampleSettings, exampleType, providedExamples);
+    return {bindings, typedBindings};
 }
 
 /** Creating a TS program takes about half a second which quickly gets very expensive. As we only need it to access the same GridOptions file we cache the first program that finds this. */
 let cachedProgram = undefined
+
 function getTypeLookupFunc(includeTypes, fileName) {
     let lookupType = (propName: string) => undefined;
     if (includeTypes) {
-        const program = cachedProgram || ts.createProgram([fileName], {});
+        const program = cachedProgram || ts.createProgram([fileName], {
+            "paths": {
+                "@ag-*": [
+                    "node_modules/@ag-*/dist/cjs/es5/main"
+                ]
+            }
+        });
         program.getTypeChecker(); // does something important to make types work below
 
         const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
@@ -144,18 +159,22 @@ function getTypeLookupFunc(includeTypes, fileName) {
                 if (pop && pop.type) {
                     return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
                 } else {
-                    console.warn(`Could not find GridOptions property ${propName} for example file ${fileName}`);
+                    console.error(`Could not find GridOptions property ${propName} for example file ${fileName}`);
                 }
                 return undefined;
             }
         } else {
-            console.warn('Could not find GridOptions file for ', fileName);
+            console.error('Could not find GridOptions file for ', fileName);
         }
     }
     return lookupType;
 }
 
-function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, exampleSettings, exampleType, providedExamples) {
+function internalParser(examplePath, {
+    fileName,
+    srcFile,
+    includeTypes
+}, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
     domTree.find('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -257,7 +276,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -267,7 +286,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
         apply: (bindings, node) => {
             const url = node.arguments[0].getText();
             const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -351,7 +370,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
             apply: (bindings, node: ts.NamedDeclaration) => {
                 const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
                 bindings.instanceMethods.push(methodText);
-                bindings.properties.push({ name: functionName, value: null, typings: gridOpsTypeLookup(functionName) });
+                bindings.properties.push({name: functionName, value: null, typings: gridOpsTypeLookup(functionName)});
             }
         });
     });
@@ -463,7 +482,11 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
                         }
                     }
                     const code = tsGenerate(node.initializer, tsTree);
-                    bindings.properties.push({ name: propertyName, value: code, typings: gridOpsTypeLookup(propertyName) });
+                    bindings.properties.push({
+                        name: propertyName,
+                        value: code,
+                        typings: gridOpsTypeLookup(propertyName)
+                    });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;

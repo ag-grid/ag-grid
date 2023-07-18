@@ -1,10 +1,10 @@
 import { BOOLEAN, NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, COLOR_STRING, STRING, Validate } from '../util/validation';
 import { getFont } from '../scene/shape/text';
-import { FontStyle, FontWeight } from './agChartOptions';
+import type { FontStyle, FontWeight } from './agChartOptions';
 import { normalizeAngle360, toRadians } from '../util/angle';
 import { BBox } from '../scene/bbox';
-import { Matrix } from '../scene/matrix';
-import { PointLabelDatum } from '../util/labelPlacement';
+import type { Matrix } from '../scene/matrix';
+import type { PointLabelDatum } from '../util/labelPlacement';
 
 export class Label {
     @Validate(BOOLEAN)

@@ -24,6 +24,7 @@ var PolarSeries = /** @class */ (function (_super) {
             moduleCtx: moduleCtx,
             useLabelLayer: useLabelLayer,
             pickModes: pickModes,
+            contentGroupVirtual: false,
             directionKeys: (_b = {},
                 _b[ChartAxisDirection.X] = ['angleKey'],
                 _b[ChartAxisDirection.Y] = ['radiusKey'],

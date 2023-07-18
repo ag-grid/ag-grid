@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GridCoreCreator = exports.Grid = void 0;
@@ -154,7 +148,7 @@ class GridCoreCreator {
         beans.ctrlsService.whenReady(() => {
             this.setColumnsAndData(beans);
             this.dispatchGridReadyEvent(beans);
-            const isEnterprise = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.EnterpriseCoreModule, gridId);
+            const isEnterprise = moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.EnterpriseCoreModule, gridId);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
         if (acceptChanges) {
@@ -174,7 +168,7 @@ class GridCoreCreator {
     }
     getRegisteredModules(params, gridId) {
         const passedViaConstructor = params ? params.modules : null;
-        const registered = moduleRegistry_1.ModuleRegistry.getRegisteredModules(gridId);
+        const registered = moduleRegistry_1.ModuleRegistry.__getRegisteredModules(gridId);
         const allModules = [];
         const mapNames = {};
         // adds to list and removes duplicates
@@ -183,7 +177,7 @@ class GridCoreCreator {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    moduleRegistry_1.ModuleRegistry.register(currentModule, moduleBased, gridId);
+                    moduleRegistry_1.ModuleRegistry.__register(currentModule, moduleBased, gridId);
                 }
             };
             addIndividualModule(mod);
@@ -195,7 +189,7 @@ class GridCoreCreator {
             passedViaConstructor.forEach(m => addModule(true, m, gridId));
         }
         if (registered) {
-            registered.forEach(m => addModule(!moduleRegistry_1.ModuleRegistry.isPackageBased(), m, undefined));
+            registered.forEach(m => addModule(!moduleRegistry_1.ModuleRegistry.__isPackageBased(), m, undefined));
         }
         return allModules;
     }
@@ -263,7 +257,7 @@ class GridCoreCreator {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
             return;
         }
-        if (!moduleRegistry_1.ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
+        if (!moduleRegistry_1.ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
             return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS

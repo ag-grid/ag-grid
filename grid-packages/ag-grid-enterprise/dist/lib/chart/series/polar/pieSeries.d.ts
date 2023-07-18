@@ -1,15 +1,17 @@
 import { Group } from '../../../scene/group';
-import { DropShadow } from '../../../scene/dropShadow';
+import type { DropShadow } from '../../../scene/dropShadow';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
+import type { SeriesNodeDatum } from './../series';
+import { HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { AgPieSeriesLabelFormatterParams, AgPieSeriesTooltipRendererParams, AgTooltipRendererResult, AgPieSeriesFormat, AgPieSeriesFormatterParams } from '../../agChartOptions';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
-import { ModuleContext } from '../../../util/module';
+import type { AgPieSeriesLabelFormatterParams, AgPieSeriesTooltipRendererParams, AgTooltipRendererResult, AgPieSeriesFormat, AgPieSeriesFormatterParams } from '../../agChartOptions';
+import type { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 declare class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
     readonly calloutLabelKey?: string;
@@ -47,6 +49,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
     };
     readonly sectorFormat: Required<AgPieSeriesFormat>;
     readonly legendItemKey?: string;
+    readonly legendItemValue?: string;
 }
 declare class PieSeriesCalloutLabel extends Label {
     offset: number;
@@ -54,6 +57,7 @@ declare class PieSeriesCalloutLabel extends Label {
     formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string;
     minSpacing: number;
     maxCollisionOffset: number;
+    avoidCollisions: boolean;
 }
 declare class PieSeriesSectorLabel extends Label {
     positionOffset: number;
@@ -149,13 +153,14 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     visibleChanged(): void;
     private processSeriesItemEnabled;
     getDomain(direction: ChartAxisDirection): any[];
-    processData(): Promise<void>;
+    processData(dataController: DataController): Promise<void>;
     maybeRefreshNodeData(): void;
     createNodeData(): Promise<{
         itemId: string;
         nodeData: PieNodeDatum[];
         labelData: PieNodeDatum[];
     }[]>;
+    private getProcessedDataIndexes;
     private _createNodeData;
     private getLabels;
     private getLabelFormatterParams;
@@ -182,7 +187,6 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     computeLabelsBBox(options: {
         hideWhenNecessary: boolean;
     }, seriesRect: BBox): BBox | null;
-    private setTextDimensionalProps;
     private updateSectorLabelNodes;
     private updateInnerCircle;
     private updateInnerLabelNodes;

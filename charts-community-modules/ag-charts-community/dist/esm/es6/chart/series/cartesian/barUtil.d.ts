@@ -1,11 +1,11 @@
-import { Point } from '../../../scene/point';
-import { AgBarSeriesFormat, AgCartesianSeriesLabelFormatterParams, FontFamily, FontWeight, FontStyle, AgBarSeriesOptions } from '../../agChartOptions';
-import { Rect } from '../../../scene/shape/rect';
-import { DropShadow } from '../../../scene/dropShadow';
-import { CartesianSeriesNodeDatum } from './cartesianSeries';
-import { SeriesItemHighlightStyle } from '../series';
-import { Text } from '../../../scene/shape/text';
-import { ModuleContext } from '../../../util/module';
+import type { Point } from '../../../scene/point';
+import type { AgBarSeriesFormat, AgCartesianSeriesLabelFormatterParams, FontFamily, FontWeight, FontStyle, AgBarSeriesOptions } from '../../agChartOptions';
+import type { Rect } from '../../../scene/shape/rect';
+import type { DropShadow } from '../../../scene/dropShadow';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import type { SeriesItemHighlightStyle } from '../series';
+import type { Text } from '../../../scene/shape/text';
+import type { ModuleContext } from '../../../util/moduleContext';
 declare type Bounds = {
     x: number;
     y: number;
@@ -70,4 +70,3 @@ export declare function updateLabel<LabelDatumType extends LabelDatum>({ labelNo
     visible: boolean;
 }): void;
 export {};
-//# sourceMappingURL=barUtil.d.ts.map

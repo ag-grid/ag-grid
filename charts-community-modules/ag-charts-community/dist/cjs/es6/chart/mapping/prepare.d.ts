@@ -1,6 +1,6 @@
-import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions } from '../agChartOptions';
-import { SeriesOptionsTypes } from './defaults';
-import { JsonMergeOptions } from '../../util/json';
+import type { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions } from '../agChartOptions';
+import type { SeriesOptionsTypes } from './defaults';
+import type { JsonMergeOptions } from '../../util/json';
 export declare function optionsType(input: {
     type?: AgChartOptions['type'];
     series?: {
@@ -12,4 +12,3 @@ export declare function isAgHierarchyChartOptions(input: AgChartOptions): input 
 export declare function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions;
 export declare const noDataCloneMergeOptions: JsonMergeOptions;
 export declare function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T;
-//# sourceMappingURL=prepare.d.ts.map

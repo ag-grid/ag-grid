@@ -162,14 +162,28 @@ export class PositionableFeature extends BeanStub {
             this.center();
         } else if (x || y) {
             this.offsetElement(x!, y!);
-        } else if (isVisible && forcePopupParentAsOffsetParent && this.boundaryEl) {
-            const top = parseFloat(this.boundaryEl.style.top!);
-            const left = parseFloat(this.boundaryEl.style.left!);
+        } else if (isVisible && forcePopupParentAsOffsetParent) {
+            let boundaryEl: HTMLElement | null = this.boundaryEl;
+            let initialisedDuringPositioning = true;
 
-            this.offsetElement(
-                isNaN(left) ? 0 : left,
-                isNaN(top) ? 0 : top
-            );
+            if (!boundaryEl) {
+                boundaryEl = this.findBoundaryElement();
+                initialisedDuringPositioning = false;
+            }
+
+            if (boundaryEl) {
+                const top = parseFloat(boundaryEl.style.top);
+                const left = parseFloat(boundaryEl.style.left);
+
+                if (initialisedDuringPositioning) {
+                    this.offsetElement(
+                        isNaN(left) ? 0 : left,
+                        isNaN(top) ? 0 : top
+                    );
+                } else {
+                    this.setPosition(left, top);
+                }
+            }
         }
 
         this.positioned = !!this.offsetParent;
@@ -387,7 +401,10 @@ export class PositionableFeature extends BeanStub {
     }
 
     public offsetElement(x = 0, y = 0) {
-        const ePopup = this.config.forcePopupParentAsOffsetParent ? this.boundaryEl! : this.element;
+        const { forcePopupParentAsOffsetParent } = this.config;
+        const ePopup = forcePopupParentAsOffsetParent ? this.boundaryEl : this.element;
+
+        if (!ePopup) { return; }
 
         this.popupService.positionPopup({
             ePopup,
@@ -397,8 +414,8 @@ export class PositionableFeature extends BeanStub {
         });
 
         this.setPosition(
-            parseFloat(ePopup.style.left!),
-            parseFloat(ePopup.style.top!)
+            parseFloat(ePopup.style.left),
+            parseFloat(ePopup.style.top)
         );
     }
 

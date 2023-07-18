@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22,9 +16,11 @@ let HorizontalResizeService = class HorizontalResizeService extends beanStub_1.B
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
-            onDragging: this.onDragging.bind(this, params)
+            onDragging: this.onDragging.bind(this, params),
+            includeTouch: true,
+            stopPropagationForTouch: true
         };
-        this.dragService.addDragSource(dragSource, true);
+        this.dragService.addDragSource(dragSource);
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
         const finishedWithResizeFunc = () => this.dragService.removeDragSource(dragSource);

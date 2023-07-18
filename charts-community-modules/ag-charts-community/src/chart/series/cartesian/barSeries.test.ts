@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChartOptions } from '../../agChartOptions';
+import type { AgChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
-import { Chart } from '../../chart';
+import type { Chart } from '../../chart';
 import {
     DATA_FRACTIONAL_LOG_AXIS,
     DATA_INVALID_DOMAIN_LOG_AXIS,
@@ -11,15 +11,16 @@ import {
     DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
+import type { TestCase } from '../../test/utils';
 import {
     waitForChartStability,
     cartesianChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    TestCase,
     prepareTestOptions,
     spyOnAnimationManager,
+    repeat,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -42,11 +43,17 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('column', 4),
+        }),
     },
     GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('column', 4),
+        }),
     },
     BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
@@ -58,16 +65,30 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('bar', 4),
+        }),
     },
     GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: repeat('bar', 4),
+        }),
     },
     COLUMN_CATEGORY_X_AXIS_POSITIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_POSITIVE_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_NEGATIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_NEGATIVE_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_FRACTIONAL_LOG_Y_AXIS: buildLogAxisTestCase(DATA_FRACTIONAL_LOG_AXIS),
     COLUMN_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
+    COLUMN_SINGLE_DATE_CATEGORY_AXIS: {
+        options: examples.COLUMN_SINGLE_DATE_CATEGORY_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+    },
+    COLUMN_SINGLE_DATE_TIME_AXIS: {
+        options: examples.COLUMN_SINGLE_DATE_TIME_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['column'] }),
+    },
 };
 
 const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {
@@ -85,6 +106,13 @@ describe('BarSeries', () => {
     });
 
     const ctx = setupMockCanvas();
+
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
 
     describe('#create', () => {
         beforeEach(() => {
@@ -106,13 +134,6 @@ describe('BarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
@@ -128,13 +149,6 @@ describe('BarSeries', () => {
     });
 
     describe('initial animation', () => {
-        const compare = async () => {
-            await waitForChartStability(chart);
-
-            const imageData = extractImageData(ctx);
-            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-        };
-
         afterEach(() => {
             jest.restoreAllMocks();
         });
@@ -182,13 +196,6 @@ describe('BarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 

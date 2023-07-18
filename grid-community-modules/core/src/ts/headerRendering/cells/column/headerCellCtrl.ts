@@ -24,7 +24,8 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
-import { doOnce } from "../../../utils/function";
+import { isBrowserSafari } from "../../../utils/browser";
+import { FocusService } from "../../../focusService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
@@ -109,11 +110,32 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             }
         ));
 
+        this.addMouseDownListenerIfNeeded(eGui);
+
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+    }
+
+    private addMouseDownListenerIfNeeded(eGui: HTMLElement): void {
+        // we add a preventDefault in the DragService for Safari only
+        // so we need to make sure we don't prevent focus on mousedown
+        if (!isBrowserSafari()) { return; }
+
+        const events = ['mousedown', 'touchstart'];
+        const eDocument = this.gridOptionsService.getDocument();
+        events.forEach(eventName => {
+            this.addManagedListener(eGui, eventName, (e: MouseEvent | TouchEvent) => {
+                const activeEl = eDocument.activeElement;
+    
+                if (activeEl !== eGui && !eGui.contains(activeEl)) {
+                    eGui.focus();
+                    FocusService.toggleKeyboardMode(e)
+                }
+            });
+        })
     }
 
     private setupUserComp(): void {

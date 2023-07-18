@@ -19,7 +19,9 @@ import {
     PostConstruct,
     RefSelector,
     TouchListener,
-    WithoutGridCommon
+    WithoutGridCommon,
+    IAggFunc,
+    DragItem
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -66,6 +68,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.modelItem = modelItem;
         this.columnGroup = modelItem.getColumnGroup();
         this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
         this.allowDragging = allowDragging;
     }
 
@@ -81,8 +84,6 @@ export class ToolPanelColumnGroupComp extends Component {
 
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-
-        this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.columnGroup, this.eventType);
 
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
@@ -205,11 +206,15 @@ export class ToolPanelColumnGroupComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             },
-            onGridEnter: () => {
+            onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    this.onChangeCommon(true);
+                     // when dragged into the grid, restore the state that was active pre-drag
+                    this.modelItemUtils.updateColumns({
+                        columns: this.columnGroup.getLeafColumns(),
+                        visibleState: dragItem?.visibleState,
+                        pivotState: dragItem?.pivotState,
+                        eventType: this.eventType
+                    })
                 }
             },
             onGridExit: () => {
@@ -226,14 +231,23 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private createDragItem() {
+        const columns = this.columnGroup.getLeafColumns();
         const visibleState: { [key: string]: boolean; } = {};
-        this.columnGroup.getLeafColumns().forEach(col => {
-            visibleState[col.getId()] = col.isVisible();
+        const pivotState: { [key: string]: {
+            pivot?: boolean;
+            rowGroup?: boolean;
+            aggFunc?: string | IAggFunc | null; }
+        } = {};
+        columns.forEach(col => {
+            const colId = col.getId();
+            visibleState[colId] = col.isVisible();
+            pivotState[colId] = this.modelItemUtils.createPivotState(col);
         });
 
         return {
-            columns: this.columnGroup.getLeafColumns(),
-            visibleState: visibleState
+            columns,
+            visibleState,
+            pivotState
         };
     }
 

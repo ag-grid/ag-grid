@@ -1,4 +1,4 @@
-import { AgChartOptions, AgChartInstance } from './agChartOptions';
+import type { AgChartOptions, AgChartInstance } from './agChartOptions';
 export interface DownloadOptions extends ImageDataUrlOptions {
     /** Name of downloaded image file. Defaults to `image`.  */
     fileName?: string;

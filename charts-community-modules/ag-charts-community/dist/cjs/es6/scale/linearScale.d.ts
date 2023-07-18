@@ -21,4 +21,3 @@ export declare class LinearScale extends ContinuousScale<number> {
         valueOf(): number;
     }) => string;
 }
-//# sourceMappingURL=linearScale.d.ts.map

@@ -216,10 +216,17 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         const updatedRowNodes = [];
         const focusedCell = this.focusService.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+        const nodesToRefresh = [...updatedRowNodes];
         if (changedPath) {
             this.clientSideRowModel.doAggregate(changedPath);
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst(rowNode => {
+                nodesToRefresh.push(rowNode);
+            });
         }
-        this.rowRenderer.refreshCells();
+        // clipboardService has to do changeDetection itself, to prevent repeat logic in favour of batching.
+        // changeDetectionService is disabled for this action.
+        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
         // if using the clipboard hack with a temp element, then the focus has been lost,

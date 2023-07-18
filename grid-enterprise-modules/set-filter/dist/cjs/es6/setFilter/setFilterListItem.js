@@ -28,6 +28,7 @@ class SetFilterListItem extends core_1.Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
     init() {
+        this.addDestroyFunc(() => { var _a; return (_a = this.destroyCellRendererComponent) === null || _a === void 0 ? void 0 : _a.call(this); });
         this.render();
         this.eCheckbox.setLabelEllipsis(true);
         this.eCheckbox.setValue(this.isSelected, true);
@@ -152,7 +153,14 @@ class SetFilterListItem extends core_1.Component {
                 this.renderCellWithoutCellRenderer();
             }
         }
-        (_b = (_a = this.cellRendererComponent) === null || _a === void 0 ? void 0 : _a.refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+        if (this.cellRendererComponent) {
+            const success = (_b = (_a = this.cellRendererComponent).refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+            if (!success) {
+                const oldComponent = this.cellRendererComponent;
+                this.renderCell();
+                this.destroyBean(oldComponent);
+            }
+        }
     }
     render() {
         const { params: { column } } = this;
@@ -212,7 +220,7 @@ class SetFilterListItem extends core_1.Component {
             if (component) {
                 this.cellRendererComponent = component;
                 this.eCheckbox.setLabel(component.getGui());
-                this.addDestroyFunc(() => this.destroyBean(component));
+                this.destroyCellRendererComponent = () => this.destroyBean(component);
             }
         });
     }

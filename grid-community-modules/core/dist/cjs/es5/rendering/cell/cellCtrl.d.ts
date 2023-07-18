@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "./../beans";
@@ -61,6 +61,7 @@ export declare class CellCtrl extends BeanStub {
     private customRowDragComp;
     private onCellCompAttachedFuncs;
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl);
+    shouldRestoreFocus(): boolean;
     private addFeatures;
     private addTooltipFeature;
     setComp(comp: ICellComp, eGui: HTMLElement, eCellWrapper: HTMLElement | undefined, printLayout: boolean, startEditing: boolean): void;

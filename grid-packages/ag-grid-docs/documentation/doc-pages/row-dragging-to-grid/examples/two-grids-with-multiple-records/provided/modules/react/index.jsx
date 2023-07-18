@@ -224,8 +224,7 @@ class GridExample extends Component {
 
                     rowData={id === 0 ? this.state.leftRowData : this.state.rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
-                    onGridReady={(params) => this.onGridReady(params, id)}>
-                </AgGridReact>
+                    onGridReady={(params) => this.onGridReady(params, id)} />
             </div>
         </div>
     )

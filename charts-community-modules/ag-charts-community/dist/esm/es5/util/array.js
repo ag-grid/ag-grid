@@ -26,3 +26,19 @@ export function extent(values) {
     }
     return extent;
 }
+export function normalisedExtent(d, min, max) {
+    var _a;
+    if (d.length > 2) {
+        d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
+    }
+    if (!isNaN(min)) {
+        d = [min, d[1]];
+    }
+    if (!isNaN(max)) {
+        d = [d[0], max];
+    }
+    if (d[0] > d[1]) {
+        d = [];
+    }
+    return d;
+}

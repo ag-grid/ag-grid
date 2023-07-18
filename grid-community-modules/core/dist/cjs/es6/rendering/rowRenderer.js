@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -55,7 +49,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
-        this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
         if (this.gridOptionsService.isGroupRowsSticky()) {
@@ -347,11 +341,11 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         const animate = params.animate && this.gridOptionsService.isAnimateRows();
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
-        const rowsToRecycle = recycleRows ? this.recycleRows() : null;
+        const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
         }
-        this.redraw(rowsToRecycle, animate);
+        this.recycleRows(rowsToRecycle, animate);
         this.gridBodyCtrl.updateRowCount();
         if (!params.onlyBody) {
             this.refreshFloatingRowComps();
@@ -412,6 +406,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
+            this.focusService.setRestoreFocusedCell(cellPosition);
             this.onCellFocusChanged({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
@@ -602,7 +597,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
         this.removeRowCtrls(rowIndexesToRemove);
     }
-    recycleRows() {
+    getRowsToRecycle() {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes = [];
         object_1.iterateObject(this.rowCtrlsByRowIndex, (index, rowComp) => {
@@ -638,13 +633,13 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         if (e.direction !== 'vertical') {
             return;
         }
-        this.redrawAfterScroll();
+        this.redraw();
     }
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    redrawAfterScroll() {
+    redraw(afterScroll = true) {
         let cellFocused;
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
@@ -652,9 +647,9 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
         }
         this.getLockOnRefresh();
-        this.redraw(null, false, true);
+        this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged(true);
+        this.dispatchDisplayedRowsChanged(afterScroll);
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -696,7 +691,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         });
         return indexesToDraw;
     }
-    redraw(rowsToRecycle, animate = false, afterScroll = false) {
+    recycleRows(rowsToRecycle, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
         if (this.stickyRowFeature) {
@@ -766,7 +761,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         });
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redrawAfterScroll();
+        this.redraw();
     }
     getFullWidthRowCtrls(rowNodes) {
         const rowNodesMap = this.mapRowNodes(rowNodes);
@@ -808,7 +803,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
             this.removeRowCtrls(indicesToForce);
         }
         if (redraw) {
-            this.redrawAfterScroll();
+            this.redraw(false);
         }
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {

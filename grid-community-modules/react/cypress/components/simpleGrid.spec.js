@@ -31,8 +31,7 @@ const App = () => {
                 rowData={rowData}
                 columnDefs={colDefs}
                 suppressReactUi={true}
-                modules={[ClientSideRowModelModule]}>
-            </AgGridReact>
+                modules={[ClientSideRowModelModule]} />
         </div>
     );
 };

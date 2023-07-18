@@ -1,6 +1,6 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
-import { RenderContext } from '../node';
+import type { RenderContext } from '../node';
 export declare class Line extends Shape {
     static className: string;
     protected static defaultStyles: never;

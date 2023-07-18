@@ -1,9 +1,11 @@
 import { Rect } from '../../scene/shape/rect';
 import { Group } from '../../scene/group';
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
+import type { ModuleInstance } from '../../util/module';
+import { BaseModuleInstance } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 import { ProxyPropertyOnWrite } from '../../util/proxy';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
-import { LayoutCompleteEvent } from '../layout/layoutService';
+import type { LayoutCompleteEvent } from '../layout/layoutService';
 import { Layers } from '../layers';
 
 export class Background extends BaseModuleInstance implements ModuleInstance {

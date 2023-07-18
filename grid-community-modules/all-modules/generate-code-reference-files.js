@@ -3,7 +3,7 @@ const ts = require('typescript');
 const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
-const ComponentUtil = require("@ag-grid-community/core/dist/cjs/es5/components/componentUtil.js").ComponentUtil;
+const { ComponentUtil } = require("@ag-grid-community/core/dist/cjs/es5/components/componentUtil");
 const { getFormatterForTS } = require('../../scripts/formatAST');
 const prettierJs = require('prettier');
 

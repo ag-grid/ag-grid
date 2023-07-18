@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 export function convertToMap(arr) {
     var map = new Map();
     arr.forEach(function (pair) { return map.set(pair[0], pair[1]); });

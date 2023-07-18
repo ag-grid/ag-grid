@@ -1,5 +1,4 @@
 import React from 'react';
-import LogoMarkLoading from '../../images/inline-svgs/ag-grid-logomark-loading.svg';
 
 const loadingStyles = {
     position: 'absolute',
@@ -8,21 +7,29 @@ const loadingStyles = {
     transform: 'translate(-50%, -50%) scale(2)',
 };
 
-const loadingScript = `const cleanupLoading = () => {
-    if (document.querySelector('.ag-root-wrapper, .ag-chart-wrapper')) {
-        document.querySelector('#loading-spinner').remove();
-        document.querySelector('#loading-script').remove();
-    } else {
-        requestAnimationFrame(() => cleanupLoading());
-    }
-};
+const loadingScript = `(function() {
+    const cleanupLoading = () => {
+        if (document.querySelector('.ag-root-wrapper, .ag-chart-wrapper')) {
+            document.querySelector('#loading-spinner').remove();
+            document.querySelector('#loading-script').remove();
+        } else {
+            requestAnimationFrame(() => cleanupLoading());
+        }
+    };
 
-cleanupLoading();`;
+    cleanupLoading();
+})()`;
 
 export const LoadingSpinner = () => {
     return (
         <>
-            <LogoMarkLoading id="loading-spinner" style={loadingStyles} />
+            <object
+                id="loading-spinner"
+                style={loadingStyles}
+                type="image/svg+xml"
+                data="https://ag-grid.com/images/ag-grid-loading-spinner.svg"
+                aria-label="loading"
+            ></object>
             <script id="loading-script" dangerouslySetInnerHTML={{ __html: loadingScript }}></script>
         </>
     );

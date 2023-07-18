@@ -1,18 +1,18 @@
 import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
-import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 import { Default } from '../../util/default';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
+import { CartesianAxis } from './cartesianAxis';
 
-class TimeAxisTick extends BaseAxisTick<TimeScale, number | Date> {
+class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
     @Default(NaN)
     maxSpacing: number = NaN;
 }
 
-export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
+export class TimeAxis extends CartesianAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 
@@ -80,9 +80,9 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         return this.moduleCtx.callbackCache.call(this.datumFormatter, datum) ?? String(datum);
     }
 
-    calculatePadding(_min: number, _max: number) {
+    calculatePadding(_min: number, _max: number): [number, number] {
         // numbers in domain correspond to Unix timestamps
-        // automatically expand domain by 1 in each direction
-        return 1;
+        // automatically expand domain by 1 in forward direction
+        return [0, 1];
     }
 }

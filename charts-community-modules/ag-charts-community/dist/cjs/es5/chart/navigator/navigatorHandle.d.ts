@@ -1,4 +1,4 @@
-import { RangeHandle } from '../shapes/rangeHandle';
+import type { RangeHandle } from '../shapes/rangeHandle';
 export declare class NavigatorHandle {
     private readonly rh;
     set fill(value: string | undefined);
@@ -17,4 +17,3 @@ export declare class NavigatorHandle {
     get gripLineLength(): number;
     constructor(rangeHandle: RangeHandle);
 }
-//# sourceMappingURL=navigatorHandle.d.ts.map

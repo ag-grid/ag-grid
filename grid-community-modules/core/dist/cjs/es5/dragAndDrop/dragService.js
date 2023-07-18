@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -71,11 +65,11 @@ var DragService = /** @class */ (function (_super) {
     DragService.prototype.isDragging = function () {
         return this.dragging;
     };
-    DragService.prototype.addDragSource = function (params, includeTouch) {
+    DragService.prototype.addDragSource = function (params) {
         var _this = this;
-        if (includeTouch === void 0) { includeTouch = false; }
         var mouseListener = this.onMouseDown.bind(this, params);
-        params.eElement.addEventListener('mousedown', mouseListener);
+        var eElement = params.eElement, includeTouch = params.includeTouch, stopPropagationForTouch = params.stopPropagationForTouch;
+        eElement.addEventListener('mousedown', mouseListener);
         var touchListener = null;
         var suppressTouch = this.gridOptionsService.is('suppressTouch');
         if (includeTouch && !suppressTouch) {
@@ -85,18 +79,20 @@ var DragService = /** @class */ (function (_super) {
                 }
                 if (touchEvent.cancelable) {
                     touchEvent.preventDefault();
-                    touchEvent.stopPropagation();
+                    if (stopPropagationForTouch) {
+                        touchEvent.stopPropagation();
+                    }
                 }
                 _this.onTouchStart(params, touchEvent);
             };
             // we set passive=false, as we want to prevent default on this event
-            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
+            eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
         this.dragSources.push({
             dragSource: params,
             mouseDownListener: mouseListener,
             touchStartListener: touchListener,
-            touchEnabled: includeTouch
+            touchEnabled: !!includeTouch
         });
     };
     DragService.prototype.getStartTarget = function () {
@@ -149,6 +145,9 @@ var DragService = /** @class */ (function (_super) {
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
+        }
+        if (this.shouldPreventMouseEvent(mouseEvent)) {
+            mouseEvent.preventDefault();
         }
         this.currentDragParams = params;
         this.dragging = false;
@@ -233,21 +232,24 @@ var DragService = /** @class */ (function (_super) {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     DragService.prototype.onMouseMove = function (mouseEvent, el) {
-        // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
-        // to avoid the grid text being selected while dragging components.
-        // Note: Safari also has an issue, where `user-select: none` is not being respected.
-        if ((this.gridOptionsService.is('enableCellTextSelection') || browser_1.isBrowserSafari()) &&
-            // The event type can be `mousedown` when `dragStartPixels=0`
-            // we should only preventDefault on `mousemove`.
-            mouseEvent.type === 'mousemove' &&
-            mouseEvent.cancelable &&
-            this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
-            // we should not prevent mouseMove when above a form field
-            // as that would prevent the text in the field from being selected
-            !this.isOverFormFieldElement(mouseEvent)) {
+        if (this.shouldPreventMouseEvent(mouseEvent)) {
             mouseEvent.preventDefault();
         }
         this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
+    };
+    DragService.prototype.shouldPreventMouseEvent = function (mouseEvent) {
+        var isEnableCellTextSelect = this.gridOptionsService.is('enableCellTextSelection');
+        var isSafari = browser_1.isBrowserSafari();
+        var isMouseMove = mouseEvent.type === 'mousemove';
+        return (
+        // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
+        // to avoid the grid text being selected while dragging components.
+        // Note: Safari also has an issue, where `user-select: none` is not being respected, so also
+        // prevent it on MouseDown.
+        ((isEnableCellTextSelect && isMouseMove) || isSafari) &&
+            mouseEvent.cancelable &&
+            this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
+            !this.isOverFormFieldElement(mouseEvent));
     };
     DragService.prototype.isOverFormFieldElement = function (mouseEvent) {
         var el = mouseEvent.target;

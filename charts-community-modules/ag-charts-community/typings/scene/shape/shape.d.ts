@@ -1,5 +1,5 @@
 import { Node } from '../node';
-import { DropShadow } from '../dropShadow';
+import type { DropShadow } from '../dropShadow';
 import { LinearGradient } from '../gradient/linearGradient';
 export declare type ShapeLineCap = 'butt' | 'round' | 'square';
 declare type ShapeLineJoin = 'round' | 'bevel' | 'miter';

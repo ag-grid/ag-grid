@@ -38,16 +38,19 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChartTheme = exports.DEFAULT_FONT_FAMILY = exports.OVERRIDE_SERIES_LABEL_DEFAULTS = exports.EXTENDS_SERIES_DEFAULTS = void 0;
+exports.ChartTheme = exports.DEFAULT_FONT_FAMILY = exports.OVERRIDE_SERIES_LABEL_DEFAULTS = exports.EXTENDS_SERIES_DEFAULTS = exports.EXTENDS_AXES_LINE_DEFAULTS = exports.EXTENDS_AXES_LABEL_DEFAULTS = exports.EXTENDS_AXES_DEFAULTS = void 0;
 var json_1 = require("../../util/json");
 var object_1 = require("../../util/object");
-var chartAxesTypes_1 = require("../chartAxesTypes");
+var axisTypes_1 = require("../factory/axisTypes");
 var chartTypes_1 = require("../factory/chartTypes");
 var seriesTypes_1 = require("../factory/seriesTypes");
 var palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
     strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
+exports.EXTENDS_AXES_DEFAULTS = Symbol('extends-axes-defaults');
+exports.EXTENDS_AXES_LABEL_DEFAULTS = Symbol('extends-axes-label-defaults');
+exports.EXTENDS_AXES_LINE_DEFAULTS = Symbol('extends-axes-line-defaults');
 exports.EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
 exports.OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
 exports.DEFAULT_FONT_FAMILY = Symbol('default-font');
@@ -98,7 +101,6 @@ var ChartTheme = /** @class */ (function () {
             right: {},
             bottom: {},
             left: {},
-            thickness: 0,
             title: {
                 enabled: false,
                 text: 'Axis Title',
@@ -351,9 +353,9 @@ var ChartTheme = /** @class */ (function () {
                 }
                 return obj;
             }, {});
-            if (chartType === 'cartesian') {
-                result.axes = chartAxesTypes_1.CHART_AXES_TYPES.axesTypes.reduce(function (obj, axisType) {
-                    var template = chartAxesTypes_1.getAxisThemeTemplate(axisType);
+            if (chartType === 'cartesian' || chartType === 'polar') {
+                result.axes = axisTypes_1.AXIS_TYPES.axesTypes.reduce(function (obj, axisType) {
+                    var template = axisTypes_1.getAxisThemeTemplate(axisType);
                     if (template) {
                         obj[axisType] = _this.templateTheme(template);
                     }
@@ -377,11 +379,15 @@ var ChartTheme = /** @class */ (function () {
             var e_1, _a;
             if (node['__extends__']) {
                 var key = node['__extends__'];
-                var source = extensions.get(key);
-                if (source == null) {
+                var source_1 = extensions.get(key);
+                if (source_1 == null) {
                     throw new Error('AG Charts - no template variable provided for: ' + key);
                 }
-                Object.assign(node, source, node);
+                Object.keys(source_1).forEach(function (key) {
+                    if (!(key in node)) {
+                        node[key] = source_1[key];
+                    }
+                });
                 delete node['__extends__'];
             }
             if (node['__overrides__']) {
@@ -413,6 +419,9 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.prototype.getTemplateParameters = function () {
         var extensions = new Map();
+        extensions.set(exports.EXTENDS_AXES_DEFAULTS, ChartTheme.getAxisDefaults());
+        extensions.set(exports.EXTENDS_AXES_LABEL_DEFAULTS, ChartTheme.getAxisDefaults().label);
+        extensions.set(exports.EXTENDS_AXES_LINE_DEFAULTS, ChartTheme.getAxisDefaults().line);
         extensions.set(exports.EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
         extensions.set(exports.OVERRIDE_SERIES_LABEL_DEFAULTS, {});
         var properties = new Map();

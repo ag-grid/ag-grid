@@ -23,14 +23,15 @@ import { _, AgCheckbox, Autowired, Column, Component, CssClassApplier, DragAndDr
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";
 var ToolPanelColumnComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnComp, _super);
-    function ToolPanelColumnComp(column, columnDept, allowDragging, groupsExist, focusWrapper) {
+    function ToolPanelColumnComp(modelItem, allowDragging, groupsExist, focusWrapper) {
         var _this = _super.call(this) || this;
-        _this.column = column;
-        _this.columnDept = columnDept;
         _this.allowDragging = allowDragging;
         _this.groupsExist = groupsExist;
         _this.focusWrapper = focusWrapper;
         _this.processingColumnStateChange = false;
+        _this.column = modelItem.getColumn();
+        _this.columnDept = modelItem.getDept();
+        _this.displayName = modelItem.getDisplayName();
         return _this;
     }
     ToolPanelColumnComp.prototype.init = function () {
@@ -42,7 +43,6 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         var checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         var displayNameSanitised = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
@@ -165,11 +165,15 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 };
                 _this.eventService.dispatchEvent(event);
             },
-            onGridEnter: function () {
+            onGridEnter: function (dragItem) {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    _this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    _this.modelItemUtils.updateColumns({
+                        columns: [_this.column],
+                        visibleState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.visibleState,
+                        pivotState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.pivotState,
+                        eventType: 'toolPanelUi'
+                    });
                 }
             },
             onGridExit: function () {
@@ -184,11 +188,14 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
     ToolPanelColumnComp.prototype.createDragItem = function () {
-        var visibleState = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        var _a, _b;
+        var colId = this.column.getColId();
+        var visibleState = (_a = {}, _a[colId] = this.column.isVisible(), _a);
+        var pivotState = (_b = {}, _b[colId] = this.modelItemUtils.createPivotState(this.column), _b);
         return {
             columns: [this.column],
-            visibleState: visibleState
+            visibleState: visibleState,
+            pivotState: pivotState
         };
     };
     ToolPanelColumnComp.prototype.onColumnStateChanged = function () {

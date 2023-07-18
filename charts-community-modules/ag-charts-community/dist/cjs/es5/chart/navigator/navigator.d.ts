@@ -1,6 +1,8 @@
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
+import type { ModuleInstance } from '../../util/module';
+import { BaseModuleInstance } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
 export declare class Navigator extends BaseModuleInstance implements ModuleInstance {
     private readonly ctx;
     private readonly rs;
@@ -34,4 +36,3 @@ export declare class Navigator extends BaseModuleInstance implements ModuleInsta
     private onDragStop;
     private stopHandleDragging;
 }
-//# sourceMappingURL=navigator.d.ts.map

@@ -1,4 +1,4 @@
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 export declare type LayoutStage = 'start-layout' | 'before-series';
 export declare type AxisLabelLayout = {
     fractionDigits: number;
@@ -47,4 +47,3 @@ export declare class LayoutService {
     dispatchLayoutComplete(event: LayoutCompleteEvent): void;
 }
 export {};
-//# sourceMappingURL=layoutService.d.ts.map

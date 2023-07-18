@@ -47,12 +47,6 @@ var InfiniteBlock = /** @class */ (function (_super) {
         };
     };
     InfiniteBlock.prototype.setDataAndId = function (rowNode, data, index) {
-        // if there's no id and the rowNode was rendered before, it means this
-        // was a placeholder rowNode and should not be recycled. Setting
-        // `alreadyRendered`  to `false` forces the rowRenderer to flush it.
-        if (!rowNode.id && rowNode.alreadyRendered) {
-            rowNode.alreadyRendered = false;
-        }
         if (_.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
@@ -138,7 +132,17 @@ var InfiniteBlock = /** @class */ (function (_super) {
         var _this = this;
         this.rowNodes.forEach(function (rowNode, index) {
             var data = params.rowData ? params.rowData[index] : undefined;
-            _this.setDataAndId(rowNode, data, _this.startRow + index);
+            if (!rowNode.id && rowNode.alreadyRendered && data) {
+                // if the node had no id and was rendered, but we have data for it now, then
+                // destroy the old row and copy its position into new row. This prevents an additional
+                // set of events being fired as the row renderer tries to understand the changing id
+                _this.rowNodes[index] = new RowNode(_this.beans);
+                _this.rowNodes[index].setRowIndex(rowNode.rowIndex);
+                _this.rowNodes[index].setRowTop(rowNode.rowTop);
+                // clean up the old row
+                rowNode.clearRowTopAndRowIndex();
+            }
+            _this.setDataAndId(_this.rowNodes[index], data, _this.startRow + index);
         });
         var finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
         this.parentCache.pageLoaded(this, finalRowCount);

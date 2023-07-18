@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellPosition } from "../entities/cellPositionUtils";
@@ -24,7 +24,8 @@ export declare class NavigationService extends BeanStub {
     private gridBodyCon;
     constructor();
     private postConstruct;
-    handlePageScrollingKey(event: KeyboardEvent): boolean;
+    handlePageScrollingKey(event: KeyboardEvent, fromFullWidth?: boolean): boolean;
+    private handlePageUpDown;
     private navigateTo;
     private onPageDown;
     private onPageUp;

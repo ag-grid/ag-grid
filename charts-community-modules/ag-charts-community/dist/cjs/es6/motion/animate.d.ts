@@ -1,4 +1,4 @@
-import { Easing } from './easing';
+import type { Easing } from './easing';
 export interface KeyframesOptions<T> {
     duration: number;
     from: T;
@@ -43,4 +43,3 @@ export interface TweenControls<T> {
     stop: () => TweenControls<T>;
 }
 export declare function tween<T>(opts: TweenOptions<T>): TweenControls<T>;
-//# sourceMappingURL=animate.d.ts.map

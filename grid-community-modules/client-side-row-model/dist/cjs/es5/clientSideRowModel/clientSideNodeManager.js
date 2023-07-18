@@ -65,6 +65,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.dispatchRowDataUpdateStartedEvent(rowData);
         var rootNode = this.rootNode;
         var sibling = this.rootNode.sibling;
         rootNode.childrenAfterFilter = null;
@@ -95,6 +96,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
         var rowNodeTransaction = {
             remove: [],
             update: [],
@@ -109,6 +111,13 @@ var ClientSideNodeManager = /** @class */ (function () {
             core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    };
+    ClientSideNodeManager.prototype.dispatchRowDataUpdateStartedEvent = function (rowData) {
+        var event = {
+            type: core_1.Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            firstRowData: (rowData === null || rowData === void 0 ? void 0 : rowData.length) ? rowData[0] : null
+        };
+        this.eventService.dispatchEvent(event);
     };
     ClientSideNodeManager.prototype.updateSelection = function (nodesToUnselect, source) {
         var selectionChanged = nodesToUnselect.length > 0;

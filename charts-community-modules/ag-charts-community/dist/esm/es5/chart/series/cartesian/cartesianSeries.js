@@ -66,6 +66,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -82,24 +93,8 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var _a, _b;
-import { Series, SeriesNodeBaseClickEvent, } from '../series';
+import { Series, SeriesNodeBaseClickEvent } from '../series';
 import { SeriesMarker } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
 import { Path } from '../../../scene/shape/path';
@@ -109,11 +104,12 @@ import { Text } from '../../../scene/shape/text';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { Layers } from '../../layers';
-import { OPT_FUNCTION, Validate } from '../../../util/validation';
+import { OPT_FUNCTION, OPT_STRING, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { StateMachine } from '../../../motion/states';
+import { Logger } from '../../../util/logger';
 var DEFAULT_DIRECTION_KEYS = (_a = {},
     _a[ChartAxisDirection.X] = ['xKey'],
     _a[ChartAxisDirection.Y] = ['yKey'],
@@ -163,8 +159,8 @@ var CartesianStateMachine = /** @class */ (function (_super) {
 var CartesianSeries = /** @class */ (function (_super) {
     __extends(CartesianSeries, _super);
     function CartesianSeries(opts) {
-        var _a, _b;
-        var _this = _super.call(this, __assign(__assign({}, opts), { useSeriesGroupLayer: true, directionKeys: (_a = opts.directionKeys) !== null && _a !== void 0 ? _a : DEFAULT_DIRECTION_KEYS, directionNames: (_b = opts.directionNames) !== null && _b !== void 0 ? _b : DEFAULT_DIRECTION_NAMES })) || this;
+        var _this = _super.call(this, __assign(__assign({}, opts), { useSeriesGroupLayer: true, directionKeys: DEFAULT_DIRECTION_KEYS, directionNames: DEFAULT_DIRECTION_NAMES })) || this;
+        _this.legendItemName = undefined;
         _this._contextNodeData = [];
         _this.nodeDataDependencies = {};
         _this.highlightSelection = Selection.select(_this.highlightNode, function () {
@@ -173,13 +169,9 @@ var CartesianSeries = /** @class */ (function (_super) {
         _this.highlightLabelSelection = Selection.select(_this.highlightLabel, Text);
         _this.subGroups = [];
         _this.subGroupId = 0;
-        /**
-         * The assumption is that the values will be reset (to `true`)
-         * in the {@link yKeys} setter.
-         */
-        _this.seriesItemEnabled = new Map();
-        var _c = opts.pathsPerSeries, pathsPerSeries = _c === void 0 ? 1 : _c, _d = opts.hasMarkers, hasMarkers = _d === void 0 ? false : _d, _e = opts.pathsZIndexSubOrderOffset, pathsZIndexSubOrderOffset = _e === void 0 ? [] : _e;
-        _this.opts = { pathsPerSeries: pathsPerSeries, hasMarkers: hasMarkers, pathsZIndexSubOrderOffset: pathsZIndexSubOrderOffset };
+        _this.datumSelectionGarbageCollection = true;
+        var _a = opts.pathsPerSeries, pathsPerSeries = _a === void 0 ? 1 : _a, _b = opts.hasMarkers, hasMarkers = _b === void 0 ? false : _b, _c = opts.hasHighlightedLabels, hasHighlightedLabels = _c === void 0 ? false : _c, _d = opts.pathsZIndexSubOrderOffset, pathsZIndexSubOrderOffset = _d === void 0 ? [] : _d;
+        _this.opts = { pathsPerSeries: pathsPerSeries, hasMarkers: hasMarkers, hasHighlightedLabels: hasHighlightedLabels, pathsZIndexSubOrderOffset: pathsZIndexSubOrderOffset };
         _this.animationState = new CartesianStateMachine('empty', {
             empty: {
                 on: {
@@ -191,6 +183,10 @@ var CartesianSeries = /** @class */ (function (_super) {
             },
             ready: {
                 on: {
+                    updateData: {
+                        target: 'waiting',
+                        action: function () { },
+                    },
                     update: {
                         target: 'ready',
                         action: function (data) { return _this.animateReadyUpdate(data); },
@@ -209,6 +205,14 @@ var CartesianSeries = /** @class */ (function (_super) {
                     },
                 },
             },
+            waiting: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateWaitingUpdateReady(data); },
+                    },
+                },
+            },
         });
         return _this;
     }
@@ -223,8 +227,10 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.addChartEventListeners = function () {
         var _this = this;
         var _a, _b;
-        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
-        (_b = this.chartEventManager) === null || _b === void 0 ? void 0 : _b.addListener('legend-item-double-click', function (event) { return _this.onLegendItemDoubleClick(event); });
+        (_a = this.ctx.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', function (event) { return _this.onLegendItemClick(event); });
+        (_b = this.ctx.chartEventManager) === null || _b === void 0 ? void 0 : _b.addListener('legend-item-double-click', function (event) {
+            return _this.onLegendItemDoubleClick(event);
+        });
     };
     CartesianSeries.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -262,21 +268,29 @@ var CartesianSeries = /** @class */ (function (_super) {
         var _b, _c;
         var seriesRect = _a.seriesRect;
         return __awaiter(this, void 0, void 0, function () {
-            var _d, seriesItemEnabled, visible, series, seriesHighlighted, anySeriesItemEnabled, newNodeDataDependencies;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var visible, series, seriesHighlighted, newNodeDataDependencies, resize;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _d = this, seriesItemEnabled = _d.seriesItemEnabled, visible = _d.visible;
-                        series = ((_c = (_b = this.highlightManager) === null || _b === void 0 ? void 0 : _b.getActiveHighlight()) !== null && _c !== void 0 ? _c : {}).series;
+                        visible = this.visible;
+                        series = ((_c = (_b = this.ctx.highlightManager) === null || _b === void 0 ? void 0 : _b.getActiveHighlight()) !== null && _c !== void 0 ? _c : {}).series;
                         seriesHighlighted = series ? series === this : undefined;
-                        anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spreadArray([], __read(seriesItemEnabled.values())).some(function (v) { return v === true; });
                         newNodeDataDependencies = {
                             seriesRectWidth: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width,
                             seriesRectHeight: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.height,
                         };
-                        if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+                        resize = jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null;
+                        if (resize) {
                             this.nodeDataDependencies = newNodeDataDependencies;
                             this.markNodeDataDirty();
+                        }
+                        return [4 /*yield*/, this.updateSelections(seriesHighlighted, visible)];
+                    case 1:
+                        _d.sent();
+                        return [4 /*yield*/, this.updateNodes(seriesHighlighted, visible)];
+                    case 2:
+                        _d.sent();
+                        if (resize) {
                             this.animationState.transition('resize', {
                                 datumSelections: this.subGroups.map(function (_a) {
                                     var datumSelection = _a.datumSelection;
@@ -293,12 +307,6 @@ var CartesianSeries = /** @class */ (function (_super) {
                                 }),
                             });
                         }
-                        return [4 /*yield*/, this.updateSelections(seriesHighlighted, anySeriesItemEnabled)];
-                    case 1:
-                        _e.sent();
-                        return [4 /*yield*/, this.updateNodes(seriesHighlighted, anySeriesItemEnabled)];
-                    case 2:
-                        _e.sent();
                         this.animationState.transition('update', {
                             datumSelections: this.subGroups.map(function (_a) {
                                 var datumSelection = _a.datumSelection;
@@ -325,14 +333,15 @@ var CartesianSeries = /** @class */ (function (_super) {
         });
     };
     CartesianSeries.prototype.updateSelections = function (seriesHighlighted, anySeriesItemEnabled) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
+            var _b;
             var _this = this;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0: return [4 /*yield*/, this.updateHighlightSelection(seriesHighlighted)];
                     case 1:
-                        _b.sent();
+                        _c.sent();
                         if (!anySeriesItemEnabled) {
                             return [2 /*return*/];
                         }
@@ -341,17 +350,20 @@ var CartesianSeries = /** @class */ (function (_super) {
                         }
                         if (!this.nodeDataRefresh) return [3 /*break*/, 4];
                         this.nodeDataRefresh = false;
-                        _a = this;
+                        if ((_a = this.chart) === null || _a === void 0 ? void 0 : _a.debug) {
+                            Logger.debug("CartesianSeries.updateSelections() - calling createNodeData() for", this.id);
+                        }
+                        _b = this;
                         return [4 /*yield*/, this.createNodeData()];
                     case 2:
-                        _a._contextNodeData = _b.sent();
+                        _b._contextNodeData = _c.sent();
                         return [4 /*yield*/, this.updateSeriesGroups()];
                     case 3:
-                        _b.sent();
-                        _b.label = 4;
+                        _c.sent();
+                        _c.label = 4;
                     case 4: return [4 /*yield*/, Promise.all(this.subGroups.map(function (g, i) { return _this.updateSeriesGroupSelections(g, i); }))];
                     case 5:
-                        _b.sent();
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -397,12 +409,11 @@ var CartesianSeries = /** @class */ (function (_super) {
         return new MarkerShape();
     };
     CartesianSeries.prototype.updateSeriesGroups = function () {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, contextNodeData, contentGroup, subGroups, _c, pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, totalGroups, layer, subGroupId, subGroupZOffset, dataNodeGroup, markerGroup, labelGroup, paths, index;
+            var _a, contextNodeData, contentGroup, subGroups, _b, pathsPerSeries, hasMarkers, totalGroups, layer, subGroupId, dataNodeGroup, markerGroup, labelGroup, paths, index;
             var _this = this;
-            return __generator(this, function (_d) {
-                _b = this, contextNodeData = _b._contextNodeData, contentGroup = _b.contentGroup, subGroups = _b.subGroups, _c = _b.opts, pathsPerSeries = _c.pathsPerSeries, hasMarkers = _c.hasMarkers, pathsZIndexSubOrderOffset = _c.pathsZIndexSubOrderOffset;
+            return __generator(this, function (_c) {
+                _a = this, contextNodeData = _a._contextNodeData, contentGroup = _a.contentGroup, subGroups = _a.subGroups, _b = _a.opts, pathsPerSeries = _b.pathsPerSeries, hasMarkers = _b.hasMarkers;
                 if (contextNodeData.length === subGroups.length) {
                     return [2 /*return*/];
                 }
@@ -436,26 +447,25 @@ var CartesianSeries = /** @class */ (function (_super) {
                 while (totalGroups > subGroups.length) {
                     layer = false;
                     subGroupId = this.subGroupId++;
-                    subGroupZOffset = subGroupId;
                     dataNodeGroup = new Group({
                         name: this.id + "-series-sub" + subGroupId + "-dataNodes",
                         layer: layer,
                         zIndex: Layers.SERIES_LAYER_ZINDEX,
-                        zIndexSubOrder: [function () { return _this._declarationOrder; }, subGroupZOffset],
+                        zIndexSubOrder: this.getGroupZIndexSubOrder('data', subGroupId),
                     });
                     markerGroup = hasMarkers
                         ? new Group({
                             name: this.id + "-series-sub" + this.subGroupId++ + "-markers",
                             layer: layer,
                             zIndex: Layers.SERIES_LAYER_ZINDEX,
-                            zIndexSubOrder: [function () { return _this._declarationOrder; }, 10000 + subGroupId],
+                            zIndexSubOrder: this.getGroupZIndexSubOrder('marker', subGroupId),
                         })
                         : undefined;
                     labelGroup = new Group({
                         name: this.id + "-series-sub" + this.subGroupId++ + "-labels",
                         layer: layer,
                         zIndex: Layers.SERIES_LABEL_ZINDEX,
-                        zIndexSubOrder: [function () { return _this._declarationOrder; }, subGroupId],
+                        zIndexSubOrder: this.getGroupZIndexSubOrder('labels', subGroupId),
                     });
                     contentGroup.appendChild(dataNodeGroup);
                     contentGroup.appendChild(labelGroup);
@@ -466,10 +476,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                     for (index = 0; index < pathsPerSeries; index++) {
                         paths[index] = new Path();
                         paths[index].zIndex = Layers.SERIES_LAYER_ZINDEX;
-                        paths[index].zIndexSubOrder = [
-                            function () { return _this._declarationOrder; },
-                            ((_a = pathsZIndexSubOrderOffset[index]) !== null && _a !== void 0 ? _a : 0) + subGroupZOffset,
-                        ];
+                        paths[index].zIndexSubOrder = this.getGroupZIndexSubOrder('paths', index);
                         contentGroup.appendChild(paths[index]);
                     }
                     subGroups.push({
@@ -478,7 +485,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                         markerGroup: markerGroup,
                         labelGroup: labelGroup,
                         labelSelection: Selection.select(labelGroup, Text),
-                        datumSelection: Selection.select(dataNodeGroup, function () { return _this.nodeFactory(); }),
+                        datumSelection: Selection.select(dataNodeGroup, function () { return _this.nodeFactory(); }, this.datumSelectionGarbageCollection),
                         markerSelection: markerGroup ? Selection.select(markerGroup, function () { return _this.markerFactory(); }) : undefined,
                     });
                 }
@@ -486,26 +493,39 @@ var CartesianSeries = /** @class */ (function (_super) {
             });
         });
     };
+    CartesianSeries.prototype.getGroupZIndexSubOrder = function (type, subIndex) {
+        var _a;
+        if (subIndex === void 0) { subIndex = 0; }
+        var result = _super.prototype.getGroupZIndexSubOrder.call(this, type, subIndex);
+        if (type === 'paths') {
+            var pathOffset_1 = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            var superFn_1 = result[0];
+            if (typeof superFn_1 === 'function') {
+                result[0] = function () { return +superFn_1() + pathOffset_1; };
+            }
+            else {
+                result[0] = +superFn_1 + pathOffset_1;
+            }
+        }
+        return result;
+    };
     CartesianSeries.prototype.updateNodes = function (seriesHighlighted, anySeriesItemEnabled) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, highlightSelection, highlightLabelSelection, contextNodeData, seriesItemEnabled, hasMarkers, visible, seriesOpacity, subGroupOpacities, isSubGroupOpacityDifferent;
+            var _b, highlightSelection, highlightLabelSelection, contextNodeData, _c, hasMarkers, hasHighlightedLabels, visible, subGroupOpacities;
             var _this = this;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, hasMarkers = _b.opts.hasMarkers;
+                        _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, _c = _b.opts, hasMarkers = _c.hasMarkers, hasHighlightedLabels = _c.hasHighlightedLabels;
                         visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
                         this.rootGroup.visible = visible;
                         this.contentGroup.visible = visible;
                         this.highlightGroup.visible = visible && !!seriesHighlighted;
-                        seriesOpacity = this.getOpacity();
                         subGroupOpacities = this.subGroups.map(function (_, index) {
                             var itemId = contextNodeData[index].itemId;
                             return _this.getOpacity({ itemId: itemId });
                         });
-                        isSubGroupOpacityDifferent = subGroupOpacities.some(function (subOp) { return subOp !== seriesOpacity; });
-                        this.contentGroup.opacity = isSubGroupOpacityDifferent ? 1 : seriesOpacity;
                         if (!hasMarkers) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.updateMarkerNodes({
                                 markerSelection: highlightSelection,
@@ -513,76 +533,77 @@ var CartesianSeries = /** @class */ (function (_super) {
                                 seriesIdx: -1,
                             })];
                     case 1:
-                        _c.sent();
+                        _d.sent();
                         this.animationState.transition('highlightMarkers', highlightSelection);
                         return [3 /*break*/, 4];
                     case 2: return [4 /*yield*/, this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 })];
                     case 3:
-                        _c.sent();
+                        _d.sent();
                         this.animationState.transition('highlight', highlightSelection);
-                        _c.label = 4;
-                    case 4: return [4 /*yield*/, this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 })];
+                        _d.label = 4;
+                    case 4:
+                        if (!hasHighlightedLabels) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 })];
                     case 5:
-                        _c.sent();
-                        return [4 /*yield*/, Promise.all(this.subGroups.map(function (subGroup, seriesIdx) { return __awaiter(_this, void 0, void 0, function () {
-                                var dataNodeGroup, markerGroup, datumSelection, labelSelection, markerSelection, paths, labelGroup, itemId, subGroupVisible, subGroupOpacity, paths_2, paths_2_1, path;
-                                var e_2, _a;
-                                var _b;
-                                return __generator(this, function (_c) {
-                                    switch (_c.label) {
-                                        case 0:
-                                            dataNodeGroup = subGroup.dataNodeGroup, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths, labelGroup = subGroup.labelGroup;
-                                            itemId = contextNodeData[seriesIdx].itemId;
-                                            subGroupVisible = visible && ((_b = seriesItemEnabled.get(itemId)) !== null && _b !== void 0 ? _b : true);
-                                            subGroupOpacity = isSubGroupOpacityDifferent ? subGroupOpacities[seriesIdx] : 1;
-                                            dataNodeGroup.opacity = subGroupOpacity;
-                                            dataNodeGroup.visible = subGroupVisible;
-                                            labelGroup.visible = subGroupVisible;
-                                            if (markerGroup) {
-                                                markerGroup.opacity = subGroupOpacity;
-                                                markerGroup.zIndex =
-                                                    dataNodeGroup.zIndex >= Layers.SERIES_LAYER_ZINDEX
-                                                        ? dataNodeGroup.zIndex
-                                                        : dataNodeGroup.zIndex + 1;
-                                                markerGroup.visible = subGroupVisible;
+                        _d.sent();
+                        _d.label = 6;
+                    case 6: return [4 /*yield*/, Promise.all(this.subGroups.map(function (subGroup, seriesIdx) { return __awaiter(_this, void 0, void 0, function () {
+                            var dataNodeGroup, markerGroup, datumSelection, labelSelection, markerSelection, paths, labelGroup, subGroupVisible, subGroupOpacity, paths_2, paths_2_1, path;
+                            var e_2, _a;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0:
+                                        dataNodeGroup = subGroup.dataNodeGroup, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths, labelGroup = subGroup.labelGroup;
+                                        subGroupVisible = visible;
+                                        subGroupOpacity = subGroupOpacities[seriesIdx];
+                                        dataNodeGroup.opacity = subGroupOpacity;
+                                        dataNodeGroup.visible = subGroupVisible;
+                                        labelGroup.visible = subGroupVisible;
+                                        if (markerGroup) {
+                                            markerGroup.opacity = subGroupOpacity;
+                                            markerGroup.zIndex =
+                                                dataNodeGroup.zIndex >= Layers.SERIES_LAYER_ZINDEX
+                                                    ? dataNodeGroup.zIndex
+                                                    : dataNodeGroup.zIndex + 1;
+                                            markerGroup.visible = subGroupVisible;
+                                        }
+                                        if (labelGroup) {
+                                            labelGroup.opacity = subGroupOpacity;
+                                        }
+                                        try {
+                                            for (paths_2 = __values(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
+                                                path = paths_2_1.value;
+                                                path.opacity = subGroupOpacity;
+                                                path.visible = subGroupVisible;
                                             }
-                                            if (labelGroup) {
-                                                labelGroup.opacity = subGroupOpacity;
-                                            }
+                                        }
+                                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                                        finally {
                                             try {
-                                                for (paths_2 = __values(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
-                                                    path = paths_2_1.value;
-                                                    path.opacity = subGroupOpacity;
-                                                    path.visible = subGroupVisible;
-                                                }
+                                                if (paths_2_1 && !paths_2_1.done && (_a = paths_2.return)) _a.call(paths_2);
                                             }
-                                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                                            finally {
-                                                try {
-                                                    if (paths_2_1 && !paths_2_1.done && (_a = paths_2.return)) _a.call(paths_2);
-                                                }
-                                                finally { if (e_2) throw e_2.error; }
-                                            }
-                                            if (!dataNodeGroup.visible) {
-                                                return [2 /*return*/];
-                                            }
-                                            return [4 /*yield*/, this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx: seriesIdx })];
-                                        case 1:
-                                            _c.sent();
-                                            return [4 /*yield*/, this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx: seriesIdx })];
-                                        case 2:
-                                            _c.sent();
-                                            if (!(hasMarkers && markerSelection)) return [3 /*break*/, 4];
-                                            return [4 /*yield*/, this.updateMarkerNodes({ markerSelection: markerSelection, isHighlight: false, seriesIdx: seriesIdx })];
-                                        case 3:
-                                            _c.sent();
-                                            _c.label = 4;
-                                        case 4: return [2 /*return*/];
-                                    }
-                                });
-                            }); }))];
-                    case 6:
-                        _c.sent();
+                                            finally { if (e_2) throw e_2.error; }
+                                        }
+                                        if (!dataNodeGroup.visible) {
+                                            return [2 /*return*/];
+                                        }
+                                        return [4 /*yield*/, this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx: seriesIdx })];
+                                    case 1:
+                                        _b.sent();
+                                        return [4 /*yield*/, this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx: seriesIdx })];
+                                    case 2:
+                                        _b.sent();
+                                        if (!(hasMarkers && markerSelection)) return [3 /*break*/, 4];
+                                        return [4 /*yield*/, this.updateMarkerNodes({ markerSelection: markerSelection, isHighlight: false, seriesIdx: seriesIdx })];
+                                    case 3:
+                                        _b.sent();
+                                        _b.label = 4;
+                                    case 4: return [2 /*return*/];
+                                }
+                            });
+                        }); }))];
+                    case 7:
+                        _d.sent();
                         return [2 /*return*/];
                 }
             });
@@ -597,7 +618,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 switch (_g.label) {
                     case 0:
                         _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData;
-                        highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+                        highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
                         item = seriesHighlighted && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.datum) ? highlightedDatum : undefined;
                         _c = this;
                         return [4 /*yield*/, this.updateHighlightSelectionItem({ item: item, highlightSelection: highlightSelection })];
@@ -666,7 +687,9 @@ var CartesianSeries = /** @class */ (function (_super) {
         var e_5, _a, e_6, _b;
         var _c, _d;
         var x = point.x, y = point.y;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, rootGroup = _e.rootGroup, contextNodeData = _e._contextNodeData;
+        var _e = this, axes = _e.axes, rootGroup = _e.rootGroup, contextNodeData = _e._contextNodeData;
+        var xAxis = axes[ChartAxisDirection.X];
+        var yAxis = axes[ChartAxisDirection.Y];
         var hitPoint = rootGroup.transformPoint(x, y);
         var minDistance = Infinity;
         var closestDatum;
@@ -718,7 +741,9 @@ var CartesianSeries = /** @class */ (function (_super) {
         var e_7, _a, e_8, _b;
         var _c, _d;
         var x = point.x, y = point.y;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, rootGroup = _e.rootGroup, contextNodeData = _e._contextNodeData;
+        var _e = this, axes = _e.axes, rootGroup = _e.rootGroup, contextNodeData = _e._contextNodeData;
+        var xAxis = axes[ChartAxisDirection.X];
+        var yAxis = axes[ChartAxisDirection.Y];
         // Prefer to start search with any available category axis.
         var directions = [xAxis, yAxis]
             .filter(function (a) { return a instanceof CategoryAxis; })
@@ -787,48 +812,31 @@ var CartesianSeries = /** @class */ (function (_super) {
         }
     };
     CartesianSeries.prototype.onLegendItemClick = function (event) {
-        var enabled = event.enabled, itemId = event.itemId, series = event.series;
-        if (series.id !== this.id)
-            return;
-        this.toggleSeriesItem(itemId, enabled);
+        var enabled = event.enabled, itemId = event.itemId, series = event.series, legendItemName = event.legendItemName;
+        var matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
+        else if (matchedLegendItemName) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
     };
     CartesianSeries.prototype.onLegendItemDoubleClick = function (event) {
-        var enabled = event.enabled, itemId = event.itemId, series = event.series, numVisibleItems = event.numVisibleItems;
+        var enabled = event.enabled, itemId = event.itemId, series = event.series, numVisibleItems = event.numVisibleItems, legendItemName = event.legendItemName;
         var totalVisibleItems = Object.values(numVisibleItems).reduce(function (p, v) { return p + v; }, 0);
-        var wasClicked = series.id === this.id;
-        var newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
-        this.toggleSeriesItem(itemId, newEnabled);
-    };
-    CartesianSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
-        if (this.seriesItemEnabled.size > 0) {
-            this.seriesItemEnabled.set(itemId, enabled);
-            this.nodeDataRefresh = true;
+        var matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id || matchedLegendItemName) {
+            // Double-clicked item should always become visible.
+            this.toggleSeriesItem(itemId, true);
+        }
+        else if (enabled && totalVisibleItems === 1) {
+            // Other items should become visible if there is only one existing visible item.
+            this.toggleSeriesItem(itemId, true);
         }
         else {
-            _super.prototype.toggleSeriesItem.call(this, itemId, enabled);
+            // Disable other items if not exactly one enabled.
+            this.toggleSeriesItem(itemId, false);
         }
-    };
-    CartesianSeries.prototype.isEnabled = function () {
-        var e_9, _a;
-        if (this.seriesItemEnabled.size > 0) {
-            try {
-                for (var _b = __values(this.seriesItemEnabled), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var _d = __read(_c.value, 2), enabled = _d[1];
-                    if (enabled) {
-                        return true;
-                    }
-                }
-            }
-            catch (e_9_1) { e_9 = { error: e_9_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                }
-                finally { if (e_9) throw e_9.error; }
-            }
-            return false;
-        }
-        return _super.prototype.isEnabled.call(this);
     };
     CartesianSeries.prototype.isPathOrSelectionDirty = function () {
         // Override point to allow more sophisticated dirty selection detection.
@@ -836,25 +844,6 @@ var CartesianSeries = /** @class */ (function (_super) {
     };
     CartesianSeries.prototype.getLabelData = function () {
         return [];
-    };
-    CartesianSeries.prototype.isAnySeriesVisible = function () {
-        var e_10, _a;
-        try {
-            for (var _b = __values(this.seriesItemEnabled.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var visible = _c.value;
-                if (visible) {
-                    return true;
-                }
-            }
-        }
-        catch (e_10_1) { e_10 = { error: e_10_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_10) throw e_10.error; }
-        }
-        return false;
     };
     CartesianSeries.prototype.updateHighlightSelectionItem = function (opts) {
         return __awaiter(this, void 0, void 0, function () {
@@ -920,6 +909,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.animateReadyUpdate = function (_data) {
         // Override point for sub-classes.
     };
+    CartesianSeries.prototype.animateWaitingUpdateReady = function (_data) {
+        // Override point for sub-classes.
+    };
     CartesianSeries.prototype.animateReadyHighlight = function (_data) {
         // Override point for sub-classes.
     };
@@ -929,6 +921,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.animateReadyResize = function (_data) {
         // Override point for sub-classes.
     };
+    __decorate([
+        Validate(OPT_STRING)
+    ], CartesianSeries.prototype, "legendItemName", void 0);
     return CartesianSeries;
 }(Series));
 export { CartesianSeries };

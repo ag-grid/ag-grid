@@ -126,6 +126,12 @@ export declare const _: {
     getInnerWidth(el: HTMLElement): number;
     getAbsoluteHeight(el: HTMLElement): number;
     getAbsoluteWidth(el: HTMLElement): number;
+    getElementRectWithOffset(el: HTMLElement): {
+        top: number;
+        left: number;
+        right: number;
+        bottom: number;
+    };
     isRtlNegativeScroll(): boolean;
     getScrollLeft(element: HTMLElement, rtl: boolean): number;
     setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
@@ -156,7 +162,7 @@ export declare const _: {
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
     nodeListForEach<T_18 extends Node>(nodeList: NodeListOf<T_18> | null, action: (value: T_18) => void): void;
     FOCUSABLE_SELECTOR: "[tabindex], input, select, button, textarea, [href]";
-    FOCUSABLE_EXCLUDE: ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *";
+    FOCUSABLE_EXCLUDE: ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
     serialiseDate(date: Date | null, includeTime?: boolean, separator?: string): string | null;
     dateToFormattedString(date: Date, format?: string): string;
     parseDateTimeFromString(value?: string | null | undefined): Date | null;

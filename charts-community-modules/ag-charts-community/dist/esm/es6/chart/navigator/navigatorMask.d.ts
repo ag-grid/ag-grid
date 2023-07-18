@@ -1,4 +1,4 @@
-import { RangeMask } from '../shapes/rangeMask';
+import type { RangeMask } from '../shapes/rangeMask';
 export declare class NavigatorMask {
     private readonly rm;
     set fill(value: string | undefined);
@@ -11,4 +11,3 @@ export declare class NavigatorMask {
     get fillOpacity(): number;
     constructor(rangeMask: RangeMask);
 }
-//# sourceMappingURL=navigatorMask.d.ts.map

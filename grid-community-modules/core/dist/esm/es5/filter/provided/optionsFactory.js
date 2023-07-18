@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 /* Common logic for options, used by both filters and floating filters. */
 var OptionsFactory = /** @class */ (function () {
     function OptionsFactory() {

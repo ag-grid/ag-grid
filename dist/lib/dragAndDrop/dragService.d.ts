@@ -15,7 +15,7 @@ export declare class DragService extends BeanStub {
     private removeListener;
     removeDragSource(params: DragListenerParams): void;
     isDragging(): boolean;
-    addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
+    addDragSource(params: DragListenerParams): void;
     getStartTarget(): EventTarget | null;
     private onTouchStart;
     private onMouseDown;
@@ -25,6 +25,7 @@ export declare class DragService extends BeanStub {
     private onCommonMove;
     private onTouchMove;
     private onMouseMove;
+    private shouldPreventMouseEvent;
     private isOverFormFieldElement;
     onTouchUp(touchEvent: TouchEvent, el: Element): void;
     onMouseUp(mouseEvent: MouseEvent, el: Element): void;
@@ -43,4 +44,8 @@ export interface DragListenerParams {
     onDragStop: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for mouse move while dragging */
     onDragging: (mouseEvent: MouseEvent | Touch) => void;
+    /** Include touch events for this Drag Listener */
+    includeTouch?: boolean;
+    /** If `true`, it will stop the propagation of Touch Events */
+    stopPropagationForTouch?: boolean;
 }

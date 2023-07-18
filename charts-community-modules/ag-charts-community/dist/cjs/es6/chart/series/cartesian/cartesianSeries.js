@@ -31,6 +31,7 @@ const json_1 = require("../../../util/json");
 const chartAxisDirection_1 = require("../../chartAxisDirection");
 const util_1 = require("../../marker/util");
 const states_1 = require("../../../motion/states");
+const logger_1 = require("../../../util/logger");
 const DEFAULT_DIRECTION_KEYS = {
     [chartAxisDirection_1.ChartAxisDirection.X]: ['xKey'],
     [chartAxisDirection_1.ChartAxisDirection.Y]: ['yKey'],
@@ -65,21 +66,17 @@ class CartesianStateMachine extends states_1.StateMachine {
 }
 class CartesianSeries extends series_1.Series {
     constructor(opts) {
-        var _a, _b;
-        super(Object.assign(Object.assign({}, opts), { useSeriesGroupLayer: true, directionKeys: (_a = opts.directionKeys) !== null && _a !== void 0 ? _a : DEFAULT_DIRECTION_KEYS, directionNames: (_b = opts.directionNames) !== null && _b !== void 0 ? _b : DEFAULT_DIRECTION_NAMES }));
+        super(Object.assign(Object.assign({}, opts), { useSeriesGroupLayer: true, directionKeys: DEFAULT_DIRECTION_KEYS, directionNames: DEFAULT_DIRECTION_NAMES }));
+        this.legendItemName = undefined;
         this._contextNodeData = [];
         this.nodeDataDependencies = {};
         this.highlightSelection = selection_1.Selection.select(this.highlightNode, () => this.opts.hasMarkers ? this.markerFactory() : this.nodeFactory());
         this.highlightLabelSelection = selection_1.Selection.select(this.highlightLabel, text_1.Text);
         this.subGroups = [];
         this.subGroupId = 0;
-        /**
-         * The assumption is that the values will be reset (to `true`)
-         * in the {@link yKeys} setter.
-         */
-        this.seriesItemEnabled = new Map();
-        const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
-        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
+        this.datumSelectionGarbageCollection = true;
+        const { pathsPerSeries = 1, hasMarkers = false, hasHighlightedLabels = false, pathsZIndexSubOrderOffset = [], } = opts;
+        this.opts = { pathsPerSeries, hasMarkers, hasHighlightedLabels, pathsZIndexSubOrderOffset };
         this.animationState = new CartesianStateMachine('empty', {
             empty: {
                 on: {
@@ -91,6 +88,10 @@ class CartesianSeries extends series_1.Series {
             },
             ready: {
                 on: {
+                    updateData: {
+                        target: 'waiting',
+                        action: () => { },
+                    },
                     update: {
                         target: 'ready',
                         action: (data) => this.animateReadyUpdate(data),
@@ -109,6 +110,14 @@ class CartesianSeries extends series_1.Series {
                     },
                 },
             },
+            waiting: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data) => this.animateWaitingUpdateReady(data),
+                    },
+                },
+            },
         });
     }
     get contextNodeData() {
@@ -117,8 +126,8 @@ class CartesianSeries extends series_1.Series {
     }
     addChartEventListeners() {
         var _a, _b;
-        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        (_b = this.chartEventManager) === null || _b === void 0 ? void 0 : _b.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        (_a = this.ctx.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        (_b = this.ctx.chartEventManager) === null || _b === void 0 ? void 0 : _b.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
     destroy() {
         super.destroy();
@@ -155,17 +164,21 @@ class CartesianSeries extends series_1.Series {
     update({ seriesRect }) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const { seriesItemEnabled, visible } = this;
-            const { series } = (_b = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight()) !== null && _b !== void 0 ? _b : {};
+            const { visible } = this;
+            const { series } = (_b = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight()) !== null && _b !== void 0 ? _b : {};
             const seriesHighlighted = series ? series === this : undefined;
-            const anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some((v) => v === true);
             const newNodeDataDependencies = {
                 seriesRectWidth: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width,
                 seriesRectHeight: seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.height,
             };
-            if (json_1.jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+            const resize = json_1.jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null;
+            if (resize) {
                 this.nodeDataDependencies = newNodeDataDependencies;
                 this.markNodeDataDirty();
+            }
+            yield this.updateSelections(seriesHighlighted, visible);
+            yield this.updateNodes(seriesHighlighted, visible);
+            if (resize) {
                 this.animationState.transition('resize', {
                     datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
                     markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
@@ -173,8 +186,6 @@ class CartesianSeries extends series_1.Series {
                     paths: this.subGroups.map(({ paths }) => paths),
                 });
             }
-            yield this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
-            yield this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
             this.animationState.transition('update', {
                 datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
                 markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
@@ -186,6 +197,7 @@ class CartesianSeries extends series_1.Series {
         });
     }
     updateSelections(seriesHighlighted, anySeriesItemEnabled) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             yield this.updateHighlightSelection(seriesHighlighted);
             if (!anySeriesItemEnabled) {
@@ -196,6 +208,9 @@ class CartesianSeries extends series_1.Series {
             }
             if (this.nodeDataRefresh) {
                 this.nodeDataRefresh = false;
+                if ((_a = this.chart) === null || _a === void 0 ? void 0 : _a.debug) {
+                    logger_1.Logger.debug(`CartesianSeries.updateSelections() - calling createNodeData() for`, this.id);
+                }
                 this._contextNodeData = yield this.createNodeData();
                 yield this.updateSeriesGroups();
             }
@@ -226,9 +241,8 @@ class CartesianSeries extends series_1.Series {
         return new MarkerShape();
     }
     updateSeriesGroups() {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { _contextNodeData: contextNodeData, contentGroup, subGroups, opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset }, } = this;
+            const { _contextNodeData: contextNodeData, contentGroup, subGroups, opts: { pathsPerSeries, hasMarkers }, } = this;
             if (contextNodeData.length === subGroups.length) {
                 return;
             }
@@ -250,26 +264,25 @@ class CartesianSeries extends series_1.Series {
             while (totalGroups > subGroups.length) {
                 const layer = false;
                 const subGroupId = this.subGroupId++;
-                const subGroupZOffset = subGroupId;
                 const dataNodeGroup = new group_1.Group({
                     name: `${this.id}-series-sub${subGroupId}-dataNodes`,
                     layer,
                     zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
-                    zIndexSubOrder: [() => this._declarationOrder, subGroupZOffset],
+                    zIndexSubOrder: this.getGroupZIndexSubOrder('data', subGroupId),
                 });
                 const markerGroup = hasMarkers
                     ? new group_1.Group({
                         name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                         layer,
                         zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
-                        zIndexSubOrder: [() => this._declarationOrder, 10000 + subGroupId],
+                        zIndexSubOrder: this.getGroupZIndexSubOrder('marker', subGroupId),
                     })
                     : undefined;
                 const labelGroup = new group_1.Group({
                     name: `${this.id}-series-sub${this.subGroupId++}-labels`,
                     layer,
                     zIndex: layers_1.Layers.SERIES_LABEL_ZINDEX,
-                    zIndexSubOrder: [() => this._declarationOrder, subGroupId],
+                    zIndexSubOrder: this.getGroupZIndexSubOrder('labels', subGroupId),
                 });
                 contentGroup.appendChild(dataNodeGroup);
                 contentGroup.appendChild(labelGroup);
@@ -280,10 +293,7 @@ class CartesianSeries extends series_1.Series {
                 for (let index = 0; index < pathsPerSeries; index++) {
                     paths[index] = new path_1.Path();
                     paths[index].zIndex = layers_1.Layers.SERIES_LAYER_ZINDEX;
-                    paths[index].zIndexSubOrder = [
-                        () => this._declarationOrder,
-                        ((_a = pathsZIndexSubOrderOffset[index]) !== null && _a !== void 0 ? _a : 0) + subGroupZOffset,
-                    ];
+                    paths[index].zIndexSubOrder = this.getGroupZIndexSubOrder('paths', index);
                     contentGroup.appendChild(paths[index]);
                 }
                 subGroups.push({
@@ -292,27 +302,39 @@ class CartesianSeries extends series_1.Series {
                     markerGroup,
                     labelGroup,
                     labelSelection: selection_1.Selection.select(labelGroup, text_1.Text),
-                    datumSelection: selection_1.Selection.select(dataNodeGroup, () => this.nodeFactory()),
+                    datumSelection: selection_1.Selection.select(dataNodeGroup, () => this.nodeFactory(), this.datumSelectionGarbageCollection),
                     markerSelection: markerGroup ? selection_1.Selection.select(markerGroup, () => this.markerFactory()) : undefined,
                 });
             }
         });
     }
+    getGroupZIndexSubOrder(type, subIndex = 0) {
+        var _a;
+        const result = super.getGroupZIndexSubOrder(type, subIndex);
+        if (type === 'paths') {
+            const pathOffset = (_a = this.opts.pathsZIndexSubOrderOffset[subIndex]) !== null && _a !== void 0 ? _a : 0;
+            const superFn = result[0];
+            if (typeof superFn === 'function') {
+                result[0] = () => +superFn() + pathOffset;
+            }
+            else {
+                result[0] = +superFn + pathOffset;
+            }
+        }
+        return result;
+    }
     updateNodes(seriesHighlighted, anySeriesItemEnabled) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData, seriesItemEnabled, opts: { hasMarkers }, } = this;
+            const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData, opts: { hasMarkers, hasHighlightedLabels }, } = this;
             const visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
             this.rootGroup.visible = visible;
             this.contentGroup.visible = visible;
             this.highlightGroup.visible = visible && !!seriesHighlighted;
-            const seriesOpacity = this.getOpacity();
             const subGroupOpacities = this.subGroups.map((_, index) => {
                 const { itemId } = contextNodeData[index];
                 return this.getOpacity({ itemId });
             });
-            const isSubGroupOpacityDifferent = subGroupOpacities.some((subOp) => subOp !== seriesOpacity);
-            this.contentGroup.opacity = isSubGroupOpacityDifferent ? 1 : seriesOpacity;
             if (hasMarkers) {
                 yield this.updateMarkerNodes({
                     markerSelection: highlightSelection,
@@ -325,13 +347,13 @@ class CartesianSeries extends series_1.Series {
                 yield this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
                 this.animationState.transition('highlight', highlightSelection);
             }
-            yield this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+            if (hasHighlightedLabels) {
+                yield this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+            }
             yield Promise.all(this.subGroups.map((subGroup, seriesIdx) => __awaiter(this, void 0, void 0, function* () {
-                var _b;
                 const { dataNodeGroup, markerGroup, datumSelection, labelSelection, markerSelection, paths, labelGroup, } = subGroup;
-                const { itemId } = contextNodeData[seriesIdx];
-                const subGroupVisible = visible && ((_b = seriesItemEnabled.get(itemId)) !== null && _b !== void 0 ? _b : true);
-                const subGroupOpacity = isSubGroupOpacityDifferent ? subGroupOpacities[seriesIdx] : 1;
+                const subGroupVisible = visible;
+                const subGroupOpacity = subGroupOpacities[seriesIdx];
                 dataNodeGroup.opacity = subGroupOpacity;
                 dataNodeGroup.visible = subGroupVisible;
                 labelGroup.visible = subGroupVisible;
@@ -365,7 +387,7 @@ class CartesianSeries extends series_1.Series {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData } = this;
-            const highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+            const highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
             const item = seriesHighlighted && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.datum) ? highlightedDatum : undefined;
             this.highlightSelection = yield this.updateHighlightSelectionItem({ item, highlightSelection });
             let labelItem;
@@ -404,7 +426,9 @@ class CartesianSeries extends series_1.Series {
     pickNodeClosestDatum(point) {
         var _a, _b;
         const { x, y } = point;
-        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const { axes, rootGroup, _contextNodeData: contextNodeData } = this;
+        const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         const hitPoint = rootGroup.transformPoint(x, y);
         let minDistance = Infinity;
         let closestDatum;
@@ -435,7 +459,9 @@ class CartesianSeries extends series_1.Series {
     pickNodeMainAxisFirst(point, requireCategoryAxis) {
         var _a, _b;
         const { x, y } = point;
-        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const { axes, rootGroup, _contextNodeData: contextNodeData } = this;
+        const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         // Prefer to start search with any available category axis.
         const directions = [xAxis, yAxis]
             .filter((a) => a instanceof categoryAxis_1.CategoryAxis)
@@ -484,37 +510,31 @@ class CartesianSeries extends series_1.Series {
         }
     }
     onLegendItemClick(event) {
-        const { enabled, itemId, series } = event;
-        if (series.id !== this.id)
-            return;
-        this.toggleSeriesItem(itemId, enabled);
+        const { enabled, itemId, series, legendItemName } = event;
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
+        else if (matchedLegendItemName) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
     }
     onLegendItemDoubleClick(event) {
-        const { enabled, itemId, series, numVisibleItems } = event;
+        const { enabled, itemId, series, numVisibleItems, legendItemName } = event;
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
-        const wasClicked = series.id === this.id;
-        const newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
-        this.toggleSeriesItem(itemId, newEnabled);
-    }
-    toggleSeriesItem(itemId, enabled) {
-        if (this.seriesItemEnabled.size > 0) {
-            this.seriesItemEnabled.set(itemId, enabled);
-            this.nodeDataRefresh = true;
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id || matchedLegendItemName) {
+            // Double-clicked item should always become visible.
+            this.toggleSeriesItem(itemId, true);
+        }
+        else if (enabled && totalVisibleItems === 1) {
+            // Other items should become visible if there is only one existing visible item.
+            this.toggleSeriesItem(itemId, true);
         }
         else {
-            super.toggleSeriesItem(itemId, enabled);
+            // Disable other items if not exactly one enabled.
+            this.toggleSeriesItem(itemId, false);
         }
-    }
-    isEnabled() {
-        if (this.seriesItemEnabled.size > 0) {
-            for (const [, enabled] of this.seriesItemEnabled) {
-                if (enabled) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return super.isEnabled();
     }
     isPathOrSelectionDirty() {
         // Override point to allow more sophisticated dirty selection detection.
@@ -522,14 +542,6 @@ class CartesianSeries extends series_1.Series {
     }
     getLabelData() {
         return [];
-    }
-    isAnySeriesVisible() {
-        for (const visible of this.seriesItemEnabled.values()) {
-            if (visible) {
-                return true;
-            }
-        }
-        return false;
     }
     updateHighlightSelectionItem(opts) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -580,6 +592,9 @@ class CartesianSeries extends series_1.Series {
     animateReadyUpdate(_data) {
         // Override point for sub-classes.
     }
+    animateWaitingUpdateReady(_data) {
+        // Override point for sub-classes.
+    }
     animateReadyHighlight(_data) {
         // Override point for sub-classes.
     }
@@ -590,6 +605,9 @@ class CartesianSeries extends series_1.Series {
         // Override point for sub-classes.
     }
 }
+__decorate([
+    validation_1.Validate(validation_1.OPT_STRING)
+], CartesianSeries.prototype, "legendItemName", void 0);
 exports.CartesianSeries = CartesianSeries;
 class CartesianSeriesMarker extends seriesMarker_1.SeriesMarker {
     constructor() {

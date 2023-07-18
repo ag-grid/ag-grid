@@ -13,14 +13,14 @@ export declare class CellKeyboardListenerFeature extends BeanStub {
     constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl);
     setComp(eGui: HTMLElement): void;
     onKeyDown(event: KeyboardEvent): void;
-    private onNavigationKeyPressed;
+    private onNavigationKeyDown;
     private onShiftRangeSelect;
     private onTabKeyDown;
-    private onBackspaceOrDeleteKeyPressed;
+    private onBackspaceOrDeleteKeyDown;
     private onEnterKeyDown;
     private onF2KeyDown;
     private onEscapeKeyDown;
-    onKeyPress(event: KeyboardEvent): void;
-    private onSpaceKeyPressed;
+    processCharacter(event: KeyboardEvent): void;
+    private onSpaceKeyDown;
     destroy(): void;
 }

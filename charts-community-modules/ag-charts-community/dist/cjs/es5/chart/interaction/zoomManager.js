@@ -54,21 +54,8 @@ var __read = (this && this.__read) || function (o, n) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZoomManager = void 0;
+var chartAxisDirection_1 = require("../chartAxisDirection");
 var baseManager_1 = require("./baseManager");
-function isEqual(a, b) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    if (a === b)
-        return true;
-    if (((_a = a === null || a === void 0 ? void 0 : a.x) === null || _a === void 0 ? void 0 : _a.min) !== ((_b = b === null || b === void 0 ? void 0 : b.x) === null || _b === void 0 ? void 0 : _b.min))
-        return false;
-    if (((_c = a === null || a === void 0 ? void 0 : a.x) === null || _c === void 0 ? void 0 : _c.max) !== ((_d = b === null || b === void 0 ? void 0 : b.x) === null || _d === void 0 ? void 0 : _d.max))
-        return false;
-    if (((_e = a === null || a === void 0 ? void 0 : a.y) === null || _e === void 0 ? void 0 : _e.max) !== ((_f = b === null || b === void 0 ? void 0 : b.y) === null || _f === void 0 ? void 0 : _f.max))
-        return false;
-    if (((_g = a === null || a === void 0 ? void 0 : a.y) === null || _g === void 0 ? void 0 : _g.min) !== ((_h = b === null || b === void 0 ? void 0 : b.y) === null || _h === void 0 ? void 0 : _h.min))
-        return false;
-    return true;
-}
 /**
  * Manages the current zoom state for a chart. Tracks the requested zoom from distinct dependents
  * and handles conflicting zoom requests.
@@ -76,31 +63,72 @@ function isEqual(a, b) {
 var ZoomManager = /** @class */ (function (_super) {
     __extends(ZoomManager, _super);
     function ZoomManager() {
-        var _this = _super.call(this) || this;
-        _this.states = {};
-        _this.currentZoom = undefined;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.axes = {};
         return _this;
     }
-    ZoomManager.prototype.updateZoom = function (callerId, newZoom) {
-        delete this.states[callerId];
-        if (newZoom != null) {
-            this.states[callerId] = __assign({}, newZoom);
+    ZoomManager.prototype.updateAxes = function (axes) {
+        var _this = this;
+        var removedAxes = new Set(Object.keys(this.axes));
+        axes.forEach(function (axis) {
+            var _a;
+            var _b, _c;
+            removedAxes.delete(axis.id);
+            (_a = (_b = _this.axes)[_c = axis.id]) !== null && _a !== void 0 ? _a : (_b[_c] = new AxisZoomManager(axis));
+        });
+        removedAxes.forEach(function (axisId) {
+            delete _this.axes[axisId];
+        });
+        if (this.initialZoom) {
+            this.updateZoom(this.initialZoom.callerId, this.initialZoom.newZoom);
+            this.initialZoom = undefined;
         }
+    };
+    ZoomManager.prototype.updateZoom = function (callerId, newZoom) {
+        if (Object.keys(this.axes).length === 0) {
+            this.initialZoom = { callerId: callerId, newZoom: newZoom };
+            return;
+        }
+        Object.values(this.axes).forEach(function (axis) {
+            axis.updateZoom(callerId, newZoom === null || newZoom === void 0 ? void 0 : newZoom[axis.getDirection()]);
+        });
+        this.applyStates();
+    };
+    ZoomManager.prototype.updateAxisZoom = function (callerId, axisId, newZoom) {
+        var _a;
+        (_a = this.axes[axisId]) === null || _a === void 0 ? void 0 : _a.updateZoom(callerId, newZoom);
         this.applyStates();
     };
     ZoomManager.prototype.getZoom = function () {
-        return this.currentZoom;
+        var x;
+        var y;
+        // TODO: this only works when there is a single axis on each direction as it gets the last of each
+        Object.values(this.axes).forEach(function (axis) {
+            if (axis.getDirection() === chartAxisDirection_1.ChartAxisDirection.X) {
+                x = axis.getZoom();
+            }
+            else if (axis.getDirection() === chartAxisDirection_1.ChartAxisDirection.Y) {
+                y = axis.getZoom();
+            }
+        });
+        if (x || y) {
+            return { x: x, y: y };
+        }
     };
-    ZoomManager.prototype.applyStates = function () {
+    ZoomManager.prototype.getAxisZoom = function (axisId) {
+        var _a;
+        return (_a = this.axes[axisId]) === null || _a === void 0 ? void 0 : _a.getZoom();
+    };
+    ZoomManager.prototype.getAxisZooms = function () {
         var e_1, _a;
-        var currentZoom = this.currentZoom;
-        var zoomToApply = {};
+        var axes = {};
         try {
-            // Last added entry wins.
-            for (var _b = __values(Object.entries(this.states)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), _ = _d[0], _e = _d[1], x = _e.x, y = _e.y;
-                zoomToApply.x = x !== null && x !== void 0 ? x : zoomToApply.x;
-                zoomToApply.y = y !== null && y !== void 0 ? y : zoomToApply.y;
+            for (var _b = __values(Object.entries(this.axes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), axisId = _d[0], axis = _d[1];
+                axes[axisId] = {
+                    direction: axis.getDirection(),
+                    zoom: axis.getZoom(),
+                };
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -110,14 +138,62 @@ var ZoomManager = /** @class */ (function (_super) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        this.currentZoom = zoomToApply.x != null || zoomToApply.y != null ? zoomToApply : undefined;
-        var changed = !isEqual(currentZoom, this.currentZoom);
+        return axes;
+    };
+    ZoomManager.prototype.applyStates = function () {
+        var e_2, _a;
+        var changed = Object.values(this.axes)
+            .map(function (axis) { return axis.applyStates(); })
+            .some(Boolean);
         if (!changed) {
             return;
         }
-        var event = __assign({ type: 'zoom-change' }, (currentZoom !== null && currentZoom !== void 0 ? currentZoom : {}));
+        var currentZoom = this.getZoom();
+        var axes = {};
+        try {
+            for (var _b = __values(Object.entries(this.axes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), axisId = _d[0], axis = _d[1];
+                axes[axisId] = axis.getZoom();
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        var event = __assign(__assign({ type: 'zoom-change' }, (currentZoom !== null && currentZoom !== void 0 ? currentZoom : {})), { axes: axes });
         this.listeners.dispatch('zoom-change', event);
     };
     return ZoomManager;
 }(baseManager_1.BaseManager));
 exports.ZoomManager = ZoomManager;
+var AxisZoomManager = /** @class */ (function () {
+    function AxisZoomManager(axis) {
+        this.states = {};
+        this.currentZoom = undefined;
+        this.axis = axis;
+    }
+    AxisZoomManager.prototype.getDirection = function () {
+        return this.axis.direction;
+    };
+    AxisZoomManager.prototype.updateZoom = function (callerId, newZoom) {
+        delete this.states[callerId];
+        if (newZoom != null) {
+            this.states[callerId] = __assign({}, newZoom);
+        }
+    };
+    AxisZoomManager.prototype.getZoom = function () {
+        return this.currentZoom;
+    };
+    AxisZoomManager.prototype.applyStates = function () {
+        var _a, _b;
+        var prevZoom = this.currentZoom;
+        var last = Object.keys(this.states)[Object.keys(this.states).length - 1];
+        this.currentZoom = __assign({}, this.states[last]);
+        var changed = (prevZoom === null || prevZoom === void 0 ? void 0 : prevZoom.min) !== ((_a = this.currentZoom) === null || _a === void 0 ? void 0 : _a.min) || (prevZoom === null || prevZoom === void 0 ? void 0 : prevZoom.max) !== ((_b = this.currentZoom) === null || _b === void 0 ? void 0 : _b.max);
+        return changed;
+    };
+    return AxisZoomManager;
+}());

@@ -14,4 +14,6 @@ export declare class FakeHScrollComp extends AbstractFakeScrollComp {
     protected onScrollVisibilityChanged(): void;
     private setFakeHScrollSpacerWidths;
     protected setScrollVisible(): void;
+    getScrollPosition(): number;
+    setScrollPosition(value: number): void;
 }

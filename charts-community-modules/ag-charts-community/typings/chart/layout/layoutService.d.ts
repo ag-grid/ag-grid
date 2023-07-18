@@ -1,4 +1,4 @@
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 export declare type LayoutStage = 'start-layout' | 'before-series';
 export declare type AxisLabelLayout = {
     fractionDigits: number;

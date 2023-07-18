@@ -57,11 +57,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             _this.setupAria();
         });
         this.setupTooltip();
+        this.activateTabIndex();
     };
     DropZoneColumnComp.prototype.setupAria = function () {
         var translate = this.localeService.getLocaleTextFunc();
         var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
-        var aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        var aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
         var sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
@@ -215,12 +216,21 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        // ePopup.style.height = this.gridOptionsService.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = eGui.clientWidth + "px";
-        var popupHiddenFunc = function () {
+        var focusoutListener = this.addManagedListener(ePopup, 'focusout', function (e) {
+            if (!ePopup.contains(e.relatedTarget) && addPopupRes) {
+                addPopupRes.hideFunc();
+            }
+        });
+        var popupHiddenFunc = function (callbackEvent) {
             _this.destroyBean(virtualList);
             _this.popupShowing = false;
-            eGui.focus();
+            if ((callbackEvent === null || callbackEvent === void 0 ? void 0 : callbackEvent.key) === 'Escape') {
+                eGui.focus();
+            }
+            if (focusoutListener) {
+                focusoutListener();
+            }
         };
         var translate = this.localeService.getLocaleTextFunc();
         var addPopupRes = this.popupService.addPopup({
@@ -294,7 +304,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return this.dropZonePurpose === 'rowGroup';
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span role=\"option\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
     __decorate([
         core_1.Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);

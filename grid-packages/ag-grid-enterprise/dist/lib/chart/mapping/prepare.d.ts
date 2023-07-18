@@ -1,6 +1,6 @@
-import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions } from '../agChartOptions';
-import { SeriesOptionsTypes } from './defaults';
-import { JsonMergeOptions } from '../../util/json';
+import type { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions } from '../agChartOptions';
+import type { SeriesOptionsTypes } from './defaults';
+import type { JsonMergeOptions } from '../../util/json';
 export declare function optionsType(input: {
     type?: AgChartOptions['type'];
     series?: {

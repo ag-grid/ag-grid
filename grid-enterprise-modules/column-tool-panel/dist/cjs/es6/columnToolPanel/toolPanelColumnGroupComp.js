@@ -21,6 +21,7 @@ class ToolPanelColumnGroupComp extends core_1.Component {
         this.modelItem = modelItem;
         this.columnGroup = modelItem.getColumnGroup();
         this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
         this.allowDragging = allowDragging;
     }
     init() {
@@ -31,7 +32,6 @@ class ToolPanelColumnGroupComp extends core_1.Component {
         const checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.columnGroup, this.eventType);
         if (core_1._.missing(this.displayName)) {
             this.displayName = '>>';
         }
@@ -137,11 +137,15 @@ class ToolPanelColumnGroupComp extends core_1.Component {
                 };
                 this.eventService.dispatchEvent(event);
             },
-            onGridEnter: () => {
+            onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    this.modelItemUtils.updateColumns({
+                        columns: this.columnGroup.getLeafColumns(),
+                        visibleState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.visibleState,
+                        pivotState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.pivotState,
+                        eventType: this.eventType
+                    });
                 }
             },
             onGridExit: () => {
@@ -156,13 +160,18 @@ class ToolPanelColumnGroupComp extends core_1.Component {
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
     createDragItem() {
+        const columns = this.columnGroup.getLeafColumns();
         const visibleState = {};
-        this.columnGroup.getLeafColumns().forEach(col => {
-            visibleState[col.getId()] = col.isVisible();
+        const pivotState = {};
+        columns.forEach(col => {
+            const colId = col.getId();
+            visibleState[colId] = col.isVisible();
+            pivotState[colId] = this.modelItemUtils.createPivotState(col);
         });
         return {
-            columns: this.columnGroup.getLeafColumns(),
-            visibleState: visibleState
+            columns,
+            visibleState,
+            pivotState
         };
     }
     setupExpandContract() {

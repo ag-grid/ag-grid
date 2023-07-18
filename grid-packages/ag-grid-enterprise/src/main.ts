@@ -18,23 +18,25 @@ import { SparklinesModule } from "@ag-grid-enterprise/sparklines";
 import { StatusBarModule } from "@ag-grid-enterprise/status-bar";
 import { ViewportRowModelModule } from "@ag-grid-enterprise/viewport-row-model";
 
-ModuleRegistry.register(ColumnsToolPanelModule as any, false);
-ModuleRegistry.register(ExcelExportModule as any, false);
-ModuleRegistry.register(FiltersToolPanelModule as any, false);
-ModuleRegistry.register(SparklinesModule as any, false);
-ModuleRegistry.register(GridChartsModule as any, false);
-ModuleRegistry.register(MasterDetailModule as any, false);
-ModuleRegistry.register(MenuModule as any, false);
-ModuleRegistry.register(MultiFilterModule as any, false);
-ModuleRegistry.register(RangeSelectionModule as any, false);
-ModuleRegistry.register(RichSelectModule as any, false);
-ModuleRegistry.register(RowGroupingModule as any, false);
-ModuleRegistry.register(ServerSideRowModelModule as any, false);
-ModuleRegistry.register(SetFilterModule as any, false);
-ModuleRegistry.register(SideBarModule as any, false);
-ModuleRegistry.register(StatusBarModule as any, false);
-ModuleRegistry.register(ViewportRowModelModule as any, false);
-ModuleRegistry.register(ClipboardModule as any, false);
+ModuleRegistry.__registerModules([
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MasterDetailModule,
+    MenuModule,
+    MultiFilterModule,
+    RangeSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    ServerSideRowModelModule,
+    SetFilterModule,
+    SideBarModule,
+    SparklinesModule,
+    StatusBarModule,
+    ViewportRowModelModule
+], false, undefined);
 
 export { LicenseManager } from "@ag-grid-enterprise/core";
 export { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
@@ -177,6 +179,7 @@ DomLayoutType,
 Downloader,
 DragAndDropService,
 DraggingEvent,
+DragItem,
 DragListenerParams,
 DragService,
 DragSource,
@@ -283,6 +286,7 @@ HeaderElement,
 HeaderFilterCellComp,
 HeaderFilterCellCtrl,
 HeaderGroupCellCtrl,
+HeaderLocation,
 HeaderNavigationDirection,
 HeaderNavigationService,
 HeaderPosition,
@@ -626,6 +630,7 @@ ToolPanelClass,
 ToolPanelClassParams,
 ToolPanelColumnCompParams,
 ToolPanelDef,
+TooltipLocation,
 TouchListener,
 TreeDataDisplayType,
 UpdateChartParams,

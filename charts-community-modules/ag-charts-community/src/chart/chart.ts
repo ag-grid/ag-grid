@@ -1,45 +1,54 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
 import { Text } from '../scene/shape/text';
-import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
+import type { Series, SeriesNodeDatum } from './series/series';
+import { SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
-import { Caption } from '../caption';
-import { Observable, TypedEvent } from '../util/observable';
-import { ChartAxis } from './chartAxis';
-import { ChartAxisDirection } from './chartAxisDirection';
+import type { Caption } from '../caption';
+import type { TypedEvent } from '../util/observable';
+import { Observable } from '../util/observable';
+import type { ChartAxis } from './chartAxis';
+import type { ChartAxisDirection } from './chartAxisDirection';
 import { createId } from '../util/id';
-import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
-import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
+import type { PlacedLabel, PointLabelDatum } from '../util/labelPlacement';
+import { isPointLabelDatum, placeLabels } from '../util/labelPlacement';
+import type { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
-import { CartesianSeries } from './series/cartesian/cartesianSeries';
-import { Point } from '../scene/point';
+import type { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
-import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import type { TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import { Tooltip } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
 import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
 import { ChartEventManager } from './interaction/chartEventManager';
-import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import type { HighlightChangeEvent } from './interaction/highlightManager';
+import { HighlightManager } from './interaction/highlightManager';
+import type { InteractionEvent } from './interaction/interactionManager';
+import { InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
 import { ZoomManager } from './interaction/zoomManager';
-import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
+import type { Module, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { CategoryLegendDatum, ChartLegendDatum, ChartLegend } from './legendDatum';
+import type { CategoryLegendDatum, ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
 import { CallbackCache } from '../util/callbackCache';
+import type { ModuleContext } from '../util/moduleContext';
+import { DataController } from './data/dataController';
+import { SeriesStateManager } from './series/seriesStateManager';
+import { SeriesLayerManager } from './series/seriesLayerManager';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -74,31 +83,26 @@ export abstract class Chart extends Observable implements AgChartInstance {
     @ActionOnSet<Chart>({
         newValue(value) {
             this.scene.debug.consoleLog = value;
+            if (this.animationManager) {
+                this.animationManager.debug = value;
+            }
         },
     })
     public debug;
 
     private extraDebugStats: Record<string, number> = {};
 
-    private _container: OptionalHTMLElement = undefined;
-    set container(value: OptionalHTMLElement) {
-        if (this._container !== value) {
-            const { parentNode } = this.element;
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            if (this.destroyed) return;
 
-            if (parentNode != null) {
-                parentNode.removeChild(this.element);
-            }
-
-            if (value && !this.destroyed) {
-                value.appendChild(this.element);
-            }
-
-            this._container = value;
-        }
-    }
-    get container(): OptionalHTMLElement {
-        return this._container;
-    }
+            value.appendChild(this.element);
+        },
+        oldValue(value) {
+            value.removeChild(this.element);
+        },
+    })
+    container: OptionalHTMLElement = undefined;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -206,6 +210,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
     protected readonly callbackCache: CallbackCache;
+    protected readonly seriesStateManager: SeriesStateManager;
+    protected readonly seriesLayerManager: SeriesLayerManager;
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
     protected readonly legendModules: Record<string, { instance: ModuleInstance }> = {};
     private legendType: string | undefined;
@@ -235,7 +241,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         element.style.position = 'relative';
 
         this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
-        this.debug = false;
         this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
@@ -251,6 +256,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.updateService = new UpdateService((type = ChartUpdateType.FULL, { forceNodeDataRefresh }) =>
             this.update(type, { forceNodeDataRefresh })
         );
+        this.seriesStateManager = new SeriesStateManager();
+        this.seriesLayerManager = new SeriesLayerManager(this.seriesRoot);
         this.callbackCache = new CallbackCache();
 
         this.animationManager = new AnimationManager(this.interactionManager);
@@ -262,6 +269,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.overlays = new ChartOverlays(this.element);
         this.highlight = new ChartHighlight();
         this.container = container;
+        this.debug = false;
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -338,6 +346,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             dataService,
             layoutService,
             updateService,
+            seriesStateManager,
+            seriesLayerManager,
             mode,
             callbackCache,
         } = this;
@@ -354,6 +364,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             layoutService,
             updateService,
             mode,
+            seriesStateManager,
+            seriesLayerManager,
             callbackCache,
         };
     }
@@ -382,6 +394,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         this.interactionManager.destroy();
+        this.animationManager.stop();
 
         if (keepTransferableResources) {
             this.scene.strip();
@@ -391,8 +404,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.container = undefined;
         }
 
-        this.series.forEach((s) => s.destroy());
-        this.series = [];
+        this.removeAllSeries();
+        this.seriesLayerManager.destroy();
 
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
@@ -404,9 +417,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return result;
     }
 
-    log(opts: any) {
+    log(...opts: any[]) {
         if (this.debug) {
-            Logger.debug(opts);
+            Logger.debug(...opts);
         }
     }
 
@@ -501,6 +514,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
     private async performUpdate(count: number) {
         const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+        this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
         const splits = [performance.now()];
 
         switch (performUpdateType) {
@@ -511,24 +525,11 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 splits.push(performance.now());
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (this.autoSize && !this._lastAutoSize) {
-                    const count = this._performUpdateNoRenderCount++;
-
-                    if (count < 5) {
-                        // Reschedule if canvas size hasn't been set yet to avoid a race.
-                        this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
-                        this.performUpdateTrigger.schedule();
-                        break;
-                    }
-
-                    // After several failed passes, continue and accept there maybe a redundant
-                    // render. Sometimes this case happens when we already have the correct
-                    // width/height, and we end up never rendering the chart in that scenario.
-                }
-                this._performUpdateNoRenderCount = 0;
+                if (!this.checkFirstAutoSize()) break;
 
                 await this.performLayout();
                 this.handleOverlays();
+                this.log('Chart.performUpdate() - seriesRect', this.seriesRect);
                 splits.push(performance.now());
 
             // eslint-disable-next-line no-fallthrough
@@ -557,12 +558,36 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         const end = performance.now();
-        this.log({
+        this.log('Chart.performUpdate() - end', {
             chart: this,
             durationMs: Math.round((end - splits[0]) * 100) / 100,
             count,
             performUpdateType: ChartUpdateType[performUpdateType],
         });
+    }
+
+    private checkFirstAutoSize() {
+        if (this.autoSize && !this._lastAutoSize) {
+            const count = this._performUpdateNoRenderCount++;
+            const backOffMs = (count ^ 2) * 10;
+
+            if (count < 5) {
+                // Reschedule if canvas size hasn't been set yet to avoid a race.
+                this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                this.performUpdateTrigger.schedule(backOffMs);
+
+                this.log('Chart.checkFirstAutoSize() - backing off until first size update', backOffMs);
+                return false;
+            }
+
+            // After several failed passes, continue and accept there maybe a redundant
+            // render. Sometimes this case happens when we already have the correct
+            // width/height, and we end up never rendering the chart in that scenario.
+            this.log('Chart.checkFirstAutoSize() - timeout for first size update.');
+        }
+        this._performUpdateNoRenderCount = 0;
+
+        return true;
     }
 
     readonly element: HTMLElement;
@@ -580,6 +605,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             axis.attachAxis(this.axisGroup);
             removedAxes.delete(axis);
         });
+        this.zoomManager.updateAxes(this._axes);
 
         removedAxes.forEach((axis) => axis.destroy());
     }
@@ -596,19 +622,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._series;
     }
 
-    addSeries(series: Series<any>, before?: Series<any>): boolean {
-        const { series: allSeries, seriesRoot } = this;
+    private addSeries(series: Series<any>): boolean {
+        const { series: allSeries } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 
         if (canAdd) {
-            const beforeIndex = before ? allSeries.indexOf(before) : -1;
+            allSeries.push(series);
 
-            if (beforeIndex >= 0) {
-                allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.rootGroup, before!.rootGroup);
-            } else {
-                allSeries.push(series);
-                seriesRoot.append(series.rootGroup);
+            if (series.rootGroup.parent == null) {
+                this.seriesLayerManager.requestGroup(series);
             }
             this.initSeries(series);
 
@@ -618,34 +640,28 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return false;
     }
 
-    protected initSeries(series: Series<any>) {
+    private initSeries(series: Series<any>) {
         series.chart = this;
-        series.highlightManager = this.highlightManager;
-        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
 
-        series.chartEventManager = this.chartEventManager;
         series.addChartEventListeners();
     }
 
-    protected freeSeries(series: Series<any>) {
-        series.chart = undefined;
-        series.removeEventListener('nodeClick', this.onSeriesNodeClick);
-        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-    }
-
-    removeAllSeries(): void {
+    private removeAllSeries(): void {
         this.series.forEach((series) => {
-            this.freeSeries(series);
-            this.seriesRoot.removeChild(series.rootGroup);
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+            series.destroy();
+
+            series.chart = undefined;
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     }
 
-    protected addSeriesListeners(series: Series<any>) {
+    private addSeriesListeners(series: Series<any>) {
         if (this.hasEventListener('seriesNodeClick')) {
             series.addEventListener('nodeClick', this.onSeriesNodeClick);
         }
@@ -667,13 +683,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected assignSeriesToAxes() {
         this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                const seriesAxis = s.axes[axis.direction];
                 return seriesAxis === axis;
             });
         });
     }
 
-    protected assignAxesToSeries(force: boolean = false) {
+    protected assignAxesToSeries() {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
 
@@ -685,11 +701,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((series) => {
             series.directions.forEach((direction) => {
-                const currentAxis = direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
-                if (currentAxis && !force) {
-                    return;
-                }
-
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
                     Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
@@ -705,11 +716,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                     return;
                 }
 
-                if (direction === ChartAxisDirection.X) {
-                    series.xAxis = newAxis;
-                } else {
-                    series.yAxis = newAxis;
-                }
+                series.axes[direction] = newAxis;
             });
         });
     }
@@ -737,6 +744,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private resize(width?: number, height?: number) {
         width ??= this.width ?? (this.autoSize ? this._lastAutoSize?.[0] : this.scene.canvas.width);
         height ??= this.height ?? (this.autoSize ? this._lastAutoSize?.[1] : this.scene.canvas.height);
+        this.log('Chart.resize()', { width, height });
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {
@@ -746,12 +754,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     async processData() {
-        if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
-            this.assignAxesToSeries(true);
+        if (this.axes.length > 0) {
+            this.assignAxesToSeries();
             this.assignSeriesToAxes();
         }
 
-        await Promise.all(this.series.map((s) => s.processData()));
+        const dataController = new DataController();
+        const seriesPromises = this.series.map((s) => s.processData(dataController));
+        await dataController.execute();
+        await Promise.all(seriesPromises);
         await this.updateLegend();
     }
 
@@ -782,18 +793,22 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private attachLegend(legendType: string) {
-        if (this.legendType === legendType) {
-            return;
+    private attachLegend(legendType: string): ChartLegend {
+        if (this.legendType === legendType && this.legend) {
+            return this.legend;
         }
 
         this.legend?.destroy();
         this.legend = undefined;
 
         const ctx = this.getModuleContext();
-        this.legend = getLegend(legendType, ctx);
-        this.legend.attachLegend(this.scene.root);
+        const legend = getLegend(legendType, ctx);
+        legend.attachLegend(this.scene.root);
+
+        this.legend = legend;
         this.legendType = legendType;
+
+        return legend;
     }
 
     private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
@@ -811,14 +826,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 legendData.push(...data);
             });
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
-        this.attachLegend(legendType);
-        this.applyLegendOptions?.(this.legend!);
+        const legend = this.attachLegend(legendType);
+        this.applyLegendOptions?.(legend);
 
         if (legendType === 'category') {
             this.validateLegendData(legendData);
         }
 
-        this.legend!.data = legendData;
+        legend.data = legendData;
     }
 
     protected validateLegendData(legendData: ChartLegendDatum[]) {
@@ -850,7 +865,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected async performLayout() {
-        this.scene.root!.visible = true;
+        if (this.scene.root != null) {
+            this.scene.root.visible = true;
+        }
 
         const {
             scene: { width, height },
@@ -1210,7 +1227,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;
             const { canvas } = this.scene;
-            const point = datum.series.rootGroup.inverseTransformPoint(x, y);
+            const point = datum.series.contentGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();
             return {
                 ...meta,

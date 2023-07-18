@@ -5,7 +5,6 @@ export declare class DetailCellRendererCtrl extends BeanStub implements IDetailC
     private params;
     private comp;
     private loadRowDataVersion;
-    private needRefresh;
     private refreshStrategy;
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
     private onFullWidthRowFocused;

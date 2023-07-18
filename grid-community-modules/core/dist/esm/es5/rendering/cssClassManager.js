@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var CssClassManager = /** @class */ (function () {
     function CssClassManager(getGui) {
         // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already

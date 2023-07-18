@@ -71,9 +71,7 @@ const GridComponent = () => {
                 }}
                 rowData={rowData}
                 columnDefs={colDefs}
-                modules={[ClientSideRowModelModule]}>
-
-            </AgGridReact>
+                modules={[ClientSideRowModelModule]} />
         </div>
     )
 }

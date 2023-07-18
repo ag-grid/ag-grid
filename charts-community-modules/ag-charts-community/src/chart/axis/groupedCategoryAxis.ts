@@ -2,25 +2,27 @@ import { Selection } from '../../scene/selection';
 import { Line } from '../../scene/shape/line';
 import { normalizeAngle360, toRadians } from '../../util/angle';
 import { Text } from '../../scene/shape/text';
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 import { BandScale } from '../../scale/bandScale';
-import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
-import { AxisLabel, AxisLine } from '../../axis';
-import { ChartAxis } from '../chartAxis';
+import type { TreeLayout } from '../../layout/tree';
+import { ticksToTree, treeLayout } from '../../layout/tree';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
-import { Point } from '../../scene/point';
+import type { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
-import { ModuleContext } from '../../util/module';
-import { AgAxisCaptionFormatterParams } from '../agChartOptions';
+import type { ModuleContext } from '../../util/moduleContext';
+import type { AgAxisCaptionFormatterParams } from '../agChartOptions';
+import { AxisLabel } from './axisLabel';
+import { AxisLine } from './axisLine';
+import { CartesianAxis } from './cartesianAxis';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
     grid: boolean = false;
 }
 
-export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
+export class GroupedCategoryAxis extends CartesianAxis<BandScale<string | number>> {
     static className = 'GroupedCategoryAxis';
     static type = 'groupedCategory' as const;
 

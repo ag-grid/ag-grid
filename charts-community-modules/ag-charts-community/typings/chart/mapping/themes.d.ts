@@ -1,5 +1,5 @@
 import { ChartTheme } from '../themes/chartTheme';
-import { AgChartTheme, AgChartThemeName } from '../agChartOptions';
+import type { AgChartTheme, AgChartThemeName } from '../agChartOptions';
 declare type ThemeMap = {
     [key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme;
 };

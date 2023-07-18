@@ -1,16 +1,11 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 import { includes } from "./utils/array";
 import { AgPromise } from "./utils";
-var OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
+var OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'mousemove'];
 var PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 var VanillaFrameworkOverrides = /** @class */ (function () {
     function VanillaFrameworkOverrides() {
+        this.renderingEngine = "vanilla";
         this.isOutsideAngular = function (eventType) { return includes(OUTSIDE_ANGULAR_EVENTS, eventType); };
     }
     // for Vanilla JS, we use simple timeout

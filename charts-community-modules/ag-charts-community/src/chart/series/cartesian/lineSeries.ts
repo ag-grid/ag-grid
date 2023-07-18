@@ -1,17 +1,17 @@
-import { Path } from '../../../scene/shape/path';
+import type { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
+import type { Selection } from '../../../scene/selection';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
-import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
-import { Text } from '../../../scene/shape/text';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { Text } from '../../../scene/shape/text';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
-    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -20,9 +20,9 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { Marker } from '../../marker/marker';
+import type { Marker } from '../../marker/marker';
 import { NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_STRING, OPT_COLOR_STRING, Validate } from '../../../util/validation';
-import {
+import type {
     AgCartesianSeriesLabelFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
@@ -30,9 +30,9 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel, UngroupedDataItem } from '../../data/dataModel';
-import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import type { UngroupedDataItem } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -122,37 +122,43 @@ export class LineSeries extends CartesianSeries<LineContext> {
     @Validate(OPT_STRING)
     yName?: string = undefined;
 
-    async processData() {
-        const { xAxis, yAxis, xKey = '', yKey = '' } = this;
+    async processData(dataController: DataController) {
+        const { axes, xKey = '', yKey = '' } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any>(this.id, data ?? [], {
             props: [
-                valueProperty(xKey, isContinuousX, { id: 'xValue' }),
-                valueProperty(yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
+                valueProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                valueProperty(this, yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
             ],
             dataVisible: this.visible,
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { xAxis, yAxis, dataModel, processedData } = this;
+        const { axes, dataModel, processedData } = this;
         if (!processedData || !dataModel) return [];
 
-        const xDef = dataModel.resolveProcessedDataDefById(`xValue`);
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
+
+        const xDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
         if (direction === ChartAxisDirection.X) {
-            const domain = dataModel.getDomain(`xValue`, processedData);
-            if (xDef?.valueType === 'category') {
+            const domain = dataModel.getDomain(this, `xValue`, 'value', processedData);
+            if (xDef?.def.type === 'value' && xDef.def.valueType === 'category') {
                 return domain;
             }
 
             return this.fixNumericExtent(extent(domain), xAxis);
         } else {
-            const domain = dataModel.getDomain(`yValue`, processedData);
+            const domain = dataModel.getDomain(this, `yValue`, 'value', processedData);
             return this.fixNumericExtent(domain as any, yAxis);
         }
     }
@@ -161,11 +167,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const {
             processedData,
             dataModel,
-            xAxis,
-            yAxis,
+            axes,
             marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
             ctx: { callbackCache },
         } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!processedData || !dataModel || !xAxis || !yAxis) {
             return [];
@@ -179,8 +187,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const nodeData: LineNodeDatum[] = new Array(processedData.data.length);
         const size = markerEnabled ? markerSize : 0;
 
-        const xIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`)?.index ?? -1;
-        const yIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`)?.index ?? -1;
+        const xIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+        const yIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
@@ -199,6 +207,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 if (isNaN(x)) {
                     prevXInRange = undefined;
                     moveTo = true;
+                    nextPoint = undefined;
                     continue;
                 }
                 const tolerance = (xScale.bandwidth ?? markerSize * 0.5 + (strokeWidth ?? 0)) + 1;
@@ -239,6 +248,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     xKey,
                     point: { x, y, moveTo, size },
                     nodeMidPoint: { x, y },
+                    yValue: yDatum,
+                    xValue: xDatum,
                     label: labelText
                         ? {
                               text: labelText,
@@ -414,7 +425,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey, axes } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
@@ -422,9 +436,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         const { xName, yName, tooltip, marker, id: seriesId } = this;
         const { renderer: tooltipRenderer, format: tooltipFormat } = tooltip;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue } = nodeDatum;
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const title = sanitizeHtml(this.title ?? yName);
@@ -519,18 +531,31 @@ export class LineSeries extends CartesianSeries<LineContext> {
         labelSelections,
         contextData,
         paths,
-        seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
         labelSelections: Array<Selection<Text, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
-        seriesRect?: BBox;
     }) {
         contextData.forEach(({ nodeData }, contextDataIndex) => {
             const [lineNode] = paths[contextDataIndex];
 
             const { path: linePath } = lineNode;
+
+            const nodeLengths: Array<number> = [0];
+            const lineLength = nodeData.reduce((sum, datum, index) => {
+                if (index === 0) return sum;
+                const prev = nodeData[index - 1];
+                if (isNaN(datum.point.x) || isNaN(datum.point.y) || isNaN(prev.point.x) || isNaN(prev.point.y)) {
+                    nodeLengths.push(sum);
+                    return sum;
+                }
+                const length = Math.sqrt(
+                    Math.pow(datum.point.x - prev.point.x, 2) + Math.pow(datum.point.y - prev.point.y, 2)
+                );
+                nodeLengths.push(sum + length);
+                return sum + length;
+            }, 0);
 
             lineNode.fill = undefined;
             lineNode.lineJoin = 'round';
@@ -543,38 +568,39 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDash = this.lineDash;
             lineNode.lineDashOffset = this.lineDashOffset;
 
-            const duration = 1000;
+            const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {
                 from: 0,
-                to: seriesRect?.width ?? 0,
-                disableInteractions: true,
-                ease: easing.linear,
-                repeat: 0,
+                to: lineLength,
             };
 
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
                 duration,
-                onUpdate(xValue) {
+                onUpdate(length) {
                     linePath.clear({ trackChanges: true });
 
                     nodeData.forEach((datum, index) => {
-                        if (datum.point.x <= xValue) {
+                        if (nodeLengths[index] <= length) {
                             // Draw/move the full segment if past the end of this segment
                             if (datum.point.moveTo) {
                                 linePath.moveTo(datum.point.x, datum.point.y);
                             } else {
                                 linePath.lineTo(datum.point.x, datum.point.y);
                             }
-                        } else if (index > 0 && nodeData[index - 1].point.x < xValue) {
+                        } else if (index > 0 && nodeLengths[index - 1] < length) {
                             // Draw/move partial line if in between the start and end of this segment
                             const start = nodeData[index - 1].point;
                             const end = datum.point;
 
-                            const x = xValue;
-                            const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                            const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
+                            const remainingLength = nodeLengths[index] - length;
+                            const ratio = (segmentLength - remainingLength) / segmentLength;
+
+                            const x = (1 - ratio) * start.x + ratio * end.x;
+                            const y = (1 - ratio) * start.y + ratio * end.y;
 
                             if (datum.point.moveTo) {
                                 linePath.moveTo(x, y);
@@ -588,12 +614,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 },
             });
 
-            markerSelections[contextDataIndex].each((marker, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
+            markerSelections[contextDataIndex].each((marker, datum, index) => {
+                const delay = lineLength > 0 ? (nodeLengths[index] / lineLength) * duration : 0;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
@@ -604,15 +630,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 });
             });
 
-            labelSelections[contextDataIndex].each((label, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+            labelSelections[contextDataIndex].each((label, _, index) => {
+                const delay = (nodeLengths[index] / lineLength) * duration;
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay,
                     duration: markerDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -634,7 +658,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
     }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetMarkersAndPaths(data);
     }
 

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -171,6 +165,16 @@ var Component = /** @class */ (function (_super) {
             thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     };
+    Component.prototype.activateTabIndex = function (elements) {
+        var tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        if (!elements) {
+            elements = [];
+        }
+        if (!elements.length) {
+            elements.push(this.getGui());
+        }
+        elements.forEach(function (el) { return el.setAttribute('tabindex', tabIndex.toString()); });
+    };
     Component.prototype.setTemplate = function (template, paramsMap) {
         var eGui = dom_1.loadTemplate(template);
         this.setTemplateFromElement(eGui, paramsMap);
@@ -203,7 +207,7 @@ var Component = /** @class */ (function (_super) {
             // the element. otherwise no way of components putting ref=xxx on the top
             // level element as querySelector only looks at children.
             var topLevelRefMatch = querySelector.refSelector
-                && _this.eGui.getAttribute('ref') === querySelector.refSelector;
+                && _this.getAttribute('ref') === querySelector.refSelector;
             if (topLevelRefMatch) {
                 setResult(_this.eGui);
             }

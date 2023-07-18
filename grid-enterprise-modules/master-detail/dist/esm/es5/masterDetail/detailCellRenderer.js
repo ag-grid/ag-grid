@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component, Grid, RefSelector, _ } from "@ag-grid-community/core";
+import { Component, Grid, RefSelector, _, ModuleRegistry } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 var DetailCellRenderer = /** @class */ (function (_super) {
     __extends(DetailCellRenderer, _super);
@@ -102,7 +102,8 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper
-            }
+            },
+            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
         });
         this.detailApi = gridOptions.api;
         this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);

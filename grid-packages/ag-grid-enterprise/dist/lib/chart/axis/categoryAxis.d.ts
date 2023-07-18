@@ -1,7 +1,7 @@
 import { BandScale } from '../../scale/bandScale';
-import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
-export declare class CategoryAxis extends ChartAxis<BandScale<string | object>> {
+import type { ModuleContext } from '../../util/moduleContext';
+import { CartesianAxis } from './cartesianAxis';
+export declare class CategoryAxis extends CartesianAxis<BandScale<string | object>> {
     static className: string;
     static type: "category";
     private _paddingOverrideEnabled;

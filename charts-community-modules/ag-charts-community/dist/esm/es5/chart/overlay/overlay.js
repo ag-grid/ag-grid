@@ -15,7 +15,7 @@ var Overlay = /** @class */ (function () {
     Overlay.prototype.show = function (rect) {
         var _a, _b;
         var element = this.element;
-        if (!this.element) {
+        if (!element) {
             element = document.createElement('div');
             element.className = this.className;
             this.element = element;
@@ -26,7 +26,7 @@ var Overlay = /** @class */ (function () {
         element.style.width = rect.width + "px";
         element.style.height = rect.height + "px";
         if (this.renderer) {
-            this.element.innerHTML = this.renderer();
+            element.innerHTML = this.renderer();
         }
         else {
             var content = document.createElement('div');

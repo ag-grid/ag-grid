@@ -46,8 +46,7 @@ class FileBrowser extends Component {
           getContextMenuItems={this.getContextMenuItems}
           getRowId={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}
-        >
-        </AgGridReact>
+        />
       </div>
     )
   }

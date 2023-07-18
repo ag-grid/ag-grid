@@ -99,6 +99,7 @@ export class SetFilterListItem<V> extends Component {
 
     private cellRendererParams: ISetFilterCellRendererParams;
     private cellRendererComponent?: ICellRendererComp;
+    private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
         super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
@@ -119,6 +120,8 @@ export class SetFilterListItem<V> extends Component {
 
     @PostConstruct
     private init(): void {
+        this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
+
         this.render();
 
         this.eCheckbox.setLabelEllipsis(true);
@@ -261,7 +264,14 @@ export class SetFilterListItem<V> extends Component {
                 this.renderCellWithoutCellRenderer();
             }
         }
-        this.cellRendererComponent?.refresh?.(this.cellRendererParams as any);
+        if (this.cellRendererComponent) {
+            const success = this.cellRendererComponent.refresh?.(this.cellRendererParams as any);
+            if (!success) {
+                const oldComponent = this.cellRendererComponent;
+                this.renderCell();
+                this.destroyBean(oldComponent);
+            }
+        }
     }
 
     public render(): void {
@@ -331,7 +341,7 @@ export class SetFilterListItem<V> extends Component {
             if (component) {
                 this.cellRendererComponent = component;
                 this.eCheckbox.setLabel(component.getGui());
-                this.addDestroyFunc(() => this.destroyBean(component));
+                this.destroyCellRendererComponent = () => this.destroyBean(component);
             }
         });
     }

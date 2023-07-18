@@ -655,7 +655,7 @@ var Legend = /** @class */ (function () {
         var newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled);
+            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled, datum.legendItemName);
         }
         if (!newEnabled) {
             highlightManager.updateHighlight(this.id);
@@ -703,7 +703,7 @@ var Legend = /** @class */ (function () {
                     numVisibleItems_1[d.seriesId]++;
             });
             var clickedItem = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
-            this.ctx.chartEventManager.legendItemDoubleClick(series, itemId, (_a = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _a !== void 0 ? _a : false, numVisibleItems_1);
+            this.ctx.chartEventManager.legendItemDoubleClick(series, itemId, (_a = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _a !== void 0 ? _a : false, numVisibleItems_1, clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.legendItemName);
         }
         this.ctx.updateService.update(chartUpdateType_1.ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
         legendItemDoubleClick === null || legendItemDoubleClick === void 0 ? void 0 : legendItemDoubleClick({ type: 'dblclick', enabled: true, itemId: itemId, seriesId: series.id });

@@ -669,9 +669,15 @@ export interface AgBaseChartOptions {
 }
 
 export interface AgBaseAxisOptions {
+    /** Axis type identifier. */
+    type: string;
     keys?: string[];
-    /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
-    thickness?: PixelSize;
+    /** Configuration for the axis line. */
+    line?: AgAxisLineOptions;
+    /** Configuration for the axis labels, shown next to the ticks. */
+    label?: AgAxisLabelOptions;
+    /** Configuration of the lines used to form the grid in the chart area. */
+    gridStyle?: AgAxisGridStyle[];
 }
 
 export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
@@ -781,16 +787,12 @@ export type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'l
 export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     /** The position on the chart where the axis should be rendered. */
     position?: AgCartesianAxisPosition;
-    /** Configuration for the title shown next to the axis. */
-    title?: AgAxisCaptionOptions;
-    /** Configuration for the axis line. */
-    line?: AgAxisLineOptions;
-    /** Configuration for the axis labels, shown next to the ticks. */
-    label?: AgAxisLabelOptions;
-    /** Configuration of the lines used to form the grid in the chart area. */
-    gridStyle?: AgAxisGridStyle[];
     /** Add cross lines or regions corresponding to data values. */
     crossLines?: AgCrossLineOptions[];
+    /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
+    thickness?: PixelSize;
+    /** Configuration for the title shown next to the axis. */
+    title?: AgAxisCaptionOptions;
 }
 
 export interface AgCrossLineOptions {
@@ -1291,7 +1293,10 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
+    /** An option indicating if the areas should be stacked. */
     stacked?: boolean;
+    /** An ID to be used to group stacked items. */
+    stackGroup?: string;
 }
 
 export type AgBarSeriesLabelPlacement = 'inside' | 'outside';
@@ -1331,7 +1336,7 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for bar series. */
 export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'bar';
-    /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate bars. */
     grouped?: boolean;
     /** An option indicating if the bars should be stacked. */
     stacked?: boolean;
@@ -1412,7 +1417,7 @@ export interface AgColumnSeriesTooltip extends AgSeriesTooltip {
 /** Configuration for column series. */
 export interface AgColumnSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'column';
-    /** Whether to show different y-values as separate columns (grouped) or not (stacked). */
+    /** Whether to group together (adjacently) separate columns. */
     grouped?: boolean;
     /** An option indicating if the columns should be stacked. */
     stacked?: boolean;
@@ -1522,6 +1527,8 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     offset?: PixelSize;
     /** Minimum angle in degrees required for a sector to show a label. */
     minAngle?: number;
+    /** Avoid callout label collision and overflow by automatically moving colliding labels or reducing the pie radius. If set to `false`, callout labels may collide with each other and the pie radius will not change to prevent clipping of callout labels. */
+    avoidCollisions?: boolean;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }

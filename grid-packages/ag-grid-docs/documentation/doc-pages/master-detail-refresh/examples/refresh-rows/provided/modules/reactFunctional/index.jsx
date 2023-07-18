@@ -127,8 +127,7 @@ const GridExample = () => {
                     detailCellRendererParams={detailCellRendererParams}
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
-                >
-                </AgGridReact>
+                />
             </div>
 
         </div>

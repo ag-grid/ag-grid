@@ -78,6 +78,9 @@ export interface RowDataChangedEvent<TData = any, TContext = any> extends AgGrid
 }
 export interface RowDataUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
+export interface RowDataUpdateStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    firstRowData: TData | null;
+}
 export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
 /**
@@ -351,7 +354,7 @@ export interface ExpandCollapseAllEvent<TData = any, TContext = any> extends AgG
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
-export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "autosizeColumnHeaderHeight" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "rowDataUpdated" | "api" | "flex" | "pivotChart" | "columnRowGroupChanged";
+export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "autosizeColumnHeaderHeight" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "rowDataUpdated" | "api" | "flex" | "pivotChart" | "columnRowGroupChanged" | "cellDataTypeInferred";
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
     column: Column | null;

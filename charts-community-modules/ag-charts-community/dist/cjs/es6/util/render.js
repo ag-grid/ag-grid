@@ -16,11 +16,11 @@ exports.debouncedCallback = exports.debouncedAnimationFrame = void 0;
  * animation callback executes.
  */
 function debouncedAnimationFrame(cb) {
-    return buildScheduler((cb) => requestAnimationFrame(cb), cb);
+    return buildScheduler((cb, _delayMs) => requestAnimationFrame(cb), cb);
 }
 exports.debouncedAnimationFrame = debouncedAnimationFrame;
 function debouncedCallback(cb) {
-    return buildScheduler((cb) => setTimeout(cb, 0), cb);
+    return buildScheduler((cb, delayMs = 0) => setTimeout(cb, delayMs), cb);
 }
 exports.debouncedCallback = debouncedCallback;
 function buildScheduler(scheduleFn, cb) {
@@ -52,9 +52,9 @@ function buildScheduler(scheduleFn, cb) {
         maybePromise.then(done).catch(done);
     };
     return {
-        schedule() {
+        schedule(delayMs) {
             if (scheduleCount === 0 && !busy()) {
-                scheduleFn(scheduleCb);
+                scheduleFn(scheduleCb, delayMs);
             }
             scheduleCount++;
         },
@@ -63,7 +63,7 @@ function buildScheduler(scheduleFn, cb) {
                 if (!busy()) {
                     return;
                 }
-                if (!awaitingPromise) {
+                if (awaitingPromise == null) {
                     awaitingPromise = new Promise((resolve) => {
                         awaitingDone = resolve;
                     });

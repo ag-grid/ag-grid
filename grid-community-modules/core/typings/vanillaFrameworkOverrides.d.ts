@@ -2,6 +2,7 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { AgPromise } from "./utils";
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export declare class VanillaFrameworkOverrides implements IFrameworkOverrides {
+    renderingEngine: 'vanilla' | 'react';
     setTimeout(action: any, timeout?: any): void;
     setInterval(action: any, timeout?: any): AgPromise<number>;
     isOutsideAngular: (eventType: string) => boolean;

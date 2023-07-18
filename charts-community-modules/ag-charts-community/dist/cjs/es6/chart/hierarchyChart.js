@@ -33,9 +33,9 @@ class HierarchyChart extends chart_1.Chart {
             const hoverRectPadding = 20;
             const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
             this.hoverRect = hoverRect;
+            this.seriesRoot.translationX = Math.floor(shrinkRect.x);
+            this.seriesRoot.translationY = Math.floor(shrinkRect.y);
             yield Promise.all(this.series.map((series) => __awaiter(this, void 0, void 0, function* () {
-                series.rootGroup.translationX = Math.floor(shrinkRect.x);
-                series.rootGroup.translationY = Math.floor(shrinkRect.y);
                 yield series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
             })));
             const { seriesRoot } = this;

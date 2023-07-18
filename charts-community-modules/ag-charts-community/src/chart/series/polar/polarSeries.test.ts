@@ -1,17 +1,17 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgPolarChartOptions } from '../../agChartOptions';
+import type { AgPolarChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
-import { Chart } from '../../chart';
+import type { Chart } from '../../chart';
 import { ChartUpdateType } from '../../chartUpdateType';
 import * as examples from './test/examples';
+import type { PolarTestCase } from '../../test/utils';
 import {
     waitForChartStability,
     polarChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    PolarTestCase,
     toMatchImage,
     repeat,
     deproxy,
@@ -92,6 +92,13 @@ describe('PolarSeries', () => {
 
     const ctx = setupMockCanvas();
 
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
@@ -112,13 +119,6 @@ describe('PolarSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgPolarChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
@@ -134,13 +134,6 @@ describe('PolarSeries', () => {
     });
 
     describe('initial animation', () => {
-        const compare = async () => {
-            await waitForChartStability(chart);
-
-            const imageData = extractImageData(ctx);
-            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-        };
-
         afterEach(() => {
             jest.restoreAllMocks();
         });

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -165,4 +165,5 @@ export declare class Events {
     static EVENT_MOUSE_FOCUS: 'mouseFocus';
     static EVENT_STORE_UPDATED: 'storeUpdated';
     static EVENT_FILTER_DESTROYED: 'filterDestroyed';
+    static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted';
 }

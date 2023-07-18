@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -60,7 +54,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { getAbsoluteHeight, getAbsoluteWidth } from '../utils/dom';
+import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
@@ -261,14 +255,7 @@ var PopupService = /** @class */ (function (_super) {
         else if (getComputedStyle(popupParent).position === 'static') {
             popupParent = popupParent.offsetParent;
         }
-        var style = getComputedStyle(popupParent);
-        var bounds = popupParent.getBoundingClientRect();
-        return {
-            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
-        };
+        return getElementRectWithOffset(popupParent);
     };
     PopupService.prototype.keepXYWithinBounds = function (ePopup, position, direction) {
         var isVertical = direction === DIRECTION.vertical;
@@ -435,6 +422,7 @@ var PopupService = /** @class */ (function (_super) {
             popup.stopAnchoringPromise.then(function (destroyFunc) { return destroyFunc && destroyFunc(); });
         }
         popup.stopAnchoringPromise = undefined;
+        popup.isAnchored = false;
         if (!relativeElement) {
             return;
         }
@@ -446,6 +434,7 @@ var PopupService = /** @class */ (function (_super) {
             hidePopup: popup.hideFunc
         });
         popup.stopAnchoringPromise = destroyPositionTracker;
+        popup.isAnchored = true;
         return destroyPositionTracker;
     };
     PopupService.prototype.removePopupFromPopupList = function (element) {

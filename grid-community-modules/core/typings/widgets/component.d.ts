@@ -30,6 +30,7 @@ export declare class Component extends BeanStub {
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
     private iterateOverQuerySelectors;
+    protected activateTabIndex(elements?: Element[]): void;
     setTemplate(template: string | null | undefined, paramsMap?: {
         [key: string]: any;
     }): void;

@@ -34,6 +34,7 @@ class BarChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         const series = params.fields.map(f => ({
             type: this.standaloneChartType,
             grouped: isGrouped,
+            stacked: ['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar'].includes(this.chartType),
             normalizedTo: this.isNormalised() ? 100 : undefined,
             xKey: params.category.id,
             xName: params.category.name,
@@ -51,7 +52,7 @@ class BarChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         };
         const updateFilteredOutSeries = (seriesOptions) => {
             const yKey = seriesOptions.yKey + '-filtered-out';
-            return Object.assign(Object.assign({}, object_1.deepMerge({}, seriesOptions)), { yKey, fill: color_1.hexToRGBA(seriesOptions.fill, '0.3'), stroke: color_1.hexToRGBA(seriesOptions.stroke, '0.3'), hideInLegend: [yKey] });
+            return Object.assign(Object.assign({}, object_1.deepMerge({}, seriesOptions)), { yKey, fill: color_1.hexToRGBA(seriesOptions.fill, '0.3'), stroke: color_1.hexToRGBA(seriesOptions.stroke, '0.3'), showInLegend: false });
         };
         const allSeries = [];
         for (let i = 0; i < series.length; i++) {

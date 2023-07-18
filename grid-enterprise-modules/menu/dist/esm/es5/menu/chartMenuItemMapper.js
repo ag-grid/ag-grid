@@ -56,7 +56,7 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     ChartMenuItemMapper.prototype.getChartItems = function (key) {
         var _a, _b;
         if (!this.chartService) {
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
+            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
             return undefined;
         }
         var builder = key === 'pivotChart'

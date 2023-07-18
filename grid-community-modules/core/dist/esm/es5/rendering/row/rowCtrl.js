@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -283,7 +277,7 @@ var RowCtrl = /** @class */ (function (_super) {
         var pinned = this.getPinnedForContainer(gui.containerType);
         var params = this.createFullWidthParams(gui.element, pinned);
         if (this.rowType == RowType.FullWidthDetail) {
-            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.beans.context.getGridId())) {
+            if (!ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.beans.context.getGridId())) {
                 return;
             }
         }
@@ -1291,7 +1285,7 @@ var RowCtrl = /** @class */ (function (_super) {
     // reverse will take the offset away rather than add.
     RowCtrl.prototype.applyPaginationOffset = function (topPx, reverse) {
         if (reverse === void 0) { reverse = false; }
-        if (this.rowNode.isRowPinned()) {
+        if (this.rowNode.isRowPinned() || this.rowNode.sticky) {
             return topPx;
         }
         var pixelOffset = this.beans.paginationProxy.getPixelOffset();
@@ -1307,7 +1301,8 @@ var RowCtrl = /** @class */ (function (_super) {
         // visible (ie parent group was expanded) but is now not visible
         if (exists(pixels)) {
             var afterPaginationPixels = this.applyPaginationOffset(pixels);
-            var afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+            var skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
+            var afterScalingPixels = skipScaling ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
             var topPx = afterScalingPixels + "px";
             this.setRowTopStyle(topPx);
         }

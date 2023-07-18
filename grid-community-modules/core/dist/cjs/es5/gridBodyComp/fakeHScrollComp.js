@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -109,6 +103,15 @@ var FakeHScrollComp = /** @class */ (function (_super) {
         dom_1.setFixedHeight(this.eViewport, scrollContainerSize);
         dom_1.setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+    };
+    FakeHScrollComp.prototype.getScrollPosition = function () {
+        return dom_1.getScrollLeft(this.getViewport(), this.enableRtl);
+    };
+    FakeHScrollComp.prototype.setScrollPosition = function (value) {
+        if (!dom_1.isVisible(this.getViewport())) {
+            this.attemptSettingScrollPosition(value);
+        }
+        dom_1.setScrollLeft(this.getViewport(), value, this.enableRtl);
     };
     FakeHScrollComp.TEMPLATE = "<div class=\"ag-body-horizontal-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eRightSpacer\"></div>\n        </div>";
     __decorate([

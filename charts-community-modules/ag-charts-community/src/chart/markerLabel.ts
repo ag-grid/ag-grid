@@ -1,10 +1,10 @@
 import { Group } from '../scene/group';
 import { Text } from '../scene/shape/text';
 import { Square } from './marker/square';
-import { Marker } from './marker/marker';
+import type { Marker } from './marker/marker';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { RenderContext } from '../scene/node';
-import { FontStyle, FontWeight } from './agChartOptions';
+import type { RenderContext } from '../scene/node';
+import type { FontStyle, FontWeight } from './agChartOptions';
 import { ProxyPropertyOnWrite } from '../util/proxy';
 
 export class MarkerLabel extends Group {

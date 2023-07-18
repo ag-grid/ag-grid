@@ -1,8 +1,8 @@
 import { Group } from '../../scene/group';
 import { RangeHandle } from './rangeHandle';
 import { RangeMask } from './rangeMask';
-import { BBox } from '../../scene/bbox';
-import { RenderContext } from '../../scene/node';
+import type { BBox } from '../../scene/bbox';
+import type { RenderContext } from '../../scene/node';
 export declare class RangeSelector extends Group {
     static className: string;
     private static defaults;
@@ -34,4 +34,3 @@ export declare class RangeSelector extends Group {
     computeVisibleRangeBBox(): BBox;
     render(renderCtx: RenderContext): void;
 }
-//# sourceMappingURL=rangeSelector.d.ts.map

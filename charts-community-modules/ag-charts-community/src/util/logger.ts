@@ -10,7 +10,7 @@ export const Logger = {
         console.warn(`AG Charts - ${message}`, ...logContent);
     },
 
-    error(message: string, ...logContent: any[]) {
+    error(message: any, ...logContent: any[]) {
         if (typeof message === 'object') {
             console.error(`AG Charts error`, message, ...logContent);
         } else {
@@ -18,11 +18,11 @@ export const Logger = {
         }
     },
 
-    warnOnce(message: string, ...logContent: any[]) {
+    warnOnce(message: any, ...logContent: any[]) {
         doOnce(() => Logger.warn(message, ...logContent), `Logger.warn: ${message}`);
     },
 
-    errorOnce(message: string, ...logContent: any[]) {
+    errorOnce(message: any, ...logContent: any[]) {
         doOnce(() => Logger.error(message, ...logContent), `Logger.warn: ${message}`);
     },
 };

@@ -42,9 +42,7 @@ const gridOptions = {
 
 ## User Created Charts
 
-
-
-The animation above highlights a number of charting features. For more details on each feature follow the links provided below:
+The video above highlights a number of charting features. For more details on each feature follow the links provided below:
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
     <div style="flex: 1 1 0;">

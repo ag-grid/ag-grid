@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isNonNullObject = exports.removeAllReferences = exports.getValueUsingField = exports.set = exports.get = exports.missingOrEmptyObject = exports.mergeDeep = exports.getAllValuesInObject = exports.getAllKeysInObjects = exports.copyPropertyIfPresent = exports.copyPropertiesIfPresent = exports.setProperty = exports.getProperty = exports.deepCloneDefinition = exports.deepCloneObject = exports.cloneObject = exports.iterateObject = void 0;

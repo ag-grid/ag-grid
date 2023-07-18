@@ -1,5 +1,6 @@
 import { BBox } from '../scene/bbox';
-import { Chart, TransferableResources } from './chart';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
 export declare class HierarchyChart extends Chart {
     static className: string;
     static type: "hierarchy";
@@ -7,4 +8,3 @@ export declare class HierarchyChart extends Chart {
     protected _data: any;
     performLayout(): Promise<BBox>;
 }
-//# sourceMappingURL=hierarchyChart.d.ts.map

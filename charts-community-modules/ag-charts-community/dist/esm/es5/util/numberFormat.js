@@ -84,15 +84,16 @@ function parseFormatter(formatter) {
 }
 export function format(formatter) {
     var options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
-    var fill = options.fill, align = options.align, _a = options.sign, sign = _a === void 0 ? '-' : _a, symbol = options.symbol, zero = options.zero, width = options.width, comma = options.comma, type = options.type, _b = options.prefix, prefix = _b === void 0 ? '' : _b, _c = options.suffix, suffix = _c === void 0 ? '' : _c;
-    var precision = options.precision, trim = options.trim;
+    var fill = options.fill, align = options.align, _a = options.sign, sign = _a === void 0 ? '-' : _a, symbol = options.symbol, zero = options.zero, width = options.width, comma = options.comma, type = options.type, _b = options.prefix, prefix = _b === void 0 ? '' : _b, _c = options.suffix, suffix = _c === void 0 ? '' : _c, precision = options.precision;
+    var trim = options.trim;
+    var precisionIsNaN = precision === undefined || isNaN(precision);
     var formatBody;
     if (!type) {
         formatBody = decimalTypes['g'];
         trim = true;
     }
     else if (type in decimalTypes && type in integerTypes) {
-        formatBody = isNaN(precision) ? integerTypes[type] : decimalTypes[type];
+        formatBody = precisionIsNaN ? integerTypes[type] : decimalTypes[type];
     }
     else if (type in decimalTypes) {
         formatBody = decimalTypes[type];
@@ -103,11 +104,15 @@ export function format(formatter) {
     else {
         throw new Error("The number formatter type is invalid: " + type);
     }
-    if (isNaN(precision)) {
-        precision = type ? 6 : 12;
+    var formatterPrecision;
+    if (precision == null || precisionIsNaN) {
+        formatterPrecision = type ? 6 : 12;
+    }
+    else {
+        formatterPrecision = precision;
     }
     return function (n) {
-        var result = formatBody(n, precision);
+        var result = formatBody(n, formatterPrecision);
         if (trim) {
             result = removeTrailingZeros(result);
         }
@@ -127,7 +132,7 @@ export function format(formatter) {
         if (type === '%' || type === 'p') {
             result = result + "%";
         }
-        if (!isNaN(width)) {
+        if (width != null && !isNaN(width)) {
             result = addPadding(result, width, fill !== null && fill !== void 0 ? fill : zero, align);
         }
         result = "" + prefix + result + suffix;
@@ -257,7 +262,8 @@ function addPadding(numString, width, fill, align) {
 }
 export function tickFormat(ticks, formatter) {
     var options = parseFormatter(formatter !== null && formatter !== void 0 ? formatter : ',f');
-    if (isNaN(options.precision)) {
+    var precision = options.precision;
+    if (precision == null || isNaN(precision)) {
         if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max.apply(Math, __spreadArray([], __read(ticks.map(function (x) {
                 if (typeof x !== 'number' || x === 0) {

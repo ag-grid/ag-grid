@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSeriesThemeTemplate = exports.getSeriesDefaults = exports.getSeries = exports.registerSeries = void 0;
+exports.getSeriesPaletteFactory = exports.addSeriesPaletteFactory = exports.getSeriesThemeTemplate = exports.getSeriesDefaults = exports.getSeries = exports.registerSeries = void 0;
 var areaSeries_1 = require("../series/cartesian/areaSeries");
 var barSeries_1 = require("../series/cartesian/barSeries");
 var histogramSeries_1 = require("../series/cartesian/histogramSeries");
@@ -22,10 +22,14 @@ var BUILT_IN_SERIES_FACTORIES = {
 var SERIES_FACTORIES = {};
 var SERIES_DEFAULTS = {};
 var SERIES_THEME_TEMPLATES = {};
-function registerSeries(seriesType, chartType, cstr, defaults, theme) {
+var SERIES_PALETTE_FACTORIES = {};
+function registerSeries(seriesType, chartType, cstr, defaults, theme, paletteFactory) {
     SERIES_FACTORIES[seriesType] = cstr;
     SERIES_DEFAULTS[seriesType] = defaults;
     SERIES_THEME_TEMPLATES[seriesType] = theme;
+    if (paletteFactory) {
+        addSeriesPaletteFactory(seriesType, paletteFactory);
+    }
     chartTypes_1.registerChartSeriesType(seriesType, chartType);
 }
 exports.registerSeries = registerSeries;
@@ -46,3 +50,11 @@ function getSeriesThemeTemplate(chartType) {
     return SERIES_THEME_TEMPLATES[chartType];
 }
 exports.getSeriesThemeTemplate = getSeriesThemeTemplate;
+function addSeriesPaletteFactory(seriesType, factory) {
+    SERIES_PALETTE_FACTORIES[seriesType] = factory;
+}
+exports.addSeriesPaletteFactory = addSeriesPaletteFactory;
+function getSeriesPaletteFactory(seriesType) {
+    return SERIES_PALETTE_FACTORIES[seriesType];
+}
+exports.getSeriesPaletteFactory = getSeriesPaletteFactory;

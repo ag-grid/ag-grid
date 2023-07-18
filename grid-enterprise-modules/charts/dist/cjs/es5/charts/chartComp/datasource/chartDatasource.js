@@ -210,7 +210,7 @@ var ChartDatasource = /** @class */ (function (_super) {
                 }
             });
         });
-        if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+        if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
             dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
                 if (params.crossFiltering) {
                     params.valueCols.forEach(function (valueCol) {
@@ -233,7 +233,7 @@ var ChartDatasource = /** @class */ (function (_super) {
                 else {
                     var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
                     var aggResult = 0;
-                    if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation', _this.context.getGridId())) {
+                    if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation', _this.context.getGridId())) {
                         aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
                     }
                     groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;

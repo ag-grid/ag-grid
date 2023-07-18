@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.2
+// @ag-grid-community/react v30.0.5
 import { HeaderGroupCellCtrl } from '@ag-grid-community/core';
 import React from 'react';
 declare const _default: React.MemoExoticComponent<(props: {

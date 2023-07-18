@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -27,7 +21,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { setFixedHeight, setFixedWidth } from "../utils/dom";
+import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
 import { Events } from "../eventKeys";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
@@ -106,6 +100,15 @@ var FakeHScrollComp = /** @class */ (function (_super) {
         setFixedHeight(this.eViewport, scrollContainerSize);
         setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+    };
+    FakeHScrollComp.prototype.getScrollPosition = function () {
+        return getScrollLeft(this.getViewport(), this.enableRtl);
+    };
+    FakeHScrollComp.prototype.setScrollPosition = function (value) {
+        if (!isVisible(this.getViewport())) {
+            this.attemptSettingScrollPosition(value);
+        }
+        setScrollLeft(this.getViewport(), value, this.enableRtl);
     };
     FakeHScrollComp.TEMPLATE = "<div class=\"ag-body-horizontal-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eRightSpacer\"></div>\n        </div>";
     __decorate([

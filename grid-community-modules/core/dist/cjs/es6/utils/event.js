@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addSafePassiveEventListener = exports.getEventPath = exports.createEventPath = exports.isElementInEventPath = exports.getCtrlForEventTarget = exports.isEventSupported = exports.isStopPropagationForAgGrid = exports.stopPropagationForAgGrid = void 0;

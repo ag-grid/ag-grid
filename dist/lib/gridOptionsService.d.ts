@@ -1,6 +1,6 @@
 import { ColumnApi } from "./columns/columnApi";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetRowIdParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams } from "./interfaces/iCallbackParams";
 import { AgEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
@@ -88,6 +88,7 @@ export declare class GridOptionsService {
     addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void;
     removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void;
     globalEventHandler(eventName: string, event?: any): void;
+    getGridId(): string;
     getScrollbarWidth(): number;
     isRowModelType(rowModelType: RowModelType): boolean;
     isDomLayout(domLayout: DomLayoutType): boolean;
@@ -105,10 +106,11 @@ export declare class GridOptionsService {
     getDomData(element: Node | null, key: string): any;
     setDomData(element: Element, key: string, value: any): any;
     getDocument(): Document;
+    getWindow(): Window & typeof globalThis;
     getRootNode(): Document | ShadowRoot;
-    getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined;
     getAsyncTransactionWaitMillis(): number | undefined;
     isAnimateRows(): boolean;
+    isGroupRowsSticky(): boolean;
     isTreeData(): boolean;
     isMasterDetail(): boolean;
     isEnableRangeSelection(): boolean;

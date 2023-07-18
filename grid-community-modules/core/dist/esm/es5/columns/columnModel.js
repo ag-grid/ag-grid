@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -124,6 +118,9 @@ var ColumnModel = /** @class */ (function (_super) {
         _this.leftWidth = 0;
         _this.rightWidth = 0;
         _this.bodyWidthDirty = true;
+        // when we're waiting for cell data types to be inferred, we need to defer column resizing
+        _this.shouldQueueResizeOperations = false;
+        _this.resizeOperationQueue = [];
         return _this;
     }
     ColumnModel.prototype.init = function () {
@@ -140,6 +137,10 @@ var ColumnModel = /** @class */ (function (_super) {
         this.addManagedPropertyListener('columnTypes', function (params) { return _this.onSharedColDefChanged(params.source); });
     };
     ColumnModel.prototype.onAutoGroupColumnDefChanged = function () {
+        // Possible for update to be called before columns are present in which case there is nothing to do here.
+        if (!this.columnDefs) {
+            return;
+        }
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
@@ -398,6 +399,10 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     ColumnModel.prototype.autoSizeColumns = function (params) {
         var _this = this;
+        if (this.shouldQueueResizeOperations) {
+            this.resizeOperationQueue.push(function () { return _this.autoSizeColumns(params); });
+            return;
+        }
         var columns = params.columns, skipHeader = params.skipHeader, skipHeaderGroups = params.skipHeaderGroups, stopAtGroup = params.stopAtGroup, _a = params.source, source = _a === void 0 ? 'api' : _a;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
@@ -565,7 +570,12 @@ var ColumnModel = /** @class */ (function (_super) {
         return resizedColumns;
     };
     ColumnModel.prototype.autoSizeAllColumns = function (skipHeader, source) {
+        var _this = this;
         if (source === void 0) { source = "api"; }
+        if (this.shouldQueueResizeOperations) {
+            this.resizeOperationQueue.push(function () { return _this.autoSizeAllColumns(skipHeader, source); });
+            return;
+        }
         var allDisplayedColumns = this.getAllDisplayedColumns();
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader: skipHeader, source: source });
     };
@@ -1573,6 +1583,7 @@ var ColumnModel = /** @class */ (function (_super) {
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
         // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
         // As a work around, developers should just put lockPosition columns first in their colDef list.
+        var _this = this;
         if (source === void 0) { source = "api"; }
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         var primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
@@ -1590,50 +1601,53 @@ var ColumnModel = /** @class */ (function (_super) {
             colsToProcess = colsToProcess.concat(primaryColumns);
         }
         colsToProcess.forEach(function (column) {
-            var getValueOrNull = function (a, b) { return a != null ? a : b != null ? b : null; };
-            var colDef = column.getColDef();
-            var sort = getValueOrNull(colDef.sort, colDef.initialSort);
-            var sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
-            var hide = getValueOrNull(colDef.hide, colDef.initialHide);
-            var pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
-            var width = getValueOrNull(colDef.width, colDef.initialWidth);
-            var flex = getValueOrNull(colDef.flex, colDef.initialFlex);
-            var rowGroupIndex = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
-            var rowGroup = getValueOrNull(colDef.rowGroup, colDef.initialRowGroup);
-            if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
-                rowGroupIndex = null;
-                rowGroup = null;
-            }
-            var pivotIndex = getValueOrNull(colDef.pivotIndex, colDef.initialPivotIndex);
-            var pivot = getValueOrNull(colDef.pivot, colDef.initialPivot);
-            if (pivotIndex == null && (pivot == null || pivot == false)) {
-                pivotIndex = null;
-                pivot = null;
-            }
-            var aggFunc = getValueOrNull(colDef.aggFunc, colDef.initialAggFunc);
-            var stateItem = {
-                colId: column.getColId(),
-                sort: sort,
-                sortIndex: sortIndex,
-                hide: hide,
-                pinned: pinned,
-                width: width,
-                flex: flex,
-                rowGroup: rowGroup,
-                rowGroupIndex: rowGroupIndex,
-                pivot: pivot,
-                pivotIndex: pivotIndex,
-                aggFunc: aggFunc,
-            };
-            if (missing(rowGroupIndex) && rowGroup) {
+            var stateItem = _this.getColumnStateFromColDef(column);
+            if (missing(stateItem.rowGroupIndex) && stateItem.rowGroup) {
                 stateItem.rowGroupIndex = letRowGroupIndex++;
             }
-            if (missing(pivotIndex) && pivot) {
+            if (missing(stateItem.pivotIndex) && stateItem.pivot) {
                 stateItem.pivotIndex = letPivotIndex++;
             }
             columnStates.push(stateItem);
         });
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
+    };
+    ColumnModel.prototype.getColumnStateFromColDef = function (column) {
+        var getValueOrNull = function (a, b) { return a != null ? a : b != null ? b : null; };
+        var colDef = column.getColDef();
+        var sort = getValueOrNull(colDef.sort, colDef.initialSort);
+        var sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
+        var hide = getValueOrNull(colDef.hide, colDef.initialHide);
+        var pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
+        var width = getValueOrNull(colDef.width, colDef.initialWidth);
+        var flex = getValueOrNull(colDef.flex, colDef.initialFlex);
+        var rowGroupIndex = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
+        var rowGroup = getValueOrNull(colDef.rowGroup, colDef.initialRowGroup);
+        if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+            rowGroupIndex = null;
+            rowGroup = null;
+        }
+        var pivotIndex = getValueOrNull(colDef.pivotIndex, colDef.initialPivotIndex);
+        var pivot = getValueOrNull(colDef.pivot, colDef.initialPivot);
+        if (pivotIndex == null && (pivot == null || pivot == false)) {
+            pivotIndex = null;
+            pivot = null;
+        }
+        var aggFunc = getValueOrNull(colDef.aggFunc, colDef.initialAggFunc);
+        return {
+            colId: column.getColId(),
+            sort: sort,
+            sortIndex: sortIndex,
+            hide: hide,
+            pinned: pinned,
+            width: width,
+            flex: flex,
+            rowGroup: rowGroup,
+            rowGroupIndex: rowGroupIndex,
+            pivot: pivot,
+            pivotIndex: pivotIndex,
+            aggFunc: aggFunc,
+        };
     };
     ColumnModel.prototype.applyColumnState = function (params, source) {
         var _this = this;
@@ -3080,8 +3094,13 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     // called from api
     ColumnModel.prototype.sizeColumnsToFit = function (gridWidth, source, silent, params) {
+        var _this = this;
         var _a, _b, _c, _d, _e;
         if (source === void 0) { source = "sizeColumnsToFit"; }
+        if (this.shouldQueueResizeOperations) {
+            this.resizeOperationQueue.push(function () { return _this.sizeColumnsToFit(gridWidth, source, silent, params); });
+            return;
+        }
         var limitsMap = {};
         if (params) {
             (_a = params === null || params === void 0 ? void 0 : params.columnLimits) === null || _a === void 0 ? void 0 : _a.forEach(function (_a) {
@@ -3358,6 +3377,104 @@ var ColumnModel = /** @class */ (function (_super) {
     ColumnModel.prototype.getPivotGroupHeaderHeight = function () {
         var _a;
         return (_a = this.gridOptionsService.getNum('pivotGroupHeaderHeight')) !== null && _a !== void 0 ? _a : this.getGroupHeaderHeight();
+    };
+    ColumnModel.prototype.queueResizeOperations = function () {
+        this.shouldQueueResizeOperations = true;
+    };
+    ColumnModel.prototype.processResizeOperations = function () {
+        this.shouldQueueResizeOperations = false;
+        this.resizeOperationQueue.forEach(function (resizeOperation) { return resizeOperation(); });
+        this.resizeOperationQueue = [];
+    };
+    ColumnModel.prototype.resetColumnDefIntoColumn = function (column) {
+        var userColDef = column.getUserProvidedColDef();
+        if (!userColDef) {
+            return false;
+        }
+        var newColDef = this.columnFactory.mergeColDefs(userColDef, column.getColId());
+        column.setColDef(newColDef, userColDef);
+        return true;
+    };
+    ColumnModel.prototype.generateColumnStateForRowGroupAndPivotIndexes = function (updatedRowGroupColumnState, updatedPivotColumnState) {
+        // Generally columns should appear in the order they were before. For any new columns, these should appear in the original col def order.
+        // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
+        // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
+        var _this = this;
+        var existingColumnStateUpdates = {};
+        var orderColumns = function (updatedColumnState, colList, enableProp, initialEnableProp, indexProp, initialIndexProp) {
+            if (!colList.length || !_this.primaryColumns) {
+                return [];
+            }
+            var updatedColIdArray = Object.keys(updatedColumnState);
+            var updatedColIds = new Set(updatedColIdArray);
+            var newColIds = new Set(updatedColIdArray);
+            var allColIds = new Set(colList.map(function (column) {
+                var colId = column.getColId();
+                newColIds.delete(colId);
+                return colId;
+            }).concat(updatedColIdArray));
+            var colIdsInOriginalOrder = [];
+            var originalOrderMap = {};
+            var orderIndex = 0;
+            for (var i = 0; i < _this.primaryColumns.length; i++) {
+                var colId = _this.primaryColumns[i].getColId();
+                if (allColIds.has(colId)) {
+                    colIdsInOriginalOrder.push(colId);
+                    originalOrderMap[colId] = orderIndex++;
+                }
+            }
+            // follow approach in `resetColumnState`
+            var index = 1000;
+            var hasAddedNewCols = false;
+            var lastIndex = 0;
+            var processPrecedingNewCols = function (colId) {
+                var originalOrderIndex = originalOrderMap[colId];
+                for (var i = lastIndex; i < originalOrderIndex; i++) {
+                    var newColId = colIdsInOriginalOrder[i];
+                    if (newColIds.has(newColId)) {
+                        updatedColumnState[newColId][indexProp] = index++;
+                        newColIds.delete(newColId);
+                    }
+                }
+                lastIndex = originalOrderIndex;
+            };
+            colList.forEach(function (column) {
+                var colId = column.getColId();
+                if (updatedColIds.has(colId)) {
+                    // New col already exists. Add any other new cols that should be before it.
+                    processPrecedingNewCols(colId);
+                    updatedColumnState[colId][indexProp] = index++;
+                }
+                else {
+                    var colDef = column.getColDef();
+                    var missingIndex = colDef[indexProp] === null || (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
+                    if (missingIndex) {
+                        if (!hasAddedNewCols) {
+                            var propEnabled = colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
+                            if (propEnabled) {
+                                processPrecedingNewCols(colId);
+                            }
+                            else {
+                                // Reached the first manually added column. Add all the new columns now.
+                                newColIds.forEach(function (newColId) {
+                                    // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
+                                    updatedColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
+                                });
+                                index += colIdsInOriginalOrder.length;
+                                hasAddedNewCols = true;
+                            }
+                        }
+                        if (!existingColumnStateUpdates[colId]) {
+                            existingColumnStateUpdates[colId] = { colId: colId };
+                        }
+                        existingColumnStateUpdates[colId][indexProp] = index++;
+                    }
+                }
+            });
+        };
+        orderColumns(updatedRowGroupColumnState, this.rowGroupColumns, 'rowGroup', 'initialRowGroup', 'rowGroupIndex', 'initialRowGroupIndex');
+        orderColumns(updatedPivotColumnState, this.pivotColumns, 'pivot', 'initialPivot', 'pivotIndex', 'initialPivotIndex');
+        return Object.values(existingColumnStateUpdates);
     };
     __decorate([
         Autowired('expressionService')

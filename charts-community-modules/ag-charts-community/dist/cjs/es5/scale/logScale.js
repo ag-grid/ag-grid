@@ -182,9 +182,9 @@ var LogScale = /** @class */ (function (_super) {
         var count = _a.count, ticks = _a.ticks, specifier = _a.specifier;
         var base = this.base;
         if (specifier == null) {
-            specifier = (base === 10 ? '.0e' : ',');
+            specifier = base === 10 ? '.0e' : ',';
         }
-        if (typeof specifier !== 'function') {
+        if (typeof specifier === 'string') {
             specifier = numberFormat_1.format(specifier);
         }
         if (count === Infinity) {

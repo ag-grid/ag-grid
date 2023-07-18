@@ -210,8 +210,7 @@ render() {
                 {/* return id required for tree data and immutable data */}
                 getRowId={params => params.data.id}
                 {/* specify our FileCellRenderer component */}
-                components={this.components}>
-            </AgGridReact>
+                components={this.components} />
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { BBox } from '../scene/bbox';
+import type { BBox } from '../scene/bbox';
 import { segmentIntersection, arcIntersections } from '../scene/intersection';
 
 interface SectorBoundaries {

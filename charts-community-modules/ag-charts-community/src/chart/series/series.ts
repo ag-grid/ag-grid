@@ -1,7 +1,8 @@
 import { Group } from '../../scene/group';
-import { ChartLegendDatum } from '../legendDatum';
-import { Observable, TypedEvent } from '../../util/observable';
-import { ChartAxis } from '../chartAxis';
+import type { ChartLegendDatum } from '../legendDatum';
+import type { TypedEvent } from '../../util/observable';
+import { Observable } from '../../util/observable';
+import type { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum } from '../../util/value';
 import {
@@ -13,19 +14,22 @@ import {
     STRING,
     Validate,
 } from '../../util/validation';
-import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
+import type { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
-import { SizedPoint, Point } from '../../scene/point';
-import { BBox } from '../../scene/bbox';
-import { AnimationManager } from '../interaction/animationManager';
-import { ChartEventManager } from '../interaction/chartEventManager';
-import { HighlightManager } from '../interaction/highlightManager';
+import type { SizedPoint, Point } from '../../scene/point';
+import type { BBox } from '../../scene/bbox';
 import { ChartAxisDirection } from '../chartAxisDirection';
-import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
+import type { AgChartInteractionRange } from '../agChartOptions';
+import type { DatumPropertyDefinition, ScopeProvider } from '../data/dataModel';
+import { fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
+import type { DataController } from '../data/dataController';
+import { accumulateGroup } from '../data/processors';
+import { ActionOnSet } from '../../util/proxy';
+import type { SeriesGrouping } from './seriesStateManager';
+import type { ZIndexSubOrder } from '../../scene/node';
 
 /**
  * Processed series datum used in node selections,
@@ -61,38 +65,60 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+function basicContinuousCheckDatumValidation(v: any) {
+    return checkDatum(v, true) != null;
+}
+
+function basicDiscreteCheckDatumValidation(v: any) {
+    return checkDatum(v, false) != null;
+}
+
+export function keyProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
     const result: DatumPropertyDefinition<K> = {
+        scopes: [scope.id],
         property: propName,
         type: 'key',
         valueType: continuous ? 'range' : 'category',
-        validation: (v) => checkDatum(v, continuous) != null,
+        validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation,
         ...opts,
     };
     return result;
 }
 
-export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+export function valueProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
     const result: DatumPropertyDefinition<K> = {
+        scopes: [scope.id],
         property: propName,
         type: 'value',
         valueType: continuous ? 'range' : 'category',
-        validation: (v) => checkDatum(v, continuous) != null,
+        validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation,
         ...opts,
     };
     return result;
 }
 
 export function rangedValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
 ): DatumPropertyDefinition<K> {
     const { min = -Infinity, max = Infinity, ...defOpts } = opts;
     return {
+        scopes: [scope.id],
         type: 'value',
         property: propName,
         valueType: 'range',
-        validation: (v) => checkDatum(v, true) != null,
+        validation: basicContinuousCheckDatumValidation,
         processor: () => (datum) => {
             if (typeof datum !== 'number') return datum;
             if (isNaN(datum)) return datum;
@@ -104,27 +130,40 @@ export function rangedValueProperty<K>(
 }
 
 export function accumulativeValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     continuous: boolean,
     opts = {} as Partial<DatumPropertyDefinition<K>>
 ) {
     const result: DatumPropertyDefinition<K> = {
-        ...valueProperty(propName, continuous, opts),
+        ...valueProperty(scope, propName, continuous, opts),
         processor: accumulatedValue(),
     };
     return result;
 }
 
 export function trailingAccumulatedValueProperty<K>(
+    scope: ScopeProvider,
     propName: K,
     continuous: boolean,
     opts = {} as Partial<DatumPropertyDefinition<K>>
 ) {
     const result: DatumPropertyDefinition<K> = {
-        ...valueProperty(propName, continuous, opts),
+        ...valueProperty(scope, propName, continuous, opts),
         processor: trailingAccumulatedValue(),
     };
     return result;
+}
+
+export function groupAccumulativeValueProperty<K>(
+    scope: ScopeProvider,
+    propName: K,
+    continuous: boolean,
+    mode: 'normal' | 'trailing' | 'window' | 'window-trailing',
+    sum: 'current' | 'last' = 'current',
+    opts: Partial<DatumPropertyDefinition<K>> & { groupId: string }
+) {
+    return [valueProperty(scope, propName, continuous, opts), accumulateGroup(scope, opts.groupId, mode, sum)];
 }
 
 export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements TypedEvent {
@@ -216,7 +255,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     // The group node that contains all the nodes used to render this series.
-    readonly rootGroup: Group = new Group({ name: 'seriesRoot' });
+    readonly rootGroup: Group = new Group({ name: 'seriesRoot', isVirtual: true });
 
     // The group node that contains the series rendering in it's default (non-highlighted) state.
     readonly contentGroup: Group;
@@ -234,14 +273,15 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // Package-level visibility, not meant to be set by the user.
     chart?: {
         mode: 'standalone' | 'integrated';
+        debug: boolean;
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
-    animationManager?: AnimationManager;
-    chartEventManager?: ChartEventManager;
-    highlightManager?: HighlightManager;
-    xAxis?: ChartAxis;
-    yAxis?: ChartAxis;
+
+    axes: Record<ChartAxisDirection, ChartAxis | undefined> = {
+        [ChartAxisDirection.X]: undefined,
+        [ChartAxisDirection.Y]: undefined,
+    };
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     private directionKeys: { [key in ChartAxisDirection]?: string[] };
@@ -287,6 +327,32 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
 
+    @ActionOnSet<Series>({
+        changeValue: function (newVal, oldVal) {
+            this.onSeriesGroupingChange(oldVal, newVal);
+        },
+    })
+    seriesGrouping?: SeriesGrouping = undefined;
+
+    private onSeriesGroupingChange(prev?: SeriesGrouping, next?: SeriesGrouping) {
+        const { id, type, visible, rootGroup } = this;
+
+        if (prev) {
+            this.ctx.seriesStateManager.deregisterSeries({ id, type });
+        }
+        if (next) {
+            this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
+        }
+        this.ctx.seriesLayerManager.changeGroup({
+            id,
+            type,
+            rootGroup,
+            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
+            seriesGrouping: next,
+            oldGrouping: prev,
+        });
+    }
+
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
     }
@@ -295,25 +361,26 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     protected readonly ctx: ModuleContext;
 
-    constructor(opts: {
+    constructor(seriesOpts: {
         moduleCtx: ModuleContext;
         useSeriesGroupLayer?: boolean;
         useLabelLayer?: boolean;
         pickModes?: SeriesNodePickMode[];
+        contentGroupVirtual?: boolean;
         directionKeys?: { [key in ChartAxisDirection]?: string[] };
         directionNames?: { [key in ChartAxisDirection]?: string[] };
     }) {
         super();
 
-        this.ctx = opts.moduleCtx;
+        this.ctx = seriesOpts.moduleCtx;
 
         const {
-            useSeriesGroupLayer = true,
             useLabelLayer = false,
             pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
             directionKeys = {},
             directionNames = {},
-        } = opts;
+            contentGroupVirtual = true,
+        } = seriesOpts;
 
         const { rootGroup } = this;
 
@@ -323,9 +390,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.contentGroup = rootGroup.appendChild(
             new Group({
                 name: `${this.id}-content`,
-                layer: useSeriesGroupLayer,
+                layer: !contentGroupVirtual,
+                isVirtual: contentGroupVirtual,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [() => this._declarationOrder, 0],
+                zIndexSubOrder: this.getGroupZIndexSubOrder('data'),
             })
         );
 
@@ -334,7 +402,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [() => this._declarationOrder, 15000],
+                zIndexSubOrder: this.getGroupZIndexSubOrder('highlight'),
             })
         );
         this.highlightNode = this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
@@ -355,12 +423,37 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
+    getGroupZIndexSubOrder(
+        type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
+        subIndex = 0
+    ): ZIndexSubOrder {
+        let mainAdjust = 0;
+        switch (type) {
+            case 'data':
+            case 'paths':
+                break;
+            case 'labels':
+                mainAdjust += 20000;
+                break;
+            case 'marker':
+                mainAdjust += 10000;
+                break;
+            // Following cases are in their own layer, so need to be careful to respect declarationOrder.
+            case 'highlight':
+                subIndex += 15000;
+                break;
+        }
+        const main = () => this._declarationOrder + mainAdjust;
+        return [main, subIndex];
+    }
+
     addChartEventListeners(): void {
         return;
     }
 
     destroy(): void {
-        // Override point for sub-classes.
+        this.ctx.seriesStateManager.deregisterSeries(this);
+        this.ctx.seriesLayerManager.releaseGroup(this);
     }
 
     private getDirectionValues(
@@ -413,7 +506,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getDomain(direction: ChartAxisDirection): any[];
 
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
-    abstract processData(): Promise<void>;
+    abstract processData(dataController: DataController): Promise<void>;
 
     // Using processed data, create data that backs visible nodes.
     abstract createNodeData(): Promise<C[]>;
@@ -424,7 +517,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     visibleChanged() {
-        // Override point for this.visible change post-processing.
+        this.ctx.seriesStateManager.registerSeries(this);
     }
 
     // Produce data joins and update selection's nodes using node data.
@@ -477,7 +570,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected isItemIdHighlighted(datum?: {
         itemId?: any;
     }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const { series, itemId } = highlightedDatum ?? {};
         const highlighting = series != null;
 
@@ -615,9 +708,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            const padding = axis?.calculatePadding(min, max) ?? 1;
-            min -= padding;
-            max += padding;
+            const [paddingMin, paddingMax] = axis?.calculatePadding(min, max) ?? [1, 1];
+            min -= paddingMin;
+            max += paddingMax;
         }
 
         return [min, max];

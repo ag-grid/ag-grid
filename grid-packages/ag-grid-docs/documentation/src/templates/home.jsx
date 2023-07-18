@@ -43,17 +43,17 @@ const urlMap = {
     },
     angular: {
         'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
-        example: 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
+        example: 'https://codesandbox.io/p/sandbox/ag-grid-angular-example-zly6rt?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1-2%2C1',
         thinkster: 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
-        'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz',
+        'example-title': 'CodeSandbox Example',
+        'example-icon': 'codesandbox',
     },
     react: {
         'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
-        example: 'https://stackblitz.com/edit/ag-grid-react-hello-world',
+        example: 'https://codesandbox.io/s/ag-grid-react-hello-world-9pnf3n',
         thinkster: 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
-        'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz',
+        'example-title': 'CodeSandbox Example',
+        'example-icon': 'codesandbox',
     },
     vue: {
         'video-tutorial': 'https://youtu.be/eW3qCti1lsA',

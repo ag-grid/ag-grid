@@ -1,4 +1,5 @@
-import { Marker, MarkerPathMove } from './marker';
+import type { MarkerPathMove } from './marker';
+import { Marker } from './marker';
 export declare class Diamond extends Marker {
     static className: string;
     static moves: MarkerPathMove[];

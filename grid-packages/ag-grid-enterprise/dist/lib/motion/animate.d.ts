@@ -1,4 +1,4 @@
-import { Easing } from './easing';
+import type { Easing } from './easing';
 export interface KeyframesOptions<T> {
     duration: number;
     from: T;

@@ -22,9 +22,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS, NUMBER_OR_NAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
-import { ChartAxis } from '../chartAxis';
 import { Default } from '../../util/default';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
+import { CartesianAxis } from './cartesianAxis';
 var TimeAxisTick = /** @class */ (function (_super) {
     __extends(TimeAxisTick, _super);
     function TimeAxisTick() {
@@ -37,7 +37,7 @@ var TimeAxisTick = /** @class */ (function (_super) {
         Default(NaN)
     ], TimeAxisTick.prototype, "maxSpacing", void 0);
     return TimeAxisTick;
-}(BaseAxisTick));
+}(AxisTick));
 var TimeAxis = /** @class */ (function (_super) {
     __extends(TimeAxis, _super);
     function TimeAxis(moduleCtx) {
@@ -94,8 +94,8 @@ var TimeAxis = /** @class */ (function (_super) {
     };
     TimeAxis.prototype.calculatePadding = function (_min, _max) {
         // numbers in domain correspond to Unix timestamps
-        // automatically expand domain by 1 in each direction
-        return 1;
+        // automatically expand domain by 1 in forward direction
+        return [0, 1];
     };
     TimeAxis.className = 'TimeAxis';
     TimeAxis.type = 'time';
@@ -106,5 +106,5 @@ var TimeAxis = /** @class */ (function (_super) {
         Validate(AND(OPT_DATE_OR_DATETIME_MS, GREATER_THAN('min')))
     ], TimeAxis.prototype, "max", void 0);
     return TimeAxis;
-}(ChartAxis));
+}(CartesianAxis));
 export { TimeAxis };

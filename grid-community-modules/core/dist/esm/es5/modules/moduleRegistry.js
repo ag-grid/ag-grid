@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -31,9 +25,22 @@ import { values } from "../utils/generic";
 var ModuleRegistry = /** @class */ (function () {
     function ModuleRegistry() {
     }
-    ModuleRegistry.register = function (module, moduleBased, gridId) {
-        if (moduleBased === void 0) { moduleBased = true; }
-        if (gridId === void 0) { gridId = undefined; }
+    /**
+     * Globally register the given module for all grids.
+     * @param module - module to register
+     */
+    ModuleRegistry.register = function (module) {
+        ModuleRegistry.__register(module, true, undefined);
+    };
+    /**
+     * Globally register the given modules for all grids.
+     * @param modules - modules to register
+     */
+    ModuleRegistry.registerModules = function (modules) {
+        ModuleRegistry.__registerModules(modules, true, undefined);
+    };
+    /** AG GRID INTERNAL - Module registration helper. */
+    ModuleRegistry.__register = function (module, moduleBased, gridId) {
         ModuleRegistry.runVersionChecks(module);
         if (gridId !== undefined) {
             ModuleRegistry.areGridScopedModules = true;
@@ -47,17 +54,17 @@ var ModuleRegistry = /** @class */ (function () {
         }
         ModuleRegistry.setModuleBased(moduleBased);
     };
-    ModuleRegistry.unRegisterGridModules = function (gridId) {
+    /** AG GRID INTERNAL - Unregister grid scoped module. */
+    ModuleRegistry.__unRegisterGridModules = function (gridId) {
         delete ModuleRegistry.gridModulesMap[gridId];
     };
-    ModuleRegistry.registerModules = function (modules, moduleBased, gridId) {
-        if (moduleBased === void 0) { moduleBased = true; }
-        if (gridId === void 0) { gridId = undefined; }
+    /** AG GRID INTERNAL - Module registration helper. */
+    ModuleRegistry.__registerModules = function (modules, moduleBased, gridId) {
         ModuleRegistry.setModuleBased(moduleBased);
         if (!modules) {
             return;
         }
-        modules.forEach(function (module) { return ModuleRegistry.register(module, moduleBased, gridId); });
+        modules.forEach(function (module) { return ModuleRegistry.__register(module, moduleBased, gridId); });
     };
     ModuleRegistry.isValidModuleVersion = function (module) {
         var _a = __read(module.version.split('.') || [], 2), moduleMajor = _a[0], moduleMinor = _a[1];
@@ -96,14 +103,15 @@ var ModuleRegistry = /** @class */ (function () {
         }
     };
     /**
-     * INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
+     * AG GRID INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
      */
-    ModuleRegistry.setIsBundled = function () {
+    ModuleRegistry.__setIsBundled = function () {
         ModuleRegistry.isBundled = true;
     };
-    ModuleRegistry.assertRegistered = function (moduleName, reason, gridId) {
+    /** AG GRID INTERNAL - Assert a given module has been register, globally or individually with this grid. */
+    ModuleRegistry.__assertRegistered = function (moduleName, reason, gridId) {
         var _a;
-        if (this.isRegistered(moduleName, gridId)) {
+        if (this.__isRegistered(moduleName, gridId)) {
             return true;
         }
         var warningKey = reason + moduleName;
@@ -131,14 +139,22 @@ var ModuleRegistry = /** @class */ (function () {
         }, warningKey);
         return false;
     };
-    ModuleRegistry.isRegistered = function (moduleName, gridId) {
+    /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
+    ModuleRegistry.__isRegistered = function (moduleName, gridId) {
         var _a;
         return !!ModuleRegistry.globalModulesMap[moduleName] || !!((_a = ModuleRegistry.gridModulesMap[gridId]) === null || _a === void 0 ? void 0 : _a[moduleName]);
     };
-    ModuleRegistry.getRegisteredModules = function (gridId) {
+    /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */
+    ModuleRegistry.__getRegisteredModules = function (gridId) {
         return __spreadArray(__spreadArray([], __read(values(ModuleRegistry.globalModulesMap))), __read(values(ModuleRegistry.gridModulesMap[gridId] || {})));
     };
-    ModuleRegistry.isPackageBased = function () {
+    /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
+    ModuleRegistry.__getGridRegisteredModules = function (gridId) {
+        var _a;
+        return values((_a = ModuleRegistry.gridModulesMap[gridId]) !== null && _a !== void 0 ? _a : {}) || [];
+    };
+    /** INTERNAL */
+    ModuleRegistry.__isPackageBased = function () {
         return !ModuleRegistry.moduleBased;
     };
     // having in a map a) removes duplicates and b) allows fast lookup

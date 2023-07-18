@@ -26,6 +26,7 @@ export declare class AnimationFrameService extends BeanStub {
     flushAllFrames(): void;
     schedule(): void;
     private requestFrame;
+    requestAnimationFrame(callback: any): void;
     isQueueEmpty(): boolean;
     debounce(func: () => void): () => void;
 }

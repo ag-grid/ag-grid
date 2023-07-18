@@ -13,7 +13,7 @@ var __values = (this && this.__values) || function(o) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupModules = void 0;
 var module_1 = require("../../util/module");
-var chartAxesTypes_1 = require("../chartAxesTypes");
+var axisTypes_1 = require("./axisTypes");
 var chartOptions_1 = require("../chartOptions");
 var chartTypes_1 = require("./chartTypes");
 var legendTypes_1 = require("./legendTypes");
@@ -23,7 +23,7 @@ function setupModules() {
     try {
         for (var REGISTERED_MODULES_1 = __values(module_1.REGISTERED_MODULES), REGISTERED_MODULES_1_1 = REGISTERED_MODULES_1.next(); !REGISTERED_MODULES_1_1.done; REGISTERED_MODULES_1_1 = REGISTERED_MODULES_1.next()) {
             var m = REGISTERED_MODULES_1_1.value;
-            if (m.optionConstructors != null) {
+            if (chartOptions_1.JSON_APPLY_PLUGINS.constructors != null && m.optionConstructors != null) {
                 Object.assign(chartOptions_1.JSON_APPLY_PLUGINS.constructors, m.optionConstructors);
             }
             if (m.type === 'root') {
@@ -46,14 +46,14 @@ function setupModules() {
             if (m.type === 'series') {
                 if (m.chartTypes.length > 1)
                     throw new Error('AG Charts - Module definition error: ' + m.identifier);
-                seriesTypes_1.registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate);
+                seriesTypes_1.registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate, m.paletteFactory);
             }
-            if (m.type === 'axis') {
+            if (m.type === 'axis-option') {
                 if (m.themeTemplate) {
                     try {
                         for (var _f = (e_3 = void 0, __values(m.axisTypes)), _g = _f.next(); !_g.done; _g = _f.next()) {
                             var axisType = _g.value;
-                            chartAxesTypes_1.registerAxisThemeTemplate(axisType, m.themeTemplate);
+                            axisTypes_1.registerAxisThemeTemplate(axisType, m.themeTemplate);
                         }
                     }
                     catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -63,6 +63,12 @@ function setupModules() {
                         }
                         finally { if (e_3) throw e_3.error; }
                     }
+                }
+            }
+            if (m.type === 'axis') {
+                axisTypes_1.registerAxis(m.identifier, m.instanceConstructor);
+                if (m.themeTemplate) {
+                    axisTypes_1.registerAxisThemeTemplate(m.identifier, m.themeTemplate);
                 }
             }
             if (m.type === 'legend') {

@@ -1,50 +1,69 @@
-import { Scale } from '../scale/scale';
-import { Axis, TickInterval } from '../axis';
-import { ChartAxisDirection } from './chartAxisDirection';
-import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
-import { AxisLayout } from './layout/layoutService';
-import { AxisModule, ModuleContext, ModuleInstance } from '../util/module';
-interface BoundSeries {
-    type: string;
-    getDomain(direction: ChartAxisDirection): any[];
-    isEnabled(): boolean;
-    getKeys(direction: ChartAxisDirection): string[];
-    getNames(direction: ChartAxisDirection): (string | undefined)[];
-    visible: boolean;
+import type { Node } from '../scene/node';
+import type { BBox } from '../scene/bbox';
+import type { AgCartesianAxisPosition } from './agChartOptions';
+import type { Flag } from './label';
+import type { AxisLayout } from './layout/layoutService';
+import type { ChartAxisDirection } from './chartAxisDirection';
+import type { Scale } from '../scale/scale';
+export interface BoundSeries {
     getBandScalePadding?(): {
         inner: number;
         outer: number;
     };
+    getDomain(direction: ChartAxisDirection): any[];
+    getKeys(direction: ChartAxisDirection): string[];
+    getNames(direction: ChartAxisDirection): (string | undefined)[];
+    isEnabled(): boolean;
+    type: string;
+    visible: boolean;
 }
-export declare class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<S, D> {
-    keys: string[];
+export interface ChartAxis {
+    addModule(module: any): void;
+    attachAxis(node: Node): void;
     boundSeries: BoundSeries[];
-    linkedTo?: ChartAxis;
-    includeInvisibleDomains: boolean;
-    protected readonly modules: Record<string, {
-        instance: ModuleInstance;
-    }>;
-    get type(): AgCartesianAxisType;
-    get direction(): ChartAxisDirection;
-    protected useCalculatedTickCount(): boolean;
-    protected constructor(moduleCtx: ModuleContext, scale: S);
-    position: AgCartesianAxisPosition;
-    update(primaryTickCount?: number): number | undefined;
-    protected updateDirection(): void;
-    protected calculateDomain(): void;
-    normaliseDataDomain(d: D[]): D[];
-    isAnySeriesActive(): boolean;
-    getLayoutState(): AxisLayout;
-    private axisContext?;
-    addModule(module: AxisModule): void;
-    removeModule(module: AxisModule): void;
-    isModuleEnabled(module: AxisModule): boolean;
+    calculatePadding(min: number, _max: number): [number, number];
+    clipGrid(x: number, y: number, width: number, height: number): void;
+    clipTickLines(x: number, y: number, width: number, height: number): void;
+    computeBBox(): BBox;
+    crossLines?: any[];
+    dataDomain: any[];
     destroy(): void;
-    protected getTitleFormatterParams(): {
-        direction: ChartAxisDirection;
-        boundSeries: import("./agChartOptions").AgAxisBoundSeries[];
-        defaultValue: string | undefined;
+    detachAxis(node: Node): void;
+    direction: ChartAxisDirection;
+    formatDatum(datum: any): string;
+    getLayoutState(): AxisLayout;
+    gridLength: number;
+    gridPadding: number;
+    id: string;
+    inRange(x: number, width?: number, tolerance?: number): boolean;
+    inRangeEx(x: number, width?: number, tolerance?: number): -1 | 0 | 1;
+    isModuleEnabled(module: any): boolean;
+    keys: string[];
+    label: {
+        getSideFlag(): Flag;
     };
+    linkedTo?: ChartAxis;
+    maxThickness: number;
+    nice: boolean;
+    position?: AgCartesianAxisPosition;
+    range: number[];
+    removeModule(module: any): void;
+    rotation: number;
+    scale: Scale<any, any, any>;
+    seriesAreaPadding: number;
+    setCrossLinesVisible(visible: boolean): void;
+    thickness?: number;
+    translation: {
+        x: number;
+        y: number;
+    };
+    type: string;
+    update(primaryTickCount?: number): number | undefined;
+    updateScale(): void;
+    updatePosition(position: {
+        rotation: number;
+        sideFlag: Flag;
+    }): void;
+    visibleRange: number[];
 }
-export {};
 //# sourceMappingURL=chartAxis.d.ts.map

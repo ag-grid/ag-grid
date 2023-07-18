@@ -46,12 +46,13 @@ import { normalizeAngle360, toRadians } from '../../util/angle';
 import { Text } from '../../scene/shape/text';
 import { BandScale } from '../../scale/bandScale';
 import { ticksToTree, treeLayout } from '../../layout/tree';
-import { AxisLabel, AxisLine } from '../../axis';
-import { ChartAxis } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
+import { AxisLabel } from './axisLabel';
+import { AxisLine } from './axisLine';
+import { CartesianAxis } from './cartesianAxis';
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
     __extends(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
@@ -402,5 +403,5 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         Validate(OPT_COLOR_STRING)
     ], GroupedCategoryAxis.prototype, "labelColor", void 0);
     return GroupedCategoryAxis;
-}(ChartAxis));
+}(CartesianAxis));
 export { GroupedCategoryAxis };

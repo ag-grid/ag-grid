@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/all-modules",
-  "version": "30.0.2",
+  "version": "30.0.5",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.js",
   "module": "./dist/esm/es6/main.js",
@@ -8,11 +8,11 @@
   "private": "true",
   "scripts": {
     "clean": "rimraf dist .hash",
-    "build-cjs": "rimraf dist/tsconfig.esm.es6.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-css": "npx gulp copy-grid-core-styles",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false --inlineSourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false --inlineSourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "generate-doc-files": "node ./generate-code-reference-files.js",
     "build": "npm run build-cjs && npm run build-esm && npm run build-css && npm run generate-doc-files && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run build-css && npm run generate-doc-files && npm run hash",
@@ -60,11 +60,11 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~30.0.2",
-    "@ag-grid-community/core": "~30.0.2",
-    "@ag-grid-community/csv-export": "~30.0.2",
-    "@ag-grid-community/infinite-row-model": "~30.0.2",
-    "@ag-grid-community/styles": "~30.0.2"
+    "@ag-grid-community/client-side-row-model": "~30.0.5",
+    "@ag-grid-community/core": "~30.0.5",
+    "@ag-grid-community/csv-export": "~30.0.5",
+    "@ag-grid-community/infinite-row-model": "~30.0.5",
+    "@ag-grid-community/styles": "~30.0.5"
   },
   "devDependencies": {
     "css-loader": "^3.2.0",

@@ -24,6 +24,7 @@ export declare class ClientSideNodeManager {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
     } | null | undefined): RowNodeTransaction;
+    private dispatchRowDataUpdateStartedEvent;
     private updateSelection;
     private executeAdd;
     private executeRemove;

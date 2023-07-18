@@ -9,7 +9,7 @@ import { CellStyle } from '../entities/colDef';
  */
 export declare function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
 export declare const FOCUSABLE_SELECTOR = "[tabindex], input, select, button, textarea, [href]";
-export declare const FOCUSABLE_EXCLUDE = ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *";
+export declare const FOCUSABLE_EXCLUDE = ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
 export declare function isFocusableFormField(element: HTMLElement): boolean;
 export declare function setDisplayed(element: Element, displayed: boolean, options?: {
     skipAriaHidden?: boolean;
@@ -40,6 +40,12 @@ export declare function getInnerHeight(el: HTMLElement): number;
 export declare function getInnerWidth(el: HTMLElement): number;
 export declare function getAbsoluteHeight(el: HTMLElement): number;
 export declare function getAbsoluteWidth(el: HTMLElement): number;
+export declare function getElementRectWithOffset(el: HTMLElement): {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+};
 export declare function isRtlNegativeScroll(): boolean;
 export declare function getScrollLeft(element: HTMLElement, rtl: boolean): number;
 export declare function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;

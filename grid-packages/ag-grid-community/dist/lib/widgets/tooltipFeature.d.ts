@@ -3,13 +3,13 @@ import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { RowNode } from "../entities/rowNode";
 import { Beans } from "../rendering/beans";
-import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
     getGui(): HTMLElement;
-    getLocation(): string;
+    getLocation(): TooltipLocation;
     getColumn?(): Column | ColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;

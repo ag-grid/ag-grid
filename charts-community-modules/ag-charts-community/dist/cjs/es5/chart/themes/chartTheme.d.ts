@@ -1,4 +1,4 @@
-import { AgPolarSeriesTheme, AgChartThemePalette, AgChartThemeOptions, AgCartesianThemeOptions, AgPolarThemeOptions, AgHierarchyThemeOptions, AgCartesianSeriesTheme, AgHierarchySeriesTheme, AgChartInteractionRange } from '../agChartOptions';
+import type { AgPolarSeriesTheme, AgChartThemePalette, AgChartThemeOptions, AgCartesianThemeOptions, AgPolarThemeOptions, AgHierarchyThemeOptions, AgCartesianSeriesTheme, AgHierarchySeriesTheme, AgChartInteractionRange } from '../agChartOptions';
 declare type ChartThemeDefaults = {
     cartesian: AgCartesianThemeOptions;
     groupedCategory: AgCartesianThemeOptions;
@@ -11,6 +11,9 @@ declare type ChartThemeDefaults = {
 } & {
     [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions;
 };
+export declare const EXTENDS_AXES_DEFAULTS: unique symbol;
+export declare const EXTENDS_AXES_LABEL_DEFAULTS: unique symbol;
+export declare const EXTENDS_AXES_LINE_DEFAULTS: unique symbol;
 export declare const EXTENDS_SERIES_DEFAULTS: unique symbol;
 export declare const OVERRIDE_SERIES_LABEL_DEFAULTS: unique symbol;
 export declare const DEFAULT_FONT_FAMILY: unique symbol;
@@ -63,4 +66,3 @@ export declare class ChartTheme {
     protected mergeWithParentDefaults(parentDefaults: ChartThemeDefaults, defaults: ChartThemeDefaults): ChartThemeDefaults;
 }
 export {};
-//# sourceMappingURL=chartTheme.d.ts.map

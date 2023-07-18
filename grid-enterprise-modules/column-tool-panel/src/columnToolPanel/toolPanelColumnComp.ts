@@ -16,8 +16,10 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    WithoutGridCommon
+    WithoutGridCommon,
+    DragItem
 } from "@ag-grid-community/core";
+import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";
 
@@ -36,18 +38,22 @@ export class ToolPanelColumnComp extends Component {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
+    private column: Column;
+    private columnDept: number;
     private eDragHandle: Element;
     private displayName: string | null;
     private processingColumnStateChange = false;
 
     constructor(
-        private readonly column: Column,
-        private readonly columnDept: number,
+        modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement
     ) {
         super();
+        this.column = modelItem.getColumn();
+        this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
     }
 
     @PostConstruct
@@ -63,7 +69,6 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 
@@ -207,11 +212,15 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             },
-            onGridEnter: () => {
+            onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    this.modelItemUtils.updateColumns({
+                        columns: [this.column],
+                        visibleState: dragItem?.visibleState,
+                        pivotState: dragItem?.pivotState,
+                        eventType: 'toolPanelUi'
+                    })
                 }
             },
             onGridExit: () => {
@@ -228,11 +237,13 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private createDragItem() {
-        const visibleState: { [key: string]: boolean; } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        const colId = this.column.getColId();
+        const visibleState = { [colId]: this.column.isVisible() };
+        const pivotState = { [colId]: this.modelItemUtils.createPivotState(this.column) }
         return {
             columns: [this.column],
-            visibleState: visibleState
+            visibleState,
+            pivotState
         };
     }
 

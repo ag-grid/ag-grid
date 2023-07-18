@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -174,6 +168,30 @@ let FocusService = FocusService_1 = class FocusService extends beanStub_1.BeanSt
     getFocusedCell() {
         return this.focusedCellPosition;
     }
+    shouldRestoreFocus(cell) {
+        if (this.isCellRestoreFocused(cell)) {
+            setTimeout(() => {
+                // Clear the restore focused cell position after the timeout to avoid
+                // the cell being focused again and stealing focus from another part of the app.
+                this.restoredFocusedCellPosition = null;
+            }, 0);
+            return true;
+        }
+        return false;
+    }
+    isCellRestoreFocused(cellPosition) {
+        if (this.restoredFocusedCellPosition == null) {
+            return false;
+        }
+        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+    }
+    setRestoreFocusedCell(cellPosition) {
+        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
+            // to support restoring focus after an async rendering.
+            this.restoredFocusedCellPosition = cellPosition;
+        }
+    }
     getFocusEventParams() {
         const { rowIndex, rowPinned, column } = this.focusedCellPosition;
         const params = {
@@ -189,6 +207,7 @@ let FocusService = FocusService_1 = class FocusService extends beanStub_1.BeanSt
         return params;
     }
     clearFocusedCell() {
+        this.restoredFocusedCellPosition = null;
         if (this.focusedCellPosition == null) {
             return;
         }
@@ -219,8 +238,7 @@ let FocusService = FocusService_1 = class FocusService extends beanStub_1.BeanSt
         if (this.focusedCellPosition == null) {
             return false;
         }
-        return this.focusedCellPosition.column === cellPosition.column &&
-            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
     }
     isRowNodeFocused(rowNode) {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
@@ -473,6 +491,9 @@ __decorate([
 __decorate([
     context_1.Autowired('rowPositionUtils')
 ], FocusService.prototype, "rowPositionUtils", void 0);
+__decorate([
+    context_1.Autowired('cellPositionUtils')
+], FocusService.prototype, "cellPositionUtils", void 0);
 __decorate([
     context_1.Optional('rangeService')
 ], FocusService.prototype, "rangeService", void 0);

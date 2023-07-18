@@ -1,4 +1,5 @@
-import { Easing, linear } from './easing';
+import type { Easing } from './easing';
+import { linear } from './easing';
 
 export interface KeyframesOptions<T> {
     duration: number;
@@ -49,7 +50,7 @@ export function animate<T = number>({
     autoplay = true,
     delay = 0,
     ease = linear,
-    repeat: repeatMax = Infinity,
+    repeat: repeatMax = 0,
     repeatType = RepeatType.Loop,
     onComplete,
     onPlay,
@@ -158,7 +159,6 @@ export function tween<T>(opts: TweenOptions<T>): TweenControls<T> {
 
     const animateOpts: AnimationOptions<T> = {
         ...opts,
-        repeat: 0,
         autoplay: false,
         onUpdate: (value: T) => {
             handleUpdate?.(value);

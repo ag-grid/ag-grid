@@ -25,7 +25,6 @@ exports[`TimeScale should create ticks with configured milliseconds interval for
   2022-04-09T23:00:00.000Z,
   2022-04-30T23:00:00.000Z,
   2022-05-21T23:00:00.000Z,
-  2022-06-11T23:00:00.000Z,
 ]
 `;
 

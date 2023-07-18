@@ -30,17 +30,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, BeanStub, RowNode, Events, _ } from "@ag-grid-community/core";
+import { Autowired, BeanStub, Events, _ } from "@ag-grid-community/core";
 var DetailCellRendererCtrl = /** @class */ (function (_super) {
     __extends(DetailCellRendererCtrl, _super);
     function DetailCellRendererCtrl() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.loadRowDataVersion = 0;
-        _this.needRefresh = false;
         return _this;
     }
     DetailCellRendererCtrl.prototype.init = function (comp, params) {
-        var _this = this;
         this.params = params;
         this.comp = comp;
         var doNothingBecauseInsidePinnedSection = params.pinned != null;
@@ -52,9 +50,6 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
         this.addThemeToDetailGrid();
         this.createDetailGrid();
         this.loadRowData();
-        this.addManagedListener(params.node.parent, RowNode.EVENT_DATA_CHANGED, function () {
-            _this.needRefresh = true;
-        });
         this.addManagedListener(this.eventService, Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
     };
     DetailCellRendererCtrl.prototype.onFullWidthRowFocused = function (e) {
@@ -165,24 +160,15 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
     DetailCellRendererCtrl.prototype.refresh = function () {
         var GET_GRID_TO_REFRESH = false;
         var GET_GRID_TO_DO_NOTHING = true;
-        // if we return true, it means we pretend to the grid
-        // that we have refreshed, so refresh will never happen.
-        var doNotRefresh = !this.needRefresh || this.refreshStrategy === 'nothing';
-        if (doNotRefresh) {
-            // we do nothing in this refresh method, and also tell the grid to do nothing
-            return GET_GRID_TO_DO_NOTHING;
+        switch (this.refreshStrategy) {
+            // ignore this refresh, make grid think we've refreshed but do nothing
+            case 'nothing': return GET_GRID_TO_DO_NOTHING;
+            // grid will destroy and recreate the cell
+            case 'everything': return GET_GRID_TO_REFRESH;
         }
-        // reset flag, so don't refresh again until more data changes.
-        this.needRefresh = false;
-        if (this.refreshStrategy === 'everything') {
-            // we want full refresh, so tell the grid to destroy and recreate this cell
-            return GET_GRID_TO_REFRESH;
-        }
-        else {
-            // do the refresh here, and tell the grid to do nothing
-            this.loadRowData();
-            return GET_GRID_TO_DO_NOTHING;
-        }
+        // do the refresh here, and tell the grid to do nothing
+        this.loadRowData();
+        return GET_GRID_TO_DO_NOTHING;
     };
     __decorate([
         Autowired('rowPositionUtils')

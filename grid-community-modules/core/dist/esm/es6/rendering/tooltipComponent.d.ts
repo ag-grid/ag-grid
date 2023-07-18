@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PopupComponent } from '../widgets/popupComponent';
@@ -8,9 +8,10 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
 import { IRowNode } from '../interfaces/iRowNode';
+export declare type TooltipLocation = 'cell' | 'columnToolPanelColumn' | 'columnToolPanelColumnGroup' | 'filterToolPanelColumnGroup' | 'header' | 'headerGroup' | 'menu' | 'pivotColumnsList' | 'rowGroupColumnsList' | 'setFilterValue' | 'valueColumnsList' | 'UNKNOWN';
 export interface ITooltipParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
-    location: string;
+    location: TooltipLocation;
     /** The value to be rendered by the tooltip. */
     value?: TValue | null;
     /** The formatted value to be rendered by the tooltip. */

@@ -81,13 +81,12 @@ var HierarchyChart = /** @class */ (function (_super) {
                         hoverRectPadding = 20;
                         hoverRect = shrinkRect.clone().grow(hoverRectPadding);
                         this.hoverRect = hoverRect;
+                        this.seriesRoot.translationX = Math.floor(shrinkRect.x);
+                        this.seriesRoot.translationY = Math.floor(shrinkRect.y);
                         return [4 /*yield*/, Promise.all(this.series.map(function (series) { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0:
-                                            series.rootGroup.translationX = Math.floor(shrinkRect.x);
-                                            series.rootGroup.translationY = Math.floor(shrinkRect.y);
-                                            return [4 /*yield*/, series.update({ seriesRect: shrinkRect })];
+                                        case 0: return [4 /*yield*/, series.update({ seriesRect: shrinkRect })];
                                         case 1:
                                             _a.sent(); // this has to happen after the `updateAxes` call
                                             return [2 /*return*/];

@@ -28,8 +28,8 @@ const zIndexChangedCallback = (o) => {
  * Each node can have zero or one parent and belong to zero or one scene.
  */
 class Node extends changeDetectable_1.ChangeDetectable {
-    constructor() {
-        super(...arguments);
+    constructor({ isVirtual } = {}) {
+        super();
         /** Unique number to allow creation order to be easily determined. */
         this.serialNumber = Node._nextSerialNumber++;
         /**
@@ -47,6 +47,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
          * But we still need to distinguish regular leaf nodes from container leafs somehow.
          */
         this.isContainerNode = false;
+        this._virtualChildren = [];
         this._children = [];
         // Used to check for duplicate nodes.
         this.childSet = {}; // new Set<Node>()
@@ -54,7 +55,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
         // for performance optimization purposes.
         this.matrix = new matrix_1.Matrix();
         this.inverseMatrix = new matrix_1.Matrix();
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
         this.scalingX = 1;
         this.scalingY = 1;
         /**
@@ -81,6 +82,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
         /** Discriminators for render order within a zIndex. */
         this.zIndexSubOrder = undefined;
         this.pointerEvents = PointerEvents.All;
+        this.isVirtual = isVirtual !== null && isVirtual !== void 0 ? isVirtual : false;
     }
     /**
      * Some arbitrary data bound to the node.
@@ -98,7 +100,10 @@ class Node extends changeDetectable_1.ChangeDetectable {
     _setLayerManager(value) {
         this._layerManager = value;
         this._debug = value === null || value === void 0 ? void 0 : value.debug;
-        for (const child of this.children) {
+        for (const child of this._children) {
+            child._setLayerManager(value);
+        }
+        for (const child of this._virtualChildren) {
             child._setLayerManager(value);
         }
     }
@@ -109,7 +114,19 @@ class Node extends changeDetectable_1.ChangeDetectable {
         return this._parent;
     }
     get children() {
-        return this._children;
+        if (this._virtualChildren.length === 0)
+            return this._children;
+        const result = [...this._children];
+        for (const next of this._virtualChildren) {
+            result.push(...next.children);
+        }
+        return result;
+    }
+    get virtualChildren() {
+        return this._virtualChildren;
+    }
+    hasVirtualChildren() {
+        return this._virtualChildren.length > 0;
     }
     /**
      * Appends one or more new node instances to this parent.
@@ -136,7 +153,12 @@ class Node extends changeDetectable_1.ChangeDetectable {
                 // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
                 throw new Error(`Duplicate ${node.constructor.name} node: ${node}`);
             }
-            this._children.push(node);
+            if (node.isVirtual) {
+                this._virtualChildren.push(node);
+            }
+            else {
+                this._children.push(node);
+            }
             this.childSet[node.id] = true;
             node._parent = this;
             node._setLayerManager(this.layerManager);
@@ -149,50 +171,29 @@ class Node extends changeDetectable_1.ChangeDetectable {
         return node;
     }
     removeChild(node) {
-        if (node.parent === this) {
-            const i = this.children.indexOf(node);
-            if (i >= 0) {
-                this._children.splice(i, 1);
-                delete this.childSet[node.id];
-                node._parent = undefined;
-                node._setLayerManager();
-                this.dirtyZIndex = true;
-                this.markDirty(node, changeDetectable_1.RedrawType.MAJOR);
-                return node;
-            }
+        const error = () => {
+            throw new Error(`The node to be removed is not a child of this node.`);
+        };
+        if (node.parent !== this) {
+            error();
         }
-        throw new Error(`The node to be removed is not a child of this node.`);
-    }
-    /**
-     * Inserts the node `node` before the existing child node `nextNode`.
-     * If `nextNode` is null, insert `node` at the end of the list of children.
-     * If the `node` belongs to another parent, it is first removed.
-     * Returns the `node`.
-     * @param node
-     * @param nextNode
-     */
-    insertBefore(node, nextNode) {
-        const parent = node.parent;
-        if (node.parent) {
-            node.parent.removeChild(node);
-        }
-        if (nextNode && nextNode.parent === this) {
-            const i = this.children.indexOf(nextNode);
-            if (i >= 0) {
-                this._children.splice(i, 0, node);
-                this.childSet[node.id] = true;
-                node._parent = this;
-                node._setLayerManager(this.layerManager);
-            }
-            else {
-                throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
-            }
-            this.dirtyZIndex = true;
-            this.markDirty(node, changeDetectable_1.RedrawType.MAJOR);
+        if (node.isVirtual) {
+            const i = this._virtualChildren.indexOf(node);
+            if (i < 0)
+                error();
+            this._virtualChildren.splice(i, 1);
         }
         else {
-            this.append(node);
+            const i = this._children.indexOf(node);
+            if (i < 0)
+                error();
+            this._children.splice(i, 1);
         }
+        delete this.childSet[node.id];
+        node._parent = undefined;
+        node._setLayerManager();
+        this.dirtyZIndex = true;
+        this.markDirty(node, changeDetectable_1.RedrawType.MAJOR);
         return node;
     }
     calculateCumulativeMatrix() {
@@ -223,7 +224,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
         return matrix.transformBBox(bbox);
     }
     markDirtyTransform() {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, changeDetectable_1.RedrawType.MAJOR);
     }
     containsPoint(_x, _y) {
@@ -299,7 +300,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
         return bbox;
     }
     computeTransformMatrix() {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         const { matrix, scalingX, scalingY, rotation, translationX, translationY, scalingCenterX, scalingCenterY, rotationCenterX, rotationCenterY, } = this;
@@ -310,7 +311,7 @@ class Node extends changeDetectable_1.ChangeDetectable {
             rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     }
     render(renderCtx) {
         const { stats } = renderCtx;
@@ -352,9 +353,14 @@ class Node extends changeDetectable_1.ChangeDetectable {
             return;
         }
         this._dirty = changeDetectable_1.RedrawType.NONE;
-        if (recursive) {
-            for (const child of this.children) {
-                child.markClean();
+        if (recursive !== false) {
+            for (const child of this._virtualChildren) {
+                child.markClean({ force });
+            }
+        }
+        if (recursive === true) {
+            for (const child of this._children) {
+                child.markClean({ force });
             }
         }
     }
@@ -363,13 +369,19 @@ class Node extends changeDetectable_1.ChangeDetectable {
     }
     get nodeCount() {
         let count = 1;
-        let dirtyCount = this._dirty >= changeDetectable_1.RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let dirtyCount = this._dirty >= changeDetectable_1.RedrawType.NONE || this.dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
-        for (const child of this._children) {
+        const countChild = (child) => {
             const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
             count += childCount;
             visibleCount += childVisibleCount;
             dirtyCount += childDirtyCount;
+        };
+        for (const child of this._children) {
+            countChild(child);
+        }
+        for (const child of this._virtualChildren) {
+            countChild(child);
         }
         return { count, visibleCount, dirtyCount };
     }

@@ -17,17 +17,15 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Axis = exports.AxisTitle = exports.AxisLabel = exports.BaseAxisTick = exports.AxisLine = exports.Tags = void 0;
+exports.Axis = exports.Tags = void 0;
 const group_1 = require("./scene/group");
 const selection_1 = require("./scene/selection");
 const line_1 = require("./scene/shape/line");
 const text_1 = require("./scene/shape/text");
-const arc_1 = require("./scene/shape/arc");
 const bbox_1 = require("./scene/bbox");
 const caption_1 = require("./caption");
 const id_1 = require("./util/id");
 const angle_1 = require("./util/angle");
-const interval_1 = require("./util/time/interval");
 const equal_1 = require("./util/equal");
 const validation_1 = require("./util/validation");
 const layers_1 = require("./chart/layers");
@@ -36,15 +34,15 @@ const continuousScale_1 = require("./scale/continuousScale");
 const matrix_1 = require("./scene/matrix");
 const timeScale_1 = require("./scale/timeScale");
 const logScale_1 = require("./scale/logScale");
-const default_1 = require("./util/default");
-const deprecation_1 = require("./util/deprecation");
 const array_1 = require("./util/array");
 const chartAxisDirection_1 = require("./chart/chartAxisDirection");
 const label_1 = require("./chart/label");
 const logger_1 = require("./util/logger");
-const TICK_COUNT = validation_1.predicateWithMessage((v, ctx) => validation_1.NUMBER(0)(v, ctx) || v instanceof interval_1.TimeInterval, `expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`);
-const OPT_TICK_COUNT = validation_1.predicateWithMessage((v, ctx) => validation_1.OPTIONAL(v, ctx, TICK_COUNT), `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`);
-const OPT_TICK_INTERVAL = validation_1.predicateWithMessage((v, ctx) => validation_1.OPTIONAL(v, ctx, (v, ctx) => (v !== 0 && validation_1.NUMBER(0)(v, ctx)) || v instanceof interval_1.TimeInterval), `expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`);
+const axisLabel_1 = require("./chart/axis/axisLabel");
+const axisLine_1 = require("./chart/axis/axisLine");
+const axisTick_1 = require("./chart/axis/axisTick");
+const easing = require("./motion/easing");
+const states_1 = require("./motion/states");
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = validation_1.predicateWithMessage(validation_1.ARRAY(undefined, (o) => {
     for (const key in o) {
@@ -69,262 +67,8 @@ var TickGenerationType;
     TickGenerationType[TickGenerationType["FILTER"] = 2] = "FILTER";
     TickGenerationType[TickGenerationType["VALUES"] = 3] = "VALUES";
 })(TickGenerationType || (TickGenerationType = {}));
-class AxisLine {
-    constructor() {
-        this.width = 1;
-        this.color = 'rgba(195, 195, 195, 1)';
-    }
+class AxisStateMachine extends states_1.StateMachine {
 }
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], AxisLine.prototype, "width", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_COLOR_STRING)
-], AxisLine.prototype, "color", void 0);
-exports.AxisLine = AxisLine;
-class BaseAxisTick {
-    constructor() {
-        this.enabled = true;
-        /**
-         * The line width to be used by axis ticks.
-         */
-        this.width = 1;
-        /**
-         * The line length to be used by axis ticks.
-         */
-        this.size = 6;
-        /**
-         * The color of the axis ticks.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-         */
-        this.color = 'rgba(195, 195, 195, 1)';
-        /**
-         * A hint of how many ticks to use (the exact number of ticks might differ),
-         * a `TimeInterval` or a `CountableTimeInterval`.
-         * For example:
-         *
-         *     axis.tick.count = 5;
-         *     axis.tick.count = year;
-         *     axis.tick.count = month.every(6);
-         */
-        this.count = undefined;
-        this.interval = undefined;
-        this.values = undefined;
-        this.minSpacing = NaN;
-    }
-}
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], BaseAxisTick.prototype, "enabled", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], BaseAxisTick.prototype, "width", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], BaseAxisTick.prototype, "size", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_COLOR_STRING)
-], BaseAxisTick.prototype, "color", void 0);
-__decorate([
-    validation_1.Validate(OPT_TICK_COUNT),
-    deprecation_1.Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-], BaseAxisTick.prototype, "count", void 0);
-__decorate([
-    validation_1.Validate(OPT_TICK_INTERVAL)
-], BaseAxisTick.prototype, "interval", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_ARRAY())
-], BaseAxisTick.prototype, "values", void 0);
-__decorate([
-    validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.LESS_THAN('maxSpacing'))),
-    default_1.Default(NaN)
-], BaseAxisTick.prototype, "minSpacing", void 0);
-exports.BaseAxisTick = BaseAxisTick;
-class AxisLabel {
-    constructor() {
-        this.enabled = true;
-        /** If set to `false`, axis labels will not be wrapped on multiple lines. */
-        this.autoWrap = false;
-        /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-        this.maxWidth = undefined;
-        /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-        this.maxHeight = undefined;
-        this.fontStyle = undefined;
-        this.fontWeight = undefined;
-        this.fontSize = 12;
-        this.fontFamily = 'Verdana, sans-serif';
-        /**
-         * The padding between the labels and the ticks.
-         */
-        this.padding = 5;
-        /**
-         * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
-         */
-        this.minSpacing = NaN;
-        /**
-         * The color of the labels.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-         */
-        this.color = 'rgba(87, 87, 87, 1)';
-        /**
-         * Custom label rotation in degrees.
-         * Labels are rendered perpendicular to the axis line by default.
-         * Or parallel to the axis line, if the {@link parallel} is set to `true`.
-         * The value of this config is used as the angular offset/deflection
-         * from the default rotation.
-         */
-        this.rotation = undefined;
-        /**
-         * If specified and axis labels may collide, they are rotated to reduce collisions. If the
-         * `rotation` property is specified, it takes precedence.
-         */
-        this.autoRotate = undefined;
-        /**
-         * Rotation angle to use when autoRotate is applied.
-         */
-        this.autoRotateAngle = 335;
-        /**
-         * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
-         */
-        this.avoidCollisions = true;
-        /**
-         * By default labels and ticks are positioned to the left of the axis line.
-         * `true` positions the labels to the right of the axis line.
-         * However, if the axis is rotated, it's easier to think in terms
-         * of this side or the opposite side, rather than left and right.
-         * We use the term `mirror` for conciseness, although it's not
-         * true mirroring - for example, when a label is rotated, so that
-         * it is inclined at the 45 degree angle, text flowing from north-west
-         * to south-east, ending at the tick to the left of the axis line,
-         * and then we set this config to `true`, the text will still be flowing
-         * from north-west to south-east, _starting_ at the tick to the right
-         * of the axis line.
-         */
-        this.mirrored = false;
-        /**
-         * Labels are rendered perpendicular to the axis line by default.
-         * Setting this config to `true` makes labels render parallel to the axis line
-         * and center aligns labels' text at the ticks.
-         */
-        this.parallel = false;
-        /**
-         * In case {@param value} is a number, the {@param fractionDigits} parameter will
-         * be provided as well. The `fractionDigits` corresponds to the number of fraction
-         * digits used by the tick step. For example, if the tick step is `0.0005`,
-         * the `fractionDigits` is 4.
-         */
-        this.formatter = undefined;
-        this.format = undefined;
-    }
-    /**
-     * The side of the axis line to position the labels on.
-     * -1 = left (default)
-     * 1 = right
-     */
-    getSideFlag() {
-        return this.mirrored ? 1 : -1;
-    }
-    getFont() {
-        return text_1.getFont(this);
-    }
-}
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], AxisLabel.prototype, "enabled", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_BOOLEAN)
-], AxisLabel.prototype, "autoWrap", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_NUMBER(0))
-], AxisLabel.prototype, "maxWidth", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_NUMBER(0))
-], AxisLabel.prototype, "maxHeight", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_FONT_STYLE)
-], AxisLabel.prototype, "fontStyle", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_FONT_WEIGHT)
-], AxisLabel.prototype, "fontWeight", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(1))
-], AxisLabel.prototype, "fontSize", void 0);
-__decorate([
-    validation_1.Validate(validation_1.STRING)
-], AxisLabel.prototype, "fontFamily", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], AxisLabel.prototype, "padding", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER_OR_NAN()),
-    default_1.Default(NaN)
-], AxisLabel.prototype, "minSpacing", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_COLOR_STRING)
-], AxisLabel.prototype, "color", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_NUMBER(-360, 360))
-], AxisLabel.prototype, "rotation", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_BOOLEAN)
-], AxisLabel.prototype, "autoRotate", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(-360, 360))
-], AxisLabel.prototype, "autoRotateAngle", void 0);
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], AxisLabel.prototype, "avoidCollisions", void 0);
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], AxisLabel.prototype, "mirrored", void 0);
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], AxisLabel.prototype, "parallel", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_STRING)
-], AxisLabel.prototype, "format", void 0);
-exports.AxisLabel = AxisLabel;
-class AxisTitle {
-    constructor() {
-        this.enabled = false;
-        this.text = undefined;
-        this.fontStyle = undefined;
-        this.fontWeight = undefined;
-        this.fontSize = 10;
-        this.fontFamily = 'sans-serif';
-        this.color = undefined;
-        this.wrapping = 'always';
-        this.formatter = undefined;
-    }
-}
-__decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], AxisTitle.prototype, "enabled", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_STRING)
-], AxisTitle.prototype, "text", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_FONT_STYLE)
-], AxisTitle.prototype, "fontStyle", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_FONT_WEIGHT)
-], AxisTitle.prototype, "fontWeight", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], AxisTitle.prototype, "fontSize", void 0);
-__decorate([
-    validation_1.Validate(validation_1.STRING)
-], AxisTitle.prototype, "fontFamily", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_COLOR_STRING)
-], AxisTitle.prototype, "color", void 0);
-__decorate([
-    validation_1.Validate(validation_1.TEXT_WRAP)
-], AxisTitle.prototype, "wrapping", void 0);
-__decorate([
-    validation_1.Validate(validation_1.OPT_FUNCTION)
-], AxisTitle.prototype, "formatter", void 0);
-exports.AxisTitle = AxisTitle;
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -340,6 +84,9 @@ class Axis {
         this.id = id_1.createId(this);
         this.nice = true;
         this.dataDomain = [];
+        this.keys = [];
+        this.boundSeries = [];
+        this.includeInvisibleDomains = false;
         this.axisGroup = new group_1.Group({ name: `${this.id}-axis`, zIndex: layers_1.Layers.AXIS_ZINDEX });
         this.lineNode = this.axisGroup.appendChild(new line_1.Line());
         this.tickLineGroup = this.axisGroup.appendChild(new group_1.Group({ name: `${this.id}-Axis-tick-lines`, zIndex: layers_1.Layers.AXIS_ZINDEX }));
@@ -350,18 +97,12 @@ class Axis {
             name: `${this.id}-gridLines`,
             zIndex: layers_1.Layers.AXIS_GRID_ZINDEX,
         }));
-        this.gridArcGroup = this.gridGroup.appendChild(new group_1.Group({
-            name: `${this.id}-gridArcs`,
-            zIndex: layers_1.Layers.AXIS_GRID_ZINDEX,
-        }));
-        this.tickLineGroupSelection = selection_1.Selection.select(this.tickLineGroup, line_1.Line);
-        this.tickLabelGroupSelection = selection_1.Selection.select(this.tickLabelGroup, text_1.Text);
-        this.gridLineGroupSelection = selection_1.Selection.select(this.gridLineGroup, line_1.Line);
-        this.gridArcGroupSelection = selection_1.Selection.select(this.gridArcGroup, arc_1.Arc);
-        this._crossLines = [];
-        this.line = new AxisLine();
+        this.tickLineGroupSelection = selection_1.Selection.select(this.tickLineGroup, line_1.Line, false);
+        this.tickLabelGroupSelection = selection_1.Selection.select(this.tickLabelGroup, text_1.Text, false);
+        this.gridLineGroupSelection = selection_1.Selection.select(this.gridLineGroup, line_1.Line, false);
+        this.line = new axisLine_1.AxisLine();
         this.tick = this.createTick();
-        this.label = new AxisLabel();
+        this.label = new axisLabel_1.AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
         this.layout = {
@@ -371,6 +112,8 @@ class Axis {
                 format: this.label.format,
             },
         };
+        this.modules = {};
+        this.destroyFns = [];
         this.range = [0, 1];
         this.visibleRange = [0, 1];
         this.title = undefined;
@@ -393,12 +136,6 @@ class Axis {
                 lineDash: [4, 2],
             },
         ];
-        /**
-         * `false` - render grid as lines of {@link gridLength} that extend the ticks
-         *           on the opposite side of the axis
-         * `true` - render grid as concentric circles that go through the ticks
-         */
-        this._radialGrid = false;
         this.fractionDigits = 0;
         /**
          * The distance between the grid ticks and the axis ticks.
@@ -408,19 +145,56 @@ class Axis {
          * Is used to avoid collisions between axis labels and series.
          */
         this.seriesAreaPadding = 0;
-        this.thickness = 0;
         this.maxThickness = Infinity;
         this._scale = scale;
         this.refreshScale();
         this._titleCaption.node.rotation = -Math.PI / 2;
         this.axisGroup.appendChild(this._titleCaption.node);
+        const axisHoverHandle = moduleCtx.interactionManager.addListener('hover', (e) => this.checkAxisHover(e));
+        this.destroyFns.push(() => moduleCtx.interactionManager.removeListener(axisHoverHandle));
+        this.animationManager = moduleCtx.animationManager;
+        this.animationState = new AxisStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'align',
+                        action: () => this.resetSelectionNodes(),
+                    },
+                },
+            },
+            align: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: () => this.resetSelectionNodes(),
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data) => this.animateReadyUpdate(data),
+                    },
+                },
+            },
+        });
+        this._crossLines = [];
+        this.assignCrossLineArrayConstructor(this._crossLines);
     }
     get scale() {
         return this._scale;
     }
+    get type() {
+        var _a;
+        return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
+    }
     set crossLines(value) {
         var _a, _b;
         (_a = this._crossLines) === null || _a === void 0 ? void 0 : _a.forEach((crossLine) => this.detachCrossLine(crossLine));
+        if (value) {
+            this.assignCrossLineArrayConstructor(value);
+        }
         this._crossLines = value;
         (_b = this._crossLines) === null || _b === void 0 ? void 0 : _b.forEach((crossLine) => {
             this.attachCrossLine(crossLine);
@@ -437,7 +211,12 @@ class Axis {
         this.crossLineGroup.removeChild(crossLine.group);
     }
     destroy() {
-        // For override by sub-classes.
+        for (const [key, module] of Object.entries(this.modules)) {
+            module.instance.destroy();
+            delete this.modules[key];
+            delete this[key];
+        }
+        this.destroyFns.forEach((f) => f());
     }
     refreshScale() {
         var _a;
@@ -460,10 +239,10 @@ class Axis {
     setCrossLinesVisible(visible) {
         this.crossLineGroup.visible = visible;
     }
-    attachAxis(node, nextNode) {
-        node.insertBefore(this.gridGroup, nextNode);
-        node.insertBefore(this.axisGroup, nextNode);
-        node.insertBefore(this.crossLineGroup, nextNode);
+    attachAxis(node) {
+        node.appendChild(this.gridGroup);
+        node.appendChild(this.axisGroup);
+        node.appendChild(this.crossLineGroup);
     }
     detachAxis(node) {
         node.removeChild(this.gridGroup);
@@ -551,7 +330,6 @@ class Axis {
         // Was visible and now invisible, or was invisible and now visible.
         if ((this._gridLength && !value) || (!this._gridLength && value)) {
             this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
         }
         this._gridLength = value;
         (_a = this.crossLines) === null || _a === void 0 ? void 0 : _a.forEach((crossLine) => {
@@ -561,23 +339,21 @@ class Axis {
     get gridLength() {
         return this._gridLength;
     }
-    set radialGrid(value) {
-        if (this._radialGrid !== value) {
-            this._radialGrid = value;
-            this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-            this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
-        }
-    }
-    get radialGrid() {
-        return this._radialGrid;
-    }
     createTick() {
-        return new BaseAxisTick();
+        return new axisTick_1.AxisTick();
+    }
+    checkAxisHover(event) {
+        const bbox = this.computeBBox();
+        const isInAxis = bbox.containsPoint(event.offsetX, event.offsetY);
+        if (!isInAxis)
+            return;
+        this.moduleCtx.chartEventManager.axisHover(this.id, this.direction);
     }
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount) {
+        const previous = this.tickLabelGroupSelection.nodes().map((node) => node.datum.tickId);
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -592,6 +368,13 @@ class Axis {
             sideFlag,
         }), { tickData, combinedRotation, textBaseline, textAlign } = _a, ticksResult = __rest(_a, ["tickData", "combinedRotation", "textBaseline", "textAlign"]);
         this.updateSelections(tickData.ticks);
+        if (this.animationManager.skipAnimations) {
+            this.resetSelectionNodes();
+        }
+        else {
+            const diff = this.calculateUpdateDiff(previous, tickData);
+            this.animationState.transition('update', diff);
+        }
         this.updateLabels({
             tickLabelGroupSelection: this.tickLabelGroupSelection,
             combinedRotation,
@@ -841,11 +624,22 @@ class Axis {
         const halfBandwidth = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
         const ticks = [];
         let labelCount = 0;
+        const tickIdCounts = new Map();
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
             const tickLabel = this.formatTick(rawTick, i);
-            ticks.push({ tick: rawTick, tickLabel, translationY });
+            // Create a tick id from the label, or as an increment of the last label if this tick label is blank
+            let tickId = tickLabel;
+            if (tickIdCounts.has(tickId)) {
+                const count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = `${tickId}_${count}`;
+            }
+            else {
+                tickIdCounts.set(tickId, 1);
+            }
+            ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
             if (tickLabel === '' || tickLabel == undefined) {
                 continue;
             }
@@ -860,8 +654,9 @@ class Axis {
         return ticks.filter((_, i) => i % keepEvery === 0);
     }
     createTicks(tickCount, minTickCount, maxTickCount) {
+        var _a, _b, _c;
         this.setTickCount(tickCount, minTickCount, maxTickCount);
-        return this.scale.ticks();
+        return (_c = (_b = (_a = this.scale).ticks) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : [];
     }
     estimateTickCount({ minSpacing, maxSpacing }) {
         const availableRange = this.calculateAvailableRange();
@@ -920,9 +715,8 @@ class Axis {
             const visible = node.translationY >= min && node.translationY <= max;
             node.visible = visible;
         };
-        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
         gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
         this.tickLineGroup.visible = this.tick.enabled;
@@ -959,7 +753,19 @@ class Axis {
         return max - min;
     }
     calculateDomain() {
-        // Placeholder for subclasses to override.
+        const { direction, boundSeries, includeInvisibleDomains } = this;
+        if (this.linkedTo) {
+            this.dataDomain = this.linkedTo.dataDomain;
+        }
+        else {
+            const domains = [];
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
+                domains.push(series.getDomain(direction));
+            }
+            const domain = new Array().concat(...domains);
+            this.dataDomain = this.normaliseDataDomain(domain);
+        }
     }
     updatePosition({ rotation, sideFlag }) {
         const { crossLineGroup, axisGroup, gridGroup, translation, gridLineGroupSelection, gridPadding, gridLength } = this;
@@ -986,80 +792,47 @@ class Axis {
     }
     updateSelections(data) {
         const gridData = this.gridLength ? data : [];
-        const gridLineGroupSelection = this.radialGrid
-            ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridData, (group) => {
-                const node = new line_1.Line();
-                node.tag = Tags.GridLine;
-                group.append(node);
-            });
-        const gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridData, (group) => {
-                const node = new arc_1.Arc();
-                node.tag = Tags.GridArc;
-                group.append(node);
-            })
-            : this.gridArcGroupSelection;
+        const gridLineGroupSelection = this.gridLineGroupSelection.update(gridData, (group) => {
+            const node = new line_1.Line();
+            node.tag = Tags.GridLine;
+            group.append(node);
+        }, (datum) => datum.tickId);
         const tickLineGroupSelection = this.tickLineGroupSelection.update(data, (group) => {
             const line = new line_1.Line();
             line.tag = Tags.TickLine;
             group.appendChild(line);
-        });
+        }, (datum) => datum.tickId);
         const tickLabelGroupSelection = this.tickLabelGroupSelection.update(data, (group) => {
             const text = new text_1.Text();
             text.tag = Tags.TickLabel;
             group.appendChild(text);
-        });
-        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
-        // But node `translationY` values must be rounded to get pixel grid alignment
-        const translationFn = (node) => (node.translationY = Math.round(node.datum.translationY));
-        gridLineGroupSelection.each(translationFn);
-        gridArcGroupSelection.each(translationFn);
-        tickLineGroupSelection.each(translationFn);
-        tickLabelGroupSelection.each(translationFn);
+        }, (datum) => datum.tickId);
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
-        this.gridArcGroupSelection = gridArcGroupSelection;
     }
     updateGridLines(sideFlag) {
-        var _a;
-        const { gridStyle, scale, tick, gridPadding, gridLength } = this;
-        if (gridLength && gridStyle.length) {
-            const styleCount = gridStyle.length;
-            let grid;
-            if (this.radialGrid) {
-                const angularGridLength = angle_1.normalizeAngle360Inclusive(angle_1.toRadians(gridLength));
-                const halfBandwidth = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
-                grid = this.gridArcGroupSelection.each((arc, datum) => {
-                    const radius = Math.round(scale.convert(datum) + halfBandwidth);
-                    arc.centerX = 0;
-                    arc.centerY = scale.range[0] - radius;
-                    arc.endAngle = angularGridLength;
-                    arc.radius = radius;
-                });
-            }
-            else {
-                grid = this.gridLineGroupSelection.each((line) => {
-                    line.x1 = gridPadding;
-                    line.x2 = -sideFlag * gridLength + gridPadding;
-                    line.y1 = 0;
-                    line.y2 = 0;
-                });
-            }
-            grid.each((node, _, index) => {
-                const style = gridStyle[index % styleCount];
-                node.stroke = style.stroke;
-                node.strokeWidth = tick.width;
-                node.lineDash = style.lineDash;
-                node.fill = undefined;
-            });
+        const { gridStyle, tick, gridPadding, gridLength } = this;
+        if (gridLength === 0 || gridStyle.length === 0) {
+            return;
         }
+        const styleCount = gridStyle.length;
+        this.gridLineGroupSelection.each((line, _, index) => {
+            const style = gridStyle[index % styleCount];
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+            line.stroke = style.stroke;
+            line.strokeWidth = tick.width;
+            line.lineDash = style.lineDash;
+            line.fill = undefined;
+        });
     }
     updateLabels({ tickLabelGroupSelection, combinedRotation, textBaseline, textAlign, labelX, }) {
         const { label, label: { enabled: labelsEnabled }, } = this;
         if (!labelsEnabled) {
-            return { labelData: [], rotated: false };
+            return;
         }
         // Apply label option values
         tickLabelGroupSelection.each((node, datum) => {
@@ -1188,7 +961,7 @@ class Axis {
         crossLine.gridLength = this.gridLength;
     }
     isAnySeriesActive() {
-        return false;
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
     }
     clipTickLines(x, y, width, height) {
         this.tickLineGroup.setClipRectInGroupCoordinateSpace(new bbox_1.BBox(x, y, width, height));
@@ -1197,7 +970,192 @@ class Axis {
         this.gridGroup.setClipRectInGroupCoordinateSpace(new bbox_1.BBox(x, y, width, height));
     }
     calculatePadding(min, _max) {
-        return Math.abs(min * 0.01);
+        return [Math.abs(min * 0.01), Math.abs(min * 0.01)];
+    }
+    getTitleFormatterParams() {
+        var _a;
+        const boundSeries = this.boundSeries.reduce((acc, next) => {
+            const keys = next.getKeys(this.direction);
+            const names = next.getNames(this.direction);
+            for (let idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, []);
+        return {
+            direction: this.direction,
+            boundSeries,
+            defaultValue: (_a = this.title) === null || _a === void 0 ? void 0 : _a.text,
+        };
+    }
+    normaliseDataDomain(d) {
+        return d;
+    }
+    getLayoutState() {
+        return Object.assign({ rect: this.computeBBox(), gridPadding: this.gridPadding, seriesAreaPadding: this.seriesAreaPadding, tickSize: this.tick.size }, this.layout);
+    }
+    createAxisContext() {
+        const keys = () => {
+            return this.boundSeries
+                .map((s) => s.getKeys(this.direction))
+                .reduce((keys, seriesKeys) => {
+                keys.push(...seriesKeys);
+                return keys;
+            }, []);
+        };
+        return {
+            axisId: this.id,
+            direction: this.direction,
+            continuous: this.scale instanceof continuousScale_1.ContinuousScale,
+            keys,
+            scaleValueFormatter: (specifier) => { var _a, _b, _c; return (_c = (_b = (_a = this.scale).tickFormat) === null || _b === void 0 ? void 0 : _b.call(_a, { specifier })) !== null && _c !== void 0 ? _c : undefined; },
+            scaleBandwidth: () => { var _a; return (_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0; },
+            scaleConvert: (val) => this.scale.convert(val),
+            scaleInvert: (val) => { var _a, _b, _c; return (_c = (_b = (_a = this.scale).invert) === null || _b === void 0 ? void 0 : _b.call(_a, val)) !== null && _c !== void 0 ? _c : undefined; },
+        };
+    }
+    addModule(module) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+        if (this.axisContext == null) {
+            this.axisContext = this.createAxisContext();
+        }
+        const moduleInstance = new module.instanceConstructor(Object.assign(Object.assign({}, this.moduleCtx), { parent: this.axisContext }));
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+        this[module.optionsKey] = moduleInstance;
+    }
+    removeModule(module) {
+        var _a, _b;
+        (_b = (_a = this.modules[module.optionsKey]) === null || _a === void 0 ? void 0 : _a.instance) === null || _b === void 0 ? void 0 : _b.destroy();
+        delete this.modules[module.optionsKey];
+        delete this[module.optionsKey];
+    }
+    isModuleEnabled(module) {
+        return this.modules[module.optionsKey] != null;
+    }
+    animateReadyUpdate(diff) {
+        var _a, _b;
+        if (!diff.changed) {
+            this.resetSelectionNodes();
+            return;
+        }
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        const addedCount = Object.keys(diff.added).length;
+        const removedCount = Object.keys(diff.removed).length;
+        if (removedCount === diff.tickCount) {
+            this.resetSelectionNodes();
+            return;
+        }
+        const totalDuration = (_b = (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
+        let sectionDuration = Math.floor(totalDuration / 2);
+        if (addedCount > 0 && removedCount > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        }
+        const options = {
+            delay: removedCount > 0 ? sectionDuration : 0,
+            duration: sectionDuration,
+        };
+        const animationGroup = `${this.id}_${Math.random()}`;
+        tickLabelGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum, animationGroup);
+        });
+        gridLineGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum, animationGroup);
+        });
+        tickLineGroupSelection.each((node, datum) => {
+            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum, animationGroup);
+        });
+    }
+    animateSelectionNode(selection, diff, options, node, datum, animationGroup) {
+        const roundedTranslationY = Math.round(datum.translationY);
+        let translate = { from: node.translationY, to: roundedTranslationY };
+        let opacity = { from: 1, to: 1 };
+        const { duration } = options;
+        let { delay } = options;
+        const datumId = datum.tickLabel;
+        if (diff.added[datumId]) {
+            translate = { from: roundedTranslationY, to: roundedTranslationY };
+            opacity = { from: 0, to: 1 };
+            delay += duration;
+        }
+        else if (diff.removed[datumId]) {
+            opacity = { from: 1, to: 0 };
+            delay = 0;
+        }
+        const props = [translate, opacity];
+        this.animationManager.animateManyWithThrottle(`${this.id}_ready-update_${node.id}`, props, {
+            disableInteractions: false,
+            delay,
+            duration,
+            ease: easing.easeOut,
+            throttleId: this.id,
+            throttleGroup: animationGroup,
+            onUpdate([translationY, opacity]) {
+                node.translationY = translationY;
+                node.opacity = opacity;
+            },
+            onComplete() {
+                selection.cleanup();
+            },
+        });
+    }
+    resetSelectionNodes() {
+        const { gridLineGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        gridLineGroupSelection.cleanup();
+        tickLineGroupSelection.cleanup();
+        tickLabelGroupSelection.cleanup();
+        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
+        // But node `translationY` values must be rounded to get pixel grid alignment
+        const resetFn = (node) => {
+            node.translationY = Math.round(node.datum.translationY);
+            node.opacity = 1;
+        };
+        gridLineGroupSelection.each(resetFn);
+        tickLineGroupSelection.each(resetFn);
+        tickLabelGroupSelection.each(resetFn);
+    }
+    calculateUpdateDiff(previous, tickData) {
+        var _a;
+        const added = new Set();
+        const removed = new Set();
+        const tickCount = Math.max(previous.length, tickData.ticks.length);
+        for (let i = 0; i < tickCount; i++) {
+            const prev = previous[i];
+            const tick = (_a = tickData.ticks[i]) === null || _a === void 0 ? void 0 : _a.tickId;
+            if (prev === tick) {
+                continue;
+            }
+            if (removed.has(tick)) {
+                removed.delete(tick);
+            }
+            else if (tick) {
+                added.add(tick);
+            }
+            if (added.has(prev)) {
+                added.delete(prev);
+            }
+            else if (prev) {
+                removed.add(prev);
+            }
+        }
+        const addedKeys = {};
+        const removedKeys = {};
+        added.forEach((a) => {
+            addedKeys[a] = true;
+        });
+        removed.forEach((r) => {
+            removedKeys[r] = true;
+        });
+        return {
+            changed: added.size > 0 || removed.size > 0,
+            tickCount,
+            added: addedKeys,
+            removed: removedKeys,
+        };
     }
 }
 Axis.defaultTickMinSpacing = 50;
@@ -1205,9 +1163,9 @@ __decorate([
     validation_1.Validate(validation_1.BOOLEAN)
 ], Axis.prototype, "nice", void 0);
 __decorate([
+    validation_1.Validate(validation_1.STRING_ARRAY)
+], Axis.prototype, "keys", void 0);
+__decorate([
     validation_1.Validate(GRID_STYLE)
 ], Axis.prototype, "gridStyle", void 0);
-__decorate([
-    validation_1.Validate(validation_1.NUMBER(0))
-], Axis.prototype, "thickness", void 0);
 exports.Axis = Axis;

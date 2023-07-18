@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 // when doing transactions, or change detection, and grouping is present
 // in the data, there is no need for the ClientSideRowModel to update each
 // group after an update, ony parts that were impacted by the change.

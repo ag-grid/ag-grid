@@ -10,10 +10,10 @@ exports.TimeAxis = void 0;
 const validation_1 = require("../../util/validation");
 const timeScale_1 = require("../../scale/timeScale");
 const array_1 = require("../../util/array");
-const chartAxis_1 = require("../chartAxis");
 const default_1 = require("../../util/default");
-const axis_1 = require("../../axis");
-class TimeAxisTick extends axis_1.BaseAxisTick {
+const axisTick_1 = require("./axisTick");
+const cartesianAxis_1 = require("./cartesianAxis");
+class TimeAxisTick extends axisTick_1.AxisTick {
     constructor() {
         super(...arguments);
         this.maxSpacing = NaN;
@@ -23,7 +23,7 @@ __decorate([
     validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.GREATER_THAN('minSpacing'))),
     default_1.Default(NaN)
 ], TimeAxisTick.prototype, "maxSpacing", void 0);
-class TimeAxis extends chartAxis_1.ChartAxis {
+class TimeAxis extends cartesianAxis_1.CartesianAxis {
     constructor(moduleCtx) {
         super(moduleCtx, new timeScale_1.TimeScale());
         this.datumFormat = '%m/%d/%y, %H:%M:%S';
@@ -77,8 +77,8 @@ class TimeAxis extends chartAxis_1.ChartAxis {
     }
     calculatePadding(_min, _max) {
         // numbers in domain correspond to Unix timestamps
-        // automatically expand domain by 1 in each direction
-        return 1;
+        // automatically expand domain by 1 in forward direction
+        return [0, 1];
     }
 }
 TimeAxis.className = 'TimeAxis';

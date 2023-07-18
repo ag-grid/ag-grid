@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42,15 +36,20 @@ let ChangeDetectionService = class ChangeDetectionService extends beanStub_1.Bea
         if (this.gridOptionsService.is('suppressChangeDetection')) {
             return;
         }
+        const nodesToRefresh = [rowNode];
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             const onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
             const changedPath = new changedPath_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst(rowNode => {
+                nodesToRefresh.push(rowNode);
+            });
         }
         // step 2 of change detection is to refresh the cells
-        this.rowRenderer.refreshCells();
+        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     }
 };
 __decorate([

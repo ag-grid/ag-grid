@@ -17,18 +17,15 @@ const JobsBoard = () => {
                     <p>
                         AG Grid is used by thousands of banks, insurance companies, government agencies and blue chip
                         software companies all over the world. Our customers rely on us to be experts in our field of
-                        data grids and integration with various frameworks. Following a very succesful introduction to
-                        the market in March 2016, we are rapidly expanding into 2018 to challenge the market with our
-                        superior product. As a provider of a leading software library, we stay ahead of the curve and
-                        are experts in JavaScript and associated libraries such as Angular, React, Vue, Polymer and Web
+                        data grids and integration with various frameworks. As a provider of a leading software library, we stay ahead of the curve and
+                        are experts in JavaScript and associated libraries such as Angular, React, Vue, and Web
                         Components.
                     </p>
 
                     <h4>Life at AG Grid</h4>
                     <p>
-                        We are a young successful start-up where you will experience our growth from small to very big.
                         The current development team have a background building enterprise applications with extensive
-                        experience using Java, C# and C++. There are plenty of opportunities to learn from experienced
+                        experience using Typescript, Java, C# and C++. There are plenty of opportunities to learn from experienced
                         team members. We now would like to grow our team with people at all levels of experience. Our
                         culture is friendly and relaxed with an emphasis on continuing to deliver our world leading
                         product, customer support and service level.
@@ -37,11 +34,10 @@ const JobsBoard = () => {
                         <h4>Perks of Working with us:</h4>
                     </p>
                     <ul>
-                        <li>Thriving young company that is self-funded.</li>
+                        <li>Thriving company that is self-funded.</li>
                         <li>Work with the latest front end technologies.</li>
                         <li>Excellent software practices, no corporate baggage.</li>
                         <li>Travel to and represent AG Grid at international conferences.</li>
-                        <li>Experience a company grow from a few people to world domination.</li>
                     </ul>
 
                     <div>
@@ -54,20 +50,15 @@ const JobsBoard = () => {
                         </p>
 
                         <ul>
-                            <li>Excellent opportunity to join a new leading company in the market</li>
-                            <li>Flat hierarchy no BS</li>
+                            <li>Excellent opportunity to join a leading company in the market</li>
                             <li>You will have the opportunity to be a key member of the company</li>
                             <li>
                                 We work with ALL frameworks, so it's up to you to decide where you want to become an
                                 expert
                             </li>
                             <li>
-                                We are huge in the community, we sponsor 10+ conferences and we give talks, you could
+                                We invest in the community, we sponsor conferences and give talks, you could
                                 become a speaker for AG Grid or represent the company in conferences
-                            </li>
-                            <li>
-                                You will learn how to build Enterprise-grade software that handles the sort of
-                                requirements that only 1% of the programmers know how to deal with
                             </li>
                             <li>Competitive salary</li>
                         </ul>
@@ -80,11 +71,11 @@ const JobsBoard = () => {
                             <li>Developer with 2-3 years experience looking to be given the opportunity to grow.</li>
                             <li>
                                 Strong on core computer science abstract topics. In AG Grid you will have to learn about
-                                low level performance optimisations, complex algorithms, software patterns...
+                                low level performance optimisations, complex algorithms, software patterns.
                             </li>
                             <li>
                                 Passionate about software. You will be asked to come up with your own ideas and
-                                approaches to improve the product
+                                approaches to improve the product.
                             </li>
                         </ul>
 
@@ -97,7 +88,7 @@ const JobsBoard = () => {
                                 Helping us build a knowledge base, doing so, you will be creating complex grids with
                                 graphs, charts.
                             </li>
-                            <li>Fixing bugs and taking ownership of the smaller feature requests</li>
+                            <li>Fixing bugs and taking ownership of smaller feature requests</li>
                             <li>
                                 Helping us in conferences either by becoming a speaker or by representing AG Grid as an
                                 sponsor
@@ -121,13 +112,10 @@ const JobsBoard = () => {
                                             <li>Angular</li>
                                             <li>React</li>
                                             <li>Vue</li>
-                                            <li>Polymer</li>
-                                            <li>npm</li>
-                                            <li>Webpack</li>
                                         </ul>
                                     </li>
                                     <li>
-                                        You must be strong on core computer science, you should be answer with
+                                        You must be strong on core computer science, you should be able to answer with
                                         confidence questions like:{' '}
                                         <ul>
                                             <li>How would you model a tree?</li>

@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
       field: 'age',
       minWidth: 120,
       checkboxSelection: checkboxSelection,
-      aggFunc: 'sum',
     },
     { field: 'year', maxWidth: 120 },
     { field: 'date', minWidth: 150 },

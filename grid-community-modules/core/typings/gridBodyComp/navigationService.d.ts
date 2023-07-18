@@ -21,7 +21,8 @@ export declare class NavigationService extends BeanStub {
     private gridBodyCon;
     constructor();
     private postConstruct;
-    handlePageScrollingKey(event: KeyboardEvent): boolean;
+    handlePageScrollingKey(event: KeyboardEvent, fromFullWidth?: boolean): boolean;
+    private handlePageUpDown;
     private navigateTo;
     private onPageDown;
     private onPageUp;

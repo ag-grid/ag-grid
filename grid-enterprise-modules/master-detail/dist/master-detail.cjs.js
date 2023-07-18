@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -47,11 +47,9 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
     function DetailCellRendererCtrl() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.loadRowDataVersion = 0;
-        _this.needRefresh = false;
         return _this;
     }
     DetailCellRendererCtrl.prototype.init = function (comp, params) {
-        var _this = this;
         this.params = params;
         this.comp = comp;
         var doNothingBecauseInsidePinnedSection = params.pinned != null;
@@ -63,9 +61,6 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
         this.addThemeToDetailGrid();
         this.createDetailGrid();
         this.loadRowData();
-        this.addManagedListener(params.node.parent, core.RowNode.EVENT_DATA_CHANGED, function () {
-            _this.needRefresh = true;
-        });
         this.addManagedListener(this.eventService, core.Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
     };
     DetailCellRendererCtrl.prototype.onFullWidthRowFocused = function (e) {
@@ -176,24 +171,15 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
     DetailCellRendererCtrl.prototype.refresh = function () {
         var GET_GRID_TO_REFRESH = false;
         var GET_GRID_TO_DO_NOTHING = true;
-        // if we return true, it means we pretend to the grid
-        // that we have refreshed, so refresh will never happen.
-        var doNotRefresh = !this.needRefresh || this.refreshStrategy === 'nothing';
-        if (doNotRefresh) {
-            // we do nothing in this refresh method, and also tell the grid to do nothing
-            return GET_GRID_TO_DO_NOTHING;
+        switch (this.refreshStrategy) {
+            // ignore this refresh, make grid think we've refreshed but do nothing
+            case 'nothing': return GET_GRID_TO_DO_NOTHING;
+            // grid will destroy and recreate the cell
+            case 'everything': return GET_GRID_TO_REFRESH;
         }
-        // reset flag, so don't refresh again until more data changes.
-        this.needRefresh = false;
-        if (this.refreshStrategy === 'everything') {
-            // we want full refresh, so tell the grid to destroy and recreate this cell
-            return GET_GRID_TO_REFRESH;
-        }
-        else {
-            // do the refresh here, and tell the grid to do nothing
-            this.loadRowData();
-            return GET_GRID_TO_DO_NOTHING;
-        }
+        // do the refresh here, and tell the grid to do nothing
+        this.loadRowData();
+        return GET_GRID_TO_DO_NOTHING;
     };
     __decorate$1([
         core.Autowired('rowPositionUtils')
@@ -306,7 +292,8 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper
-            }
+            },
+            modules: core.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
         });
         this.detailApi = gridOptions.api;
         this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);
@@ -328,7 +315,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var MasterDetailModule = {
     version: VERSION,

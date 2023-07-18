@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChartOptions } from '../../agChartOptions';
+import type { AgChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
-import { Chart } from '../../chart';
+import type { Chart } from '../../chart';
 import * as examples from '../../test/examples';
 import {
     repeat,
@@ -80,13 +80,6 @@ describe('ScatterSeries', () => {
     });
 
     describe('initial animation', () => {
-        const compare = async () => {
-            await waitForChartStability(chart);
-
-            const imageData = extractImageData(ctx);
-            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-        };
-
         afterEach(() => {
             jest.restoreAllMocks();
         });

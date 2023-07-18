@@ -4,7 +4,7 @@
         typescriptOptions: {
             module: 'system',
             moduleResolution: 'node',
-            target: 'es5',
+            target: 'es2015',
             noImplicitAny: false,
             sourceMap: true,
             jsx: 'react',
@@ -63,8 +63,8 @@
                 defaultExtension: 'tsx',
             },
             'ag-grid-react': {
-                main: './main.js',
-                defaultExtension: 'js',
+                main: './lib/main.mjs',
+                defaultExtension: 'mjs'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.min.js',
@@ -75,8 +75,8 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/react': {
-                main: './main.js',
-                defaultExtension: 'js',
+                main: './lib/main.mjs',
+                defaultExtension: 'mjs',
             },
         },
         meta: {

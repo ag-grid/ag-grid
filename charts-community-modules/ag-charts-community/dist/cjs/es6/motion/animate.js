@@ -7,7 +7,7 @@ var RepeatType;
     RepeatType["Loop"] = "loop";
     RepeatType["Reverse"] = "reverse";
 })(RepeatType = exports.RepeatType || (exports.RepeatType = {}));
-function animate({ driver, duration, from, to, autoplay = true, delay = 0, ease = easing_1.linear, repeat: repeatMax = Infinity, repeatType = RepeatType.Loop, onComplete, onPlay, onRepeat, onStop, onUpdate, }) {
+function animate({ driver, duration, from, to, autoplay = true, delay = 0, ease = easing_1.linear, repeat: repeatMax = 0, repeatType = RepeatType.Loop, onComplete, onPlay, onRepeat, onStop, onUpdate, }) {
     let state;
     let delayElapsed = 0;
     let elapsed = 0;
@@ -87,7 +87,7 @@ function animate({ driver, duration, from, to, autoplay = true, delay = 0, ease 
 exports.animate = animate;
 function tween(opts) {
     let handleUpdate;
-    const animateOpts = Object.assign(Object.assign({}, opts), { repeat: 0, autoplay: false, onUpdate: (value) => {
+    const animateOpts = Object.assign(Object.assign({}, opts), { autoplay: false, onUpdate: (value) => {
             handleUpdate === null || handleUpdate === void 0 ? void 0 : handleUpdate(value);
         } });
     const animationControls = animate(animateOpts);

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -66,6 +60,7 @@ var eventKeys_1 = require("../eventKeys");
 var object_1 = require("../utils/object");
 var moduleRegistry_1 = require("../modules/moduleRegistry");
 var moduleNames_1 = require("../modules/moduleNames");
+var column_1 = require("../entities/column");
 var function_1 = require("../utils/function");
 var keyCode_1 = require("../constants/keyCode");
 var generic_1 = require("../utils/generic");
@@ -91,6 +86,10 @@ var DataTypeService = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.dataTypeDefinitions = {};
         _this.isWaitingForRowData = false;
+        _this.isColumnTypeOverrideInDataTypeDefinitions = false;
+        // keep track of any column state updates whilst waiting for data types to be inferred
+        _this.columnStateUpdatesPendingInference = {};
+        _this.columnStateUpdateListenerDestroyFuncs = [];
         return _this;
     }
     DataTypeService.prototype.init = function () {
@@ -148,6 +147,9 @@ var DataTypeService = /** @class */ (function (_super) {
     DataTypeService.prototype.processDataTypeDefinition = function (dataTypeDefinition, dataTypeDefinitions, alreadyProcessedDataTypes, defaultDataTypes) {
         var mergedDataTypeDefinition;
         var extendsCellDataType = dataTypeDefinition.extendsDataType;
+        if (dataTypeDefinition.columnTypes) {
+            this.isColumnTypeOverrideInDataTypeDefinitions = true;
+        }
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
             var baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
@@ -234,7 +236,7 @@ var DataTypeService = /** @class */ (function (_super) {
             cellDataType = colDef.cellDataType;
         }
         if ((cellDataType == null || cellDataType === true)) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field) : false;
+            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
         if (!cellDataType) {
             colDef.cellDataType = false;
@@ -261,7 +263,22 @@ var DataTypeService = /** @class */ (function (_super) {
         var _a, _b;
         var dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(colDef, userColDef, colId);
         var columnTypes = (_b = (_a = userColDef.type) !== null && _a !== void 0 ? _a : dataTypeDefinitionColumnType) !== null && _b !== void 0 ? _b : colDef.type;
+        colDef.type = columnTypes;
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
+    };
+    DataTypeService.prototype.addColumnListeners = function (column) {
+        if (!this.isWaitingForRowData) {
+            return;
+        }
+        var columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
+        if (!columnStateUpdates) {
+            return;
+        }
+        var columnListener = function (event) {
+            columnStateUpdates.add(event.key);
+        };
+        column.addEventListener(column_1.Column.EVENT_STATE_UPDATED, columnListener);
+        this.columnStateUpdateListenerDestroyFuncs.push(function () { return column.removeEventListener(column_1.Column.EVENT_STATE_UPDATED, columnListener); });
     };
     DataTypeService.prototype.canInferCellDataType = function (colDef, userColDef) {
         var _this = this;
@@ -308,27 +325,19 @@ var DataTypeService = /** @class */ (function (_super) {
             return comparisonValue === undefined ? !!value : value === comparisonValue;
         }
     };
-    DataTypeService.prototype.inferCellDataType = function (field) {
+    DataTypeService.prototype.inferCellDataType = function (field, colId) {
         var _a;
         if (!field) {
             return undefined;
         }
-        var rowData = this.gridOptionsService.get('rowData');
         var value;
-        var fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
-        if (rowData === null || rowData === void 0 ? void 0 : rowData.length) {
-            value = object_1.getValueUsingField(rowData[0], field, fieldContainsDots);
+        var initialData = this.getInitialData();
+        if (initialData) {
+            var fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            value = object_1.getValueUsingField(initialData, field, fieldContainsDots);
         }
         else {
-            var rowNodes = this.rowModel
-                .getRootNode()
-                .allLeafChildren;
-            if (rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.length) {
-                value = object_1.getValueUsingField(rowNodes[0].data, field, fieldContainsDots);
-            }
-            else {
-                this.initWaitForRowData();
-            }
+            this.initWaitForRowData(colId);
         }
         if (value == null) {
             return undefined;
@@ -339,20 +348,100 @@ var DataTypeService = /** @class */ (function (_super) {
         })) !== null && _a !== void 0 ? _a : ['object'], 1), cellDataType = _b[0];
         return cellDataType;
     };
-    DataTypeService.prototype.initWaitForRowData = function () {
+    DataTypeService.prototype.getInitialData = function () {
+        var rowData = this.gridOptionsService.get('rowData');
+        if (rowData === null || rowData === void 0 ? void 0 : rowData.length) {
+            return rowData[0];
+        }
+        else if (this.initialData) {
+            return this.initialData;
+        }
+        else {
+            var rowNodes = this.rowModel
+                .getRootNode()
+                .allLeafChildren;
+            if (rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.length) {
+                return rowNodes[0].data;
+            }
+        }
+        return null;
+    };
+    DataTypeService.prototype.initWaitForRowData = function (colId) {
         var _this = this;
+        this.columnStateUpdatesPendingInference[colId] = new Set();
         if (this.isWaitingForRowData) {
             return;
         }
         this.isWaitingForRowData = true;
-        var destroyFunc = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_DATA_UPDATED, function () {
+        var columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
+        if (columnTypeOverridesExist) {
+            this.columnModel.queueResizeOperations();
+        }
+        var destroyFunc = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_DATA_UPDATE_STARTED, function (event) {
+            var firstRowData = event.firstRowData;
+            if (!firstRowData) {
+                return;
+            }
             destroyFunc === null || destroyFunc === void 0 ? void 0 : destroyFunc();
             _this.isWaitingForRowData = false;
-            setTimeout(function () {
-                // ensure event handled async
-                _this.columnModel.recreateColumnDefs('rowDataUpdated');
-            });
+            _this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
+            _this.columnStateUpdatesPendingInference = {};
+            if (columnTypeOverridesExist) {
+                _this.columnModel.processResizeOperations();
+            }
         });
+    };
+    DataTypeService.prototype.processColumnsPendingInference = function (firstRowData, columnTypeOverridesExist) {
+        var _this = this;
+        this.initialData = firstRowData;
+        var state = [];
+        this.columnStateUpdateListenerDestroyFuncs.forEach(function (destroyFunc) { return destroyFunc(); });
+        this.columnStateUpdateListenerDestroyFuncs = [];
+        var newRowGroupColumnStateWithoutIndex = {};
+        var newPivotColumnStateWithoutIndex = {};
+        Object.entries(this.columnStateUpdatesPendingInference).forEach(function (_a) {
+            var _b = __read(_a, 2), colId = _b[0], columnStateUpdates = _b[1];
+            var column = _this.columnModel.getGridColumn(colId);
+            if (!column) {
+                return;
+            }
+            var oldColDef = column.getColDef();
+            if (!_this.columnModel.resetColumnDefIntoColumn(column)) {
+                return;
+            }
+            var newColDef = column.getColDef();
+            if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
+                var updatedColumnState = _this.getUpdatedColumnState(column, columnStateUpdates);
+                if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
+                    newRowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
+                    newPivotColumnStateWithoutIndex[colId] = updatedColumnState;
+                }
+                state.push(updatedColumnState);
+            }
+        });
+        if (columnTypeOverridesExist) {
+            state.push.apply(state, __spreadArray([], __read(this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex))));
+        }
+        if (state.length) {
+            this.columnModel.applyColumnState({ state: state }, 'cellDataTypeInferred');
+        }
+        this.initialData = null;
+    };
+    DataTypeService.prototype.getUpdatedColumnState = function (column, columnStateUpdates) {
+        var columnState = this.columnModel.getColumnStateFromColDef(column);
+        columnStateUpdates.forEach(function (key) {
+            // if the column state has been updated, don't update again
+            delete columnState[key];
+            if (key === 'rowGroup') {
+                delete columnState.rowGroupIndex;
+            }
+            else if (key === 'pivot') {
+                delete columnState.pivotIndex;
+            }
+        });
+        return columnState;
     };
     DataTypeService.prototype.checkObjectValueHandlers = function (defaultDataTypes) {
         var resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
@@ -419,15 +508,19 @@ var DataTypeService = /** @class */ (function (_super) {
             }
             return _this.valueFormatterService.formatValue(column, node, value, valueFormatter);
         };
-        var usingSetFilter = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId());
+        var usingSetFilter = moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId());
         var translate = this.localeService.getLocaleTextFunc();
+        var mergeFilterParams = function (params) {
+            var filterParams = colDef.filterParams;
+            colDef.filterParams = typeof filterParams === 'object' ? __assign(__assign({}, filterParams), params) : params;
+        };
         colDef.useValueFormatterForExport = true;
         colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: function (a, b) {
                             var valA = a == null ? 0 : parseInt(a);
                             var valB = b == null ? 0 : parseInt(b);
@@ -435,7 +528,7 @@ var DataTypeService = /** @class */ (function (_super) {
                                 return 0;
                             return valA > valB ? 1 : -1;
                         },
-                    };
+                    });
                 }
                 break;
             }
@@ -444,17 +537,17 @@ var DataTypeService = /** @class */ (function (_super) {
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
                 colDef.suppressKeyboardEvent = function (params) { return !!params.colDef.editable && params.event.key === keyCode_1.KeyCode.SPACE; };
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: function (params) {
                             if (!generic_1.exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
                         }
-                    };
+                    });
                 }
                 else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         maxNumConditions: 1,
                         filterOptions: [
                             'empty',
@@ -471,7 +564,7 @@ var DataTypeService = /** @class */ (function (_super) {
                                 numberOfInputs: 0,
                             },
                         ]
-                    };
+                    });
                 }
                 break;
             }
@@ -479,7 +572,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 colDef.cellEditor = 'agDateCellEditor';
                 colDef.keyCreator = function (params) { return formatValue(params.column, params.node, params.value); };
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -492,7 +585,7 @@ var DataTypeService = /** @class */ (function (_super) {
                             }
                             return pathKey !== null && pathKey !== void 0 ? pathKey : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -501,7 +594,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 colDef.keyCreator = function (params) { return formatValue(params.column, params.node, params.value); };
                 var convertToDate_1 = this.getDateParserFunction();
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
@@ -518,10 +611,10 @@ var DataTypeService = /** @class */ (function (_super) {
                             }
                             return pathKey !== null && pathKey !== void 0 ? pathKey : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 else {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         comparator: function (filterDate, cellValue) {
                             var cellAsDate = convertToDate_1(cellValue);
                             if (cellValue == null || cellAsDate < filterDate) {
@@ -532,7 +625,7 @@ var DataTypeService = /** @class */ (function (_super) {
                             }
                             return 0;
                         }
-                    };
+                    });
                 }
                 break;
             }
@@ -554,12 +647,12 @@ var DataTypeService = /** @class */ (function (_super) {
                 };
                 colDef.keyCreator = function (params) { return formatValue(params.column, params.node, params.value); };
                 if (usingSetFilter) {
-                    colDef.filterParams = {
+                    mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
                             return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
-                    };
+                    });
                 }
                 else {
                     colDef.filterValueGetter = function (params) { return formatValue(params.column, params.node, _this.valueService.getValue(params.column, params.node)); };
@@ -569,7 +662,7 @@ var DataTypeService = /** @class */ (function (_super) {
         }
     };
     DataTypeService.prototype.getDefaultDataTypes = function () {
-        var defaultDateFormatMatcher = function (value) { return !!value.match('\\d{4}-\\d{2}-\\d{2}'); };
+        var defaultDateFormatMatcher = function (value) { return !!value.match('^\\d{4}-\\d{2}-\\d{2}$'); };
         var translate = this.localeService.getLocaleTextFunc();
         return {
             number: {
@@ -633,6 +726,9 @@ var DataTypeService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('columnModel')
     ], DataTypeService.prototype, "columnModel", void 0);
+    __decorate([
+        context_1.Autowired('columnUtils')
+    ], DataTypeService.prototype, "columnUtils", void 0);
     __decorate([
         context_1.Autowired('valueService')
     ], DataTypeService.prototype, "valueService", void 0);

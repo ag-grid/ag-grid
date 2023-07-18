@@ -16,13 +16,9 @@ const AboutPage = () => {
                     </section>
 
                     <section>
-                        <h2>Our Mission</h2>
 
                         <article>
-                            <p>
-                                At AG Grid, our mission is simple: <strong>Build the best datagrid in the world</strong>
-                                .
-                            </p>
+                            <br/>
                             <p>
                                 Born out of frustration with existing solutions, <strong>AG Grid</strong> evolved from a
                                 side project to becoming the leading JavaScript datagrid on the market. We are a company
@@ -33,25 +29,10 @@ const AboutPage = () => {
                                 our mission.
                             </p>
                             <p>
-                                Our story is proof that necessity is the mother of invention. During his time working in
-                                London-based financial institutions, <strong>Niall Crosby</strong> - founder and CEO -
-                                struggled to find any datagrid component that could deliver the performance required in
-                                tandem with a complete feature list. This struggle ultimately led Niall to pulling out
-                                the keyboard one Christmas holiday period and starting <strong>AG Grid</strong> as a
-                                side project. This was then released as open source and quickly developed a following.
-                            </p>
-                            <p>
-                                Niall found himself having to devote considerable time and effort to maintaining
-                                <strong> AG Grid</strong>, even fielding feature requests from users. It became apparent
-                                that this thing had legs - and the idea of <strong>AG Grid Enterprise</strong> took seed
-                                in Niall’s mind. A little over one year after the project started the first commercial
-                                version was launched.
-                            </p>
-                            <p>
                                 Today, <strong>AG Grid</strong> is a self-funded, bootstrapped company with thousands of
-                                customers globally. Our product has resonated in the market - as our users face the same
-                                challenges Niall did - and this has been central to our rapid growth. And we’re not
-                                stopping here: we are working on the next great features to continue our mission.
+                                customers globally. Even though we've already created the world's best Javascript datagrid,
+                                our work isn't over: we're forging ahead with the development of new features to show the
+                                world what’s possible in a Javascript datagrid.
                             </p>
                         </article>
                     </section>
@@ -61,20 +42,15 @@ const AboutPage = () => {
 
                         <article>
                             <p>
-                                We believe that a datagrid should be agnostic to the framework that developers choose.
-                                This allows flexibility and future-proofs your development. This is also where the 'ag'
-                                in <strong>AG Grid </strong>
-                                comes from.
-                            </p>
-                            <p>
+                                We believe that a datagrid should be framework-agnostic, providing developers with flexibility
+                                and future-proofing their work. This philosophy is mirrored in our name; ‘AG' stands for agnostic.
+
                                 Our experience is in building Enterprise applications: we know that the datagrid is at
                                 the core of an Enterprise application, and needs to deliver performance and a rich
                                 feature set.
-                            </p>
-                            <p>
-                                We give away what others charge for. <strong>AG Grid Community</strong> provides all of
-                                the features of our competition. We only charge when we go above and beyond, with
-                                features that other grids don’t provide.
+
+                                We pride ourselves on offering what others typically charge for. <strong>AG Grid
+                                Community</strong> delivers features comparable to our competition, free of charge.
                             </p>
                         </article>
                     </section>
@@ -295,18 +271,6 @@ const AboutPage = () => {
                                 </address>
                                 <p>
                                     Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3>Want to work with us?</h3>
-                                <p>
-                                    {' '}
-                                    We are always looking for Javascript Developers with Enterprise Applications
-                                    experience.{' '}
-                                </p>
-                                <p>
-                                    Check the <a href="/ag-grid-jobs-board/">jobs board</a>.
                                 </p>
                             </div>
                         </article>

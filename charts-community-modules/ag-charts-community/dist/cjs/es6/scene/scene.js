@@ -17,6 +17,7 @@ const group_1 = require("./group");
 const hdpiOffscreenCanvas_1 = require("../canvas/hdpiOffscreenCanvas");
 const window_1 = require("../util/window");
 const compare_1 = require("../util/compare");
+const sceneDebugOptions_1 = require("./sceneDebugOptions");
 const logger_1 = require("../util/logger");
 function buildSceneNodeHighlight() {
     var _a;
@@ -49,12 +50,16 @@ class Scene {
             stats: false,
             renderBoundingBoxes: false,
             consoleLog: false,
+            level: sceneDebugOptions_1.SceneDebugLevel.SUMMARY,
             sceneNodeHighlight: [],
         };
         const { document = window.document, mode = (_a = window_1.windowValue('agChartsSceneRenderModel')) !== null && _a !== void 0 ? _a : 'adv-composite', width, height, overrideDevicePixelRatio = undefined, } = opts;
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
         this.opts = { document, mode };
-        this.debug.consoleLog = window_1.windowValue('agChartsDebug') === true;
+        this.debug.consoleLog = [true, 'scene'].includes(window_1.windowValue('agChartsDebug'));
+        this.debug.level = ['scene'].includes(window_1.windowValue('agChartsDebug'))
+            ? sceneDebugOptions_1.SceneDebugLevel.DETAILED
+            : sceneDebugOptions_1.SceneDebugLevel.SUMMARY;
         this.debug.stats = (_b = window_1.windowValue('agChartsSceneStats')) !== null && _b !== void 0 ? _b : false;
         this.debug.dirtyTree = (_c = window_1.windowValue('agChartsSceneDirtyTree')) !== null && _c !== void 0 ? _c : false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
@@ -141,7 +146,7 @@ class Scene {
             lastLayer.element.insertAdjacentElement('afterend', canvas.element);
         }
         if (this.debug.consoleLog) {
-            logger_1.Logger.debug({ layers: this.layers });
+            logger_1.Logger.debug('Scene.addLayer() - layers', this.layers);
         }
         return newLayer.canvas;
     }
@@ -152,7 +157,7 @@ class Scene {
             canvas.destroy();
             this.markDirty();
             if (this.debug.consoleLog) {
-                logger_1.Logger.debug({ layers: this.layers });
+                logger_1.Logger.debug('Scene.removeLayer() -  layers', this.layers);
             }
         }
     }
@@ -164,7 +169,7 @@ class Scene {
             this.sortLayers();
             this.markDirty();
             if (this.debug.consoleLog) {
-                logger_1.Logger.debug({ layers: this.layers });
+                logger_1.Logger.debug('Scene.moveLayer() -  layers', this.layers);
             }
         }
     }
@@ -193,7 +198,14 @@ class Scene {
             if (node.parent === null && node.layerManager && node.layerManager !== this) {
                 node.layerManager.root = null;
             }
-            node._setLayerManager(this);
+            node._setLayerManager({
+                addLayer: (opts) => this.addLayer(opts),
+                moveLayer: (...opts) => this.moveLayer(...opts),
+                removeLayer: (...opts) => this.removeLayer(...opts),
+                markDirty: () => this.markDirty(),
+                canvas: this.canvas,
+                debug: Object.assign(Object.assign({}, this.debug), { consoleLog: this.debug.level >= sceneDebugOptions_1.SceneDebugLevel.DETAILED }),
+            });
         }
         this.markDirty();
     }
@@ -234,7 +246,7 @@ class Scene {
             }
             if (root && !this.dirty) {
                 if (this.debug.consoleLog) {
-                    logger_1.Logger.debug('no-op', {
+                    logger_1.Logger.debug('Scene.render() - no-op', {
                         redrawType: node_1.RedrawType[root.dirty],
                         tree: this.buildTree(root),
                     });
@@ -259,11 +271,11 @@ class Scene {
             }
             if (root && this.debug.dirtyTree) {
                 const { dirtyTree, paths } = this.buildDirtyTree(root);
-                logger_1.Logger.debug({ dirtyTree, paths });
+                logger_1.Logger.debug('Scene.render() - dirtyTree', { dirtyTree, paths });
             }
             if (root && canvasCleared) {
                 if (this.debug.consoleLog) {
-                    logger_1.Logger.debug('before', {
+                    logger_1.Logger.debug('Scene.render() - before', {
                         redrawType: node_1.RedrawType[root.dirty],
                         canvasCleared,
                         tree: this.buildTree(root),
@@ -294,7 +306,11 @@ class Scene {
             this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
             this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
             if (root && this.debug.consoleLog) {
-                logger_1.Logger.debug('after', { redrawType: node_1.RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+                logger_1.Logger.debug('Scene.render() - after', {
+                    redrawType: node_1.RedrawType[root.dirty],
+                    canvasCleared,
+                    tree: this.buildTree(root),
+                });
             }
         });
     }
@@ -359,7 +375,7 @@ class Scene {
             const predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
             const nodes = (_a = this.root) === null || _a === void 0 ? void 0 : _a.findNodes(predicate);
             if (!nodes || nodes.length === 0) {
-                logger_1.Logger.debug(`no debugging node with id [${next}] in scene graph.`);
+                logger_1.Logger.debug(`Scene.render() - no debugging node with id [${next}] in scene graph.`);
                 continue;
             }
             for (const node of nodes) {
@@ -375,7 +391,7 @@ class Scene {
         for (const [name, node] of Object.entries(debugNodes)) {
             const bbox = node.computeTransformedBBox();
             if (!bbox) {
-                logger_1.Logger.debug(`no bbox for debugged node [${name}].`);
+                logger_1.Logger.debug(`Scene.render() - no bbox for debugged node [${name}].`);
                 continue;
             }
             ctx.globalAlpha = 0.8;
@@ -394,14 +410,19 @@ class Scene {
         ctx.restore();
     }
     buildTree(node) {
-        var _a;
+        var _a, _b;
         const name = (_a = (node instanceof group_1.Group ? node.name : null)) !== null && _a !== void 0 ? _a : node.id;
-        return Object.assign({ name,
-            node, dirty: node_1.RedrawType[node.dirty] }, node.children
+        return Object.assign(Object.assign({ name,
+            node, dirty: node_1.RedrawType[node.dirty] }, (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.isVirtual)
+            ? {
+                virtualParentDirty: node_1.RedrawType[node.parent.dirty],
+                virtualParent: node.parent,
+            }
+            : {})), node.children
             .map((c) => this.buildTree(c))
             .reduce((result, childTree) => {
             let { name: treeNodeName } = childTree;
-            const { node: { visible, opacity, zIndex, zIndexSubOrder }, node: childNode, } = childTree;
+            const { node: { visible, opacity, zIndex, zIndexSubOrder }, node: childNode, virtualParent, } = childTree;
             if (!visible || opacity <= 0) {
                 treeNodeName = `(${treeNodeName})`;
             }
@@ -411,11 +432,20 @@ class Scene {
             const key = [
                 `${treeNodeName !== null && treeNodeName !== void 0 ? treeNodeName : '<unknown>'}`,
                 `z: ${zIndex}`,
-                zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                zIndexSubOrder &&
+                    `zo: ${zIndexSubOrder
+                        .map((v) => (typeof v === 'function' ? `${v()} (fn)` : v))
+                        .join(' / ')}`,
+                virtualParent && `(virtual parent)`,
             ]
                 .filter((v) => !!v)
                 .join(' ');
-            result[key] = childTree;
+            let selectedKey = key;
+            let index = 1;
+            while (result[selectedKey] != null && index < 100) {
+                selectedKey = `${key} (${index++})`;
+            }
+            result[selectedKey] = childTree;
             return result;
         }, {}));
     }

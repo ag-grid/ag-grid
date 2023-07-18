@@ -240,7 +240,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.isModuleLoaded = function (menuTabName) {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
+            return core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
         }
         return true;
     };

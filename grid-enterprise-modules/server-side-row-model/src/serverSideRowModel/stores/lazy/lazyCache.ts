@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams, GetRowIdFunc, WithoutGridCommon, GetRowIdParams } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams, GetRowIdFunc, WithoutGridCommon, GetRowIdParams, Events } from "@ag-grid-community/core";
 import { BlockUtils } from "../../blocks/blockUtils";
 import { NodeManager } from "../../nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -60,6 +60,13 @@ export class LazyCache extends BeanStub {
      */
     private getRowIdFunc?: ((params: WithoutGridCommon<GetRowIdParams<any, any>>) => string);
     private isMasterDetail: boolean;
+
+    /**
+     * A cache of removed group nodes, this is retained for preserving group
+     * state when the node moves in and out of the cache. Generally caused by
+     * rows moving blocks.
+     */
+    private removedNodeCache = new Map<string, RowNode>();
 
     constructor(store: LazyStore, numberOfRows: number, storeParams: ServerSideGroupLevelParams) {
         super();
@@ -392,6 +399,20 @@ export class LazyCache extends BeanStub {
         if (data && this.getRowIdFunc != null) {
             const id = this.getRowId(data);
 
+            // the node was deleted at some point, but as we're refreshing
+            // it's been cached and we can retrieve it for reuse.
+            const deletedNode = id && this.removedNodeCache?.get(id);
+            if (deletedNode) {
+                this.removedNodeCache?.delete(id!);
+                this.blockUtils.updateDataIntoRowNode(deletedNode, data);
+                this.nodeMap.set({
+                    id: deletedNode.id!,
+                    node: deletedNode,
+                    index: atStoreIndex
+                });
+                return deletedNode;
+            }
+
             const lazyNode = this.nodeMap.getBy('id', id);
             if (lazyNode) {
                 // delete old lazy node so we can insert it at different location
@@ -404,6 +425,13 @@ export class LazyCache extends BeanStub {
                     node,
                     index: atStoreIndex
                 });
+                this.nodesToRefresh.delete(node);
+
+                if (this.rowLoader.getBlockStartIndexForIndex(index) === this.rowLoader.getBlockStartIndexForIndex(atStoreIndex)) {
+                    // if the block hasn't changed and we have a nodes map, we don't need to refresh the original block, as this block
+                    // has just been refreshed.
+                    return node;
+                }
 
                 // mark all of the old block as needsVerify to trigger it for a refresh, as nodes
                 // should not be out of place
@@ -499,7 +527,13 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex!);
         this.nodesToRefresh.delete(lazyNode.node);
         
-        this.blockUtils.destroyRowNode(lazyNode.node);
+        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+            // while refreshing, we retain the group nodes so they can be moved
+            // without losing state
+            this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
+        } else {
+            this.blockUtils.destroyRowNode(lazyNode.node);
+        }
     }
 
     public getSsrmParams() {
@@ -717,6 +751,7 @@ export class LazyCache extends BeanStub {
                 return;
             }
 
+            // node already exists, and same as node at designated position, update data
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
                 this.nodesToRefresh.delete(nodeFromCache.node);
@@ -763,6 +798,13 @@ export class LazyCache extends BeanStub {
         if (!finishedRefreshing) {
             return;
         }
+
+        // any nodes left in the map need to be cleaned up, this prevents us preserving nodes
+        // indefinitely
+        this.removedNodeCache.forEach(node => {
+            this.blockUtils.destroyRowNode(node);
+        });
+        this.removedNodeCache = new Map();
 
         this.store.fireRefreshFinishedEvent();
     }

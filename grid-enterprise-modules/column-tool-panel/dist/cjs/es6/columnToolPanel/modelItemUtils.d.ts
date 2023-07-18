@@ -1,5 +1,5 @@
 import { ColumnModelItem } from "./columnModelItem";
-import { ColumnModel, ColumnEventType, IAggFuncService, Column } from "@ag-grid-community/core";
+import { ColumnModel, ColumnEventType, IAggFuncService, Column, IAggFunc } from "@ag-grid-community/core";
 export declare class ModelItemUtils {
     aggFuncService: IAggFuncService;
     columnModel: ColumnModel;
@@ -13,4 +13,23 @@ export declare class ModelItemUtils {
     private setAllPivot;
     private setAllPivotPassive;
     private setAllPivotActive;
+    updateColumns(params: {
+        columns: Column[];
+        visibleState?: {
+            [key: string]: boolean;
+        };
+        pivotState?: {
+            [key: string]: {
+                pivot?: boolean;
+                rowGroup?: boolean;
+                aggFunc?: string | IAggFunc | null;
+            };
+        };
+        eventType: ColumnEventType;
+    }): void;
+    createPivotState(column: Column): {
+        pivot?: boolean;
+        rowGroup?: boolean;
+        aggFunc?: string | IAggFunc | null;
+    };
 }

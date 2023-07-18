@@ -124,12 +124,15 @@ var CartesianChart = /** @class */ (function (_super) {
                         _a = this.updateAxes(shrinkRect), seriesRect = _a.seriesRect, visibility = _a.visibility, clipSeries = _a.clipSeries;
                         this.seriesRoot.visible = visibility.series;
                         this.seriesRect = seriesRect;
-                        this.series.forEach(function (series) {
-                            series.rootGroup.translationX = Math.floor(seriesRect.x);
-                            series.rootGroup.translationY = Math.floor(seriesRect.y);
-                        });
+                        this.seriesRoot.translationX = Math.floor(seriesRect.x);
+                        this.seriesRoot.translationY = Math.floor(seriesRect.y);
                         _b = this, seriesRoot = _b.seriesRoot, seriesAreaPadding = _b.seriesAreaPadding;
-                        seriesPaddedRect = seriesRect.clone().grow(seriesAreaPadding);
+                        seriesPaddedRect = seriesRect.clone().grow({
+                            top: seriesAreaPadding.top,
+                            right: seriesAreaPadding.right,
+                            bottom: seriesAreaPadding.bottom,
+                            left: seriesAreaPadding.left,
+                        });
                         hoverRectPadding = 20;
                         hoverRect = seriesPaddedRect.clone().grow(hoverRectPadding);
                         this.hoverRect = hoverRect;
@@ -140,7 +143,7 @@ var CartesianChart = /** @class */ (function (_super) {
                             axes: this.axes.map(function (axis) { return (__assign({ id: axis.id }, axis.getLayoutState())); }),
                         });
                         if (clipSeries) {
-                            seriesRoot.setClipRectInGroupCoordinateSpace(seriesPaddedRect);
+                            seriesRoot.setClipRectInGroupCoordinateSpace(seriesRect);
                         }
                         else {
                             seriesRoot.setClipRectInGroupCoordinateSpace();
@@ -265,8 +268,8 @@ var CartesianChart = /** @class */ (function (_super) {
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
         axes.forEach(function (axis) {
             var _a, _b;
-            var position = axis.position;
-            var _c = _this.calculateAxisDimensions({
+            var _c = axis.position, position = _c === void 0 ? 'left' : _c;
+            var _d = _this.calculateAxisDimensions({
                 axis: axis,
                 seriesRect: seriesRect,
                 paddedBounds: paddedBounds,
@@ -275,7 +278,7 @@ var CartesianChart = /** @class */ (function (_super) {
                 primaryTickCounts: primaryTickCounts,
                 clipSeries: clipSeries,
                 addInterAxisPadding: ((_a = visited[position]) !== null && _a !== void 0 ? _a : 0) > 0,
-            }), newClipSeries = _c.clipSeries, axisThickness = _c.axisThickness, axisOffset = _c.axisOffset;
+            }), newClipSeries = _d.clipSeries, axisThickness = _d.axisThickness, axisOffset = _d.axisOffset;
             visited[position] = ((_b = visited[position]) !== null && _b !== void 0 ? _b : 0) + 1;
             clipSeries = clipSeries || newClipSeries;
             _this.positionAxis({
@@ -373,10 +376,10 @@ var CartesianChart = /** @class */ (function (_super) {
         return fn(value, compareTo);
     };
     CartesianChart.prototype.calculateAxisDimensions = function (opts) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         var axis = opts.axis, seriesRect = opts.seriesRect, paddedBounds = opts.paddedBounds, axisWidths = opts.axisWidths, newAxisWidths = opts.newAxisWidths, primaryTickCounts = opts.primaryTickCounts, addInterAxisPadding = opts.addInterAxisPadding;
         var clipSeries = opts.clipSeries;
-        var position = axis.position, direction = axis.direction;
+        var _f = axis.position, position = _f === void 0 ? 'left' : _f, direction = axis.direction;
         var axisLeftRightRange = function (axis) {
             if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                 return [0, seriesRect.height];
@@ -396,7 +399,7 @@ var CartesianChart = /** @class */ (function (_super) {
                 axis.gridLength = seriesRect.width;
                 break;
         }
-        var zoom = (_b = this.zoomManager.getZoom()) === null || _b === void 0 ? void 0 : _b[axis.direction];
+        var zoom = this.zoomManager.getAxisZoom(axis.id);
         var _g = zoom !== null && zoom !== void 0 ? zoom : {}, _h = _g.min, min = _h === void 0 ? 0 : _h, _j = _g.max, max = _j === void 0 ? 1 : _j;
         axis.visibleRange = [min, max];
         if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
@@ -404,7 +407,7 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         var primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
         var paddedBoundsCoefficient = 0.3;
-        if (axis.thickness > 0) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axis.maxThickness = axis.thickness;
         }
         else if (direction === ChartAxisDirection.Y) {
@@ -414,9 +417,9 @@ var CartesianChart = /** @class */ (function (_super) {
             axis.maxThickness = paddedBounds.height * paddedBoundsCoefficient;
         }
         primaryTickCount = axis.update(primaryTickCount);
-        primaryTickCounts[direction] = (_c = primaryTickCounts[direction]) !== null && _c !== void 0 ? _c : primaryTickCount;
+        primaryTickCounts[direction] = (_b = primaryTickCounts[direction]) !== null && _b !== void 0 ? _b : primaryTickCount;
         var axisThickness = 0;
-        if (axis.thickness) {
+        if (axis.thickness != null && axis.thickness > 0) {
             axisThickness = axis.thickness;
         }
         else {
@@ -429,8 +432,8 @@ var CartesianChart = /** @class */ (function (_super) {
             axisThickness += axisPadding;
         }
         axisThickness = Math.ceil(axisThickness);
-        newAxisWidths[position] = ((_d = newAxisWidths[position]) !== null && _d !== void 0 ? _d : 0) + axisThickness;
-        axis.gridPadding = ((_e = axisWidths[position]) !== null && _e !== void 0 ? _e : 0) - ((_f = newAxisWidths[position]) !== null && _f !== void 0 ? _f : 0);
+        newAxisWidths[position] = ((_c = newAxisWidths[position]) !== null && _c !== void 0 ? _c : 0) + axisThickness;
+        axis.gridPadding = ((_d = axisWidths[position]) !== null && _d !== void 0 ? _d : 0) - ((_e = newAxisWidths[position]) !== null && _e !== void 0 ? _e : 0);
         return { clipSeries: clipSeries, axisThickness: axisThickness, axisOffset: axisOffset };
     };
     CartesianChart.prototype.positionAxis = function (opts) {

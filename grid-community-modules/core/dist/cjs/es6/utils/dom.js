@@ -1,12 +1,6 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.prependDC = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.offsetWidth = exports.offsetHeight = exports.getElementAttribute = exports.appendHtml = exports.loadTemplate = exports.isVisible = exports.removeFromParent = exports.removeElement = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
+exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.prependDC = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.offsetWidth = exports.offsetHeight = exports.getElementAttribute = exports.appendHtml = exports.loadTemplate = exports.isVisible = exports.removeFromParent = exports.removeElement = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getElementRectWithOffset = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
 const browser_1 = require("./browser");
 const generic_1 = require("./generic");
 const aria_1 = require("./aria");
@@ -34,7 +28,7 @@ function radioCssClass(element, elementClass, otherElementClass) {
 }
 exports.radioCssClass = radioCssClass;
 exports.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-exports.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
+exports.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 function isFocusableFormField(element) {
     const matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     const inputSelector = 'input, select, button, textarea';
@@ -142,6 +136,17 @@ function getAbsoluteWidth(el) {
     return Math.ceil(el.offsetWidth + marginWidth);
 }
 exports.getAbsoluteWidth = getAbsoluteWidth;
+function getElementRectWithOffset(el) {
+    const offsetElementRect = el.getBoundingClientRect();
+    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = getElementSize(el);
+    return {
+        top: offsetElementRect.top + (borderTopWidth || 0),
+        left: offsetElementRect.left + (borderLeftWidth || 0),
+        right: offsetElementRect.right + (borderRightWidth || 0),
+        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
+    };
+}
+exports.getElementRectWithOffset = getElementRectWithOffset;
 function isRtlNegativeScroll() {
     if (typeof rtlNegativeScroll === "boolean") {
         return rtlNegativeScroll;

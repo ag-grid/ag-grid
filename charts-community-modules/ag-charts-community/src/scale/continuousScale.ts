@@ -1,6 +1,6 @@
 import { Logger } from '../util/logger';
-import { TimeInterval } from '../util/time/interval';
-import { Scale } from './scale';
+import type { TimeInterval } from '../util/time/interval';
+import type { Scale } from './scale';
 
 export abstract class ContinuousScale<D extends number | Date, I = number> implements Scale<D, number, I> {
     static readonly defaultTickCount = 5;

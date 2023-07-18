@@ -39,8 +39,7 @@ const App = () => {
                 modules={[ClientSideRowModelModule]}
                 comps={{
                     crf: CRF
-                }}>                
-            </AgGridReact>
+                }} />
         </div>
     );
 };

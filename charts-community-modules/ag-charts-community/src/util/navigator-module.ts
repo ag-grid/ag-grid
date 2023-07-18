@@ -1,5 +1,6 @@
 import { Navigator } from '../chart/navigator/navigator';
-import { Module, registerModule } from './module';
+import type { Module } from './module';
+import { registerModule } from './module';
 
 export const CHART_NAVIGATOR_MODULE: Module = {
     type: 'root',

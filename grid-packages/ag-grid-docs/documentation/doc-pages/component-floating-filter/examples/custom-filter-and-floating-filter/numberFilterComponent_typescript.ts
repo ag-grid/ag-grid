@@ -68,7 +68,7 @@ export class NumberFilterComponent implements IFilterComp {
 
         const filterValue = this.filterText;
 
-        if (!value) return false;
+        if (value == null) return false;
         return Number(value) > Number(filterValue);
     }
 

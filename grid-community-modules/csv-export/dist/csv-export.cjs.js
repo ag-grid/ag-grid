@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -76,7 +76,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
         }
         var currentColumnGroupIndex = this.groupColumns.indexOf(column);
         if (currentColumnGroupIndex !== -1) {
-            if ((_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()]) {
+            if (((_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()]) != null) {
                 return true;
             }
             // if this is a top level footer, always render`Total` in the left-most cell
@@ -796,7 +796,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var CsvExportModule = {
     version: VERSION,

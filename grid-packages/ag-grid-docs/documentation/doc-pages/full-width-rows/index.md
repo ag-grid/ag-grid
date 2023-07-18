@@ -78,7 +78,7 @@ The following points should be noted:
 ## Embedded Full Width Rows
 
 By default, Full Width Rows remain in place while the grid is scrolled horizontally. However, this may be undesirable 
-for some applications which need to horizontally scroll the full-width rows together the rest of the rows.
+for some applications which need to horizontally scroll the full-width rows together with the rest of the rows.
 
 In order to have Full Width Rows scroll like normal rows, set `embedFullWidthRows=true` in the gridOptions.
 

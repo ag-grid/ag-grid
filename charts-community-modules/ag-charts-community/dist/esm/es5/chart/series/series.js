@@ -83,6 +83,8 @@ import { ChartAxisDirection } from '../chartAxisDirection';
 import { fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 import { accumulatedValue, trailingAccumulatedValue } from '../data/aggregateFunctions';
+import { accumulateGroup } from '../data/processors';
+import { ActionOnSet } from '../../util/proxy';
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
 export var SeriesNodePickMode;
 (function (SeriesNodePickMode) {
@@ -95,20 +97,26 @@ export var SeriesNodePickMode;
     /** Pick matches based upon distance to ideal position */
     SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
 })(SeriesNodePickMode || (SeriesNodePickMode = {}));
-export function keyProperty(propName, continuous, opts) {
+function basicContinuousCheckDatumValidation(v) {
+    return checkDatum(v, true) != null;
+}
+function basicDiscreteCheckDatumValidation(v) {
+    return checkDatum(v, false) != null;
+}
+export function keyProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign({ property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } }, opts);
+    var result = __assign({ scopes: [scope.id], property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
-export function valueProperty(propName, continuous, opts) {
+export function valueProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign({ property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: function (v) { return checkDatum(v, continuous) != null; } }, opts);
+    var result = __assign({ scopes: [scope.id], property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
-export function rangedValueProperty(propName, opts) {
+export function rangedValueProperty(scope, propName, opts) {
     if (opts === void 0) { opts = {}; }
     var _a = opts.min, min = _a === void 0 ? -Infinity : _a, _b = opts.max, max = _b === void 0 ? Infinity : _b, defOpts = __rest(opts, ["min", "max"]);
-    return __assign({ type: 'value', property: propName, valueType: 'range', validation: function (v) { return checkDatum(v, true) != null; }, processor: function () { return function (datum) {
+    return __assign({ scopes: [scope.id], type: 'value', property: propName, valueType: 'range', validation: basicContinuousCheckDatumValidation, processor: function () { return function (datum) {
             if (typeof datum !== 'number')
                 return datum;
             if (isNaN(datum))
@@ -116,15 +124,19 @@ export function rangedValueProperty(propName, opts) {
             return Math.min(Math.max(datum, min), max);
         }; } }, defOpts);
 }
-export function accumulativeValueProperty(propName, continuous, opts) {
+export function accumulativeValueProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign(__assign({}, valueProperty(propName, continuous, opts)), { processor: accumulatedValue() });
+    var result = __assign(__assign({}, valueProperty(scope, propName, continuous, opts)), { processor: accumulatedValue() });
     return result;
 }
-export function trailingAccumulatedValueProperty(propName, continuous, opts) {
+export function trailingAccumulatedValueProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign(__assign({}, valueProperty(propName, continuous, opts)), { processor: trailingAccumulatedValue() });
+    var result = __assign(__assign({}, valueProperty(scope, propName, continuous, opts)), { processor: trailingAccumulatedValue() });
     return result;
+}
+export function groupAccumulativeValueProperty(scope, propName, continuous, mode, sum, opts) {
+    if (sum === void 0) { sum = 'current'; }
+    return [valueProperty(scope, propName, continuous, opts), accumulateGroup(scope, opts.groupId, mode, sum)];
 }
 var SeriesNodeBaseClickEvent = /** @class */ (function () {
     function SeriesNodeBaseClickEvent(nativeEvent, datum, series) {
@@ -239,11 +251,16 @@ var SeriesTooltipInteraction = /** @class */ (function () {
 export { SeriesTooltipInteraction };
 var Series = /** @class */ (function (_super) {
     __extends(Series, _super);
-    function Series(opts) {
+    function Series(seriesOpts) {
+        var _a;
         var _this = _super.call(this) || this;
         _this.id = createId(_this);
         // The group node that contains all the nodes used to render this series.
-        _this.rootGroup = new Group({ name: 'seriesRoot' });
+        _this.rootGroup = new Group({ name: 'seriesRoot', isVirtual: true });
+        _this.axes = (_a = {},
+            _a[ChartAxisDirection.X] = undefined,
+            _a[ChartAxisDirection.Y] = undefined,
+            _a);
         _this.directions = [ChartAxisDirection.X, ChartAxisDirection.Y];
         // Flag to determine if we should recalculate node data.
         _this.nodeDataRefresh = true;
@@ -252,24 +269,26 @@ var Series = /** @class */ (function (_super) {
         _this.showInLegend = true;
         _this.cursor = 'default';
         _this.nodeClickRange = 'exact';
+        _this.seriesGrouping = undefined;
         _this._declarationOrder = -1;
         _this.highlightStyle = new HighlightStyle();
-        _this.ctx = opts.moduleCtx;
-        var _a = opts.useSeriesGroupLayer, useSeriesGroupLayer = _a === void 0 ? true : _a, _b = opts.useLabelLayer, useLabelLayer = _b === void 0 ? false : _b, _c = opts.pickModes, pickModes = _c === void 0 ? [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] : _c, _d = opts.directionKeys, directionKeys = _d === void 0 ? {} : _d, _e = opts.directionNames, directionNames = _e === void 0 ? {} : _e;
+        _this.ctx = seriesOpts.moduleCtx;
+        var _b = seriesOpts.useLabelLayer, useLabelLayer = _b === void 0 ? false : _b, _c = seriesOpts.pickModes, pickModes = _c === void 0 ? [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] : _c, _d = seriesOpts.directionKeys, directionKeys = _d === void 0 ? {} : _d, _e = seriesOpts.directionNames, directionNames = _e === void 0 ? {} : _e, _f = seriesOpts.contentGroupVirtual, contentGroupVirtual = _f === void 0 ? true : _f;
         var rootGroup = _this.rootGroup;
         _this.directionKeys = directionKeys;
         _this.directionNames = directionNames;
         _this.contentGroup = rootGroup.appendChild(new Group({
             name: _this.id + "-content",
-            layer: useSeriesGroupLayer,
+            layer: !contentGroupVirtual,
+            isVirtual: contentGroupVirtual,
             zIndex: Layers.SERIES_LAYER_ZINDEX,
-            zIndexSubOrder: [function () { return _this._declarationOrder; }, 0],
+            zIndexSubOrder: _this.getGroupZIndexSubOrder('data'),
         }));
         _this.highlightGroup = rootGroup.appendChild(new Group({
             name: _this.id + "-highlight",
             layer: true,
             zIndex: Layers.SERIES_LAYER_ZINDEX,
-            zIndexSubOrder: [function () { return _this._declarationOrder; }, 15000],
+            zIndexSubOrder: _this.getGroupZIndexSubOrder('highlight'),
         }));
         _this.highlightNode = _this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
         _this.highlightLabel = _this.highlightGroup.appendChild(new Group({ name: 'highlightLabel' }));
@@ -319,14 +338,55 @@ var Series = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    Series.prototype.onSeriesGroupingChange = function (prev, next) {
+        var _this = this;
+        var _a = this, id = _a.id, type = _a.type, visible = _a.visible, rootGroup = _a.rootGroup;
+        if (prev) {
+            this.ctx.seriesStateManager.deregisterSeries({ id: id, type: type });
+        }
+        if (next) {
+            this.ctx.seriesStateManager.registerSeries({ id: id, type: type, visible: visible, seriesGrouping: next });
+        }
+        this.ctx.seriesLayerManager.changeGroup({
+            id: id,
+            type: type,
+            rootGroup: rootGroup,
+            getGroupZIndexSubOrder: function (type) { return _this.getGroupZIndexSubOrder(type); },
+            seriesGrouping: next,
+            oldGrouping: prev,
+        });
+    };
     Series.prototype.getBandScalePadding = function () {
         return { inner: 1, outer: 0 };
+    };
+    Series.prototype.getGroupZIndexSubOrder = function (type, subIndex) {
+        var _this = this;
+        if (subIndex === void 0) { subIndex = 0; }
+        var mainAdjust = 0;
+        switch (type) {
+            case 'data':
+            case 'paths':
+                break;
+            case 'labels':
+                mainAdjust += 20000;
+                break;
+            case 'marker':
+                mainAdjust += 10000;
+                break;
+            // Following cases are in their own layer, so need to be careful to respect declarationOrder.
+            case 'highlight':
+                subIndex += 15000;
+                break;
+        }
+        var main = function () { return _this._declarationOrder + mainAdjust; };
+        return [main, subIndex];
     };
     Series.prototype.addChartEventListeners = function () {
         return;
     };
     Series.prototype.destroy = function () {
-        // Override point for sub-classes.
+        this.ctx.seriesStateManager.deregisterSeries(this);
+        this.ctx.seriesLayerManager.releaseGroup(this);
     };
     Series.prototype.getDirectionValues = function (direction, properties) {
         var _this = this;
@@ -386,7 +446,7 @@ var Series = /** @class */ (function (_super) {
         this.nodeDataRefresh = true;
     };
     Series.prototype.visibleChanged = function () {
-        // Override point for this.visible change post-processing.
+        this.ctx.seriesStateManager.registerSeries(this);
     };
     Series.prototype.getOpacity = function (datum) {
         var _a = this.highlightStyle.series, _b = _a.dimOpacity, dimOpacity = _b === void 0 ? 1 : _b, _c = _a.enabled, enabled = _c === void 0 ? true : _c;
@@ -420,7 +480,7 @@ var Series = /** @class */ (function (_super) {
     };
     Series.prototype.isItemIdHighlighted = function (datum) {
         var _a;
-        var highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+        var highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
         var _b = highlightedDatum !== null && highlightedDatum !== void 0 ? highlightedDatum : {}, series = _b.series, itemId = _b.itemId;
         var highlighting = series != null;
         if (!highlighting) {
@@ -529,9 +589,9 @@ var Series = /** @class */ (function (_super) {
         var _b = __read(fixedExtent, 2), min = _b[0], max = _b[1];
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
-            var padding = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : 1;
-            min -= padding;
-            max += padding;
+            var _c = __read((_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : [1, 1], 2), paddingMin = _c[0], paddingMax = _c[1];
+            min -= paddingMin;
+            max += paddingMax;
         }
         return [min, max];
     };
@@ -551,6 +611,13 @@ var Series = /** @class */ (function (_super) {
     __decorate([
         Validate(INTERACTION_RANGE)
     ], Series.prototype, "nodeClickRange", void 0);
+    __decorate([
+        ActionOnSet({
+            changeValue: function (newVal, oldVal) {
+                this.onSeriesGroupingChange(oldVal, newVal);
+            },
+        })
+    ], Series.prototype, "seriesGrouping", void 0);
     return Series;
 }(Observable));
 export { Series };

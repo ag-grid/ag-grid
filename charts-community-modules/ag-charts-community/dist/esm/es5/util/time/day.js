@@ -1,13 +1,12 @@
 import { CountableTimeInterval } from './interval';
 import { durationDay } from './duration';
 function encode(date) {
-    var utc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-    return Math.floor(utc / durationDay);
+    var tzOffsetMs = date.getTimezoneOffset() * 60000;
+    return Math.floor((date.getTime() - tzOffsetMs) / durationDay);
 }
 function decode(encoded) {
-    var d = new Date(0);
+    var d = new Date(1970, 0, 1);
     d.setDate(d.getDate() + encoded);
-    d.setHours(0, 0, 0, 0);
     return d;
 }
 export var day = new CountableTimeInterval(encode, decode);

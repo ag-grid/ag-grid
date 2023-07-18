@@ -96,7 +96,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             this.getContext().createBean(renderedGroup);
             return renderedGroup;
         }
-        var columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist, listItemElement);
+        var columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(item, this.allowDragging, this.groupsExist, listItemElement);
         this.getContext().createBean(columnComp);
         return columnComp;
     };
@@ -197,7 +197,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 recursivelyBuild(columnGroup.getChildren(), dept, parentList);
                 return;
             }
-            var displayName = _this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, _this.eventType);
+            var displayName = _this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             var item = new columnModelItem_1.ColumnModelItem(displayName, columnGroup, dept, true, _this.expandGroupsByDefault);
             parentList.push(item);
             addListeners(item);

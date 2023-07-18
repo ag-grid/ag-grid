@@ -2,14 +2,15 @@ import { CountableTimeInterval } from './interval';
 import { durationDay } from './duration';
 
 function encode(date: Date) {
-    const utc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-    return Math.floor(utc / durationDay);
+    const tzOffsetMs = date.getTimezoneOffset() * 60_000;
+
+    return Math.floor((date.getTime() - tzOffsetMs) / durationDay);
 }
 
 function decode(encoded: number) {
-    const d = new Date(0);
+    const d = new Date(1970, 0, 1);
     d.setDate(d.getDate() + encoded);
-    d.setHours(0, 0, 0, 0);
+
     return d;
 }
 

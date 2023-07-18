@@ -3,14 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saturday = exports.friday = exports.thursday = exports.wednesday = exports.tuesday = exports.monday = exports.sunday = void 0;
 var duration_1 = require("./duration");
 var interval_1 = require("./interval");
-var baseSunday = new Date(2023, 0, 1);
 // Set date to n-th day of the week.
 function weekday(n) {
-    // Use UTC for weeks calculation to get into account time zone shifts
-    var base = Date.UTC(baseSunday.getFullYear(), baseSunday.getMonth(), baseSunday.getDate()) + n * duration_1.durationDay;
+    var base = new Date(2023, 0, 1 + n).getTime();
     function encode(date) {
-        var utc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-        return Math.floor((utc - base) / duration_1.durationWeek);
+        var dateMs = date.getTime();
+        return Math.floor((dateMs - base) / duration_1.durationWeek);
     }
     function decode(encoded) {
         var d = new Date(base);

@@ -58,6 +58,7 @@ export declare class CellCtrl extends BeanStub {
     private customRowDragComp;
     private onCellCompAttachedFuncs;
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl);
+    shouldRestoreFocus(): boolean;
     private addFeatures;
     private addTooltipFeature;
     setComp(comp: ICellComp, eGui: HTMLElement, eCellWrapper: HTMLElement | undefined, printLayout: boolean, startEditing: boolean): void;

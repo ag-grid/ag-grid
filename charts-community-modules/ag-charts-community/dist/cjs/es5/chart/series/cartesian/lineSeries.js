@@ -97,8 +97,6 @@ var string_1 = require("../../../util/string");
 var label_1 = require("../../label");
 var sanitize_1 = require("../../../util/sanitize");
 var validation_1 = require("../../../util/validation");
-var dataModel_1 = require("../../data/dataModel");
-var easing = require("../../../motion/easing");
 var LineSeriesLabel = /** @class */ (function (_super) {
     __extends(LineSeriesLabel, _super);
     function LineSeriesLabel() {
@@ -158,67 +156,79 @@ var LineSeries = /** @class */ (function (_super) {
         label.enabled = false;
         return _this;
     }
-    LineSeries.prototype.processData = function () {
+    LineSeries.prototype.processData = function (dataController) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xAxis, yAxis, _b, xKey, _c, yKey, data, isContinuousX, isContinuousY;
-            return __generator(this, function (_d) {
-                _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, _b = _a.xKey, xKey = _b === void 0 ? '' : _b, _c = _a.yKey, yKey = _c === void 0 ? '' : _c;
-                data = xKey && yKey && this.data ? this.data : [];
-                isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
-                isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
-                this.dataModel = new dataModel_1.DataModel({
-                    props: [
-                        series_1.valueProperty(xKey, isContinuousX, { id: 'xValue' }),
-                        series_1.valueProperty(yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
-                    ],
-                    dataVisible: this.visible,
-                });
-                this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
-                return [2 /*return*/];
+            var _a, axes, _b, xKey, _c, yKey, data, xAxis, yAxis, isContinuousX, isContinuousY, _d, dataModel, processedData;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        _a = this, axes = _a.axes, _b = _a.xKey, xKey = _b === void 0 ? '' : _b, _c = _a.yKey, yKey = _c === void 0 ? '' : _c;
+                        data = xKey && yKey && this.data ? this.data : [];
+                        xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+                        yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+                        isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
+                        isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
+                        return [4 /*yield*/, dataController.request(this.id, data !== null && data !== void 0 ? data : [], {
+                                props: [
+                                    series_1.valueProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                                    series_1.valueProperty(this, yKey, isContinuousY, { id: 'yValue', invalidValue: undefined }),
+                                ],
+                                dataVisible: this.visible,
+                            })];
+                    case 1:
+                        _d = _e.sent(), dataModel = _d.dataModel, processedData = _d.processedData;
+                        this.dataModel = dataModel;
+                        this.processedData = processedData;
+                        return [2 /*return*/];
+                }
             });
         });
     };
     LineSeries.prototype.getDomain = function (direction) {
-        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, dataModel = _a.dataModel, processedData = _a.processedData;
+        var _a = this, axes = _a.axes, dataModel = _a.dataModel, processedData = _a.processedData;
         if (!processedData || !dataModel)
             return [];
-        var xDef = dataModel.resolveProcessedDataDefById("xValue");
+        var xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        var yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+        var xDef = dataModel.resolveProcessedDataDefById(this, "xValue");
         if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
-            var domain = dataModel.getDomain("xValue", processedData);
-            if ((xDef === null || xDef === void 0 ? void 0 : xDef.valueType) === 'category') {
+            var domain = dataModel.getDomain(this, "xValue", 'value', processedData);
+            if ((xDef === null || xDef === void 0 ? void 0 : xDef.def.type) === 'value' && xDef.def.valueType === 'category') {
                 return domain;
             }
             return this.fixNumericExtent(array_1.extent(domain), xAxis);
         }
         else {
-            var domain = dataModel.getDomain("yValue", processedData);
+            var domain = dataModel.getDomain(this, "yValue", 'value', processedData);
             return this.fixNumericExtent(domain, yAxis);
         }
     };
     LineSeries.prototype.createNodeData = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var _m, processedData, dataModel, xAxis, yAxis, _o, markerEnabled, markerSize, strokeWidth, callbackCache, _p, label, _q, yKey, _r, xKey, seriesId, xScale, yScale, xOffset, yOffset, nodeData, size, xIdx, yIdx, moveTo, prevXInRange, nextPoint, actualLength, i, _s, datum, values, xDatum, yDatum, x, tolerance, nextXDatum, xInRange, nextXInRange, y, labelText;
-            return __generator(this, function (_t) {
-                _m = this, processedData = _m.processedData, dataModel = _m.dataModel, xAxis = _m.xAxis, yAxis = _m.yAxis, _o = _m.marker, markerEnabled = _o.enabled, markerSize = _o.size, strokeWidth = _o.strokeWidth, callbackCache = _m.ctx.callbackCache;
+            var _f, processedData, dataModel, axes, _g, markerEnabled, markerSize, strokeWidth, callbackCache, xAxis, yAxis, _h, label, _j, yKey, _k, xKey, seriesId, xScale, yScale, xOffset, yOffset, nodeData, size, xIdx, yIdx, moveTo, prevXInRange, nextPoint, actualLength, i, _l, datum, values, xDatum, yDatum, x, tolerance, nextXDatum, xInRange, nextXInRange, y, labelText;
+            return __generator(this, function (_m) {
+                _f = this, processedData = _f.processedData, dataModel = _f.dataModel, axes = _f.axes, _g = _f.marker, markerEnabled = _g.enabled, markerSize = _g.size, strokeWidth = _g.strokeWidth, callbackCache = _f.ctx.callbackCache;
+                xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+                yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
                 if (!processedData || !dataModel || !xAxis || !yAxis) {
                     return [2 /*return*/, []];
                 }
-                _p = this, label = _p.label, _q = _p.yKey, yKey = _q === void 0 ? '' : _q, _r = _p.xKey, xKey = _r === void 0 ? '' : _r, seriesId = _p.id;
+                _h = this, label = _h.label, _j = _h.yKey, yKey = _j === void 0 ? '' : _j, _k = _h.xKey, xKey = _k === void 0 ? '' : _k, seriesId = _h.id;
                 xScale = xAxis.scale;
                 yScale = yAxis.scale;
                 xOffset = ((_a = xScale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
                 yOffset = ((_b = yScale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
                 nodeData = new Array(processedData.data.length);
                 size = markerEnabled ? markerSize : 0;
-                xIdx = (_e = (_d = (_c = this.dataModel) === null || _c === void 0 ? void 0 : _c.resolveProcessedDataIndexById("xValue")) === null || _d === void 0 ? void 0 : _d.index) !== null && _e !== void 0 ? _e : -1;
-                yIdx = (_h = (_g = (_f = this.dataModel) === null || _f === void 0 ? void 0 : _f.resolveProcessedDataIndexById("yValue")) === null || _g === void 0 ? void 0 : _g.index) !== null && _h !== void 0 ? _h : -1;
+                xIdx = dataModel.resolveProcessedDataIndexById(this, "xValue").index;
+                yIdx = dataModel.resolveProcessedDataIndexById(this, "yValue").index;
                 moveTo = true;
                 prevXInRange = undefined;
                 nextPoint = undefined;
                 actualLength = 0;
                 for (i = 0; i < processedData.data.length; i++) {
-                    _s = nextPoint !== null && nextPoint !== void 0 ? nextPoint : processedData.data[i], datum = _s.datum, values = _s.values;
+                    _l = nextPoint !== null && nextPoint !== void 0 ? nextPoint : processedData.data[i], datum = _l.datum, values = _l.values;
                     xDatum = values[xIdx];
                     yDatum = values[yIdx];
                     if (yDatum === undefined) {
@@ -230,12 +240,13 @@ var LineSeries = /** @class */ (function (_super) {
                         if (isNaN(x)) {
                             prevXInRange = undefined;
                             moveTo = true;
+                            nextPoint = undefined;
                             continue;
                         }
-                        tolerance = ((_j = xScale.bandwidth) !== null && _j !== void 0 ? _j : markerSize * 0.5 + (strokeWidth !== null && strokeWidth !== void 0 ? strokeWidth : 0)) + 1;
+                        tolerance = ((_c = xScale.bandwidth) !== null && _c !== void 0 ? _c : markerSize * 0.5 + (strokeWidth !== null && strokeWidth !== void 0 ? strokeWidth : 0)) + 1;
                         nextPoint =
-                            ((_k = processedData.data[i + 1]) === null || _k === void 0 ? void 0 : _k.values[yIdx]) === undefined ? undefined : processedData.data[i + 1];
-                        nextXDatum = (_l = processedData.data[i + 1]) === null || _l === void 0 ? void 0 : _l.values[xIdx];
+                            ((_d = processedData.data[i + 1]) === null || _d === void 0 ? void 0 : _d.values[yIdx]) === undefined ? undefined : processedData.data[i + 1];
+                        nextXDatum = (_e = processedData.data[i + 1]) === null || _e === void 0 ? void 0 : _e.values[xIdx];
                         xInRange = xAxis.inRangeEx(x, 0, tolerance);
                         nextXInRange = nextPoint && xAxis.inRangeEx(xScale.convert(nextXDatum) + xOffset, 0, tolerance);
                         if (xInRange === -1 && nextXInRange === -1) {
@@ -268,6 +279,8 @@ var LineSeries = /** @class */ (function (_super) {
                             xKey: xKey,
                             point: { x: x, y: y, moveTo: moveTo, size: size },
                             nodeMidPoint: { x: x, y: y },
+                            yValue: yDatum,
+                            xValue: xDatum,
                             label: labelText
                                 ? {
                                     text: labelText,
@@ -419,15 +432,15 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a, _b;
-        var _c = this, xKey = _c.xKey, yKey = _c.yKey, xAxis = _c.xAxis, yAxis = _c.yAxis;
+        var _c = this, xKey = _c.xKey, yKey = _c.yKey, axes = _c.axes;
+        var xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        var yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
         var _d = this, xName = _d.xName, yName = _d.yName, tooltip = _d.tooltip, marker = _d.marker, seriesId = _d.id;
         var tooltipRenderer = tooltip.renderer, tooltipFormat = tooltip.format;
-        var datum = nodeDatum.datum;
-        var xValue = datum[xKey];
-        var yValue = datum[yKey];
+        var datum = nodeDatum.datum, xValue = nodeDatum.xValue, yValue = nodeDatum.yValue;
         var xString = xAxis.formatDatum(xValue);
         var yString = yAxis.formatDatum(yValue);
         var title = sanitize_1.sanitizeHtml((_a = this.title) !== null && _a !== void 0 ? _a : yName);
@@ -507,12 +520,25 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.prototype.animateEmptyUpdateReady = function (_a) {
         var _this = this;
-        var markerSelections = _a.markerSelections, labelSelections = _a.labelSelections, contextData = _a.contextData, paths = _a.paths, seriesRect = _a.seriesRect;
+        var markerSelections = _a.markerSelections, labelSelections = _a.labelSelections, contextData = _a.contextData, paths = _a.paths;
         contextData.forEach(function (_a, contextDataIndex) {
-            var _b, _c;
+            var _b, _c, _d;
             var nodeData = _a.nodeData;
-            var _d = __read(paths[contextDataIndex], 1), lineNode = _d[0];
+            var _e = __read(paths[contextDataIndex], 1), lineNode = _e[0];
             var linePath = lineNode.path;
+            var nodeLengths = [0];
+            var lineLength = nodeData.reduce(function (sum, datum, index) {
+                if (index === 0)
+                    return sum;
+                var prev = nodeData[index - 1];
+                if (isNaN(datum.point.x) || isNaN(datum.point.y) || isNaN(prev.point.x) || isNaN(prev.point.y)) {
+                    nodeLengths.push(sum);
+                    return sum;
+                }
+                var length = Math.sqrt(Math.pow(datum.point.x - prev.point.x, 2) + Math.pow(datum.point.y - prev.point.y, 2));
+                nodeLengths.push(sum + length);
+                return sum + length;
+            }, 0);
             lineNode.fill = undefined;
             lineNode.lineJoin = 'round';
             lineNode.pointerEvents = node_1.PointerEvents.None;
@@ -521,19 +547,16 @@ var LineSeries = /** @class */ (function (_super) {
             lineNode.strokeOpacity = _this.strokeOpacity;
             lineNode.lineDash = _this.lineDash;
             lineNode.lineDashOffset = _this.lineDashOffset;
-            var duration = 1000;
+            var duration = (_c = (_b = _this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.defaultOptions.duration) !== null && _c !== void 0 ? _c : 1000;
             var markerDuration = 200;
             var animationOptions = {
                 from: 0,
-                to: (_b = seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) !== null && _b !== void 0 ? _b : 0,
-                disableInteractions: true,
-                ease: easing.linear,
-                repeat: 0,
+                to: lineLength,
             };
-            (_c = _this.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready", __assign(__assign({}, animationOptions), { duration: duration, onUpdate: function (xValue) {
+            (_d = _this.ctx.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready", __assign(__assign({}, animationOptions), { duration: duration, onUpdate: function (length) {
                     linePath.clear({ trackChanges: true });
                     nodeData.forEach(function (datum, index) {
-                        if (datum.point.x <= xValue) {
+                        if (nodeLengths[index] <= length) {
                             // Draw/move the full segment if past the end of this segment
                             if (datum.point.moveTo) {
                                 linePath.moveTo(datum.point.x, datum.point.y);
@@ -542,12 +565,15 @@ var LineSeries = /** @class */ (function (_super) {
                                 linePath.lineTo(datum.point.x, datum.point.y);
                             }
                         }
-                        else if (index > 0 && nodeData[index - 1].point.x < xValue) {
+                        else if (index > 0 && nodeLengths[index - 1] < length) {
                             // Draw/move partial line if in between the start and end of this segment
                             var start = nodeData[index - 1].point;
                             var end = datum.point;
-                            var x = xValue;
-                            var y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+                            var segmentLength = nodeLengths[index] - nodeLengths[index - 1];
+                            var remainingLength = nodeLengths[index] - length;
+                            var ratio = (segmentLength - remainingLength) / segmentLength;
+                            var x = (1 - ratio) * start.x + ratio * end.x;
+                            var y = (1 - ratio) * start.y + ratio * end.y;
                             if (datum.point.moveTo) {
                                 linePath.moveTo(x, y);
                             }
@@ -558,25 +584,23 @@ var LineSeries = /** @class */ (function (_super) {
                     });
                     lineNode.checkPathDirty();
                 } }));
-            markerSelections[contextDataIndex].each(function (marker, datum) {
+            markerSelections[contextDataIndex].each(function (marker, datum, index) {
                 var _a, _b, _c, _d;
-                var delay = (seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) ? (datum.point.x / seriesRect.width) * duration : 0;
+                var delay = lineLength > 0 ? (nodeLengths[index] / lineLength) * duration : 0;
                 var format = _this.animateFormatter(datum);
                 var size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
-                (_c = _this.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign(__assign({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
+                (_c = _this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign(__assign({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
                         marker.size = size;
                     } }));
             });
-            labelSelections[contextDataIndex].each(function (label, datum) {
+            labelSelections[contextDataIndex].each(function (label, _, index) {
                 var _a;
-                var delay = (seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) ? (datum.point.x / seriesRect.width) * duration : 0;
-                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                var delay = (nodeLengths[index] / lineLength) * duration;
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
                     from: 0,
                     to: 1,
                     delay: delay,
                     duration: markerDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: function (opacity) {
                         label.opacity = opacity;
                     },
@@ -589,7 +613,7 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.prototype.animateReadyResize = function (data) {
         var _a;
-        (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.stop();
+        (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.reset();
         this.resetMarkersAndPaths(data);
     };
     LineSeries.prototype.resetMarkersAndPaths = function (_a) {

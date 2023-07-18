@@ -54,6 +54,7 @@ export interface JsonMergeOptions {
 export declare function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T;
 export declare type JsonApplyParams = {
     constructors?: Record<string, new () => any>;
+    constructedArrays?: WeakMap<Array<any>, new () => any>;
     allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
 };
 /**
@@ -67,9 +68,11 @@ export declare type JsonApplyParams = {
  * @param params.skip property names to skip from the source
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
+ * @param params.constructedArrays map stores arrays which items should be initialised
+ *                                 using a class constructor
  * @param params.allowedTypes overrides by path for allowed property types
  */
-export declare function jsonApply<Target, Source extends DeepPartial<Target>>(target: Target, source?: Source, params?: {
+export declare function jsonApply<Target extends object, Source extends DeepPartial<Target>>(target: Target, source?: Source, params?: {
     path?: string;
     matcherPath?: string;
     skip?: string[];
@@ -94,4 +97,3 @@ declare type Classification = 'array' | 'object' | 'primitive';
  */
 declare function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null;
 export {};
-//# sourceMappingURL=json.d.ts.map

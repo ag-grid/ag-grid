@@ -6,4 +6,3 @@ export declare class Padding {
     constructor(top?: number, right?: number, bottom?: number, left?: number);
     clear(): void;
 }
-//# sourceMappingURL=padding.d.ts.map

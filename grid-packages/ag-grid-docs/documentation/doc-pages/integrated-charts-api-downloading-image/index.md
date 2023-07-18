@@ -1,11 +1,11 @@
 ---
-title: "Downloading Chart Image"
+title: "Chart Image Export"
 enterprise: true
 ---
 
-This section shows how to download charts via the Chart Toolbar and Grid API.
+This section shows how to export charts via the Chart Toolbar and Grid API.
 
-## Downloading Charts via Chart Toolbar
+## Export Charts via Chart Toolbar
 
 Users can use the 'Download Chart' [Chart Toolbar](/integrated-charts-toolbar/) item to download the rendered
 chart in the browser.
@@ -18,7 +18,7 @@ chart in the browser.
 
 Note that the downloaded chart image will be in a `PNG` format.
 
-## Downloading Charts via Grid API
+## Export Charts via Grid API
 
 There are two ways to download the chart image using the Grid API as shown below:
 
@@ -38,8 +38,5 @@ The example below demonstrates how you can retrieve images rendered from the cha
 
 <grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
 
-## Next Up
-
-Continue to the next section to learn about: [Chart Tool Panel API](/integrated-charts-api-chart-tool-panel/).
 
 

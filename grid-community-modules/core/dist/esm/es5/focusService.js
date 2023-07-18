@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -223,6 +217,31 @@ var FocusService = /** @class */ (function (_super) {
     FocusService.prototype.getFocusedCell = function () {
         return this.focusedCellPosition;
     };
+    FocusService.prototype.shouldRestoreFocus = function (cell) {
+        var _this = this;
+        if (this.isCellRestoreFocused(cell)) {
+            setTimeout(function () {
+                // Clear the restore focused cell position after the timeout to avoid
+                // the cell being focused again and stealing focus from another part of the app.
+                _this.restoredFocusedCellPosition = null;
+            }, 0);
+            return true;
+        }
+        return false;
+    };
+    FocusService.prototype.isCellRestoreFocused = function (cellPosition) {
+        if (this.restoredFocusedCellPosition == null) {
+            return false;
+        }
+        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+    };
+    FocusService.prototype.setRestoreFocusedCell = function (cellPosition) {
+        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
+            // to support restoring focus after an async rendering.
+            this.restoredFocusedCellPosition = cellPosition;
+        }
+    };
     FocusService.prototype.getFocusEventParams = function () {
         var _a = this.focusedCellPosition, rowIndex = _a.rowIndex, rowPinned = _a.rowPinned, column = _a.column;
         var params = {
@@ -238,6 +257,7 @@ var FocusService = /** @class */ (function (_super) {
         return params;
     };
     FocusService.prototype.clearFocusedCell = function () {
+        this.restoredFocusedCellPosition = null;
         if (this.focusedCellPosition == null) {
             return;
         }
@@ -267,8 +287,7 @@ var FocusService = /** @class */ (function (_super) {
         if (this.focusedCellPosition == null) {
             return false;
         }
-        return this.focusedCellPosition.column === cellPosition.column &&
-            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
     };
     FocusService.prototype.isRowNodeFocused = function (rowNode) {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
@@ -527,6 +546,9 @@ var FocusService = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowPositionUtils')
     ], FocusService.prototype, "rowPositionUtils", void 0);
+    __decorate([
+        Autowired('cellPositionUtils')
+    ], FocusService.prototype, "cellPositionUtils", void 0);
     __decorate([
         Optional('rangeService')
     ], FocusService.prototype, "rangeService", void 0);

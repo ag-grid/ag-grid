@@ -1,11 +1,12 @@
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
+import type { SeriesNodeDatum } from '../series';
+import { SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { DropShadow } from '../../../scene/dropShadow';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { ChartAxisDirection } from '../../chartAxisDirection';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { BBox } from '../../../scene/bbox';
-import { AgTreemapSeriesTooltipRendererParams, AgTooltipRendererResult, AgTreemapSeriesFormatterParams, AgTreemapSeriesFormat, TextWrap } from '../../agChartOptions';
+import type { AgTreemapSeriesTooltipRendererParams, AgTooltipRendererResult, AgTreemapSeriesFormatterParams, AgTreemapSeriesFormat, TextWrap } from '../../agChartOptions';
 declare type TreeDatum = {
     [prop: string]: any;
     children?: TreeDatum[];
@@ -133,4 +134,3 @@ export declare class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     getLegendData(): ChartLegendDatum[];
 }
 export {};
-//# sourceMappingURL=treemapSeries.d.ts.map

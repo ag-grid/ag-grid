@@ -14,7 +14,7 @@ const logger_1 = require("../util/logger");
 class Group extends node_1.Node {
     constructor(opts) {
         var _a;
-        super();
+        super({ isVirtual: opts === null || opts === void 0 ? void 0 : opts.isVirtual });
         this.opts = opts;
         this.opacity = 1;
         this.lastBBox = undefined;
@@ -81,7 +81,19 @@ class Group extends node_1.Node {
         }
     }
     markDirty(source, type = node_1.RedrawType.TRIVIAL) {
-        const parentType = type <= node_1.RedrawType.MINOR ? node_1.RedrawType.TRIVIAL : type;
+        if (this.isVirtual) {
+            // Always percolate directly for virtual nodes - they don't exist for rendering purposes.
+            super.markDirty(source, type);
+            return;
+        }
+        // Downgrade dirty-ness percolated to parent in special cases.
+        let parentType = type;
+        if (type < node_1.RedrawType.MINOR) {
+            parentType = node_1.RedrawType.TRIVIAL;
+        }
+        else if (this.layer != null) {
+            parentType = node_1.RedrawType.TRIVIAL;
+        }
         super.markDirty(source, type, parentType);
     }
     // We consider a group to be boundless, thus any point belongs to it.
@@ -99,31 +111,35 @@ class Group extends node_1.Node {
         var _a, _b;
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect, dirtyTransform } = this;
         let { ctx, forceRender, clipBBox } = renderCtx;
         const { resized, stats } = renderCtx;
         const canvasCtxTransform = ctx.getTransform();
         const isDirty = dirty >= node_1.RedrawType.MINOR || dirtyZIndex || resized;
-        const isChildDirty = isDirty || children.some((n) => n.dirty >= node_1.RedrawType.TRIVIAL);
-        if (name && consoleLog) {
-            logger_1.Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+        let isChildDirty = isDirty;
+        let isChildLayerDirty = false;
+        for (const child of children) {
+            isChildDirty || (isChildDirty = child.layerManager == null && child.dirty >= node_1.RedrawType.TRIVIAL);
+            isChildLayerDirty || (isChildLayerDirty = child.layerManager != null && child.dirty >= node_1.RedrawType.TRIVIAL);
+            if (isChildDirty) {
+                break;
+            }
         }
-        if (layer) {
+        if (name && consoleLog) {
+            logger_1.Logger.debug({ name, group: this, isDirty, isChildDirty, dirtyTransform, renderCtx, forceRender });
+        }
+        if (dirtyTransform) {
+            forceRender = 'dirtyTransform';
+        }
+        else if (layer) {
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
-                forceRender = true;
+                forceRender = 'dirtyTransform';
                 this.lastBBox = currentBBox;
             }
-            else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated
-                // If it's not a path2D, turn off forceRender
-                // By default there is no need to force redraw a group which has it's own canvas layer
-                // as the layer is independent of any other layer
-                forceRender = false;
-            }
         }
-        if (!isDirty && !isChildDirty && !forceRender) {
+        if (!isDirty && !isChildDirty && !isChildLayerDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
                 logger_1.Logger.debug({ name, result: 'skipping', renderCtx, counts, group: this });
@@ -142,8 +158,11 @@ class Group extends node_1.Node {
             ctx = layer.context;
             ctx.save();
             ctx.resetTransform();
-            forceRender = true;
-            layer.clear();
+            if (forceRender !== 'dirtyTransform') {
+                forceRender = isChildDirty || dirtyZIndex;
+            }
+            if (forceRender)
+                layer.clear();
             if (clipBBox) {
                 // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
                 const { width, height, x, y } = clipBBox;
@@ -173,11 +192,16 @@ class Group extends node_1.Node {
             }
             this.clipCtx(ctx, x, y, width, height);
             // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+            clipBBox = this.matrix.transformBBox(clipRect);
         }
+        const hasVirtualChildren = this.hasVirtualChildren();
         if (dirtyZIndex) {
-            this.sortChildren();
-            forceRender = true;
+            this.sortChildren(children);
+            if (forceRender !== 'dirtyTransform')
+                forceRender = true;
+        }
+        else if (hasVirtualChildren) {
+            this.sortChildren(children);
         }
         // Reduce churn if renderCtx is identical.
         const renderContextChanged = forceRender !== renderCtx.forceRender || clipBBox !== renderCtx.clipBBox || ctx !== renderCtx.ctx;
@@ -210,11 +234,19 @@ class Group extends node_1.Node {
         if (clipRect) {
             ctx.restore();
         }
+        if (hasVirtualChildren) {
+            // Mark virtual nodes as clean and their virtual children - all other nodes have already
+            // been visited and marked clean.
+            for (const child of this.virtualChildren) {
+                child.markClean({ recursive: 'virtual' });
+            }
+        }
         if (layer) {
             if (stats)
                 stats.layersRendered++;
             ctx.restore();
-            layer.snapshot();
+            if (forceRender)
+                layer.snapshot();
             // Check for save/restore depth of zero!
             (_b = (_a = layer.context).verifyDepthZero) === null || _b === void 0 ? void 0 : _b.call(_a);
         }
@@ -223,9 +255,9 @@ class Group extends node_1.Node {
             logger_1.Logger.debug({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
         }
     }
-    sortChildren() {
+    sortChildren(children) {
         this.dirtyZIndex = false;
-        this.children.sort((a, b) => {
+        children.sort((a, b) => {
             var _a, _b;
             return compare_1.compoundAscending([a.zIndex, ...((_a = a.zIndexSubOrder) !== null && _a !== void 0 ? _a : [undefined, undefined]), a.serialNumber], [b.zIndex, ...((_b = b.zIndexSubOrder) !== null && _b !== void 0 ? _b : [undefined, undefined]), b.serialNumber], compare_1.ascendingStringNumberUndefined);
         });
@@ -281,6 +313,7 @@ class Group extends node_1.Node {
 Group.className = 'Group';
 __decorate([
     node_1.SceneChangeDetection({
+        redraw: node_1.RedrawType.MAJOR,
         convertor: (v) => Math.min(1, Math.max(0, v)),
     })
 ], Group.prototype, "opacity", void 0);

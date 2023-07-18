@@ -1,4 +1,19 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -27,6 +42,17 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -43,34 +69,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
         to[j] = from[i];
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Axis = exports.AxisTitle = exports.AxisLabel = exports.BaseAxisTick = exports.AxisLine = exports.Tags = void 0;
+exports.Axis = exports.Tags = void 0;
 var group_1 = require("./scene/group");
 var selection_1 = require("./scene/selection");
 var line_1 = require("./scene/shape/line");
 var text_1 = require("./scene/shape/text");
-var arc_1 = require("./scene/shape/arc");
 var bbox_1 = require("./scene/bbox");
 var caption_1 = require("./caption");
 var id_1 = require("./util/id");
 var angle_1 = require("./util/angle");
-var interval_1 = require("./util/time/interval");
 var equal_1 = require("./util/equal");
 var validation_1 = require("./util/validation");
 var layers_1 = require("./chart/layers");
@@ -79,15 +92,15 @@ var continuousScale_1 = require("./scale/continuousScale");
 var matrix_1 = require("./scene/matrix");
 var timeScale_1 = require("./scale/timeScale");
 var logScale_1 = require("./scale/logScale");
-var default_1 = require("./util/default");
-var deprecation_1 = require("./util/deprecation");
 var array_1 = require("./util/array");
 var chartAxisDirection_1 = require("./chart/chartAxisDirection");
 var label_1 = require("./chart/label");
 var logger_1 = require("./util/logger");
-var TICK_COUNT = validation_1.predicateWithMessage(function (v, ctx) { return validation_1.NUMBER(0)(v, ctx) || v instanceof interval_1.TimeInterval; }, "expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'");
-var OPT_TICK_COUNT = validation_1.predicateWithMessage(function (v, ctx) { return validation_1.OPTIONAL(v, ctx, TICK_COUNT); }, "expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'");
-var OPT_TICK_INTERVAL = validation_1.predicateWithMessage(function (v, ctx) { return validation_1.OPTIONAL(v, ctx, function (v, ctx) { return (v !== 0 && validation_1.NUMBER(0)(v, ctx)) || v instanceof interval_1.TimeInterval; }); }, "expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'");
+var axisLabel_1 = require("./chart/axis/axisLabel");
+var axisLine_1 = require("./chart/axis/axisLine");
+var axisTick_1 = require("./chart/axis/axisTick");
+var easing = require("./motion/easing");
+var states_1 = require("./motion/states");
 var GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 var GRID_STYLE = validation_1.predicateWithMessage(validation_1.ARRAY(undefined, function (o) {
     for (var key in o) {
@@ -112,266 +125,13 @@ var TickGenerationType;
     TickGenerationType[TickGenerationType["FILTER"] = 2] = "FILTER";
     TickGenerationType[TickGenerationType["VALUES"] = 3] = "VALUES";
 })(TickGenerationType || (TickGenerationType = {}));
-var AxisLine = /** @class */ (function () {
-    function AxisLine() {
-        this.width = 1;
-        this.color = 'rgba(195, 195, 195, 1)';
+var AxisStateMachine = /** @class */ (function (_super) {
+    __extends(AxisStateMachine, _super);
+    function AxisStateMachine() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], AxisLine.prototype, "width", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_COLOR_STRING)
-    ], AxisLine.prototype, "color", void 0);
-    return AxisLine;
-}());
-exports.AxisLine = AxisLine;
-var BaseAxisTick = /** @class */ (function () {
-    function BaseAxisTick() {
-        this.enabled = true;
-        /**
-         * The line width to be used by axis ticks.
-         */
-        this.width = 1;
-        /**
-         * The line length to be used by axis ticks.
-         */
-        this.size = 6;
-        /**
-         * The color of the axis ticks.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-         */
-        this.color = 'rgba(195, 195, 195, 1)';
-        /**
-         * A hint of how many ticks to use (the exact number of ticks might differ),
-         * a `TimeInterval` or a `CountableTimeInterval`.
-         * For example:
-         *
-         *     axis.tick.count = 5;
-         *     axis.tick.count = year;
-         *     axis.tick.count = month.every(6);
-         */
-        this.count = undefined;
-        this.interval = undefined;
-        this.values = undefined;
-        this.minSpacing = NaN;
-    }
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], BaseAxisTick.prototype, "enabled", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], BaseAxisTick.prototype, "width", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], BaseAxisTick.prototype, "size", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_COLOR_STRING)
-    ], BaseAxisTick.prototype, "color", void 0);
-    __decorate([
-        validation_1.Validate(OPT_TICK_COUNT),
-        deprecation_1.Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-    ], BaseAxisTick.prototype, "count", void 0);
-    __decorate([
-        validation_1.Validate(OPT_TICK_INTERVAL)
-    ], BaseAxisTick.prototype, "interval", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_ARRAY())
-    ], BaseAxisTick.prototype, "values", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.LESS_THAN('maxSpacing'))),
-        default_1.Default(NaN)
-    ], BaseAxisTick.prototype, "minSpacing", void 0);
-    return BaseAxisTick;
-}());
-exports.BaseAxisTick = BaseAxisTick;
-var AxisLabel = /** @class */ (function () {
-    function AxisLabel() {
-        this.enabled = true;
-        /** If set to `false`, axis labels will not be wrapped on multiple lines. */
-        this.autoWrap = false;
-        /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-        this.maxWidth = undefined;
-        /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-        this.maxHeight = undefined;
-        this.fontStyle = undefined;
-        this.fontWeight = undefined;
-        this.fontSize = 12;
-        this.fontFamily = 'Verdana, sans-serif';
-        /**
-         * The padding between the labels and the ticks.
-         */
-        this.padding = 5;
-        /**
-         * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
-         */
-        this.minSpacing = NaN;
-        /**
-         * The color of the labels.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-         */
-        this.color = 'rgba(87, 87, 87, 1)';
-        /**
-         * Custom label rotation in degrees.
-         * Labels are rendered perpendicular to the axis line by default.
-         * Or parallel to the axis line, if the {@link parallel} is set to `true`.
-         * The value of this config is used as the angular offset/deflection
-         * from the default rotation.
-         */
-        this.rotation = undefined;
-        /**
-         * If specified and axis labels may collide, they are rotated to reduce collisions. If the
-         * `rotation` property is specified, it takes precedence.
-         */
-        this.autoRotate = undefined;
-        /**
-         * Rotation angle to use when autoRotate is applied.
-         */
-        this.autoRotateAngle = 335;
-        /**
-         * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
-         */
-        this.avoidCollisions = true;
-        /**
-         * By default labels and ticks are positioned to the left of the axis line.
-         * `true` positions the labels to the right of the axis line.
-         * However, if the axis is rotated, it's easier to think in terms
-         * of this side or the opposite side, rather than left and right.
-         * We use the term `mirror` for conciseness, although it's not
-         * true mirroring - for example, when a label is rotated, so that
-         * it is inclined at the 45 degree angle, text flowing from north-west
-         * to south-east, ending at the tick to the left of the axis line,
-         * and then we set this config to `true`, the text will still be flowing
-         * from north-west to south-east, _starting_ at the tick to the right
-         * of the axis line.
-         */
-        this.mirrored = false;
-        /**
-         * Labels are rendered perpendicular to the axis line by default.
-         * Setting this config to `true` makes labels render parallel to the axis line
-         * and center aligns labels' text at the ticks.
-         */
-        this.parallel = false;
-        /**
-         * In case {@param value} is a number, the {@param fractionDigits} parameter will
-         * be provided as well. The `fractionDigits` corresponds to the number of fraction
-         * digits used by the tick step. For example, if the tick step is `0.0005`,
-         * the `fractionDigits` is 4.
-         */
-        this.formatter = undefined;
-        this.format = undefined;
-    }
-    /**
-     * The side of the axis line to position the labels on.
-     * -1 = left (default)
-     * 1 = right
-     */
-    AxisLabel.prototype.getSideFlag = function () {
-        return this.mirrored ? 1 : -1;
-    };
-    AxisLabel.prototype.getFont = function () {
-        return text_1.getFont(this);
-    };
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], AxisLabel.prototype, "enabled", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_BOOLEAN)
-    ], AxisLabel.prototype, "autoWrap", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_NUMBER(0))
-    ], AxisLabel.prototype, "maxWidth", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_NUMBER(0))
-    ], AxisLabel.prototype, "maxHeight", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_FONT_STYLE)
-    ], AxisLabel.prototype, "fontStyle", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_FONT_WEIGHT)
-    ], AxisLabel.prototype, "fontWeight", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(1))
-    ], AxisLabel.prototype, "fontSize", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.STRING)
-    ], AxisLabel.prototype, "fontFamily", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], AxisLabel.prototype, "padding", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER_OR_NAN()),
-        default_1.Default(NaN)
-    ], AxisLabel.prototype, "minSpacing", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_COLOR_STRING)
-    ], AxisLabel.prototype, "color", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_NUMBER(-360, 360))
-    ], AxisLabel.prototype, "rotation", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_BOOLEAN)
-    ], AxisLabel.prototype, "autoRotate", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(-360, 360))
-    ], AxisLabel.prototype, "autoRotateAngle", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], AxisLabel.prototype, "avoidCollisions", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], AxisLabel.prototype, "mirrored", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], AxisLabel.prototype, "parallel", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_STRING)
-    ], AxisLabel.prototype, "format", void 0);
-    return AxisLabel;
-}());
-exports.AxisLabel = AxisLabel;
-var AxisTitle = /** @class */ (function () {
-    function AxisTitle() {
-        this.enabled = false;
-        this.text = undefined;
-        this.fontStyle = undefined;
-        this.fontWeight = undefined;
-        this.fontSize = 10;
-        this.fontFamily = 'sans-serif';
-        this.color = undefined;
-        this.wrapping = 'always';
-        this.formatter = undefined;
-    }
-    __decorate([
-        validation_1.Validate(validation_1.BOOLEAN)
-    ], AxisTitle.prototype, "enabled", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_STRING)
-    ], AxisTitle.prototype, "text", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_FONT_STYLE)
-    ], AxisTitle.prototype, "fontStyle", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_FONT_WEIGHT)
-    ], AxisTitle.prototype, "fontWeight", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], AxisTitle.prototype, "fontSize", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.STRING)
-    ], AxisTitle.prototype, "fontFamily", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_COLOR_STRING)
-    ], AxisTitle.prototype, "color", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.TEXT_WRAP)
-    ], AxisTitle.prototype, "wrapping", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.OPT_FUNCTION)
-    ], AxisTitle.prototype, "formatter", void 0);
-    return AxisTitle;
-}());
-exports.AxisTitle = AxisTitle;
+    return AxisStateMachine;
+}(states_1.StateMachine));
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -383,10 +143,14 @@ exports.AxisTitle = AxisTitle;
  */
 var Axis = /** @class */ (function () {
     function Axis(moduleCtx, scale) {
+        var _this = this;
         this.moduleCtx = moduleCtx;
         this.id = id_1.createId(this);
         this.nice = true;
         this.dataDomain = [];
+        this.keys = [];
+        this.boundSeries = [];
+        this.includeInvisibleDomains = false;
         this.axisGroup = new group_1.Group({ name: this.id + "-axis", zIndex: layers_1.Layers.AXIS_ZINDEX });
         this.lineNode = this.axisGroup.appendChild(new line_1.Line());
         this.tickLineGroup = this.axisGroup.appendChild(new group_1.Group({ name: this.id + "-Axis-tick-lines", zIndex: layers_1.Layers.AXIS_ZINDEX }));
@@ -397,18 +161,12 @@ var Axis = /** @class */ (function () {
             name: this.id + "-gridLines",
             zIndex: layers_1.Layers.AXIS_GRID_ZINDEX,
         }));
-        this.gridArcGroup = this.gridGroup.appendChild(new group_1.Group({
-            name: this.id + "-gridArcs",
-            zIndex: layers_1.Layers.AXIS_GRID_ZINDEX,
-        }));
-        this.tickLineGroupSelection = selection_1.Selection.select(this.tickLineGroup, line_1.Line);
-        this.tickLabelGroupSelection = selection_1.Selection.select(this.tickLabelGroup, text_1.Text);
-        this.gridLineGroupSelection = selection_1.Selection.select(this.gridLineGroup, line_1.Line);
-        this.gridArcGroupSelection = selection_1.Selection.select(this.gridArcGroup, arc_1.Arc);
-        this._crossLines = [];
-        this.line = new AxisLine();
+        this.tickLineGroupSelection = selection_1.Selection.select(this.tickLineGroup, line_1.Line, false);
+        this.tickLabelGroupSelection = selection_1.Selection.select(this.tickLabelGroup, text_1.Text, false);
+        this.gridLineGroupSelection = selection_1.Selection.select(this.gridLineGroup, line_1.Line, false);
+        this.line = new axisLine_1.AxisLine();
         this.tick = this.createTick();
-        this.label = new AxisLabel();
+        this.label = new axisLabel_1.AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
         this.layout = {
@@ -418,6 +176,8 @@ var Axis = /** @class */ (function () {
                 format: this.label.format,
             },
         };
+        this.modules = {};
+        this.destroyFns = [];
         this.range = [0, 1];
         this.visibleRange = [0, 1];
         this.title = undefined;
@@ -440,12 +200,6 @@ var Axis = /** @class */ (function () {
                 lineDash: [4, 2],
             },
         ];
-        /**
-         * `false` - render grid as lines of {@link gridLength} that extend the ticks
-         *           on the opposite side of the axis
-         * `true` - render grid as concentric circles that go through the ticks
-         */
-        this._radialGrid = false;
         this.fractionDigits = 0;
         /**
          * The distance between the grid ticks and the axis ticks.
@@ -455,16 +209,54 @@ var Axis = /** @class */ (function () {
          * Is used to avoid collisions between axis labels and series.
          */
         this.seriesAreaPadding = 0;
-        this.thickness = 0;
         this.maxThickness = Infinity;
         this._scale = scale;
         this.refreshScale();
         this._titleCaption.node.rotation = -Math.PI / 2;
         this.axisGroup.appendChild(this._titleCaption.node);
+        var axisHoverHandle = moduleCtx.interactionManager.addListener('hover', function (e) { return _this.checkAxisHover(e); });
+        this.destroyFns.push(function () { return moduleCtx.interactionManager.removeListener(axisHoverHandle); });
+        this.animationManager = moduleCtx.animationManager;
+        this.animationState = new AxisStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'align',
+                        action: function () { return _this.resetSelectionNodes(); },
+                    },
+                },
+            },
+            align: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function () { return _this.resetSelectionNodes(); },
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: function (data) { return _this.animateReadyUpdate(data); },
+                    },
+                },
+            },
+        });
+        this._crossLines = [];
+        this.assignCrossLineArrayConstructor(this._crossLines);
     }
     Object.defineProperty(Axis.prototype, "scale", {
         get: function () {
             return this._scale;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Axis.prototype, "type", {
+        get: function () {
+            var _a;
+            return (_a = this.constructor.type) !== null && _a !== void 0 ? _a : '';
         },
         enumerable: false,
         configurable: true
@@ -477,6 +269,9 @@ var Axis = /** @class */ (function () {
             var _this = this;
             var _a, _b;
             (_a = this._crossLines) === null || _a === void 0 ? void 0 : _a.forEach(function (crossLine) { return _this.detachCrossLine(crossLine); });
+            if (value) {
+                this.assignCrossLineArrayConstructor(value);
+            }
             this._crossLines = value;
             (_b = this._crossLines) === null || _b === void 0 ? void 0 : _b.forEach(function (crossLine) {
                 _this.attachCrossLine(crossLine);
@@ -493,7 +288,23 @@ var Axis = /** @class */ (function () {
         this.crossLineGroup.removeChild(crossLine.group);
     };
     Axis.prototype.destroy = function () {
-        // For override by sub-classes.
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], module = _d[1];
+                module.instance.destroy();
+                delete this.modules[key];
+                delete this[key];
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        this.destroyFns.forEach(function (f) { return f(); });
     };
     Axis.prototype.refreshScale = function () {
         var _this = this;
@@ -517,10 +328,10 @@ var Axis = /** @class */ (function () {
     Axis.prototype.setCrossLinesVisible = function (visible) {
         this.crossLineGroup.visible = visible;
     };
-    Axis.prototype.attachAxis = function (node, nextNode) {
-        node.insertBefore(this.gridGroup, nextNode);
-        node.insertBefore(this.axisGroup, nextNode);
-        node.insertBefore(this.crossLineGroup, nextNode);
+    Axis.prototype.attachAxis = function (node) {
+        node.appendChild(this.gridGroup);
+        node.appendChild(this.axisGroup);
+        node.appendChild(this.crossLineGroup);
     };
     Axis.prototype.detachAxis = function (node) {
         node.removeChild(this.gridGroup);
@@ -617,7 +428,6 @@ var Axis = /** @class */ (function () {
             // Was visible and now invisible, or was invisible and now visible.
             if ((this._gridLength && !value) || (!this._gridLength && value)) {
                 this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-                this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
             }
             this._gridLength = value;
             (_a = this.crossLines) === null || _a === void 0 ? void 0 : _a.forEach(function (crossLine) {
@@ -627,27 +437,21 @@ var Axis = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Axis.prototype, "radialGrid", {
-        get: function () {
-            return this._radialGrid;
-        },
-        set: function (value) {
-            if (this._radialGrid !== value) {
-                this._radialGrid = value;
-                this.gridLineGroupSelection = this.gridLineGroupSelection.clear();
-                this.gridArcGroupSelection = this.gridArcGroupSelection.clear();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Axis.prototype.createTick = function () {
-        return new BaseAxisTick();
+        return new axisTick_1.AxisTick();
+    };
+    Axis.prototype.checkAxisHover = function (event) {
+        var bbox = this.computeBBox();
+        var isInAxis = bbox.containsPoint(event.offsetX, event.offsetY);
+        if (!isInAxis)
+            return;
+        this.moduleCtx.chartEventManager.axisHover(this.id, this.direction);
     };
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     Axis.prototype.update = function (primaryTickCount) {
+        var previous = this.tickLabelGroupSelection.nodes().map(function (node) { return node.datum.tickId; });
         var _a = this.calculateRotations(), rotation = _a.rotation, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation;
         var sideFlag = this.label.getSideFlag();
         var labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
@@ -662,6 +466,13 @@ var Axis = /** @class */ (function () {
             sideFlag: sideFlag,
         }), tickData = _b.tickData, combinedRotation = _b.combinedRotation, textBaseline = _b.textBaseline, textAlign = _b.textAlign, ticksResult = __rest(_b, ["tickData", "combinedRotation", "textBaseline", "textAlign"]);
         this.updateSelections(tickData.ticks);
+        if (this.animationManager.skipAnimations) {
+            this.resetSelectionNodes();
+        }
+        else {
+            var diff = this.calculateUpdateDiff(previous, tickData);
+            this.animationState.transition('update', diff);
+        }
         this.updateLabels({
             tickLabelGroupSelection: this.tickLabelGroupSelection,
             combinedRotation: combinedRotation,
@@ -714,7 +525,7 @@ var Axis = /** @class */ (function () {
         return { rotation: rotation, parallelFlipRotation: parallelFlipRotation, regularFlipRotation: regularFlipRotation };
     };
     Axis.prototype.generateTicks = function (_a) {
-        var e_1, _b, _c;
+        var e_2, _b, _c;
         var _d;
         var primaryTickCount = _a.primaryTickCount, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation, labelX = _a.labelX, sideFlag = _a.sideFlag;
         var _e = this, scale = _e.scale, tick = _e.tick, _f = _e.label, parallel = _f.parallel, rotation = _f.rotation, fontFamily = _f.fontFamily, fontSize = _f.fontSize, fontStyle = _f.fontStyle, fontWeight = _f.fontWeight;
@@ -760,7 +571,7 @@ var Axis = /** @class */ (function () {
             textAlign = label_1.getTextAlign(parallel, configuredRotation, 0, sideFlag, regularFlipFlag);
             var tickStrategies = this.getTickStrategies({ secondaryAxis: secondaryAxis, index: index });
             try {
-                for (var tickStrategies_1 = (e_1 = void 0, __values(tickStrategies)), tickStrategies_1_1 = tickStrategies_1.next(); !tickStrategies_1_1.done; tickStrategies_1_1 = tickStrategies_1.next()) {
+                for (var tickStrategies_1 = (e_2 = void 0, __values(tickStrategies)), tickStrategies_1_1 = tickStrategies_1.next(); !tickStrategies_1_1.done; tickStrategies_1_1 = tickStrategies_1.next()) {
                     var strategy = tickStrategies_1_1.value;
                     (_c = strategy({
                         index: index,
@@ -777,12 +588,12 @@ var Axis = /** @class */ (function () {
                     labelOverlap = this.checkLabelOverlap(rotation_1, rotated, labelMatrix, ticksResult, labelX, __assign(__assign({}, textProps), { textAlign: textAlign }));
                 }
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
                     if (tickStrategies_1_1 && !tickStrategies_1_1.done && (_b = tickStrategies_1.return)) _b.call(tickStrategies_1);
                 }
-                finally { if (e_1) throw e_1.error; }
+                finally { if (e_2) throw e_2.error; }
             }
         }
         var combinedRotation = defaultRotation + configuredRotation + autoRotation;
@@ -893,7 +704,7 @@ var Axis = /** @class */ (function () {
         return labelPlacement_1.axisLabelsOverlap(labelData, labelSpacing);
     };
     Axis.prototype.createLabelData = function (tickData, labelX, textProps, labelMatrix) {
-        var e_2, _a;
+        var e_3, _a;
         var labelData = [];
         try {
             for (var tickData_1 = __values(tickData), tickData_1_1 = tickData_1.next(); !tickData_1_1.done; tickData_1_1 = tickData_1.next()) {
@@ -910,12 +721,12 @@ var Axis = /** @class */ (function () {
                 labelData.push(labelDatum);
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (tickData_1_1 && !tickData_1_1.done && (_a = tickData_1.return)) _a.call(tickData_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return labelData;
     };
@@ -949,11 +760,22 @@ var Axis = /** @class */ (function () {
         var halfBandwidth = ((_b = this.scale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
         var ticks = [];
         var labelCount = 0;
+        var tickIdCounts = new Map();
         for (var i = 0; i < rawTicks.length; i++) {
             var rawTick = rawTicks[i];
             var translationY = scale.convert(rawTick) + halfBandwidth;
             var tickLabel = this.formatTick(rawTick, i);
-            ticks.push({ tick: rawTick, tickLabel: tickLabel, translationY: translationY });
+            // Create a tick id from the label, or as an increment of the last label if this tick label is blank
+            var tickId = tickLabel;
+            if (tickIdCounts.has(tickId)) {
+                var count = tickIdCounts.get(tickId);
+                tickIdCounts.set(tickId, count + 1);
+                tickId = tickId + "_" + count;
+            }
+            else {
+                tickIdCounts.set(tickId, 1);
+            }
+            ticks.push({ tick: rawTick, tickId: tickId, tickLabel: tickLabel, translationY: translationY });
             if (tickLabel === '' || tickLabel == undefined) {
                 continue;
             }
@@ -968,8 +790,9 @@ var Axis = /** @class */ (function () {
         return ticks.filter(function (_, i) { return i % keepEvery === 0; });
     };
     Axis.prototype.createTicks = function (tickCount, minTickCount, maxTickCount) {
+        var _a, _b, _c;
         this.setTickCount(tickCount, minTickCount, maxTickCount);
-        return this.scale.ticks();
+        return (_c = (_b = (_a = this.scale).ticks) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : [];
     };
     Axis.prototype.estimateTickCount = function (_a) {
         var minSpacing = _a.minSpacing, maxSpacing = _a.maxSpacing;
@@ -1029,9 +852,8 @@ var Axis = /** @class */ (function () {
             var visible = node.translationY >= min && node.translationY <= max;
             node.visible = visible;
         };
-        var _a = this, gridLineGroupSelection = _a.gridLineGroupSelection, gridArcGroupSelection = _a.gridArcGroupSelection, tickLineGroupSelection = _a.tickLineGroupSelection, tickLabelGroupSelection = _a.tickLabelGroupSelection;
+        var _a = this, gridLineGroupSelection = _a.gridLineGroupSelection, tickLineGroupSelection = _a.tickLineGroupSelection, tickLabelGroupSelection = _a.tickLabelGroupSelection;
         gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
         this.tickLineGroup.visible = this.tick.enabled;
@@ -1070,7 +892,30 @@ var Axis = /** @class */ (function () {
         return max - min;
     };
     Axis.prototype.calculateDomain = function () {
-        // Placeholder for subclasses to override.
+        var e_4, _a, _b;
+        var _c = this, direction = _c.direction, boundSeries = _c.boundSeries, includeInvisibleDomains = _c.includeInvisibleDomains;
+        if (this.linkedTo) {
+            this.dataDomain = this.linkedTo.dataDomain;
+        }
+        else {
+            var domains = [];
+            var visibleSeries = boundSeries.filter(function (s) { return includeInvisibleDomains || s.isEnabled(); });
+            try {
+                for (var visibleSeries_1 = __values(visibleSeries), visibleSeries_1_1 = visibleSeries_1.next(); !visibleSeries_1_1.done; visibleSeries_1_1 = visibleSeries_1.next()) {
+                    var series = visibleSeries_1_1.value;
+                    domains.push(series.getDomain(direction));
+                }
+            }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            finally {
+                try {
+                    if (visibleSeries_1_1 && !visibleSeries_1_1.done && (_a = visibleSeries_1.return)) _a.call(visibleSeries_1);
+                }
+                finally { if (e_4) throw e_4.error; }
+            }
+            var domain = (_b = new Array()).concat.apply(_b, __spreadArray([], __read(domains)));
+            this.dataDomain = this.normaliseDataDomain(domain);
+        }
     };
     Axis.prototype.updatePosition = function (_a) {
         var rotation = _a.rotation, sideFlag = _a.sideFlag;
@@ -1098,81 +943,48 @@ var Axis = /** @class */ (function () {
     };
     Axis.prototype.updateSelections = function (data) {
         var gridData = this.gridLength ? data : [];
-        var gridLineGroupSelection = this.radialGrid
-            ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridData, function (group) {
-                var node = new line_1.Line();
-                node.tag = Tags.GridLine;
-                group.append(node);
-            });
-        var gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridData, function (group) {
-                var node = new arc_1.Arc();
-                node.tag = Tags.GridArc;
-                group.append(node);
-            })
-            : this.gridArcGroupSelection;
+        var gridLineGroupSelection = this.gridLineGroupSelection.update(gridData, function (group) {
+            var node = new line_1.Line();
+            node.tag = Tags.GridLine;
+            group.append(node);
+        }, function (datum) { return datum.tickId; });
         var tickLineGroupSelection = this.tickLineGroupSelection.update(data, function (group) {
             var line = new line_1.Line();
             line.tag = Tags.TickLine;
             group.appendChild(line);
-        });
+        }, function (datum) { return datum.tickId; });
         var tickLabelGroupSelection = this.tickLabelGroupSelection.update(data, function (group) {
             var text = new text_1.Text();
             text.tag = Tags.TickLabel;
             group.appendChild(text);
-        });
-        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
-        // But node `translationY` values must be rounded to get pixel grid alignment
-        var translationFn = function (node) { return (node.translationY = Math.round(node.datum.translationY)); };
-        gridLineGroupSelection.each(translationFn);
-        gridArcGroupSelection.each(translationFn);
-        tickLineGroupSelection.each(translationFn);
-        tickLabelGroupSelection.each(translationFn);
+        }, function (datum) { return datum.tickId; });
         this.tickLineGroupSelection = tickLineGroupSelection;
         this.tickLabelGroupSelection = tickLabelGroupSelection;
         this.gridLineGroupSelection = gridLineGroupSelection;
-        this.gridArcGroupSelection = gridArcGroupSelection;
     };
     Axis.prototype.updateGridLines = function (sideFlag) {
-        var _a;
-        var _b = this, gridStyle = _b.gridStyle, scale = _b.scale, tick = _b.tick, gridPadding = _b.gridPadding, gridLength = _b.gridLength;
-        if (gridLength && gridStyle.length) {
-            var styleCount_1 = gridStyle.length;
-            var grid = void 0;
-            if (this.radialGrid) {
-                var angularGridLength_1 = angle_1.normalizeAngle360Inclusive(angle_1.toRadians(gridLength));
-                var halfBandwidth_1 = ((_a = this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
-                grid = this.gridArcGroupSelection.each(function (arc, datum) {
-                    var radius = Math.round(scale.convert(datum) + halfBandwidth_1);
-                    arc.centerX = 0;
-                    arc.centerY = scale.range[0] - radius;
-                    arc.endAngle = angularGridLength_1;
-                    arc.radius = radius;
-                });
-            }
-            else {
-                grid = this.gridLineGroupSelection.each(function (line) {
-                    line.x1 = gridPadding;
-                    line.x2 = -sideFlag * gridLength + gridPadding;
-                    line.y1 = 0;
-                    line.y2 = 0;
-                });
-            }
-            grid.each(function (node, _, index) {
-                var style = gridStyle[index % styleCount_1];
-                node.stroke = style.stroke;
-                node.strokeWidth = tick.width;
-                node.lineDash = style.lineDash;
-                node.fill = undefined;
-            });
+        var _a = this, gridStyle = _a.gridStyle, tick = _a.tick, gridPadding = _a.gridPadding, gridLength = _a.gridLength;
+        if (gridLength === 0 || gridStyle.length === 0) {
+            return;
         }
+        var styleCount = gridStyle.length;
+        this.gridLineGroupSelection.each(function (line, _, index) {
+            var style = gridStyle[index % styleCount];
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+            line.stroke = style.stroke;
+            line.strokeWidth = tick.width;
+            line.lineDash = style.lineDash;
+            line.fill = undefined;
+        });
     };
     Axis.prototype.updateLabels = function (_a) {
         var tickLabelGroupSelection = _a.tickLabelGroupSelection, combinedRotation = _a.combinedRotation, textBaseline = _a.textBaseline, textAlign = _a.textAlign, labelX = _a.labelX;
         var _b = this, label = _b.label, labelsEnabled = _b.label.enabled;
         if (!labelsEnabled) {
-            return { labelData: [], rotated: false };
+            return;
         }
         // Apply label option values
         tickLabelGroupSelection.each(function (node, datum) {
@@ -1302,7 +1114,8 @@ var Axis = /** @class */ (function () {
         crossLine.gridLength = this.gridLength;
     };
     Axis.prototype.isAnySeriesActive = function () {
-        return false;
+        var _this = this;
+        return this.boundSeries.some(function (s) { return _this.includeInvisibleDomains || s.isEnabled(); });
     };
     Axis.prototype.clipTickLines = function (x, y, width, height) {
         this.tickLineGroup.setClipRectInGroupCoordinateSpace(new bbox_1.BBox(x, y, width, height));
@@ -1311,18 +1124,207 @@ var Axis = /** @class */ (function () {
         this.gridGroup.setClipRectInGroupCoordinateSpace(new bbox_1.BBox(x, y, width, height));
     };
     Axis.prototype.calculatePadding = function (min, _max) {
-        return Math.abs(min * 0.01);
+        return [Math.abs(min * 0.01), Math.abs(min * 0.01)];
+    };
+    Axis.prototype.getTitleFormatterParams = function () {
+        var _this = this;
+        var _a;
+        var boundSeries = this.boundSeries.reduce(function (acc, next) {
+            var keys = next.getKeys(_this.direction);
+            var names = next.getNames(_this.direction);
+            for (var idx = 0; idx < keys.length; idx++) {
+                acc.push({
+                    key: keys[idx],
+                    name: names[idx],
+                });
+            }
+            return acc;
+        }, []);
+        return {
+            direction: this.direction,
+            boundSeries: boundSeries,
+            defaultValue: (_a = this.title) === null || _a === void 0 ? void 0 : _a.text,
+        };
+    };
+    Axis.prototype.normaliseDataDomain = function (d) {
+        return d;
+    };
+    Axis.prototype.getLayoutState = function () {
+        return __assign({ rect: this.computeBBox(), gridPadding: this.gridPadding, seriesAreaPadding: this.seriesAreaPadding, tickSize: this.tick.size }, this.layout);
+    };
+    Axis.prototype.createAxisContext = function () {
+        var _this = this;
+        var keys = function () {
+            return _this.boundSeries
+                .map(function (s) { return s.getKeys(_this.direction); })
+                .reduce(function (keys, seriesKeys) {
+                keys.push.apply(keys, __spreadArray([], __read(seriesKeys)));
+                return keys;
+            }, []);
+        };
+        return {
+            axisId: this.id,
+            direction: this.direction,
+            continuous: this.scale instanceof continuousScale_1.ContinuousScale,
+            keys: keys,
+            scaleValueFormatter: function (specifier) { var _a, _b, _c; return (_c = (_b = (_a = _this.scale).tickFormat) === null || _b === void 0 ? void 0 : _b.call(_a, { specifier: specifier })) !== null && _c !== void 0 ? _c : undefined; },
+            scaleBandwidth: function () { var _a; return (_a = _this.scale.bandwidth) !== null && _a !== void 0 ? _a : 0; },
+            scaleConvert: function (val) { return _this.scale.convert(val); },
+            scaleInvert: function (val) { var _a, _b, _c; return (_c = (_b = (_a = _this.scale).invert) === null || _b === void 0 ? void 0 : _b.call(_a, val)) !== null && _c !== void 0 ? _c : undefined; },
+        };
+    };
+    Axis.prototype.addModule = function (module) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+        if (this.axisContext == null) {
+            this.axisContext = this.createAxisContext();
+        }
+        var moduleInstance = new module.instanceConstructor(__assign(__assign({}, this.moduleCtx), { parent: this.axisContext }));
+        this.modules[module.optionsKey] = { instance: moduleInstance };
+        this[module.optionsKey] = moduleInstance;
+    };
+    Axis.prototype.removeModule = function (module) {
+        var _a, _b;
+        (_b = (_a = this.modules[module.optionsKey]) === null || _a === void 0 ? void 0 : _a.instance) === null || _b === void 0 ? void 0 : _b.destroy();
+        delete this.modules[module.optionsKey];
+        delete this[module.optionsKey];
+    };
+    Axis.prototype.isModuleEnabled = function (module) {
+        return this.modules[module.optionsKey] != null;
+    };
+    Axis.prototype.animateReadyUpdate = function (diff) {
+        var _this = this;
+        var _a, _b;
+        if (!diff.changed) {
+            this.resetSelectionNodes();
+            return;
+        }
+        var _c = this, gridLineGroupSelection = _c.gridLineGroupSelection, tickLineGroupSelection = _c.tickLineGroupSelection, tickLabelGroupSelection = _c.tickLabelGroupSelection;
+        var addedCount = Object.keys(diff.added).length;
+        var removedCount = Object.keys(diff.removed).length;
+        if (removedCount === diff.tickCount) {
+            this.resetSelectionNodes();
+            return;
+        }
+        var totalDuration = (_b = (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
+        var sectionDuration = Math.floor(totalDuration / 2);
+        if (addedCount > 0 && removedCount > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        }
+        var options = {
+            delay: removedCount > 0 ? sectionDuration : 0,
+            duration: sectionDuration,
+        };
+        var animationGroup = this.id + "_" + Math.random();
+        tickLabelGroupSelection.each(function (node, datum) {
+            _this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum, animationGroup);
+        });
+        gridLineGroupSelection.each(function (node, datum) {
+            _this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum, animationGroup);
+        });
+        tickLineGroupSelection.each(function (node, datum) {
+            _this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum, animationGroup);
+        });
+    };
+    Axis.prototype.animateSelectionNode = function (selection, diff, options, node, datum, animationGroup) {
+        var roundedTranslationY = Math.round(datum.translationY);
+        var translate = { from: node.translationY, to: roundedTranslationY };
+        var opacity = { from: 1, to: 1 };
+        var duration = options.duration;
+        var delay = options.delay;
+        var datumId = datum.tickLabel;
+        if (diff.added[datumId]) {
+            translate = { from: roundedTranslationY, to: roundedTranslationY };
+            opacity = { from: 0, to: 1 };
+            delay += duration;
+        }
+        else if (diff.removed[datumId]) {
+            opacity = { from: 1, to: 0 };
+            delay = 0;
+        }
+        var props = [translate, opacity];
+        this.animationManager.animateManyWithThrottle(this.id + "_ready-update_" + node.id, props, {
+            disableInteractions: false,
+            delay: delay,
+            duration: duration,
+            ease: easing.easeOut,
+            throttleId: this.id,
+            throttleGroup: animationGroup,
+            onUpdate: function (_a) {
+                var _b = __read(_a, 2), translationY = _b[0], opacity = _b[1];
+                node.translationY = translationY;
+                node.opacity = opacity;
+            },
+            onComplete: function () {
+                selection.cleanup();
+            },
+        });
+    };
+    Axis.prototype.resetSelectionNodes = function () {
+        var _a = this, gridLineGroupSelection = _a.gridLineGroupSelection, tickLineGroupSelection = _a.tickLineGroupSelection, tickLabelGroupSelection = _a.tickLabelGroupSelection;
+        gridLineGroupSelection.cleanup();
+        tickLineGroupSelection.cleanup();
+        tickLabelGroupSelection.cleanup();
+        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
+        // But node `translationY` values must be rounded to get pixel grid alignment
+        var resetFn = function (node) {
+            node.translationY = Math.round(node.datum.translationY);
+            node.opacity = 1;
+        };
+        gridLineGroupSelection.each(resetFn);
+        tickLineGroupSelection.each(resetFn);
+        tickLabelGroupSelection.each(resetFn);
+    };
+    Axis.prototype.calculateUpdateDiff = function (previous, tickData) {
+        var _a;
+        var added = new Set();
+        var removed = new Set();
+        var tickCount = Math.max(previous.length, tickData.ticks.length);
+        for (var i = 0; i < tickCount; i++) {
+            var prev = previous[i];
+            var tick = (_a = tickData.ticks[i]) === null || _a === void 0 ? void 0 : _a.tickId;
+            if (prev === tick) {
+                continue;
+            }
+            if (removed.has(tick)) {
+                removed.delete(tick);
+            }
+            else if (tick) {
+                added.add(tick);
+            }
+            if (added.has(prev)) {
+                added.delete(prev);
+            }
+            else if (prev) {
+                removed.add(prev);
+            }
+        }
+        var addedKeys = {};
+        var removedKeys = {};
+        added.forEach(function (a) {
+            addedKeys[a] = true;
+        });
+        removed.forEach(function (r) {
+            removedKeys[r] = true;
+        });
+        return {
+            changed: added.size > 0 || removed.size > 0,
+            tickCount: tickCount,
+            added: addedKeys,
+            removed: removedKeys,
+        };
     };
     Axis.defaultTickMinSpacing = 50;
     __decorate([
         validation_1.Validate(validation_1.BOOLEAN)
     ], Axis.prototype, "nice", void 0);
     __decorate([
+        validation_1.Validate(validation_1.STRING_ARRAY)
+    ], Axis.prototype, "keys", void 0);
+    __decorate([
         validation_1.Validate(GRID_STYLE)
     ], Axis.prototype, "gridStyle", void 0);
-    __decorate([
-        validation_1.Validate(validation_1.NUMBER(0))
-    ], Axis.prototype, "thickness", void 0);
     return Axis;
 }());
 exports.Axis = Axis;

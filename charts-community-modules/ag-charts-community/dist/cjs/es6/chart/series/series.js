@@ -17,7 +17,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Series = exports.SeriesTooltipInteraction = exports.SeriesTooltip = exports.HighlightStyle = exports.SeriesItemHighlightStyle = exports.SeriesNodeDoubleClickEvent = exports.SeriesNodeClickEvent = exports.SeriesNodeBaseClickEvent = exports.trailingAccumulatedValueProperty = exports.accumulativeValueProperty = exports.rangedValueProperty = exports.valueProperty = exports.keyProperty = exports.SeriesNodePickMode = void 0;
+exports.Series = exports.SeriesTooltipInteraction = exports.SeriesTooltip = exports.HighlightStyle = exports.SeriesItemHighlightStyle = exports.SeriesNodeDoubleClickEvent = exports.SeriesNodeClickEvent = exports.SeriesNodeBaseClickEvent = exports.groupAccumulativeValueProperty = exports.trailingAccumulatedValueProperty = exports.accumulativeValueProperty = exports.rangedValueProperty = exports.valueProperty = exports.keyProperty = exports.SeriesNodePickMode = void 0;
 const group_1 = require("../../scene/group");
 const observable_1 = require("../../util/observable");
 const id_1 = require("../../util/id");
@@ -28,6 +28,8 @@ const chartAxisDirection_1 = require("../chartAxisDirection");
 const dataModel_1 = require("../data/dataModel");
 const tooltip_1 = require("../tooltip/tooltip");
 const aggregateFunctions_1 = require("../data/aggregateFunctions");
+const processors_1 = require("../data/processors");
+const proxy_1 = require("../../util/proxy");
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
 var SeriesNodePickMode;
 (function (SeriesNodePickMode) {
@@ -40,19 +42,25 @@ var SeriesNodePickMode;
     /** Pick matches based upon distance to ideal position */
     SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
 })(SeriesNodePickMode = exports.SeriesNodePickMode || (exports.SeriesNodePickMode = {}));
-function keyProperty(propName, continuous, opts = {}) {
-    const result = Object.assign({ property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null }, opts);
+function basicContinuousCheckDatumValidation(v) {
+    return value_1.checkDatum(v, true) != null;
+}
+function basicDiscreteCheckDatumValidation(v) {
+    return value_1.checkDatum(v, false) != null;
+}
+function keyProperty(scope, propName, continuous, opts = {}) {
+    const result = Object.assign({ scopes: [scope.id], property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
 exports.keyProperty = keyProperty;
-function valueProperty(propName, continuous, opts = {}) {
-    const result = Object.assign({ property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: (v) => value_1.checkDatum(v, continuous) != null }, opts);
+function valueProperty(scope, propName, continuous, opts = {}) {
+    const result = Object.assign({ scopes: [scope.id], property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
 exports.valueProperty = valueProperty;
-function rangedValueProperty(propName, opts = {}) {
+function rangedValueProperty(scope, propName, opts = {}) {
     const { min = -Infinity, max = Infinity } = opts, defOpts = __rest(opts, ["min", "max"]);
-    return Object.assign({ type: 'value', property: propName, valueType: 'range', validation: (v) => value_1.checkDatum(v, true) != null, processor: () => (datum) => {
+    return Object.assign({ scopes: [scope.id], type: 'value', property: propName, valueType: 'range', validation: basicContinuousCheckDatumValidation, processor: () => (datum) => {
             if (typeof datum !== 'number')
                 return datum;
             if (isNaN(datum))
@@ -61,16 +69,20 @@ function rangedValueProperty(propName, opts = {}) {
         } }, defOpts);
 }
 exports.rangedValueProperty = rangedValueProperty;
-function accumulativeValueProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: aggregateFunctions_1.accumulatedValue() });
+function accumulativeValueProperty(scope, propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(scope, propName, continuous, opts)), { processor: aggregateFunctions_1.accumulatedValue() });
     return result;
 }
 exports.accumulativeValueProperty = accumulativeValueProperty;
-function trailingAccumulatedValueProperty(propName, continuous, opts = {}) {
-    const result = Object.assign(Object.assign({}, valueProperty(propName, continuous, opts)), { processor: aggregateFunctions_1.trailingAccumulatedValue() });
+function trailingAccumulatedValueProperty(scope, propName, continuous, opts = {}) {
+    const result = Object.assign(Object.assign({}, valueProperty(scope, propName, continuous, opts)), { processor: aggregateFunctions_1.trailingAccumulatedValue() });
     return result;
 }
 exports.trailingAccumulatedValueProperty = trailingAccumulatedValueProperty;
+function groupAccumulativeValueProperty(scope, propName, continuous, mode, sum = 'current', opts) {
+    return [valueProperty(scope, propName, continuous, opts), processors_1.accumulateGroup(scope, opts.groupId, mode, sum)];
+}
+exports.groupAccumulativeValueProperty = groupAccumulativeValueProperty;
 class SeriesNodeBaseClickEvent {
     constructor(nativeEvent, datum, series) {
         this.type = 'nodeClick';
@@ -168,11 +180,15 @@ __decorate([
 ], SeriesTooltipInteraction.prototype, "enabled", void 0);
 exports.SeriesTooltipInteraction = SeriesTooltipInteraction;
 class Series extends observable_1.Observable {
-    constructor(opts) {
+    constructor(seriesOpts) {
         super();
         this.id = id_1.createId(this);
         // The group node that contains all the nodes used to render this series.
-        this.rootGroup = new group_1.Group({ name: 'seriesRoot' });
+        this.rootGroup = new group_1.Group({ name: 'seriesRoot', isVirtual: true });
+        this.axes = {
+            [chartAxisDirection_1.ChartAxisDirection.X]: undefined,
+            [chartAxisDirection_1.ChartAxisDirection.Y]: undefined,
+        };
         this.directions = [chartAxisDirection_1.ChartAxisDirection.X, chartAxisDirection_1.ChartAxisDirection.Y];
         // Flag to determine if we should recalculate node data.
         this.nodeDataRefresh = true;
@@ -181,24 +197,26 @@ class Series extends observable_1.Observable {
         this.showInLegend = true;
         this.cursor = 'default';
         this.nodeClickRange = 'exact';
+        this.seriesGrouping = undefined;
         this._declarationOrder = -1;
         this.highlightStyle = new HighlightStyle();
-        this.ctx = opts.moduleCtx;
-        const { useSeriesGroupLayer = true, useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, directionNames = {}, } = opts;
+        this.ctx = seriesOpts.moduleCtx;
+        const { useLabelLayer = false, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST], directionKeys = {}, directionNames = {}, contentGroupVirtual = true, } = seriesOpts;
         const { rootGroup } = this;
         this.directionKeys = directionKeys;
         this.directionNames = directionNames;
         this.contentGroup = rootGroup.appendChild(new group_1.Group({
             name: `${this.id}-content`,
-            layer: useSeriesGroupLayer,
+            layer: !contentGroupVirtual,
+            isVirtual: contentGroupVirtual,
             zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
-            zIndexSubOrder: [() => this._declarationOrder, 0],
+            zIndexSubOrder: this.getGroupZIndexSubOrder('data'),
         }));
         this.highlightGroup = rootGroup.appendChild(new group_1.Group({
             name: `${this.id}-highlight`,
             layer: true,
             zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
-            zIndexSubOrder: [() => this._declarationOrder, 15000],
+            zIndexSubOrder: this.getGroupZIndexSubOrder('highlight'),
         }));
         this.highlightNode = this.highlightGroup.appendChild(new group_1.Group({ name: 'highlightNode' }));
         this.highlightLabel = this.highlightGroup.appendChild(new group_1.Group({ name: 'highlightLabel' }));
@@ -235,14 +253,52 @@ class Series extends observable_1.Observable {
     get visible() {
         return this._visible;
     }
+    onSeriesGroupingChange(prev, next) {
+        const { id, type, visible, rootGroup } = this;
+        if (prev) {
+            this.ctx.seriesStateManager.deregisterSeries({ id, type });
+        }
+        if (next) {
+            this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
+        }
+        this.ctx.seriesLayerManager.changeGroup({
+            id,
+            type,
+            rootGroup,
+            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
+            seriesGrouping: next,
+            oldGrouping: prev,
+        });
+    }
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
+    }
+    getGroupZIndexSubOrder(type, subIndex = 0) {
+        let mainAdjust = 0;
+        switch (type) {
+            case 'data':
+            case 'paths':
+                break;
+            case 'labels':
+                mainAdjust += 20000;
+                break;
+            case 'marker':
+                mainAdjust += 10000;
+                break;
+            // Following cases are in their own layer, so need to be careful to respect declarationOrder.
+            case 'highlight':
+                subIndex += 15000;
+                break;
+        }
+        const main = () => this._declarationOrder + mainAdjust;
+        return [main, subIndex];
     }
     addChartEventListeners() {
         return;
     }
     destroy() {
-        // Override point for sub-classes.
+        this.ctx.seriesStateManager.deregisterSeries(this);
+        this.ctx.seriesLayerManager.releaseGroup(this);
     }
     getDirectionValues(direction, properties) {
         const resolvedDirection = this.resolveKeyDirection(direction);
@@ -286,7 +342,7 @@ class Series extends observable_1.Observable {
         this.nodeDataRefresh = true;
     }
     visibleChanged() {
-        // Override point for this.visible change post-processing.
+        this.ctx.seriesStateManager.registerSeries(this);
     }
     getOpacity(datum) {
         const { highlightStyle: { series: { dimOpacity = 1, enabled = true }, }, } = this;
@@ -320,7 +376,7 @@ class Series extends observable_1.Observable {
     }
     isItemIdHighlighted(datum) {
         var _a;
-        const highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+        const highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
         const { series, itemId } = highlightedDatum !== null && highlightedDatum !== void 0 ? highlightedDatum : {};
         const highlighting = series != null;
         if (!highlighting) {
@@ -418,9 +474,9 @@ class Series extends observable_1.Observable {
         let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
-            const padding = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : 1;
-            min -= padding;
-            max += padding;
+            const [paddingMin, paddingMax] = (_a = axis === null || axis === void 0 ? void 0 : axis.calculatePadding(min, max)) !== null && _a !== void 0 ? _a : [1, 1];
+            min -= paddingMin;
+            max += paddingMax;
         }
         return [min, max];
     }
@@ -441,4 +497,11 @@ __decorate([
 __decorate([
     validation_1.Validate(validation_1.INTERACTION_RANGE)
 ], Series.prototype, "nodeClickRange", void 0);
+__decorate([
+    proxy_1.ActionOnSet({
+        changeValue: function (newVal, oldVal) {
+            this.onSeriesGroupingChange(oldVal, newVal);
+        },
+    })
+], Series.prototype, "seriesGrouping", void 0);
 exports.Series = Series;

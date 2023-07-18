@@ -40,10 +40,5 @@ export declare class PropertyKeys {
     static CALLBACK_PROPERTIES: CallbackKeys[];
     static FUNCTION_PROPERTIES: GridOptionKey[];
     static ALL_PROPERTIES: GridOptionKey[];
-    /**
-     * Used when performing property checks. This avoids noise caused when using frameworks, which can add their own
-     * framework-specific properties to colDefs, gridOptions etc.
-     */
-    static FRAMEWORK_PROPERTIES: string[];
 }
 export {};

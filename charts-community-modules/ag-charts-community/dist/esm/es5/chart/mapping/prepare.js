@@ -43,13 +43,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 import { DEFAULT_CARTESIAN_CHART_OVERRIDES, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES, } from './defaults';
 import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
-import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
+import { AXIS_TYPES } from '../factory/axisTypes';
 import { CHART_TYPES } from '../factory/chartTypes';
-import { CHART_AXES_TYPES } from '../chartAxesTypes';
-import { getSeriesDefaults } from '../factory/seriesTypes';
+import { addSeriesPaletteFactory, getSeriesDefaults, getSeriesPaletteFactory } from '../factory/seriesTypes';
 export function optionsType(input) {
     var _a, _b, _c, _d;
     return (_d = (_a = input.type) !== null && _a !== void 0 ? _a : (_c = (_b = input.series) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.type) !== null && _d !== void 0 ? _d : 'line';
@@ -97,7 +96,7 @@ function isAxisOptionType(input) {
     if (input == null) {
         return false;
     }
-    return CHART_AXES_TYPES.has(input);
+    return AXIS_TYPES.has(input);
 }
 function countArrayElements(input) {
     var e_1, _a;
@@ -192,7 +191,7 @@ export function prepareOptions(newOptions, fallbackOptions) {
     // Special cases where we have arrays of elements which need their own defaults.
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
-    mergedOptions.series = processSeriesOptions(((_f = mergedOptions.series) !== null && _f !== void 0 ? _f : []).map(function (s) {
+    mergedOptions.series = processSeriesOptions(mergedOptions, ((_f = mergedOptions.series) !== null && _f !== void 0 ? _f : []).map(function (s) {
         var type = defaultSeriesType;
         if (s.type) {
             type = s.type;
@@ -209,11 +208,11 @@ export function prepareOptions(newOptions, fallbackOptions) {
     var checkAxisType = function (type) {
         var isAxisType = isAxisOptionType(type);
         if (!isAxisType) {
-            Logger.warnOnce("AG Charts - unknown axis type: " + type + "; expected one of: " + CHART_AXES_TYPES.axesTypes + ", ignoring.");
+            Logger.warnOnce("AG Charts - unknown axis type: " + type + "; expected one of: " + AXIS_TYPES.axesTypes + ", ignoring.");
         }
         return isAxisType;
     };
-    if (isAgCartesianChartOptions(mergedOptions)) {
+    if ('axes' in mergedOptions) {
         var validAxesTypes = true;
         try {
             for (var _m = __values((_g = mergedOptions.axes) !== null && _g !== void 0 ? _g : []), _o = _m.next(); !_o.done; _o = _m.next()) {
@@ -300,46 +299,55 @@ function prepareSeries(context, input) {
     }
     var paletteOptions = calculateSeriesPalette(context, input);
     // Part of the options interface, but not directly consumed by the series implementations.
-    var removeOptions = { stacked: DELETE };
-    var mergedResult = jsonMerge(__spreadArray(__spreadArray([], __read(defaults)), [paletteOptions, input, removeOptions]), noDataCloneMergeOptions);
-    return applySeriesTransform(mergedResult);
+    var removeOptions = { stacked: DELETE, grouped: DELETE };
+    return jsonMerge(__spreadArray(__spreadArray([], __read(defaults)), [paletteOptions, input, removeOptions]), noDataCloneMergeOptions);
 }
+addSeriesPaletteFactory('pie', function (_a) {
+    var takeColors = _a.takeColors, colorsCount = _a.colorsCount;
+    return takeColors(colorsCount);
+});
+var singleSeriesPaletteFactory = function (_a) {
+    var takeColors = _a.takeColors;
+    var _b = takeColors(1), _c = __read(_b.fills, 1), fill = _c[0], _d = __read(_b.strokes, 1), stroke = _d[0];
+    return { fill: fill, stroke: stroke };
+};
+addSeriesPaletteFactory('area', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('bar', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('column', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('histogram', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('scatter', function (params) {
+    var _a = singleSeriesPaletteFactory(params), fill = _a.fill, stroke = _a.stroke;
+    return { marker: { fill: fill, stroke: stroke } };
+});
+addSeriesPaletteFactory('line', function (params) {
+    var _a = singleSeriesPaletteFactory(params), fill = _a.fill, stroke = _a.stroke;
+    return {
+        stroke: fill,
+        marker: { fill: fill, stroke: stroke },
+    };
+});
 function calculateSeriesPalette(context, input) {
     var _a;
-    var paletteOptions = {};
+    var paletteFactory = getSeriesPaletteFactory(input.type);
+    if (!paletteFactory) {
+        return {};
+    }
     var _b = context.palette, fills = _b.fills, strokes = _b.strokes;
     var inputAny = input;
-    var colourCount = countArrayElements((_a = inputAny['yKeys']) !== null && _a !== void 0 ? _a : []) || 1; // Defaults to 1 if no yKeys.
-    switch (input.type) {
-        case 'pie':
-            colourCount = Math.max(fills.length, strokes.length);
-        // eslint-disable-next-line no-fallthrough
-        case 'area':
-        case 'bar':
-        case 'column':
-            paletteOptions.fills = takeColours(context, fills, colourCount);
-            paletteOptions.strokes = takeColours(context, strokes, colourCount);
-            break;
-        case 'histogram':
-            paletteOptions.fill = takeColours(context, fills, 1)[0];
-            paletteOptions.stroke = takeColours(context, strokes, 1)[0];
-            break;
-        case 'scatter':
-            paletteOptions.marker = {
-                stroke: takeColours(context, strokes, 1)[0],
-                fill: takeColours(context, fills, 1)[0],
+    var seriesCount = countArrayElements((_a = inputAny['yKeys']) !== null && _a !== void 0 ? _a : []) || 1; // Defaults to 1 if no yKeys.
+    var colorsCount = Math.max(fills.length, strokes.length);
+    return paletteFactory({
+        seriesCount: seriesCount,
+        colorsCount: colorsCount,
+        takeColors: function (count) {
+            var colors = {
+                fills: takeColours(context, fills, count),
+                strokes: takeColours(context, strokes, count),
             };
-            break;
-        case 'line':
-            paletteOptions.stroke = takeColours(context, fills, 1)[0];
-            paletteOptions.marker = {
-                stroke: takeColours(context, strokes, 1)[0],
-                fill: takeColours(context, fills, 1)[0],
-            };
-            break;
-    }
-    context.colourIndex += colourCount;
-    return paletteOptions;
+            context.colourIndex += count;
+            return colors;
+        },
+    });
 }
 function prepareAxis(axis, axisTheme) {
     // Remove redundant theme overload keys.

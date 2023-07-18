@@ -1,10 +1,4 @@
 /**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
-/**
  * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
  * when in ClientSideNodeManager we always have indexes (as this sorts the items the
  * user provided) but when in GroupStage, the nodes can contain filler nodes that

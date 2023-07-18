@@ -106,11 +106,9 @@ import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
 import { Observable } from '../util/observable';
-import { ChartAxisDirection } from './chartAxisDirection';
 import { createId } from '../util/id';
 import { isPointLabelDatum, placeLabels } from '../util/labelPlacement';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
-import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip } from './tooltip/tooltip';
@@ -133,6 +131,9 @@ import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
 import { CallbackCache } from '../util/callbackCache';
+import { DataController } from './data/dataController';
+import { SeriesStateManager } from './series/seriesStateManager';
+import { SeriesLayerManager } from './series/seriesLayerManager';
 var Chart = /** @class */ (function (_super) {
     __extends(Chart, _super);
     function Chart(document, overrideDevicePixelRatio, resources) {
@@ -145,7 +146,7 @@ var Chart = /** @class */ (function (_super) {
         _this.queuedUserOptions = [];
         _this.seriesRoot = new Group({ name: _this.id + "-Series-root" });
         _this.extraDebugStats = {};
-        _this._container = undefined;
+        _this.container = undefined;
         _this.data = [];
         _this.padding = new Padding(20);
         _this.seriesAreaPadding = new Padding(0);
@@ -223,7 +224,6 @@ var Chart = /** @class */ (function (_super) {
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
         _this.scene = scene !== null && scene !== void 0 ? scene : new Scene({ document: document, overrideDevicePixelRatio: overrideDevicePixelRatio });
-        _this.debug = false;
         _this.scene.debug.consoleLog = false;
         _this.scene.root = root;
         _this.scene.container = element;
@@ -240,6 +240,8 @@ var Chart = /** @class */ (function (_super) {
             var forceNodeDataRefresh = _a.forceNodeDataRefresh;
             return _this.update(type, { forceNodeDataRefresh: forceNodeDataRefresh });
         });
+        _this.seriesStateManager = new SeriesStateManager();
+        _this.seriesLayerManager = new SeriesLayerManager(_this.seriesRoot);
         _this.callbackCache = new CallbackCache();
         _this.animationManager = new AnimationManager(_this.interactionManager);
         _this.animationManager.skipAnimations = true;
@@ -249,6 +251,7 @@ var Chart = /** @class */ (function (_super) {
         _this.overlays = new ChartOverlays(_this.element);
         _this.highlight = new ChartHighlight();
         _this.container = container;
+        _this.debug = false;
         SizeMonitor.observe(_this.element, function (size) {
             var _a;
             var width = size.width, height = size.height;
@@ -290,25 +293,6 @@ var Chart = /** @class */ (function (_super) {
         var lastUpdateOptions = (_a = queuedUserOptions[queuedUserOptions.length - 1]) !== null && _a !== void 0 ? _a : this.userOptions;
         return jsonMerge([lastUpdateOptions]);
     };
-    Object.defineProperty(Chart.prototype, "container", {
-        get: function () {
-            return this._container;
-        },
-        set: function (value) {
-            if (this._container !== value) {
-                var parentNode = this.element.parentNode;
-                if (parentNode != null) {
-                    parentNode.removeChild(this.element);
-                }
-                if (value && !this.destroyed) {
-                    value.appendChild(this.element);
-                }
-                this._container = value;
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Chart.prototype.autoSizeChanged = function (value) {
         var style = this.element.style;
         if (value) {
@@ -354,7 +338,7 @@ var Chart = /** @class */ (function (_super) {
         return this.modules[module.optionsKey] != null;
     };
     Chart.prototype.getModuleContext = function () {
-        var _a = this, scene = _a.scene, animationManager = _a.animationManager, chartEventManager = _a.chartEventManager, cursorManager = _a.cursorManager, highlightManager = _a.highlightManager, interactionManager = _a.interactionManager, tooltipManager = _a.tooltipManager, zoomManager = _a.zoomManager, dataService = _a.dataService, layoutService = _a.layoutService, updateService = _a.updateService, mode = _a.mode, callbackCache = _a.callbackCache;
+        var _a = this, scene = _a.scene, animationManager = _a.animationManager, chartEventManager = _a.chartEventManager, cursorManager = _a.cursorManager, highlightManager = _a.highlightManager, interactionManager = _a.interactionManager, tooltipManager = _a.tooltipManager, zoomManager = _a.zoomManager, dataService = _a.dataService, layoutService = _a.layoutService, updateService = _a.updateService, seriesStateManager = _a.seriesStateManager, seriesLayerManager = _a.seriesLayerManager, mode = _a.mode, callbackCache = _a.callbackCache;
         return {
             scene: scene,
             animationManager: animationManager,
@@ -368,6 +352,8 @@ var Chart = /** @class */ (function (_super) {
             layoutService: layoutService,
             updateService: updateService,
             mode: mode,
+            seriesStateManager: seriesStateManager,
+            seriesLayerManager: seriesLayerManager,
             callbackCache: callbackCache,
         };
     };
@@ -402,6 +388,7 @@ var Chart = /** @class */ (function (_super) {
             finally { if (e_1) throw e_1.error; }
         }
         this.interactionManager.destroy();
+        this.animationManager.stop();
         if (keepTransferableResources) {
             this.scene.strip();
             result = { container: this.container, scene: this.scene, element: this.element };
@@ -410,17 +397,21 @@ var Chart = /** @class */ (function (_super) {
             this.scene.destroy();
             this.container = undefined;
         }
-        this.series.forEach(function (s) { return s.destroy(); });
-        this.series = [];
+        this.removeAllSeries();
+        this.seriesLayerManager.destroy();
         this.axes.forEach(function (a) { return a.destroy(); });
         this.axes = [];
         this.callbackCache.invalidateCache();
         this._destroyed = true;
         return result;
     };
-    Chart.prototype.log = function (opts) {
+    Chart.prototype.log = function () {
+        var opts = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            opts[_i] = arguments[_i];
+        }
         if (this.debug) {
-            Logger.debug(opts);
+            Logger.debug.apply(Logger, __spreadArray([], __read(opts)));
         }
     };
     Chart.prototype.disablePointer = function (highlightOnly) {
@@ -541,11 +532,12 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.performUpdate = function (count) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, performUpdateType, extraDebugStats, splits, _c, count_1, seriesRect_1, seriesUpdates, tooltipMeta, end;
+            var _b, performUpdateType, extraDebugStats, splits, _c, seriesRect_1, seriesUpdates, tooltipMeta, end;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         _b = this, performUpdateType = _b._performUpdateType, extraDebugStats = _b.extraDebugStats;
+                        this.log('Chart.performUpdate() - start', ChartUpdateType[performUpdateType]);
                         splits = [performance.now()];
                         _c = performUpdateType;
                         switch (_c) {
@@ -565,23 +557,13 @@ var Chart = /** @class */ (function (_super) {
                         splits.push(performance.now());
                         _d.label = 3;
                     case 3:
-                        if (this.autoSize && !this._lastAutoSize) {
-                            count_1 = this._performUpdateNoRenderCount++;
-                            if (count_1 < 5) {
-                                // Reschedule if canvas size hasn't been set yet to avoid a race.
-                                this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
-                                this.performUpdateTrigger.schedule();
-                                return [3 /*break*/, 11];
-                            }
-                            // After several failed passes, continue and accept there maybe a redundant
-                            // render. Sometimes this case happens when we already have the correct
-                            // width/height, and we end up never rendering the chart in that scenario.
-                        }
-                        this._performUpdateNoRenderCount = 0;
+                        if (!this.checkFirstAutoSize())
+                            return [3 /*break*/, 11];
                         return [4 /*yield*/, this.performLayout()];
                     case 4:
                         _d.sent();
                         this.handleOverlays();
+                        this.log('Chart.performUpdate() - seriesRect', this.seriesRect);
                         splits.push(performance.now());
                         _d.label = 5;
                     case 5:
@@ -610,7 +592,7 @@ var Chart = /** @class */ (function (_super) {
                         _d.label = 11;
                     case 11:
                         end = performance.now();
-                        this.log({
+                        this.log('Chart.performUpdate() - end', {
                             chart: this,
                             durationMs: Math.round((end - splits[0]) * 100) / 100,
                             count: count,
@@ -620,6 +602,25 @@ var Chart = /** @class */ (function (_super) {
                 }
             });
         });
+    };
+    Chart.prototype.checkFirstAutoSize = function () {
+        if (this.autoSize && !this._lastAutoSize) {
+            var count = this._performUpdateNoRenderCount++;
+            var backOffMs = (count ^ 2) * 10;
+            if (count < 5) {
+                // Reschedule if canvas size hasn't been set yet to avoid a race.
+                this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                this.performUpdateTrigger.schedule(backOffMs);
+                this.log('Chart.checkFirstAutoSize() - backing off until first size update', backOffMs);
+                return false;
+            }
+            // After several failed passes, continue and accept there maybe a redundant
+            // render. Sometimes this case happens when we already have the correct
+            // width/height, and we end up never rendering the chart in that scenario.
+            this.log('Chart.checkFirstAutoSize() - timeout for first size update.');
+        }
+        this._performUpdateNoRenderCount = 0;
+        return true;
     };
     Object.defineProperty(Chart.prototype, "axes", {
         get: function () {
@@ -638,6 +639,7 @@ var Chart = /** @class */ (function (_super) {
                 axis.attachAxis(_this.axisGroup);
                 removedAxes.delete(axis);
             });
+            this.zoomManager.updateAxes(this._axes);
             removedAxes.forEach(function (axis) { return axis.destroy(); });
         },
         enumerable: false,
@@ -655,18 +657,13 @@ var Chart = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
-    Chart.prototype.addSeries = function (series, before) {
-        var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
+    Chart.prototype.addSeries = function (series) {
+        var allSeries = this.series;
         var canAdd = allSeries.indexOf(series) < 0;
         if (canAdd) {
-            var beforeIndex = before ? allSeries.indexOf(before) : -1;
-            if (beforeIndex >= 0) {
-                allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.rootGroup, before.rootGroup);
-            }
-            else {
-                allSeries.push(series);
-                seriesRoot.append(series.rootGroup);
+            allSeries.push(series);
+            if (series.rootGroup.parent == null) {
+                this.seriesLayerManager.requestGroup(series);
             }
             this.initSeries(series);
             return true;
@@ -675,25 +672,19 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.initSeries = function (series) {
         series.chart = this;
-        series.highlightManager = this.highlightManager;
-        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
-        series.chartEventManager = this.chartEventManager;
         series.addChartEventListeners();
-    };
-    Chart.prototype.freeSeries = function (series) {
-        series.chart = undefined;
-        series.removeEventListener('nodeClick', this.onSeriesNodeClick);
-        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     };
     Chart.prototype.removeAllSeries = function () {
         var _this = this;
         this.series.forEach(function (series) {
-            _this.freeSeries(series);
-            _this.seriesRoot.removeChild(series.rootGroup);
+            series.removeEventListener('nodeClick', _this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', _this.onSeriesNodeDoubleClick);
+            series.destroy();
+            series.chart = undefined;
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     };
@@ -717,14 +708,13 @@ var Chart = /** @class */ (function (_super) {
         var _this = this;
         this.axes.forEach(function (axis) {
             axis.boundSeries = _this.series.filter(function (s) {
-                var seriesAxis = axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                var seriesAxis = s.axes[axis.direction];
                 return seriesAxis === axis;
             });
         });
     };
-    Chart.prototype.assignAxesToSeries = function (force) {
+    Chart.prototype.assignAxesToSeries = function () {
         var _this = this;
-        if (force === void 0) { force = false; }
         // This method has to run before `assignSeriesToAxes`.
         var directionToAxesMap = {};
         this.axes.forEach(function (axis) {
@@ -735,10 +725,6 @@ var Chart = /** @class */ (function (_super) {
         });
         this.series.forEach(function (series) {
             series.directions.forEach(function (direction) {
-                var currentAxis = direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
-                if (currentAxis && !force) {
-                    return;
-                }
                 var directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
                     Logger.warn("no available axis for direction [" + direction + "]; check series and axes configuration.");
@@ -750,12 +736,7 @@ var Chart = /** @class */ (function (_super) {
                     Logger.warn("no matching axis for direction [" + direction + "] and keys [" + seriesKeys + "]; check series and axes configuration.");
                     return;
                 }
-                if (direction === ChartAxisDirection.X) {
-                    series.xAxis = newAxis;
-                }
-                else {
-                    series.yAxis = newAxis;
-                }
+                series.axes[direction] = newAxis;
             });
         });
     };
@@ -800,6 +781,7 @@ var Chart = /** @class */ (function (_super) {
         var _a, _b, _c, _d;
         width !== null && width !== void 0 ? width : (width = (_a = this.width) !== null && _a !== void 0 ? _a : (this.autoSize ? (_b = this._lastAutoSize) === null || _b === void 0 ? void 0 : _b[0] : this.scene.canvas.width));
         height !== null && height !== void 0 ? height : (height = (_c = this.height) !== null && _c !== void 0 ? _c : (this.autoSize ? (_d = this._lastAutoSize) === null || _d === void 0 ? void 0 : _d[1] : this.scene.canvas.height));
+        this.log('Chart.resize()', { width: width, height: height });
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height))
             return;
         if (this.scene.resize(width, height)) {
@@ -809,18 +791,24 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.processData = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var dataController, seriesPromises;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (this.axes.length > 0 || this.series.some(function (s) { return s instanceof CartesianSeries; })) {
-                            this.assignAxesToSeries(true);
+                        if (this.axes.length > 0) {
+                            this.assignAxesToSeries();
                             this.assignSeriesToAxes();
                         }
-                        return [4 /*yield*/, Promise.all(this.series.map(function (s) { return s.processData(); }))];
+                        dataController = new DataController();
+                        seriesPromises = this.series.map(function (s) { return s.processData(dataController); });
+                        return [4 /*yield*/, dataController.execute()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.updateLegend()];
+                        return [4 /*yield*/, Promise.all(seriesPromises)];
                     case 2:
+                        _a.sent();
+                        return [4 /*yield*/, this.updateLegend()];
+                    case 3:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -860,15 +848,17 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.attachLegend = function (legendType) {
         var _a;
-        if (this.legendType === legendType) {
-            return;
+        if (this.legendType === legendType && this.legend) {
+            return this.legend;
         }
         (_a = this.legend) === null || _a === void 0 ? void 0 : _a.destroy();
         this.legend = undefined;
         var ctx = this.getModuleContext();
-        this.legend = getLegend(legendType, ctx);
-        this.legend.attachLegend(this.scene.root);
+        var legend = getLegend(legendType, ctx);
+        legend.attachLegend(this.scene.root);
+        this.legend = legend;
         this.legendType = legendType;
+        return legend;
     };
     Chart.prototype.setLegendInit = function (initLegend) {
         this.applyLegendOptions = initLegend;
@@ -876,7 +866,7 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.updateLegend = function () {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var legendData, legendType;
+            var legendData, legendType, legend;
             return __generator(this, function (_b) {
                 legendData = [];
                 this.series
@@ -886,12 +876,12 @@ var Chart = /** @class */ (function (_super) {
                     legendData.push.apply(legendData, __spreadArray([], __read(data)));
                 });
                 legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
-                this.attachLegend(legendType);
-                (_a = this.applyLegendOptions) === null || _a === void 0 ? void 0 : _a.call(this, this.legend);
+                legend = this.attachLegend(legendType);
+                (_a = this.applyLegendOptions) === null || _a === void 0 ? void 0 : _a.call(this, legend);
                 if (legendType === 'category') {
                     this.validateLegendData(legendData);
                 }
-                this.legend.data = legendData;
+                legend.data = legendData;
                 return [2 /*return*/];
             });
         });
@@ -927,7 +917,9 @@ var Chart = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, width, height, shrinkRect;
             return __generator(this, function (_b) {
-                this.scene.root.visible = true;
+                if (this.scene.root != null) {
+                    this.scene.root.visible = true;
+                }
                 _a = this.scene, width = _a.width, height = _a.height;
                 shrinkRect = new BBox(0, 0, width, height);
                 (shrinkRect = this.layoutService.dispatchPerformLayout('start-layout', { shrinkRect: shrinkRect }).shrinkRect);
@@ -1196,7 +1188,7 @@ var Chart = /** @class */ (function (_super) {
         if (type === 'node' && datum.nodeMidPoint) {
             var _a = datum.nodeMidPoint, x = _a.x, y = _a.y;
             var canvas = this.scene.canvas;
-            var point = datum.series.rootGroup.inverseTransformPoint(x, y);
+            var point = datum.series.contentGroup.inverseTransformPoint(x, y);
             var canvasRect = canvas.element.getBoundingClientRect();
             return __assign(__assign({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(point.x), offsetY: Math.round(point.y) });
         }
@@ -1272,9 +1264,24 @@ var Chart = /** @class */ (function (_super) {
         ActionOnSet({
             newValue: function (value) {
                 this.scene.debug.consoleLog = value;
+                if (this.animationManager) {
+                    this.animationManager.debug = value;
+                }
             },
         })
     ], Chart.prototype, "debug", void 0);
+    __decorate([
+        ActionOnSet({
+            newValue: function (value) {
+                if (this.destroyed)
+                    return;
+                value.appendChild(this.element);
+            },
+            oldValue: function (value) {
+                value.removeChild(this.element);
+            },
+        })
+    ], Chart.prototype, "container", void 0);
     __decorate([
         ActionOnSet({
             newValue: function (value) {

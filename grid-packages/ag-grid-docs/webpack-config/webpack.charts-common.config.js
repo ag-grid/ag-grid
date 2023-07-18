@@ -10,8 +10,6 @@ module.exports = {
         'react-dom': 'react-dom'
     },
     resolve: {
-        // favour cjs over es6 (docs only rebuilds cjs...)
-        // mainFields: ["main", "module"],
         extensions: [".ts", ".tsx", ".js"]
     },
     module: {

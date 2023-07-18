@@ -8,4 +8,3 @@ export * as _Theme from './integrated-charts-theme';
 export * as _Scale from './sparklines-scale';
 export * as _Util from './sparklines-util';
 export * as _ModuleSupport from './module-support';
-//# sourceMappingURL=main.d.ts.map

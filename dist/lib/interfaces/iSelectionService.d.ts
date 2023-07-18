@@ -8,7 +8,7 @@ export interface ISelectionService {
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];
     getSelectionCount(): number;
-    setNodeSelected(params: ISetNodeSelectedParams): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     filterFromSelection(predicate: (node: RowNode) => boolean): void;
     updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
     syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
@@ -32,8 +32,7 @@ export interface ISelectionService {
         justCurrentPage?: boolean;
     }): void;
 }
-export interface ISetNodeSelectedParams {
-    node: RowNode;
+interface INodeSelectionParams {
     newValue: boolean;
     clearSelection?: boolean;
     suppressFinishActions?: boolean;
@@ -42,3 +41,7 @@ export interface ISetNodeSelectedParams {
     source: SelectionEventSourceType;
     event?: Event;
 }
+export interface ISetNodesSelectedParams extends INodeSelectionParams {
+    nodes: RowNode[];
+}
+export {};

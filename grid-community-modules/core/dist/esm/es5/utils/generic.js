@@ -1,10 +1,4 @@
 /**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
-/**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
  * @returns {T | null}

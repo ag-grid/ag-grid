@@ -385,6 +385,12 @@ const CellComp = (props: {
         cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
+
+        if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {
+            // Restore focus to the cell if it was focused before and not editing.
+            // If it is editing then it is likely the focus was moved to the editor and we should not move it back.
+            eGui.current.focus({ preventScroll: true });
+        }
     });
 
     const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);

@@ -1,11 +1,11 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
+import type { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
-import { Chart } from '../chart';
+import type { Chart } from '../chart';
 import { ChartUpdateType } from '../chartUpdateType';
-import { ChartAxis } from '../chartAxis';
+import type { ChartAxis } from '../chartAxis';
 import * as axesExamples from '../test/examples-axes';
 import * as examples from '../test/examples';
 import {
@@ -62,7 +62,7 @@ const EXAMPLES: Record<string, TestCase> = {
     ...mixinDerivedCases({
         BASIC_CATEGORY_AXIS: {
             options: axesExamples.CATEGORY_AXIS_BASIC_EXAMPLE,
-            assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+            assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 3) }),
         },
         BASIC_CATEGORY_UNIFORM_AXIS: {
             options: axesExamples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
@@ -130,28 +130,28 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
         options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['column', 'line'],
+            seriesTypes: ['column', 'column', 'line'],
         }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
         options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['column', 'line'],
+            seriesTypes: ['column', 'column', 'line'],
         }),
     },
     AREA_CHART_NO_SERIES: {
         options: axesExamples.AREA_CHART_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
-            seriesTypes: ['area'],
+            seriesTypes: repeat('area', 6),
         }),
     },
     AREA_CHART_STACKED_NORMALISED_NO_SERIES: {
         options: axesExamples.AREA_CHART_STACKED_NORMALISED_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number'],
-            seriesTypes: ['area'],
+            seriesTypes: repeat('area', 7),
         }),
     },
 };
@@ -171,7 +171,7 @@ const EXAMPLES_TICK_VALUES: Record<string, TestCase> = {
     },
     CATEGORY_AXIS_TICK_VALUES: {
         options: axesExamples.CATEGORY_AXIS_TICK_VALUES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('column', 7) }),
     },
 };
 
@@ -186,7 +186,7 @@ const EXAMPLES_TICK_SPACING: Record<string, TestCase> = {
     },
     AXIS_TICK_MIN_MAX_SPACING: {
         options: axesExamples.AXIS_TICK_MIN_MAX_SPACING,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('column', 7) }),
     },
 };
 
@@ -194,7 +194,10 @@ const EXAMPLES_CLIPPING: Record<string, TestCase> = {
     ...mixinDerivedCases({
         GRDILINE_TICKLINE_CLIPPING: {
             options: axesExamples.GRDILINE_TICKLINE_CLIPPING,
-            assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
+            assertions: cartesianChartAssertions({
+                axisTypes: ['category', 'number'],
+                seriesTypes: repeat('column', 3),
+            }),
         },
         GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING: {
             options: axesExamples.GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING,
@@ -228,23 +231,23 @@ function applyAutoWrapping<T>(opts: T, maxWidth?: number): T {
 const EXAMPLES_LABEL_AUTO_WRAPPING: Record<string, TestCase> = {
     BAR_CHART_EXAMPLE: {
         options: applyAutoWrapping(examples.BAR_CHART_EXAMPLE, 150),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['bar'] }),
     },
     GROUPED_BAR_CHART_EXAMPLE: {
         options: applyAutoWrapping(examples.GROUPED_BAR_CHART_EXAMPLE),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 2) }),
     },
     STACKED_BAR_CHART_EXAMPLE: {
         options: applyAutoWrapping(examples.STACKED_BAR_CHART_EXAMPLE, 150),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 4) }),
     },
     ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: {
         options: applyAutoWrapping(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE, 100),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('bar', 3) }),
     },
     BAR_CHART_WITH_LABELS_EXAMPLE: {
         options: applyAutoWrapping(examples.BAR_CHART_WITH_LABELS_EXAMPLE),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['bar'] }),
     },
     COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_EXAMPLE)),
@@ -252,15 +255,15 @@ const EXAMPLES_LABEL_AUTO_WRAPPING: Record<string, TestCase> = {
     },
     GROUPED_COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.GROUPED_BAR_CHART_EXAMPLE)),
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 2) }),
     },
     STACKED_COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.STACKED_BAR_CHART_EXAMPLE)),
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 4) }),
     },
     ONE_HUNDRED_PERCENT_STACKED_COLUMN_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE)),
-        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('column', 3) }),
     },
     COLUMN_CHART_WITH_LABELS_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_WITH_LABELS_EXAMPLE)),
@@ -292,7 +295,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
     return result;
 }
 
-function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width: number; height: number } {
+function calculateAxisBBox(axis: ChartAxis): { x: number; y: number; width: number; height: number } {
     const bbox = axis.computeBBox();
 
     const { x, y, width, height } = bbox;
@@ -321,6 +324,19 @@ describe('Axis Examples', () => {
         expect(console.error).not.toBeCalled();
     });
 
+    const snapshot = async () => {
+        await waitForChartStability(chart);
+
+        return ctx.nodeCanvas?.toBuffer('raw');
+    };
+
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const newImageData = extractImageData({ ...ctx });
+        (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     for (const [exampleName, example] of Object.entries(EXAMPLES)) {
         it(`for ${exampleName} it should create chart instance as expected`, async () => {
             const options: AgChartOptions = example.options;
@@ -330,7 +346,7 @@ describe('Axis Examples', () => {
         });
 
         it(`for ${exampleName} it should render to canvas as expected`, async () => {
-            const compare = async () => {
+            const axisCompare = async () => {
                 await waitForChartStability(chart);
 
                 for (const axis of chart.axes) {
@@ -348,12 +364,12 @@ describe('Axis Examples', () => {
             const options: AgChartOptions = { ...example.options };
             prepareTestOptions(options);
 
-            chart = deproxy(AgChart.create(options)) as Chart;
-            await compare();
+            chart = deproxy(AgChart.create(options));
+            await axisCompare();
 
             if (example.extraScreenshotActions) {
                 await example.extraScreenshotActions(chart);
-                await compare();
+                await axisCompare();
             }
         });
     }
@@ -367,23 +383,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -393,16 +402,10 @@ describe('Axis Examples', () => {
             });
 
             it(`for ${exampleName} it should render identically after legend toggle`, async () => {
-                const snapshot = async () => {
-                    await waitForChartStability(chart);
-
-                    return ctx.nodeCanvas?.toBuffer('raw');
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 const reference = await snapshot();
 
                 chart.series.forEach((s) => {
@@ -426,28 +429,22 @@ describe('Axis Examples', () => {
 
     describe('toggle secondary axis series', () => {
         it(`for ADV_COMBINATION_SERIES_CHART_EXAMPLE it should render identically after legend toggle`, async () => {
-            const snapshot = async () => {
-                await waitForChartStability(chart);
-
-                return ctx.nodeCanvas?.toBuffer('raw');
-            };
-
             const options: AgChartOptions = { ...examples.ADV_COMBINATION_SERIES_CHART_EXAMPLE };
             prepareTestOptions(options);
 
-            chart = deproxy(AgChart.create(options)) as Chart;
+            chart = deproxy(AgChart.create(options));
             const reference = await snapshot();
-            expect(chart.series[1].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
+            expect(chart.series[2].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
 
             // Hide series bound to secondary axis.
-            (chart.series[1] as any).toggleSeriesItem('exportedTonnes', false);
+            (chart.series[2] as any).toggleSeriesItem('exportedTonnes', false);
             chart.update(ChartUpdateType.FULL);
 
             const afterUpdate = await snapshot();
             (expect(afterUpdate) as any).not.toMatchImage(reference);
 
             // Show series bound to secondary axis.
-            (chart.series[1] as any).toggleSeriesItem('exportedTonnes', true);
+            (chart.series[2] as any).toggleSeriesItem('exportedTonnes', true);
             chart.update(ChartUpdateType.FULL);
 
             const afterFinalUpdate = await snapshot();
@@ -459,23 +456,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_VALUES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -490,23 +480,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_SPACING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -521,23 +504,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_LABEL_AUTO_WRAPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -552,23 +528,16 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_CLIPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const newImageData = extractImageData({ ...ctx });
-                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 prepareTestOptions(options);
 
-                chart = deproxy(AgChart.create(options)) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {

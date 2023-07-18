@@ -5,7 +5,8 @@
         "outDir": "dist-test",
         "rootDir": "src",
         "noUnusedParameters": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "importsNotUsedAsValues": "error"
         // "strict": true
     },
     "include": ["main-test.ts", "**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]

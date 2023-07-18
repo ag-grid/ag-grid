@@ -1,12 +1,14 @@
-import { Node, RedrawType, RenderContext, LayerManager, ZIndexSubOrder } from './node';
+import type { RenderContext, LayerManager, ZIndexSubOrder } from './node';
+import { Node, RedrawType } from './node';
 import { BBox } from './bbox';
-import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
+import type { HdpiCanvas } from '../canvas/hdpiCanvas';
+import type { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 export declare class Group extends Node {
     protected readonly opts?: {
         readonly layer?: boolean | undefined;
         readonly zIndex?: number | undefined;
         readonly zIndexSubOrder?: ZIndexSubOrder | undefined;
+        readonly isVirtual?: boolean | undefined;
         readonly name?: string | undefined;
     } | undefined;
     static className: string;
@@ -20,6 +22,7 @@ export declare class Group extends Node {
         readonly layer?: boolean | undefined;
         readonly zIndex?: number | undefined;
         readonly zIndexSubOrder?: ZIndexSubOrder | undefined;
+        readonly isVirtual?: boolean | undefined;
         readonly name?: string | undefined;
     } | undefined);
     _setLayerManager(scene?: LayerManager): void;
@@ -42,4 +45,3 @@ export declare class Group extends Node {
      */
     setClipRectInGroupCoordinateSpace(bbox?: BBox): void;
 }
-//# sourceMappingURL=group.d.ts.map

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45,16 +39,29 @@ var eventKeys_1 = require("../eventKeys");
 var function_1 = require("../utils/function");
 var browser_1 = require("../utils/browser");
 var dom_1 = require("../utils/dom");
+var ScrollDirection;
+(function (ScrollDirection) {
+    ScrollDirection[ScrollDirection["Vertical"] = 0] = "Vertical";
+    ScrollDirection[ScrollDirection["Horizontal"] = 1] = "Horizontal";
+})(ScrollDirection || (ScrollDirection = {}));
+;
+var ScrollSource;
+(function (ScrollSource) {
+    ScrollSource[ScrollSource["Container"] = 0] = "Container";
+    ScrollSource[ScrollSource["FakeContainer"] = 1] = "FakeContainer";
+})(ScrollSource || (ScrollSource = {}));
+;
 var GridBodyScrollFeature = /** @class */ (function (_super) {
     __extends(GridBodyScrollFeature, _super);
     function GridBodyScrollFeature(eBodyViewport) {
         var _this = _super.call(this) || this;
+        _this.lastScrollSource = [null, null];
         _this.scrollLeft = -1;
         _this.nextScrollTop = -1;
         _this.scrollTop = -1;
         _this.eBodyViewport = eBodyViewport;
-        _this.resetLastHScrollDebounced = function_1.debounce(function () { return _this.eLastHScroll = null; }, 500);
-        _this.resetLastVScrollDebounced = function_1.debounce(function () { return _this.eLastVScroll = null; }, 500);
+        _this.resetLastHScrollDebounced = function_1.debounce(function () { return _this.lastScrollSource[ScrollDirection.Horizontal] = null; }, 500);
+        _this.resetLastVScrollDebounced = function_1.debounce(function () { return _this.lastScrollSource[ScrollDirection.Vertical] = null; }, 500);
         return _this;
     }
     GridBodyScrollFeature.prototype.postConstruct = function () {
@@ -71,14 +78,14 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         var fakeHScroll = this.ctrlsService.getFakeHScrollComp();
         var fakeVScroll = this.ctrlsService.getFakeVScrollComp();
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
-        this.addManagedListener(fakeHScroll.getViewport(), 'scroll', this.onFakeHScroll.bind(this));
+        fakeHScroll.onScrollCallback(this.onFakeHScroll.bind(this));
         var isDebounce = this.gridOptionsService.is('debounceVerticalScrollbar');
         var onVScroll = isDebounce ?
             function_1.debounce(this.onVScroll.bind(this), 100) : this.onVScroll.bind(this);
         var onFakeVScroll = isDebounce ?
             function_1.debounce(this.onFakeVScroll.bind(this), 100) : this.onFakeVScroll.bind(this);
         this.addManagedListener(this.eBodyViewport, 'scroll', onVScroll);
-        this.addManagedListener(fakeVScroll.getViewport(), 'scroll', onFakeVScroll);
+        fakeVScroll.onScrollCallback(onFakeVScroll);
     };
     GridBodyScrollFeature.prototype.onDisplayedColumnsWidthChanged = function () {
         if (this.enableRtl) {
@@ -110,45 +117,46 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         topCenterContainer.setContainerTranslateX(offset);
         stickyTopCenterContainer.setContainerTranslateX(offset);
         var centerViewport = this.centerRowContainerCtrl.getViewportElement();
-        var isCenterViewportLastHorizontal = this.eLastHScroll === centerViewport;
-        var partner = isCenterViewportLastHorizontal ?
-            fakeHScroll.getViewport() :
-            this.centerRowContainerCtrl.getViewportElement();
-        dom_1.setScrollLeft(partner, Math.abs(scrollLeft), this.enableRtl);
+        var isCenterViewportLastHorizontal = this.lastScrollSource[ScrollDirection.Horizontal] === ScrollSource.Container;
+        scrollLeft = Math.abs(scrollLeft);
+        if (isCenterViewportLastHorizontal) {
+            fakeHScroll.setScrollPosition(scrollLeft);
+        }
+        else {
+            dom_1.setScrollLeft(centerViewport, scrollLeft, this.enableRtl);
+        }
     };
-    GridBodyScrollFeature.prototype.isControllingHScroll = function (eDiv) {
-        if (!this.eLastHScroll) {
-            this.eLastHScroll = eDiv;
+    GridBodyScrollFeature.prototype.isControllingScroll = function (source, direction) {
+        if (this.lastScrollSource[direction] == null) {
+            this.lastScrollSource[direction] = source;
             return true;
         }
-        return eDiv === this.eLastHScroll;
-    };
-    GridBodyScrollFeature.prototype.isControllingVScroll = function (eDiv) {
-        if (!this.eLastVScroll) {
-            this.eLastVScroll = eDiv;
-            return true;
-        }
-        return eDiv === this.eLastVScroll;
+        return this.lastScrollSource[direction] === source;
     };
     GridBodyScrollFeature.prototype.onFakeHScroll = function () {
-        var fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
-        if (!this.isControllingHScroll(fakeHScrollViewport)) {
+        if (!this.isControllingScroll(ScrollSource.FakeContainer, ScrollDirection.Horizontal)) {
             return;
         }
-        this.onHScrollCommon(fakeHScrollViewport);
+        this.onHScrollCommon(ScrollSource.FakeContainer);
     };
     GridBodyScrollFeature.prototype.onHScroll = function () {
-        var centerContainerViewport = this.centerRowContainerCtrl.getViewportElement();
-        if (!this.isControllingHScroll(centerContainerViewport)) {
+        if (!this.isControllingScroll(ScrollSource.Container, ScrollDirection.Horizontal)) {
             return;
         }
-        this.onHScrollCommon(centerContainerViewport);
+        this.onHScrollCommon(ScrollSource.Container);
     };
-    GridBodyScrollFeature.prototype.onHScrollCommon = function (eSource) {
+    GridBodyScrollFeature.prototype.onHScrollCommon = function (source) {
         var centerContainerViewport = this.centerRowContainerCtrl.getViewportElement();
         var scrollLeft = centerContainerViewport.scrollLeft;
-        if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
+        if (this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, scrollLeft, true)) {
             return;
+        }
+        var newScrollLeft;
+        if (source === ScrollSource.Container) {
+            newScrollLeft = dom_1.getScrollLeft(centerContainerViewport, this.enableRtl);
+        }
+        else {
+            newScrollLeft = this.ctrlsService.getFakeHScrollComp().getScrollPosition();
         }
         // we do Math.round() rather than Math.floor(), to mirror how scroll values are applied.
         // eg if a scale is applied (ie user has zoomed the browser), then applying scroll=200
@@ -156,32 +164,36 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         // initially Math.floor() was used, however this caused (almost) infinite loop with aligned grids,
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
-        this.doHorizontalScroll(Math.round(dom_1.getScrollLeft(eSource, this.enableRtl)));
+        this.doHorizontalScroll(Math.round(newScrollLeft));
         this.resetLastHScrollDebounced();
     };
     GridBodyScrollFeature.prototype.onFakeVScroll = function () {
-        var fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
-        if (!this.isControllingVScroll(fakeVScrollViewport)) {
+        if (!this.isControllingScroll(ScrollSource.FakeContainer, ScrollDirection.Vertical)) {
             return;
         }
-        this.onVScrollCommon(fakeVScrollViewport);
+        this.onVScrollCommon(ScrollSource.FakeContainer);
     };
     GridBodyScrollFeature.prototype.onVScroll = function () {
-        if (!this.isControllingVScroll(this.eBodyViewport)) {
+        if (!this.isControllingScroll(ScrollSource.Container, ScrollDirection.Vertical)) {
             return;
         }
-        this.onVScrollCommon(this.eBodyViewport);
+        this.onVScrollCommon(ScrollSource.Container);
     };
-    GridBodyScrollFeature.prototype.onVScrollCommon = function (eSource) {
-        var scrollTop = eSource.scrollTop;
-        if (this.shouldBlockScrollUpdate('vertical', scrollTop, true)) {
+    GridBodyScrollFeature.prototype.onVScrollCommon = function (source) {
+        var scrollTop;
+        if (source === ScrollSource.Container) {
+            scrollTop = this.eBodyViewport.scrollTop;
+        }
+        else {
+            scrollTop = this.ctrlsService.getFakeVScrollComp().getScrollPosition();
+        }
+        if (this.shouldBlockScrollUpdate(ScrollDirection.Vertical, scrollTop, true)) {
             return;
         }
         this.animationFrameService.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
-        if (eSource === this.eBodyViewport) {
-            var fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
-            fakeVScrollViewport.scrollTop = scrollTop;
+        if (source === ScrollSource.Container) {
+            this.ctrlsService.getFakeVScrollComp().setScrollPosition(scrollTop);
         }
         else {
             this.eBodyViewport.scrollTop = scrollTop;
@@ -198,13 +210,12 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         this.resetLastVScrollDebounced();
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
-        var fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
-        var fakeScrollLeft = dom_1.getScrollLeft(fakeHScrollViewport, this.enableRtl);
+        var fakeScrollLeft = this.ctrlsService.getFakeHScrollComp().getScrollPosition();
         if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
         }
         this.scrollLeft = scrollLeft;
-        this.fireScrollEvent('horizontal');
+        this.fireScrollEvent(ScrollDirection.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
         this.onHorizontalViewportChanged();
     };
@@ -212,7 +223,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         var _this = this;
         var bodyScrollEvent = {
             type: eventKeys_1.Events.EVENT_BODY_SCROLL,
-            direction: direction,
+            direction: direction === ScrollDirection.Horizontal ? 'horizontal' : 'vertical',
             left: this.scrollLeft,
             top: this.scrollTop
         };
@@ -238,7 +249,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         if (touchOnly && !browser_1.isIOSUserAgent()) {
             return false;
         }
-        if (direction === 'vertical') {
+        if (direction === ScrollDirection.Vertical) {
             return this.shouldBlockVerticalScroll(scrollTo);
         }
         return this.shouldBlockHorizontalScroll(scrollTo);
@@ -268,7 +279,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         return false;
     };
     GridBodyScrollFeature.prototype.redrawRowsAfterScroll = function () {
-        this.fireScrollEvent('vertical');
+        this.fireScrollEvent(ScrollDirection.Vertical);
     };
     GridBodyScrollFeature.prototype.onHorizontalViewportChanged = function () {
         this.centerRowContainerCtrl.onHorizontalViewportChanged();
@@ -281,7 +292,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
     // triggers a resize event, so notify listeners if the scroll position has changed
     GridBodyScrollFeature.prototype.checkScrollLeft = function () {
         if (this.scrollLeft !== this.centerRowContainerCtrl.getCenterViewportScrollLeft()) {
-            this.onHScrollCommon(this.centerRowContainerCtrl.getViewportElement());
+            this.onHScrollCommon(ScrollSource.Container);
         }
     };
     GridBodyScrollFeature.prototype.scrollGridIfNeeded = function () {
@@ -293,11 +304,13 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         return frameNeeded;
     };
     // called by scrollHorizontally method and alignedGridsService
-    GridBodyScrollFeature.prototype.setHorizontalScrollPosition = function (hScrollPosition) {
-        var fakeHScrollGui = this.ctrlsService.getFakeHScrollComp().getGui();
+    GridBodyScrollFeature.prototype.setHorizontalScrollPosition = function (hScrollPosition, fromAlignedGridsService) {
+        if (fromAlignedGridsService === void 0) { fromAlignedGridsService = false; }
         var minScrollLeft = 0;
         var maxScrollLeft = this.centerRowContainerCtrl.getViewportElement().scrollWidth - this.centerRowContainerCtrl.getCenterWidth();
-        if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
+        // if this is call is coming from the alignedGridsService, we don't need to validate the
+        // scroll, because it has already been validated by the grid firing the scroll event.
+        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, hScrollPosition)) {
             if (this.enableRtl && dom_1.isRtlNegativeScroll()) {
                 hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
             }
@@ -431,9 +444,9 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
             }
             if (newScrollPosition !== null) {
                 this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redrawAfterScroll();
+                this.rowRenderer.redraw();
             }
-            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the row can get shifted if during the rendering (during rowRenderer.redraw()),
             // the height of a row changes due to lazy calculation of row heights when using
             // colDef.autoHeight or gridOptions.getRowHeight.
             // if row was shifted, then the position we scrolled to is incorrect.

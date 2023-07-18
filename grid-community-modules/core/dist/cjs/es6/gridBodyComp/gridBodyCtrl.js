@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -210,7 +204,9 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         }
     }
     onFullWidthContainerWheel(e, eCenterColsViewport) {
-        if (!e.deltaX || Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        if (!e.deltaX ||
+            Math.abs(e.deltaY) > Math.abs(e.deltaX) ||
+            !this.mouseEventService.isEventFromThisGrid(e)) {
             return;
         }
         e.preventDefault();

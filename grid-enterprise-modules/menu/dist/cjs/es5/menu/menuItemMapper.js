@@ -100,7 +100,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
                     if (!(column === null || column === void 0 ? void 0 : column.isPrimary()) && !(column === null || column === void 0 ? void 0 : column.getColDef().pivotValueColumn)) {
                         return null;
                     }
@@ -153,7 +153,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -165,7 +165,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -177,7 +177,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -189,7 +189,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'cut':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
                     var focusedCell = this.focusService.getFocusedCell();
                     var rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     var isEditable = rowNode ? focusedCell === null || focusedCell === void 0 ? void 0 : focusedCell.column.isCellEditable(rowNode) : false;
@@ -205,7 +205,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return null;
                 }
             case 'paste':
-                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
+                if (core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
@@ -219,8 +219,8 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 }
             case 'export':
                 var exportSubMenuItems = [];
-                var csvModuleLoaded = core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.CsvExportModule, this.context.getGridId());
-                var excelModuleLoaded = core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ExcelExportModule, this.context.getGridId());
+                var csvModuleLoaded = core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.CsvExportModule, this.context.getGridId());
+                var excelModuleLoaded = core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.ExcelExportModule, this.context.getGridId());
                 if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }

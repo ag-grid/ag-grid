@@ -1,30 +1,34 @@
-import { Series, SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch, SeriesNodeBaseClickEvent } from '../series';
-import { ChartAxis } from '../../chartAxis';
+import type { SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch } from '../series';
+import { Series, SeriesNodeBaseClickEvent } from '../series';
+import type { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
-import { Marker } from '../../marker/marker';
+import type { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
-import { Node } from '../../../scene/node';
-import { PointLabelDatum } from '../../../util/labelPlacement';
-import { Point } from '../../../scene/point';
-import { BBox } from '../../../scene/bbox';
-import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { DataModel, ProcessedData } from '../../data/dataModel';
-import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
-import { ModuleContext } from '../../../util/module';
+import type { Node, ZIndexSubOrder } from '../../../scene/node';
+import type { PointLabelDatum } from '../../../util/labelPlacement';
+import type { Point } from '../../../scene/point';
+import type { BBox } from '../../../scene/bbox';
+import type { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import type { DataModel, ProcessedData } from '../../data/dataModel';
+import type { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { StateMachine } from '../../../motion/states';
+import type { ModuleContext } from '../../../util/moduleContext';
 declare type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, ContextType['nodeData'][number]>;
 declare type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, ContextType['labelData'][number]>;
 export interface CartesianSeriesNodeDatum extends SeriesNodeDatum {
     readonly xKey: string;
     readonly yKey: string;
+    readonly xValue: any;
+    readonly yValue: any;
 }
 interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     hasMarkers: boolean;
+    hasHighlightedLabels: boolean;
 }
 export declare class CartesianSeriesNodeBaseClickEvent<Datum extends {
     datum: any;
@@ -43,7 +47,12 @@ export declare class CartesianSeriesNodeDoubleClickEvent<Datum extends {
 }> extends CartesianSeriesNodeBaseClickEvent<Datum> {
     readonly type = "nodeDoubleClick";
 }
+declare type CartesianAnimationState = 'empty' | 'ready' | 'waiting';
+declare type CartesianAnimationEvent = 'update' | 'updateData' | 'highlight' | 'highlightMarkers' | 'resize';
+declare class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {
+}
 export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<any, any>, N extends Node = Group> extends Series<C> {
+    legendItemName?: string;
     private _contextNodeData;
     get contextNodeData(): C[];
     private nodeDataDependencies;
@@ -52,23 +61,13 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     private subGroups;
     private subGroupId;
     private readonly opts;
-    private animationState;
-    /**
-     * The assumption is that the values will be reset (to `true`)
-     * in the {@link yKeys} setter.
-     */
-    protected readonly seriesItemEnabled: Map<string, boolean>;
+    protected animationState: CartesianStateMachine;
+    protected datumSelectionGarbageCollection: boolean;
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
     protected constructor(opts: Partial<SeriesOpts> & {
         moduleCtx: ModuleContext;
         pickModes?: SeriesNodePickMode[];
-        directionKeys?: {
-            [key in ChartAxisDirection]?: string[];
-        };
-        directionNames?: {
-            [key in ChartAxisDirection]?: string[];
-        };
     });
     addChartEventListeners(): void;
     destroy(): void;
@@ -101,6 +100,7 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     protected nodeFactory(): Node;
     protected markerFactory(): Marker;
     private updateSeriesGroups;
+    getGroupZIndexSubOrder(type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths', subIndex?: number): ZIndexSubOrder;
     protected updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean): Promise<void>;
     protected updateHighlightSelection(seriesHighlighted?: boolean): Promise<void>;
     protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined;
@@ -111,11 +111,8 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     } | undefined;
     onLegendItemClick(event: LegendItemClickChartEvent): void;
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent): void;
-    protected toggleSeriesItem(itemId: string, enabled: boolean): void;
-    isEnabled(): boolean;
     protected isPathOrSelectionDirty(): boolean;
     getLabelData(): PointLabelDatum[];
-    protected isAnySeriesVisible(): boolean;
     protected updateHighlightSelectionItem(opts: {
         item?: C['nodeData'][number];
         highlightSelection: NodeDataSelection<N, C>;
@@ -158,6 +155,9 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
         contextData: Array<C>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
+    }): void;
+    protected animateWaitingUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
     }): void;
     protected animateReadyHighlight(_data: NodeDataSelection<N, C>): void;
     protected animateReadyHighlightMarkers(_data: NodeDataSelection<Marker, C>): void;

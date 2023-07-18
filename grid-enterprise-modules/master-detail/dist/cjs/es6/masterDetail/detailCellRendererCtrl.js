@@ -12,7 +12,6 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
     constructor() {
         super(...arguments);
         this.loadRowDataVersion = 0;
-        this.needRefresh = false;
     }
     init(comp, params) {
         this.params = params;
@@ -26,9 +25,6 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
         this.addThemeToDetailGrid();
         this.createDetailGrid();
         this.loadRowData();
-        this.addManagedListener(params.node.parent, core_1.RowNode.EVENT_DATA_CHANGED, () => {
-            this.needRefresh = true;
-        });
         this.addManagedListener(this.eventService, core_1.Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
     }
     onFullWidthRowFocused(e) {
@@ -138,24 +134,15 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
     refresh() {
         const GET_GRID_TO_REFRESH = false;
         const GET_GRID_TO_DO_NOTHING = true;
-        // if we return true, it means we pretend to the grid
-        // that we have refreshed, so refresh will never happen.
-        const doNotRefresh = !this.needRefresh || this.refreshStrategy === 'nothing';
-        if (doNotRefresh) {
-            // we do nothing in this refresh method, and also tell the grid to do nothing
-            return GET_GRID_TO_DO_NOTHING;
+        switch (this.refreshStrategy) {
+            // ignore this refresh, make grid think we've refreshed but do nothing
+            case 'nothing': return GET_GRID_TO_DO_NOTHING;
+            // grid will destroy and recreate the cell
+            case 'everything': return GET_GRID_TO_REFRESH;
         }
-        // reset flag, so don't refresh again until more data changes.
-        this.needRefresh = false;
-        if (this.refreshStrategy === 'everything') {
-            // we want full refresh, so tell the grid to destroy and recreate this cell
-            return GET_GRID_TO_REFRESH;
-        }
-        else {
-            // do the refresh here, and tell the grid to do nothing
-            this.loadRowData();
-            return GET_GRID_TO_DO_NOTHING;
-        }
+        // do the refresh here, and tell the grid to do nothing
+        this.loadRowData();
+        return GET_GRID_TO_DO_NOTHING;
     }
 }
 __decorate([

@@ -36,13 +36,13 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import { LinearScale } from '../../scale/linearScale';
-import { extent } from '../../util/array';
-import { ChartAxis } from '../chartAxis';
+import { normalisedExtent } from '../../util/array';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
-import { BaseAxisTick } from '../../axis';
+import { AxisTick } from './axisTick';
+import { CartesianAxis } from './cartesianAxis';
 var NumberAxisTick = /** @class */ (function (_super) {
     __extends(NumberAxisTick, _super);
     function NumberAxisTick() {
@@ -55,7 +55,7 @@ var NumberAxisTick = /** @class */ (function (_super) {
         Default(NaN)
     ], NumberAxisTick.prototype, "maxSpacing", void 0);
     return NumberAxisTick;
-}(BaseAxisTick));
+}(AxisTick));
 var NumberAxis = /** @class */ (function (_super) {
     __extends(NumberAxis, _super);
     function NumberAxis(moduleCtx, scale) {
@@ -67,21 +67,8 @@ var NumberAxis = /** @class */ (function (_super) {
         return _this;
     }
     NumberAxis.prototype.normaliseDataDomain = function (d) {
-        var _a;
-        var _b = this, min = _b.min, max = _b.max;
-        if (d.length > 2) {
-            d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            d = [min, d[1]];
-        }
-        if (!isNaN(max)) {
-            d = [d[0], max];
-        }
-        if (d[0] > d[1]) {
-            d = [];
-        }
-        return d;
+        var _a = this, min = _a.min, max = _a.max;
+        return normalisedExtent(d, min, max);
     };
     NumberAxis.prototype.formatDatum = function (datum) {
         if (typeof datum === 'number') {
@@ -116,5 +103,5 @@ var NumberAxis = /** @class */ (function (_super) {
         Default(NaN)
     ], NumberAxis.prototype, "max", void 0);
     return NumberAxis;
-}(ChartAxis));
+}(CartesianAxis));
 export { NumberAxis };

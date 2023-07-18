@@ -32,7 +32,7 @@ export class DropZoneColumnComp extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE = /* html */
-        `<span role="option" tabindex="0">
+        `<span role="option">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
@@ -94,13 +94,14 @@ export class DropZoneColumnComp extends Component {
         });
 
         this.setupTooltip();
+        this.activateTabIndex();
     }
 
     private setupAria() {
         const translate = this.localeService.getLocaleTextFunc();
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
 
-        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
         const sortDirection =  {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
@@ -281,13 +282,25 @@ export class DropZoneColumnComp extends Component {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        // ePopup.style.height = this.gridOptionsService.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const popupHiddenFunc = () => {
+        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e: FocusEvent) => {
+            if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
+                addPopupRes.hideFunc();
+            }
+        });
+
+        const popupHiddenFunc = (callbackEvent?: KeyboardEvent) => {
             this.destroyBean(virtualList);
             this.popupShowing = false;
-            eGui.focus();
+
+            if (callbackEvent?.key === 'Escape') {
+                eGui.focus();
+            }
+
+            if (focusoutListener) {
+                focusoutListener();
+            }
         };
 
         const translate = this.localeService.getLocaleTextFunc();

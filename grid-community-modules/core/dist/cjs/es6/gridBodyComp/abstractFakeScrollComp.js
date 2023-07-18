@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16,6 +10,8 @@ exports.AbstractFakeScrollComp = void 0;
 const context_1 = require("../context/context");
 const eventKeys_1 = require("../eventKeys");
 const browser_1 = require("../utils/browser");
+const dom_1 = require("../utils/dom");
+const function_1 = require("../utils/function");
 const component_1 = require("../widgets/component");
 const componentAnnotations_1 = require("../widgets/componentAnnotations");
 class AbstractFakeScrollComp extends component_1.Component {
@@ -72,11 +68,18 @@ class AbstractFakeScrollComp extends component_1.Component {
             }, 400);
         });
     }
+    attemptSettingScrollPosition(value) {
+        const viewport = this.getViewport();
+        function_1.waitUntil(() => dom_1.isVisible(viewport), () => this.setScrollPosition(value), 100);
+    }
     getViewport() {
         return this.eViewport;
     }
     getContainer() {
         return this.eContainer;
+    }
+    onScrollCallback(fn) {
+        this.addManagedListener(this.getViewport(), 'scroll', fn);
     }
 }
 __decorate([

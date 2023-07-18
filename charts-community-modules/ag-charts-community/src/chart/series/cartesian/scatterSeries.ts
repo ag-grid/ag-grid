@@ -1,14 +1,11 @@
-import { Selection } from '../../../scene/selection';
-import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
-import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import type { Selection } from '../../../scene/selection';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, valueProperty } from '../series';
+import type { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { ColorScale } from '../../../scale/colorScale';
 import { LinearScale } from '../../../scale/linearScale';
-import {
-    CartesianSeries,
-    CartesianSeriesMarker,
-    CartesianSeriesNodeBaseClickEvent,
-    CartesianSeriesNodeDatum,
-} from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -16,22 +13,22 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import { extent } from '../../../util/array';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { Label } from '../../label';
-import { Text } from '../../../scene/shape/text';
+import type { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
-import { Marker } from '../../marker/marker';
-import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
+import type { Marker } from '../../marker/marker';
+import type { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { OPT_FUNCTION, OPT_STRING, OPT_NUMBER_ARRAY, COLOR_STRING_ARRAY, Validate } from '../../../util/validation';
-import {
+import type {
     AgScatterSeriesLabelFormatterParams,
     AgScatterSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel } from '../../data/dataModel';
-import * as easing from '../../../motion/easing';
-import { ModuleContext } from '../../../util/module';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
+    readonly sizeValue: any;
     readonly label: MeasuredLabel;
     readonly fill: string | undefined;
 }
@@ -140,34 +137,38 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         label.enabled = false;
     }
 
-    async processData() {
-        const { xKey = '', yKey = '', sizeKey, xAxis, yAxis, marker, data } = this;
+    async processData(dataController: DataController) {
+        const { xKey = '', yKey = '', sizeKey, labelKey, axes, marker, data } = this;
 
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const { colorScale, colorDomain, colorRange, colorKey } = this;
 
-        this.dataModel = new DataModel<any>({
+        const { dataModel, processedData } = await dataController.request<any, any, true>(this.id, data ?? [], {
             props: [
-                valueProperty(xKey, isContinuousX, { id: `xValue` }),
-                valueProperty(yKey, isContinuousY, { id: `yValue` }),
-                ...(sizeKey ? [valueProperty(sizeKey, true, { id: `sizeValue` })] : []),
-                ...(colorKey ? [valueProperty(colorKey, true, { id: `colorValue` })] : []),
+                valueProperty(this, xKey, isContinuousX, { id: `xValue` }),
+                valueProperty(this, yKey, isContinuousY, { id: `yValue` }),
+                ...(sizeKey ? [valueProperty(this, sizeKey, true, { id: `sizeValue` })] : []),
+                ...(colorKey ? [valueProperty(this, colorKey, true, { id: `colorValue` })] : []),
+                ...(labelKey ? [valueProperty(this, labelKey, false, { id: `labelValue` })] : []),
             ],
             dataVisible: this.visible,
         });
-        this.processedData = this.dataModel.processData(data ?? []);
+        this.dataModel = dataModel;
+        this.processedData = processedData;
 
         if (sizeKey) {
-            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndexById(`sizeValue`)?.index ?? -1;
-            const processedSize = this.processedData?.domain.values[sizeKeyIdx] ?? [];
+            const sizeKeyIdx = dataModel.resolveProcessedDataIndexById(this, `sizeValue`).index;
+            const processedSize = processedData.domain.values[sizeKeyIdx] ?? [];
             this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
         }
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
-            colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
+            const colorKeyIdx = dataModel.resolveProcessedDataIndexById(this, `colorValue`).index;
+            colorScale.domain = colorDomain ?? processedData.domain.values[colorKeyIdx] ?? [];
             colorScale.range = colorRange;
             colorScale.update();
         }
@@ -178,12 +179,12 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         if (!processedData || !dataModel) return [];
 
         const id = direction === ChartAxisDirection.X ? `xValue` : `yValue`;
-        const dataDef = dataModel.resolveProcessedDataDefById(id);
-        const domain = dataModel.getDomain(id, processedData);
-        if (dataDef?.valueType === 'category') {
+        const dataDef = dataModel.resolveProcessedDataDefById(this, id, 'value');
+        const domain = dataModel.getDomain(this, id, 'value', processedData);
+        if (dataDef?.def.type === 'value' && dataDef?.def.valueType === 'category') {
             return domain;
         }
-        const axis = direction === ChartAxisDirection.X ? this.xAxis : this.yAxis;
+        const axis = this.axes[direction];
         return this.fixNumericExtent(extent(domain), axis);
     }
 
@@ -205,21 +206,26 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     async createNodeData() {
         const {
             visible,
-            xAxis,
-            yAxis,
+            axes,
             yKey = '',
             xKey = '',
             label,
             labelKey,
             ctx: { callbackCache },
+            dataModel,
+            processedData,
         } = this;
 
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`);
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`);
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
-        if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
-            return [];
-        }
+        if (!(dataModel && processedData && visible && xAxis && yAxis)) return [];
+
+        const xDataIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+        const yDataIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
+        const sizeDataIdx = this.sizeKey ? dataModel.resolveProcessedDataIndexById(this, `sizeValue`).index : -1;
+        const colorDataIdx = this.colorKey ? dataModel.resolveProcessedDataIndexById(this, `colorValue`).index : -1;
+        const labelDataIdx = this.labelKey ? dataModel.resolveProcessedDataIndexById(this, `labelValue`).index : -1;
 
         const { colorScale, sizeKey, colorKey, id: seriesId } = this;
 
@@ -234,9 +240,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const font = label.getFont();
         let actualLength = 0;
-        for (const { values, datum } of this.processedData?.data ?? []) {
-            const xDatum = values[xDataIdx.index];
-            const yDatum = values[yDataIdx.index];
+        for (const { values, datum } of processedData.data ?? []) {
+            const xDatum = values[xDataIdx];
+            const yDatum = values[yDataIdx];
             const x = xScale.convert(xDatum) + xOffset;
             const y = yScale.convert(yDatum) + yOffset;
 
@@ -249,13 +255,12 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 text = callbackCache.call(label.formatter, { value: yDatum, seriesId, datum });
             }
             if (text === undefined) {
-                text = labelKey ? String(datum[labelKey]) : '';
+                text = labelKey ? String(values[labelDataIdx]) : '';
             }
 
             const size = HdpiCanvas.getTextSize(text, font);
-            const markerSize = sizeKey ? sizeScale.convert(values[2]) : marker.size;
-            const colorIdx = sizeKey ? 3 : 2;
-            const fill = colorKey ? colorScale.convert(values[colorIdx]) : undefined;
+            const markerSize = sizeKey ? sizeScale.convert(values[sizeDataIdx]) : marker.size;
+            const fill = colorKey ? colorScale.convert(values[colorDataIdx]) : undefined;
 
             nodeData[actualLength++] = {
                 series: this,
@@ -263,6 +268,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 yKey,
                 xKey,
                 datum,
+                xValue: xDatum,
+                yValue: yDatum,
+                sizeValue: values[sizeDataIdx],
                 point: { x, y, size: markerSize },
                 nodeMidPoint: { x, y },
                 fill,
@@ -435,7 +443,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey, axes } = this;
+
+        const xAxis = axes[ChartAxisDirection.X];
+        const yAxis = axes[ChartAxisDirection.Y];
 
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
@@ -477,9 +488,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const color = format?.fill ?? fill ?? 'gray';
         const title = this.title ?? yName;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const {
+            datum,
+            xValue,
+            yValue,
+            sizeValue,
+            label: { text: labelText },
+        } = nodeDatum;
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
@@ -488,11 +503,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             `<b>${sanitizeHtml(yName ?? yKey)}</b>: ${yString}`;
 
         if (sizeKey) {
-            content += `<br><b>${sanitizeHtml(sizeName ?? sizeKey)}</b>: ${sanitizeHtml(datum[sizeKey])}`;
+            content += `<br><b>${sanitizeHtml(sizeName ?? sizeKey)}</b>: ${sanitizeHtml(sizeValue)}`;
         }
 
         if (labelKey) {
-            content = `<b>${sanitizeHtml(labelName ?? labelKey)}</b>: ${sanitizeHtml(datum[labelKey])}<br>` + content;
+            content = `<b>${sanitizeHtml(labelName ?? labelKey)}</b>: ${sanitizeHtml(labelText)}<br>` + content;
         }
 
         const defaults: AgTooltipRendererResult = {
@@ -565,7 +580,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
         labelSelections: Array<Selection<Text, ScatterNodeDatum>>;
     }) {
-        const duration = 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         markerSelections.forEach((markerSelection) => {
@@ -574,13 +589,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 const size = datum.point?.size ?? 0;
                 const to = format?.size ?? size;
 
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
                     from: 0,
                     to: to,
-                    disableInteractions: true,
                     duration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate(size) {
                         marker.size = size;
                     },
@@ -590,13 +602,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

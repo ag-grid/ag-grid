@@ -1,10 +1,10 @@
 import { Matrix } from './matrix';
-import { BBox } from './bbox';
+import type { BBox } from './bbox';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
-import { SceneDebugOptions } from './sceneDebugOptions';
-import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
-import { LiteralOrFn } from '../util/compare';
+import type { SceneDebugOptions } from './sceneDebugOptions';
+import type { HdpiCanvas } from '../canvas/hdpiCanvas';
+import type { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
+import type { LiteralOrFn } from '../util/compare';
 export { SceneChangeDetection, RedrawType };
 declare type OffscreenCanvasRenderingContext2D = any;
 export declare enum PointerEvents {
@@ -13,7 +13,7 @@ export declare enum PointerEvents {
 }
 export declare type RenderContext = {
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    forceRender: boolean;
+    forceRender: boolean | 'dirtyTransform';
     resized: boolean;
     clipBBox?: BBox;
     stats?: {
@@ -69,14 +69,23 @@ export declare abstract class Node extends ChangeDetectable {
      * But we still need to distinguish regular leaf nodes from container leafs somehow.
      */
     protected isContainerNode: boolean;
+    /**
+     * Indicates if this node should be substituted for it's children when traversing the scene
+     * graph. This allows intermingling of child-nodes that are managed by different chart classes
+     * without breaking scene-graph encapsulation.
+     */
+    readonly isVirtual: boolean;
     protected _debug?: SceneDebugOptions;
     protected _layerManager?: LayerManager;
     _setLayerManager(value?: LayerManager): void;
     get layerManager(): LayerManager | undefined;
     private _parent?;
     get parent(): Node | undefined;
+    private _virtualChildren;
     private _children;
     get children(): Node[];
+    protected get virtualChildren(): Node[];
+    hasVirtualChildren(): boolean;
     private childSet;
     /**
      * Appends one or more new node instances to this parent.
@@ -89,15 +98,6 @@ export declare abstract class Node extends ChangeDetectable {
     append(nodes: Node[] | Node): void;
     appendChild<T extends Node>(node: T): T;
     removeChild<T extends Node>(node: T): T;
-    /**
-     * Inserts the node `node` before the existing child node `nextNode`.
-     * If `nextNode` is null, insert `node` at the end of the list of children.
-     * If the `node` belongs to another parent, it is first removed.
-     * Returns the `node`.
-     * @param node
-     * @param nextNode
-     */
-    insertBefore<T extends Node>(node: T, nextNode?: Node | null): T;
     matrix: Matrix;
     protected inverseMatrix: Matrix;
     private calculateCumulativeMatrix;
@@ -111,7 +111,7 @@ export declare abstract class Node extends ChangeDetectable {
     };
     transformBBox(bbox: BBox): BBox;
     inverseTransformBBox(bbox: BBox): BBox;
-    private _dirtyTransform;
+    protected dirtyTransform: boolean;
     markDirtyTransform(): void;
     scalingX: number;
     scalingY: number;
@@ -133,6 +133,9 @@ export declare abstract class Node extends ChangeDetectable {
     rotation: number;
     translationX: number;
     translationY: number;
+    constructor({ isVirtual }?: {
+        isVirtual?: boolean;
+    });
     containsPoint(_x: number, _y: number): boolean;
     /**
      * Hit testing method.
@@ -151,7 +154,7 @@ export declare abstract class Node extends ChangeDetectable {
     get dirty(): RedrawType;
     markClean(opts?: {
         force?: boolean;
-        recursive?: boolean;
+        recursive?: boolean | 'virtual';
     }): void;
     visible: boolean;
     protected visibilityChanged(): void;
@@ -167,4 +170,3 @@ export declare abstract class Node extends ChangeDetectable {
     };
     protected zIndexChanged(): void;
 }
-//# sourceMappingURL=node.d.ts.map

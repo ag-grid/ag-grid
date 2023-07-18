@@ -5,6 +5,7 @@ import {
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
 import { useLayoutEffectOnce } from './useEffectOnce';
+import { agFlushSync } from './utils';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;
@@ -25,7 +26,19 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const topTabGuardRef = useRef<HTMLDivElement>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement>(null);
     const tabGuardCtrlRef = useRef<TabGuardCtrl>();
-    const [tabIndex, setTabIndex] = useState<number>();
+
+    const setTabIndex = (value?: string | null) => {
+        const processedValue = value == null ? undefined : parseInt(value, 10).toString();
+
+        [topTabGuardRef, bottomTabGuardRef].forEach(tabGuard => {
+            if (processedValue === undefined) {
+                tabGuard.current?.removeAttribute('tabindex');
+            } else {
+                tabGuard.current?.setAttribute('tabindex', processedValue);
+            }
+            
+        })
+    }
 
     useImperativeHandle(forwardRef, () => ({
         forceFocusOutOfContainer() {
@@ -37,9 +50,10 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         const eTopGuard = topTabGuardRef.current!;
         const eBottomGuard = bottomTabGuardRef.current!;
 
+
         const compProxy: ITabGuard = {
-            setTabIndex: value => value == null ? setTabIndex(undefined) : setTabIndex(parseInt(value, 10))
-        }
+            setTabIndex
+        };
 
         const ctrl = tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
             comp: compProxy,
@@ -64,7 +78,6 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
             <div 
                 className={ `${TabGuardClassNames.TAB_GUARD} ${className}` }
                 role="presentation"
-                tabIndex={ tabIndex }
                 ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
             ></div>
         );

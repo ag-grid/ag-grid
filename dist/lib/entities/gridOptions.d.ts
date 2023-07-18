@@ -2,7 +2,7 @@
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
 import { ColumnApi } from "../columns/columnApi";
-import { AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, ComponentStateChangedEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RedoEndedEvent, RedoStartedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, StoreRefreshedEvent, ToolPanelSizeChangedEvent, ToolPanelVisibleChangedEvent, UndoEndedEvent, UndoStartedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
+import { AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent, CellKeyDownEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, ComponentStateChangedEvent, CutEndEvent, CutStartEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeDeleteEndEvent, RangeDeleteStartEvent, RangeSelectionChangedEvent, RedoEndedEvent, RedoStartedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, StoreRefreshedEvent, ToolPanelSizeChangedEvent, ToolPanelVisibleChangedEvent, UndoEndedEvent, UndoStartedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
 import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
@@ -22,6 +22,7 @@ import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
+import { DataTypeDefinition } from "./dataType";
 export interface GridOptions<TData = any> {
     /** Specifies the status bar components to use in the status bar. */
     statusBar?: {
@@ -63,8 +64,6 @@ export interface GridOptions<TData = any> {
     copyHeadersToClipboard?: boolean;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyGroupHeadersToClipboard?: boolean;
-    /** @deprecated v27.1 Use `clipboardDelimiter` */
-    clipboardDeliminator?: string;
     /**
      * Specify the delimiter to use when copying to clipboard.
      * Default: `\t`
@@ -91,6 +90,15 @@ export interface GridOptions<TData = any> {
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
     columnTypes?: {
         [key: string]: ColDef<TData>;
+    };
+    /**
+     * An object map of cell data types to their definitions.
+     * Cell data types can either override/update the pre-defined data types
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * or can be custom data types.
+     */
+    dataTypeDefinitions?: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
     };
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
@@ -132,14 +140,6 @@ export interface GridOptions<TData = any> {
     components?: {
         [p: string]: any;
     };
-    /** @deprecated As of v27, use `components` for framework components too. */
-    frameworkComponents?: {
-        [p: string]: {
-            new (): any;
-        };
-    } | any;
-    /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
-    reactUi?: boolean;
     /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
      * It is planned the next major release of the grid will drop support of the legacy React engine,
      * hence this property is deprecated as will be removed in the next major release. */
@@ -150,7 +150,7 @@ export interface GridOptions<TData = any> {
     singleClickEdit?: boolean;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
-    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false` */
     readOnlyEdit?: boolean;
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
@@ -158,18 +158,22 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
-    /**
-     * Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-     * i.e. pressing the `Enter` key will move down to the cell beneath.
-     * Default: `false`
-     */
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`. */
     enterMovesDown?: boolean;
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`. */
+    enterMovesDownAfterEdit?: boolean;
     /**
-     * Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-     * i.e. pressing the Enter key will move down to the cell beneath.
+     * Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
+     * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * Default: `false`
      */
-    enterMovesDownAfterEdit?: boolean;
+    enterNavigatesVertically?: boolean;
+    /**
+     * Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
+     * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
+     * Default: `false`
+     */
+    enterNavigatesVerticallyAfterEdit?: boolean;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */
     enableCellEditingOnBackspace?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */
@@ -191,16 +195,23 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */
     cacheQuickFilter?: boolean;
     /**
-     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
-     * This can give a significant performance improvement when there are a large number of hidden columns,
-     * and you are only interested in filtering on what's visible. Default: `false`
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.
      */
     excludeHiddenColumnsFromQuickFilter?: boolean;
+    /**
+     * Hidden columns are excluded from the Quick Filter by default.
+     * To include hidden columns, set to `true`.
+     * Default: `false`
+     */
+    includeHiddenColumnsInQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
-    /** The list of chart themes to be used. */
+    /**
+     * The list of chart themes that a user can chose from in the chart settings panel.
+     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+     */
     chartThemes?: string[];
     /** A map containing custom chart themes. */
     customChartThemes?: {
@@ -219,8 +230,6 @@ export interface GridOptions<TData = any> {
     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
     */
     loadingCellRenderer?: any;
-    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */
-    loadingCellRendererFramework?: any;
     /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
@@ -240,8 +249,6 @@ export interface GridOptions<TData = any> {
     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
     */
     detailCellRenderer?: any;
-    /** @deprecated As of v27, use `detailCellRenderer` for framework components too. */
-    detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
     /** Set fixed height in pixels for each detail row. */
@@ -297,8 +304,6 @@ export interface GridOptions<TData = any> {
     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
     */
     loadingOverlayComponent?: any;
-    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */
-    loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
     /** Disables the 'loading' overlay. Default: `false` */
@@ -310,8 +315,6 @@ export interface GridOptions<TData = any> {
     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
     */
     noRowsOverlayComponent?: any;
-    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */
-    noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
     /** Disables the 'no rows' overlay. Default: `false` */
@@ -351,7 +354,9 @@ export interface GridOptions<TData = any> {
     };
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
-    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
+    /** When using aggregations, the grid will always calculate the root level aggregation value. Default: `false` */
+    alwaysAggregateAtRootLevel?: boolean;
+    /** @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel  */
     suppressAggAtRootLevel?: boolean;
     /** When using change detection, only the updated column will be re-aggregated. Default: `false` */
     aggregateOnlyChangedColumns?: boolean;
@@ -415,8 +420,6 @@ export interface GridOptions<TData = any> {
     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
     */
     fullWidthCellRenderer?: any;
-    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */
-    fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
     /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally . */
@@ -473,18 +476,16 @@ export interface GridOptions<TData = any> {
     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
     */
     groupRowRenderer?: any;
-    /** @deprecated As of v27, use `groupRowRenderer` for framework components too. */
-    groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
-    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */
+    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false` */
     rowGroupPanelSuppressSort?: boolean;
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
-    groupRowsSticky?: boolean;
+    /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false` */
+    suppressGroupRowsSticky?: boolean;
     /** @deprecated v24 - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
     /** Data to be displayed as pinned top rows in the grid. */
@@ -495,10 +496,6 @@ export interface GridOptions<TData = any> {
     rowModelType?: RowModelType;
     /** Set the data to be displayed as rows in the grid. */
     rowData?: TData[] | null;
-    /**
-     * @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
-     * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
-    immutableData?: boolean;
     /** How many milliseconds to wait before executing a batch of async transactions. */
     asyncTransactionWaitMillis?: number;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */
@@ -552,7 +549,9 @@ export interface GridOptions<TData = any> {
     serverSideDatasource?: IServerSideDatasource;
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
     serverSideSortAllLevels?: boolean;
-    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
+    /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
+    serverSideOnlyRefreshFilteredGroups?: boolean;
+    /** @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead */
     serverSideFilterAllLevels?: boolean;
     /**
      *
@@ -567,7 +566,7 @@ export interface GridOptions<TData = any> {
     serverSideFilterOnServer?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
     serverSideFilteringAlwaysResets?: boolean;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */
     viewportDatasource?: IViewportDatasource;
@@ -603,10 +602,6 @@ export interface GridOptions<TData = any> {
     suppressRowDeselection?: boolean;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */
     suppressRowClickSelection?: boolean;
-    /**
-     * @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
-     */
-    suppressCellSelection?: boolean;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
     suppressCellFocus?: boolean;
     /** If `true`, only a single range can be selected. Default: `false` */
@@ -660,6 +655,8 @@ export interface GridOptions<TData = any> {
     suppressRowTransform?: boolean;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */
     columnHoverHighlight?: boolean;
+    /** Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.  */
+    gridId?: string;
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
     /** @deprecated v29.2 */
@@ -699,24 +696,18 @@ export interface GridOptions<TData = any> {
     navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
-    /** @deprecated v27.2 - Use `getLocaleText` instead. */
-    localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
     /** A callback for localising text within the grid. */
     getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
     getDocument?: () => Document;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
-    /** @deprecated v27.2 - Use `getGroupRowAgg` instead. */
-    groupRowAggNodes?: (nodes: IRowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
-    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
-    defaultGroupOrderComparator?: (nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number;
     /** @deprecated v28 - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef<TData>) => void;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
@@ -746,10 +737,6 @@ export interface GridOptions<TData = any> {
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
-    /**
-     * @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
-     * Allows you to set the ID for a particular row node based on the data. */
-    getRowNodeId?: GetRowNodeIdFunc<TData>;
     /** Allows setting the ID for a particular row node based on the data. */
     getRowId?: GetRowIdFunc<TData>;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
@@ -762,8 +749,6 @@ export interface GridOptions<TData = any> {
     isRowMaster?: IsRowMaster<TData>;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
     fillOperation?: (params: FillOperationParams<TData>) => any;
-    /** @deprecated v27.2 Use `postSortRows` instead */
-    postSort?: (nodes: IRowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
@@ -772,14 +757,16 @@ export interface GridOptions<TData = any> {
     getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
-    /** @deprecated v27.2 Use `isFullWidthRow` instead. */
-    isFullWidthCell?: (rowNode: IRowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
     isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
-    /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */
+    /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>): void;
     /** The tool panel size has been changed. */
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
+    /** Cut operation has started. */
+    onCutStart?(event: CutStartEvent<TData>): void;
+    /** Cut operation has ended. */
+    onCutEnd?(event: CutEndEvent<TData>): void;
     /** Paste operation has started. */
     onPasteStart?(event: PasteStartEvent<TData>): void;
     /** Paste operation has ended. */
@@ -841,6 +828,10 @@ export interface GridOptions<TData = any> {
     onRedoStarted?(event: RedoStartedEvent<TData>): void;
     /** Redo operation has ended. */
     onRedoEnded?(event: RedoEndedEvent<TData>): void;
+    /** Range delete operation (cell clear) has started. */
+    onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
+    /** Range delete operation (cell clear) has ended. */
+    onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
     /** Filter has been opened. */
     onFilterOpened?(event: FilterOpenedEvent<TData>): void;
     /** Filter has been modified and applied. */
@@ -857,8 +848,6 @@ export interface GridOptions<TData = any> {
     onChartDestroyed?(event: ChartDestroyed<TData>): void;
     /** DOM event `keyDown` happened on a cell. */
     onCellKeyDown?(event: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>): void;
-    /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>): void;
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
     onGridReady?(event: GridReadyEvent<TData>): void;
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */
@@ -1079,8 +1068,6 @@ export interface LoadingCellRendererSelectorFunc<TData = any> {
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
     component?: any;
-    /** @deprecated As of v27, use `component` for framework components too. */
-    frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
 }

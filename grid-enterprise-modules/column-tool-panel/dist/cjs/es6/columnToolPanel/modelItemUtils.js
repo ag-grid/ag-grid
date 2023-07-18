@@ -179,6 +179,35 @@ let ModelItemUtils = class ModelItemUtils {
             this.columnModel.applyColumnState({ state: colStateItems }, eventType);
         }
     }
+    updateColumns(params) {
+        const { columns, visibleState, pivotState, eventType } = params;
+        const state = columns.map(column => {
+            const colId = column.getColId();
+            if (this.columnModel.isPivotMode()) {
+                const pivotStateForColumn = pivotState === null || pivotState === void 0 ? void 0 : pivotState[colId];
+                return {
+                    colId,
+                    pivot: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.pivot,
+                    rowGroup: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.rowGroup,
+                    aggFunc: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.aggFunc,
+                };
+            }
+            else {
+                return {
+                    colId,
+                    hide: !(visibleState === null || visibleState === void 0 ? void 0 : visibleState[colId])
+                };
+            }
+        });
+        this.columnModel.applyColumnState({ state }, eventType);
+    }
+    createPivotState(column) {
+        return {
+            pivot: column.isPivotActive(),
+            rowGroup: column.isRowGroupActive(),
+            aggFunc: column.isValueActive() ? column.getAggFunc() : undefined
+        };
+    }
 };
 __decorate([
     core_1.Autowired('aggFuncService')

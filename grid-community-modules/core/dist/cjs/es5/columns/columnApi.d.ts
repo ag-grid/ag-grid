@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
+import { ColDef, ColGroupDef, HeaderLocation, IAggFunc } from "../entities/colDef";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -10,7 +10,13 @@ import { Column, ColumnPinnedType } from "../entities/column";
 import { ColumnEventType } from "../events";
 export declare class ColumnApi {
     private columnModel;
-    /** Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead. */
+    /**
+     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
+     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
+     * If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     sizeColumnsToFit(gridWidth: number): void;
     /** Call this if you want to open or close a column group. */
     setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
@@ -19,9 +25,9 @@ export declare class ColumnApi {
     /** Returns the provided column group with the given name. */
     getProvidedColumnGroup(name: string): ProvidedColumnGroup | null;
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    getDisplayNameForColumn(column: Column, location: string | null): string;
+    getDisplayNameForColumn(column: Column, location: HeaderLocation): string;
     /** Returns the display name for a column group (when grouping columns). */
-    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string;
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     getColumn(key: any): Column | null;
     /** Returns all the columns, regardless of visible or not. */
@@ -147,11 +153,23 @@ export declare class ColumnApi {
     getRightDisplayedColumnGroups(): IHeaderColumn[];
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
     getAllDisplayedColumnGroups(): IHeaderColumn[] | null;
-    /** Auto-sizes a column based on its contents. */
+    /**
+     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
+     * set `cellDataType = false` on the default column definition.
+     */
     autoSizeColumn(key: string | Column, skipHeader?: boolean): void;
-    /** Same as `autoSizeColumn`, but provide a list of column keys. */
+    /**
+     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void;
-    /** Calls `autoSizeColumns` on all displayed columns. */
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     autoSizeAllColumns(skipHeader?: boolean): void;
     /** Set the pivot result columns. */
     setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void;

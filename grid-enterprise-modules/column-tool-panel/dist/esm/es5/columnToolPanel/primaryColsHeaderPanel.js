@@ -48,6 +48,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+        this.activateTabIndex([this.eExpand]);
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -108,7 +109,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eSelect.setValue(this.selectState);
     };
     PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
-    PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
+    PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
     __decorate([
         Autowired('columnModel')
     ], PrimaryColsHeaderPanel.prototype, "columnModel", void 0);

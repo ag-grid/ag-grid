@@ -12,9 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PolarChart = void 0;
 const chart_1 = require("./chart");
 const polarSeries_1 = require("./series/polar/polarSeries");
+const angle_1 = require("../util/angle");
 const padding_1 = require("../util/padding");
 const bbox_1 = require("../scene/bbox");
 const pieSeries_1 = require("./series/polar/pieSeries");
+const chartAxisDirection_1 = require("./chartAxisDirection");
+const polarAxis_1 = require("./axis/polarAxis");
 class PolarChart extends chart_1.Chart {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
         super(document, overrideDevicePixelRatio, resources);
@@ -28,7 +31,8 @@ class PolarChart extends chart_1.Chart {
             const shrinkRect = yield _super.performLayout.call(this);
             const fullSeriesRect = shrinkRect.clone();
             this.computeSeriesRect(shrinkRect);
-            this.computeCircle();
+            this.computeCircle(shrinkRect);
+            this.axes.forEach((axis) => axis.update());
             const hoverRectPadding = 20;
             const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
             this.hoverRect = hoverRect;
@@ -41,6 +45,31 @@ class PolarChart extends chart_1.Chart {
             return shrinkRect;
         });
     }
+    updateAxes(cx, cy, radius) {
+        var _a;
+        this.axes.forEach((axis) => {
+            var _a;
+            if (axis.direction === chartAxisDirection_1.ChartAxisDirection.X) {
+                const rotation = angle_1.toRadians((_a = axis.rotation) !== null && _a !== void 0 ? _a : 0);
+                axis.range = [-Math.PI / 2 + rotation, (3 * Math.PI) / 2 + rotation];
+                axis.gridLength = radius;
+                axis.translation.x = cx;
+                axis.translation.y = cy;
+            }
+            else if (axis.direction === chartAxisDirection_1.ChartAxisDirection.Y) {
+                axis.range = [radius, 0];
+                axis.translation.x = cx;
+                axis.translation.y = cy - radius;
+            }
+            axis.updateScale();
+        });
+        const angleAxis = this.axes.find((axis) => axis.direction === chartAxisDirection_1.ChartAxisDirection.X);
+        const scale = angleAxis === null || angleAxis === void 0 ? void 0 : angleAxis.scale;
+        const angles = (_a = scale === null || scale === void 0 ? void 0 : scale.ticks) === null || _a === void 0 ? void 0 : _a.call(scale).map((value) => scale.convert(value));
+        this.axes
+            .filter((axis) => axis instanceof polarAxis_1.PolarAxis)
+            .forEach((axis) => (axis.gridAngles = angles));
+    }
     computeSeriesRect(shrinkRect) {
         const { seriesAreaPadding } = this;
         shrinkRect.shrink(seriesAreaPadding.left, 'left');
@@ -49,12 +78,15 @@ class PolarChart extends chart_1.Chart {
         shrinkRect.shrink(seriesAreaPadding.bottom, 'bottom');
         this.seriesRect = shrinkRect;
     }
-    computeCircle() {
-        const seriesBox = this.seriesRect;
+    computeCircle(seriesBox) {
         const polarSeries = this.series.filter((series) => {
             return series instanceof polarSeries_1.PolarSeries;
         });
+        const polarAxes = this.axes.filter((axis) => {
+            return axis instanceof polarAxis_1.PolarAxis;
+        });
         const setSeriesCircle = (cx, cy, r) => {
+            this.updateAxes(cx, cy, r);
             polarSeries.forEach((series) => {
                 series.centerX = cx;
                 series.centerY = cy;
@@ -81,18 +113,18 @@ class PolarChart extends chart_1.Chart {
         setSeriesCircle(centerX, centerY, radius);
         const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = [];
-            for (const series of polarSeries) {
+            for (const series of [...polarAxes, ...polarSeries]) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
-                if (box == null)
-                    continue;
-                labelBoxes.push(box);
+                if (box) {
+                    labelBoxes.push(box);
+                }
             }
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;
             }
             const labelBox = bbox_1.BBox.merge(labelBoxes);
-            const refined = this.refineCircle(labelBox, radius);
+            const refined = this.refineCircle(labelBox, radius, seriesBox);
             setSeriesCircle(refined.centerX, refined.centerY, refined.radius);
             if (refined.radius === radius) {
                 return;
@@ -104,10 +136,10 @@ class PolarChart extends chart_1.Chart {
         shake(); // Just in case
         shake({ hideWhenNecessary: true }); // Hide unnecessary labels
         shake({ hideWhenNecessary: true }); // Final result
+        return { radius, centerX, centerY };
     }
-    refineCircle(labelsBox, radius) {
+    refineCircle(labelsBox, radius, seriesBox) {
         const minCircleRatio = 0.5; // Prevents reduced circle to be too small
-        const seriesBox = this.seriesRect;
         const circleLeft = -radius;
         const circleTop = -radius;
         const circleRight = radius;

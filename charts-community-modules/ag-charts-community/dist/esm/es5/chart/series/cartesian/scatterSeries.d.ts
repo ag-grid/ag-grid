@@ -1,16 +1,20 @@
-import { Selection } from '../../../scene/selection';
-import { SeriesTooltip, SeriesNodeDataContext } from '../series';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { Selection } from '../../../scene/selection';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip } from '../series';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { ColorScale } from '../../../scale/colorScale';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent, CartesianSeriesNodeDatum } from './cartesianSeries';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { Label } from '../../label';
-import { Text } from '../../../scene/shape/text';
-import { Marker } from '../../marker/marker';
-import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
-import { AgScatterSeriesLabelFormatterParams, AgScatterSeriesTooltipRendererParams, AgTooltipRendererResult, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
-import { ModuleContext } from '../../../util/module';
+import type { Text } from '../../../scene/shape/text';
+import type { Marker } from '../../marker/marker';
+import type { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
+import type { AgScatterSeriesLabelFormatterParams, AgScatterSeriesTooltipRendererParams, AgTooltipRendererResult, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
+    readonly sizeValue: any;
     readonly label: MeasuredLabel;
     readonly fill: string | undefined;
 }
@@ -52,7 +56,7 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
     colorScale: ColorScale;
     readonly tooltip: ScatterSeriesTooltip;
     constructor(moduleCtx: ModuleContext);
-    processData(): Promise<void>;
+    processData(dataController: DataController): Promise<void>;
     getDomain(direction: ChartAxisDirection): any[];
     protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeClickEvent;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeDoubleClickEvent;
@@ -94,4 +98,3 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
     protected isLabelEnabled(): boolean;
 }
 export {};
-//# sourceMappingURL=scatterSeries.d.ts.map

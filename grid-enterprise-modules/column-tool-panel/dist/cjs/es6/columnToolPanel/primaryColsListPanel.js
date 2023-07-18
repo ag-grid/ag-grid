@@ -77,7 +77,7 @@ class PrimaryColsListPanel extends core_1.Component {
             this.getContext().createBean(renderedGroup);
             return renderedGroup;
         }
-        const columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist, listItemElement);
+        const columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(item, this.allowDragging, this.groupsExist, listItemElement);
         this.getContext().createBean(columnComp);
         return columnComp;
     }
@@ -177,7 +177,7 @@ class PrimaryColsListPanel extends core_1.Component {
                 recursivelyBuild(columnGroup.getChildren(), dept, parentList);
                 return;
             }
-            const displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, this.eventType);
+            const displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item = new columnModelItem_1.ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
             parentList.push(item);
             addListeners(item);

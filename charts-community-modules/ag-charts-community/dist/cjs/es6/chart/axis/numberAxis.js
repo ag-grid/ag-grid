@@ -9,13 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberAxis = void 0;
 const linearScale_1 = require("../../scale/linearScale");
 const array_1 = require("../../util/array");
-const chartAxis_1 = require("../chartAxis");
 const validation_1 = require("../../util/validation");
 const default_1 = require("../../util/default");
 const secondaryAxisTicks_1 = require("../../util/secondaryAxisTicks");
 const logger_1 = require("../../util/logger");
-const axis_1 = require("../../axis");
-class NumberAxisTick extends axis_1.BaseAxisTick {
+const axisTick_1 = require("./axisTick");
+const cartesianAxis_1 = require("./cartesianAxis");
+class NumberAxisTick extends axisTick_1.AxisTick {
     constructor() {
         super(...arguments);
         this.maxSpacing = NaN;
@@ -25,7 +25,7 @@ __decorate([
     validation_1.Validate(validation_1.AND(validation_1.NUMBER_OR_NAN(1), validation_1.GREATER_THAN('minSpacing'))),
     default_1.Default(NaN)
 ], NumberAxisTick.prototype, "maxSpacing", void 0);
-class NumberAxis extends chartAxis_1.ChartAxis {
+class NumberAxis extends cartesianAxis_1.CartesianAxis {
     constructor(moduleCtx, scale = new linearScale_1.LinearScale()) {
         super(moduleCtx, scale);
         this.min = NaN;
@@ -33,21 +33,8 @@ class NumberAxis extends chartAxis_1.ChartAxis {
         scale.strictClampByDefault = true;
     }
     normaliseDataDomain(d) {
-        var _a;
         const { min, max } = this;
-        if (d.length > 2) {
-            d = (_a = array_1.extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            d = [min, d[1]];
-        }
-        if (!isNaN(max)) {
-            d = [d[0], max];
-        }
-        if (d[0] > d[1]) {
-            d = [];
-        }
-        return d;
+        return array_1.normalisedExtent(d, min, max);
     }
     formatDatum(datum) {
         if (typeof datum === 'number') {

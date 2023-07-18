@@ -14,8 +14,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private onDataChanged;
     private onSelectableChanged;
     private onSelectionChanged;
-    private onCheckedClicked;
-    private onUncheckedClicked;
+    private onClicked;
     init(params: {
         rowNode: RowNode;
         column?: Column;
@@ -25,6 +24,7 @@ export declare class CheckboxSelectionComponent extends Component {
             removeHidden: boolean;
         };
     }): void;
+    private shouldHandleIndeterminateState;
     private showOrHideSelect;
     private getIsVisible;
 }

@@ -1,7 +1,7 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
-import { RenderContext } from '../node';
-import { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
+import type { RenderContext } from '../node';
+import type { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
 export interface TextSizeProperties {
     fontFamily: string;
     fontSize: number;
@@ -59,6 +59,11 @@ export declare class Text extends Shape {
     private static truncateLine;
     private static wrapLineSequentially;
     private static wrapLineBalanced;
+    setFont(props: TextSizeProperties): void;
+    setAlign(props: {
+        textAlign: CanvasTextAlign;
+        textBaseline: CanvasTextBaseline;
+    }): void;
 }
 interface TextMeasurer {
     size(text: string): {

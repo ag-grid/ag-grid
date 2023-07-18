@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var NumberSequence = /** @class */ (function () {
     function NumberSequence(initValue, step) {
         if (initValue === void 0) { initValue = 0; }

@@ -448,14 +448,8 @@ var ServerSideRowModel = /** @class */ (function (_super) {
                 nodeRange.push(node);
             }
         });
-        var rowsAreContiguous = nodeRange.every(function (node, idx, all) {
-            if (idx === 0) {
-                return node.rowIndex === firstIndex;
-            }
-            return all[idx - 1].rowIndex === (node.rowIndex - 1);
-        });
         // don't allow range selection if we don't have the full range of rows
-        if (!rowsAreContiguous || nodeRange.length !== (lastIndex - firstIndex + 1)) {
+        if (nodeRange.length !== (lastIndex - firstIndex + 1)) {
             return [firstInRange];
         }
         return nodeRange;

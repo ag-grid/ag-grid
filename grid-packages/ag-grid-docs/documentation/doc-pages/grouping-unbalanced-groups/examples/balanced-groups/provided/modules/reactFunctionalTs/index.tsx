@@ -113,8 +113,7 @@ const GridExample = () => {
                     groupDefaultExpanded={-1}
                     rowGroupPanelShow={'always'}
                     animateRows={true}
-                >
-                </AgGridReact>
+                />
             </div>
         </div>
     );

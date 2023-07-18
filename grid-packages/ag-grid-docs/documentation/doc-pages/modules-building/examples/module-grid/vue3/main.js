@@ -1,15 +1,14 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
+import {createApp} from 'vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
-
+import {ModuleRegistry} from '@ag-grid-community/core';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import {MenuModule} from '@ag-grid-enterprise/menu';
+import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 const VueExample = {
     template: `
@@ -23,30 +22,29 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue
     },
-    data: function () {
-        return {
-            columnDefs: null,
-            rowData: null
-        };
-    },
-    beforeMount() {
-        this.columnDefs = [
-            { headerName: 'Make', field: 'make' },
-            { headerName: 'Model', field: 'model' },
-            { headerName: 'Price', field: 'price' }
+    setup() {
+        const columnDefs = [
+            {headerName: 'Make', field: 'make'},
+            {headerName: 'Model', field: 'model'},
+            {headerName: 'Price', field: 'price'}
         ];
 
-        this.rowData = [
-            { make: 'Toyota', model: 'Celica', price: 35000 },
-            { make: 'Ford', model: 'Mondeo', price: 32000 },
-            { make: 'Porsche', model: 'Boxster', price: 72000 }
+        const rowData = [
+            {make: 'Toyota', model: 'Celica', price: 35000},
+            {make: 'Ford', model: 'Mondeo', price: 32000},
+            {make: 'Porsche', model: 'Boxster', price: 72000}
         ];
-    },
-    methods: {
-        onGridReady(params) {
+
+        const onGridReady = (params) => {
             params.api.sizeColumnsToFit();
         }
-    }
+
+        return {
+            columnDefs,
+            rowData,
+            onGridReady
+        };
+    },
 };
 
 createApp(VueExample).mount('#app');

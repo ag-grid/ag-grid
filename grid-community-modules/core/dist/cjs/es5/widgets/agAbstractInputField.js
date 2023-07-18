@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -59,6 +53,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
             this.setValue(value);
         }
         this.addInputListeners();
+        this.activateTabIndex([this.eInput]);
     };
     AgAbstractInputField.prototype.refreshLabel = function () {
         if (generic_1.exists(this.getLabel())) {

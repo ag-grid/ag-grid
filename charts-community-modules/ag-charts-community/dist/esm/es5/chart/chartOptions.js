@@ -9,14 +9,18 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { AxisTitle } from '../axis';
+import { AxisTitle } from './axis/axisTitle';
 import { Caption } from '../caption';
 import { DropShadow } from '../scene/dropShadow';
-import { CrossLine } from './crossline/crossLine';
 import { DoughnutInnerLabel, DoughnutInnerCircle } from './series/polar/pieSeries';
 export var JSON_APPLY_PLUGINS = {
     constructors: {},
+    constructedArrays: new WeakMap(),
 };
+export function assignJsonApplyConstructedArray(array, ctor) {
+    var _a;
+    (_a = JSON_APPLY_PLUGINS.constructedArrays) === null || _a === void 0 ? void 0 : _a.set(array, ctor);
+}
 var JSON_APPLY_OPTIONS = {
     constructors: {
         title: Caption,
@@ -24,7 +28,6 @@ var JSON_APPLY_OPTIONS = {
         footnote: Caption,
         shadow: DropShadow,
         innerCircle: DoughnutInnerCircle,
-        'axes[].crossLines[]': CrossLine,
         'axes[].title': AxisTitle,
         'series[].innerLabels[]': DoughnutInnerLabel,
     },
@@ -37,6 +40,7 @@ var JSON_APPLY_OPTIONS = {
 export function getJsonApplyOptions() {
     return {
         constructors: __assign(__assign({}, JSON_APPLY_OPTIONS.constructors), JSON_APPLY_PLUGINS.constructors),
+        constructedArrays: JSON_APPLY_PLUGINS.constructedArrays,
         allowedTypes: __assign({}, JSON_APPLY_OPTIONS.allowedTypes),
     };
 }

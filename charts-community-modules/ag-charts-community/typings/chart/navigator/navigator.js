@@ -31,6 +31,7 @@ var bbox_1 = require("../../scene/bbox");
 var Navigator = /** @class */ (function (_super) {
     __extends(Navigator, _super);
     function Navigator(ctx) {
+        var _a;
         var _this = _super.call(this) || this;
         _this.ctx = ctx;
         _this.rs = new rangeSelector_1.RangeSelector();
@@ -57,7 +58,7 @@ var Navigator = /** @class */ (function (_super) {
             ctx.layoutService.addListener('before-series', function (event) { return _this.layout(event); }),
             ctx.layoutService.addListener('layout-complete', function (event) { return _this.layoutComplete(event); }),
         ].forEach(function (s) { return _this.destroyFns.push(function () { return ctx.layoutService.removeListener(s); }); });
-        ctx.scene.root.appendChild(_this.rs);
+        (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.appendChild(_this.rs);
         _this.destroyFns.push(function () { var _a; return (_a = ctx.scene.root) === null || _a === void 0 ? void 0 : _a.removeChild(_this.rs); });
         _this.destroyFns.push(function () { return _this.ctx.zoomManager.updateZoom('navigator'); });
         _this.updateGroupVisibility();

@@ -29,8 +29,6 @@ const sanitize_1 = require("../../../util/sanitize");
 const label_1 = require("../../label");
 const hdpiCanvas_1 = require("../../../canvas/hdpiCanvas");
 const validation_1 = require("../../../util/validation");
-const dataModel_1 = require("../../data/dataModel");
-const easing = require("../../../motion/easing");
 class ScatterSeriesLabel extends label_1.Label {
     constructor() {
         super(...arguments);
@@ -100,31 +98,35 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         const { label } = this;
         label.enabled = false;
     }
-    processData() {
-        var _a, _b, _c, _d, _e, _f;
+    processData(dataController) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const { xKey = '', yKey = '', sizeKey, xAxis, yAxis, marker, data } = this;
+            const { xKey = '', yKey = '', sizeKey, labelKey, axes, marker, data } = this;
+            const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+            const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
             const isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
             const isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
             const { colorScale, colorDomain, colorRange, colorKey } = this;
-            this.dataModel = new dataModel_1.DataModel({
+            const { dataModel, processedData } = yield dataController.request(this.id, data !== null && data !== void 0 ? data : [], {
                 props: [
-                    series_1.valueProperty(xKey, isContinuousX, { id: `xValue` }),
-                    series_1.valueProperty(yKey, isContinuousY, { id: `yValue` }),
-                    ...(sizeKey ? [series_1.valueProperty(sizeKey, true, { id: `sizeValue` })] : []),
-                    ...(colorKey ? [series_1.valueProperty(colorKey, true, { id: `colorValue` })] : []),
+                    series_1.valueProperty(this, xKey, isContinuousX, { id: `xValue` }),
+                    series_1.valueProperty(this, yKey, isContinuousY, { id: `yValue` }),
+                    ...(sizeKey ? [series_1.valueProperty(this, sizeKey, true, { id: `sizeValue` })] : []),
+                    ...(colorKey ? [series_1.valueProperty(this, colorKey, true, { id: `colorValue` })] : []),
+                    ...(labelKey ? [series_1.valueProperty(this, labelKey, false, { id: `labelValue` })] : []),
                 ],
                 dataVisible: this.visible,
             });
-            this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
+            this.dataModel = dataModel;
+            this.processedData = processedData;
             if (sizeKey) {
-                const sizeKeyIdx = (_b = (_a = this.dataModel.resolveProcessedDataIndexById(`sizeValue`)) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1;
-                const processedSize = (_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.domain.values[sizeKeyIdx]) !== null && _d !== void 0 ? _d : [];
+                const sizeKeyIdx = dataModel.resolveProcessedDataIndexById(this, `sizeValue`).index;
+                const processedSize = (_a = processedData.domain.values[sizeKeyIdx]) !== null && _a !== void 0 ? _a : [];
                 this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
             }
             if (colorKey) {
-                const colorKeyIdx = (_f = (_e = this.dataModel.resolveProcessedDataIndexById(`colorValue`)) === null || _e === void 0 ? void 0 : _e.index) !== null && _f !== void 0 ? _f : -1;
-                colorScale.domain = colorDomain !== null && colorDomain !== void 0 ? colorDomain : this.processedData.domain.values[colorKeyIdx];
+                const colorKeyIdx = dataModel.resolveProcessedDataIndexById(this, `colorValue`).index;
+                colorScale.domain = (_b = colorDomain !== null && colorDomain !== void 0 ? colorDomain : processedData.domain.values[colorKeyIdx]) !== null && _b !== void 0 ? _b : [];
                 colorScale.range = colorRange;
                 colorScale.update();
             }
@@ -135,12 +137,12 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         if (!processedData || !dataModel)
             return [];
         const id = direction === chartAxisDirection_1.ChartAxisDirection.X ? `xValue` : `yValue`;
-        const dataDef = dataModel.resolveProcessedDataDefById(id);
-        const domain = dataModel.getDomain(id, processedData);
-        if ((dataDef === null || dataDef === void 0 ? void 0 : dataDef.valueType) === 'category') {
+        const dataDef = dataModel.resolveProcessedDataDefById(this, id, 'value');
+        const domain = dataModel.getDomain(this, id, 'value', processedData);
+        if ((dataDef === null || dataDef === void 0 ? void 0 : dataDef.def.type) === 'value' && (dataDef === null || dataDef === void 0 ? void 0 : dataDef.def.valueType) === 'category') {
             return domain;
         }
-        const axis = direction === chartAxisDirection_1.ChartAxisDirection.X ? this.xAxis : this.yAxis;
+        const axis = this.axes[direction];
         return this.fixNumericExtent(array_1.extent(domain), axis);
     }
     getNodeClickEvent(event, datum) {
@@ -152,27 +154,31 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         return new ScatterSeriesNodeDoubleClickEvent(this.sizeKey, (_a = this.xKey) !== null && _a !== void 0 ? _a : '', (_b = this.yKey) !== null && _b !== void 0 ? _b : '', event, datum, this);
     }
     createNodeData() {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
-            const { visible, xAxis, yAxis, yKey = '', xKey = '', label, labelKey, ctx: { callbackCache }, } = this;
-            const xDataIdx = (_a = this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndexById(`xValue`);
-            const yDataIdx = (_b = this.dataModel) === null || _b === void 0 ? void 0 : _b.resolveProcessedDataIndexById(`yValue`);
-            if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
+            const { visible, axes, yKey = '', xKey = '', label, labelKey, ctx: { callbackCache }, dataModel, processedData, } = this;
+            const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+            const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+            if (!(dataModel && processedData && visible && xAxis && yAxis))
                 return [];
-            }
+            const xDataIdx = dataModel.resolveProcessedDataIndexById(this, `xValue`).index;
+            const yDataIdx = dataModel.resolveProcessedDataIndexById(this, `yValue`).index;
+            const sizeDataIdx = this.sizeKey ? dataModel.resolveProcessedDataIndexById(this, `sizeValue`).index : -1;
+            const colorDataIdx = this.colorKey ? dataModel.resolveProcessedDataIndexById(this, `colorValue`).index : -1;
+            const labelDataIdx = this.labelKey ? dataModel.resolveProcessedDataIndexById(this, `labelValue`).index : -1;
             const { colorScale, sizeKey, colorKey, id: seriesId } = this;
             const xScale = xAxis.scale;
             const yScale = yAxis.scale;
-            const xOffset = ((_c = xScale.bandwidth) !== null && _c !== void 0 ? _c : 0) / 2;
-            const yOffset = ((_d = yScale.bandwidth) !== null && _d !== void 0 ? _d : 0) / 2;
+            const xOffset = ((_a = xScale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
+            const yOffset = ((_b = yScale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
             const { sizeScale, marker } = this;
-            const nodeData = new Array((_f = (_e = this.processedData) === null || _e === void 0 ? void 0 : _e.data.length) !== null && _f !== void 0 ? _f : 0);
+            const nodeData = new Array((_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.data.length) !== null && _d !== void 0 ? _d : 0);
             sizeScale.range = [marker.size, marker.maxSize];
             const font = label.getFont();
             let actualLength = 0;
-            for (const { values, datum } of (_h = (_g = this.processedData) === null || _g === void 0 ? void 0 : _g.data) !== null && _h !== void 0 ? _h : []) {
-                const xDatum = values[xDataIdx.index];
-                const yDatum = values[yDataIdx.index];
+            for (const { values, datum } of (_e = processedData.data) !== null && _e !== void 0 ? _e : []) {
+                const xDatum = values[xDataIdx];
+                const yDatum = values[yDataIdx];
                 const x = xScale.convert(xDatum) + xOffset;
                 const y = yScale.convert(yDatum) + yOffset;
                 if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
@@ -183,18 +189,20 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
                     text = callbackCache.call(label.formatter, { value: yDatum, seriesId, datum });
                 }
                 if (text === undefined) {
-                    text = labelKey ? String(datum[labelKey]) : '';
+                    text = labelKey ? String(values[labelDataIdx]) : '';
                 }
                 const size = hdpiCanvas_1.HdpiCanvas.getTextSize(text, font);
-                const markerSize = sizeKey ? sizeScale.convert(values[2]) : marker.size;
-                const colorIdx = sizeKey ? 3 : 2;
-                const fill = colorKey ? colorScale.convert(values[colorIdx]) : undefined;
+                const markerSize = sizeKey ? sizeScale.convert(values[sizeDataIdx]) : marker.size;
+                const fill = colorKey ? colorScale.convert(values[colorDataIdx]) : undefined;
                 nodeData[actualLength++] = {
                     series: this,
                     itemId: yKey,
                     yKey,
                     xKey,
                     datum,
+                    xValue: xDatum,
+                    yValue: yDatum,
+                    sizeValue: values[sizeDataIdx],
                     point: { x, y, size: markerSize },
                     nodeMidPoint: { x, y },
                     fill,
@@ -202,7 +210,7 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
                 };
             }
             nodeData.length = actualLength;
-            return [{ itemId: (_j = this.yKey) !== null && _j !== void 0 ? _j : this.id, nodeData, labelData: nodeData }];
+            return [{ itemId: (_f = this.yKey) !== null && _f !== void 0 ? _f : this.id, nodeData, labelData: nodeData }];
         });
     }
     isPathOrSelectionDirty() {
@@ -315,7 +323,9 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
     }
     getTooltipHtml(nodeDatum) {
         var _a, _b, _c, _d, _e, _f, _g;
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey, axes } = this;
+        const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
@@ -340,18 +350,16 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         }
         const color = (_f = (_e = format === null || format === void 0 ? void 0 : format.fill) !== null && _e !== void 0 ? _e : fill) !== null && _f !== void 0 ? _f : 'gray';
         const title = (_g = this.title) !== null && _g !== void 0 ? _g : yName;
-        const datum = nodeDatum.datum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
+        const { datum, xValue, yValue, sizeValue, label: { text: labelText }, } = nodeDatum;
         const xString = sanitize_1.sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitize_1.sanitizeHtml(yAxis.formatDatum(yValue));
         let content = `<b>${sanitize_1.sanitizeHtml(xName !== null && xName !== void 0 ? xName : xKey)}</b>: ${xString}<br>` +
             `<b>${sanitize_1.sanitizeHtml(yName !== null && yName !== void 0 ? yName : yKey)}</b>: ${yString}`;
         if (sizeKey) {
-            content += `<br><b>${sanitize_1.sanitizeHtml(sizeName !== null && sizeName !== void 0 ? sizeName : sizeKey)}</b>: ${sanitize_1.sanitizeHtml(datum[sizeKey])}`;
+            content += `<br><b>${sanitize_1.sanitizeHtml(sizeName !== null && sizeName !== void 0 ? sizeName : sizeKey)}</b>: ${sanitize_1.sanitizeHtml(sizeValue)}`;
         }
         if (labelKey) {
-            content = `<b>${sanitize_1.sanitizeHtml(labelName !== null && labelName !== void 0 ? labelName : labelKey)}</b>: ${sanitize_1.sanitizeHtml(datum[labelKey])}<br>` + content;
+            content = `<b>${sanitize_1.sanitizeHtml(labelName !== null && labelName !== void 0 ? labelName : labelKey)}</b>: ${sanitize_1.sanitizeHtml(labelText)}<br>` + content;
         }
         const defaults = {
             title,
@@ -408,7 +416,8 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         return legendData;
     }
     animateEmptyUpdateReady({ markerSelections, labelSelections, }) {
-        const duration = 1000;
+        var _a, _b;
+        const duration = (_b = (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
         const labelDuration = 200;
         markerSelections.forEach((markerSelection) => {
             markerSelection.each((marker, datum) => {
@@ -416,13 +425,10 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
                 const format = this.animateFormatter(marker, datum);
                 const size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
                 const to = (_c = format === null || format === void 0 ? void 0 : format.size) !== null && _c !== void 0 ? _c : size;
-                (_d = this.animationManager) === null || _d === void 0 ? void 0 : _d.animate(`${this.id}_empty-update-ready_${marker.id}`, {
+                (_d = this.ctx.animationManager) === null || _d === void 0 ? void 0 : _d.animate(`${this.id}_empty-update-ready_${marker.id}`, {
                     from: 0,
                     to: to,
-                    disableInteractions: true,
                     duration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate(size) {
                         marker.size = size;
                     },
@@ -432,13 +438,11 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
                 var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },

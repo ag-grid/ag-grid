@@ -49,6 +49,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -62,9 +83,12 @@ var __values = (this && this.__values) || function(o) {
 };
 import { Chart } from './chart';
 import { PolarSeries } from './series/polar/polarSeries';
+import { toRadians } from '../util/angle';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
 import { PieSeries } from './series/polar/pieSeries';
+import { ChartAxisDirection } from './chartAxisDirection';
+import { PolarAxis } from './axis/polarAxis';
 var PolarChart = /** @class */ (function (_super) {
     __extends(PolarChart, _super);
     function PolarChart(document, overrideDevicePixelRatio, resources) {
@@ -83,7 +107,8 @@ var PolarChart = /** @class */ (function (_super) {
                         shrinkRect = _a.sent();
                         fullSeriesRect = shrinkRect.clone();
                         this.computeSeriesRect(shrinkRect);
-                        this.computeCircle();
+                        this.computeCircle(shrinkRect);
+                        this.axes.forEach(function (axis) { return axis.update(); });
                         hoverRectPadding = 20;
                         hoverRect = shrinkRect.clone().grow(hoverRectPadding);
                         this.hoverRect = hoverRect;
@@ -98,6 +123,31 @@ var PolarChart = /** @class */ (function (_super) {
             });
         });
     };
+    PolarChart.prototype.updateAxes = function (cx, cy, radius) {
+        var _a;
+        this.axes.forEach(function (axis) {
+            var _a;
+            if (axis.direction === ChartAxisDirection.X) {
+                var rotation = toRadians((_a = axis.rotation) !== null && _a !== void 0 ? _a : 0);
+                axis.range = [-Math.PI / 2 + rotation, (3 * Math.PI) / 2 + rotation];
+                axis.gridLength = radius;
+                axis.translation.x = cx;
+                axis.translation.y = cy;
+            }
+            else if (axis.direction === ChartAxisDirection.Y) {
+                axis.range = [radius, 0];
+                axis.translation.x = cx;
+                axis.translation.y = cy - radius;
+            }
+            axis.updateScale();
+        });
+        var angleAxis = this.axes.find(function (axis) { return axis.direction === ChartAxisDirection.X; });
+        var scale = angleAxis === null || angleAxis === void 0 ? void 0 : angleAxis.scale;
+        var angles = (_a = scale === null || scale === void 0 ? void 0 : scale.ticks) === null || _a === void 0 ? void 0 : _a.call(scale).map(function (value) { return scale.convert(value); });
+        this.axes
+            .filter(function (axis) { return axis instanceof PolarAxis; })
+            .forEach(function (axis) { return (axis.gridAngles = angles); });
+    };
     PolarChart.prototype.computeSeriesRect = function (shrinkRect) {
         var seriesAreaPadding = this.seriesAreaPadding;
         shrinkRect.shrink(seriesAreaPadding.left, 'left');
@@ -106,13 +156,16 @@ var PolarChart = /** @class */ (function (_super) {
         shrinkRect.shrink(seriesAreaPadding.bottom, 'bottom');
         this.seriesRect = shrinkRect;
     };
-    PolarChart.prototype.computeCircle = function () {
+    PolarChart.prototype.computeCircle = function (seriesBox) {
         var _this = this;
-        var seriesBox = this.seriesRect;
         var polarSeries = this.series.filter(function (series) {
             return series instanceof PolarSeries;
         });
+        var polarAxes = this.axes.filter(function (axis) {
+            return axis instanceof PolarAxis;
+        });
         var setSeriesCircle = function (cx, cy, r) {
+            _this.updateAxes(cx, cy, r);
             polarSeries.forEach(function (series) {
                 series.centerX = cx;
                 series.centerY = cy;
@@ -142,18 +195,18 @@ var PolarChart = /** @class */ (function (_super) {
             var _c = _a === void 0 ? {} : _a, _d = _c.hideWhenNecessary, hideWhenNecessary = _d === void 0 ? false : _d;
             var labelBoxes = [];
             try {
-                for (var polarSeries_1 = __values(polarSeries), polarSeries_1_1 = polarSeries_1.next(); !polarSeries_1_1.done; polarSeries_1_1 = polarSeries_1.next()) {
-                    var series = polarSeries_1_1.value;
+                for (var _e = __values(__spreadArray(__spreadArray([], __read(polarAxes)), __read(polarSeries))), _f = _e.next(); !_f.done; _f = _e.next()) {
+                    var series = _f.value;
                     var box = series.computeLabelsBBox({ hideWhenNecessary: hideWhenNecessary }, seriesBox);
-                    if (box == null)
-                        continue;
-                    labelBoxes.push(box);
+                    if (box) {
+                        labelBoxes.push(box);
+                    }
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (polarSeries_1_1 && !polarSeries_1_1.done && (_b = polarSeries_1.return)) _b.call(polarSeries_1);
+                    if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
@@ -162,7 +215,7 @@ var PolarChart = /** @class */ (function (_super) {
                 return;
             }
             var labelBox = BBox.merge(labelBoxes);
-            var refined = _this.refineCircle(labelBox, radius);
+            var refined = _this.refineCircle(labelBox, radius, seriesBox);
             setSeriesCircle(refined.centerX, refined.centerY, refined.radius);
             if (refined.radius === radius) {
                 return;
@@ -174,10 +227,10 @@ var PolarChart = /** @class */ (function (_super) {
         shake(); // Just in case
         shake({ hideWhenNecessary: true }); // Hide unnecessary labels
         shake({ hideWhenNecessary: true }); // Final result
+        return { radius: radius, centerX: centerX, centerY: centerY };
     };
-    PolarChart.prototype.refineCircle = function (labelsBox, radius) {
+    PolarChart.prototype.refineCircle = function (labelsBox, radius, seriesBox) {
         var minCircleRatio = 0.5; // Prevents reduced circle to be too small
-        var seriesBox = this.seriesRect;
         var circleLeft = -radius;
         var circleTop = -radius;
         var circleRight = radius;

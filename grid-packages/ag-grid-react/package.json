@@ -1,9 +1,9 @@
 {
   "name": "ag-grid-react",
-  "version": "30.0.2",
+  "version": "30.0.5",
   "description": "AG Grid React Component",
-  "main": "main.js",
-  "typings": "./main.d.ts",
+  "main": "./lib/main.mjs",
+  "typings": "./lib/main.d.ts",
   "scripts": {
     "clean": "rimraf bundles lib .hash",
     "build": "npx gulp && npm run hash",
@@ -38,10 +38,10 @@
   "devDependencies": {
     "@babel/runtime": "^7.16.3",
     "prop-types": "^15.6.2",
-    "ag-grid-community": "~30.0.2",
-    "@ag-grid-community/react": "~30.0.2",
-    "@ag-grid-community/client-side-row-model": "~30.0.2",
-    "@ag-grid-community/core": "~30.0.2",
+    "ag-grid-community": "~30.0.5",
+    "@ag-grid-community/react": "~30.0.5",
+    "@ag-grid-community/client-side-row-model": "~30.0.5",
+    "@ag-grid-community/core": "~30.0.5",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
@@ -58,6 +58,7 @@
     "rollup-plugin-uglify": "^6.0.0",
     "vinyl-source-stream": "^2.0.0",
     "gulp-replace": "^1.0.0",
+    "gulp-rename": "2.0.0",
     "rollup-stream": "^1.24.0",
     "lnk": "^1.1.0",
     "jest": "26.6.0",
@@ -80,7 +81,7 @@
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "ag-grid-community": "~30.0.2",
+    "ag-grid-community": "~30.0.5",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

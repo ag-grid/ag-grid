@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
@@ -41,6 +41,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private ariaDescriptionProperties;
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void;
+    private addMouseDownListenerIfNeeded;
     private setupUserComp;
     private setCompDetails;
     private lookupUserCompDetails;

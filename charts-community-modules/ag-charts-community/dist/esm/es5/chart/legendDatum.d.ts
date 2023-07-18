@@ -1,7 +1,7 @@
-import { Marker } from './marker/marker';
-import { Node } from '../scene/node';
-import { BBox } from '../scene/bbox';
-import { AgChartLegendListeners } from './agChartOptions';
+import type { Marker } from './marker/marker';
+import type { Node } from '../scene/node';
+import type { BBox } from '../scene/bbox';
+import type { AgChartLegendListeners } from './agChartOptions';
 export interface ChartLegend {
     computeBBox(): BBox;
     attachLegend(node: Node | null): void;
@@ -30,6 +30,8 @@ export interface CategoryLegendDatum extends ChartLegendDatum {
         fillOpacity: number;
         strokeOpacity: number;
     };
+    /** Optional deduplication id - used to coordinate synced toggling of multiple items. */
+    legendItemName?: string;
     label: {
         text: string;
     };
@@ -38,4 +40,3 @@ export interface CategoryLegendDatum extends ChartLegendDatum {
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
  */
 export declare const __FORCE_MODULE_DETECTION = 0;
-//# sourceMappingURL=legendDatum.d.ts.map

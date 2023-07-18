@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -349,13 +343,13 @@ var GridOptionsService = /** @class */ (function () {
         return true;
     };
     GridOptionsService.prototype.isTreeData = function () {
-        return this.is('treeData') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
+        return this.is('treeData') && moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
     };
     GridOptionsService.prototype.isMasterDetail = function () {
-        return this.is('masterDetail') && moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
+        return this.is('masterDetail') && moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
     };
     GridOptionsService.prototype.isEnableRangeSelection = function () {
-        return this.is('enableRangeSelection') && moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, this.api.getGridId());
+        return this.is('enableRangeSelection') && moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, this.api.getGridId());
     };
     GridOptionsService.prototype.isColumnsSortingCoupledToGroup = function () {
         var autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;

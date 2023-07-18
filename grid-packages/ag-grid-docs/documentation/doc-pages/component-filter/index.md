@@ -45,7 +45,7 @@ The method `doesFilterPass(params)` takes the following as a parameter:
 If you create your own filter you have two options to get floating filters working for that filter:
 
 1. You can [create your own floating filter](/component-floating-filter/).
-1. You can implement the `getModelAsString()` method in your custom filter. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter.
+1. You can implement the `getModelAsString()` method in your custom filter. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter. See [Custom Filter And Read-Only Floating Filter](/component-floating-filter/#example-custom-filter-and-read-only-floating-filter).
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
 

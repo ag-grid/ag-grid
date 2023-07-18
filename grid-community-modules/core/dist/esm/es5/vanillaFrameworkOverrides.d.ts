@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { AgPromise } from "./utils";
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export declare class VanillaFrameworkOverrides implements IFrameworkOverrides {
+    renderingEngine: 'vanilla' | 'react';
     setTimeout(action: any, timeout?: any): void;
     setInterval(action: any, timeout?: any): AgPromise<number>;
     isOutsideAngular: (eventType: string) => boolean;

@@ -78,6 +78,7 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
         this.strokeWidth = 1;
         this.shadow = undefined;
         this.calculatedBins = [];
+        this.datumSelectionGarbageCollection = false;
         this.label.enabled = false;
     }
     // During processData phase, used to unify different ways of the user specifying
@@ -123,30 +124,31 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
             binSize,
         };
     }
-    processData() {
+    processData(dataController) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { xKey, yKey, data, areaPlot, aggregation } = this;
-            const props = [series_1.keyProperty(xKey, true), processors_1.SORT_DOMAIN_GROUPS];
+            const props = [series_1.keyProperty(this, xKey, true), processors_1.SORT_DOMAIN_GROUPS];
             if (yKey) {
-                let aggProp = aggregateFunctions_1.groupCount();
+                let aggProp = aggregateFunctions_1.groupCount(this, 'groupCount');
                 if (aggregation === 'count') {
                     // Nothing to do.
                 }
                 else if (aggregation === 'sum') {
-                    aggProp = aggregateFunctions_1.groupSum([yKey]);
+                    aggProp = aggregateFunctions_1.groupSum(this, 'groupAgg');
                 }
                 else if (aggregation === 'mean') {
-                    aggProp = aggregateFunctions_1.groupAverage([yKey]);
+                    aggProp = aggregateFunctions_1.groupAverage(this, 'groupAgg');
                 }
                 if (areaPlot) {
-                    aggProp = aggregateFunctions_1.area([yKey], aggProp);
+                    aggProp = aggregateFunctions_1.area(this, 'groupAgg', aggProp);
                 }
-                props.push(series_1.valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
+                props.push(series_1.valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
             }
             else {
-                let aggProp = aggregateFunctions_1.groupCount();
+                let aggProp = aggregateFunctions_1.groupCount(this, 'groupAgg');
                 if (areaPlot) {
-                    aggProp = aggregateFunctions_1.area([], aggProp);
+                    aggProp = aggregateFunctions_1.area(this, 'groupAgg', aggProp);
                 }
                 props.push(aggProp);
             }
@@ -177,20 +179,25 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
                     return [];
                 };
             };
-            this.dataModel = new dataModel_1.DataModel({
+            if (!((_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.skipAnimations) && this.processedData) {
+                props.push(processors_1.diff(this.processedData, false));
+            }
+            const { dataModel, processedData } = yield dataController.request(this.id, data !== null && data !== void 0 ? data : [], {
                 props,
                 dataVisible: this.visible,
                 groupByFn,
             });
-            this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
+            this.dataModel = dataModel;
+            this.processedData = processedData;
+            this.animationState.transition('updateData');
         });
     }
     getDomain(direction) {
         var _a, _b, _c, _d;
-        const { processedData } = this;
-        if (!processedData)
+        const { processedData, dataModel } = this;
+        if (!processedData || !dataModel)
             return [];
-        const { domain: { aggValues: [yDomain] = [] }, } = processedData;
+        const yDomain = dataModel.getDomain(this, `groupAgg`, 'aggregate', processedData);
         const xDomainMin = (_a = this.calculatedBins) === null || _a === void 0 ? void 0 : _a[0][0];
         const xDomainMax = (_b = this.calculatedBins) === null || _b === void 0 ? void 0 : _b[((_d = (_c = this.calculatedBins) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) - 1][1];
         if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
@@ -209,8 +216,10 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
     createNodeData() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { xAxis, yAxis, processedData, ctx: { callbackCache }, } = this;
-            if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
+            const { axes, processedData, ctx: { callbackCache }, } = this;
+            const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+            const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+            if (!this.visible || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
                 return [];
             }
             const { scale: xScale } = xAxis;
@@ -256,6 +265,8 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
                     xKey,
                     x: xMinPx,
                     y: yMaxPx,
+                    xValue: xMinPx,
+                    yValue: yMaxPx,
                     width: w,
                     height: h,
                     nodeMidPoint,
@@ -277,7 +288,7 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
             return datumSelection.update(nodeData, (rect) => {
                 rect.tag = HistogramSeriesNodeTag.Bin;
                 rect.crisp = true;
-            });
+            }, (datum) => datum.domain.join('_'));
         });
     }
     updateDatumNodes(opts) {
@@ -290,8 +301,6 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
                     ? highlightedDatumStrokeWidth
                     : datum.strokeWidth;
                 const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
-                rect.x = datum.x;
-                rect.width = datum.width;
                 rect.fill = (_a = (isDatumHighlighted ? highlightedFill : undefined)) !== null && _a !== void 0 ? _a : datum.fill;
                 rect.stroke = (_b = (isDatumHighlighted ? highlightedStroke : undefined)) !== null && _b !== void 0 ? _b : datum.stroke;
                 rect.fillOpacity = fillOpacity;
@@ -340,7 +349,9 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
         });
     }
     getTooltipHtml(nodeDatum) {
-        const { xKey, yKey = '', xAxis, yAxis } = this;
+        const { xKey, yKey = '', axes } = this;
+        const xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        const yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         if (!xKey || !xAxis || !yAxis) {
             return '';
         }
@@ -405,7 +416,8 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
         return legendData;
     }
     animateEmptyUpdateReady({ datumSelections, labelSelections, }) {
-        const duration = 1000;
+        var _a, _b;
+        const duration = (_b = (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
         const labelDuration = 200;
         let startingY = 0;
         datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
@@ -414,14 +426,12 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
                 var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${rect.id}`, [
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${rect.id}`, [
                     { from: startingY, to: datum.y },
                     { from: 0, to: datum.height },
                 ], {
-                    disableInteractions: true,
                     duration,
                     ease: easing.easeOut,
-                    repeat: 0,
                     onUpdate([y, height]) {
                         rect.y = y;
                         rect.height = height;
@@ -434,13 +444,11 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
                 var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -458,9 +466,110 @@ class HistogramSeries extends cartesianSeries_1.CartesianSeries {
     }
     animateReadyResize({ datumSelections }) {
         var _a;
-        (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.stop();
+        (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
+        });
+    }
+    animateWaitingUpdateReady({ datumSelections, labelSelections, }) {
+        var _a, _b, _c;
+        const { processedData } = this;
+        const diff = (_a = processedData === null || processedData === void 0 ? void 0 : processedData.reduced) === null || _a === void 0 ? void 0 : _a.diff;
+        if (!(diff === null || diff === void 0 ? void 0 : diff.changed)) {
+            datumSelections.forEach((datumSelection) => {
+                this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+        const totalDuration = (_c = (_b = this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.defaultOptions.duration) !== null && _c !== void 0 ? _c : 1000;
+        const labelDuration = 200;
+        let sectionDuration = totalDuration;
+        if (diff.added.length > 0 && diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        }
+        else if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
+            startingY = Math.max(startingY, datum.height + datum.y);
+        }));
+        const addedIds = {};
+        diff.added.forEach((d) => {
+            addedIds[d.join('_')] = true;
+        });
+        const removedIds = {};
+        diff.removed.forEach((d) => {
+            removedIds[d.join('_')] = true;
+        });
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                var _a;
+                let props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                let delay = diff.removed.length > 0 ? sectionDuration : 0;
+                let cleanup = false;
+                const datumId = datum.domain.join('_');
+                const contextY = startingY;
+                const contextHeight = 0;
+                if (datumId !== undefined && addedIds[datumId] !== undefined) {
+                    props = [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
+                        { from: contextY, to: datum.y },
+                        { from: contextHeight, to: datum.height },
+                    ];
+                    delay += sectionDuration;
+                }
+                else if (datumId !== undefined && removedIds[datumId] !== undefined) {
+                    props = [
+                        { from: rect.x, to: datum.x },
+                        { from: rect.width, to: datum.width },
+                        { from: datum.y, to: contextY },
+                        { from: datum.height, to: contextHeight },
+                    ];
+                    delay = 0;
+                    cleanup = true;
+                }
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_waiting-update-ready_${rect.id}`, props, {
+                    disableInteractions: true,
+                    delay,
+                    duration: sectionDuration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate([x, width, y, height]) {
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                    onComplete() {
+                        if (cleanup)
+                            datumSelection.cleanup();
+                    },
+                });
+            });
+        });
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                var _a;
+                label.opacity = 0;
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: totalDuration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
+            });
         });
     }
     resetSelectionRects(selection) {

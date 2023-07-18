@@ -1,6 +1,6 @@
 import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { setFixedWidth } from "../utils/dom";
+import { isVisible, setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
 
@@ -48,5 +48,14 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
             this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
         }
+    }
+
+    public getScrollPosition(): number {
+        return this.getViewport().scrollTop;
+    }
+
+    public setScrollPosition(value: number): void {
+        if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+        this.getViewport().scrollTop = value;
     }
 }

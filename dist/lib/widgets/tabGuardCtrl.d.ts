@@ -42,7 +42,6 @@ export declare class TabGuardCtrl extends BeanStub {
     private onFocusIn;
     private onFocusOut;
     onTabKeyDown(e: KeyboardEvent): void;
-    getGridTabIndex(): string;
     focusInnerElement(fromBottom?: boolean): void;
     getNextFocusableElement(backwards?: boolean): HTMLElement | null;
     forceFocusOutOfContainer(up?: boolean): void;

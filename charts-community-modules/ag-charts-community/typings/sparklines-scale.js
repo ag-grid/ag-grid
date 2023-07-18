@@ -15,4 +15,5 @@ __exportStar(require("./scale/bandScale"), exports);
 __exportStar(require("./scale/continuousScale"), exports);
 __exportStar(require("./scale/colorScale"), exports);
 __exportStar(require("./scale/linearScale"), exports);
+__exportStar(require("./scale/scale"), exports);
 //# sourceMappingURL=sparklines-scale.js.map

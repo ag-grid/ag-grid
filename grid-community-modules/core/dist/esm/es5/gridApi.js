@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -104,13 +98,13 @@ var GridApi = /** @class */ (function () {
     };
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     GridApi.prototype.getDataAsCsv = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
             return this.csvCreator.getDataAsCsv(params);
         }
     };
     /** Downloads a CSV export of the grid's data. */
     GridApi.prototype.exportDataAsCsv = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
             this.csvCreator.exportDataAsCsv(params);
         }
     };
@@ -120,7 +114,7 @@ var GridApi = /** @class */ (function () {
         return mergedParams.exportMode;
     };
     GridApi.prototype.assertNotExcelMultiSheet = function (method, params) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) {
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) {
             return false;
         }
         var exportMode = this.getExcelExportMode(params);
@@ -144,7 +138,7 @@ var GridApi = /** @class */ (function () {
     };
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     GridApi.prototype.getSheetDataForExcel = function (params) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) {
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) {
             return;
         }
         var exportMode = this.getExcelExportMode(params);
@@ -153,13 +147,13 @@ var GridApi = /** @class */ (function () {
     };
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     GridApi.prototype.getMultipleSheetsAsExcel = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     };
     /** Downloads an Excel export of multiple sheets in one file. */
     GridApi.prototype.exportMultipleSheetsAsExcel = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     };
@@ -586,7 +580,9 @@ var GridApi = /** @class */ (function () {
         this.selectionService.deselectAllRowNodes({ source: source, justCurrentPage: true });
     };
     /**
-     * Sets columns to adjust in size to fit the grid horizontally.
+     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
     GridApi.prototype.sizeColumnsToFit = function (params) {
         this.gridBodyCtrl.sizeColumnsToFit(params);
@@ -744,7 +740,7 @@ var GridApi = /** @class */ (function () {
     };
     /** Gets the status panel instance corresponding to the supplied `id`. */
     GridApi.prototype.getStatusPanel = function (key) {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) {
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) {
             return;
         }
         var comp = this.statusBarService.getStatusPanel(key);
@@ -828,10 +824,6 @@ var GridApi = /** @class */ (function () {
      * Defaults to `normal` if no domLayout provided.
      */
     GridApi.prototype.setDomLayout = function (domLayout) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
-            console.error("AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.");
-            return;
-        }
         this.gridOptionsService.set('domLayout', domLayout);
     };
     /** Sets the `enableCellTextSelection` property. */
@@ -988,7 +980,7 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsService.set('getRowHeight', rowHeightFunc);
     };
     GridApi.prototype.assertSideBarLoaded = function (apiMethod) {
-        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     };
     /** Returns `true` if the side bar is visible. */
     GridApi.prototype.isSideBarVisible = function () {
@@ -1193,7 +1185,7 @@ var GridApi = /** @class */ (function () {
         if (this.rangeService) {
             return this.rangeService.getCellRanges();
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
         return null;
     };
     /** Adds the provided cell range to the selected ranges. */
@@ -1202,14 +1194,14 @@ var GridApi = /** @class */ (function () {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
     };
     /** Clears the selected ranges. */
     GridApi.prototype.clearRangeSelection = function () {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();
         }
-        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     };
     /** Reverts the last cell edit. */
     GridApi.prototype.undoCellEditing = function () {
@@ -1229,103 +1221,103 @@ var GridApi = /** @class */ (function () {
     };
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     GridApi.prototype.getChartModels = function () {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
             return this.chartService.getChartModels();
         }
     };
     /** Returns the `ChartRef` using the supplied `chartId`. */
     GridApi.prototype.getChartRef = function (chartId) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
             return this.chartService.getChartRef(chartId);
         }
     };
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     GridApi.prototype.getChartImageDataURL = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
             return this.chartService.getChartImageDataURL(params);
         }
     };
     /** Starts a browser-based image download for the referenced chartId. */
     GridApi.prototype.downloadChart = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
             return this.chartService.downloadChart(params);
         }
     };
     /** Open the Chart Tool Panel. */
     GridApi.prototype.openChartToolPanel = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
             return this.chartService.openChartToolPanel(params);
         }
     };
     /** Close the Chart Tool Panel. */
     GridApi.prototype.closeChartToolPanel = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
             return this.chartService.closeChartToolPanel(params.chartId);
         }
     };
     /** Used to programmatically create charts from a range. */
     GridApi.prototype.createRangeChart = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
             return this.chartService.createRangeChart(params);
         }
     };
     /** Used to programmatically create pivot charts from a grid. */
     GridApi.prototype.createPivotChart = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
             return this.chartService.createPivotChart(params);
         }
     };
     /** Used to programmatically create cross filter charts from a range. */
     GridApi.prototype.createCrossFilterChart = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
             return this.chartService.createCrossFilterChart(params);
         }
     };
     /** Used to programmatically update a chart. */
     GridApi.prototype.updateChart = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
             this.chartService.updateChart(params);
         }
     };
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     GridApi.prototype.restoreChart = function (chartModel, chartContainer) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
             return this.chartService.restoreChart(chartModel, chartContainer);
         }
     };
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     GridApi.prototype.copyToClipboard = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
             this.clipboardService.copyToClipboard(params);
         }
     };
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     GridApi.prototype.cutToClipboard = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
             this.clipboardService.cutToClipboard(params, 'api');
         }
     };
     /** Copies the selected rows to the clipboard. */
     GridApi.prototype.copySelectedRowsToClipboard = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRowsToClipboard(params);
         }
     };
     /** Copies the selected ranges to the clipboard. */
     GridApi.prototype.copySelectedRangeToClipboard = function (params) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
             this.clipboardService.copySelectedRangeToClipboard(params);
         }
     };
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     GridApi.prototype.copySelectedRangeDown = function () {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
             this.clipboardService.copyRangeDown();
         }
     };
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     GridApi.prototype.pasteFromClipboard = function () {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
             this.clipboardService.pasteFromClipboard();
         }
     };
@@ -1469,12 +1461,7 @@ var GridApi = /** @class */ (function () {
             this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
-        var res = this.clientSideRowModel.updateRowData(rowDataTransaction);
-        // do change detection for all present cells
-        if (!this.gridOptionsService.is('suppressChangeDetection')) {
-            this.rowRenderer.refreshCells();
-        }
-        return res;
+        return this.clientSideRowModel.updateRowData(rowDataTransaction);
     };
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     GridApi.prototype.applyTransactionAsync = function (rowDataTransaction, callback) {
@@ -1603,10 +1590,6 @@ var GridApi = /** @class */ (function () {
      *  - `false` to disable pagination
      */
     GridApi.prototype.setPagination = function (value) {
-        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
-            console.error("AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.");
-            return;
-        }
         this.gridOptionsService.set('pagination', value);
     };
     /**

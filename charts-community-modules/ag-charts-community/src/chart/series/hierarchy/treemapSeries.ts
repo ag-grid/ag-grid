@@ -1,6 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
+import type { SeriesNodeDatum } from '../series';
+import { SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -8,8 +9,8 @@ import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
-import { ChartAxisDirection } from '../../chartAxisDirection';
-import { ChartLegendDatum } from '../../legendDatum';
+import type { ChartAxisDirection } from '../../chartAxisDirection';
+import type { ChartLegendDatum } from '../../legendDatum';
 import { toFixed, isEqual } from '../../../util/number';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
@@ -27,7 +28,7 @@ import {
     Validate,
     TEXT_WRAP,
 } from '../../../util/validation';
-import {
+import type {
     AgTreemapSeriesLabelsOptions,
     AgTreemapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
@@ -472,7 +473,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             if (isLeaf) {
                 nodeDatum.value = sizeKey ? datum[sizeKey] ?? 1 : 1;
             } else {
-                datum.children!.forEach((child) => {
+                datum.children?.forEach((child) => {
                     const childNodeDatum = createTreeNodeDatum(child, depth + 1, nodeDatum);
                     const value = childNodeDatum.value;
                     if (isNaN(value) || !isFinite(value) || value === 0) {
@@ -522,7 +523,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             descendants.push(datum);
             datum.children?.forEach(traverse);
         };
-        traverse(this.dataRoot!);
+        traverse(dataRoot);
 
         const { groupSelection, highlightSelection } = this;
         const update = (selection: typeof groupSelection) => {
@@ -544,7 +545,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     private isDatumHighlighted(datum: TreemapNodeDatum) {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         return datum === highlightedDatum && (datum.isLeaf || this.highlightGroups);
     }
 
@@ -582,9 +583,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     async updateNodes() {
-        if (!this.chart) {
-            return;
-        }
+        if (!this.chart) return;
 
         const {
             gradient,
@@ -603,12 +602,15 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             groupStrokeWidth,
             tileShadow,
             labelShadow,
+            dataRoot,
         } = this;
 
+        if (!dataRoot) return;
+
         const seriesRect = this.chart.getSeriesRect()!;
-        const boxes = this.squarify(this.dataRoot!, new BBox(0, 0, seriesRect.width, seriesRect.height));
+        const boxes = this.squarify(dataRoot, new BBox(0, 0, seriesRect.width, seriesRect.height));
         const labelMeta = this.buildLabelMeta(boxes);
-        const highlightedSubtree = this.getHighlightedSubtree();
+        const highlightedSubtree = this.getHighlightedSubtree(dataRoot);
 
         this.updateNodeMidPoint(boxes);
 
@@ -720,7 +722,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         });
     }
 
-    private getHighlightedSubtree(): Set<TreemapNodeDatum> {
+    private getHighlightedSubtree(dataRoot: TreemapNodeDatum): Set<TreemapNodeDatum> {
         const items = new Set<TreemapNodeDatum>();
         const traverse = (datum: TreemapNodeDatum) => {
             if (this.isDatumHighlighted(datum) || (datum.parent && items.has(datum.parent))) {
@@ -728,7 +730,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
             datum.children?.forEach(traverse);
         };
-        traverse(this.dataRoot!);
+        traverse(dataRoot);
         return items;
     }
 
@@ -790,8 +792,6 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let labelStyle: Label;
             let wrappedText = '';
             if (datum.isLeaf) {
-                labelStyle = labels.small;
-
                 const pickStyle = () => {
                     const availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
                     const labelStyles = [labels.large, labels.medium, labels.small];
@@ -927,8 +927,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let valueText: string | undefined = '';
             if (valueFormatter) {
                 valueText = callbackCache.call(valueFormatter, { datum });
-            } else {
-                const value = datum[valueKey!];
+            } else if (valueKey != null) {
+                const value = datum[valueKey];
                 if (typeof value === 'number' && isFinite(value)) {
                     valueText = toFixed(value);
                 }

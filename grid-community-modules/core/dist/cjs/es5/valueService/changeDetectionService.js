@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -61,15 +55,20 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         if (this.gridOptionsService.is('suppressChangeDetection')) {
             return;
         }
+        var nodesToRefresh = [rowNode];
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             var onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
             var changedPath = new changedPath_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst(function (rowNode) {
+                nodesToRefresh.push(rowNode);
+            });
         }
         // step 2 of change detection is to refresh the cells
-        this.rowRenderer.refreshCells();
+        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     };
     __decorate([
         context_1.Autowired('rowModel')

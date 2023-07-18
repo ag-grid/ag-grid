@@ -52,6 +52,7 @@ export declare class SetFilterListItem<V> extends Component {
     private valueFunction?;
     private cellRendererParams;
     private cellRendererComponent?;
+    private destroyCellRendererComponent?;
     constructor(params: SetFilterListItemParams<V>);
     private init;
     private setupExpansion;

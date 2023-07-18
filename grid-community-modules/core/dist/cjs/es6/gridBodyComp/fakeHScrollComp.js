@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -92,6 +86,15 @@ class FakeHScrollComp extends abstractFakeScrollComp_1.AbstractFakeScrollComp {
         dom_1.setFixedHeight(this.eViewport, scrollContainerSize);
         dom_1.setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+    }
+    getScrollPosition() {
+        return dom_1.getScrollLeft(this.getViewport(), this.enableRtl);
+    }
+    setScrollPosition(value) {
+        if (!dom_1.isVisible(this.getViewport())) {
+            this.attemptSettingScrollPosition(value);
+        }
+        dom_1.setScrollLeft(this.getViewport(), value, this.enableRtl);
     }
 }
 FakeHScrollComp.TEMPLATE = `<div class="ag-body-horizontal-scroll" aria-hidden="true">

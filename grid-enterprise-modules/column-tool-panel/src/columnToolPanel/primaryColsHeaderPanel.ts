@@ -36,7 +36,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select-header" role="presentation">
-            <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
+            <div ref="eExpand" class="ag-column-select-header-icon"></div>
             <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
         </div>`;
@@ -50,7 +50,6 @@ export class PrimaryColsHeaderPanel extends Component {
         this.createExpandIcons();
 
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.SPACE) {
                 e.preventDefault();
@@ -74,6 +73,8 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+
+        this.activateTabIndex([this.eExpand]);
     }
 
     public init(params: ToolPanelColumnCompParams): void {

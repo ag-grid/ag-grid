@@ -1,5 +1,5 @@
-import { TimeInterval } from '../util/time/interval';
-import { Scale } from './scale';
+import type { TimeInterval } from '../util/time/interval';
+import type { Scale } from './scale';
 export declare abstract class ContinuousScale<D extends number | Date, I = number> implements Scale<D, number, I> {
     domain: D[];
     range: number[];

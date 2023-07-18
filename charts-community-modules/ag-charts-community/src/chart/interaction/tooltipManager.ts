@@ -1,6 +1,6 @@
-import { BBox } from '../../scene/bbox';
-import { Tooltip, TooltipMeta } from '../tooltip/tooltip';
-import { InteractionEvent, InteractionManager } from './interactionManager';
+import type { BBox } from '../../scene/bbox';
+import type { Tooltip, TooltipMeta } from '../tooltip/tooltip';
+import type { InteractionEvent, InteractionManager } from './interactionManager';
 
 interface TooltipState {
     content: string;
@@ -31,11 +31,7 @@ export class TooltipManager {
             content = this.states[callerId]?.content;
         }
 
-        if (!content) {
-            delete this.states[callerId];
-        } else {
-            this.states[callerId] = { content, meta };
-        }
+        this.states[callerId] = { content, meta };
 
         this.applyStates();
     }

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -106,6 +100,11 @@ var RowContainerComp = /** @class */ (function (_super) {
                 _this.ensureDomOrder(existingRowComp.getGui());
             }
             else {
+                // don't create new row comps for rows which are not displayed. still want the existing components
+                // as they may be animating out.
+                if (!rowCon.getRowNode().displayed) {
+                    return;
+                }
                 var rowComp = new RowComp(rowCon, _this.beans, _this.type);
                 _this.rowComps[instanceId] = rowComp;
                 _this.appendRow(rowComp.getGui());

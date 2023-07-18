@@ -170,7 +170,7 @@ class ColumnToolPanel extends core_1.Component {
         }
     }
     isRowGroupingModuleLoaded() {
-        return core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
+        return core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
     }
     expandColumnGroups(groupIds) {
         this.primaryColsPanel.expandGroups(groupIds);

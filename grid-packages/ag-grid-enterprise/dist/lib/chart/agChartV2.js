@@ -83,13 +83,9 @@ exports.AgChart = void 0;
 var cartesianChart_1 = require("./cartesianChart");
 var polarChart_1 = require("./polarChart");
 var hierarchyChart_1 = require("./hierarchyChart");
+var axisTypes_1 = require("./factory/axisTypes");
 var seriesTypes_1 = require("./factory/seriesTypes");
 var pieSeries_1 = require("./series/polar/pieSeries");
-var logAxis_1 = require("./axis/logAxis");
-var numberAxis_1 = require("./axis/numberAxis");
-var categoryAxis_1 = require("./axis/categoryAxis");
-var groupedCategoryAxis_1 = require("./axis/groupedCategoryAxis");
-var timeAxis_1 = require("./axis/timeAxis");
 var chartUpdateType_1 = require("./chartUpdateType");
 var json_1 = require("../util/json");
 var prepare_1 = require("./mapping/prepare");
@@ -224,7 +220,7 @@ var AgChartInternal = /** @class */ (function () {
     AgChartInternal.createOrUpdate = function (userOptions, proxy) {
         var _this = this;
         AgChartInternal.initialiseModules();
-        debug('>>> createOrUpdate() user options', userOptions);
+        debug('>>> AgChartV2.createOrUpdate() user options', userOptions);
         var mixinOpts = {};
         if (AgChartInternal.DEBUG() === true) {
             mixinOpts['debug'] = true;
@@ -278,8 +274,8 @@ var AgChartInternal = /** @class */ (function () {
         var chart = proxy.chart, queuedUserOptions = proxy.chart.queuedUserOptions;
         var lastUpdateOptions = (_a = queuedUserOptions[queuedUserOptions.length - 1]) !== null && _a !== void 0 ? _a : chart.userOptions;
         var userOptions = json_1.jsonMerge([lastUpdateOptions, deltaOptions]);
-        debug('>>> updateUserDelta() user delta', deltaOptions);
-        debug('base options', lastUpdateOptions);
+        debug('>>> AgChartV2.updateUserDelta() user delta', deltaOptions);
+        debug('AgChartV2.updateUserDelta() - base options', lastUpdateOptions);
         AgChartInternal.createOrUpdate(userOptions, proxy);
     };
     /**
@@ -378,7 +374,7 @@ var AgChartInternal = /** @class */ (function () {
                         _b.sent();
                         if (chart.destroyed)
                             return [2 /*return*/];
-                        debug('applying delta', processedOptions);
+                        debug('AgChartV2.updateDelta() - applying delta', processedOptions);
                         applyChartOptions(chart, processedOptions, userOptions);
                         return [2 /*return*/];
                 }
@@ -403,11 +399,11 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     var completeOptions = json_1.jsonMerge([(_a = chart.processedOptions) !== null && _a !== void 0 ? _a : {}, processedOptions], prepare_1.noDataCloneMergeOptions);
     var modulesChanged = applyModules(chart, completeOptions);
     var skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
-    if (prepare_1.isAgCartesianChartOptions(processedOptions)) {
+    if (prepare_1.isAgCartesianChartOptions(processedOptions) || prepare_1.isAgPolarChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
     }
-    else if (prepare_1.isAgPolarChartOptions(processedOptions) || prepare_1.isAgHierarchyChartOptions(processedOptions)) {
+    else if (prepare_1.isAgHierarchyChartOptions(processedOptions)) {
         // Use defaults.
     }
     else {
@@ -423,7 +419,7 @@ function applyChartOptions(chart, processedOptions, userOptions) {
         applySeries(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if (prepare_1.isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
+    if ('axes' in processedOptions && Array.isArray(processedOptions.axes)) {
         var axesPresent = applyAxes(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
@@ -444,7 +440,7 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     chart.userOptions = json_1.jsonMerge([(_d = chart.userOptions) !== null && _d !== void 0 ? _d : {}, userOptions], prepare_1.noDataCloneMergeOptions);
     var majorChange = forceNodeDataRefresh || modulesChanged;
     var updateType = majorChange ? chartUpdateType_1.ChartUpdateType.PROCESS_DATA : chartUpdateType_1.ChartUpdateType.PERFORM_LAYOUT;
-    debug('chart update type', { updateType: chartUpdateType_1.ChartUpdateType[updateType] });
+    debug('AgChartV2.applyChartOptions() - update type', chartUpdateType_1.ChartUpdateType[updateType]);
     chart.update(updateType, { forceNodeDataRefresh: forceNodeDataRefresh });
 }
 function applyModules(chart, options) {
@@ -496,7 +492,7 @@ function applySeries(chart, options) {
             if (!seriesDiff) {
                 return;
             }
-            debug("applying series diff idx " + i, seriesDiff);
+            debug("AgChartV2.applySeries() - applying series diff idx " + i, seriesDiff);
             applySeriesValues(s, seriesDiff, { path: "series[" + i + "]", index: i });
             s.markNodeDataDirty();
         });
@@ -518,7 +514,7 @@ function applyAxes(chart, options) {
                 var _a, _b;
                 var previousOpts = (_b = (_a = oldOpts_1.axes) === null || _a === void 0 ? void 0 : _a[i]) !== null && _b !== void 0 ? _b : {};
                 var axisDiff = json_1.jsonDiff(previousOpts, optAxes[i]);
-                debug("applying axis diff idx " + i, axisDiff);
+                debug("AgChartV2.applyAxes() - applying axis diff idx " + i, axisDiff);
                 var path = "axes[" + i + "]";
                 var skip = ['axes[].type'];
                 applyOptionValues(a, axisDiff, { path: path, skip: skip });
@@ -532,23 +528,24 @@ function applyAxes(chart, options) {
 function applyLegend(chart, options) {
     var skip = ['listeners'];
     chart.setLegendInit(function (legend) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         applyOptionValues(legend, (_a = options.legend) !== null && _a !== void 0 ? _a : {}, { skip: skip });
         if ((_b = options.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
-            Object.assign(chart.legend.listeners, (_c = options.legend.listeners) !== null && _c !== void 0 ? _c : {});
+            Object.assign((_c = chart.legend) === null || _c === void 0 ? void 0 : _c.listeners, (_d = options.legend.listeners) !== null && _d !== void 0 ? _d : {});
         }
     });
 }
 function createSeries(chart, options) {
     var e_2, _a;
+    var _b;
     var series = [];
     var moduleContext = chart.getModuleContext();
     var index = 0;
     try {
-        for (var _b = __values(options !== null && options !== void 0 ? options : []), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var seriesOptions = _c.value;
+        for (var _c = __values(options !== null && options !== void 0 ? options : []), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var seriesOptions = _d.value;
             var path = "series[" + index++ + "]";
-            var seriesInstance = seriesTypes_1.getSeries(seriesOptions.type, moduleContext);
+            var seriesInstance = seriesTypes_1.getSeries((_b = seriesOptions.type) !== null && _b !== void 0 ? _b : 'unknown', moduleContext);
             applySeriesValues(seriesInstance, seriesOptions, { path: path, index: index });
             series.push(seriesInstance);
         }
@@ -556,7 +553,7 @@ function createSeries(chart, options) {
     catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
         finally { if (e_2) throw e_2.error; }
     }
@@ -571,26 +568,7 @@ function createAxis(chart, options) {
     try {
         for (var _b = __values(options !== null && options !== void 0 ? options : []), _c = _b.next(); !_c.done; _c = _b.next()) {
             var axisOptions = _c.value;
-            var axis = void 0;
-            switch (axisOptions.type) {
-                case 'number':
-                    axis = new numberAxis_1.NumberAxis(moduleContext);
-                    break;
-                case logAxis_1.LogAxis.type:
-                    axis = new logAxis_1.LogAxis(moduleContext);
-                    break;
-                case categoryAxis_1.CategoryAxis.type:
-                    axis = new categoryAxis_1.CategoryAxis(moduleContext);
-                    break;
-                case groupedCategoryAxis_1.GroupedCategoryAxis.type:
-                    axis = new groupedCategoryAxis_1.GroupedCategoryAxis(moduleContext);
-                    break;
-                case timeAxis_1.TimeAxis.type:
-                    axis = new timeAxis_1.TimeAxis(moduleContext);
-                    break;
-                default:
-                    throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
-            }
+            var axis = axisTypes_1.getAxis(axisOptions.type, moduleContext);
             var path = "axes[" + index++ + "]";
             applyAxisModules(axis, axisOptions);
             applyOptionValues(axis, axisOptions, { path: path, skip: skip });
@@ -609,7 +587,7 @@ function createAxis(chart, options) {
 function applyAxisModules(axis, options) {
     var e_4, _a;
     var modulesChanged = false;
-    var rootModules = module_support_1.REGISTERED_MODULES.filter(function (m) { return m.type === 'axis'; });
+    var rootModules = module_support_1.REGISTERED_MODULES.filter(function (m) { return m.type === 'axis-option'; });
     try {
         for (var rootModules_2 = __values(rootModules), rootModules_2_1 = rootModules_2.next(); !rootModules_2_1.done; rootModules_2_1 = rootModules_2.next()) {
             var next = rootModules_2_1.value;
@@ -650,9 +628,9 @@ function applyOptionValues(target, options, _a) {
     return json_1.jsonApply(target, options, applyOpts);
 }
 function applySeriesValues(target, options, _a) {
-    var _b;
-    var _c = _a === void 0 ? {} : _a, path = _c.path, index = _c.index;
-    var skip = ['series[].listeners'];
+    var _b, _c;
+    var _d = _a === void 0 ? {} : _a, path = _d.path, index = _d.index;
+    var skip = ['series[].listeners', 'series[].seriesGrouping'];
     var jsonApplyOptions = chartOptions_1.getJsonApplyOptions();
     var ctrs = (_b = jsonApplyOptions.constructors) !== null && _b !== void 0 ? _b : {};
     var seriesTypeOverrides = {
@@ -663,6 +641,16 @@ function applySeriesValues(target, options, _a) {
     var listeners = options === null || options === void 0 ? void 0 : options.listeners;
     if (listeners != null) {
         registerListeners(target, listeners);
+    }
+    var seriesGrouping = options.seriesGrouping;
+    if ('seriesGrouping' in (options !== null && options !== void 0 ? options : {})) {
+        if (seriesGrouping) {
+            var newSeriesGroup = Object.freeze(__assign(__assign({}, ((_c = target.seriesGrouping) !== null && _c !== void 0 ? _c : {})), seriesGrouping));
+            target.seriesGrouping = newSeriesGroup;
+        }
+        else {
+            target.seriesGrouping = seriesGrouping;
+        }
     }
     return result;
 }

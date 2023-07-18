@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -626,13 +626,13 @@ var SideBarComp = /** @class */ (function (_super) {
         }
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+            var moduleMissing = !core.ModuleRegistry.__assertRegistered(core.ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }
         }
         if (def.toolPanel === 'agFiltersToolPanel') {
-            var moduleMissing = !core.ModuleRegistry.assertRegistered(core.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+            var moduleMissing = !core.ModuleRegistry.__assertRegistered(core.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) {
                 return false;
             }
@@ -951,7 +951,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var SideBarModule = {
     version: VERSION,

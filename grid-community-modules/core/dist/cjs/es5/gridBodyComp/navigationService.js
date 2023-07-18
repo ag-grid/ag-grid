@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -62,7 +56,8 @@ var NavigationService = /** @class */ (function (_super) {
             _this.gridBodyCon = p.gridBodyCtrl;
         });
     };
-    NavigationService.prototype.handlePageScrollingKey = function (event) {
+    NavigationService.prototype.handlePageScrollingKey = function (event, fromFullWidth) {
+        if (fromFullWidth === void 0) { fromFullWidth = false; }
         var key = event.key;
         var alt = event.altKey;
         var ctrl = event.ctrlKey || event.metaKey;
@@ -94,23 +89,10 @@ var NavigationService = /** @class */ (function (_super) {
                 }
                 break;
             case keyCode_1.KeyCode.PAGE_DOWN:
-                if (!currentCell) {
-                    return false;
-                }
-                // handle page up and page down when ctrl & alt are NOT pressed
-                if (!ctrl && !alt) {
-                    this.onPageDown(currentCell);
-                    processed = true;
-                }
-                break;
             case keyCode_1.KeyCode.PAGE_UP:
-                if (!currentCell) {
-                    return false;
-                }
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
-                    this.onPageUp(currentCell);
-                    processed = true;
+                    processed = this.handlePageUpDown(key, currentCell, fromFullWidth);
                 }
                 break;
         }
@@ -118,6 +100,21 @@ var NavigationService = /** @class */ (function (_super) {
             event.preventDefault();
         }
         return processed;
+    };
+    NavigationService.prototype.handlePageUpDown = function (key, currentCell, fromFullWidth) {
+        if (fromFullWidth) {
+            currentCell = this.focusService.getFocusedCell();
+        }
+        if (!currentCell) {
+            return false;
+        }
+        if (key === keyCode_1.KeyCode.PAGE_UP) {
+            this.onPageUp(currentCell);
+        }
+        else {
+            this.onPageDown(currentCell);
+        }
+        return true;
     };
     NavigationService.prototype.navigateTo = function (navigateParams) {
         var scrollIndex = navigateParams.scrollIndex, scrollType = navigateParams.scrollType, scrollColumn = navigateParams.scrollColumn, focusIndex = navigateParams.focusIndex, focusColumn = navigateParams.focusColumn;

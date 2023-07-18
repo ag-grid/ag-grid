@@ -18,6 +18,12 @@ class LazyCache extends core_1.BeanStub {
          * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
          */
         this.live = true;
+        /**
+         * A cache of removed group nodes, this is retained for preserving group
+         * state when the node moves in and out of the cache. Generally caused by
+         * rows moving blocks.
+         */
+        this.removedNodeCache = new Map();
         this.store = store;
         this.numberOfRows = numberOfRows;
         this.isLastRowKnown = false;
@@ -273,6 +279,7 @@ class LazyCache extends core_1.BeanStub {
      * @returns the new row node
      */
     createRowAtIndex(atStoreIndex, data, createNodeCallback) {
+        var _a, _b;
         // make sure an existing node isn't being overwritten
         const lazyNode = this.nodeMap.getBy('index', atStoreIndex);
         // if node already exists, update it or destroy it
@@ -295,6 +302,19 @@ class LazyCache extends core_1.BeanStub {
         // if the node already exists elsewhere, update it and move it to the new location
         if (data && this.getRowIdFunc != null) {
             const id = this.getRowId(data);
+            // the node was deleted at some point, but as we're refreshing
+            // it's been cached and we can retrieve it for reuse.
+            const deletedNode = id && ((_a = this.removedNodeCache) === null || _a === void 0 ? void 0 : _a.get(id));
+            if (deletedNode) {
+                (_b = this.removedNodeCache) === null || _b === void 0 ? void 0 : _b.delete(id);
+                this.blockUtils.updateDataIntoRowNode(deletedNode, data);
+                this.nodeMap.set({
+                    id: deletedNode.id,
+                    node: deletedNode,
+                    index: atStoreIndex
+                });
+                return deletedNode;
+            }
             const lazyNode = this.nodeMap.getBy('id', id);
             if (lazyNode) {
                 // delete old lazy node so we can insert it at different location
@@ -306,6 +326,12 @@ class LazyCache extends core_1.BeanStub {
                     node,
                     index: atStoreIndex
                 });
+                this.nodesToRefresh.delete(node);
+                if (this.rowLoader.getBlockStartIndexForIndex(index) === this.rowLoader.getBlockStartIndexForIndex(atStoreIndex)) {
+                    // if the block hasn't changed and we have a nodes map, we don't need to refresh the original block, as this block
+                    // has just been refreshed.
+                    return node;
+                }
                 // mark all of the old block as needsVerify to trigger it for a refresh, as nodes
                 // should not be out of place
                 this.markBlockForVerify(index);
@@ -387,7 +413,14 @@ class LazyCache extends core_1.BeanStub {
         this.nodeMap.delete(lazyNode);
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex);
         this.nodesToRefresh.delete(lazyNode.node);
-        this.blockUtils.destroyRowNode(lazyNode.node);
+        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+            // while refreshing, we retain the group nodes so they can be moved
+            // without losing state
+            this.removedNodeCache.set(lazyNode.node.id, lazyNode.node);
+        }
+        else {
+            this.blockUtils.destroyRowNode(lazyNode.node);
+        }
     }
     getSsrmParams() {
         return this.store.getSsrmParams();
@@ -579,6 +612,7 @@ class LazyCache extends core_1.BeanStub {
                 this.createRowAtIndex(rowIndex, data);
                 return;
             }
+            // node already exists, and same as node at designated position, update data
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
                 this.nodesToRefresh.delete(nodeFromCache.node);
@@ -622,6 +656,12 @@ class LazyCache extends core_1.BeanStub {
         if (!finishedRefreshing) {
             return;
         }
+        // any nodes left in the map need to be cleaned up, this prevents us preserving nodes
+        // indefinitely
+        this.removedNodeCache.forEach(node => {
+            this.blockUtils.destroyRowNode(node);
+        });
+        this.removedNodeCache = new Map();
         this.store.fireRefreshFinishedEvent();
     }
     isLastRowIndexKnown() {

@@ -72,8 +72,9 @@ var zIndexChangedCallback = function (o) {
  */
 var Node = /** @class */ (function (_super) {
     __extends(Node, _super);
-    function Node() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function Node(_a) {
+        var _b = _a === void 0 ? {} : _a, isVirtual = _b.isVirtual;
+        var _this = _super.call(this) || this;
         /** Unique number to allow creation order to be easily determined. */
         _this.serialNumber = Node._nextSerialNumber++;
         /**
@@ -91,6 +92,7 @@ var Node = /** @class */ (function (_super) {
          * But we still need to distinguish regular leaf nodes from container leafs somehow.
          */
         _this.isContainerNode = false;
+        _this._virtualChildren = [];
         _this._children = [];
         // Used to check for duplicate nodes.
         _this.childSet = {}; // new Set<Node>()
@@ -98,7 +100,7 @@ var Node = /** @class */ (function (_super) {
         // for performance optimization purposes.
         _this.matrix = new Matrix();
         _this.inverseMatrix = new Matrix();
-        _this._dirtyTransform = false;
+        _this.dirtyTransform = false;
         _this.scalingX = 1;
         _this.scalingY = 1;
         /**
@@ -125,6 +127,7 @@ var Node = /** @class */ (function (_super) {
         /** Discriminators for render order within a zIndex. */
         _this.zIndexSubOrder = undefined;
         _this.pointerEvents = PointerEvents.All;
+        _this.isVirtual = isVirtual !== null && isVirtual !== void 0 ? isVirtual : false;
         return _this;
     }
     Object.defineProperty(Node.prototype, "datum", {
@@ -145,21 +148,34 @@ var Node = /** @class */ (function (_super) {
         configurable: true
     });
     Node.prototype._setLayerManager = function (value) {
-        var e_1, _a;
+        var e_1, _a, e_2, _b;
         this._layerManager = value;
         this._debug = value === null || value === void 0 ? void 0 : value.debug;
         try {
-            for (var _b = __values(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var child = _c.value;
+            for (var _c = __values(this._children), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var child = _d.value;
                 child._setLayerManager(value);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
             }
             finally { if (e_1) throw e_1.error; }
+        }
+        try {
+            for (var _e = __values(this._virtualChildren), _f = _e.next(); !_f.done; _f = _e.next()) {
+                var child = _f.value;
+                child._setLayerManager(value);
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+            }
+            finally { if (e_2) throw e_2.error; }
         }
     };
     Object.defineProperty(Node.prototype, "layerManager", {
@@ -178,11 +194,38 @@ var Node = /** @class */ (function (_super) {
     });
     Object.defineProperty(Node.prototype, "children", {
         get: function () {
-            return this._children;
+            var e_3, _a;
+            if (this._virtualChildren.length === 0)
+                return this._children;
+            var result = __spreadArray([], __read(this._children));
+            try {
+                for (var _b = __values(this._virtualChildren), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var next = _c.value;
+                    result.push.apply(result, __spreadArray([], __read(next.children)));
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            return result;
         },
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Node.prototype, "virtualChildren", {
+        get: function () {
+            return this._virtualChildren;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Node.prototype.hasVirtualChildren = function () {
+        return this._virtualChildren.length > 0;
+    };
     /**
      * Appends one or more new node instances to this parent.
      * If one needs to:
@@ -192,7 +235,7 @@ var Node = /** @class */ (function (_super) {
      * @param nodes A node or nodes to append.
      */
     Node.prototype.append = function (nodes) {
-        var e_2, _a;
+        var e_4, _a;
         // Passing a single parameter to an open-ended version of `append`
         // would be 30-35% slower than this.
         if (!Array.isArray(nodes)) {
@@ -211,18 +254,23 @@ var Node = /** @class */ (function (_super) {
                     // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
                     throw new Error("Duplicate " + node.constructor.name + " node: " + node);
                 }
-                this._children.push(node);
+                if (node.isVirtual) {
+                    this._virtualChildren.push(node);
+                }
+                else {
+                    this._children.push(node);
+                }
                 this.childSet[node.id] = true;
                 node._parent = this;
                 node._setLayerManager(this.layerManager);
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
         finally {
             try {
                 if (nodes_1_1 && !nodes_1_1.done && (_a = nodes_1.return)) _a.call(nodes_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_4) throw e_4.error; }
         }
         this.dirtyZIndex = true;
         this.markDirty(this, RedrawType.MAJOR);
@@ -232,50 +280,29 @@ var Node = /** @class */ (function (_super) {
         return node;
     };
     Node.prototype.removeChild = function (node) {
-        if (node.parent === this) {
-            var i = this.children.indexOf(node);
-            if (i >= 0) {
-                this._children.splice(i, 1);
-                delete this.childSet[node.id];
-                node._parent = undefined;
-                node._setLayerManager();
-                this.dirtyZIndex = true;
-                this.markDirty(node, RedrawType.MAJOR);
-                return node;
-            }
+        var error = function () {
+            throw new Error("The node to be removed is not a child of this node.");
+        };
+        if (node.parent !== this) {
+            error();
         }
-        throw new Error("The node to be removed is not a child of this node.");
-    };
-    /**
-     * Inserts the node `node` before the existing child node `nextNode`.
-     * If `nextNode` is null, insert `node` at the end of the list of children.
-     * If the `node` belongs to another parent, it is first removed.
-     * Returns the `node`.
-     * @param node
-     * @param nextNode
-     */
-    Node.prototype.insertBefore = function (node, nextNode) {
-        var parent = node.parent;
-        if (node.parent) {
-            node.parent.removeChild(node);
-        }
-        if (nextNode && nextNode.parent === this) {
-            var i = this.children.indexOf(nextNode);
-            if (i >= 0) {
-                this._children.splice(i, 0, node);
-                this.childSet[node.id] = true;
-                node._parent = this;
-                node._setLayerManager(this.layerManager);
-            }
-            else {
-                throw new Error(nextNode + " has " + parent + " as the parent, " + "but is not in its list of children.");
-            }
-            this.dirtyZIndex = true;
-            this.markDirty(node, RedrawType.MAJOR);
+        if (node.isVirtual) {
+            var i = this._virtualChildren.indexOf(node);
+            if (i < 0)
+                error();
+            this._virtualChildren.splice(i, 1);
         }
         else {
-            this.append(node);
+            var i = this._children.indexOf(node);
+            if (i < 0)
+                error();
+            this._children.splice(i, 1);
         }
+        delete this.childSet[node.id];
+        node._parent = undefined;
+        node._setLayerManager();
+        this.dirtyZIndex = true;
+        this.markDirty(node, RedrawType.MAJOR);
         return node;
     };
     Node.prototype.calculateCumulativeMatrix = function () {
@@ -306,7 +333,7 @@ var Node = /** @class */ (function (_super) {
         return matrix.transformBBox(bbox);
     };
     Node.prototype.markDirtyTransform = function () {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     };
     Node.prototype.containsPoint = function (_x, _y) {
@@ -353,7 +380,7 @@ var Node = /** @class */ (function (_super) {
         }
     };
     Node.prototype.findNodes = function (predicate) {
-        var e_3, _a;
+        var e_5, _a;
         var result = predicate(this) ? [this] : [];
         try {
             for (var _b = __values(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -364,12 +391,12 @@ var Node = /** @class */ (function (_super) {
                 }
             }
         }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_3) throw e_3.error; }
+            finally { if (e_5) throw e_5.error; }
         }
         return result;
     };
@@ -393,7 +420,7 @@ var Node = /** @class */ (function (_super) {
         return bbox;
     };
     Node.prototype.computeTransformMatrix = function () {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
         var _a = this, matrix = _a.matrix, scalingX = _a.scalingX, scalingY = _a.scalingY, rotation = _a.rotation, translationX = _a.translationX, translationY = _a.translationY, scalingCenterX = _a.scalingCenterX, scalingCenterY = _a.scalingCenterY, rotationCenterX = _a.rotationCenterX, rotationCenterY = _a.rotationCenterY;
@@ -404,7 +431,7 @@ var Node = /** @class */ (function (_super) {
             rotationCenterY: rotationCenterY,
         });
         matrix.inverseTo(this.inverseMatrix);
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     };
     Node.prototype.render = function (renderCtx) {
         var stats = renderCtx.stats;
@@ -447,25 +474,40 @@ var Node = /** @class */ (function (_super) {
         configurable: true
     });
     Node.prototype.markClean = function (opts) {
-        var e_4, _a;
-        var _b = opts !== null && opts !== void 0 ? opts : {}, _c = _b.force, force = _c === void 0 ? false : _c, _d = _b.recursive, recursive = _d === void 0 ? true : _d;
+        var e_6, _a, e_7, _b;
+        var _c = opts !== null && opts !== void 0 ? opts : {}, _d = _c.force, force = _d === void 0 ? false : _d, _e = _c.recursive, recursive = _e === void 0 ? true : _e;
         if (this._dirty === RedrawType.NONE && !force) {
             return;
         }
         this._dirty = RedrawType.NONE;
-        if (recursive) {
+        if (recursive !== false) {
             try {
-                for (var _e = __values(this.children), _f = _e.next(); !_f.done; _f = _e.next()) {
-                    var child = _f.value;
-                    child.markClean();
+                for (var _f = __values(this._virtualChildren), _g = _f.next(); !_g.done; _g = _f.next()) {
+                    var child = _g.value;
+                    child.markClean({ force: force });
                 }
             }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            catch (e_6_1) { e_6 = { error: e_6_1 }; }
             finally {
                 try {
-                    if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
+                    if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
                 }
-                finally { if (e_4) throw e_4.error; }
+                finally { if (e_6) throw e_6.error; }
+            }
+        }
+        if (recursive === true) {
+            try {
+                for (var _h = __values(this._children), _j = _h.next(); !_j.done; _j = _h.next()) {
+                    var child = _j.value;
+                    child.markClean({ force: force });
+                }
+            }
+            catch (e_7_1) { e_7 = { error: e_7_1 }; }
+            finally {
+                try {
+                    if (_j && !_j.done && (_b = _h.return)) _b.call(_h);
+                }
+                finally { if (e_7) throw e_7.error; }
             }
         }
     };
@@ -474,25 +516,41 @@ var Node = /** @class */ (function (_super) {
     };
     Object.defineProperty(Node.prototype, "nodeCount", {
         get: function () {
-            var e_5, _a;
+            var e_8, _a, e_9, _b;
             var count = 1;
-            var dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+            var dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
             var visibleCount = this.visible ? 1 : 0;
+            var countChild = function (child) {
+                var _a = child.nodeCount, childCount = _a.count, childVisibleCount = _a.visibleCount, childDirtyCount = _a.dirtyCount;
+                count += childCount;
+                visibleCount += childVisibleCount;
+                dirtyCount += childDirtyCount;
+            };
             try {
-                for (var _b = __values(this._children), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var child = _c.value;
-                    var _d = child.nodeCount, childCount = _d.count, childVisibleCount = _d.visibleCount, childDirtyCount = _d.dirtyCount;
-                    count += childCount;
-                    visibleCount += childVisibleCount;
-                    dirtyCount += childDirtyCount;
+                for (var _c = __values(this._children), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var child = _d.value;
+                    countChild(child);
                 }
             }
-            catch (e_5_1) { e_5 = { error: e_5_1 }; }
+            catch (e_8_1) { e_8 = { error: e_8_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
-                finally { if (e_5) throw e_5.error; }
+                finally { if (e_8) throw e_8.error; }
+            }
+            try {
+                for (var _e = __values(this._virtualChildren), _f = _e.next(); !_f.done; _f = _e.next()) {
+                    var child = _f.value;
+                    countChild(child);
+                }
+            }
+            catch (e_9_1) { e_9 = { error: e_9_1 }; }
+            finally {
+                try {
+                    if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+                }
+                finally { if (e_9) throw e_9.error; }
             }
             return { count: count, visibleCount: visibleCount, dirtyCount: dirtyCount };
         },

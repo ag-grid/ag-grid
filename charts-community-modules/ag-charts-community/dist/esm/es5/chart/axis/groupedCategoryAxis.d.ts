@@ -1,12 +1,13 @@
 import { BandScale } from '../../scale/bandScale';
-import { AxisLabel, AxisLine } from '../../axis';
-import { ChartAxis } from '../chartAxis';
-import { Point } from '../../scene/point';
-import { ModuleContext } from '../../util/module';
+import type { Point } from '../../scene/point';
+import type { ModuleContext } from '../../util/moduleContext';
+import { AxisLabel } from './axisLabel';
+import { AxisLine } from './axisLine';
+import { CartesianAxis } from './cartesianAxis';
 declare class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean;
 }
-export declare class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
+export declare class GroupedCategoryAxis extends CartesianAxis<BandScale<string | number>> {
     static className: string;
     static type: "groupedCategory";
     readonly tickScale: BandScale<string | number>;
@@ -50,4 +51,3 @@ export declare class GroupedCategoryAxis extends ChartAxis<BandScale<string | nu
     update(primaryTickCount?: number): number | undefined;
 }
 export {};
-//# sourceMappingURL=groupedCategoryAxis.d.ts.map

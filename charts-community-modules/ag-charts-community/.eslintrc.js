@@ -19,6 +19,7 @@ module.exports = {
         'no-console': 2,
         'no-unused-vars': 0, // Handled by TS strict flag.
         'no-case-declarations': 0,
+        '@typescript-eslint/consistent-type-imports': 'error',
     },
     overrides: [
         {

@@ -4,4 +4,3 @@ export declare const CHART_AXES_TYPES: {
 };
 export declare function registerAxisThemeTemplate(axisType: string, theme: {}): void;
 export declare function getAxisThemeTemplate(axisType: string): {};
-//# sourceMappingURL=chartAxesTypes.d.ts.map

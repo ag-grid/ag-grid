@@ -192,7 +192,12 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
 
     for (const nextProp of props) {
         const values = json
-            .map((j) => (j != null && nextProp in j ? (j as any)[nextProp] : NOT_SPECIFIED))
+            .map((j) => {
+                if (j != null && typeof j === 'object' && nextProp in j) {
+                    return (j as any)[nextProp];
+                }
+                return NOT_SPECIFIED;
+            })
             .filter((v) => v !== NOT_SPECIFIED);
 
         if (values.length === 0) {
@@ -229,6 +234,7 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
 
 export type JsonApplyParams = {
     constructors?: Record<string, new () => any>;
+    constructedArrays?: WeakMap<Array<any>, new () => any>;
     allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
 };
 
@@ -243,9 +249,11 @@ export type JsonApplyParams = {
  * @param params.skip property names to skip from the source
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
+ * @param params.constructedArrays map stores arrays which items should be initialised
+ *                                 using a class constructor
  * @param params.allowedTypes overrides by path for allowed property types
  */
-export function jsonApply<Target, Source extends DeepPartial<Target>>(
+export function jsonApply<Target extends object, Source extends DeepPartial<Target>>(
     target: Target,
     source?: Source,
     params: {
@@ -260,6 +268,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         matcherPath = path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined,
         skip = [],
         constructors = {},
+        constructedArrays = new WeakMap(),
         allowedTypes = {},
         idx,
     } = params;
@@ -311,7 +320,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
             }
 
             if (newValueType === 'array') {
-                ctr = ctr ?? constructors[`${propertyMatcherPath}[]`];
+                ctr = ctr ?? constructedArrays.get(currentValue) ?? constructors[`${propertyMatcherPath}[]`];
                 if (ctr != null) {
                     const newValueArray: any[] = newValue as any;
                     targetAny[property] = newValueArray.map((v, idx) =>
@@ -349,8 +358,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 targetAny[property] = newValue;
             }
         } catch (error) {
-            const err = error as any;
-            Logger.warn(`unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`);
+            Logger.warn(`unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`);
             continue;
         }
     }

@@ -11,6 +11,7 @@ export declare class MultiFilter extends TabGuardComp implements IFilterComp, IM
     private lastOpenedInContainer?;
     private activeFilterIndices;
     private lastActivatedMenuItem;
+    private hidePopup?;
     private afterFiltersReadyFuncs;
     constructor();
     private postConstruct;

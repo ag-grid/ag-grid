@@ -1,8 +1,9 @@
 import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
-import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-import { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
+import type { RenderContext } from '../node';
+import { RedrawType, SceneChangeDetection } from '../node';
+import type { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
 
 export interface TextSizeProperties {
     fontFamily: string;
@@ -54,12 +55,12 @@ export class Text extends Shape {
     private _dirtyFont: boolean = true;
     private _font?: string;
     get font(): string {
-        if (this._dirtyFont) {
+        if (this._font == null || this._dirtyFont) {
             this._dirtyFont = false;
             this._font = getFont(this);
         }
 
-        return this._font!;
+        return this._font;
     }
 
     @SceneFontChangeDetection()
@@ -483,6 +484,18 @@ export class Text extends Shape {
         }
 
         return lines;
+    }
+
+    setFont(props: TextSizeProperties) {
+        this.fontFamily = props.fontFamily;
+        this.fontSize = props.fontSize;
+        this.fontStyle = props.fontStyle;
+        this.fontWeight = props.fontWeight;
+    }
+
+    setAlign(props: { textAlign: CanvasTextAlign; textBaseline: CanvasTextBaseline }) {
+        this.textAlign = props.textAlign;
+        this.textBaseline = props.textBaseline;
     }
 }
 

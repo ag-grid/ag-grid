@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -62,10 +56,11 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
-            onDragging: this.onDragging.bind(this)
+            onDragging: this.onDragging.bind(this),
+            includeTouch: allowTouch
         };
         this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
-        this.dragService.addDragSource(params, allowTouch);
+        this.dragService.addDragSource(params);
     }
     removeDragSource(dragSource) {
         const sourceAndParams = this.dragSourceAndParamsList.find(item => item.dragSource === dragSource);
@@ -259,13 +254,12 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
         }
         const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
-        // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
-        // then brought in scrollbars to the browser. no idea why, but putting in -2 here
-        // works around it which is good enough for me.
-        const browserWidth = browser_1.getBodyWidth() - 2;
-        const browserHeight = browser_1.getBodyHeight() - 2;
-        let top = event.pageY - (ghostHeight / 2);
-        let left = event.pageX - 10;
+        const browserWidth = browser_1.getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
+        const browserHeight = browser_1.getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
+        const offsetParentSize = dom_1.getElementRectWithOffset(ghost.offsetParent);
+        const { clientY, clientX } = event;
+        let top = (clientY - offsetParentSize.top) - (ghostHeight / 2);
+        let left = (clientX - offsetParentSize.left) - 10;
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;

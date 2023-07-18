@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isInvisibleScrollbar = exports.getScrollbarWidth = exports.getBodyHeight = exports.getBodyWidth = exports.getMaxDivHeight = exports.getTabIndex = exports.browserSupportsPreventScroll = exports.isIOSUserAgent = exports.isMacOsUserAgent = exports.isBrowserFirefox = exports.isBrowserChrome = exports.getSafariVersion = exports.isBrowserSafari = void 0;

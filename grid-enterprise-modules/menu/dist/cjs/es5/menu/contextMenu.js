@@ -46,7 +46,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions = [];
-        if (core_1._.exists(node) && core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (core_1._.exists(node) && core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gridOptionsService.is('suppressCutToClipboard')) {
@@ -55,7 +55,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.is('enableCharts') && core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -65,8 +65,8 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         }
         if (core_1._.exists(node)) {
             // if user clicks a cell
-            var csvModuleMissing = !core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.CsvExportModule, this.context.getGridId());
-            var excelModuleMissing = !core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ExcelExportModule, this.context.getGridId());
+            var csvModuleMissing = !core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.CsvExportModule, this.context.getGridId());
+            var excelModuleMissing = !core_1.ModuleRegistry.__isRegistered(core_1.ModuleNames.ExcelExportModule, this.context.getGridId());
             var suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
             var suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             var onIPad = core_1._.isIOSUserAgent();

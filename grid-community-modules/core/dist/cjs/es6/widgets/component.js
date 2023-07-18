@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -152,6 +146,16 @@ class Component extends beanStub_1.BeanStub {
             thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     }
+    activateTabIndex(elements) {
+        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        if (!elements) {
+            elements = [];
+        }
+        if (!elements.length) {
+            elements.push(this.getGui());
+        }
+        elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
+    }
     setTemplate(template, paramsMap) {
         const eGui = dom_1.loadTemplate(template);
         this.setTemplateFromElement(eGui, paramsMap);
@@ -183,7 +187,7 @@ class Component extends beanStub_1.BeanStub {
             // the element. otherwise no way of components putting ref=xxx on the top
             // level element as querySelector only looks at children.
             const topLevelRefMatch = querySelector.refSelector
-                && this.eGui.getAttribute('ref') === querySelector.refSelector;
+                && this.getAttribute('ref') === querySelector.refSelector;
             if (topLevelRefMatch) {
                 setResult(this.eGui);
             }

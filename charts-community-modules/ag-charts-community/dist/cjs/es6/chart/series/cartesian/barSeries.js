@@ -25,16 +25,12 @@ const cartesianSeries_1 = require("./cartesianSeries");
 const chartAxisDirection_1 = require("../../chartAxisDirection");
 const tooltip_1 = require("../../tooltip/tooltip");
 const array_1 = require("../../../util/array");
-const equal_1 = require("../../../util/equal");
-const logger_1 = require("../../../util/logger");
 const sanitize_1 = require("../../../util/sanitize");
 const continuousScale_1 = require("../../../scale/continuousScale");
 const validation_1 = require("../../../util/validation");
 const categoryAxis_1 = require("../../axis/categoryAxis");
 const groupedCategoryAxis_1 = require("../../axis/groupedCategoryAxis");
 const logAxis_1 = require("../../axis/logAxis");
-const dataModel_1 = require("../../data/dataModel");
-const aggregateFunctions_1 = require("../../data/aggregateFunctions");
 const processors_1 = require("../../data/processors");
 const easing = require("../../../motion/easing");
 const barUtil_1 = require("./barUtil");
@@ -67,56 +63,36 @@ class BarSeriesTooltip extends series_1.SeriesTooltip {
 __decorate([
     validation_1.Validate(validation_1.OPT_FUNCTION)
 ], BarSeriesTooltip.prototype, "renderer", void 0);
-function is2dArray(array) {
-    return array.length > 0 && Array.isArray(array[0]);
-}
 class BarSeries extends cartesianSeries_1.CartesianSeries {
     constructor(moduleCtx) {
         super({
             moduleCtx,
             pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
-            directionKeys: {
-                [chartAxisDirection_1.ChartAxisDirection.X]: ['xKey'],
-                [chartAxisDirection_1.ChartAxisDirection.Y]: ['yKeys'],
-            },
-            directionNames: {
-                [chartAxisDirection_1.ChartAxisDirection.X]: ['xName'],
-                [chartAxisDirection_1.ChartAxisDirection.Y]: ['yNames'],
-            },
+            hasHighlightedLabels: true,
         });
         this.label = new BarSeriesLabel();
         this.tooltip = new BarSeriesTooltip();
-        this.fills = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
-        this.strokes = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+        this.fill = '#c16068';
+        this.stroke = '#874349';
         this.fillOpacity = 1;
         this.strokeOpacity = 1;
         this.lineDash = [0];
         this.lineDashOffset = 0;
         this.formatter = undefined;
+        this.xKey = undefined;
+        this.xName = undefined;
+        this.yKey = undefined;
+        this.yName = undefined;
         /**
          * Used to get the position of bars within each group.
          */
         this.groupScale = new bandScale_1.BandScale();
-        this.xKey = undefined;
-        this.xName = undefined;
-        this.cumYKeyCount = [];
-        this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
-        this.hideInLegend = [];
-        this.yKeys = [];
-        this.yKeysCache = [];
-        this.visibles = [];
-        this.grouped = false;
-        this.stackGroups = {};
-        /**
-         * A map of `yKeys` to their names (used in legends and tooltips).
-         * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
-         */
-        this.yNames = {};
-        this.legendItemNames = {};
+        this.stackGroup = undefined;
         this.strokeWidth = 1;
         this.shadow = undefined;
         this.smallestDataInterval = undefined;
+        this.datumSelectionGarbageCollection = false;
         this.label.enabled = false;
     }
     resolveKeyDirection(direction) {
@@ -128,146 +104,80 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
         }
         return direction;
     }
-    processYKeys() {
-        let { yKeys } = this;
-        let flatYKeys = undefined;
-        // Convert from flat y-keys to grouped y-keys.
-        if (!is2dArray(yKeys)) {
-            flatYKeys = yKeys;
-            yKeys = this.grouped ? flatYKeys.map((k) => [k]) : [flatYKeys];
-        }
-        const stackGroups = Object.values(this.stackGroups);
-        if (stackGroups.length > 0) {
-            const flattenKeys = (keys) => keys.reduce((res, k) => res.concat(k), []);
-            // Create a stack for items without a group
-            const flatKeys = flattenKeys(yKeys);
-            const keysInStacks = new Set(flattenKeys(stackGroups));
-            const ungroupedKeys = flatKeys.filter((k) => !keysInStacks.has(k));
-            yKeys = stackGroups.map((keys) => keys);
-            if (ungroupedKeys.length > 0) {
-                yKeys.push(ungroupedKeys);
-            }
-            // Preserve the order of colours and other properties
-            const indexMap = (items) => items.reduce((map, key, index) => map.set(key, index), new Map());
-            const newKeys = flattenKeys(yKeys);
-            const newKeysIndices = indexMap(newKeys);
-            const sort = (items) => {
-                const result = Array.from({ length: items.length });
-                items.forEach((item, index) => {
-                    const key = flatKeys[index];
-                    const newIndex = newKeysIndices.get(key);
-                    result[newIndex] = item;
-                });
-                return result;
-            };
-            this.fills = sort(this.fills);
-            this.strokes = sort(this.strokes);
-            this.visibles = sort(this.visibles);
-        }
-        if (!equal_1.areArrayItemsStrictlyEqual(this.yKeysCache, yKeys)) {
-            this.flatYKeys = flatYKeys ? flatYKeys : undefined;
-            this.yKeys = yKeys;
-            let prevYKeyCount = 0;
-            this.cumYKeyCount = [];
-            const visibleStacks = [];
-            yKeys.forEach((stack, index) => {
-                if (stack.length > 0) {
-                    visibleStacks.push(String(index));
-                }
-                this.cumYKeyCount.push(prevYKeyCount);
-                prevYKeyCount += stack.length;
-            });
-            this.processSeriesItemEnabled();
-            const { groupScale } = this;
-            groupScale.domain = visibleStacks;
-        }
-        this.yKeysCache = yKeys;
-    }
-    processSeriesItemEnabled() {
-        const { seriesItemEnabled } = this;
-        const flattenFn = (r, n) => r.concat(...(Array.isArray(n) ? n : [n]));
-        const visibles = this.visibles.reduce(flattenFn, []);
-        seriesItemEnabled.clear();
-        let visiblesIdx = 0;
-        this.yKeys.forEach((stack) => {
-            stack.forEach((yKey) => { var _a; return seriesItemEnabled.set(yKey, (_a = visibles[visiblesIdx++]) !== null && _a !== void 0 ? _a : true); });
-        });
-    }
-    getStackGroup(yKey) {
-        var _a;
-        const { stackGroups } = this;
-        return (_a = Object.entries(stackGroups).find(([_, keys]) => keys.includes(yKey))) === null || _a === void 0 ? void 0 : _a[0];
-    }
-    processYNames() {
-        const values = this.yNames;
-        if (Array.isArray(values) && this.flatYKeys) {
-            const map = {};
-            this.flatYKeys.forEach((k, i) => {
-                map[k] = values[i];
-            });
-            this.yNames = map;
-        }
-    }
-    processData() {
+    processData(dataController) {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
-            this.processYKeys();
-            this.processYNames();
-            const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
+            const { xKey, yKey, normalizedTo, seriesGrouping: { groupIndex = this.id } = {}, data = [] } = this;
             const normalizedToAbs = Math.abs(normalizedTo !== null && normalizedTo !== void 0 ? normalizedTo : NaN);
             const isContinuousX = ((_a = this.getCategoryAxis()) === null || _a === void 0 ? void 0 : _a.scale) instanceof continuousScale_1.ContinuousScale;
             const isContinuousY = ((_b = this.getValueAxis()) === null || _b === void 0 ? void 0 : _b.scale) instanceof continuousScale_1.ContinuousScale;
-            const activeSeriesItems = [...seriesItemEnabled.entries()]
-                .filter(([, enabled]) => enabled)
-                .map(([yKey]) => yKey);
-            const activeStacks = this.yKeys
-                .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
-                .filter((stack) => stack.length > 0);
+            const stackGroupName = `bar-stack-${groupIndex}-yValues`;
+            const stackGroupTrailingName = `${stackGroupName}-trailing`;
             const normaliseTo = normalizedToAbs && isFinite(normalizedToAbs) ? normalizedToAbs : undefined;
             const extraProps = [];
             if (normaliseTo) {
-                extraProps.push(processors_1.normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+                extraProps.push(processors_1.normaliseGroupTo(this, [stackGroupName, stackGroupTrailingName], normaliseTo, 'range'));
             }
-            this.dataModel = new dataModel_1.DataModel({
+            if (!((_c = this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.skipAnimations) && this.processedData) {
+                extraProps.push(processors_1.diff(this.processedData));
+            }
+            const { dataModel, processedData } = yield dataController.request(this.id, data, {
                 props: [
-                    series_1.keyProperty(xKey, isContinuousX),
-                    ...activeSeriesItems.map((yKey) => series_1.valueProperty(yKey, isContinuousY, { invalidValue: null })),
-                    ...activeStacks.map((stack) => aggregateFunctions_1.sum(stack)),
+                    series_1.keyProperty(this, xKey, isContinuousX, { id: 'xValue' }),
+                    series_1.valueProperty(this, yKey, isContinuousY, { id: `yValue-raw`, invalidValue: null }),
+                    ...series_1.groupAccumulativeValueProperty(this, yKey, isContinuousY, 'normal', 'current', {
+                        id: `yValue-end`,
+                        invalidValue: null,
+                        groupId: stackGroupName,
+                    }),
+                    ...series_1.groupAccumulativeValueProperty(this, yKey, isContinuousY, 'trailing', 'current', {
+                        id: `yValue-start`,
+                        invalidValue: null,
+                        groupId: stackGroupTrailingName,
+                    }),
                     ...(isContinuousX ? [processors_1.SMALLEST_KEY_INTERVAL] : []),
-                    processors_1.AGG_VALUES_EXTENT,
                     ...extraProps,
                 ],
                 groupByKeys: true,
-                dataVisible: this.visible && activeSeriesItems.length > 0,
+                dataVisible: this.visible,
             });
-            this.processedData = this.dataModel.processData(data);
+            this.dataModel = dataModel;
+            this.processedData = processedData;
             this.smallestDataInterval = {
-                x: (_e = (_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.reduced) === null || _d === void 0 ? void 0 : _d[processors_1.SMALLEST_KEY_INTERVAL.property]) !== null && _e !== void 0 ? _e : Infinity,
+                x: (_e = (_d = processedData.reduced) === null || _d === void 0 ? void 0 : _d[processors_1.SMALLEST_KEY_INTERVAL.property]) !== null && _e !== void 0 ? _e : Infinity,
                 y: Infinity,
             };
+            this.animationState.transition('updateData');
         });
     }
     getDomain(direction) {
         var _a;
-        const { processedData } = this;
-        if (!processedData)
+        const { processedData, dataModel } = this;
+        if (!processedData || !dataModel)
             return [];
-        const { defs: { keys: [keyDef], }, domain: { keys: [keys], values: [yExtent], }, reduced: { [processors_1.SMALLEST_KEY_INTERVAL.property]: smallestX, [processors_1.AGG_VALUES_EXTENT.property]: ySumExtent } = {}, } = processedData;
+        const { reduced: { [processors_1.SMALLEST_KEY_INTERVAL.property]: smallestX } = {} } = processedData;
+        const categoryAxis = this.getCategoryAxis();
+        const valueAxis = this.getValueAxis();
+        const keyDef = dataModel.resolveProcessedDataDefById(this, `xValue`);
+        const keys = dataModel.getDomain(this, `xValue`, 'key', processedData);
+        const yExtent = dataModel.getDomain(this, `yValue-end`, 'value', processedData);
         if (direction === this.getCategoryDirection()) {
-            if (keyDef.valueType === 'category') {
+            if ((keyDef === null || keyDef === void 0 ? void 0 : keyDef.def.type) === 'key' && (keyDef === null || keyDef === void 0 ? void 0 : keyDef.def.valueType) === 'category') {
                 return keys;
             }
+            const scalePadding = isFinite(smallestX) ? smallestX : 0;
             const keysExtent = (_a = array_1.extent(keys)) !== null && _a !== void 0 ? _a : [NaN, NaN];
             if (direction === chartAxisDirection_1.ChartAxisDirection.Y) {
-                return [keysExtent[0] + -smallestX, keysExtent[1]];
+                return this.fixNumericExtent([keysExtent[0] + -scalePadding, keysExtent[1]], categoryAxis);
             }
-            return [keysExtent[0], keysExtent[1] + smallestX];
+            return this.fixNumericExtent([keysExtent[0], keysExtent[1] + scalePadding], categoryAxis);
         }
         else if (this.getValueAxis() instanceof logAxis_1.LogAxis) {
-            return this.fixNumericExtent(yExtent);
+            return this.fixNumericExtent(yExtent, valueAxis);
         }
         else {
-            return this.fixNumericExtent(ySumExtent);
+            const fixedYExtent = [yExtent[0] > 0 ? 0 : yExtent[0], yExtent[1] < 0 ? 0 : yExtent[1]];
+            return this.fixNumericExtent(fixedYExtent, valueAxis);
         }
     }
     getNodeClickEvent(event, datum) {
@@ -279,10 +189,12 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
         return new cartesianSeries_1.CartesianSeriesNodeDoubleClickEvent((_a = this.xKey) !== null && _a !== void 0 ? _a : '', datum.yKey, event, datum, this);
     }
     getCategoryAxis() {
-        return this.getCategoryDirection() === chartAxisDirection_1.ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+        const direction = this.getCategoryDirection();
+        return this.axes[direction];
     }
     getValueAxis() {
-        return this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.Y ? this.yAxis : this.xAxis;
+        const direction = this.getBarDirection();
+        return this.axes[direction];
     }
     calculateStep(range) {
         var _a;
@@ -304,22 +216,28 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
     }
     createNodeData() {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, visible } = this;
+            const { visible, dataModel } = this;
             const xAxis = this.getCategoryAxis();
             const yAxis = this.getValueAxis();
-            if (!(data && visible && xAxis && yAxis)) {
+            if (!(dataModel && visible && xAxis && yAxis)) {
                 return [];
             }
             const xScale = xAxis.scale;
             const yScale = yAxis.scale;
-            const { groupScale, yKeys, xKey = '', cumYKeyCount, fills, strokes, strokeWidth, seriesItemEnabled, label, id: seriesId, processedData, ctx, } = this;
+            const { groupScale, yKey = '', xKey = '', fill, stroke, strokeWidth, label, id: seriesId, processedData, ctx, ctx: { seriesStateManager }, } = this;
             let xBandWidth = xScale.bandwidth;
             if (xScale instanceof continuousScale_1.ContinuousScale) {
                 const availableRange = Math.max(xAxis.range[0], xAxis.range[1]);
                 const step = this.calculateStep(availableRange);
                 xBandWidth = step;
             }
-            groupScale.range = [0, xBandWidth];
+            const domain = [];
+            const { index: groupIndex, visibleGroupCount } = seriesStateManager.getVisiblePeerGroupIndex(this);
+            for (let groupIdx = 0; groupIdx < visibleGroupCount; groupIdx++) {
+                domain.push(String(groupIdx));
+            }
+            groupScale.domain = domain;
+            groupScale.range = [0, xBandWidth !== null && xBandWidth !== void 0 ? xBandWidth : 0];
             if (xAxis instanceof categoryAxis_1.CategoryAxis) {
                 groupScale.padding = xAxis.groupPaddingInner;
             }
@@ -342,99 +260,82 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
                     groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
                     groupScale.rawBandwidth;
-            const contexts = [];
+            const xIndex = dataModel.resolveProcessedDataIndexById(this, `xValue`, 'key').index;
+            const yRawIndex = dataModel.resolveProcessedDataIndexById(this, `yValue-raw`).index;
+            const yStartIndex = dataModel.resolveProcessedDataIndexById(this, `yValue-start`).index;
+            const yEndIndex = dataModel.resolveProcessedDataIndexById(this, `yValue-end`).index;
+            const context = {
+                itemId: yKey,
+                nodeData: [],
+                labelData: [],
+            };
             processedData === null || processedData === void 0 ? void 0 : processedData.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
-                var _a, _b, _c, _d, _e;
-                var _f;
-                const x = xScale.convert(keys[0]);
-                for (let stackIndex = 0; stackIndex < ((_a = yKeys === null || yKeys === void 0 ? void 0 : yKeys.length) !== null && _a !== void 0 ? _a : 0); stackIndex++) {
-                    const stackYKeys = (_b = yKeys === null || yKeys === void 0 ? void 0 : yKeys[stackIndex]) !== null && _b !== void 0 ? _b : []; // y-data for a stack within a group
-                    (_c = contexts[stackIndex]) !== null && _c !== void 0 ? _c : (contexts[stackIndex] = []);
-                    let prevMinY = 0;
-                    let prevMaxY = 0;
-                    for (let levelIndex = 0; levelIndex < stackYKeys.length; levelIndex++) {
-                        const yKey = stackYKeys[levelIndex];
-                        const yIndex = (_d = processedData === null || processedData === void 0 ? void 0 : processedData.indices.values[yKey]) !== null && _d !== void 0 ? _d : -1;
-                        (_e = (_f = contexts[stackIndex])[levelIndex]) !== null && _e !== void 0 ? _e : (_f[levelIndex] = {
-                            itemId: yKey,
-                            nodeData: [],
-                            labelData: [],
-                        });
-                        if (yIndex === undefined)
-                            continue;
-                        const yValue = values[0][yIndex];
-                        const currY = +yValue;
-                        const barX = x + groupScale.convert(String(stackIndex));
-                        // Bars outside of visible range are not rendered, so we create node data
-                        // only for the visible subset of user data.
-                        if (!xAxis.inRange(barX, barWidth)) {
-                            continue;
-                        }
-                        if (isNaN(currY)) {
-                            continue;
-                        }
-                        const prevY = currY < 0 ? prevMinY : prevMaxY;
-                        const y = yScale.convert(prevY + currY, { strict: false });
-                        const bottomY = yScale.convert(prevY, { strict: false });
-                        const barAlongX = this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.X;
-                        const rect = {
-                            x: barAlongX ? Math.min(y, bottomY) : barX,
-                            y: barAlongX ? barX : Math.min(y, bottomY),
-                            width: barAlongX ? Math.abs(bottomY - y) : barWidth,
-                            height: barAlongX ? barWidth : Math.abs(bottomY - y),
-                        };
-                        const nodeMidPoint = {
-                            x: rect.x + rect.width / 2,
-                            y: rect.y + rect.height / 2,
-                        };
-                        const { fontStyle: labelFontStyle, fontWeight: labelFontWeight, fontSize: labelFontSize, fontFamily: labelFontFamily, color: labelColor, formatter, placement, } = label;
-                        const { text: labelText, textAlign: labelTextAlign, textBaseline: labelTextBaseline, x: labelX, y: labelY, } = barUtil_1.createLabelData({ value: yValue, rect, formatter, placement, seriesId, barAlongX, ctx });
-                        const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                        const nodeData = {
-                            index: dataIndex,
-                            series: this,
-                            itemId: yKey,
-                            datum: seriesDatum[0],
-                            cumulativeValue: prevY + currY,
-                            yValue,
-                            yKey,
-                            xKey,
-                            x: rect.x,
-                            y: rect.y,
-                            width: rect.width,
-                            height: rect.height,
-                            nodeMidPoint,
-                            colorIndex,
-                            fill: fills[colorIndex % fills.length],
-                            stroke: strokes[colorIndex % strokes.length],
-                            strokeWidth,
-                            label: seriesItemEnabled.get(yKey) && labelText
-                                ? {
-                                    text: labelText,
-                                    fontStyle: labelFontStyle,
-                                    fontWeight: labelFontWeight,
-                                    fontSize: labelFontSize,
-                                    fontFamily: labelFontFamily,
-                                    textAlign: labelTextAlign,
-                                    textBaseline: labelTextBaseline,
-                                    fill: labelColor,
-                                    x: labelX,
-                                    y: labelY,
-                                }
-                                : undefined,
-                        };
-                        contexts[stackIndex][levelIndex].nodeData.push(nodeData);
-                        contexts[stackIndex][levelIndex].labelData.push(nodeData);
-                        if (currY < 0) {
-                            prevMinY += currY;
-                        }
-                        else {
-                            prevMaxY += currY;
-                        }
-                    }
+                const xValue = keys[xIndex];
+                const x = xScale.convert(xValue);
+                const currY = +values[0][yEndIndex];
+                const prevY = +values[0][yStartIndex];
+                const yRawValue = values[0][yRawIndex];
+                const barX = x + groupScale.convert(String(groupIndex));
+                // Bars outside of visible range are not rendered, so we create node data
+                // only for the visible subset of user data.
+                if (!xAxis.inRange(barX, barWidth)) {
+                    return;
                 }
+                if (isNaN(currY)) {
+                    return;
+                }
+                const y = yScale.convert(currY, { strict: false });
+                const bottomY = yScale.convert(prevY, { strict: false });
+                const barAlongX = this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.X;
+                const rect = {
+                    x: barAlongX ? Math.min(y, bottomY) : barX,
+                    y: barAlongX ? barX : Math.min(y, bottomY),
+                    width: barAlongX ? Math.abs(bottomY - y) : barWidth,
+                    height: barAlongX ? barWidth : Math.abs(bottomY - y),
+                };
+                const nodeMidPoint = {
+                    x: rect.x + rect.width / 2,
+                    y: rect.y + rect.height / 2,
+                };
+                const { fontStyle: labelFontStyle, fontWeight: labelFontWeight, fontSize: labelFontSize, fontFamily: labelFontFamily, color: labelColor, formatter, placement, } = label;
+                const { text: labelText, textAlign: labelTextAlign, textBaseline: labelTextBaseline, x: labelX, y: labelY, } = barUtil_1.createLabelData({ value: yRawValue, rect, formatter, placement, seriesId, barAlongX, ctx });
+                const nodeData = {
+                    index: dataIndex,
+                    series: this,
+                    itemId: yKey,
+                    datum: seriesDatum[0],
+                    cumulativeValue: prevY + currY,
+                    xValue,
+                    yValue: yRawValue,
+                    yKey,
+                    xKey,
+                    x: rect.x,
+                    y: rect.y,
+                    width: rect.width,
+                    height: rect.height,
+                    nodeMidPoint,
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    label: labelText
+                        ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            textAlign: labelTextAlign,
+                            textBaseline: labelTextBaseline,
+                            fill: labelColor,
+                            x: labelX,
+                            y: labelY,
+                        }
+                        : undefined,
+                };
+                context.nodeData.push(nodeData);
+                context.labelData.push(nodeData);
             });
-            return contexts.reduce((r, n) => r.concat(...n), []);
+            return [context];
         });
     }
     nodeFactory() {
@@ -443,21 +344,21 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
     updateDatumSelection(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { nodeData, datumSelection } = opts;
-            return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar));
+            const getDatumId = (datum) => datum.xValue;
+            return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar), getDatumId);
         });
     }
     updateDatumNodes(opts) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { datumSelection, isHighlight } = opts;
-            const { fills, strokes, fillOpacity, strokeOpacity, lineDash, lineDashOffset, shadow, formatter, id: seriesId, highlightStyle: { item: itemHighlightStyle }, ctx, } = this;
-            const crisp = barUtil_1.checkCrisp((_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange);
+            const { fill, stroke, fillOpacity, strokeOpacity, lineDash, lineDashOffset, shadow, formatter, id: seriesId, highlightStyle: { item: itemHighlightStyle }, ctx, stackGroup, } = this;
+            const xAxis = this.axes[chartAxisDirection_1.ChartAxisDirection.X];
+            const crisp = barUtil_1.checkCrisp(xAxis === null || xAxis === void 0 ? void 0 : xAxis.visibleRange);
             const categoryAlongX = this.getCategoryDirection() === chartAxisDirection_1.ChartAxisDirection.X;
             datumSelection.each((rect, datum) => {
-                const { colorIndex } = datum;
                 const style = {
-                    fill: fills[colorIndex % fills.length],
-                    stroke: strokes[colorIndex % fills.length],
+                    fill,
+                    stroke,
                     fillOpacity,
                     strokeOpacity,
                     lineDash,
@@ -473,7 +374,7 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
                     highlightStyle: itemHighlightStyle,
                     formatter,
                     seriesId,
-                    stackGroup: this.getStackGroup(datum.yKey),
+                    stackGroup,
                     ctx,
                 });
                 config.crisp = crisp;
@@ -504,35 +405,16 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
     }
     getTooltipHtml(nodeDatum) {
         var _a;
-        const { xKey, yKeys, processedData, ctx: { callbackCache }, } = this;
+        const { xKey, yKey, processedData, ctx: { callbackCache }, } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
-        const { yKey } = nodeDatum;
+        const { xValue, yValue, datum } = nodeDatum;
         if (!processedData || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
-        let fillIndex = 0;
-        let i = 0;
-        let j = 0;
-        for (; j < yKeys.length; j++) {
-            const stack = yKeys[j];
-            i = stack.indexOf(yKey);
-            if (i >= 0) {
-                fillIndex += i;
-                break;
-            }
-            fillIndex += stack.length;
-        }
-        const { xName, yNames, fills, strokes, tooltip, formatter, id: seriesId } = this;
+        const { xName, yName, fill, stroke, tooltip, formatter, id: seriesId, stackGroup } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const datum = nodeDatum.datum;
-        const yName = yNames[yKey];
-        const stackGroup = this.getStackGroup(yKey);
-        const fill = fills[fillIndex % fills.length];
-        const stroke = strokes[fillIndex % fills.length];
         const strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
         const xString = sanitize_1.sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitize_1.sanitizeHtml(yAxis.formatDatum(yValue));
         const title = sanitize_1.sanitizeHtml(yName);
@@ -575,144 +457,63 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
         return tooltip_1.toTooltipHtml(defaults);
     }
     getLegendData() {
-        const { id, data, xKey, yKeys, yNames, legendItemNames, cumYKeyCount, seriesItemEnabled, hideInLegend, fills, strokes, fillOpacity, strokeOpacity, } = this;
-        if (!(data === null || data === void 0 ? void 0 : data.length) || !xKey || !yKeys.length) {
+        var _a;
+        const { id, data, xKey, yKey, yName, legendItemName, fill, stroke, fillOpacity, strokeOpacity, visible, showInLegend, } = this;
+        if (!showInLegend || !(data === null || data === void 0 ? void 0 : data.length) || !xKey || !yKey) {
             return [];
         }
         const legendData = [];
-        this.validateLegendData();
-        this.yKeys.forEach((stack, stackIndex) => {
-            var _a, _b, _c;
-            for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
-                const yKey = stack[levelIndex];
-                if (hideInLegend.indexOf(yKey) >= 0) {
-                    return;
-                }
-                const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                legendData.push({
-                    legendType: 'category',
-                    id,
-                    itemId: yKey,
-                    seriesId: id,
-                    enabled: (_a = seriesItemEnabled.get(yKey)) !== null && _a !== void 0 ? _a : false,
-                    label: {
-                        text: (_c = (_b = legendItemNames[yKey]) !== null && _b !== void 0 ? _b : yNames[yKey]) !== null && _c !== void 0 ? _c : yKey,
-                    },
-                    marker: {
-                        fill: fills[colorIndex % fills.length],
-                        stroke: strokes[colorIndex % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity,
-                    },
-                });
-            }
+        legendData.push({
+            legendType: 'category',
+            id,
+            itemId: yKey,
+            seriesId: id,
+            enabled: visible,
+            label: {
+                text: (_a = legendItemName !== null && legendItemName !== void 0 ? legendItemName : yName) !== null && _a !== void 0 ? _a : yKey,
+            },
+            legendItemName,
+            marker: {
+                fill,
+                stroke,
+                fillOpacity: fillOpacity,
+                strokeOpacity: strokeOpacity,
+            },
         });
         return legendData;
     }
-    validateLegendData() {
-        const { hideInLegend, legendItemNames } = this;
-        let hasAnyLegendItemName = false;
-        this.yKeys.forEach((stack) => {
-            stack.forEach((yKey) => {
-                if (hideInLegend.indexOf(yKey) >= 0) {
-                    return;
-                }
-                const hasLegendItemName = legendItemNames[yKey] !== undefined;
-                if (hasAnyLegendItemName && !hasLegendItemName) {
-                    logger_1.Logger.warnOnce(`a series is missing the legendItemName property, unexpected behaviour may occur.`);
-                }
-                hasAnyLegendItemName = hasLegendItemName;
-            });
-        });
-    }
-    onLegendItemClick(event) {
-        const { itemId, enabled, series } = event;
-        if (series.id !== this.id)
-            return;
-        super.toggleSeriesItem(itemId, enabled);
-        // Toggle items where the legendItemName matches the legendItemName of the clicked item
-        Object.keys(this.legendItemNames)
-            .filter((id) => this.legendItemNames[id] !== undefined && this.legendItemNames[id] === this.legendItemNames[itemId])
-            .forEach((yKey) => {
-            if (yKey !== itemId) {
-                super.toggleSeriesItem(yKey, enabled);
-            }
-        });
-        this.calculateVisibleDomain();
-    }
-    onLegendItemDoubleClick(event) {
-        const { enabled, itemId, numVisibleItems } = event;
-        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
-        const singleEnabledInEachSeries = Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
-        const newEnableds = {};
-        this.yKeys.forEach((stack) => {
-            stack.forEach((yKey) => {
-                var _a;
-                const matches = yKey === itemId;
-                const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
-                const newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
-                newEnableds[yKey] = (_a = newEnableds[yKey]) !== null && _a !== void 0 ? _a : newEnabled;
-                // Toggle other items that have matching legendItemNames which have not already been processed.
-                Object.keys(this.legendItemNames)
-                    .filter((id) => this.legendItemNames[id] !== undefined &&
-                    this.legendItemNames[id] === this.legendItemNames[yKey])
-                    .forEach((nameYKey) => {
-                    var _a;
-                    newEnableds[nameYKey] = (_a = newEnableds[nameYKey]) !== null && _a !== void 0 ? _a : newEnabled;
-                });
-            });
-        });
-        Object.keys(newEnableds).forEach((yKey) => {
-            super.toggleSeriesItem(yKey, newEnableds[yKey]);
-        });
-        this.calculateVisibleDomain();
-    }
-    calculateVisibleDomain() {
-        const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
-        this.seriesItemEnabled.forEach((enabled, yKey) => {
-            if (!enabled) {
-                yKeys.forEach((stack) => {
-                    const index = stack.indexOf(yKey);
-                    if (index >= 0) {
-                        stack.splice(index, 1);
-                    }
-                });
-            }
-        });
-        const visibleStacks = [];
-        yKeys.forEach((stack, index) => {
-            if (stack.length > 0) {
-                visibleStacks.push(String(index));
-            }
-        });
-        this.groupScale.domain = visibleStacks;
-        this.nodeDataRefresh = true;
-    }
     animateEmptyUpdateReady({ datumSelections, labelSelections, }) {
-        const duration = 1000;
+        var _a, _b;
+        const duration = (_b = (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
         const labelDuration = 200;
-        let startingX = Infinity;
-        datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
-            if (datum.yValue >= 0) {
-                startingX = Math.min(startingX, datum.x);
-            }
-        }));
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
                 var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${rect.id}`, [
-                    { from: startingX, to: datum.x },
-                    { from: 0, to: datum.width },
-                ], {
-                    disableInteractions: true,
+                let contextX = startingX;
+                let contextWidth = 0;
+                let contextY = datum.y;
+                let contextHeight = datum.height;
+                if (this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.Y) {
+                    contextX = datum.x;
+                    contextWidth = datum.width;
+                    contextY = startingY;
+                    contextHeight = 0;
+                }
+                const props = [
+                    { from: contextX, to: datum.x },
+                    { from: contextWidth, to: datum.width },
+                    { from: contextY, to: datum.y },
+                    { from: contextHeight, to: datum.height },
+                ];
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${rect.id}`, props, {
                     duration,
                     ease: easing.easeOut,
-                    repeat: 0,
-                    onUpdate([x, width]) {
+                    onUpdate([x, width, y, height]) {
                         rect.x = x;
                         rect.width = width;
-                        rect.y = datum.y;
-                        rect.height = datum.height;
+                        rect.y = y;
+                        rect.height = height;
                     },
                 });
             });
@@ -720,13 +521,11 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
                 var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -734,19 +533,124 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
             });
         });
     }
-    animateReadyUpdate({ datumSelections }) {
-        datumSelections.forEach((datumSelection) => {
-            this.resetSelectionRects(datumSelection);
-        });
-    }
     animateReadyHighlight(highlightSelection) {
         this.resetSelectionRects(highlightSelection);
     }
     animateReadyResize({ datumSelections }) {
         var _a;
-        (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.stop();
+        (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
+        });
+    }
+    animateWaitingUpdateReady({ datumSelections, labelSelections, }) {
+        var _a, _b, _c, _d, _e;
+        const { processedData } = this;
+        const diff = (_a = processedData === null || processedData === void 0 ? void 0 : processedData.reduced) === null || _a === void 0 ? void 0 : _a.diff;
+        if (!(diff === null || diff === void 0 ? void 0 : diff.changed)) {
+            datumSelections.forEach((datumSelection) => {
+                this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+        const totalDuration = (_c = (_b = this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.defaultOptions.duration) !== null && _c !== void 0 ? _c : 1000;
+        const labelDuration = 200;
+        let sectionDuration = totalDuration;
+        if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
+        const datumIdKey = (_e = (_d = this.processedData) === null || _d === void 0 ? void 0 : _d.defs.keys) === null || _e === void 0 ? void 0 : _e[0];
+        const addedIds = {};
+        diff.added.forEach((d) => {
+            addedIds[d[0]] = true;
+        });
+        const removedIds = {};
+        diff.removed.forEach((d) => {
+            removedIds[d[0]] = true;
+        });
+        const rectThrottleGroup = `${this.id}_${Math.random()}`;
+        const labelThrottleGroup = `${this.id}_${Math.random()}`;
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                var _a;
+                let props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                let delay = diff.removed.length > 0 ? sectionDuration : 0;
+                let duration = sectionDuration;
+                let cleanup = false;
+                const datumId = datumIdKey ? datum.xValue : '';
+                let contextX = startingX;
+                let contextWidth = 0;
+                let contextY = datum.y;
+                let contextHeight = datum.height;
+                if (this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.Y) {
+                    contextX = datum.x;
+                    contextWidth = datum.width;
+                    contextY = startingY;
+                    contextHeight = 0;
+                }
+                const isAdded = datumId !== undefined && addedIds[datumId] !== undefined;
+                const isRemoved = datumId !== undefined && removedIds[datumId] !== undefined;
+                if (isAdded) {
+                    props = [
+                        { from: contextX, to: datum.x },
+                        { from: contextWidth, to: datum.width },
+                        { from: contextY, to: datum.y },
+                        { from: contextHeight, to: datum.height },
+                    ];
+                    duration = sectionDuration;
+                }
+                else if (isRemoved) {
+                    props = [
+                        { from: datum.x, to: contextX },
+                        { from: datum.width, to: contextWidth },
+                        { from: datum.y, to: contextY },
+                        { from: datum.height, to: contextHeight },
+                    ];
+                    delay = 0;
+                    duration = sectionDuration;
+                    cleanup = true;
+                }
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateManyWithThrottle(`${this.id}_waiting-update-ready_${rect.id}`, props, {
+                    delay,
+                    duration,
+                    ease: easing.easeOut,
+                    throttleId: `${this.id}_rects`,
+                    throttleGroup: rectThrottleGroup,
+                    onUpdate([x, width, y, height]) {
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                    onComplete() {
+                        if (cleanup)
+                            datumSelection.cleanup();
+                    },
+                });
+            });
+        });
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                var _a;
+                label.opacity = 0;
+                (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateWithThrottle(`${this.id}_waiting-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: totalDuration,
+                    duration: labelDuration,
+                    throttleId: `${this.id}_labels`,
+                    throttleGroup: labelThrottleGroup,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
+            });
         });
     }
     resetSelectionRects(selection) {
@@ -756,6 +660,41 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
             rect.width = datum.width;
             rect.height = datum.height;
         });
+        selection.cleanup();
+    }
+    getDirectionStartingValues(datumSelections) {
+        const isColumnSeries = this.getBarDirection() === chartAxisDirection_1.ChartAxisDirection.Y;
+        const xAxis = this.axes[chartAxisDirection_1.ChartAxisDirection.X];
+        const yAxis = this.axes[chartAxisDirection_1.ChartAxisDirection.Y];
+        const isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
+        const isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
+        let startingX = Infinity;
+        let startingY = 0;
+        if (yAxis && isColumnSeries) {
+            if (isContinuousY) {
+                startingY = yAxis.scale.convert(0);
+            }
+            else {
+                datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
+                    if (datum.yValue >= 0) {
+                        startingY = Math.max(startingY, datum.height + datum.y);
+                    }
+                }));
+            }
+        }
+        if (xAxis && !isColumnSeries) {
+            if (isContinuousX) {
+                startingX = xAxis.scale.convert(0);
+            }
+            else {
+                datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
+                    if (datum.yValue >= 0) {
+                        startingX = Math.min(startingX, datum.x);
+                    }
+                }));
+            }
+        }
+        return { startingX, startingY };
     }
     isLabelEnabled() {
         return this.label.enabled;
@@ -773,11 +712,11 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
 BarSeries.className = 'BarSeries';
 BarSeries.type = 'bar';
 __decorate([
-    validation_1.Validate(validation_1.COLOR_STRING_ARRAY)
-], BarSeries.prototype, "fills", void 0);
+    validation_1.Validate(validation_1.OPT_COLOR_STRING)
+], BarSeries.prototype, "fill", void 0);
 __decorate([
-    validation_1.Validate(validation_1.COLOR_STRING_ARRAY)
-], BarSeries.prototype, "strokes", void 0);
+    validation_1.Validate(validation_1.OPT_COLOR_STRING)
+], BarSeries.prototype, "stroke", void 0);
 __decorate([
     validation_1.Validate(validation_1.NUMBER(0, 1))
 ], BarSeries.prototype, "fillOpacity", void 0);
@@ -800,14 +739,14 @@ __decorate([
     validation_1.Validate(validation_1.OPT_STRING)
 ], BarSeries.prototype, "xName", void 0);
 __decorate([
-    validation_1.Validate(validation_1.STRING_ARRAY)
-], BarSeries.prototype, "hideInLegend", void 0);
+    validation_1.Validate(validation_1.OPT_STRING)
+], BarSeries.prototype, "yKey", void 0);
 __decorate([
-    validation_1.Validate(validation_1.BOOLEAN_ARRAY)
-], BarSeries.prototype, "visibles", void 0);
+    validation_1.Validate(validation_1.OPT_STRING)
+], BarSeries.prototype, "yName", void 0);
 __decorate([
-    validation_1.Validate(validation_1.BOOLEAN)
-], BarSeries.prototype, "grouped", void 0);
+    validation_1.Validate(validation_1.OPT_STRING)
+], BarSeries.prototype, "stackGroup", void 0);
 __decorate([
     validation_1.Validate(validation_1.OPT_NUMBER())
 ], BarSeries.prototype, "normalizedTo", void 0);
@@ -821,52 +760,6 @@ class ColumnSeries extends BarSeries {
     }
     getCategoryDirection() {
         return chartAxisDirection_1.ChartAxisDirection.X;
-    }
-    animateEmptyUpdateReady({ datumSelections, labelSelections, }) {
-        const duration = 1000;
-        const labelDuration = 200;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) => datumSelection.each((_, datum) => {
-            if (datum.yValue >= 0) {
-                startingY = Math.max(startingY, datum.height + datum.y);
-            }
-        }));
-        datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${rect.id}`, [
-                    { from: startingY, to: datum.y },
-                    { from: 0, to: datum.height },
-                ], {
-                    disableInteractions: true,
-                    duration,
-                    ease: easing.easeOut,
-                    repeat: 0,
-                    onUpdate([y, height]) {
-                        rect.y = y;
-                        rect.height = height;
-                        rect.x = datum.x;
-                        rect.width = datum.width;
-                    },
-                });
-            });
-        });
-        labelSelections.forEach((labelSelection) => {
-            labelSelection.each((label) => {
-                var _a;
-                (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, {
-                    from: 0,
-                    to: 1,
-                    delay: duration,
-                    duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
-                    onUpdate: (opacity) => {
-                        label.opacity = opacity;
-                    },
-                });
-            });
-        });
     }
 }
 exports.ColumnSeries = ColumnSeries;

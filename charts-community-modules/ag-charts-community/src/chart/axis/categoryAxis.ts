@@ -1,9 +1,9 @@
 import { NUMBER, Validate } from '../../util/validation';
 import { BandScale } from '../../scale/bandScale';
-import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
+import type { ModuleContext } from '../../util/moduleContext';
+import { CartesianAxis } from './cartesianAxis';
 
-export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
+export class CategoryAxis extends CartesianAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
 
@@ -36,8 +36,11 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
 
     normaliseDataDomain(d: (string | object)[]): (string | object)[] {
         // Prevent duplicate categories.
-        const valuesSet = new Set<string | {}>(d);
-        return new Array(...valuesSet.values());
+        const valuesSet: Record<string, (typeof d)[number]> = {};
+        for (const next of d) {
+            valuesSet[String(next)] ??= next;
+        }
+        return Object.values(valuesSet);
     }
 
     protected calculateDomain() {

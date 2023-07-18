@@ -1,11 +1,11 @@
 import { TimeScale } from '../../scale/timeScale';
-import { ChartAxis } from '../chartAxis';
-import { ModuleContext } from '../../util/module';
-import { BaseAxisTick } from '../../axis';
-declare class TimeAxisTick extends BaseAxisTick<TimeScale, number | Date> {
+import type { ModuleContext } from '../../util/moduleContext';
+import { AxisTick } from './axisTick';
+import { CartesianAxis } from './cartesianAxis';
+declare class TimeAxisTick extends AxisTick<TimeScale, number | Date> {
     maxSpacing: number;
 }
-export declare class TimeAxis extends ChartAxis<TimeScale, number | Date> {
+export declare class TimeAxis extends CartesianAxis<TimeScale, number | Date> {
     static className: string;
     static type: "time";
     private datumFormat;
@@ -17,7 +17,6 @@ export declare class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     protected createTick(): TimeAxisTick;
     protected onLabelFormatChange(ticks: any[], format?: string): void;
     formatDatum(datum: Date): string;
-    calculatePadding(_min: number, _max: number): number;
+    calculatePadding(_min: number, _max: number): [number, number];
 }
 export {};
-//# sourceMappingURL=timeAxis.d.ts.map

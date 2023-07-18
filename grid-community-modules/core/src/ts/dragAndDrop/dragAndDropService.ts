@@ -10,9 +10,10 @@ import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { flatten, removeFromArray } from "../utils/array";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
-import { loadTemplate, clearElement } from "../utils/dom";
+import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom";
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
+import { IAggFunc } from "../entities/colDef";
 
 export interface DragItem {
     /**
@@ -29,6 +30,13 @@ export interface DragItem {
 
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
+
+    /** When dragging columns, this contains the pivot state of the columns. This is only populated/used in column tool panel */
+    pivotState?: { [key: string]: {
+        pivot?: boolean;
+        rowGroup?: boolean;
+        aggFunc?: string | IAggFunc | null;
+    } };
 }
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }
@@ -200,12 +208,13 @@ export class DragAndDropService extends BeanStub {
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
-            onDragging: this.onDragging.bind(this)
+            onDragging: this.onDragging.bind(this),
+            includeTouch: allowTouch
         };
 
         this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
 
-        this.dragService.addDragSource(params, allowTouch);
+        this.dragService.addDragSource(params);
     }
 
     public removeDragSource(dragSource: DragSource): void {
@@ -441,14 +450,15 @@ export class DragAndDropService extends BeanStub {
         const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
 
-        // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
-        // then brought in scrollbars to the browser. no idea why, but putting in -2 here
-        // works around it which is good enough for me.
-        const browserWidth = getBodyWidth() - 2;
-        const browserHeight = getBodyHeight() - 2;
+        const browserWidth = getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
+        const browserHeight = getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
 
-        let top = event.pageY - (ghostHeight / 2);
-        let left = event.pageX - 10;
+        const offsetParentSize = getElementRectWithOffset(ghost.offsetParent as HTMLElement);
+
+        const { clientY, clientX } = event;
+
+        let top = (clientY - offsetParentSize.top) - (ghostHeight / 2);
+        let left = (clientX - offsetParentSize.left) - 10;
 
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28,6 +22,8 @@ const hoverFeature_1 = require("../hoverFeature");
 const resizeFeature_1 = require("./resizeFeature");
 const selectAllFeature_1 = require("./selectAllFeature");
 const dom_1 = require("../../../utils/dom");
+const browser_1 = require("../../../utils/browser");
+const focusService_1 = require("../../../focusService");
 class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
     constructor(column, parentRowCtrl) {
         super(column, parentRowCtrl);
@@ -66,11 +62,30 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
             onFocusIn: this.onFocusIn.bind(this),
             onFocusOut: this.onFocusOut.bind(this)
         }));
+        this.addMouseDownListenerIfNeeded(eGui);
         this.addManagedListener(this.column, column_1.Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+    }
+    addMouseDownListenerIfNeeded(eGui) {
+        // we add a preventDefault in the DragService for Safari only
+        // so we need to make sure we don't prevent focus on mousedown
+        if (!browser_1.isBrowserSafari()) {
+            return;
+        }
+        const events = ['mousedown', 'touchstart'];
+        const eDocument = this.gridOptionsService.getDocument();
+        events.forEach(eventName => {
+            this.addManagedListener(eGui, eventName, (e) => {
+                const activeEl = eDocument.activeElement;
+                if (activeEl !== eGui && !eGui.contains(activeEl)) {
+                    eGui.focus();
+                    focusService_1.FocusService.toggleKeyboardMode(e);
+                }
+            });
+        });
     }
     setupUserComp() {
         const compDetails = this.lookupUserCompDetails();

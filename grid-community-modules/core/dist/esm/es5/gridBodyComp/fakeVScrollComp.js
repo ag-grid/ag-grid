@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -27,7 +21,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { setFixedWidth } from "../utils/dom";
+import { isVisible, setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
 var FakeVScrollComp = /** @class */ (function (_super) {
@@ -58,6 +52,15 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
             this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
         }
+    };
+    FakeVScrollComp.prototype.getScrollPosition = function () {
+        return this.getViewport().scrollTop;
+    };
+    FakeVScrollComp.prototype.setScrollPosition = function (value) {
+        if (!isVisible(this.getViewport())) {
+            this.attemptSettingScrollPosition(value);
+        }
+        this.getViewport().scrollTop = value;
     };
     FakeVScrollComp.TEMPLATE = "<div class=\"ag-body-vertical-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-body-vertical-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-vertical-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n        </div>";
     __decorate([

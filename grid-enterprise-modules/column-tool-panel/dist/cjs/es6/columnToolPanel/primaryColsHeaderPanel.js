@@ -34,6 +34,7 @@ class PrimaryColsHeaderPanel extends core_1.Component {
         const translate = this.localeService.getLocaleTextFunc();
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+        this.activateTabIndex([this.eExpand]);
     }
     init(params) {
         this.params = params;
@@ -94,7 +95,7 @@ class PrimaryColsHeaderPanel extends core_1.Component {
 }
 PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
 PrimaryColsHeaderPanel.TEMPLATE = `<div class="ag-column-select-header" role="presentation">
-            <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
+            <div ref="eExpand" class="ag-column-select-header-icon"></div>
             <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
         </div>`;

@@ -1,6 +1,7 @@
 import { Shape } from './shape';
 import { Path2D } from '../path2D';
-import { RedrawType, RenderContext } from '../node';
+import type { RenderContext } from '../node';
+import { RedrawType } from '../node';
 export declare function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType;
     convertor?: (o: any) => any;

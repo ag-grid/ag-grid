@@ -1,7 +1,6 @@
 import { Column, Component, ITooltipParams, WithoutGridCommon } from "@ag-grid-community/core";
+import { ColumnModelItem } from "./columnModelItem";
 export declare class ToolPanelColumnComp extends Component {
-    private readonly column;
-    private readonly columnDept;
     private readonly allowDragging;
     private readonly groupsExist;
     private readonly focusWrapper;
@@ -11,10 +10,12 @@ export declare class ToolPanelColumnComp extends Component {
     private readonly modelItemUtils;
     private eLabel;
     private cbSelect;
+    private column;
+    private columnDept;
     private eDragHandle;
     private displayName;
     private processingColumnStateChange;
-    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean, focusWrapper: HTMLElement);
+    constructor(modelItem: ColumnModelItem, allowDragging: boolean, groupsExist: boolean, focusWrapper: HTMLElement);
     init(): void;
     getColumn(): Column;
     private setupTooltip;

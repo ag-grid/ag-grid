@@ -1,5 +1,5 @@
 import { Text } from './scene/shape/text';
-import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
+import type { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
 export declare class Caption {
     static readonly PADDING = 10;
     readonly node: Text;

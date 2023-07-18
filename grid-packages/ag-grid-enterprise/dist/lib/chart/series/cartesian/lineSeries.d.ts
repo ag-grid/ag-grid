@@ -1,15 +1,17 @@
-import { Path } from '../../../scene/shape/path';
-import { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext } from '../series';
-import { BBox } from '../../../scene/bbox';
-import { Text } from '../../../scene/shape/text';
-import { ChartLegendDatum } from '../../legendDatum';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDatum, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
+import type { Path } from '../../../scene/shape/path';
+import type { Selection } from '../../../scene/selection';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip } from '../series';
+import type { Text } from '../../../scene/shape/text';
+import type { ChartLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { Label } from '../../label';
-import { Marker } from '../../marker/marker';
-import { AgCartesianSeriesLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, AgTooltipRendererResult, FontStyle, FontWeight } from '../../agChartOptions';
-import { ModuleContext } from '../../../util/module';
+import type { Marker } from '../../marker/marker';
+import type { AgCartesianSeriesLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, AgTooltipRendererResult, FontStyle, FontWeight } from '../../agChartOptions';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
         readonly moveTo: boolean;
@@ -50,7 +52,7 @@ export declare class LineSeries extends CartesianSeries<LineContext> {
     xName?: string;
     yKey?: string;
     yName?: string;
-    processData(): Promise<void>;
+    processData(dataController: DataController): Promise<void>;
     getDomain(direction: ChartAxisDirection): any[];
     createNodeData(): Promise<{
         itemId: string;
@@ -78,12 +80,11 @@ export declare class LineSeries extends CartesianSeries<LineContext> {
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: LineNodeDatum): CartesianSeriesNodeDoubleClickEvent<any>;
     getTooltipHtml(nodeDatum: LineNodeDatum): string;
     getLegendData(): ChartLegendDatum[];
-    animateEmptyUpdateReady({ markerSelections, labelSelections, contextData, paths, seriesRect, }: {
+    animateEmptyUpdateReady({ markerSelections, labelSelections, contextData, paths, }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
         labelSelections: Array<Selection<Text, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
-        seriesRect?: BBox;
     }): void;
     animateReadyUpdate(data: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;

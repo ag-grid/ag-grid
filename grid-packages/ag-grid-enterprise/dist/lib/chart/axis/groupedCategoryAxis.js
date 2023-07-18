@@ -49,12 +49,13 @@ var angle_1 = require("../../util/angle");
 var text_1 = require("../../scene/shape/text");
 var bandScale_1 = require("../../scale/bandScale");
 var tree_1 = require("../../layout/tree");
-var axis_1 = require("../../axis");
-var chartAxis_1 = require("../chartAxis");
 var chartAxisDirection_1 = require("../chartAxisDirection");
 var array_1 = require("../../util/array");
 var validation_1 = require("../../util/validation");
 var label_1 = require("../label");
+var axisLabel_1 = require("./axisLabel");
+var axisLine_1 = require("./axisLine");
+var cartesianAxis_1 = require("./cartesianAxis");
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
     __extends(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
@@ -66,7 +67,7 @@ var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.BOOLEAN)
     ], GroupedCategoryAxisLabel.prototype, "grid", void 0);
     return GroupedCategoryAxisLabel;
-}(axis_1.AxisLabel));
+}(axisLabel_1.AxisLabel));
 var GroupedCategoryAxis = /** @class */ (function (_super) {
     __extends(GroupedCategoryAxis, _super);
     function GroupedCategoryAxis(moduleCtx) {
@@ -78,7 +79,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             x: 0,
             y: 0,
         };
-        _this.line = new axis_1.AxisLine();
+        _this.line = new axisLine_1.AxisLine();
         _this.label = new GroupedCategoryAxisLabel();
         /**
          * The color of the labels.
@@ -405,6 +406,6 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.OPT_COLOR_STRING)
     ], GroupedCategoryAxis.prototype, "labelColor", void 0);
     return GroupedCategoryAxis;
-}(chartAxis_1.ChartAxis));
+}(cartesianAxis_1.CartesianAxis));
 exports.GroupedCategoryAxis = GroupedCategoryAxis;
 //# sourceMappingURL=groupedCategoryAxis.js.map

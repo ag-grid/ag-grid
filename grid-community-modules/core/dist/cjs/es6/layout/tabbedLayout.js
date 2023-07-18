@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -114,7 +108,7 @@ class TabbedLayout extends component_1.Component {
     addItem(item) {
         const eHeaderButton = document.createElement('span');
         aria_1.setAriaRole(eHeaderButton, 'tab');
-        eHeaderButton.setAttribute('tabIndex', '-1');
+        eHeaderButton.setAttribute('tabindex', '-1');
         eHeaderButton.appendChild(item.title);
         eHeaderButton.classList.add('ag-tab');
         this.eHeader.appendChild(eHeaderButton);

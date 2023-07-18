@@ -35,7 +35,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                     class="ag-theme-alpine"
                     [rowData]="bottomData"
                     [gridOptions]="bottomOptions"
-                    headerHeight="0"
+                    [headerHeight]="0"
                     [rowStyle]="{ fontWeight: 'bold' }"
                     [columnDefs]="columnDefs">
             </ag-grid-angular>

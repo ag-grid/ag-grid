@@ -16,19 +16,23 @@ function sumValues(values, accumulator = [0, 0]) {
     }
     return accumulator;
 }
-function sum(props) {
+function sum(scope, id, matchGroupId) {
     const result = {
-        properties: props,
+        id,
+        scopes: [scope.id],
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
     };
     return result;
 }
 exports.sum = sum;
-function groupSum(props) {
+function groupSum(scope, id, matchGroupId) {
     return {
+        id,
+        scopes: [scope.id],
         type: 'aggregate',
-        properties: props,
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         aggregateFunction: (values) => sumValues(values),
         groupAggregateFunction: (next, acc = [0, 0]) => {
             var _a, _b;
@@ -39,28 +43,32 @@ function groupSum(props) {
     };
 }
 exports.groupSum = groupSum;
-function range(props) {
+function range(scope, id, matchGroupId) {
     const result = {
-        properties: props,
+        id,
+        scopes: [scope.id],
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => utilFunctions_1.extendDomain(values),
     };
     return result;
 }
 exports.range = range;
-function count() {
+function count(scope, id) {
     const result = {
-        properties: [],
+        id,
+        scopes: [scope.id],
         type: 'aggregate',
         aggregateFunction: () => [0, 1],
     };
     return result;
 }
 exports.count = count;
-function groupCount() {
+function groupCount(scope, id) {
     return {
+        id,
+        scopes: [scope.id],
         type: 'aggregate',
-        properties: [],
         aggregateFunction: () => [0, 1],
         groupAggregateFunction: (next, acc = [0, 0]) => {
             var _a, _b;
@@ -71,18 +79,22 @@ function groupCount() {
     };
 }
 exports.groupCount = groupCount;
-function average(props) {
+function average(scope, id, matchGroupId) {
     const result = {
-        properties: props,
+        id,
+        scopes: [scope.id],
+        matchGroupIds: [matchGroupId],
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values).map((v) => v / values.length),
     };
     return result;
 }
 exports.average = average;
-function groupAverage(props) {
+function groupAverage(scope, id, matchGroupId) {
     const result = {
-        properties: props,
+        id,
+        scopes: [scope.id],
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         type: 'aggregate',
         aggregateFunction: (values) => sumValues(values),
         groupAggregateFunction: (next, acc = [0, 0, -1]) => {
@@ -103,9 +115,11 @@ function groupAverage(props) {
     return result;
 }
 exports.groupAverage = groupAverage;
-function area(props, aggFn) {
+function area(scope, id, aggFn, matchGroupId) {
     const result = {
-        properties: props,
+        id,
+        scopes: [scope.id],
+        matchGroupIds: matchGroupId ? [matchGroupId] : undefined,
         type: 'aggregate',
         aggregateFunction: (values, keyRange = []) => {
             const keyWidth = keyRange[1] - keyRange[0];

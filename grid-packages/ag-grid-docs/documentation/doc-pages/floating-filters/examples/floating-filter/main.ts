@@ -1,7 +1,5 @@
 import { Grid, ColDef, GridOptions, ISetFilter, IDateFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
-declare var PersonFilter: any;
-
 var dateFilterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
@@ -25,11 +23,11 @@ var dateFilterParams: IDateFilterParams = {
       return 1
     }
     return 0;
-  },
+  }
 }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: PersonFilter, suppressMenu: true },
+  { field: 'athlete', filter: 'agTextColumnFilter', suppressMenu: true },
   { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
   { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
   {

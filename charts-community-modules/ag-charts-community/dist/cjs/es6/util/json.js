@@ -128,7 +128,12 @@ function jsonMerge(json, opts) {
     const props = new Set(json.map((v) => (v != null ? Object.keys(v) : [])).reduce((r, n) => r.concat(n), []));
     for (const nextProp of props) {
         const values = json
-            .map((j) => (j != null && nextProp in j ? j[nextProp] : NOT_SPECIFIED))
+            .map((j) => {
+            if (j != null && typeof j === 'object' && nextProp in j) {
+                return j[nextProp];
+            }
+            return NOT_SPECIFIED;
+        })
             .filter((v) => v !== NOT_SPECIFIED);
         if (values.length === 0) {
             continue;
@@ -171,11 +176,13 @@ exports.jsonMerge = jsonMerge;
  * @param params.skip property names to skip from the source
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
+ * @param params.constructedArrays map stores arrays which items should be initialised
+ *                                 using a class constructor
  * @param params.allowedTypes overrides by path for allowed property types
  */
 function jsonApply(target, source, params = {}) {
-    var _a, _b;
-    const { path = undefined, matcherPath = path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined, skip = [], constructors = {}, allowedTypes = {}, idx, } = params;
+    var _a, _b, _c;
+    const { path = undefined, matcherPath = path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined, skip = [], constructors = {}, constructedArrays = new WeakMap(), allowedTypes = {}, idx, } = params;
     if (target == null) {
         throw new Error(`AG Charts - target is uninitialised: ${path !== null && path !== void 0 ? path : '<root>'}`);
     }
@@ -214,7 +221,7 @@ function jsonApply(target, source, params = {}) {
                 continue;
             }
             if (newValueType === 'array') {
-                ctr = ctr !== null && ctr !== void 0 ? ctr : constructors[`${propertyMatcherPath}[]`];
+                ctr = (_c = ctr !== null && ctr !== void 0 ? ctr : constructedArrays.get(currentValue)) !== null && _c !== void 0 ? _c : constructors[`${propertyMatcherPath}[]`];
                 if (ctr != null) {
                     const newValueArray = newValue;
                     targetAny[property] = newValueArray.map((v, idx) => jsonApply(new ctr(), v, Object.assign(Object.assign({}, params), { path: propertyPath, matcherPath: propertyMatcherPath + '[]', idx })));
@@ -242,8 +249,7 @@ function jsonApply(target, source, params = {}) {
             }
         }
         catch (error) {
-            const err = error;
-            logger_1.Logger.warn(`unable to set [${propertyPath}] in [${targetClass === null || targetClass === void 0 ? void 0 : targetClass.name}]; nested error is: ${err.message}`);
+            logger_1.Logger.warn(`unable to set [${propertyPath}] in [${targetClass === null || targetClass === void 0 ? void 0 : targetClass.name}]; nested error is: ${error.message}`);
             continue;
         }
     }

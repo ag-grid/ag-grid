@@ -40,10 +40,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
  * animation callback executes.
  */
 export function debouncedAnimationFrame(cb) {
-    return buildScheduler(function (cb) { return requestAnimationFrame(cb); }, cb);
+    return buildScheduler(function (cb, _delayMs) { return requestAnimationFrame(cb); }, cb);
 }
 export function debouncedCallback(cb) {
-    return buildScheduler(function (cb) { return setTimeout(cb, 0); }, cb);
+    return buildScheduler(function (cb, delayMs) {
+        if (delayMs === void 0) { delayMs = 0; }
+        return setTimeout(cb, delayMs);
+    }, cb);
 }
 function buildScheduler(scheduleFn, cb) {
     var scheduleCount = 0;
@@ -74,9 +77,9 @@ function buildScheduler(scheduleFn, cb) {
         maybePromise.then(done).catch(done);
     };
     return {
-        schedule: function () {
+        schedule: function (delayMs) {
             if (scheduleCount === 0 && !busy()) {
-                scheduleFn(scheduleCb);
+                scheduleFn(scheduleCb, delayMs);
             }
             scheduleCount++;
         },
@@ -88,7 +91,7 @@ function buildScheduler(scheduleFn, cb) {
                             if (!busy()) {
                                 return [2 /*return*/];
                             }
-                            if (!awaitingPromise) {
+                            if (awaitingPromise == null) {
                                 awaitingPromise = new Promise(function (resolve) {
                                     awaitingDone = resolve;
                                 });

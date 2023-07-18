@@ -10,7 +10,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 import { REGISTERED_MODULES } from '../../util/module';
-import { registerAxisThemeTemplate } from '../chartAxesTypes';
+import { registerAxis, registerAxisThemeTemplate } from './axisTypes';
 import { JSON_APPLY_PLUGINS } from '../chartOptions';
 import { registerChartDefaults } from './chartTypes';
 import { registerLegend } from './legendTypes';
@@ -20,7 +20,7 @@ export function setupModules() {
     try {
         for (var REGISTERED_MODULES_1 = __values(REGISTERED_MODULES), REGISTERED_MODULES_1_1 = REGISTERED_MODULES_1.next(); !REGISTERED_MODULES_1_1.done; REGISTERED_MODULES_1_1 = REGISTERED_MODULES_1.next()) {
             var m = REGISTERED_MODULES_1_1.value;
-            if (m.optionConstructors != null) {
+            if (JSON_APPLY_PLUGINS.constructors != null && m.optionConstructors != null) {
                 Object.assign(JSON_APPLY_PLUGINS.constructors, m.optionConstructors);
             }
             if (m.type === 'root') {
@@ -43,9 +43,9 @@ export function setupModules() {
             if (m.type === 'series') {
                 if (m.chartTypes.length > 1)
                     throw new Error('AG Charts - Module definition error: ' + m.identifier);
-                registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate);
+                registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate, m.paletteFactory);
             }
-            if (m.type === 'axis') {
+            if (m.type === 'axis-option') {
                 if (m.themeTemplate) {
                     try {
                         for (var _f = (e_3 = void 0, __values(m.axisTypes)), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -60,6 +60,12 @@ export function setupModules() {
                         }
                         finally { if (e_3) throw e_3.error; }
                     }
+                }
+            }
+            if (m.type === 'axis') {
+                registerAxis(m.identifier, m.instanceConstructor);
+                if (m.themeTemplate) {
+                    registerAxisThemeTemplate(m.identifier, m.themeTemplate);
                 }
             }
             if (m.type === 'legend') {

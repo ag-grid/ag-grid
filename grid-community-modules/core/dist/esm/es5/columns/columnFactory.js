@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -236,6 +230,7 @@ var ColumnFactory = /** @class */ (function (_super) {
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
+        this.dataTypeService.addColumnListeners(column);
         return column;
     };
     ColumnFactory.prototype.applyColumnState = function (column, colDef) {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
@@ -8,4 +8,6 @@ export declare class FakeVScrollComp extends AbstractFakeScrollComp {
     protected postConstruct(): void;
     protected setScrollVisible(): void;
     private onRowContainerHeightChanged;
+    getScrollPosition(): number;
+    setScrollPosition(value: number): void;
 }

@@ -77,18 +77,18 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 import { Rect } from '../../../scene/shape/rect';
-import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty, } from '../series';
+import { SeriesTooltip, Series, SeriesNodePickMode, valueProperty, keyProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent, } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { BOOLEAN, NUMBER, OPT_ARRAY, OPT_FUNCTION, OPT_LINE_DASH, OPT_NUMBER, OPT_COLOR_STRING, Validate, predicateWithMessage, OPT_STRING, } from '../../../util/validation';
-import { DataModel, fixNumericExtent, } from '../../data/dataModel';
+import { fixNumericExtent } from '../../data/dataModel';
 import { area, groupAverage, groupCount, groupSum } from '../../data/aggregateFunctions';
-import { SORT_DOMAIN_GROUPS } from '../../data/processors';
+import { SORT_DOMAIN_GROUPS, diff } from '../../data/processors';
 import * as easing from '../../../motion/easing';
 var HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 var HISTOGRAM_AGGREGATION = predicateWithMessage(function (v) { return HISTOGRAM_AGGREGATIONS.includes(v); }, "expecting a histogram aggregation keyword such as 'count', 'sum' or 'mean");
@@ -145,6 +145,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         _this.shadow = undefined;
         _this.calculatedBins = [];
+        _this.datumSelectionGarbageCollection = false;
         _this.label.enabled = false;
         return _this;
     }
@@ -191,79 +192,90 @@ var HistogramSeries = /** @class */ (function (_super) {
             binSize: binSize,
         };
     };
-    HistogramSeries.prototype.processData = function () {
+    HistogramSeries.prototype.processData = function (dataController) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, xKey, yKey, data, areaPlot, aggregation, props, aggProp, aggProp, groupByFn;
+            var _b, xKey, yKey, data, areaPlot, aggregation, props, aggProp, aggProp, groupByFn, _c, dataModel, processedData;
             var _this = this;
-            return __generator(this, function (_b) {
-                _a = this, xKey = _a.xKey, yKey = _a.yKey, data = _a.data, areaPlot = _a.areaPlot, aggregation = _a.aggregation;
-                props = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
-                if (yKey) {
-                    aggProp = groupCount();
-                    if (aggregation === 'count') {
-                        // Nothing to do.
-                    }
-                    else if (aggregation === 'sum') {
-                        aggProp = groupSum([yKey]);
-                    }
-                    else if (aggregation === 'mean') {
-                        aggProp = groupAverage([yKey]);
-                    }
-                    if (areaPlot) {
-                        aggProp = area([yKey], aggProp);
-                    }
-                    props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
-                }
-                else {
-                    aggProp = groupCount();
-                    if (areaPlot) {
-                        aggProp = area([], aggProp);
-                    }
-                    props.push(aggProp);
-                }
-                groupByFn = function (dataSet) {
-                    var _a;
-                    var xExtent = fixNumericExtent(dataSet.domain.keys[0]);
-                    if (xExtent.length === 0) {
-                        // No buckets can be calculated.
-                        dataSet.domain.groups = [];
-                        return function () { return []; };
-                    }
-                    var bins = (_a = _this.bins) !== null && _a !== void 0 ? _a : _this.deriveBins(xExtent);
-                    var binCount = bins.length;
-                    _this.calculatedBins = __spreadArray([], __read(bins));
-                    return function (item) {
-                        var xValue = item.keys[0];
-                        for (var i = 0; i < binCount; i++) {
-                            var nextBin = bins[i];
-                            if (xValue >= nextBin[0] && xValue < nextBin[1]) {
-                                return nextBin;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _b = this, xKey = _b.xKey, yKey = _b.yKey, data = _b.data, areaPlot = _b.areaPlot, aggregation = _b.aggregation;
+                        props = [keyProperty(this, xKey, true), SORT_DOMAIN_GROUPS];
+                        if (yKey) {
+                            aggProp = groupCount(this, 'groupCount');
+                            if (aggregation === 'count') {
+                                // Nothing to do.
                             }
-                            if (i === binCount - 1 && xValue <= nextBin[1]) {
-                                // Handle edge case of a value being at the maximum extent, and the
-                                // final bin aligning with it.
-                                return nextBin;
+                            else if (aggregation === 'sum') {
+                                aggProp = groupSum(this, 'groupAgg');
                             }
+                            else if (aggregation === 'mean') {
+                                aggProp = groupAverage(this, 'groupAgg');
+                            }
+                            if (areaPlot) {
+                                aggProp = area(this, 'groupAgg', aggProp);
+                            }
+                            props.push(valueProperty(this, yKey, true, { invalidValue: undefined }), aggProp);
                         }
-                        return [];
-                    };
-                };
-                this.dataModel = new DataModel({
-                    props: props,
-                    dataVisible: this.visible,
-                    groupByFn: groupByFn,
-                });
-                this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
-                return [2 /*return*/];
+                        else {
+                            aggProp = groupCount(this, 'groupAgg');
+                            if (areaPlot) {
+                                aggProp = area(this, 'groupAgg', aggProp);
+                            }
+                            props.push(aggProp);
+                        }
+                        groupByFn = function (dataSet) {
+                            var _a;
+                            var xExtent = fixNumericExtent(dataSet.domain.keys[0]);
+                            if (xExtent.length === 0) {
+                                // No buckets can be calculated.
+                                dataSet.domain.groups = [];
+                                return function () { return []; };
+                            }
+                            var bins = (_a = _this.bins) !== null && _a !== void 0 ? _a : _this.deriveBins(xExtent);
+                            var binCount = bins.length;
+                            _this.calculatedBins = __spreadArray([], __read(bins));
+                            return function (item) {
+                                var xValue = item.keys[0];
+                                for (var i = 0; i < binCount; i++) {
+                                    var nextBin = bins[i];
+                                    if (xValue >= nextBin[0] && xValue < nextBin[1]) {
+                                        return nextBin;
+                                    }
+                                    if (i === binCount - 1 && xValue <= nextBin[1]) {
+                                        // Handle edge case of a value being at the maximum extent, and the
+                                        // final bin aligning with it.
+                                        return nextBin;
+                                    }
+                                }
+                                return [];
+                            };
+                        };
+                        if (!((_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.skipAnimations) && this.processedData) {
+                            props.push(diff(this.processedData, false));
+                        }
+                        return [4 /*yield*/, dataController.request(this.id, data !== null && data !== void 0 ? data : [], {
+                                props: props,
+                                dataVisible: this.visible,
+                                groupByFn: groupByFn,
+                            })];
+                    case 1:
+                        _c = _d.sent(), dataModel = _c.dataModel, processedData = _c.processedData;
+                        this.dataModel = dataModel;
+                        this.processedData = processedData;
+                        this.animationState.transition('updateData');
+                        return [2 /*return*/];
+                }
             });
         });
     };
     HistogramSeries.prototype.getDomain = function (direction) {
         var _a, _b, _c, _d;
-        var processedData = this.processedData;
-        if (!processedData)
+        var _e = this, processedData = _e.processedData, dataModel = _e.dataModel;
+        if (!processedData || !dataModel)
             return [];
-        var _e = processedData.domain.aggValues, _f = _e === void 0 ? [] : _e, _g = __read(_f, 1), yDomain = _g[0];
+        var yDomain = dataModel.getDomain(this, "groupAgg", 'aggregate', processedData);
         var xDomainMin = (_a = this.calculatedBins) === null || _a === void 0 ? void 0 : _a[0][0];
         var xDomainMax = (_b = this.calculatedBins) === null || _b === void 0 ? void 0 : _b[((_d = (_c = this.calculatedBins) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
@@ -282,11 +294,13 @@ var HistogramSeries = /** @class */ (function (_super) {
     HistogramSeries.prototype.createNodeData = function () {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, xAxis, yAxis, processedData, callbackCache, xScale, yScale, _c, fill, stroke, strokeWidth, seriesId, _d, yKey, _e, xKey, nodeData, defaultLabelFormatter, _f, _g, labelFormatter, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor;
+            var _b, axes, processedData, callbackCache, xAxis, yAxis, xScale, yScale, _c, fill, stroke, strokeWidth, seriesId, _d, yKey, _e, xKey, nodeData, defaultLabelFormatter, _f, _g, labelFormatter, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor;
             var _this = this;
             return __generator(this, function (_h) {
-                _b = this, xAxis = _b.xAxis, yAxis = _b.yAxis, processedData = _b.processedData, callbackCache = _b.ctx.callbackCache;
-                if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
+                _b = this, axes = _b.axes, processedData = _b.processedData, callbackCache = _b.ctx.callbackCache;
+                xAxis = axes[ChartAxisDirection.X];
+                yAxis = axes[ChartAxisDirection.Y];
+                if (!this.visible || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
                     return [2 /*return*/, []];
                 }
                 xScale = xAxis.scale;
@@ -332,6 +346,8 @@ var HistogramSeries = /** @class */ (function (_super) {
                         xKey: xKey,
                         x: xMinPx,
                         y: yMaxPx,
+                        xValue: xMinPx,
+                        yValue: yMaxPx,
                         width: w,
                         height: h,
                         nodeMidPoint: nodeMidPoint,
@@ -356,7 +372,7 @@ var HistogramSeries = /** @class */ (function (_super) {
                 return [2 /*return*/, datumSelection.update(nodeData, function (rect) {
                         rect.tag = HistogramSeriesNodeTag.Bin;
                         rect.crisp = true;
-                    })];
+                    }, function (datum) { return datum.domain.join('_'); })];
             });
         });
     };
@@ -373,8 +389,6 @@ var HistogramSeries = /** @class */ (function (_super) {
                         ? highlightedDatumStrokeWidth
                         : datum.strokeWidth;
                     var fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
-                    rect.x = datum.x;
-                    rect.width = datum.width;
                     rect.fill = (_a = (isDatumHighlighted ? highlightedFill : undefined)) !== null && _a !== void 0 ? _a : datum.fill;
                     rect.stroke = (_b = (isDatumHighlighted ? highlightedStroke : undefined)) !== null && _b !== void 0 ? _b : datum.stroke;
                     rect.fillOpacity = fillOpacity;
@@ -432,7 +446,9 @@ var HistogramSeries = /** @class */ (function (_super) {
         });
     };
     HistogramSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var _a = this, xKey = _a.xKey, _b = _a.yKey, yKey = _b === void 0 ? '' : _b, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, _b = _a.yKey, yKey = _b === void 0 ? '' : _b, axes = _a.axes;
+        var xAxis = axes[ChartAxisDirection.X];
+        var yAxis = axes[ChartAxisDirection.Y];
         if (!xKey || !xAxis || !yAxis) {
             return '';
         }
@@ -498,8 +514,9 @@ var HistogramSeries = /** @class */ (function (_super) {
     };
     HistogramSeries.prototype.animateEmptyUpdateReady = function (_a) {
         var _this = this;
+        var _b, _c;
         var datumSelections = _a.datumSelections, labelSelections = _a.labelSelections;
-        var duration = 1000;
+        var duration = (_c = (_b = this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.defaultOptions.duration) !== null && _c !== void 0 ? _c : 1000;
         var labelDuration = 200;
         var startingY = 0;
         datumSelections.forEach(function (datumSelection) {
@@ -510,14 +527,12 @@ var HistogramSeries = /** @class */ (function (_super) {
         datumSelections.forEach(function (datumSelection) {
             datumSelection.each(function (rect, datum) {
                 var _a;
-                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + rect.id, [
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_empty-update-ready_" + rect.id, [
                     { from: startingY, to: datum.y },
                     { from: 0, to: datum.height },
                 ], {
-                    disableInteractions: true,
                     duration: duration,
                     ease: easing.easeOut,
-                    repeat: 0,
                     onUpdate: function (_a) {
                         var _b = __read(_a, 2), y = _b[0], height = _b[1];
                         rect.y = y;
@@ -531,13 +546,11 @@ var HistogramSeries = /** @class */ (function (_super) {
         labelSelections.forEach(function (labelSelection) {
             labelSelection.each(function (label) {
                 var _a;
-                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: function (opacity) {
                         label.opacity = opacity;
                     },
@@ -559,9 +572,115 @@ var HistogramSeries = /** @class */ (function (_super) {
         var _this = this;
         var _b;
         var datumSelections = _a.datumSelections;
-        (_b = this.animationManager) === null || _b === void 0 ? void 0 : _b.stop();
+        (_b = this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.reset();
         datumSelections.forEach(function (datumSelection) {
             _this.resetSelectionRects(datumSelection);
+        });
+    };
+    HistogramSeries.prototype.animateWaitingUpdateReady = function (_a) {
+        var _this = this;
+        var _b, _c, _d;
+        var datumSelections = _a.datumSelections, labelSelections = _a.labelSelections;
+        var processedData = this.processedData;
+        var diff = (_b = processedData === null || processedData === void 0 ? void 0 : processedData.reduced) === null || _b === void 0 ? void 0 : _b.diff;
+        if (!(diff === null || diff === void 0 ? void 0 : diff.changed)) {
+            datumSelections.forEach(function (datumSelection) {
+                _this.resetSelectionRects(datumSelection);
+            });
+            return;
+        }
+        var totalDuration = (_d = (_c = this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.defaultOptions.duration) !== null && _d !== void 0 ? _d : 1000;
+        var labelDuration = 200;
+        var sectionDuration = totalDuration;
+        if (diff.added.length > 0 && diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 3);
+        }
+        else if (diff.added.length > 0 || diff.removed.length > 0) {
+            sectionDuration = Math.floor(totalDuration / 2);
+        }
+        var startingY = 0;
+        datumSelections.forEach(function (datumSelection) {
+            return datumSelection.each(function (_, datum) {
+                startingY = Math.max(startingY, datum.height + datum.y);
+            });
+        });
+        var addedIds = {};
+        diff.added.forEach(function (d) {
+            addedIds[d.join('_')] = true;
+        });
+        var removedIds = {};
+        diff.removed.forEach(function (d) {
+            removedIds[d.join('_')] = true;
+        });
+        datumSelections.forEach(function (datumSelection) {
+            datumSelection.each(function (rect, datum) {
+                var _a;
+                var props = [
+                    { from: rect.x, to: datum.x },
+                    { from: rect.width, to: datum.width },
+                    { from: rect.y, to: datum.y },
+                    { from: rect.height, to: datum.height },
+                ];
+                var delay = diff.removed.length > 0 ? sectionDuration : 0;
+                var cleanup = false;
+                var datumId = datum.domain.join('_');
+                var contextY = startingY;
+                var contextHeight = 0;
+                if (datumId !== undefined && addedIds[datumId] !== undefined) {
+                    props = [
+                        { from: datum.x, to: datum.x },
+                        { from: datum.width, to: datum.width },
+                        { from: contextY, to: datum.y },
+                        { from: contextHeight, to: datum.height },
+                    ];
+                    delay += sectionDuration;
+                }
+                else if (datumId !== undefined && removedIds[datumId] !== undefined) {
+                    props = [
+                        { from: rect.x, to: datum.x },
+                        { from: rect.width, to: datum.width },
+                        { from: datum.y, to: contextY },
+                        { from: datum.height, to: contextHeight },
+                    ];
+                    delay = 0;
+                    cleanup = true;
+                }
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(_this.id + "_waiting-update-ready_" + rect.id, props, {
+                    disableInteractions: true,
+                    delay: delay,
+                    duration: sectionDuration,
+                    ease: easing.easeOut,
+                    repeat: 0,
+                    onUpdate: function (_a) {
+                        var _b = __read(_a, 4), x = _b[0], width = _b[1], y = _b[2], height = _b[3];
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                    onComplete: function () {
+                        if (cleanup)
+                            datumSelection.cleanup();
+                    },
+                });
+            });
+        });
+        labelSelections.forEach(function (labelSelection) {
+            labelSelection.each(function (label) {
+                var _a;
+                label.opacity = 0;
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_waiting-update-ready_" + label.id, {
+                    from: 0,
+                    to: 1,
+                    delay: totalDuration,
+                    duration: labelDuration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: function (opacity) {
+                        label.opacity = opacity;
+                    },
+                });
+            });
         });
     };
     HistogramSeries.prototype.resetSelectionRects = function (selection) {

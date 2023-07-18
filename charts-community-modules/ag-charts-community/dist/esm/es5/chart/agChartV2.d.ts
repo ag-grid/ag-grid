@@ -1,4 +1,4 @@
-import { AgChartOptions, AgChartInstance } from './agChartOptions';
+import type { AgChartOptions, AgChartInstance } from './agChartOptions';
 export interface DownloadOptions extends ImageDataUrlOptions {
     /** Name of downloaded image file. Defaults to `image`.  */
     fileName?: string;
@@ -55,4 +55,3 @@ export declare abstract class AgChart {
     static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string>;
 }
 export {};
-//# sourceMappingURL=agChartV2.d.ts.map

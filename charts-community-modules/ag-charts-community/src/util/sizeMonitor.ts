@@ -13,6 +13,8 @@ export class SizeMonitor {
     private static resizeObserver: any;
     private static ready = false;
 
+    private static pollerHandler?: number;
+
     static init() {
         const NativeResizeObserver = (window as any).ResizeObserver;
 
@@ -30,10 +32,20 @@ export class SizeMonitor {
                     this.checkClientSize(element, entry);
                 });
             };
-            window.setInterval(step, 100);
+            this.pollerHandler = window.setInterval(step, 100);
         }
 
         this.ready = true;
+    }
+
+    private static destroy() {
+        if (this.pollerHandler != null) {
+            clearInterval(this.pollerHandler);
+            this.pollerHandler = undefined;
+        }
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = undefined;
+        this.ready = false;
     }
 
     private static checkSize(entry: Entry | undefined, element: HTMLElement, width: number, height: number) {
@@ -50,7 +62,7 @@ export class SizeMonitor {
         if (!this.ready) {
             this.init();
         }
-        this.unobserve(element);
+        this.unobserve(element, false);
         if (this.resizeObserver) {
             this.resizeObserver.observe(element);
         }
@@ -60,11 +72,15 @@ export class SizeMonitor {
         this.checkClientSize(element, { cb });
     }
 
-    static unobserve(element: HTMLElement) {
+    static unobserve(element: HTMLElement, cleanup = true) {
         if (this.resizeObserver) {
             this.resizeObserver.unobserve(element);
         }
         this.elements.delete(element);
+
+        if (cleanup && this.elements.size === 0) {
+            this.destroy();
+        }
     }
 
     static checkClientSize(element: HTMLElement, entry: Entry) {

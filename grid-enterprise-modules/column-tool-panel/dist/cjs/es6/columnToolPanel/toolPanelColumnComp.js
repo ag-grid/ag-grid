@@ -10,14 +10,15 @@ exports.ToolPanelColumnComp = void 0;
 const core_1 = require("@ag-grid-community/core");
 const toolPanelContextMenu_1 = require("./toolPanelContextMenu");
 class ToolPanelColumnComp extends core_1.Component {
-    constructor(column, columnDept, allowDragging, groupsExist, focusWrapper) {
+    constructor(modelItem, allowDragging, groupsExist, focusWrapper) {
         super();
-        this.column = column;
-        this.columnDept = columnDept;
         this.allowDragging = allowDragging;
         this.groupsExist = groupsExist;
         this.focusWrapper = focusWrapper;
         this.processingColumnStateChange = false;
+        this.column = modelItem.getColumn();
+        this.columnDept = modelItem.getDept();
+        this.displayName = modelItem.getDisplayName();
     }
     init() {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
@@ -27,7 +28,6 @@ class ToolPanelColumnComp extends core_1.Component {
         const checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised = core_1._.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
@@ -147,11 +147,15 @@ class ToolPanelColumnComp extends core_1.Component {
                 };
                 this.eventService.dispatchEvent(event);
             },
-            onGridEnter: () => {
+            onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    this.modelItemUtils.updateColumns({
+                        columns: [this.column],
+                        visibleState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.visibleState,
+                        pivotState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.pivotState,
+                        eventType: 'toolPanelUi'
+                    });
                 }
             },
             onGridExit: () => {
@@ -166,11 +170,13 @@ class ToolPanelColumnComp extends core_1.Component {
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
     createDragItem() {
-        const visibleState = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        const colId = this.column.getColId();
+        const visibleState = { [colId]: this.column.isVisible() };
+        const pivotState = { [colId]: this.modelItemUtils.createPivotState(this.column) };
         return {
             columns: [this.column],
-            visibleState: visibleState
+            visibleState,
+            pivotState
         };
     }
     onColumnStateChanged() {

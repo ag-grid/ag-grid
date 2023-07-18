@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
+import { ColDef, ColGroupDef, HeaderLocation, IAggFunc } from "../entities/colDef";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -14,7 +14,13 @@ export class ColumnApi {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    /** Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead. */
+    /**
+     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
+     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
+     * If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     public sizeColumnsToFit(gridWidth: number): void {
         // AG-3403 validate that gridWidth is provided because this method has the same name as
         // a method on the grid API that takes no arguments, and it's easy to confuse the two
@@ -31,9 +37,9 @@ export class ColumnApi {
     public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
+    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
     /** Returns the display name for a column group (when grouping columns). */
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     public getColumn(key: any): Column | null { return this.columnModel.getPrimaryColumn(key); }
@@ -165,15 +171,27 @@ export class ColumnApi {
     public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
-    /** Auto-sizes a column based on its contents. */
+    /**
+     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
+     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
+     * set `cellDataType = false` on the default column definition.
+     */
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
 
-    /** Same as `autoSizeColumn`, but provide a list of column keys. */
+    /**
+     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {
         this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader });
     }
 
-    /** Calls `autoSizeColumns` on all displayed columns. */
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
     /** Set the pivot result columns. */

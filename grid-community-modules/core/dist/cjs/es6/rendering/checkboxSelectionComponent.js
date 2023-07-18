@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -50,13 +44,8 @@ class CheckboxSelectionComponent extends component_1.Component {
         this.eCheckbox.setValue(state, true);
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
-    onCheckedClicked(event) {
-        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-    }
-    onUncheckedClicked(event) {
-        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
+    onClicked(newValue, groupSelectsFiltered, event) {
+        return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
     init(params) {
         this.rowNode = params.rowNode;
@@ -71,12 +60,20 @@ class CheckboxSelectionComponent extends component_1.Component {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
             event_1.stopPropagationForAgGrid(event);
+            const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
-            if (isSelected) {
-                this.onCheckedClicked(event);
+            if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
+                // try toggling children to determine action.
+                const result = this.onClicked(true, groupSelectsFiltered, event || {});
+                if (result === 0) {
+                    this.onClicked(false, groupSelectsFiltered, event);
+                }
+            }
+            else if (isSelected) {
+                this.onClicked(false, groupSelectsFiltered, event);
             }
             else {
-                this.onUncheckedClicked(event || {});
+                this.onClicked(true, groupSelectsFiltered, event || {});
             }
         });
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
@@ -92,6 +89,13 @@ class CheckboxSelectionComponent extends component_1.Component {
             this.showOrHideSelect();
         }
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+    }
+    shouldHandleIndeterminateState(isSelected, groupSelectsFiltered) {
+        // for CSRM groupSelectsFiltered, we can get an indeterminate state where all filtered children are selected,
+        // and we would expect clicking to deselect all rather than select all
+        return groupSelectsFiltered &&
+            (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
+            this.gridOptionsService.isRowModelType('clientSide');
     }
     showOrHideSelect() {
         var _a, _b, _c, _d;

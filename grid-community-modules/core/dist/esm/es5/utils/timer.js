@@ -1,10 +1,4 @@
 /**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
-/**
  * A Util Class only used when debugging for printing time to console
  */
 var Timer = /** @class */ (function () {

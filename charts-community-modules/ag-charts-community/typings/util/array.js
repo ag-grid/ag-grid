@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extent = void 0;
+exports.normalisedExtent = exports.extent = void 0;
 function extent(values) {
     var length = values.length;
     if (length === 0) {
@@ -30,4 +30,21 @@ function extent(values) {
     return extent;
 }
 exports.extent = extent;
+function normalisedExtent(d, min, max) {
+    var _a;
+    if (d.length > 2) {
+        d = (_a = extent(d)) !== null && _a !== void 0 ? _a : [NaN, NaN];
+    }
+    if (!isNaN(min)) {
+        d = [min, d[1]];
+    }
+    if (!isNaN(max)) {
+        d = [d[0], max];
+    }
+    if (d[0] > d[1]) {
+        d = [];
+    }
+    return d;
+}
+exports.normalisedExtent = normalisedExtent;
 //# sourceMappingURL=array.js.map

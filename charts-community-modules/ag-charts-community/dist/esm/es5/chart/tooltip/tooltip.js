@@ -156,6 +156,7 @@ var Tooltip = /** @class */ (function () {
             element.innerHTML = html;
         }
         else if (!element.innerHTML) {
+            this.toggle(false);
             return;
         }
         var limit = function (low, actual, high) {

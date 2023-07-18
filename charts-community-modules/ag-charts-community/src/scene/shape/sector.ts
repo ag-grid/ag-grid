@@ -37,8 +37,8 @@ export class Sector extends Path {
         const path = this.path;
 
         const angleOffset = this.angleOffset;
-        const startAngle = Math.min(this.startAngle, this.endAngle) + angleOffset;
-        const endAngle = Math.max(this.startAngle, this.endAngle) + angleOffset;
+        const startAngle = this.startAngle + angleOffset;
+        const endAngle = this.endAngle + angleOffset;
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
         const fullPie = isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));

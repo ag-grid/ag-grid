@@ -1,7 +1,7 @@
-import { FontStyle, FontWeight } from './agChartOptions';
+import type { FontStyle, FontWeight } from './agChartOptions';
 import { BBox } from '../scene/bbox';
-import { Matrix } from '../scene/matrix';
-import { PointLabelDatum } from '../util/labelPlacement';
+import type { Matrix } from '../scene/matrix';
+import type { PointLabelDatum } from '../util/labelPlacement';
 export declare class Label {
     enabled: boolean;
     fontSize: number;

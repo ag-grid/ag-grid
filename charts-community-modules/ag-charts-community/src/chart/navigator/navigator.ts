@@ -1,10 +1,12 @@
 import { RangeSelector } from '../shapes/rangeSelector';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
+import type { ModuleInstance } from '../../util/module';
+import { BaseModuleInstance } from '../../util/module';
 import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
-import { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
+import type { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
 import { BBox } from '../../scene/bbox';
+import type { ModuleContext } from '../../util/moduleContext';
 
 interface Offset {
     offsetX: number;
@@ -102,7 +104,7 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
             ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
         ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
 
-        ctx.scene.root!.appendChild(this.rs);
+        ctx.scene.root?.appendChild(this.rs);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
         this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
 

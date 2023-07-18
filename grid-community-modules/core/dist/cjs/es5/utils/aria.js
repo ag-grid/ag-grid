@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAriaCheckboxStateName = exports.setAriaControls = exports.setAriaChecked = exports.setAriaSelected = exports.removeAriaSort = exports.setAriaSort = exports.setAriaColSpan = exports.setAriaColIndex = exports.setAriaColCount = exports.setAriaRowIndex = exports.setAriaRowCount = exports.setAriaMultiSelectable = exports.setAriaPosInSet = exports.setAriaSetSize = exports.removeAriaExpanded = exports.setAriaExpanded = exports.setAriaHidden = exports.setAriaDisabled = exports.setAriaLevel = exports.setAriaLive = exports.setAriaDescribedBy = exports.setAriaDescription = exports.setAriaLabelledBy = exports.setAriaLabel = exports.getAriaDescribedBy = exports.getAriaPosInSet = exports.getAriaLevel = exports.getAriaSortState = exports.setAriaRole = void 0;

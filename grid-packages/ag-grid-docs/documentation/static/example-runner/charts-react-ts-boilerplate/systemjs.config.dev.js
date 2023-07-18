@@ -4,7 +4,7 @@
         typescriptOptions: {
             module: 'system',
             moduleResolution: 'node',
-            target: 'es5',
+            target: 'es2015',
             noImplicitAny: false,
             sourceMap: true,
             jsx: 'react',
@@ -57,11 +57,12 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/esm/es6/main.js',
-                defaultExtension: 'js'
+                main: './dist/ag-charts-community.cjs.js',
+                defaultExtension: 'js',
+                "format": "cjs"
             },
             'ag-charts-enterprise': {
-                main: './dist/esm/es6/main.js',
+                main: './dist/ag-charts-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
         },

@@ -114,8 +114,6 @@ var sanitize_1 = require("../../../util/sanitize");
 var label_1 = require("../../label");
 var hdpiCanvas_1 = require("../../../canvas/hdpiCanvas");
 var validation_1 = require("../../../util/validation");
-var dataModel_1 = require("../../data/dataModel");
-var easing = require("../../../motion/easing");
 var ScatterSeriesLabel = /** @class */ (function (_super) {
     __extends(ScatterSeriesLabel, _super);
     function ScatterSeriesLabel() {
@@ -202,35 +200,43 @@ var ScatterSeries = /** @class */ (function (_super) {
         label.enabled = false;
         return _this;
     }
-    ScatterSeries.prototype.processData = function () {
-        var _a, _b, _c, _d, _e, _f;
+    ScatterSeries.prototype.processData = function (dataController) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var _g, _h, xKey, _j, yKey, sizeKey, xAxis, yAxis, marker, data, isContinuousX, isContinuousY, _k, colorScale, colorDomain, colorRange, colorKey, sizeKeyIdx, processedSize, colorKeyIdx;
-            return __generator(this, function (_l) {
-                _g = this, _h = _g.xKey, xKey = _h === void 0 ? '' : _h, _j = _g.yKey, yKey = _j === void 0 ? '' : _j, sizeKey = _g.sizeKey, xAxis = _g.xAxis, yAxis = _g.yAxis, marker = _g.marker, data = _g.data;
-                isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
-                isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
-                _k = this, colorScale = _k.colorScale, colorDomain = _k.colorDomain, colorRange = _k.colorRange, colorKey = _k.colorKey;
-                this.dataModel = new dataModel_1.DataModel({
-                    props: __spreadArray(__spreadArray([
-                        series_1.valueProperty(xKey, isContinuousX, { id: "xValue" }),
-                        series_1.valueProperty(yKey, isContinuousY, { id: "yValue" })
-                    ], __read((sizeKey ? [series_1.valueProperty(sizeKey, true, { id: "sizeValue" })] : []))), __read((colorKey ? [series_1.valueProperty(colorKey, true, { id: "colorValue" })] : []))),
-                    dataVisible: this.visible,
-                });
-                this.processedData = this.dataModel.processData(data !== null && data !== void 0 ? data : []);
-                if (sizeKey) {
-                    sizeKeyIdx = (_b = (_a = this.dataModel.resolveProcessedDataIndexById("sizeValue")) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1;
-                    processedSize = (_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.domain.values[sizeKeyIdx]) !== null && _d !== void 0 ? _d : [];
-                    this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
+            var _c, _d, xKey, _e, yKey, sizeKey, labelKey, axes, marker, data, xAxis, yAxis, isContinuousX, isContinuousY, _f, colorScale, colorDomain, colorRange, colorKey, _g, dataModel, processedData, sizeKeyIdx, processedSize, colorKeyIdx;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _c = this, _d = _c.xKey, xKey = _d === void 0 ? '' : _d, _e = _c.yKey, yKey = _e === void 0 ? '' : _e, sizeKey = _c.sizeKey, labelKey = _c.labelKey, axes = _c.axes, marker = _c.marker, data = _c.data;
+                        xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+                        yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+                        isContinuousX = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scale) instanceof continuousScale_1.ContinuousScale;
+                        isContinuousY = (yAxis === null || yAxis === void 0 ? void 0 : yAxis.scale) instanceof continuousScale_1.ContinuousScale;
+                        _f = this, colorScale = _f.colorScale, colorDomain = _f.colorDomain, colorRange = _f.colorRange, colorKey = _f.colorKey;
+                        return [4 /*yield*/, dataController.request(this.id, data !== null && data !== void 0 ? data : [], {
+                                props: __spreadArray(__spreadArray(__spreadArray([
+                                    series_1.valueProperty(this, xKey, isContinuousX, { id: "xValue" }),
+                                    series_1.valueProperty(this, yKey, isContinuousY, { id: "yValue" })
+                                ], __read((sizeKey ? [series_1.valueProperty(this, sizeKey, true, { id: "sizeValue" })] : []))), __read((colorKey ? [series_1.valueProperty(this, colorKey, true, { id: "colorValue" })] : []))), __read((labelKey ? [series_1.valueProperty(this, labelKey, false, { id: "labelValue" })] : []))),
+                                dataVisible: this.visible,
+                            })];
+                    case 1:
+                        _g = _h.sent(), dataModel = _g.dataModel, processedData = _g.processedData;
+                        this.dataModel = dataModel;
+                        this.processedData = processedData;
+                        if (sizeKey) {
+                            sizeKeyIdx = dataModel.resolveProcessedDataIndexById(this, "sizeValue").index;
+                            processedSize = (_a = processedData.domain.values[sizeKeyIdx]) !== null && _a !== void 0 ? _a : [];
+                            this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
+                        }
+                        if (colorKey) {
+                            colorKeyIdx = dataModel.resolveProcessedDataIndexById(this, "colorValue").index;
+                            colorScale.domain = (_b = colorDomain !== null && colorDomain !== void 0 ? colorDomain : processedData.domain.values[colorKeyIdx]) !== null && _b !== void 0 ? _b : [];
+                            colorScale.range = colorRange;
+                            colorScale.update();
+                        }
+                        return [2 /*return*/];
                 }
-                if (colorKey) {
-                    colorKeyIdx = (_f = (_e = this.dataModel.resolveProcessedDataIndexById("colorValue")) === null || _e === void 0 ? void 0 : _e.index) !== null && _f !== void 0 ? _f : -1;
-                    colorScale.domain = colorDomain !== null && colorDomain !== void 0 ? colorDomain : this.processedData.domain.values[colorKeyIdx];
-                    colorScale.range = colorRange;
-                    colorScale.update();
-                }
-                return [2 /*return*/];
             });
         });
     };
@@ -239,12 +245,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         if (!processedData || !dataModel)
             return [];
         var id = direction === chartAxisDirection_1.ChartAxisDirection.X ? "xValue" : "yValue";
-        var dataDef = dataModel.resolveProcessedDataDefById(id);
-        var domain = dataModel.getDomain(id, processedData);
-        if ((dataDef === null || dataDef === void 0 ? void 0 : dataDef.valueType) === 'category') {
+        var dataDef = dataModel.resolveProcessedDataDefById(this, id, 'value');
+        var domain = dataModel.getDomain(this, id, 'value', processedData);
+        if ((dataDef === null || dataDef === void 0 ? void 0 : dataDef.def.type) === 'value' && (dataDef === null || dataDef === void 0 ? void 0 : dataDef.def.valueType) === 'category') {
             return domain;
         }
-        var axis = direction === chartAxisDirection_1.ChartAxisDirection.X ? this.xAxis : this.yAxis;
+        var axis = this.axes[direction];
         return this.fixNumericExtent(array_1.extent(domain), axis);
     };
     ScatterSeries.prototype.getNodeClickEvent = function (event, datum) {
@@ -256,32 +262,36 @@ var ScatterSeries = /** @class */ (function (_super) {
         return new ScatterSeriesNodeDoubleClickEvent(this.sizeKey, (_a = this.xKey) !== null && _a !== void 0 ? _a : '', (_b = this.yKey) !== null && _b !== void 0 ? _b : '', event, datum, this);
     };
     ScatterSeries.prototype.createNodeData = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
-            var _k, visible, xAxis, yAxis, _l, yKey, _m, xKey, label, labelKey, callbackCache, xDataIdx, yDataIdx, _o, colorScale, sizeKey, colorKey, seriesId, xScale, yScale, xOffset, yOffset, _p, sizeScale, marker, nodeData, font, actualLength, _q, _r, _s, values, datum, xDatum, yDatum, x, y, text, size, markerSize, colorIdx, fill;
-            var e_1, _t;
-            return __generator(this, function (_u) {
-                _k = this, visible = _k.visible, xAxis = _k.xAxis, yAxis = _k.yAxis, _l = _k.yKey, yKey = _l === void 0 ? '' : _l, _m = _k.xKey, xKey = _m === void 0 ? '' : _m, label = _k.label, labelKey = _k.labelKey, callbackCache = _k.ctx.callbackCache;
-                xDataIdx = (_a = this.dataModel) === null || _a === void 0 ? void 0 : _a.resolveProcessedDataIndexById("xValue");
-                yDataIdx = (_b = this.dataModel) === null || _b === void 0 ? void 0 : _b.resolveProcessedDataIndexById("yValue");
-                if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
+            var _g, visible, axes, _h, yKey, _j, xKey, label, labelKey, callbackCache, dataModel, processedData, xAxis, yAxis, xDataIdx, yDataIdx, sizeDataIdx, colorDataIdx, labelDataIdx, _k, colorScale, sizeKey, colorKey, seriesId, xScale, yScale, xOffset, yOffset, _l, sizeScale, marker, nodeData, font, actualLength, _m, _o, _p, values, datum, xDatum, yDatum, x, y, text, size, markerSize, fill;
+            var e_1, _q;
+            return __generator(this, function (_r) {
+                _g = this, visible = _g.visible, axes = _g.axes, _h = _g.yKey, yKey = _h === void 0 ? '' : _h, _j = _g.xKey, xKey = _j === void 0 ? '' : _j, label = _g.label, labelKey = _g.labelKey, callbackCache = _g.ctx.callbackCache, dataModel = _g.dataModel, processedData = _g.processedData;
+                xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+                yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
+                if (!(dataModel && processedData && visible && xAxis && yAxis))
                     return [2 /*return*/, []];
-                }
-                _o = this, colorScale = _o.colorScale, sizeKey = _o.sizeKey, colorKey = _o.colorKey, seriesId = _o.id;
+                xDataIdx = dataModel.resolveProcessedDataIndexById(this, "xValue").index;
+                yDataIdx = dataModel.resolveProcessedDataIndexById(this, "yValue").index;
+                sizeDataIdx = this.sizeKey ? dataModel.resolveProcessedDataIndexById(this, "sizeValue").index : -1;
+                colorDataIdx = this.colorKey ? dataModel.resolveProcessedDataIndexById(this, "colorValue").index : -1;
+                labelDataIdx = this.labelKey ? dataModel.resolveProcessedDataIndexById(this, "labelValue").index : -1;
+                _k = this, colorScale = _k.colorScale, sizeKey = _k.sizeKey, colorKey = _k.colorKey, seriesId = _k.id;
                 xScale = xAxis.scale;
                 yScale = yAxis.scale;
-                xOffset = ((_c = xScale.bandwidth) !== null && _c !== void 0 ? _c : 0) / 2;
-                yOffset = ((_d = yScale.bandwidth) !== null && _d !== void 0 ? _d : 0) / 2;
-                _p = this, sizeScale = _p.sizeScale, marker = _p.marker;
-                nodeData = new Array((_f = (_e = this.processedData) === null || _e === void 0 ? void 0 : _e.data.length) !== null && _f !== void 0 ? _f : 0);
+                xOffset = ((_a = xScale.bandwidth) !== null && _a !== void 0 ? _a : 0) / 2;
+                yOffset = ((_b = yScale.bandwidth) !== null && _b !== void 0 ? _b : 0) / 2;
+                _l = this, sizeScale = _l.sizeScale, marker = _l.marker;
+                nodeData = new Array((_d = (_c = this.processedData) === null || _c === void 0 ? void 0 : _c.data.length) !== null && _d !== void 0 ? _d : 0);
                 sizeScale.range = [marker.size, marker.maxSize];
                 font = label.getFont();
                 actualLength = 0;
                 try {
-                    for (_q = __values((_h = (_g = this.processedData) === null || _g === void 0 ? void 0 : _g.data) !== null && _h !== void 0 ? _h : []), _r = _q.next(); !_r.done; _r = _q.next()) {
-                        _s = _r.value, values = _s.values, datum = _s.datum;
-                        xDatum = values[xDataIdx.index];
-                        yDatum = values[yDataIdx.index];
+                    for (_m = __values((_e = processedData.data) !== null && _e !== void 0 ? _e : []), _o = _m.next(); !_o.done; _o = _m.next()) {
+                        _p = _o.value, values = _p.values, datum = _p.datum;
+                        xDatum = values[xDataIdx];
+                        yDatum = values[yDataIdx];
                         x = xScale.convert(xDatum) + xOffset;
                         y = yScale.convert(yDatum) + yOffset;
                         if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
@@ -292,18 +302,20 @@ var ScatterSeries = /** @class */ (function (_super) {
                             text = callbackCache.call(label.formatter, { value: yDatum, seriesId: seriesId, datum: datum });
                         }
                         if (text === undefined) {
-                            text = labelKey ? String(datum[labelKey]) : '';
+                            text = labelKey ? String(values[labelDataIdx]) : '';
                         }
                         size = hdpiCanvas_1.HdpiCanvas.getTextSize(text, font);
-                        markerSize = sizeKey ? sizeScale.convert(values[2]) : marker.size;
-                        colorIdx = sizeKey ? 3 : 2;
-                        fill = colorKey ? colorScale.convert(values[colorIdx]) : undefined;
+                        markerSize = sizeKey ? sizeScale.convert(values[sizeDataIdx]) : marker.size;
+                        fill = colorKey ? colorScale.convert(values[colorDataIdx]) : undefined;
                         nodeData[actualLength++] = {
                             series: this,
                             itemId: yKey,
                             yKey: yKey,
                             xKey: xKey,
                             datum: datum,
+                            xValue: xDatum,
+                            yValue: yDatum,
+                            sizeValue: values[sizeDataIdx],
                             point: { x: x, y: y, size: markerSize },
                             nodeMidPoint: { x: x, y: y },
                             fill: fill,
@@ -314,12 +326,12 @@ var ScatterSeries = /** @class */ (function (_super) {
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
-                        if (_r && !_r.done && (_t = _q.return)) _t.call(_q);
+                        if (_o && !_o.done && (_q = _m.return)) _q.call(_m);
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
                 nodeData.length = actualLength;
-                return [2 /*return*/, [{ itemId: (_j = this.yKey) !== null && _j !== void 0 ? _j : this.id, nodeData: nodeData, labelData: nodeData }]];
+                return [2 /*return*/, [{ itemId: (_f = this.yKey) !== null && _f !== void 0 ? _f : this.id, nodeData: nodeData, labelData: nodeData }]];
             });
         });
     };
@@ -447,7 +459,9 @@ var ScatterSeries = /** @class */ (function (_super) {
     };
     ScatterSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a, _b, _c, _d, _e, _f, _g;
-        var _h = this, xKey = _h.xKey, yKey = _h.yKey, xAxis = _h.xAxis, yAxis = _h.yAxis;
+        var _h = this, xKey = _h.xKey, yKey = _h.yKey, axes = _h.axes;
+        var xAxis = axes[chartAxisDirection_1.ChartAxisDirection.X];
+        var yAxis = axes[chartAxisDirection_1.ChartAxisDirection.Y];
         if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
@@ -472,18 +486,16 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var color = (_f = (_e = format === null || format === void 0 ? void 0 : format.fill) !== null && _e !== void 0 ? _e : fill) !== null && _f !== void 0 ? _f : 'gray';
         var title = (_g = this.title) !== null && _g !== void 0 ? _g : yName;
-        var datum = nodeDatum.datum;
-        var xValue = datum[xKey];
-        var yValue = datum[yKey];
+        var datum = nodeDatum.datum, xValue = nodeDatum.xValue, yValue = nodeDatum.yValue, sizeValue = nodeDatum.sizeValue, labelText = nodeDatum.label.text;
         var xString = sanitize_1.sanitizeHtml(xAxis.formatDatum(xValue));
         var yString = sanitize_1.sanitizeHtml(yAxis.formatDatum(yValue));
         var content = "<b>" + sanitize_1.sanitizeHtml(xName !== null && xName !== void 0 ? xName : xKey) + "</b>: " + xString + "<br>" +
             ("<b>" + sanitize_1.sanitizeHtml(yName !== null && yName !== void 0 ? yName : yKey) + "</b>: " + yString);
         if (sizeKey) {
-            content += "<br><b>" + sanitize_1.sanitizeHtml(sizeName !== null && sizeName !== void 0 ? sizeName : sizeKey) + "</b>: " + sanitize_1.sanitizeHtml(datum[sizeKey]);
+            content += "<br><b>" + sanitize_1.sanitizeHtml(sizeName !== null && sizeName !== void 0 ? sizeName : sizeKey) + "</b>: " + sanitize_1.sanitizeHtml(sizeValue);
         }
         if (labelKey) {
-            content = "<b>" + sanitize_1.sanitizeHtml(labelName !== null && labelName !== void 0 ? labelName : labelKey) + "</b>: " + sanitize_1.sanitizeHtml(datum[labelKey]) + "<br>" + content;
+            content = "<b>" + sanitize_1.sanitizeHtml(labelName !== null && labelName !== void 0 ? labelName : labelKey) + "</b>: " + sanitize_1.sanitizeHtml(labelText) + "<br>" + content;
         }
         var defaults = {
             title: title,
@@ -541,8 +553,9 @@ var ScatterSeries = /** @class */ (function (_super) {
     };
     ScatterSeries.prototype.animateEmptyUpdateReady = function (_a) {
         var _this = this;
+        var _b, _c;
         var markerSelections = _a.markerSelections, labelSelections = _a.labelSelections;
-        var duration = 1000;
+        var duration = (_c = (_b = this.ctx.animationManager) === null || _b === void 0 ? void 0 : _b.defaultOptions.duration) !== null && _c !== void 0 ? _c : 1000;
         var labelDuration = 200;
         markerSelections.forEach(function (markerSelection) {
             markerSelection.each(function (marker, datum) {
@@ -550,13 +563,10 @@ var ScatterSeries = /** @class */ (function (_super) {
                 var format = _this.animateFormatter(marker, datum);
                 var size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
                 var to = (_c = format === null || format === void 0 ? void 0 : format.size) !== null && _c !== void 0 ? _c : size;
-                (_d = _this.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready_" + marker.id, {
+                (_d = _this.ctx.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready_" + marker.id, {
                     from: 0,
                     to: to,
-                    disableInteractions: true,
                     duration: duration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: function (size) {
                         marker.size = size;
                     },
@@ -566,13 +576,11 @@ var ScatterSeries = /** @class */ (function (_super) {
         labelSelections.forEach(function (labelSelection) {
             labelSelection.each(function (label) {
                 var _a;
-                (_a = _this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
+                (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, {
                     from: 0,
                     to: 1,
                     delay: duration,
                     duration: labelDuration,
-                    ease: easing.linear,
-                    repeat: 0,
                     onUpdate: function (opacity) {
                         label.opacity = opacity;
                     },

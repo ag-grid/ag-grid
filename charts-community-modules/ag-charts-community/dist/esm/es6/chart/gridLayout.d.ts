@@ -1,5 +1,5 @@
-import { BBox } from '../scene/bbox';
-import { AgChartOrientation } from './agChartOptions';
+import type { BBox } from '../scene/bbox';
+import type { AgChartOrientation } from './agChartOptions';
 export declare type Page = {
     columns: Column[];
     pageWidth: number;
@@ -27,4 +27,3 @@ export declare function gridLayout({ orientation, bboxes, maxHeight, maxWidth, i
     maxPageHeight: number;
 } | undefined;
 export {};
-//# sourceMappingURL=gridLayout.d.ts.map

@@ -1,7 +1,7 @@
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { Node, RenderContext } from './node';
+import type { Node, RenderContext, ZIndexSubOrder } from './node';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
-import { SceneDebugOptions } from './sceneDebugOptions';
+import type { SceneDebugOptions } from './sceneDebugOptions';
 interface SceneOptions {
     document: Document;
     mode: 'simple' | 'composite' | 'dom-composite' | 'adv-composite';
@@ -10,7 +10,7 @@ interface SceneLayer {
     id: number;
     name?: string;
     zIndex: number;
-    zIndexSubOrder?: [string, number];
+    zIndexSubOrder?: ZIndexSubOrder;
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
     getComputedOpacity: () => number;
     getVisibility: () => boolean;
@@ -39,13 +39,13 @@ export declare class Scene {
     private _nextLayerId;
     addLayer(opts: {
         zIndex?: number;
-        zIndexSubOrder?: [string, number];
+        zIndexSubOrder?: ZIndexSubOrder;
         name?: string;
         getComputedOpacity: () => number;
         getVisibility: () => boolean;
     }): HdpiCanvas | HdpiOffscreenCanvas | undefined;
     removeLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas): void;
-    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number, newZIndexSubOrder?: [string, number]): void;
+    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number, newZIndexSubOrder?: ZIndexSubOrder): void;
     private sortLayers;
     private _dirty;
     markDirty(): void;
@@ -67,6 +67,7 @@ export declare class Scene {
         name?: string;
         node?: any;
         dirty?: string;
+        virtualParent?: Node;
     };
     buildDirtyTree(node: Node): {
         dirtyTree: {
@@ -78,4 +79,3 @@ export declare class Scene {
     };
 }
 export {};
-//# sourceMappingURL=scene.d.ts.map

@@ -48,6 +48,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         }
 
         this.addInputListeners();
+        this.activateTabIndex([this.eInput]);
     }
 
     protected refreshLabel() {

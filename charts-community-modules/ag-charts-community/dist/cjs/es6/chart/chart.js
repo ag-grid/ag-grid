@@ -24,11 +24,9 @@ const padding_1 = require("../util/padding");
 const bbox_1 = require("../scene/bbox");
 const sizeMonitor_1 = require("../util/sizeMonitor");
 const observable_1 = require("../util/observable");
-const chartAxisDirection_1 = require("./chartAxisDirection");
 const id_1 = require("../util/id");
 const labelPlacement_1 = require("../util/labelPlacement");
 const render_1 = require("../util/render");
-const cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 const validation_1 = require("../util/validation");
 const async_1 = require("../util/async");
 const tooltip_1 = require("./tooltip/tooltip");
@@ -51,6 +49,9 @@ const proxy_1 = require("../util/proxy");
 const chartHighlight_1 = require("./chartHighlight");
 const legendTypes_1 = require("./factory/legendTypes");
 const callbackCache_1 = require("../util/callbackCache");
+const dataController_1 = require("./data/dataController");
+const seriesStateManager_1 = require("./series/seriesStateManager");
+const seriesLayerManager_1 = require("./series/seriesLayerManager");
 class Chart extends observable_1.Observable {
     constructor(document = window.document, overrideDevicePixelRatio, resources) {
         var _a;
@@ -61,7 +62,7 @@ class Chart extends observable_1.Observable {
         this.queuedUserOptions = [];
         this.seriesRoot = new group_1.Group({ name: `${this.id}-Series-root` });
         this.extraDebugStats = {};
-        this._container = undefined;
+        this.container = undefined;
         this.data = [];
         this.padding = new padding_1.Padding(20);
         this.seriesAreaPadding = new padding_1.Padding(0);
@@ -124,7 +125,6 @@ class Chart extends observable_1.Observable {
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
         this.scene = scene !== null && scene !== void 0 ? scene : new scene_1.Scene({ document, overrideDevicePixelRatio });
-        this.debug = false;
         this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
@@ -137,6 +137,8 @@ class Chart extends observable_1.Observable {
         this.dataService = new dataService_1.DataService(() => this.series);
         this.layoutService = new layoutService_1.LayoutService();
         this.updateService = new updateService_1.UpdateService((type = chartUpdateType_1.ChartUpdateType.FULL, { forceNodeDataRefresh }) => this.update(type, { forceNodeDataRefresh }));
+        this.seriesStateManager = new seriesStateManager_1.SeriesStateManager();
+        this.seriesLayerManager = new seriesLayerManager_1.SeriesLayerManager(this.seriesRoot);
         this.callbackCache = new callbackCache_1.CallbackCache();
         this.animationManager = new animationManager_1.AnimationManager(this.interactionManager);
         this.animationManager.skipAnimations = true;
@@ -146,6 +148,7 @@ class Chart extends observable_1.Observable {
         this.overlays = new chartOverlays_1.ChartOverlays(this.element);
         this.highlight = new chartHighlight_1.ChartHighlight();
         this.container = container;
+        this.debug = false;
         sizeMonitor_1.SizeMonitor.observe(this.element, (size) => {
             var _a;
             const { width, height } = size;
@@ -183,21 +186,6 @@ class Chart extends observable_1.Observable {
         const { queuedUserOptions } = this;
         const lastUpdateOptions = (_a = queuedUserOptions[queuedUserOptions.length - 1]) !== null && _a !== void 0 ? _a : this.userOptions;
         return json_1.jsonMerge([lastUpdateOptions]);
-    }
-    set container(value) {
-        if (this._container !== value) {
-            const { parentNode } = this.element;
-            if (parentNode != null) {
-                parentNode.removeChild(this.element);
-            }
-            if (value && !this.destroyed) {
-                value.appendChild(this.element);
-            }
-            this._container = value;
-        }
-    }
-    get container() {
-        return this._container;
     }
     autoSizeChanged(value) {
         const { style } = this.element;
@@ -240,7 +228,7 @@ class Chart extends observable_1.Observable {
         return this.modules[module.optionsKey] != null;
     }
     getModuleContext() {
-        const { scene, animationManager, chartEventManager, cursorManager, highlightManager, interactionManager, tooltipManager, zoomManager, dataService, layoutService, updateService, mode, callbackCache, } = this;
+        const { scene, animationManager, chartEventManager, cursorManager, highlightManager, interactionManager, tooltipManager, zoomManager, dataService, layoutService, updateService, seriesStateManager, seriesLayerManager, mode, callbackCache, } = this;
         return {
             scene,
             animationManager,
@@ -254,6 +242,8 @@ class Chart extends observable_1.Observable {
             layoutService,
             updateService,
             mode,
+            seriesStateManager,
+            seriesLayerManager,
             callbackCache,
         };
     }
@@ -277,6 +267,7 @@ class Chart extends observable_1.Observable {
             delete this[key];
         }
         this.interactionManager.destroy();
+        this.animationManager.stop();
         if (keepTransferableResources) {
             this.scene.strip();
             result = { container: this.container, scene: this.scene, element: this.element };
@@ -285,17 +276,17 @@ class Chart extends observable_1.Observable {
             this.scene.destroy();
             this.container = undefined;
         }
-        this.series.forEach((s) => s.destroy());
-        this.series = [];
+        this.removeAllSeries();
+        this.seriesLayerManager.destroy();
         this.axes.forEach((a) => a.destroy());
         this.axes = [];
         this.callbackCache.invalidateCache();
         this._destroyed = true;
         return result;
     }
-    log(opts) {
+    log(...opts) {
         if (this.debug) {
-            logger_1.Logger.debug(opts);
+            logger_1.Logger.debug(...opts);
         }
     }
     disablePointer(highlightOnly = false) {
@@ -370,6 +361,7 @@ class Chart extends observable_1.Observable {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { _performUpdateType: performUpdateType, extraDebugStats } = this;
+            this.log('Chart.performUpdate() - start', chartUpdateType_1.ChartUpdateType[performUpdateType]);
             const splits = [performance.now()];
             switch (performUpdateType) {
                 case chartUpdateType_1.ChartUpdateType.FULL:
@@ -379,21 +371,11 @@ class Chart extends observable_1.Observable {
                     splits.push(performance.now());
                 // eslint-disable-next-line no-fallthrough
                 case chartUpdateType_1.ChartUpdateType.PERFORM_LAYOUT:
-                    if (this.autoSize && !this._lastAutoSize) {
-                        const count = this._performUpdateNoRenderCount++;
-                        if (count < 5) {
-                            // Reschedule if canvas size hasn't been set yet to avoid a race.
-                            this._performUpdateType = chartUpdateType_1.ChartUpdateType.PERFORM_LAYOUT;
-                            this.performUpdateTrigger.schedule();
-                            break;
-                        }
-                        // After several failed passes, continue and accept there maybe a redundant
-                        // render. Sometimes this case happens when we already have the correct
-                        // width/height, and we end up never rendering the chart in that scenario.
-                    }
-                    this._performUpdateNoRenderCount = 0;
+                    if (!this.checkFirstAutoSize())
+                        break;
                     yield this.performLayout();
                     this.handleOverlays();
+                    this.log('Chart.performUpdate() - seriesRect', this.seriesRect);
                     splits.push(performance.now());
                 // eslint-disable-next-line no-fallthrough
                 case chartUpdateType_1.ChartUpdateType.SERIES_UPDATE:
@@ -418,13 +400,32 @@ class Chart extends observable_1.Observable {
                     this._performUpdateType = chartUpdateType_1.ChartUpdateType.NONE;
             }
             const end = performance.now();
-            this.log({
+            this.log('Chart.performUpdate() - end', {
                 chart: this,
                 durationMs: Math.round((end - splits[0]) * 100) / 100,
                 count,
                 performUpdateType: chartUpdateType_1.ChartUpdateType[performUpdateType],
             });
         });
+    }
+    checkFirstAutoSize() {
+        if (this.autoSize && !this._lastAutoSize) {
+            const count = this._performUpdateNoRenderCount++;
+            const backOffMs = (count ^ 2) * 10;
+            if (count < 5) {
+                // Reschedule if canvas size hasn't been set yet to avoid a race.
+                this._performUpdateType = chartUpdateType_1.ChartUpdateType.PERFORM_LAYOUT;
+                this.performUpdateTrigger.schedule(backOffMs);
+                this.log('Chart.checkFirstAutoSize() - backing off until first size update', backOffMs);
+                return false;
+            }
+            // After several failed passes, continue and accept there maybe a redundant
+            // render. Sometimes this case happens when we already have the correct
+            // width/height, and we end up never rendering the chart in that scenario.
+            this.log('Chart.checkFirstAutoSize() - timeout for first size update.');
+        }
+        this._performUpdateNoRenderCount = 0;
+        return true;
     }
     set axes(values) {
         const removedAxes = new Set();
@@ -438,6 +439,7 @@ class Chart extends observable_1.Observable {
             axis.attachAxis(this.axisGroup);
             removedAxes.delete(axis);
         });
+        this.zoomManager.updateAxes(this._axes);
         removedAxes.forEach((axis) => axis.destroy());
     }
     get axes() {
@@ -450,18 +452,13 @@ class Chart extends observable_1.Observable {
     get series() {
         return this._series;
     }
-    addSeries(series, before) {
-        const { series: allSeries, seriesRoot } = this;
+    addSeries(series) {
+        const { series: allSeries } = this;
         const canAdd = allSeries.indexOf(series) < 0;
         if (canAdd) {
-            const beforeIndex = before ? allSeries.indexOf(before) : -1;
-            if (beforeIndex >= 0) {
-                allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.rootGroup, before.rootGroup);
-            }
-            else {
-                allSeries.push(series);
-                seriesRoot.append(series.rootGroup);
+            allSeries.push(series);
+            if (series.rootGroup.parent == null) {
+                this.seriesLayerManager.requestGroup(series);
             }
             this.initSeries(series);
             return true;
@@ -470,24 +467,18 @@ class Chart extends observable_1.Observable {
     }
     initSeries(series) {
         series.chart = this;
-        series.highlightManager = this.highlightManager;
-        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
-        series.chartEventManager = this.chartEventManager;
         series.addChartEventListeners();
-    }
-    freeSeries(series) {
-        series.chart = undefined;
-        series.removeEventListener('nodeClick', this.onSeriesNodeClick);
-        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     }
     removeAllSeries() {
         this.series.forEach((series) => {
-            this.freeSeries(series);
-            this.seriesRoot.removeChild(series.rootGroup);
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+            series.destroy();
+            series.chart = undefined;
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     }
@@ -509,12 +500,12 @@ class Chart extends observable_1.Observable {
     assignSeriesToAxes() {
         this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis = axis.direction === chartAxisDirection_1.ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                const seriesAxis = s.axes[axis.direction];
                 return seriesAxis === axis;
             });
         });
     }
-    assignAxesToSeries(force = false) {
+    assignAxesToSeries() {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap = {};
         this.axes.forEach((axis) => {
@@ -525,10 +516,6 @@ class Chart extends observable_1.Observable {
         });
         this.series.forEach((series) => {
             series.directions.forEach((direction) => {
-                const currentAxis = direction === chartAxisDirection_1.ChartAxisDirection.X ? series.xAxis : series.yAxis;
-                if (currentAxis && !force) {
-                    return;
-                }
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
                     logger_1.Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
@@ -540,12 +527,7 @@ class Chart extends observable_1.Observable {
                     logger_1.Logger.warn(`no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`);
                     return;
                 }
-                if (direction === chartAxisDirection_1.ChartAxisDirection.X) {
-                    series.xAxis = newAxis;
-                }
-                else {
-                    series.yAxis = newAxis;
-                }
+                series.axes[direction] = newAxis;
             });
         });
     }
@@ -569,6 +551,7 @@ class Chart extends observable_1.Observable {
         var _a, _b, _c, _d;
         width !== null && width !== void 0 ? width : (width = (_a = this.width) !== null && _a !== void 0 ? _a : (this.autoSize ? (_b = this._lastAutoSize) === null || _b === void 0 ? void 0 : _b[0] : this.scene.canvas.width));
         height !== null && height !== void 0 ? height : (height = (_c = this.height) !== null && _c !== void 0 ? _c : (this.autoSize ? (_d = this._lastAutoSize) === null || _d === void 0 ? void 0 : _d[1] : this.scene.canvas.height));
+        this.log('Chart.resize()', { width, height });
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height))
             return;
         if (this.scene.resize(width, height)) {
@@ -578,11 +561,14 @@ class Chart extends observable_1.Observable {
     }
     processData() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.axes.length > 0 || this.series.some((s) => s instanceof cartesianSeries_1.CartesianSeries)) {
-                this.assignAxesToSeries(true);
+            if (this.axes.length > 0) {
+                this.assignAxesToSeries();
                 this.assignSeriesToAxes();
             }
-            yield Promise.all(this.series.map((s) => s.processData()));
+            const dataController = new dataController_1.DataController();
+            const seriesPromises = this.series.map((s) => s.processData(dataController));
+            yield dataController.execute();
+            yield Promise.all(seriesPromises);
             yield this.updateLegend();
         });
     }
@@ -608,15 +594,17 @@ class Chart extends observable_1.Observable {
     }
     attachLegend(legendType) {
         var _a;
-        if (this.legendType === legendType) {
-            return;
+        if (this.legendType === legendType && this.legend) {
+            return this.legend;
         }
         (_a = this.legend) === null || _a === void 0 ? void 0 : _a.destroy();
         this.legend = undefined;
         const ctx = this.getModuleContext();
-        this.legend = legendTypes_1.getLegend(legendType, ctx);
-        this.legend.attachLegend(this.scene.root);
+        const legend = legendTypes_1.getLegend(legendType, ctx);
+        legend.attachLegend(this.scene.root);
+        this.legend = legend;
         this.legendType = legendType;
+        return legend;
     }
     setLegendInit(initLegend) {
         this.applyLegendOptions = initLegend;
@@ -632,12 +620,12 @@ class Chart extends observable_1.Observable {
                 legendData.push(...data);
             });
             const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
-            this.attachLegend(legendType);
-            (_a = this.applyLegendOptions) === null || _a === void 0 ? void 0 : _a.call(this, this.legend);
+            const legend = this.attachLegend(legendType);
+            (_a = this.applyLegendOptions) === null || _a === void 0 ? void 0 : _a.call(this, legend);
             if (legendType === 'category') {
                 this.validateLegendData(legendData);
             }
-            this.legend.data = legendData;
+            legend.data = legendData;
         });
     }
     validateLegendData(legendData) {
@@ -667,7 +655,9 @@ class Chart extends observable_1.Observable {
     }
     performLayout() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.scene.root.visible = true;
+            if (this.scene.root != null) {
+                this.scene.root.visible = true;
+            }
             const { scene: { width, height }, } = this;
             let shrinkRect = new bbox_1.BBox(0, 0, width, height);
             ({ shrinkRect } = this.layoutService.dispatchPerformLayout('start-layout', { shrinkRect }));
@@ -917,7 +907,7 @@ class Chart extends observable_1.Observable {
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;
             const { canvas } = this.scene;
-            const point = datum.series.rootGroup.inverseTransformPoint(x, y);
+            const point = datum.series.contentGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();
             return Object.assign(Object.assign({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(point.x), offsetY: Math.round(point.y) });
         }
@@ -980,9 +970,24 @@ __decorate([
     proxy_1.ActionOnSet({
         newValue(value) {
             this.scene.debug.consoleLog = value;
+            if (this.animationManager) {
+                this.animationManager.debug = value;
+            }
         },
     })
 ], Chart.prototype, "debug", void 0);
+__decorate([
+    proxy_1.ActionOnSet({
+        newValue(value) {
+            if (this.destroyed)
+                return;
+            value.appendChild(this.element);
+        },
+        oldValue(value) {
+            value.removeChild(this.element);
+        },
+    })
+], Chart.prototype, "container", void 0);
 __decorate([
     proxy_1.ActionOnSet({
         newValue(value) {

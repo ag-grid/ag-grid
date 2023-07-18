@@ -55,6 +55,12 @@ var LazyCache = /** @class */ (function (_super) {
          * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
          */
         _this.live = true;
+        /**
+         * A cache of removed group nodes, this is retained for preserving group
+         * state when the node moves in and out of the cache. Generally caused by
+         * rows moving blocks.
+         */
+        _this.removedNodeCache = new Map();
         _this.store = store;
         _this.numberOfRows = numberOfRows;
         _this.isLastRowKnown = false;
@@ -313,6 +319,7 @@ var LazyCache = /** @class */ (function (_super) {
      * @returns the new row node
      */
     LazyCache.prototype.createRowAtIndex = function (atStoreIndex, data, createNodeCallback) {
+        var _a, _b;
         // make sure an existing node isn't being overwritten
         var lazyNode = this.nodeMap.getBy('index', atStoreIndex);
         // if node already exists, update it or destroy it
@@ -335,6 +342,19 @@ var LazyCache = /** @class */ (function (_super) {
         // if the node already exists elsewhere, update it and move it to the new location
         if (data && this.getRowIdFunc != null) {
             var id = this.getRowId(data);
+            // the node was deleted at some point, but as we're refreshing
+            // it's been cached and we can retrieve it for reuse.
+            var deletedNode = id && ((_a = this.removedNodeCache) === null || _a === void 0 ? void 0 : _a.get(id));
+            if (deletedNode) {
+                (_b = this.removedNodeCache) === null || _b === void 0 ? void 0 : _b.delete(id);
+                this.blockUtils.updateDataIntoRowNode(deletedNode, data);
+                this.nodeMap.set({
+                    id: deletedNode.id,
+                    node: deletedNode,
+                    index: atStoreIndex
+                });
+                return deletedNode;
+            }
             var lazyNode_1 = this.nodeMap.getBy('id', id);
             if (lazyNode_1) {
                 // delete old lazy node so we can insert it at different location
@@ -346,6 +366,12 @@ var LazyCache = /** @class */ (function (_super) {
                     node: node,
                     index: atStoreIndex
                 });
+                this.nodesToRefresh.delete(node);
+                if (this.rowLoader.getBlockStartIndexForIndex(index) === this.rowLoader.getBlockStartIndexForIndex(atStoreIndex)) {
+                    // if the block hasn't changed and we have a nodes map, we don't need to refresh the original block, as this block
+                    // has just been refreshed.
+                    return node;
+                }
                 // mark all of the old block as needsVerify to trigger it for a refresh, as nodes
                 // should not be out of place
                 this.markBlockForVerify(index);
@@ -430,7 +456,14 @@ var LazyCache = /** @class */ (function (_super) {
         this.nodeMap.delete(lazyNode);
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex);
         this.nodesToRefresh.delete(lazyNode.node);
-        this.blockUtils.destroyRowNode(lazyNode.node);
+        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+            // while refreshing, we retain the group nodes so they can be moved
+            // without losing state
+            this.removedNodeCache.set(lazyNode.node.id, lazyNode.node);
+        }
+        else {
+            this.blockUtils.destroyRowNode(lazyNode.node);
+        }
     };
     LazyCache.prototype.getSsrmParams = function () {
         return this.store.getSsrmParams();
@@ -631,6 +664,7 @@ var LazyCache = /** @class */ (function (_super) {
                 _this.createRowAtIndex(rowIndex, data);
                 return;
             }
+            // node already exists, and same as node at designated position, update data
             if (nodeFromCache && _this.doesNodeMatch(data, nodeFromCache.node)) {
                 _this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
                 _this.nodesToRefresh.delete(nodeFromCache.node);
@@ -669,11 +703,18 @@ var LazyCache = /** @class */ (function (_super) {
         this.fireStoreUpdatedEvent();
     };
     LazyCache.prototype.fireRefreshFinishedEvent = function () {
+        var _this = this;
         var finishedRefreshing = this.nodesToRefresh.size === 0;
         // if anything refreshing currently, skip.
         if (!finishedRefreshing) {
             return;
         }
+        // any nodes left in the map need to be cleaned up, this prevents us preserving nodes
+        // indefinitely
+        this.removedNodeCache.forEach(function (node) {
+            _this.blockUtils.destroyRowNode(node);
+        });
+        this.removedNodeCache = new Map();
         this.store.fireRefreshFinishedEvent();
     };
     LazyCache.prototype.isLastRowIndexKnown = function () {

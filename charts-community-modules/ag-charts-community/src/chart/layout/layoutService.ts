@@ -1,4 +1,4 @@
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 import { Listeners } from '../../util/listeners';
 
 export type LayoutStage = 'start-layout' | 'before-series';

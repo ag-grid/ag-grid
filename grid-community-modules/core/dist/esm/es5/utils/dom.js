@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -57,7 +51,7 @@ export function radioCssClass(element, elementClass, otherElementClass) {
     }
 }
 export var FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export var FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
+export var FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 export function isFocusableFormField(element) {
     var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     var inputSelector = 'input, select, button, textarea';
@@ -156,6 +150,16 @@ export function getAbsoluteWidth(el) {
     var size = getElementSize(el);
     var marginWidth = size.marginLeft + size.marginRight;
     return Math.ceil(el.offsetWidth + marginWidth);
+}
+export function getElementRectWithOffset(el) {
+    var offsetElementRect = el.getBoundingClientRect();
+    var _a = getElementSize(el), borderTopWidth = _a.borderTopWidth, borderLeftWidth = _a.borderLeftWidth, borderRightWidth = _a.borderRightWidth, borderBottomWidth = _a.borderBottomWidth;
+    return {
+        top: offsetElementRect.top + (borderTopWidth || 0),
+        left: offsetElementRect.left + (borderLeftWidth || 0),
+        right: offsetElementRect.right + (borderRightWidth || 0),
+        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
+    };
 }
 export function isRtlNegativeScroll() {
     if (typeof rtlNegativeScroll === "boolean") {

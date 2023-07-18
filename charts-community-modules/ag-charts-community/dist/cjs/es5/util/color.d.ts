@@ -66,4 +66,3 @@ export declare class Color {
      */
     private static nameToHex;
 }
-//# sourceMappingURL=color.d.ts.map

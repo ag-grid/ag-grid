@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/multi-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/multi-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -170,7 +170,8 @@ var MultiFilter = /** @class */ (function (_super) {
         if (filter.afterGuiAttached) {
             group.addManagedListener(group, core.AgGroupComponent.EVENT_EXPANDED, function () { return filter.afterGuiAttached({
                 container: _this.lastOpenedInContainer,
-                suppressFocus: true
+                suppressFocus: true,
+                hidePopup: _this.hidePopup
             }); });
         }
         return group;
@@ -265,7 +266,11 @@ var MultiFilter = /** @class */ (function (_super) {
     };
     MultiFilter.prototype.afterGuiAttached = function (params) {
         if (params) {
+            this.hidePopup = params.hidePopup;
             this.refreshGui(params.container);
+        }
+        else {
+            this.hidePopup = undefined;
         }
         var filters = this.params.filters;
         var suppressFocus = filters && filters.some(function (filter) { return filter.display && filter.display !== 'inline'; });
@@ -299,6 +304,7 @@ var MultiFilter = /** @class */ (function (_super) {
         });
         this.filters.length = 0;
         this.destroyChildren();
+        this.hidePopup = undefined;
         _super.prototype.destroy.call(this);
     };
     MultiFilter.prototype.executeFunctionIfExists = function (name) {
@@ -519,7 +525,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var MultiFilterModule = {
     version: VERSION,

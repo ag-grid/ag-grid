@@ -34,6 +34,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         _this.modelItem = modelItem;
         _this.columnGroup = modelItem.getColumnGroup();
         _this.columnDept = modelItem.getDept();
+        _this.displayName = modelItem.getDisplayName();
         _this.allowDragging = allowDragging;
         return _this;
     }
@@ -46,7 +47,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.columnGroup, this.eventType);
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
         }
@@ -156,11 +156,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
                 };
                 _this.eventService.dispatchEvent(event);
             },
-            onGridEnter: function () {
+            onGridEnter: function (dragItem) {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    _this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    _this.modelItemUtils.updateColumns({
+                        columns: _this.columnGroup.getLeafColumns(),
+                        visibleState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.visibleState,
+                        pivotState: dragItem === null || dragItem === void 0 ? void 0 : dragItem.pivotState,
+                        eventType: _this.eventType
+                    });
                 }
             },
             onGridExit: function () {
@@ -175,13 +179,19 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
     ToolPanelColumnGroupComp.prototype.createDragItem = function () {
+        var _this = this;
+        var columns = this.columnGroup.getLeafColumns();
         var visibleState = {};
-        this.columnGroup.getLeafColumns().forEach(function (col) {
-            visibleState[col.getId()] = col.isVisible();
+        var pivotState = {};
+        columns.forEach(function (col) {
+            var colId = col.getId();
+            visibleState[colId] = col.isVisible();
+            pivotState[colId] = _this.modelItemUtils.createPivotState(col);
         });
         return {
-            columns: this.columnGroup.getLeafColumns(),
-            visibleState: visibleState
+            columns: columns,
+            visibleState: visibleState,
+            pivotState: pivotState
         };
     };
     ToolPanelColumnGroupComp.prototype.setupExpandContract = function () {

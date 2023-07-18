@@ -1,5 +1,6 @@
-import { Chart, TransferableResources } from './chart';
-import { BBox } from '../scene/bbox';
+import type { TransferableResources } from './chart';
+import { Chart } from './chart';
+import type { BBox } from '../scene/bbox';
 export declare class CartesianChart extends Chart {
     static className: string;
     static type: string;

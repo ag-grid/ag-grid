@@ -47,6 +47,12 @@ export declare class LazyCache extends BeanStub {
      */
     private getRowIdFunc?;
     private isMasterDetail;
+    /**
+     * A cache of removed group nodes, this is retained for preserving group
+     * state when the node moves in and out of the cache. Generally caused by
+     * rows moving blocks.
+     */
+    private removedNodeCache;
     constructor(store: LazyStore, numberOfRows: number, storeParams: ServerSideGroupLevelParams);
     private init;
     private destroyRowNodes;

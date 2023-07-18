@@ -25,9 +25,9 @@ exports.TimeAxis = void 0;
 var validation_1 = require("../../util/validation");
 var timeScale_1 = require("../../scale/timeScale");
 var array_1 = require("../../util/array");
-var chartAxis_1 = require("../chartAxis");
 var default_1 = require("../../util/default");
-var axis_1 = require("../../axis");
+var axisTick_1 = require("./axisTick");
+var cartesianAxis_1 = require("./cartesianAxis");
 var TimeAxisTick = /** @class */ (function (_super) {
     __extends(TimeAxisTick, _super);
     function TimeAxisTick() {
@@ -40,7 +40,7 @@ var TimeAxisTick = /** @class */ (function (_super) {
         default_1.Default(NaN)
     ], TimeAxisTick.prototype, "maxSpacing", void 0);
     return TimeAxisTick;
-}(axis_1.BaseAxisTick));
+}(axisTick_1.AxisTick));
 var TimeAxis = /** @class */ (function (_super) {
     __extends(TimeAxis, _super);
     function TimeAxis(moduleCtx) {
@@ -97,8 +97,8 @@ var TimeAxis = /** @class */ (function (_super) {
     };
     TimeAxis.prototype.calculatePadding = function (_min, _max) {
         // numbers in domain correspond to Unix timestamps
-        // automatically expand domain by 1 in each direction
-        return 1;
+        // automatically expand domain by 1 in forward direction
+        return [0, 1];
     };
     TimeAxis.className = 'TimeAxis';
     TimeAxis.type = 'time';
@@ -109,5 +109,5 @@ var TimeAxis = /** @class */ (function (_super) {
         validation_1.Validate(validation_1.AND(validation_1.OPT_DATE_OR_DATETIME_MS, validation_1.GREATER_THAN('min')))
     ], TimeAxis.prototype, "max", void 0);
     return TimeAxis;
-}(chartAxis_1.ChartAxis));
+}(cartesianAxis_1.CartesianAxis));
 exports.TimeAxis = TimeAxis;

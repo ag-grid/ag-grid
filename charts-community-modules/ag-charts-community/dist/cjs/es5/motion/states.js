@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateMachine = void 0;
 var logger_1 = require("../util/logger");
+var window_1 = require("../util/window");
 var StateMachine = /** @class */ (function () {
     function StateMachine(initialState, states) {
-        this.debug = false;
         this.state = initialState;
         this.states = states;
-        if (this.debug)
+        if (StateMachine.DEBUG())
             logger_1.Logger.debug("%c" + this.constructor.name + " | init -> " + initialState, 'color: green');
     }
     StateMachine.prototype.transition = function (event, data) {
@@ -15,14 +15,14 @@ var StateMachine = /** @class */ (function () {
         var currentStateConfig = this.states[this.state];
         var destinationTransition = (_a = currentStateConfig === null || currentStateConfig === void 0 ? void 0 : currentStateConfig.on) === null || _a === void 0 ? void 0 : _a[event];
         if (!destinationTransition) {
-            if (this.debug) {
+            if (StateMachine.DEBUG()) {
                 logger_1.Logger.debug("%c" + this.constructor.name + " | " + this.state + " -> " + event + " -> " + this.state, 'color: grey');
             }
             return;
         }
         var destinationState = destinationTransition.target;
         var destinationStateConfig = this.states[destinationState];
-        if (this.debug) {
+        if (StateMachine.DEBUG()) {
             logger_1.Logger.debug("%c" + this.constructor.name + " | " + this.state + " -> " + event + " -> " + destinationState, 'color: green');
         }
         destinationTransition.action(data);
@@ -31,6 +31,7 @@ var StateMachine = /** @class */ (function () {
         this.state = destinationState;
         return this.state;
     };
+    StateMachine.DEBUG = function () { var _a; return (_a = [true, 'animation'].includes(window_1.windowValue('agChartsDebug'))) !== null && _a !== void 0 ? _a : false; };
     return StateMachine;
 }());
 exports.StateMachine = StateMachine;

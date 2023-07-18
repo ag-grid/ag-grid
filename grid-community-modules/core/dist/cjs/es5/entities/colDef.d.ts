@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
@@ -99,6 +99,10 @@ declare type NestedPath<TValue, Prefix extends string, TValueNestedChild> = TVal
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
+export declare type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue> : never;
+/**
+ * Returns a union of all possible paths to nested fields in `TData`.
+ */
 export declare type NestedFieldPaths<TData = any, TValue = any> = {
     [TKey in StringOrNumKeys<TData>]: (TData[TKey] extends TValue ? `${TKey}` : never) | NestedPath<TData[TKey], `${TKey}`, TValue>;
 }[StringOrNumKeys<TData>];
@@ -112,7 +116,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * The field of the row object to get the cell's data from.
      * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.
      */
-    field?: NestedFieldPaths<TData, TValue>;
+    field?: ColDefField<TData, TValue>;
     /**
      * A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
      * This helps to reduce duplication of properties when you have a lot of common column properties.
@@ -558,6 +562,7 @@ export interface ValueGetterParams<TData = any, TValue = any> extends BaseColDef
 export interface ValueGetterFunc<TData = any, TValue = any> {
     (params: ValueGetterParams<TData, TValue>): TValue | null | undefined;
 }
+export declare type HeaderLocation = 'chart' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | null;
 export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/
@@ -567,7 +572,7 @@ export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGr
     /** Original column group if applicable */
     providedColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
-    location: string | null;
+    location: HeaderLocation;
 }
 export interface HeaderValueGetterFunc<TData = any, TValue = any> {
     (params: HeaderValueGetterParams<TData, TValue>): string;

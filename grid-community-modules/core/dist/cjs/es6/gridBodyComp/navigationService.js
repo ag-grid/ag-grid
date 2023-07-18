@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33,7 +27,7 @@ let NavigationService = class NavigationService extends beanStub_1.BeanStub {
             this.gridBodyCon = p.gridBodyCtrl;
         });
     }
-    handlePageScrollingKey(event) {
+    handlePageScrollingKey(event, fromFullWidth = false) {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
@@ -65,23 +59,10 @@ let NavigationService = class NavigationService extends beanStub_1.BeanStub {
                 }
                 break;
             case keyCode_1.KeyCode.PAGE_DOWN:
-                if (!currentCell) {
-                    return false;
-                }
-                // handle page up and page down when ctrl & alt are NOT pressed
-                if (!ctrl && !alt) {
-                    this.onPageDown(currentCell);
-                    processed = true;
-                }
-                break;
             case keyCode_1.KeyCode.PAGE_UP:
-                if (!currentCell) {
-                    return false;
-                }
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
-                    this.onPageUp(currentCell);
-                    processed = true;
+                    processed = this.handlePageUpDown(key, currentCell, fromFullWidth);
                 }
                 break;
         }
@@ -89,6 +70,21 @@ let NavigationService = class NavigationService extends beanStub_1.BeanStub {
             event.preventDefault();
         }
         return processed;
+    }
+    handlePageUpDown(key, currentCell, fromFullWidth) {
+        if (fromFullWidth) {
+            currentCell = this.focusService.getFocusedCell();
+        }
+        if (!currentCell) {
+            return false;
+        }
+        if (key === keyCode_1.KeyCode.PAGE_UP) {
+            this.onPageUp(currentCell);
+        }
+        else {
+            this.onPageDown(currentCell);
+        }
+        return true;
     }
     navigateTo(navigateParams) {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;

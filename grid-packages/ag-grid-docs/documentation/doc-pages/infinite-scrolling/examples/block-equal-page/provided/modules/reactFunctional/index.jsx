@@ -206,8 +206,7 @@ const GridExample = () => {
                     pagination={true}
                     getRowId={getRowId}
                     onGridReady={onGridReady}
-                >
-                </AgGridReact>
+                />
             </div>
 
         </div>

@@ -1,14 +1,17 @@
-import { Selection } from '../../../scene/selection';
+import type { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text } from '../../../scene/shape/text';
-import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesTooltip, SeriesNodeDataContext } from '../series';
+import type { Text } from '../../../scene/shape/text';
+import type { DropShadow } from '../../../scene/dropShadow';
+import type { SeriesNodeDataContext } from '../series';
+import { SeriesTooltip } from '../series';
 import { Label } from '../../label';
-import { ChartLegendDatum } from '../../legendDatum';
-import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDatum, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
+import type { ChartLegendDatum } from '../../legendDatum';
+import type { CartesianSeriesNodeDatum } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { AgCartesianSeriesLabelFormatterParams, AgTooltipRendererResult, AgHistogramSeriesOptions, FontStyle, FontWeight, AgHistogramSeriesTooltipRendererParams } from '../../agChartOptions';
-import { ModuleContext } from '../../../util/module';
+import type { AgCartesianSeriesLabelFormatterParams, AgTooltipRendererResult, AgHistogramSeriesOptions, FontStyle, FontWeight, AgHistogramSeriesTooltipRendererParams } from '../../agChartOptions';
+import type { ModuleContext } from '../../../util/moduleContext';
+import type { DataController } from '../../data/dataController';
 declare class HistogramSeriesLabel extends Label {
     formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string;
 }
@@ -66,7 +69,7 @@ export declare class HistogramSeries extends CartesianSeries<SeriesNodeDataConte
     private calculateNiceBins;
     private getBins;
     private calculateNiceStart;
-    processData(): Promise<void>;
+    processData(dataController: DataController): Promise<void>;
     getDomain(direction: ChartAxisDirection): any[];
     protected getNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeClickEvent<any>;
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeDoubleClickEvent<any>;
@@ -76,6 +79,7 @@ export declare class HistogramSeries extends CartesianSeries<SeriesNodeDataConte
         labelData: HistogramNodeDatum[];
     }[]>;
     protected nodeFactory(): Rect;
+    datumSelectionGarbageCollection: boolean;
     protected updateDatumSelection(opts: {
         nodeData: HistogramNodeDatum[];
         datumSelection: Selection<Rect, HistogramNodeDatum>;
@@ -103,6 +107,10 @@ export declare class HistogramSeries extends CartesianSeries<SeriesNodeDataConte
     animateReadyHighlight(highlightSelection: Selection<Rect, HistogramNodeDatum>): void;
     animateReadyResize({ datumSelections }: {
         datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
+    }): void;
+    animateWaitingUpdateReady({ datumSelections, labelSelections, }: {
+        datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
+        labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
     }): void;
     resetSelectionRects(selection: Selection<Rect, HistogramNodeDatum>): void;
     protected isLabelEnabled(): boolean;

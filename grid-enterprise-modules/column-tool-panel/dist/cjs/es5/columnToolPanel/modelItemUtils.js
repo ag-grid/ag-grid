@@ -182,6 +182,36 @@ var ModelItemUtils = /** @class */ (function () {
             this.columnModel.applyColumnState({ state: colStateItems }, eventType);
         }
     };
+    ModelItemUtils.prototype.updateColumns = function (params) {
+        var _this = this;
+        var columns = params.columns, visibleState = params.visibleState, pivotState = params.pivotState, eventType = params.eventType;
+        var state = columns.map(function (column) {
+            var colId = column.getColId();
+            if (_this.columnModel.isPivotMode()) {
+                var pivotStateForColumn = pivotState === null || pivotState === void 0 ? void 0 : pivotState[colId];
+                return {
+                    colId: colId,
+                    pivot: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.pivot,
+                    rowGroup: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.rowGroup,
+                    aggFunc: pivotStateForColumn === null || pivotStateForColumn === void 0 ? void 0 : pivotStateForColumn.aggFunc,
+                };
+            }
+            else {
+                return {
+                    colId: colId,
+                    hide: !(visibleState === null || visibleState === void 0 ? void 0 : visibleState[colId])
+                };
+            }
+        });
+        this.columnModel.applyColumnState({ state: state }, eventType);
+    };
+    ModelItemUtils.prototype.createPivotState = function (column) {
+        return {
+            pivot: column.isPivotActive(),
+            rowGroup: column.isRowGroupActive(),
+            aggFunc: column.isValueActive() ? column.getAggFunc() : undefined
+        };
+    };
     __decorate([
         core_1.Autowired('aggFuncService')
     ], ModelItemUtils.prototype, "aggFuncService", void 0);

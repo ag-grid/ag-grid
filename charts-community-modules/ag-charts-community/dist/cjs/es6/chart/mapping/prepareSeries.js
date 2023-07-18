@@ -1,145 +1,75 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processSeriesOptions = exports.reduceSeries = exports.groupSeriesByType = void 0;
+exports.processSeriesOptions = exports.groupSeriesByType = void 0;
 const logger_1 = require("../../util/logger");
+const window_1 = require("../../util/window");
+const STACKABLE_SERIES_TYPES = ['bar', 'column', 'area'];
+const GROUPABLE_SERIES_TYPES = ['bar', 'column'];
 /**
  * Groups the series options objects if they are of type `column` or `bar` and places them in an array at the index where the first instance of this series type was found.
  * Returns an array of arrays containing the ordered and grouped series options objects.
  */
 function groupSeriesByType(seriesOptions) {
-    var _a;
-    const indexMap = {};
+    var _a, _b, _c, _d, _e, _f;
+    const groupMap = {};
+    const stackMap = {};
+    const anyStacked = {};
+    const defaultUnstackedGroup = 'default-ag-charts-group';
     const result = [];
     for (const s of seriesOptions) {
-        if (s.type !== 'column' && s.type !== 'bar' && (s.type !== 'area' || s.stacked !== true)) {
+        const type = (_a = s.type) !== null && _a !== void 0 ? _a : 'line';
+        const stackable = STACKABLE_SERIES_TYPES.includes(type);
+        const groupable = GROUPABLE_SERIES_TYPES.includes(type);
+        if (!stackable && !groupable) {
             // No need to use index for these cases.
-            result.push([s]);
+            result.push({ type: 'ungrouped', opts: [s] });
             continue;
         }
-        const seriesType = (_a = s.type) !== null && _a !== void 0 ? _a : 'line';
-        const groupingKey = s.stacked ? 'stacked' : 'grouped';
-        const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
-        if (indexMap[indexKey] == null) {
-            // Add indexed array to result on first addition.
-            indexMap[indexKey] = [];
-            result.push(indexMap[indexKey]);
+        const { stacked: sStacked, stackGroup: sStackGroup, grouped: sGrouped = undefined, xKey } = s;
+        const stacked = sStackGroup != null || sStacked === true;
+        (_b = anyStacked[type]) !== null && _b !== void 0 ? _b : (anyStacked[type] = false);
+        anyStacked[type] || (anyStacked[type] = stacked);
+        const grouped = sGrouped === true;
+        let groupingKey = [sStackGroup !== null && sStackGroup !== void 0 ? sStackGroup : (sStacked === true ? 'stacked' : undefined), grouped ? 'grouped' : undefined]
+            .filter((v) => v != null)
+            .join('-');
+        if (!groupingKey) {
+            groupingKey = defaultUnstackedGroup;
         }
-        indexMap[indexKey].push(s);
+        const indexKey = `${type}-${xKey}-${groupingKey}`;
+        if (stacked && stackable) {
+            const updated = ((_c = stackMap[indexKey]) !== null && _c !== void 0 ? _c : (stackMap[indexKey] = { type: 'stack', opts: [] }));
+            if (updated.opts.length === 0)
+                result.push(updated);
+            updated.opts.push(s);
+        }
+        else if (grouped && groupable) {
+            const updated = ((_d = groupMap[indexKey]) !== null && _d !== void 0 ? _d : (groupMap[indexKey] = { type: 'group', opts: [] }));
+            if (updated.opts.length === 0)
+                result.push(updated);
+            updated.opts.push(s);
+        }
+        else {
+            result.push({ type: 'ungrouped', opts: [s] });
+        }
+    }
+    if (!Object.values(anyStacked).some((v) => v)) {
+        return result;
+    }
+    for (const [, group] of Object.entries(groupMap)) {
+        const type = (_f = (_e = group.opts[0]) === null || _e === void 0 ? void 0 : _e.type) !== null && _f !== void 0 ? _f : 'line';
+        if (anyStacked[type] !== true)
+            continue;
+        group.type = 'stack';
     }
     return result;
 }
 exports.groupSeriesByType = groupSeriesByType;
-const FAIL = Symbol();
-const SKIP = Symbol();
-const ARRAY_REDUCER = (prop) => (result, next) => {
-    var _a;
-    return result.concat(...((_a = next[prop]) !== null && _a !== void 0 ? _a : []));
-};
-const BOOLEAN_OR_REDUCER = (prop, defaultValue) => (result, next) => {
-    if (typeof next[prop] === 'boolean') {
-        return (result !== null && result !== void 0 ? result : false) || next[prop];
-    }
-    return result !== null && result !== void 0 ? result : defaultValue;
-};
-const DEFAULTING_ARRAY_REDUCER = (prop, defaultValue) => (result, next, idx, length) => {
-    var _a;
-    const sparse = defaultValue === SKIP || defaultValue === FAIL;
-    const nextValue = (_a = next[prop]) !== null && _a !== void 0 ? _a : defaultValue;
-    if (nextValue === FAIL) {
-        throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
-    }
-    else if (nextValue === SKIP) {
-        return result;
-    }
-    if (result.length === 0 && !sparse) {
-        // Pre-populate values on first invocation as we will only be invoked for series with a
-        // value specified.
-        while (result.length < length) {
-            result = result.concat(defaultValue);
-        }
-    }
-    if (!sparse) {
-        result[idx] = nextValue;
-        return result;
-    }
-    return result.concat(nextValue);
-};
-const YKEYS_REDUCER = (prop, activationValue) => (result, next) => {
-    if (next[prop] === activationValue) {
-        return result.concat(...(next.yKey ? [next.yKey] : next.yKeys));
-    }
-    return result;
-};
-const STACK_GROUPS_REDUCER = () => (result, next) => {
-    return Object.assign(Object.assign({}, result), { [next.stackGroup]: [...(result[next.stackGroup] || []), next.yKey] });
-};
-const REDUCE_CONFIG = {
-    hideInChart: { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
-    hideInLegend: { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
-    yKey: { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', SKIP), start: [] },
-    fill: { outputProp: 'fills', reducer: DEFAULTING_ARRAY_REDUCER('fill', SKIP), start: [] },
-    stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
-    yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
-    visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
-    legendItemName: {
-        outputProp: 'legendItemNames',
-        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', SKIP),
-        start: [],
-    },
-    grouped: {
-        outputProp: 'grouped',
-        reducer: BOOLEAN_OR_REDUCER('grouped'),
-        seriesType: ['bar', 'column'],
-        start: undefined,
-    },
-    showInLegend: {
-        outputProp: 'hideInLegend',
-        reducer: YKEYS_REDUCER('showInLegend', false),
-        seriesType: ['bar', 'column'],
-        start: [],
-    },
-    stackGroup: {
-        outputProp: 'stackGroups',
-        reducer: STACK_GROUPS_REDUCER(),
-        seriesType: ['bar', 'column'],
-        start: {},
-    },
-};
-/**
- * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
- */
-function reduceSeries(series) {
-    const options = {};
-    series.forEach((s, idx) => {
-        Object.keys(s).forEach((prop) => {
-            var _a;
-            const reducerConfig = REDUCE_CONFIG[prop];
-            const defaultReduce = () => {
-                var _a, _b;
-                options[prop] = (_b = (_a = s[prop]) !== null && _a !== void 0 ? _a : options[prop]) !== null && _b !== void 0 ? _b : undefined;
-            };
-            if (!reducerConfig) {
-                defaultReduce();
-                return;
-            }
-            const { outputProp, reducer, start = undefined, seriesType = [s.type] } = reducerConfig;
-            if (!seriesType.includes(s.type)) {
-                defaultReduce();
-                return;
-            }
-            const result = reducer((_a = options[outputProp]) !== null && _a !== void 0 ? _a : start, s, idx, series.length);
-            if (result !== undefined) {
-                options[outputProp] = result;
-            }
-        });
-    });
-    return options;
-}
-exports.reduceSeries = reduceSeries;
+const DEBUG = () => [true, 'opts'].includes(window_1.windowValue('agChartsDebug'));
 /**
  * Transforms provided series options array into an array containing series options which are compatible with standalone charts series options.
  */
-function processSeriesOptions(seriesOptions) {
+function processSeriesOptions(_opts, seriesOptions) {
     const result = [];
     const preprocessed = seriesOptions.map((series) => {
         var _a;
@@ -149,19 +79,67 @@ function processSeriesOptions(seriesOptions) {
         }
         return series;
     });
-    for (const series of groupSeriesByType(preprocessed)) {
-        switch (series[0].type) {
+    const grouped = groupSeriesByType(preprocessed);
+    const groupCount = grouped.reduce((result, next) => {
+        var _a, _b;
+        if (next.type === 'ungrouped')
+            return result;
+        const seriesType = (_a = next.opts[0].type) !== null && _a !== void 0 ? _a : 'line';
+        (_b = result[seriesType]) !== null && _b !== void 0 ? _b : (result[seriesType] = 0);
+        result[seriesType] += next.type === 'stack' ? 1 : next.opts.length;
+        return result;
+    }, {});
+    const groupIdx = {};
+    const addSeriesGroupingMeta = (group) => {
+        var _a, _b;
+        let stackIdx = 0;
+        const seriesType = (_a = group.opts[0].type) !== null && _a !== void 0 ? _a : 'line';
+        (_b = groupIdx[seriesType]) !== null && _b !== void 0 ? _b : (groupIdx[seriesType] = 0);
+        if (group.type === 'stack') {
+            for (const opts of group.opts) {
+                opts.seriesGrouping = {
+                    groupIndex: groupIdx[seriesType],
+                    groupCount: groupCount[seriesType],
+                    stackIndex: stackIdx++,
+                    stackCount: group.opts.length,
+                };
+            }
+            groupIdx[seriesType]++;
+        }
+        else if (group.type === 'group') {
+            for (const opts of group.opts) {
+                opts.seriesGrouping = {
+                    groupIndex: groupIdx[seriesType],
+                    groupCount: groupCount[seriesType],
+                    stackIndex: 0,
+                    stackCount: 0,
+                };
+                groupIdx[seriesType]++;
+            }
+        }
+        else {
+            for (const opts of group.opts) {
+                opts.seriesGrouping = undefined;
+            }
+        }
+        return group.opts;
+    };
+    if (DEBUG()) {
+        logger_1.Logger.debug('processSeriesOptions() - series grouping: ', grouped);
+    }
+    for (const group of grouped) {
+        switch (group.opts[0].type) {
             case 'column':
             case 'bar':
             case 'area':
-                result.push(reduceSeries(series));
+                result.push(...addSeriesGroupingMeta(group));
                 break;
             case 'line':
             default:
-                if (series.length > 1) {
-                    logger_1.Logger.warn('unexpected grouping of series type: ' + series[0].type);
+                if (group.opts.length > 1) {
+                    logger_1.Logger.warn('unexpected grouping of series type: ' + group.opts[0].type);
                 }
-                result.push(series[0]);
+                result.push(...group.opts);
                 break;
         }
     }

@@ -1,6 +1,6 @@
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column, ColumnPinnedType } from '../entities/column';
-import { ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
+import { ColDef, ColGroupDef, IAggFunc, HeaderLocation } from '../entities/colDef';
 import { IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { ColumnEventType } from '../events';
@@ -142,6 +142,8 @@ export declare class ColumnModel extends BeanStub {
     private viewportLeft;
     private viewportRight;
     private flexViewportWidth;
+    private shouldQueueResizeOperations;
+    private resizeOperationQueue;
     private columnDefs;
     init(): void;
     private onAutoGroupColumnDefChanged;
@@ -280,6 +282,7 @@ export declare class ColumnModel extends BeanStub {
     getColumnState(): ColumnState[];
     private orderColumnStateList;
     resetColumnState(source?: ColumnEventType): void;
+    getColumnStateFromColDef(column: Column): ColumnState;
     applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean;
     private applyOrderAfterApplyState;
     private compareColumnStatesAndDispatchEvents;
@@ -296,9 +299,9 @@ export declare class ColumnModel extends BeanStub {
     getSourceColumnsForGroupColumn(groupCol: Column): Column[] | null;
     private getAutoColumn;
     private columnsMatch;
-    getDisplayNameForColumn(column: Column | null, location: string | null, includeAggFunc?: boolean): string | null;
-    getDisplayNameForProvidedColumnGroup(columnGroup: ColumnGroup | null, providedColumnGroup: ProvidedColumnGroup | null, location: string | null): string | null;
-    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string | null;
+    getDisplayNameForColumn(column: Column | null, location: HeaderLocation, includeAggFunc?: boolean): string | null;
+    getDisplayNameForProvidedColumnGroup(columnGroup: ColumnGroup | null, providedColumnGroup: ProvidedColumnGroup | null, location: HeaderLocation): string | null;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string | null;
     private getHeaderName;
     private wrapHeaderNameWithAggFunc;
     getColumnGroup(colId: string | ColumnGroup, partId?: number): ColumnGroup | null;
@@ -381,4 +384,12 @@ export declare class ColumnModel extends BeanStub {
     getGroupHeaderHeight(): number;
     private getPivotHeaderHeight;
     getPivotGroupHeaderHeight(): number;
+    queueResizeOperations(): void;
+    processResizeOperations(): void;
+    resetColumnDefIntoColumn(column: Column): boolean;
+    generateColumnStateForRowGroupAndPivotIndexes(updatedRowGroupColumnState: {
+        [colId: string]: ColumnState;
+    }, updatedPivotColumnState: {
+        [colId: string]: ColumnState;
+    }): ColumnState[];
 }

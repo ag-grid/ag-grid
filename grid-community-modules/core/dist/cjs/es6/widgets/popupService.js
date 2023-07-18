@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -210,14 +204,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
         else if (getComputedStyle(popupParent).position === 'static') {
             popupParent = popupParent.offsetParent;
         }
-        const style = getComputedStyle(popupParent);
-        const bounds = popupParent.getBoundingClientRect();
-        return {
-            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
-        };
+        return dom_1.getElementRectWithOffset(popupParent);
     }
     keepXYWithinBounds(ePopup, position, direction) {
         const isVertical = direction === DIRECTION.vertical;
@@ -381,6 +368,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             popup.stopAnchoringPromise.then(destroyFunc => destroyFunc && destroyFunc());
         }
         popup.stopAnchoringPromise = undefined;
+        popup.isAnchored = false;
         if (!relativeElement) {
             return;
         }
@@ -392,6 +380,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             hidePopup: popup.hideFunc
         });
         popup.stopAnchoringPromise = destroyPositionTracker;
+        popup.isAnchored = true;
         return destroyPositionTracker;
     }
     removePopupFromPopupList(element) {

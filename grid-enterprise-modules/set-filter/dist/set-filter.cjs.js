@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.2
+          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -1024,6 +1024,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
+        this.addDestroyFunc(function () { var _a; return (_a = _this.destroyCellRendererComponent) === null || _a === void 0 ? void 0 : _a.call(_this); });
         this.render();
         this.eCheckbox.setLabelEllipsis(true);
         this.eCheckbox.setValue(this.isSelected, true);
@@ -1148,7 +1149,14 @@ var SetFilterListItem = /** @class */ (function (_super) {
                 this.renderCellWithoutCellRenderer();
             }
         }
-        (_b = (_a = this.cellRendererComponent) === null || _a === void 0 ? void 0 : _a.refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+        if (this.cellRendererComponent) {
+            var success = (_b = (_a = this.cellRendererComponent).refresh) === null || _b === void 0 ? void 0 : _b.call(_a, this.cellRendererParams);
+            if (!success) {
+                var oldComponent = this.cellRendererComponent;
+                this.renderCell();
+                this.destroyBean(oldComponent);
+            }
+        }
     };
     SetFilterListItem.prototype.render = function () {
         var column = this.params.column;
@@ -1209,7 +1217,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             if (component) {
                 _this.cellRendererComponent = component;
                 _this.eCheckbox.setLabel(component.getGui());
-                _this.addDestroyFunc(function () { return _this.destroyBean(component); });
+                _this.destroyCellRendererComponent = function () { return _this.destroyBean(component); };
             }
         });
     };
@@ -2456,7 +2464,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.2';
+var VERSION = '30.0.5';
 
 var SetFilterModule = {
     version: VERSION,

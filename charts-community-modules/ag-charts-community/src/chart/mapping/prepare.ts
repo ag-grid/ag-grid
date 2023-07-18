@@ -1,4 +1,4 @@
-import {
+import type {
     AgChartOptions,
     AgHierarchyChartOptions,
     AgPolarChartOptions,
@@ -7,20 +7,22 @@ import {
     AgCrossLineOptions,
     AgTooltipPositionOptions,
 } from '../agChartOptions';
+import type { SeriesOptionsTypes } from './defaults';
 import {
-    SeriesOptionsTypes,
     DEFAULT_CARTESIAN_CHART_OVERRIDES,
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
 } from './defaults';
-import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
-import { applySeriesTransform } from './transforms';
+import type { JsonMergeOptions } from '../../util/json';
+import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
 import { getChartTheme } from './themes';
-import { processSeriesOptions, SeriesOptions } from './prepareSeries';
+import type { SeriesOptions } from './prepareSeries';
+import { processSeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
+import type { SeriesPaletteFactory } from '../../util/module';
+import { AXIS_TYPES } from '../factory/axisTypes';
 import { CHART_TYPES } from '../factory/chartTypes';
-import { CHART_AXES_TYPES } from '../chartAxesTypes';
-import { getSeriesDefaults } from '../factory/seriesTypes';
+import { addSeriesPaletteFactory, getSeriesDefaults, getSeriesPaletteFactory } from '../factory/seriesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -84,7 +86,7 @@ function isAxisOptionType(input?: string): input is NonNullable<AxesOptionsTypes
     if (input == null) {
         return false;
     }
-    return CHART_AXES_TYPES.has(input);
+    return AXIS_TYPES.has(input);
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -172,6 +174,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
     mergedOptions.series = processSeriesOptions(
+        mergedOptions,
         ((mergedOptions.series as SeriesOptions[]) ?? []).map((s) => {
             let type = defaultSeriesType;
             if (s.type) {
@@ -193,14 +196,14 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
         const isAxisType = isAxisOptionType(type);
         if (!isAxisType) {
             Logger.warnOnce(
-                `AG Charts - unknown axis type: ${type}; expected one of: ${CHART_AXES_TYPES.axesTypes}, ignoring.`
+                `AG Charts - unknown axis type: ${type}; expected one of: ${AXIS_TYPES.axesTypes}, ignoring.`
             );
         }
 
         return isAxisType;
     };
 
-    if (isAgCartesianChartOptions(mergedOptions)) {
+    if ('axes' in mergedOptions) {
         let validAxesTypes = true;
         for (const { type: axisType } of mergedOptions.axes ?? []) {
             if (!checkAxisType(axisType)) {
@@ -262,7 +265,7 @@ function mergeSeriesOptions<T extends SeriesOptionsTypes>(
     return mergedSeries;
 }
 
-function prepareMainOptions<T>(
+function prepareMainOptions<T extends AgChartOptions>(
     defaultOverrides: T,
     options: T
 ): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
@@ -294,59 +297,59 @@ function prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext
     const paletteOptions = calculateSeriesPalette(context, input);
 
     // Part of the options interface, but not directly consumed by the series implementations.
-    const removeOptions = { stacked: DELETE } as T;
-    const mergedResult = jsonMerge([...defaults, paletteOptions, input, removeOptions], noDataCloneMergeOptions);
-
-    return applySeriesTransform(mergedResult);
+    const removeOptions = { stacked: DELETE, grouped: DELETE } as T;
+    return jsonMerge([...defaults, paletteOptions, input, removeOptions], noDataCloneMergeOptions);
 }
 
+addSeriesPaletteFactory('pie', ({ takeColors, colorsCount }) => takeColors(colorsCount));
+const singleSeriesPaletteFactory: SeriesPaletteFactory = ({ takeColors }) => {
+    const {
+        fills: [fill],
+        strokes: [stroke],
+    } = takeColors(1);
+    return { fill, stroke };
+};
+addSeriesPaletteFactory('area', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('bar', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('column', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('histogram', singleSeriesPaletteFactory);
+addSeriesPaletteFactory('scatter', (params) => {
+    const { fill, stroke } = singleSeriesPaletteFactory(params);
+    return { marker: { fill, stroke } };
+});
+addSeriesPaletteFactory('line', (params) => {
+    const { fill, stroke } = singleSeriesPaletteFactory(params);
+    return {
+        stroke: fill,
+        marker: { fill, stroke },
+    };
+});
+
 function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: PreparationContext, input: T): T {
-    const paletteOptions: {
-        stroke?: string;
-        fill?: string;
-        fills?: string[];
-        strokes?: string[];
-        marker?: { fill?: string; stroke?: string };
-        callout?: { colors?: string[] };
-    } = {};
+    const paletteFactory = getSeriesPaletteFactory(input.type!);
+    if (!paletteFactory) {
+        return {} as T;
+    }
 
     const {
         palette: { fills, strokes },
     } = context;
 
     const inputAny = input as any;
-    let colourCount = countArrayElements(inputAny['yKeys'] ?? []) || 1; // Defaults to 1 if no yKeys.
-    switch (input.type) {
-        case 'pie':
-            colourCount = Math.max(fills.length, strokes.length);
-        // eslint-disable-next-line no-fallthrough
-        case 'area':
-        case 'bar':
-        case 'column':
-            paletteOptions.fills = takeColours(context, fills, colourCount);
-            paletteOptions.strokes = takeColours(context, strokes, colourCount);
-            break;
-        case 'histogram':
-            paletteOptions.fill = takeColours(context, fills, 1)[0];
-            paletteOptions.stroke = takeColours(context, strokes, 1)[0];
-            break;
-        case 'scatter':
-            paletteOptions.marker = {
-                stroke: takeColours(context, strokes, 1)[0],
-                fill: takeColours(context, fills, 1)[0],
+    const seriesCount = countArrayElements(inputAny['yKeys'] ?? []) || 1; // Defaults to 1 if no yKeys.
+    const colorsCount = Math.max(fills.length, strokes.length);
+    return paletteFactory({
+        seriesCount,
+        colorsCount,
+        takeColors: (count) => {
+            const colors = {
+                fills: takeColours(context, fills, count),
+                strokes: takeColours(context, strokes, count),
             };
-            break;
-        case 'line':
-            paletteOptions.stroke = takeColours(context, fills, 1)[0];
-            paletteOptions.marker = {
-                stroke: takeColours(context, strokes, 1)[0],
-                fill: takeColours(context, fills, 1)[0],
-            };
-            break;
-    }
-    context.colourIndex += colourCount;
-
-    return paletteOptions as T;
+            context.colourIndex += count;
+            return colors;
+        },
+    }) as T;
 }
 
 function prepareAxis<T extends AxesOptionsTypes>(

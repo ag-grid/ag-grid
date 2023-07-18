@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -526,7 +520,7 @@ var FilterManager = /** @class */ (function (_super) {
     };
     FilterManager.prototype.getDefaultFilter = function (column) {
         var defaultFilter;
-        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId())) {
+        if (moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFilter = 'agSetColumnFilter';
         }
         else {
@@ -545,7 +539,7 @@ var FilterManager = /** @class */ (function (_super) {
     };
     FilterManager.prototype.getDefaultFloatingFilter = function (column) {
         var defaultFloatingFilterType;
-        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId())) {
+        if (moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         }
         else {
@@ -775,7 +769,6 @@ var FilterManager = /** @class */ (function (_super) {
         });
     };
     FilterManager.prototype.checkDestroyFilter = function (colId) {
-        var _a;
         var filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
             return;
@@ -784,7 +777,19 @@ var FilterManager = /** @class */ (function (_super) {
         var compDetails = (column.isFilterAllowed()
             ? this.createFilterInstance(column)
             : { compDetails: null }).compDetails;
-        if (!compDetails || ((_a = filterWrapper.compDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== compDetails.componentClass) {
+        var areFilterCompsDifferent = function (oldCompDetails, newCompDetails) {
+            if (!newCompDetails || !oldCompDetails) {
+                return true;
+            }
+            var oldComponentClass = oldCompDetails.componentClass;
+            var newComponentClass = newCompDetails.componentClass;
+            var isSameComponentClass = oldComponentClass === newComponentClass ||
+                // react hooks returns new wrappers, so check nested render method
+                ((oldComponentClass === null || oldComponentClass === void 0 ? void 0 : oldComponentClass.render) && (newComponentClass === null || newComponentClass === void 0 ? void 0 : newComponentClass.render) &&
+                    oldComponentClass.render === newComponentClass.render);
+            return !isSameComponentClass;
+        };
+        if (areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
         }
     };

@@ -1,8 +1,9 @@
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
-import { BBox } from '../../../scene/bbox';
-import { PointLabelDatum } from '../../../util/labelPlacement';
-import { DataModel, ProcessedData } from '../../data/dataModel';
-import { ModuleContext } from '../../../util/module';
+import type { SeriesNodeDatum, SeriesNodeDataContext } from '../series';
+import { Series, SeriesNodePickMode } from '../series';
+import type { BBox } from '../../../scene/bbox';
+import type { PointLabelDatum } from '../../../util/labelPlacement';
+import type { DataModel, ProcessedData } from '../../data/dataModel';
+import type { ModuleContext } from '../../../util/moduleContext';
 export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**
      * The center of the polar series (for example, the center of a pie).
@@ -30,4 +31,3 @@ export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Ser
         hideWhenNecessary: boolean;
     }, _seriesRect: BBox): BBox | null;
 }
-//# sourceMappingURL=polarSeries.d.ts.map

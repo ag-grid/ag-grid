@@ -1505,14 +1505,20 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   height: 100%;
 }
 .ag-column-select-column > *,
 .ag-column-select-column-group > *,
 .ag-select-agg-func-item > * {
   flex: none;
+}
+
+.ag-select-agg-func-item,
+.ag-column-select-column-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ag-column-select-checkbox {

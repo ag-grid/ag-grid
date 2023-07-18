@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.2
+// Type definitions for @ag-grid-community/core v30.0.5
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -7,6 +7,7 @@ import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { IRowNode } from "../interfaces/iRowNode";
+import { IAggFunc } from "../entities/colDef";
 export interface DragItem {
     /**
      * When dragging a row, this contains the row node being dragged
@@ -20,6 +21,14 @@ export interface DragItem {
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: {
         [key: string]: boolean;
+    };
+    /** When dragging columns, this contains the pivot state of the columns. This is only populated/used in column tool panel */
+    pivotState?: {
+        [key: string]: {
+            pivot?: boolean;
+            rowGroup?: boolean;
+            aggFunc?: string | IAggFunc | null;
+        };
     };
 }
 export declare enum DragSourceType {

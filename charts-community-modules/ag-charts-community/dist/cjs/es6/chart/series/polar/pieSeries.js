@@ -38,7 +38,6 @@ const sector_2 = require("../../../util/sector");
 const validation_1 = require("../../../util/validation");
 const states_1 = require("../../../motion/states");
 const easing = require("../../../motion/easing");
-const dataModel_1 = require("../../data/dataModel");
 const processors_1 = require("../../data/processors");
 class PieSeriesNodeBaseClickEvent extends series_1.SeriesNodeBaseClickEvent {
     constructor(angleKey, calloutLabelKey, sectorLabelKey, radiusKey, nativeEvent, datum, series) {
@@ -75,6 +74,7 @@ class PieSeriesCalloutLabel extends label_1.Label {
         this.formatter = undefined;
         this.minSpacing = 4;
         this.maxCollisionOffset = 50;
+        this.avoidCollisions = true;
     }
 }
 __decorate([
@@ -92,6 +92,9 @@ __decorate([
 __decorate([
     validation_1.Validate(validation_1.NUMBER(0))
 ], PieSeriesCalloutLabel.prototype, "maxCollisionOffset", void 0);
+__decorate([
+    validation_1.Validate(validation_1.BOOLEAN)
+], PieSeriesCalloutLabel.prototype, "avoidCollisions", void 0);
 class PieSeriesSectorLabel extends label_1.Label {
     constructor() {
         super(...arguments);
@@ -175,6 +178,7 @@ class PieStateMachine extends states_1.StateMachine {
 }
 class PieSeries extends polarSeries_1.PolarSeries {
     constructor(moduleCtx) {
+        var _a, _b, _c;
         super({ moduleCtx, useLabelLayer: true });
         this.radiusScale = new linearScale_1.LinearScale();
         this.groupSelection = selection_1.Selection.select(this.contentGroup, group_1.Group);
@@ -241,9 +245,9 @@ class PieSeries extends polarSeries_1.PolarSeries {
         const pieCalloutLabels = new group_1.Group({ name: 'pieCalloutLabels' });
         const pieSectorLabels = new group_1.Group({ name: 'pieSectorLabels' });
         const innerLabels = new group_1.Group({ name: 'innerLabels' });
-        this.labelGroup.append(pieCalloutLabels);
-        this.labelGroup.append(pieSectorLabels);
-        this.labelGroup.append(innerLabels);
+        (_a = this.labelGroup) === null || _a === void 0 ? void 0 : _a.append(pieCalloutLabels);
+        (_b = this.labelGroup) === null || _b === void 0 ? void 0 : _b.append(pieSectorLabels);
+        (_c = this.labelGroup) === null || _c === void 0 ? void 0 : _c.append(innerLabels);
         this.calloutLabelSelection = selection_1.Selection.select(pieCalloutLabels, group_1.Group);
         this.sectorLabelSelection = selection_1.Selection.select(pieSectorLabels, text_1.Text);
         this.innerLabelsSelection = selection_1.Selection.select(innerLabels, text_1.Text);
@@ -275,7 +279,7 @@ class PieSeries extends polarSeries_1.PolarSeries {
     }
     addChartEventListeners() {
         var _a;
-        (_a = this.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        (_a = this.ctx.chartEventManager) === null || _a === void 0 ? void 0 : _a.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
     visibleChanged() {
         this.processSeriesItemEnabled();
@@ -293,29 +297,43 @@ class PieSeries extends polarSeries_1.PolarSeries {
             return this.radiusScale.domain;
         }
     }
-    processData() {
+    processData(dataController) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let { data = [] } = this;
-            const { angleKey, radiusKey, seriesItemEnabled } = this;
+            const { angleKey, radiusKey, calloutLabelKey, sectorLabelKey, legendItemKey, seriesItemEnabled } = this;
             if (!angleKey)
                 return;
             const extraProps = [];
             if (radiusKey) {
-                extraProps.push(series_1.rangedValueProperty(radiusKey, { id: 'radiusValue', min: (_a = this.radiusMin) !== null && _a !== void 0 ? _a : 0, max: this.radiusMax }), series_1.valueProperty(radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
-                processors_1.normalisePropertyTo({ id: 'radiusValue' }, [0, 1], (_b = this.radiusMin) !== null && _b !== void 0 ? _b : 0, this.radiusMax));
+                extraProps.push(series_1.rangedValueProperty(this, radiusKey, {
+                    id: 'radiusValue',
+                    min: (_a = this.radiusMin) !== null && _a !== void 0 ? _a : 0,
+                    max: this.radiusMax,
+                }), series_1.valueProperty(this, radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
+                processors_1.normalisePropertyTo(this, { id: 'radiusValue' }, [0, 1], (_b = this.radiusMin) !== null && _b !== void 0 ? _b : 0, this.radiusMax));
                 extraProps.push();
             }
+            if (calloutLabelKey) {
+                extraProps.push(series_1.valueProperty(this, calloutLabelKey, false, { id: `calloutLabelValue` }));
+            }
+            if (sectorLabelKey) {
+                extraProps.push(series_1.valueProperty(this, sectorLabelKey, false, { id: `sectorLabelValue` }));
+            }
+            if (legendItemKey) {
+                extraProps.push(series_1.valueProperty(this, legendItemKey, false, { id: `legendItemValue` }));
+            }
             data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : Object.assign(Object.assign({}, d), { [angleKey]: 0 })));
-            this.dataModel = new dataModel_1.DataModel({
+            const { dataModel, processedData } = yield dataController.request(this.id, data, {
                 props: [
-                    series_1.accumulativeValueProperty(angleKey, true, { id: `angleValue` }),
-                    series_1.valueProperty(angleKey, true, { id: `angleRaw` }),
-                    processors_1.normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0),
+                    series_1.accumulativeValueProperty(this, angleKey, true, { id: `angleValue` }),
+                    series_1.valueProperty(this, angleKey, true, { id: `angleRaw` }),
+                    processors_1.normalisePropertyTo(this, { id: 'angleValue' }, [0, 1], 0),
                     ...extraProps,
                 ],
             });
-            this.processedData = this.dataModel.processData(data);
+            this.dataModel = dataModel;
+            this.processedData = processedData;
         });
     }
     maybeRefreshNodeData() {
@@ -330,15 +348,25 @@ class PieSeries extends polarSeries_1.PolarSeries {
             return this._createNodeData();
         });
     }
+    getProcessedDataIndexes(dataModel) {
+        const angleIdx = dataModel.resolveProcessedDataIndexById(this, `angleValue`).index;
+        const radiusIdx = this.radiusKey ? dataModel.resolveProcessedDataIndexById(this, `radiusValue`).index : -1;
+        const calloutLabelIdx = this.calloutLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `calloutLabelValue`).index
+            : -1;
+        const sectorLabelIdx = this.sectorLabelKey
+            ? dataModel.resolveProcessedDataIndexById(this, `sectorLabelValue`).index
+            : -1;
+        const legendItemIdx = this.legendItemKey
+            ? dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index
+            : -1;
+        return { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx };
+    }
     _createNodeData() {
-        var _a, _b, _c, _d;
         const { id: seriesId, processedData, dataModel, rotation, angleScale } = this;
         if (!processedData || !dataModel || processedData.type !== 'ungrouped')
             return [];
-        const angleIdx = (_b = (_a = dataModel.resolveProcessedDataIndexById(`angleValue`)) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1;
-        const radiusIdx = (_d = (_c = dataModel.resolveProcessedDataIndexById(`radiusValue`)) === null || _c === void 0 ? void 0 : _c.index) !== null && _d !== void 0 ? _d : -1;
-        if (angleIdx < 0)
-            return [];
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } = this.getProcessedDataIndexes(dataModel);
         let currentStart = 0;
         const nodeData = processedData.data.map((group, index) => {
             var _a;
@@ -352,7 +380,8 @@ class PieSeries extends polarSeries_1.PolarSeries {
             const angleValue = values[angleIdx + 1];
             const radius = radiusIdx >= 0 ? (_a = values[radiusIdx]) !== null && _a !== void 0 ? _a : 1 : 1;
             const radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
-            const labels = this.getLabels(datum, midAngle, span, true);
+            const legendItemValue = legendItemIdx >= 0 ? values[legendItemIdx] : undefined;
+            const labels = this.getLabels(datum, midAngle, span, true, currentValue, radiusValue, values[calloutLabelIdx], values[sectorLabelIdx], legendItemValue);
             const sectorFormat = this.getSectorFormat(datum, index, index, false);
             return Object.assign({ itemId: index, series: this, datum,
                 index,
@@ -361,7 +390,8 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 endAngle,
                 sectorFormat,
                 radius,
-                radiusValue }, labels);
+                radiusValue,
+                legendItemValue }, labels);
         });
         return [
             {
@@ -371,13 +401,13 @@ class PieSeries extends polarSeries_1.PolarSeries {
             },
         ];
     }
-    getLabels(datum, midAngle, span, skipDisabled) {
+    getLabels(datum, midAngle, span, skipDisabled, angleValue, radiusValue, calloutLabelValue, sectorLabelValue, legendItemValue) {
         const { calloutLabel, sectorLabel, legendItemKey, ctx: { callbackCache }, } = this;
         const calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
         const sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
         if (!calloutLabelKey && !sectorLabelKey && !legendItemKey)
             return {};
-        const labelFormatterParams = this.getLabelFormatterParams(datum);
+        const labelFormatterParams = this.getLabelFormatterParams(datum, angleValue, radiusValue, calloutLabelValue, sectorLabelValue);
         let calloutLabelText;
         if (calloutLabelKey) {
             const calloutLabelMinAngle = angle_1.toRadians(calloutLabel.minAngle);
@@ -389,7 +419,7 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 calloutLabelText = callbackCache.call(calloutLabel.formatter, labelFormatterParams);
             }
             else {
-                calloutLabelText = String(datum[calloutLabelKey]);
+                calloutLabelText = String(calloutLabelValue);
             }
         }
         let sectorLabelText;
@@ -398,36 +428,32 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 sectorLabelText = callbackCache.call(sectorLabel.formatter, labelFormatterParams);
             }
             else {
-                sectorLabelText = String(datum[sectorLabelKey]);
+                sectorLabelText = String(sectorLabelValue);
             }
-        }
-        let legendItemText;
-        if (legendItemKey) {
-            legendItemText = String(datum[legendItemKey]);
         }
         return Object.assign(Object.assign(Object.assign({}, (calloutLabelText != null
             ? {
                 calloutLabel: Object.assign(Object.assign({}, this.getTextAlignment(midAngle)), { text: calloutLabelText, hidden: false, collisionTextAlign: undefined, collisionOffsetY: 0, box: undefined }),
             }
-            : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemText != null
-            ? { legendItem: { key: legendItemKey, text: legendItemText } }
+            : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemValue != null
+            ? { legendItem: { key: legendItemKey, text: legendItemValue } }
             : {}));
     }
-    getLabelFormatterParams(datum) {
+    getLabelFormatterParams(datum, angleValue, radiusValue, calloutLabelValue, sectorLabelValue) {
         const { id: seriesId, radiusKey, radiusName, angleKey, angleName, calloutLabelKey, calloutLabelName, sectorLabelKey, sectorLabelName, } = this;
         return {
             datum,
             angleKey,
-            angleValue: datum[angleKey],
+            angleValue,
             angleName,
             radiusKey,
-            radiusValue: radiusKey ? datum[radiusKey] : undefined,
+            radiusValue,
             radiusName,
             calloutLabelKey,
-            calloutLabelValue: calloutLabelKey ? datum[calloutLabelKey] : undefined,
+            calloutLabelValue,
             calloutLabelName,
             sectorLabelKey,
-            sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+            sectorLabelValue,
             sectorLabelName,
             seriesId,
         };
@@ -448,15 +474,15 @@ class PieSeries extends polarSeries_1.PolarSeries {
         return quadrantTextOpts[quadrantIndex];
     }
     getSectorFormat(datum, itemId, index, highlight) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId, ctx: { callbackCache }, } = this;
-        const highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId, ctx: { callbackCache, highlightManager }, } = this;
+        const highlightedDatum = highlightManager === null || highlightManager === void 0 ? void 0 : highlightManager.getActiveHighlight();
         const isDatumHighlighted = highlight && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
-        const fill = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) !== null && _b !== void 0 ? _b : fills[index % fills.length];
-        const fillOpacity = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _c !== void 0 ? _c : seriesFillOpacity;
-        const stroke = (_d = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) !== null && _d !== void 0 ? _d : strokes[index % strokes.length];
-        const strokeWidth = (_e = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _e !== void 0 ? _e : this.getStrokeWidth(this.strokeWidth);
+        const fill = (_a = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fill) !== null && _a !== void 0 ? _a : fills[index % fills.length];
+        const fillOpacity = (_b = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.fillOpacity) !== null && _b !== void 0 ? _b : seriesFillOpacity;
+        const stroke = (_c = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.stroke) !== null && _c !== void 0 ? _c : strokes[index % strokes.length];
+        const strokeWidth = (_d = highlightedStyle === null || highlightedStyle === void 0 ? void 0 : highlightedStyle.strokeWidth) !== null && _d !== void 0 ? _d : this.getStrokeWidth(this.strokeWidth);
         let format;
         if (formatter) {
             format = callbackCache.call(formatter, {
@@ -471,10 +497,10 @@ class PieSeries extends polarSeries_1.PolarSeries {
             });
         }
         return {
-            fill: (_f = format === null || format === void 0 ? void 0 : format.fill) !== null && _f !== void 0 ? _f : fill,
-            fillOpacity: (_g = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _g !== void 0 ? _g : fillOpacity,
-            stroke: (_h = format === null || format === void 0 ? void 0 : format.stroke) !== null && _h !== void 0 ? _h : stroke,
-            strokeWidth: (_j = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _j !== void 0 ? _j : strokeWidth,
+            fill: (_e = format === null || format === void 0 ? void 0 : format.fill) !== null && _e !== void 0 ? _e : fill,
+            fillOpacity: (_f = format === null || format === void 0 ? void 0 : format.fillOpacity) !== null && _f !== void 0 ? _f : fillOpacity,
+            stroke: (_g = format === null || format === void 0 ? void 0 : format.stroke) !== null && _g !== void 0 ? _g : stroke,
+            strokeWidth: (_h = format === null || format === void 0 ? void 0 : format.strokeWidth) !== null && _h !== void 0 ? _h : strokeWidth,
         };
     }
     getInnerRadius() {
@@ -516,8 +542,16 @@ class PieSeries extends polarSeries_1.PolarSeries {
             this.updateTitleNodes();
             this.updateRadiusScale();
             this.updateInnerCircleNodes();
-            this.rootGroup.translationX = this.centerX;
-            this.rootGroup.translationY = this.centerY;
+            this.contentGroup.translationX = this.centerX;
+            this.contentGroup.translationY = this.centerY;
+            this.highlightGroup.translationX = this.centerX;
+            this.highlightGroup.translationY = this.centerY;
+            this.backgroundGroup.translationX = this.centerX;
+            this.backgroundGroup.translationY = this.centerY;
+            if (this.labelGroup) {
+                this.labelGroup.translationX = this.centerX;
+                this.labelGroup.translationY = this.centerY;
+            }
             if (title) {
                 const dy = this.getTitleTranslationY();
                 const titleBox = title.node.computeBBox();
@@ -609,13 +643,15 @@ class PieSeries extends polarSeries_1.PolarSeries {
     updateNodes(seriesRect) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const highlightedDatum = (_a = this.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
+            const highlightedDatum = (_a = this.ctx.highlightManager) === null || _a === void 0 ? void 0 : _a.getActiveHighlight();
             const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
             this.rootGroup.visible = isVisible;
             this.backgroundGroup.visible = isVisible;
             this.contentGroup.visible = isVisible;
             this.highlightGroup.visible = isVisible && (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this;
-            this.labelGroup.visible = isVisible;
+            if (this.labelGroup) {
+                this.labelGroup.visible = isVisible;
+            }
             this.contentGroup.opacity = this.getOpacity();
             this.updateInnerCircle();
             const { radiusScale } = this;
@@ -652,9 +688,11 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 .forEach((node, index) => updateSectorFn(node, node.datum, index, false));
             this.highlightSelection.selectByTag(PieNodeTag.Sector).forEach((node, index) => {
                 const isDatumHighlighted = (highlightedDatum === null || highlightedDatum === void 0 ? void 0 : highlightedDatum.series) === this && node.datum.itemId === highlightedDatum.itemId;
-                node.visible = isDatumHighlighted;
-                if (node.visible) {
+                if (isDatumHighlighted) {
                     updateSectorFn(node, node.datum, index, isDatumHighlighted);
+                }
+                else {
+                    node.visible = false;
                 }
             });
             this.animationState.transition('update');
@@ -685,7 +723,8 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 const y1 = datum.midSin * outerRadius;
                 let x2 = datum.midCos * (outerRadius + calloutLength);
                 let y2 = datum.midSin * (outerRadius + calloutLength);
-                if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
+                const isMoved = label.collisionTextAlign || label.collisionOffsetY !== 0;
+                if (isMoved && label.box != null) {
                     // Get the closest point to the text bounding box
                     const box = label.box;
                     let cx = x2;
@@ -736,9 +775,9 @@ class PieSeries extends polarSeries_1.PolarSeries {
             visibleTextPart = (seriesRight - box.x) / box.width;
         }
         const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
-        const textLength = Math.floor(text.length * visibleTextPart) - 1;
+        const textLength = visibleTextPart === 1 ? text.length : Math.floor(text.length * visibleTextPart) - 1;
         const hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
-        return { visibleTextPart, textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
+        return { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
     }
     bboxIntersectsSurroundingSeries(box, dx = 0, dy = 0) {
         const { surroundingRadius } = this;
@@ -765,9 +804,11 @@ class PieSeries extends polarSeries_1.PolarSeries {
             return !label || outerRadius === 0;
         };
         const fullData = this.nodeData;
-        const data = this.nodeData.filter((text) => !shouldSkip(text));
+        const data = this.nodeData.filter((t) => !shouldSkip(t));
         data.forEach((datum) => {
             const label = datum.calloutLabel;
+            if (label == null)
+                return;
             label.hidden = false;
             label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
@@ -778,20 +819,30 @@ class PieSeries extends polarSeries_1.PolarSeries {
         const leftLabels = data.filter((d) => d.midCos < 0).sort((a, b) => a.midSin - b.midSin);
         const rightLabels = data.filter((d) => d.midCos >= 0).sort((a, b) => a.midSin - b.midSin);
         const topLabels = data
-            .filter((d) => d.midSin < 0 && d.calloutLabel.textAlign === 'center')
+            .filter((d) => { var _a; return d.midSin < 0 && ((_a = d.calloutLabel) === null || _a === void 0 ? void 0 : _a.textAlign) === 'center'; })
             .sort((a, b) => a.midCos - b.midCos);
         const bottomLabels = data
-            .filter((d) => d.midSin >= 0 && d.calloutLabel.textAlign === 'center')
+            .filter((d) => { var _a; return d.midSin >= 0 && ((_a = d.calloutLabel) === null || _a === void 0 ? void 0 : _a.textAlign) === 'center'; })
             .sort((a, b) => a.midCos - b.midCos);
         const tempTextNode = new text_1.Text();
         const getTextBBox = (datum) => {
+            var _a;
             const label = datum.calloutLabel;
+            if (label == null)
+                return new bbox_1.BBox(0, 0, 0, 0);
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
             const labelRadius = outerRadius + calloutLine.length + offset;
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign({
+                textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign,
+                textBaseline: label.textBaseline,
+            });
             return tempTextNode.computeBBox();
         };
         const avoidNeighbourYCollision = (label, next, direction) => {
@@ -849,13 +900,13 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 return;
             }
             labels
-                .filter((datum) => datum.calloutLabel.textAlign === 'center')
-                .forEach((datum) => {
-                const label = datum.calloutLabel;
-                if (datum.midCos < 0) {
+                .filter((d) => d.calloutLabel.textAlign === 'center')
+                .forEach((d) => {
+                const label = d.calloutLabel;
+                if (d.midCos < 0) {
                     label.collisionTextAlign = 'right';
                 }
-                else if (datum.midCos > 0) {
+                else if (d.midCos > 0) {
                     label.collisionTextAlign = 'left';
                 }
                 else {
@@ -874,6 +925,7 @@ class PieSeries extends polarSeries_1.PolarSeries {
         const { offset, color } = calloutLabel;
         const tempTextNode = new text_1.Text();
         this.calloutLabelSelection.selectByTag(PieNodeTag.Label).forEach((text) => {
+            var _a;
             const { datum } = text;
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
@@ -886,13 +938,27 @@ class PieSeries extends polarSeries_1.PolarSeries {
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
             // Detect text overflow
-            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
+            const align = { textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign, textBaseline: label.textBaseline };
+            tempTextNode.text = label.text;
+            tempTextNode.x = x;
+            tempTextNode.y = y;
+            tempTextNode.setFont(this.calloutLabel);
+            tempTextNode.setAlign(align);
             const box = tempTextNode.computeBBox();
-            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
-            const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, Object.assign(Object.assign({}, label), { text: displayText }));
+            let displayText = label.text;
+            let visible = true;
+            if (calloutLabel.avoidCollisions) {
+                const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
+                displayText = label.text.length === textLength ? label.text : `${label.text.substring(0, textLength)}…`;
+                visible = !hasVerticalOverflow;
+            }
+            text.text = displayText;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign(align);
             text.fill = color;
-            text.visible = !hasVerticalOverflow;
+            text.visible = visible;
         });
     }
     computeLabelsBBox(options, seriesRect) {
@@ -900,6 +966,9 @@ class PieSeries extends polarSeries_1.PolarSeries {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset, minSpacing } = calloutLabel;
+        if (!calloutLabel.avoidCollisions) {
+            return null;
+        }
         this.maybeRefreshNodeData();
         this.updateRadiusScale();
         this.computeCalloutLabelCollisionOffsets();
@@ -909,19 +978,20 @@ class PieSeries extends polarSeries_1.PolarSeries {
         if (((_a = this.title) === null || _a === void 0 ? void 0 : _a.text) && this.title.enabled) {
             const dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
-                this.setTextDimensionalProps(text, 0, dy, this.title, {
-                    text: this.title.text,
+                text.text = this.title.text;
+                text.x = 0;
+                text.y = dy;
+                text.setFont(this.title);
+                text.setAlign({
                     textBaseline: 'bottom',
                     textAlign: 'center',
-                    hidden: false,
-                    collisionTextAlign: undefined,
-                    collisionOffsetY: 0,
                 });
                 titleBox = text.computeBBox();
                 textBoxes.push(titleBox);
             }
         }
         this.nodeData.forEach((datum) => {
+            var _a;
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
@@ -931,10 +1001,14 @@ class PieSeries extends polarSeries_1.PolarSeries {
             const labelRadius = outerRadius + calloutLength + offset;
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
-            this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
+            text.text = label.text;
+            text.x = x;
+            text.y = y;
+            text.setFont(this.calloutLabel);
+            text.setAlign({ textAlign: (_a = label.collisionTextAlign) !== null && _a !== void 0 ? _a : label.textAlign, textBaseline: label.textBaseline });
             const box = text.computeBBox();
             label.box = box;
-            // Hide labels that where pushed to far by the collision avoidance algorithm
+            // Hide labels that where pushed too far by the collision avoidance algorithm
             if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
                 label.hidden = true;
                 return;
@@ -963,19 +1037,6 @@ class PieSeries extends polarSeries_1.PolarSeries {
             return null;
         }
         return bbox_1.BBox.merge(textBoxes);
-    }
-    setTextDimensionalProps(textNode, x, y, style, label) {
-        var _a, _b;
-        const { fontStyle, fontWeight, fontSize, fontFamily } = style;
-        textNode.fontStyle = fontStyle;
-        textNode.fontWeight = fontWeight;
-        textNode.fontSize = fontSize;
-        textNode.fontFamily = fontFamily;
-        textNode.text = label.text;
-        textNode.x = x;
-        textNode.y = y;
-        textNode.textAlign = (_b = (_a = label === null || label === void 0 ? void 0 : label.collisionTextAlign) !== null && _a !== void 0 ? _a : label === null || label === void 0 ? void 0 : label.textAlign) !== null && _b !== void 0 ? _b : 'center';
-        textNode.textBaseline = label.textBaseline;
     }
     updateSectorLabelNodes() {
         const { radiusScale } = this;
@@ -1122,20 +1183,21 @@ class PieSeries extends polarSeries_1.PolarSeries {
     }
     getLegendData() {
         var _a, _b, _c;
-        const { calloutLabelKey, legendItemKey, id, data } = this;
-        if (!data || data.length === 0)
+        const { processedData, calloutLabelKey, legendItemKey, id, dataModel } = this;
+        if (!dataModel || !processedData || processedData.data.length === 0)
             return [];
         if (!legendItemKey && !calloutLabelKey)
             return [];
+        const { angleIdx, radiusIdx, calloutLabelIdx, sectorLabelIdx, legendItemIdx } = this.getProcessedDataIndexes(dataModel);
         const titleText = ((_a = this.title) === null || _a === void 0 ? void 0 : _a.showInLegend) && this.title.text;
         const legendData = [];
-        for (let index = 0; index < data.length; index++) {
-            const datum = data[index];
+        for (let index = 0; index < processedData.data.length; index++) {
+            const { datum, values } = processedData.data[index];
             const labelParts = [];
             if (titleText) {
                 labelParts.push(titleText);
             }
-            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
+            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false, values[angleIdx], values[radiusIdx], values[calloutLabelIdx], values[sectorLabelIdx], values[legendItemIdx]);
             if (legendItemKey && labels.legendItem !== undefined) {
                 labelParts.push(labels.legendItem.text);
             }
@@ -1179,33 +1241,33 @@ class PieSeries extends polarSeries_1.PolarSeries {
     }
     toggleOtherSeriesItems(series, itemId, enabled) {
         var _a, _b;
-        const { legendItemKey } = this;
-        if (!legendItemKey)
+        const { legendItemKey, dataModel } = this;
+        if (!legendItemKey || !dataModel)
             return;
         const datumToggledLegendItemValue = series.legendItemKey && ((_a = series.data) === null || _a === void 0 ? void 0 : _a.find((_, index) => index === itemId)[series.legendItemKey]);
         if (!datumToggledLegendItemValue)
             return;
-        (_b = this.data) === null || _b === void 0 ? void 0 : _b.forEach((datum, datumItemId) => {
-            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+        const legendItemIdx = dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index;
+        (_b = this.processedData) === null || _b === void 0 ? void 0 : _b.data.forEach(({ values }, datumItemId) => {
+            if (values[legendItemIdx] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);
             }
         });
     }
     animateEmptyUpdateReady() {
-        const duration = 1000;
+        var _a, _b;
+        const duration = (_b = (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.defaultOptions.duration) !== null && _b !== void 0 ? _b : 1000;
         const labelDuration = 200;
         const rotation = Math.PI / -2 + angle_1.toRadians(this.rotation);
         this.groupSelection.selectByTag(PieNodeTag.Sector).forEach((node) => {
             var _a;
             const datum = node.datum;
-            (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${node.id}`, [
+            (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animateMany(`${this.id}_empty-update-ready_${node.id}`, [
                 { from: rotation, to: datum.startAngle },
                 { from: rotation, to: datum.endAngle },
             ], {
-                disableInteractions: true,
                 duration,
                 ease: easing.easeOut,
-                repeat: 0,
                 onUpdate([startAngle, endAngle]) {
                     node.startAngle = startAngle;
                     node.endAngle = endAngle;
@@ -1217,24 +1279,22 @@ class PieSeries extends polarSeries_1.PolarSeries {
             to: 1,
             delay: duration,
             duration: labelDuration,
-            ease: easing.linear,
-            repeat: 0,
         };
         this.calloutLabelSelection.each((label) => {
             var _a;
-            (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
+            (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.sectorLabelSelection.each((label) => {
             var _a;
-            (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
+            (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.innerLabelsSelection.each((label) => {
             var _a;
-            (_a = this.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
+            (_a = this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(`${this.id}_empty-update-ready_${label.id}`, Object.assign(Object.assign({}, labelAnimationOptions), { onUpdate(opacity) {
                     label.opacity = opacity;
                 } }));
         });

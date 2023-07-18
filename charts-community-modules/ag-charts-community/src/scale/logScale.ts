@@ -163,11 +163,11 @@ export class LogScale extends ContinuousScale<number> {
         const { base } = this;
 
         if (specifier == null) {
-            specifier = (base === 10 ? '.0e' : ',') as any;
+            specifier = base === 10 ? '.0e' : ',';
         }
 
-        if (typeof specifier !== 'function') {
-            specifier = format(specifier as string);
+        if (typeof specifier === 'string') {
+            specifier = format(specifier);
         }
 
         if (count === Infinity) {

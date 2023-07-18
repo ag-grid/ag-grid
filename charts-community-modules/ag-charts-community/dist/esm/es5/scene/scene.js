@@ -84,6 +84,7 @@ import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
+import { SceneDebugLevel } from './sceneDebugOptions';
 import { Logger } from '../util/logger';
 function buildSceneNodeHighlight() {
     var _a;
@@ -116,12 +117,16 @@ var Scene = /** @class */ (function () {
             stats: false,
             renderBoundingBoxes: false,
             consoleLog: false,
+            level: SceneDebugLevel.SUMMARY,
             sceneNodeHighlight: [],
         };
         var _d = opts.document, document = _d === void 0 ? window.document : _d, _e = opts.mode, mode = _e === void 0 ? (_a = windowValue('agChartsSceneRenderModel')) !== null && _a !== void 0 ? _a : 'adv-composite' : _e, width = opts.width, height = opts.height, _f = opts.overrideDevicePixelRatio, overrideDevicePixelRatio = _f === void 0 ? undefined : _f;
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
         this.opts = { document: document, mode: mode };
-        this.debug.consoleLog = windowValue('agChartsDebug') === true;
+        this.debug.consoleLog = [true, 'scene'].includes(windowValue('agChartsDebug'));
+        this.debug.level = ['scene'].includes(windowValue('agChartsDebug'))
+            ? SceneDebugLevel.DETAILED
+            : SceneDebugLevel.SUMMARY;
         this.debug.stats = (_b = windowValue('agChartsSceneStats')) !== null && _b !== void 0 ? _b : false;
         this.debug.dirtyTree = (_c = windowValue('agChartsSceneDirtyTree')) !== null && _c !== void 0 ? _c : false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
@@ -220,7 +225,7 @@ var Scene = /** @class */ (function () {
             lastLayer.element.insertAdjacentElement('afterend', canvas.element);
         }
         if (this.debug.consoleLog) {
-            Logger.debug({ layers: this.layers });
+            Logger.debug('Scene.addLayer() - layers', this.layers);
         }
         return newLayer.canvas;
     };
@@ -231,7 +236,7 @@ var Scene = /** @class */ (function () {
             canvas.destroy();
             this.markDirty();
             if (this.debug.consoleLog) {
-                Logger.debug({ layers: this.layers });
+                Logger.debug('Scene.removeLayer() -  layers', this.layers);
             }
         }
     };
@@ -243,7 +248,7 @@ var Scene = /** @class */ (function () {
             this.sortLayers();
             this.markDirty();
             if (this.debug.consoleLog) {
-                Logger.debug({ layers: this.layers });
+                Logger.debug('Scene.moveLayer() -  layers', this.layers);
             }
         }
     };
@@ -268,6 +273,7 @@ var Scene = /** @class */ (function () {
             return this._root;
         },
         set: function (node) {
+            var _this = this;
             if (node === this._root) {
                 return;
             }
@@ -280,7 +286,26 @@ var Scene = /** @class */ (function () {
                 if (node.parent === null && node.layerManager && node.layerManager !== this) {
                     node.layerManager.root = null;
                 }
-                node._setLayerManager(this);
+                node._setLayerManager({
+                    addLayer: function (opts) { return _this.addLayer(opts); },
+                    moveLayer: function () {
+                        var opts = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            opts[_i] = arguments[_i];
+                        }
+                        return _this.moveLayer.apply(_this, __spreadArray([], __read(opts)));
+                    },
+                    removeLayer: function () {
+                        var opts = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            opts[_i] = arguments[_i];
+                        }
+                        return _this.removeLayer.apply(_this, __spreadArray([], __read(opts)));
+                    },
+                    markDirty: function () { return _this.markDirty(); },
+                    canvas: this.canvas,
+                    debug: __assign(__assign({}, this.debug), { consoleLog: this.debug.level >= SceneDebugLevel.DETAILED }),
+                });
             }
             this.markDirty();
         },
@@ -338,7 +363,7 @@ var Scene = /** @class */ (function () {
                 }
                 if (root && !this.dirty) {
                     if (this.debug.consoleLog) {
-                        Logger.debug('no-op', {
+                        Logger.debug('Scene.render() - no-op', {
                             redrawType: RedrawType[root.dirty],
                             tree: this.buildTree(root),
                         });
@@ -363,11 +388,11 @@ var Scene = /** @class */ (function () {
                 }
                 if (root && this.debug.dirtyTree) {
                     _f = this.buildDirtyTree(root), dirtyTree = _f.dirtyTree, paths = _f.paths;
-                    Logger.debug({ dirtyTree: dirtyTree, paths: paths });
+                    Logger.debug('Scene.render() - dirtyTree', { dirtyTree: dirtyTree, paths: paths });
                 }
                 if (root && canvasCleared) {
                     if (this.debug.consoleLog) {
-                        Logger.debug('before', {
+                        Logger.debug('Scene.render() - before', {
                             redrawType: RedrawType[root.dirty],
                             canvasCleared: canvasCleared,
                             tree: this.buildTree(root),
@@ -399,7 +424,11 @@ var Scene = /** @class */ (function () {
                 this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
                 this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
                 if (root && this.debug.consoleLog) {
-                    Logger.debug('after', { redrawType: RedrawType[root.dirty], canvasCleared: canvasCleared, tree: this.buildTree(root) });
+                    Logger.debug('Scene.render() - after', {
+                        redrawType: RedrawType[root.dirty],
+                        canvasCleared: canvasCleared,
+                        tree: this.buildTree(root),
+                    });
                 }
                 return [2 /*return*/];
             });
@@ -490,7 +519,7 @@ var Scene = /** @class */ (function () {
                 var predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
                 var nodes = (_d = this.root) === null || _d === void 0 ? void 0 : _d.findNodes(predicate);
                 if (!nodes || nodes.length === 0) {
-                    Logger.debug("no debugging node with id [" + next + "] in scene graph.");
+                    Logger.debug("Scene.render() - no debugging node with id [" + next + "] in scene graph.");
                     continue;
                 }
                 try {
@@ -526,7 +555,7 @@ var Scene = /** @class */ (function () {
                 var _g = __read(_f.value, 2), name_1 = _g[0], node = _g[1];
                 var bbox = node.computeTransformedBBox();
                 if (!bbox) {
-                    Logger.debug("no bbox for debugged node [" + name_1 + "].");
+                    Logger.debug("Scene.render() - no bbox for debugged node [" + name_1 + "].");
                     continue;
                 }
                 ctx.globalAlpha = 0.8;
@@ -554,13 +583,18 @@ var Scene = /** @class */ (function () {
     };
     Scene.prototype.buildTree = function (node) {
         var _this = this;
-        var _a;
+        var _a, _b;
         var name = (_a = (node instanceof Group ? node.name : null)) !== null && _a !== void 0 ? _a : node.id;
-        return __assign({ name: name, node: node, dirty: RedrawType[node.dirty] }, node.children
+        return __assign(__assign({ name: name, node: node, dirty: RedrawType[node.dirty] }, (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.isVirtual)
+            ? {
+                virtualParentDirty: RedrawType[node.parent.dirty],
+                virtualParent: node.parent,
+            }
+            : {})), node.children
             .map(function (c) { return _this.buildTree(c); })
             .reduce(function (result, childTree) {
             var treeNodeName = childTree.name;
-            var _a = childTree.node, visible = _a.visible, opacity = _a.opacity, zIndex = _a.zIndex, zIndexSubOrder = _a.zIndexSubOrder, childNode = childTree.node;
+            var _a = childTree.node, visible = _a.visible, opacity = _a.opacity, zIndex = _a.zIndex, zIndexSubOrder = _a.zIndexSubOrder, childNode = childTree.node, virtualParent = childTree.virtualParent;
             if (!visible || opacity <= 0) {
                 treeNodeName = "(" + treeNodeName + ")";
             }
@@ -570,11 +604,20 @@ var Scene = /** @class */ (function () {
             var key = [
                 "" + (treeNodeName !== null && treeNodeName !== void 0 ? treeNodeName : '<unknown>'),
                 "z: " + zIndex,
-                zIndexSubOrder && "zo: " + zIndexSubOrder.join(' / '),
+                zIndexSubOrder &&
+                    "zo: " + zIndexSubOrder
+                        .map(function (v) { return (typeof v === 'function' ? v() + " (fn)" : v); })
+                        .join(' / '),
+                virtualParent && "(virtual parent)",
             ]
                 .filter(function (v) { return !!v; })
                 .join(' ');
-            result[key] = childTree;
+            var selectedKey = key;
+            var index = 1;
+            while (result[selectedKey] != null && index < 100) {
+                selectedKey = key + " (" + index++ + ")";
+            }
+            result[selectedKey] = childTree;
             return result;
         }, {}));
     };

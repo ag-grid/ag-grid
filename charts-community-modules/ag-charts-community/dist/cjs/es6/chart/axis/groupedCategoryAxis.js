@@ -13,13 +13,14 @@ const angle_1 = require("../../util/angle");
 const text_1 = require("../../scene/shape/text");
 const bandScale_1 = require("../../scale/bandScale");
 const tree_1 = require("../../layout/tree");
-const axis_1 = require("../../axis");
-const chartAxis_1 = require("../chartAxis");
 const chartAxisDirection_1 = require("../chartAxisDirection");
 const array_1 = require("../../util/array");
 const validation_1 = require("../../util/validation");
 const label_1 = require("../label");
-class GroupedCategoryAxisLabel extends axis_1.AxisLabel {
+const axisLabel_1 = require("./axisLabel");
+const axisLine_1 = require("./axisLine");
+const cartesianAxis_1 = require("./cartesianAxis");
+class GroupedCategoryAxisLabel extends axisLabel_1.AxisLabel {
     constructor() {
         super(...arguments);
         this.grid = false;
@@ -28,7 +29,7 @@ class GroupedCategoryAxisLabel extends axis_1.AxisLabel {
 __decorate([
     validation_1.Validate(validation_1.BOOLEAN)
 ], GroupedCategoryAxisLabel.prototype, "grid", void 0);
-class GroupedCategoryAxis extends chartAxis_1.ChartAxis {
+class GroupedCategoryAxis extends cartesianAxis_1.CartesianAxis {
     constructor(moduleCtx) {
         super(moduleCtx, new bandScale_1.BandScale());
         // Label scale (labels are positioned between ticks, tick count = label count + 1).
@@ -38,7 +39,7 @@ class GroupedCategoryAxis extends chartAxis_1.ChartAxis {
             x: 0,
             y: 0,
         };
-        this.line = new axis_1.AxisLine();
+        this.line = new axisLine_1.AxisLine();
         this.label = new GroupedCategoryAxisLabel();
         /**
          * The color of the labels.

@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CellCtrl = void 0;
@@ -54,6 +48,9 @@ class CellCtrl extends beanStub_1.BeanStub {
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
         this.createCellPosition();
         this.addFeatures();
+    }
+    shouldRestoreFocus() {
+        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
     }
     addFeatures() {
         this.cellPositionFeature = new cellPositionFeature_1.CellPositionFeature(this, this.beans);

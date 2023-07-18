@@ -1,30 +1,35 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
-import { Series, SeriesNodeDatum } from './series/series';
+import type { Series, SeriesNodeDatum } from './series/series';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
-import { Caption } from '../caption';
+import type { Caption } from '../caption';
 import { Observable } from '../util/observable';
-import { ChartAxis } from './chartAxis';
-import { PlacedLabel } from '../util/labelPlacement';
-import { AgChartOptions, AgChartInstance } from './agChartOptions';
+import type { ChartAxis } from './chartAxis';
+import type { PlacedLabel } from '../util/labelPlacement';
+import type { AgChartOptions, AgChartInstance } from './agChartOptions';
 import { Tooltip } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
 import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
 import { ChartEventManager } from './interaction/chartEventManager';
-import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import type { HighlightChangeEvent } from './interaction/highlightManager';
+import { HighlightManager } from './interaction/highlightManager';
+import type { InteractionEvent } from './interaction/interactionManager';
+import { InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
 import { ZoomManager } from './interaction/zoomManager';
-import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
+import type { Module, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { ChartLegendDatum, ChartLegend } from './legendDatum';
+import type { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { ChartHighlight } from './chartHighlight';
 import { CallbackCache } from '../util/callbackCache';
+import type { ModuleContext } from '../util/moduleContext';
+import { SeriesStateManager } from './series/seriesStateManager';
+import { SeriesLayerManager } from './series/seriesLayerManager';
 declare type OptionalHTMLElement = HTMLElement | undefined | null;
 export declare type TransferableResources = {
     container?: OptionalHTMLElement;
@@ -45,9 +50,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     readonly highlight: ChartHighlight;
     debug: boolean;
     private extraDebugStats;
-    private _container;
-    set container(value: OptionalHTMLElement);
-    get container(): OptionalHTMLElement;
+    container: OptionalHTMLElement;
     data: any;
     width?: number;
     height?: number;
@@ -75,6 +78,8 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
     protected readonly callbackCache: CallbackCache;
+    protected readonly seriesStateManager: SeriesStateManager;
+    protected readonly seriesLayerManager: SeriesLayerManager;
     protected readonly modules: Record<string, {
         instance: ModuleInstance;
     }>;
@@ -90,7 +95,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     destroy(opts?: {
         keepTransferableResources: boolean;
     }): TransferableResources | undefined;
-    log(opts: any): void;
+    log(...opts: any[]): void;
     disablePointer(highlightOnly?: boolean): void;
     private _pendingFactoryUpdates;
     requestFactoryUpdate(cb: () => Promise<void>): void;
@@ -109,6 +114,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
         seriesToUpdate?: Iterable<Series>;
     }): void;
     private performUpdate;
+    private checkFirstAutoSize;
     readonly element: HTMLElement;
     protected _axes: ChartAxis[];
     set axes(values: ChartAxis[]);
@@ -116,14 +122,13 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected _series: Series[];
     set series(values: Series[]);
     get series(): Series[];
-    addSeries(series: Series<any>, before?: Series<any>): boolean;
-    protected initSeries(series: Series<any>): void;
-    protected freeSeries(series: Series<any>): void;
-    removeAllSeries(): void;
-    protected addSeriesListeners(series: Series<any>): void;
+    private addSeries;
+    private initSeries;
+    private removeAllSeries;
+    private addSeriesListeners;
     updateAllSeriesListeners(): void;
     protected assignSeriesToAxes(): void;
-    protected assignAxesToSeries(force?: boolean): void;
+    protected assignAxesToSeries(): void;
     private findMatchingAxis;
     private resize;
     processData(): Promise<void>;
@@ -165,4 +170,3 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected handleNoDataOverlay(): void;
 }
 export {};
-//# sourceMappingURL=chart.d.ts.map

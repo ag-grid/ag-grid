@@ -1,9 +1,3 @@
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.2
- * @link https://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -48,6 +42,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+        this.activateTabIndex();
     };
     LargeTextCellEditor.prototype.onKeyDown = function (event) {
         var key = event.key;
@@ -73,7 +68,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
         }
         return this.params.parseValue(value);
     };
-    LargeTextCellEditor.TEMPLATE = "<div class=\"ag-large-text\" tabindex=\"0\">\n            <ag-input-text-area ref=\"eTextArea\" class=\"ag-large-text-input\"></ag-input-text-area>\n        </div>";
+    LargeTextCellEditor.TEMPLATE = "<div class=\"ag-large-text\">\n            <ag-input-text-area ref=\"eTextArea\" class=\"ag-large-text-input\"></ag-input-text-area>\n        </div>";
     __decorate([
         componentAnnotations_1.RefSelector("eTextArea")
     ], LargeTextCellEditor.prototype, "eTextArea", void 0);

@@ -1,5 +1,5 @@
 import { OPT_FUNCTION, OPT_STRING, Validate } from '../../util/validation';
-import { BBox } from '../../scene/bbox';
+import type { BBox } from '../../scene/bbox';
 
 export class Overlay {
     constructor(className: string, parent: HTMLElement) {
@@ -18,8 +18,8 @@ export class Overlay {
     private element?: HTMLElement;
 
     show(rect: BBox) {
-        let element = this.element!;
-        if (!this.element) {
+        let element = this.element;
+        if (!element) {
             element = document.createElement('div');
             element.className = this.className;
             this.element = element;
@@ -32,7 +32,7 @@ export class Overlay {
         element.style.height = `${rect.height}px`;
 
         if (this.renderer) {
-            this.element.innerHTML = this.renderer();
+            element.innerHTML = this.renderer();
         } else {
             const content = document.createElement('div');
             content.style.alignItems = 'center';

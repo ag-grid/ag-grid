@@ -1,6 +1,6 @@
-import { BBox } from '../../scene/bbox';
-import { Point } from '../../scene/point';
-import { AgCartesianAxisPosition } from '../agChartOptions';
+import type { BBox } from '../../scene/bbox';
+import type { Point } from '../../scene/point';
+import type { AgCartesianAxisPosition } from '../agChartOptions';
 export declare type CrossLineLabelPosition = 'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight';
 declare type CoordinatesFnOpts = {
     yDirection: boolean;

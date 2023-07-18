@@ -35,7 +35,7 @@ class Text extends shape_1.Shape {
         this.lines = splitText(this.text);
     }
     get font() {
-        if (this._dirtyFont) {
+        if (this._font == null || this._dirtyFont) {
             this._dirtyFont = false;
             this._font = getFont(this);
         }
@@ -350,6 +350,16 @@ class Text extends shape_1.Shape {
             }
         }
         return lines;
+    }
+    setFont(props) {
+        this.fontFamily = props.fontFamily;
+        this.fontSize = props.fontSize;
+        this.fontStyle = props.fontStyle;
+        this.fontWeight = props.fontWeight;
+    }
+    setAlign(props) {
+        this.textAlign = props.textAlign;
+        this.textBaseline = props.textBaseline;
     }
 }
 Text.className = 'Text';
