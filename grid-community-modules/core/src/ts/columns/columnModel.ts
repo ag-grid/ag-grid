@@ -37,7 +37,7 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray } from '../utils/array';
+import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
@@ -3659,26 +3659,42 @@ export class ColumnModel extends BeanStub {
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
-            params.resizingCols.forEach(col => {
-                const indexOfCol = this.displayedColumnsCenter.indexOf(col);
-                if (flexAfterDisplayIndex < indexOfCol) {
-                    flexAfterDisplayIndex = indexOfCol;
+            const allResizingCols = new Set(params.resizingCols);
+            // find the last resizing col, as only cols after this one are affected by the resizing
+            let displayedCols = this.displayedColumnsCenter;
+            for (let i = displayedCols.length - 1; i >= 0; i--) {
+                if (allResizingCols.has(displayedCols[i])) {
+                    flexAfterDisplayIndex = i;
+                    break;
                 }
-            });
+            }
         }
 
-        const knownWidthColumns: Column[] = [];
+        // the width of all of the columns for which the width has been determined
+        let knownColumnsWidth = 0;
+
         const flexingColumns: Column[] = [];
+
+        // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
+        let minimumFlexedWidth = 0;
         for (let i = 0; i < this.displayedColumnsCenter.length; i++) {
             const isFlex = this.displayedColumnsCenter[i].getFlex() && i > flexAfterDisplayIndex;
             if (isFlex) {
                 flexingColumns.push(this.displayedColumnsCenter[i]);
+                minimumFlexedWidth += this.displayedColumnsCenter[i].getMinWidth() ?? 0;
             } else {
-                knownWidthColumns.push(this.displayedColumnsCenter[i]);
+                knownColumnsWidth += this.displayedColumnsCenter[i].getActualWidth();
             }
         };
 
         if (!flexingColumns.length) {
+            return [];
+        }
+        
+        // this is for performance to prevent trying to flex when unnecessary
+        if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
+            // known columns and the minimum width of all the flex cols are too wide for viewport
+            // so don't flex
             return [];
         }
 
@@ -3691,7 +3707,7 @@ export class ColumnModel extends BeanStub {
             for (let i = 0; i < flexingColumns.length; i++) {
                 totalFlex += flexingColumns[i].getFlex();
             }
-            spaceForFlexingColumns = this.flexViewportWidth - this.getWidthOfColsInList(knownWidthColumns);
+            spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
                 const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
@@ -3710,9 +3726,9 @@ export class ColumnModel extends BeanStub {
                     // This column is not in fact flexing as it is being constrained to a specific size
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
-                    removeFromArray(flexingColumns, col);
+                    removeFromUnorderedArray(flexingColumns, col);
                     changedColumns.push(col);
-                    knownWidthColumns.push(col);
+                    knownColumnsWidth += constrainedWidth;
                     continue outer;
                 }
 
