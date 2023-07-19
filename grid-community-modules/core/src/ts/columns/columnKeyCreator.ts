@@ -22,7 +22,7 @@ export class ColumnKeyCreator {
         let count = 0;
 
         while (true) {
-            let idToTry: string;
+            let idToTry: string | number;
             if (colId) {
                 idToTry = colId;
                 if (count !== 0) {
@@ -34,12 +34,13 @@ export class ColumnKeyCreator {
                     idToTry += '_' + count;
                 }
             } else {
-                idToTry = '' + count;
+                // no point in stringing this, object treats it the same anyway.
+                idToTry = count;
             }
 
             if (!this.existingKeys[idToTry]) {
                 this.existingKeys[idToTry] = true;
-                return idToTry;
+                return String(idToTry);
             }
 
             count++;
