@@ -3673,14 +3673,16 @@ export class ColumnModel extends BeanStub {
         // the width of all of the columns for which the width has been determined
         let knownColumnsWidth = 0;
 
-        const flexingColumns: Column[] = [];
+        let flexingColumns: Column[] = [];
 
         // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
         let minimumFlexedWidth = 0;
+        let totalFlex = 0;
         for (let i = 0; i < this.displayedColumnsCenter.length; i++) {
             const isFlex = this.displayedColumnsCenter[i].getFlex() && i > flexAfterDisplayIndex;
             if (isFlex) {
                 flexingColumns.push(this.displayedColumnsCenter[i]);
+                totalFlex += this.displayedColumnsCenter[i].getFlex();
                 minimumFlexedWidth += this.displayedColumnsCenter[i].getMinWidth() ?? 0;
             } else {
                 knownColumnsWidth += this.displayedColumnsCenter[i].getActualWidth();
@@ -3691,26 +3693,29 @@ export class ColumnModel extends BeanStub {
             return [];
         }
         
+        let changedColumns: Column[] = [];
+
         // this is for performance to prevent trying to flex when unnecessary
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            return [];
+            flexingColumns.forEach(col => col.setActualWidth(col.getMinWidth() ?? 0));
+
+            // No columns should flex, but all have been changed. Swap arrays so events fire properly.
+            // Expensive logic won't execute as flex columns is empty.
+            changedColumns = flexingColumns;
+            flexingColumns = [];
         }
 
-        const changedColumns: Column[] = [];
         const flexingColumnSizes: number[] = [];
         let spaceForFlexingColumns: number;
 
         outer: while (true) {
-            let totalFlex = 0;
-            for (let i = 0; i < flexingColumns.length; i++) {
-                totalFlex += flexingColumns[i].getFlex();
-            }
             spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
+            const spacePerFlex = spaceForFlexingColumns / totalFlex;
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
-                const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
+                const widthByFlexRule = spacePerFlex * col.getFlex();
                 let constrainedWidth = 0;
 
                 const minWidth = col.getMinWidth();
@@ -3727,8 +3732,9 @@ export class ColumnModel extends BeanStub {
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
                     removeFromUnorderedArray(flexingColumns, col);
+                    totalFlex -= col.getFlex();
                     changedColumns.push(col);
-                    knownColumnsWidth += constrainedWidth;
+                    knownColumnsWidth += col.getActualWidth();
                     continue outer;
                 }
 
