@@ -68,7 +68,7 @@ const DEFAULT_MAX_YEAR = Infinity;
 
 export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
     constructor(
-        private readonly dateFilterParams: DateFilterParams,
+        private dateFilterParams: DateFilterParams,
         localeService: LocaleService,
         optionsFactory: OptionsFactory
     ) {
@@ -96,6 +96,11 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
 
         // cater for when the type doesn't need a value
         return `${type}`;
+    }
+
+    public updateParams(params: { dateFilterParams: DateFilterParams, optionsFactory: OptionsFactory }): void {
+        super.updateParams(params);
+        this.dateFilterParams = params.dateFilterParams;
     }
 }
 

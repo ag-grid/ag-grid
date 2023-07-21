@@ -11,28 +11,34 @@ import { KeyCode } from '../../../constants/keyCode';
 import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
+import { clearElement } from '../../../utils/dom';
 
 export interface FloatingFilterInputService {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
-    addValueChangedListener(listener: () => void): void;
+    setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
+    setParams(params: { ariaLabel: string }): void;
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
+    private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
-    constructor(private params: { config?: ITextInputField, ariaLabel: string }) {
+    constructor(private params?: { config?: ITextInputField }) {
         super();
     }
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eFloatingFilterTextInput = this.createManagedBean(new AgInputTextField(this.params.config));
+        this.eFloatingFilterTextInput = this.createManagedBean(new AgInputTextField(this.params?.config));
 
-        this.eFloatingFilterTextInput.setInputAriaLabel(this.params.ariaLabel);
+        const eInput = this.eFloatingFilterTextInput.getGui();
 
-        parentElement.appendChild(this.eFloatingFilterTextInput.getGui());
+        parentElement.appendChild(eInput);
+
+        this.addManagedListener(eInput, 'input', (e: KeyboardEvent) => this.valueChangedListener(e));
+        this.addManagedListener(eInput, 'keydown', (e: KeyboardEvent) => this.valueChangedListener(e));
     }
 
     public setEditable(editable: boolean): void {
@@ -47,10 +53,16 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         this.eFloatingFilterTextInput.setValue(value, silent);
     }
 
-    public addValueChangedListener(listener: () => void): void {
-        const inputGui = this.eFloatingFilterTextInput.getGui();
-        this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keydown', listener);
+    public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {
+       this.valueChangedListener = listener;
+    }
+
+    public setParams(params: { ariaLabel: string }): void {
+        this.setAriaLabel(params.ariaLabel);
+    }
+
+    private setAriaLabel(ariaLabel: string): void {
+        this.eFloatingFilterTextInput.setInputAriaLabel(ariaLabel);
     }
 }
 
@@ -64,7 +76,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     private applyActive: boolean;
 
-    protected abstract createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): FloatingFilterInputService;
 
     @PostConstruct
     private postConstruct(): void {
@@ -90,25 +102,48 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
 
     public init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+        this.setupFloatingFilterInputService(params);
+        super.init(params);
+        this.setTextInputParams(params);
+    }
+
+    private setupFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+        this.floatingFilterInputService = this.createFloatingFilterInputService(params);
+        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+    }
+
+    private setTextInputParams(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
         this.params = params;
 
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
-        const ariaLabel = `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
-
-        this.floatingFilterInputService = this.createFloatingFilterInputService(ariaLabel);
-        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
-
-        super.init(params);
+        this.floatingFilterInputService.setParams({ ariaLabel: this.getAriaLabel(params) });
 
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         
         if (!this.isReadOnly()) {
             const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const toDebounce: (e: KeyboardEvent) => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
-            this.floatingFilterInputService.addValueChangedListener(toDebounce);
+            this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
+    }
+
+    public onParamsUpdated(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+        super.onParamsUpdated(params);
+        this.setTextInputParams(params);
+    }
+
+    protected recreateFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+        const value = this.floatingFilterInputService.getValue();
+        clearElement(this.eFloatingFilterInputContainer);
+        this.destroyBean(this.floatingFilterInputService);
+        this.setupFloatingFilterInputService(params);
+        this.floatingFilterInputService.setValue(value, true);
+    }
+
+    private getAriaLabel(params: IFloatingFilterParams<TextFilter | NumberFilter>): string {
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

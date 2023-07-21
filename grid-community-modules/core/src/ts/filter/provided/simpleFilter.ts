@@ -134,7 +134,7 @@ export type Tuple<T> = (T | null)[];
 export abstract class SimpleFilterModelFormatter {
     constructor(
         private readonly localeService: LocaleService,
-        private readonly optionsFactory: OptionsFactory
+        private optionsFactory: OptionsFactory
     ) {}
 
     // used by:
@@ -175,6 +175,10 @@ export abstract class SimpleFilterModelFormatter {
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
     protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
+
+    public updateParams(params: { optionsFactory: OptionsFactory }) {
+        this.optionsFactory = params.optionsFactory;
+    }
 }
 
 /**
