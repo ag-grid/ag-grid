@@ -123,6 +123,9 @@ export class Events {
     public static EVENT_ROW_SELECTED: 'rowSelected' = 'rowSelected';
     public static EVENT_SELECTION_CHANGED: 'selectionChanged' = 'selectionChanged';
 
+    public static EVENT_TOOLTIP_SHOW: 'tooltipShow' = 'tooltipShow';
+    public static EVENT_TOOLTIP_HIDE: 'tooltipHide' = 'tooltipHide';
+
     public static EVENT_CELL_KEY_DOWN: 'cellKeyDown' = 'cellKeyDown';
 
     public static EVENT_CELL_MOUSE_OVER: 'cellMouseOver' = 'cellMouseOver';
