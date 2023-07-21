@@ -2314,6 +2314,11 @@ AddType text/javascript ts jsx
     Redirect 301 /react-data-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /vue-data-grid/grid-features/ https://www.ag-grid.com/
 
+    Redirect 301 /javascript-data-grid/integrated-charts-api-downloading-image/ /javascript-data-grid/integrated-charts-chart-tool-panels/
+    Redirect 301 /angular-data-grid/integrated-charts-api-downloading-image/ /angular-data-grid/integrated-charts-chart-tool-panels/
+    Redirect 301 /react-data-grid/integrated-charts-api-downloading-image/ /react-data-grid/integrated-charts-chart-tool-panels/
+    Redirect 301 /vue-data-grid/integrated-charts-api-downloading-image/ /vue-data-grid/integrated-charts-chart-tool-panels/
+
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
     Redirect 301 /about.php /about

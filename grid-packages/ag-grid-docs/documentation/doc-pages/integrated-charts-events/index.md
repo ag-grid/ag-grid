@@ -89,3 +89,7 @@ The example below demonstrates Standalone Charts Events subscription:
 - Click on a legend item and observe that the `legendItemClick` listener emits a console message.
 
 <grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about: [Time Series](/integrated-charts-time-series/).

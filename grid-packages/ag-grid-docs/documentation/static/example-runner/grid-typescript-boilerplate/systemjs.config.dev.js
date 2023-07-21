@@ -1,4 +1,3 @@
-
 (function (global) {
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -19,7 +18,7 @@
             typescript: {
                 exports: "ts"
             },
-            '*.css': { loader: 'css' }
+            '*.css': {loader: 'css'}
         },
         paths: {
             // paths serve as alias
@@ -85,7 +84,8 @@
             },
             'ag-charts-community': {
                 main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
+                defaultExtension: 'js',
+                format: 'cjs'
             },
             '@ag-grid-enterprise/all-modules': {
                 main: './dist/cjs/es5/main.js',

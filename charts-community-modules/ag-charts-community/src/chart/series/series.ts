@@ -18,9 +18,6 @@ import type { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import type { SizedPoint, Point } from '../../scene/point';
 import type { BBox } from '../../scene/bbox';
-import type { AnimationManager } from '../interaction/animationManager';
-import type { ChartEventManager } from '../interaction/chartEventManager';
-import type { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import type { AgChartInteractionRange } from '../agChartOptions';
 import type { DatumPropertyDefinition, ScopeProvider } from '../data/dataModel';
@@ -280,9 +277,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
-    animationManager?: AnimationManager;
-    chartEventManager?: ChartEventManager;
-    highlightManager?: HighlightManager;
 
     axes: Record<ChartAxisDirection, ChartAxis | undefined> = {
         [ChartAxisDirection.X]: undefined,
@@ -334,14 +328,30 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     nodeClickRange: AgChartInteractionRange = 'exact';
 
     @ActionOnSet<Series>({
-        newValue: function (val) {
-            if (val) {
-                const { id, type, visible } = this;
-                this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: val });
-            }
+        changeValue: function (newVal, oldVal) {
+            this.onSeriesGroupingChange(oldVal, newVal);
         },
     })
     seriesGrouping?: SeriesGrouping = undefined;
+
+    private onSeriesGroupingChange(prev?: SeriesGrouping, next?: SeriesGrouping) {
+        const { id, type, visible, rootGroup } = this;
+
+        if (prev) {
+            this.ctx.seriesStateManager.deregisterSeries({ id, type });
+        }
+        if (next) {
+            this.ctx.seriesStateManager.registerSeries({ id, type, visible, seriesGrouping: next });
+        }
+        this.ctx.seriesLayerManager.changeGroup({
+            id,
+            type,
+            rootGroup,
+            getGroupZIndexSubOrder: (type) => this.getGroupZIndexSubOrder(type),
+            seriesGrouping: next,
+            oldGrouping: prev,
+        });
+    }
 
     getBandScalePadding() {
         return { inner: 1, outer: 0 };
@@ -415,27 +425,26 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     getGroupZIndexSubOrder(
         type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
-        subIndex?: number
+        subIndex = 0
     ): ZIndexSubOrder {
-        let main = 0;
+        let mainAdjust = 0;
         switch (type) {
             case 'data':
-                main = 0;
-                break;
             case 'paths':
-                main = 0;
                 break;
             case 'labels':
-                main += 20000;
-                break;
-            case 'highlight':
-                main += 15000;
+                mainAdjust += 20000;
                 break;
             case 'marker':
-                main += 10000;
+                mainAdjust += 10000;
+                break;
+            // Following cases are in their own layer, so need to be careful to respect declarationOrder.
+            case 'highlight':
+                subIndex += 15000;
                 break;
         }
-        return [main, () => this._declarationOrder + (subIndex ?? 0)];
+        const main = () => this._declarationOrder + mainAdjust;
+        return [main, subIndex];
     }
 
     addChartEventListeners(): void {
@@ -444,6 +453,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     destroy(): void {
         this.ctx.seriesStateManager.deregisterSeries(this);
+        this.ctx.seriesLayerManager.releaseGroup(this);
     }
 
     private getDirectionValues(
@@ -560,7 +570,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected isItemIdHighlighted(datum?: {
         itemId?: any;
     }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const { series, itemId } = highlightedDatum ?? {};
         const highlighting = series != null;
 

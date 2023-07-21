@@ -171,7 +171,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     async processData(dataController: DataController) {
-        const { xKey, yKey, axes, normalizedTo, data, visible, seriesGrouping: { groupIndex = -1 } = {} } = this;
+        const { xKey, yKey, axes, normalizedTo, data, visible, seriesGrouping: { groupIndex = this.id } = {} } = this;
 
         if (!xKey || !yKey || !data) return;
 
@@ -777,7 +777,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         contextData.forEach(({ fillSelectionData, strokeSelectionData, itemId }, seriesIdx) => {
             const [fill, stroke] = paths[seriesIdx];
 
-            const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+            const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
             const markerDuration = 200;
 
             const animationOptions = {
@@ -801,7 +801,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 stroke.lineDash = lineDash;
                 stroke.lineDashOffset = lineDashOffset;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_stroke_${seriesIdx}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_stroke_${seriesIdx}`, {
                     ...animationOptions,
                     onUpdate(xValue) {
                         stroke.path.clear({ trackChanges: true });
@@ -859,7 +859,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 fill.lineDashOffset = lineDashOffset;
                 fill.fillShadow = shadow;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_fill_${seriesIdx}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_fill_${seriesIdx}`, {
                     ...animationOptions,
                     onUpdate(xValue) {
                         fill.path.clear({ trackChanges: true });
@@ -919,7 +919,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
-                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
@@ -932,7 +932,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             labelSelections[seriesIdx].each((label, datum) => {
                 const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay,

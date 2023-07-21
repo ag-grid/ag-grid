@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-community",
-  "version": "8.0.0",
+  "version": "8.0.5",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.mjs",
   "module": "./dist/esm/es6/main.mjs",

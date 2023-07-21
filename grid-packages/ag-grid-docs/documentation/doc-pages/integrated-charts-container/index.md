@@ -39,5 +39,5 @@ From the example below, the following can be noted:
 
 ## Next Up
 
-Continue to the next section to learn about: [Application Created Charts](/integrated-charts-application-created/).
+Continue to the next section to learn about: [Chart Customisation](/integrated-charts-customisation/).
 

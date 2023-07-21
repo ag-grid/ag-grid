@@ -868,7 +868,11 @@ export class DataModel<
             let valueInDatum = false;
             let value;
             if (hasAccessor) {
-                value = accessors[def.property](datum);
+                try {
+                    value = accessors[def.property](datum);
+                } catch (error: any) {
+                    // Swallow errors - these get reported as missing values to the user later.
+                }
                 valueInDatum = value !== undefined;
             } else {
                 valueInDatum = def.property in datum;
@@ -915,7 +919,13 @@ export class DataModel<
             const isPath = def.property.indexOf('.') >= 0 || def.property.indexOf('[') >= 0;
             if (!isPath) continue;
 
-            result[def.property] = new Function('datum', `return datum.${def.property};`) as (d: any) => any;
+            let fnBody;
+            if (def.property.startsWith('[')) {
+                fnBody = `return datum${def.property};`;
+            } else {
+                fnBody = `return datum.${def.property};`;
+            }
+            result[def.property] = new Function('datum', fnBody) as (d: any) => any;
         }
         return result;
     }

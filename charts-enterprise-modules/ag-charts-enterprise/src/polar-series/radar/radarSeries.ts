@@ -204,8 +204,10 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
@@ -359,6 +361,10 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         this.lineSelection.update(pathData);
     }
 
+    protected getMarkerFill(highlightedStyle?: _ModuleSupport.SeriesItemHighlightStyle) {
+        return highlightedStyle?.fill ?? this.marker.fill;
+    }
+
     protected updateMarkers(selection: _Scene.Selection<_Scene.Marker, RadarNodeDatum>, highlight: boolean) {
         const { marker, visible, ctx, angleKey, radiusKey, id: seriesId } = this;
         const { shape, enabled, formatter, size } = marker;
@@ -366,7 +372,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         let selectionData: RadarNodeDatum[] = [];
         if (visible && shape && enabled) {
             if (highlight) {
-                const highlighted = this.highlightManager?.getActiveHighlight();
+                const highlighted = this.ctx.highlightManager?.getActiveHighlight();
                 if (highlighted?.datum) {
                     selectionData = [highlighted as RadarNodeDatum];
                 }
@@ -376,8 +382,8 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
         }
         const highlightedStyle = highlight ? this.highlightStyle.item : undefined;
         selection.update(selectionData).each((node, datum) => {
-            const fill = highlightedStyle?.fill ?? marker.fill;
-            const stroke = highlightedStyle?.stroke ?? marker.stroke;
+            const fill = this.getMarkerFill(highlightedStyle);
+            const stroke = highlightedStyle?.stroke ?? marker.stroke ?? this.stroke;
             const strokeWidth = highlightedStyle?.strokeWidth ?? marker.strokeWidth ?? this.strokeWidth ?? 1;
             const format = formatter
                 ? callbackCache.call(formatter, {
@@ -527,7 +533,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill ?? marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
+                    fill: this.getMarkerFill() ?? marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke ?? stroke ?? 'rgba(0, 0, 0, 0)',
                     fillOpacity: marker.fillOpacity ?? 1,
                     strokeOpacity: marker.strokeOpacity ?? strokeOpacity ?? 1,
@@ -710,7 +716,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
 
         this.beforePathAnimation();
 
-        this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+        this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
             ...animationOptions,
             duration,
             onUpdate: (length) => this.updatePathAnimation(points, nodeLengths, length),
@@ -721,7 +727,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
             const format = this.animateFormatter(datum);
             const size = datum.point?.size ?? 0;
 
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                 ...animationOptions,
                 to: format?.size ?? size,
                 delay,
@@ -734,7 +740,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
 
         labelSelection.each((label, _, index) => {
             const delay = (nodeLengths[index] / lineLength) * duration;
-            this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                 from: 0,
                 to: 1,
                 delay,
@@ -751,7 +757,7 @@ export abstract class RadarSeries extends _ModuleSupport.PolarSeries<RadarNodeDa
     }
 
     animateReadyResize() {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         this.resetMarkersAndPaths();
     }
 

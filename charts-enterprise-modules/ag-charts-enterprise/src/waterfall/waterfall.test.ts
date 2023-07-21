@@ -31,6 +31,22 @@ describe('Chart', () => {
         expect(console.warn).not.toBeCalled();
     });
 
+    const DATA_WITH_TOTAL_SUBTOTAL = [
+        { year: '2020', spending: 10 },
+        { year: '2021', spending: 20 },
+        { year: '2022', spending: 30 },
+        { year: '2023', dataType: 'subtotal' },
+        { year: '2024', spending: -80 },
+        { year: '2025', spending: -30 },
+        { year: '2026', spending: 40 },
+        { year: '2027', dataType: 'subtotal' },
+        { year: '2028', spending: -30 },
+        { year: '2029', spending: 40 },
+        { year: '2030', dataType: 'subtotal' },
+        { year: '2031', spending: 50 },
+        { year: '2032', dataType: 'total' },
+    ];
+
     const WATERFALL_COLUMN_OPTIONS: AgChartOptions = {
         data: [
             { year: '2020', spending: 10 },
@@ -48,6 +64,7 @@ describe('Chart', () => {
                 type: 'waterfall-column',
                 xKey: 'year',
                 yKey: 'spending',
+                typeKey: 'dataType',
                 label: {
                     enabled: true,
                     placement: 'inside',
@@ -96,6 +113,25 @@ describe('Chart', () => {
 
     it(`should render a waterfall-bar chart as expected`, async () => {
         const options: AgChartOptions = { ...switchSeriesType(WATERFALL_COLUMN_OPTIONS, 'waterfall-bar') };
+        prepareTestOptions(options as any);
+
+        chart = AgEnterpriseCharts.create(options);
+        await compare();
+    });
+
+    it(`should render a waterfall-column chart with total and subtotal columns`, async () => {
+        const options: AgChartOptions = { ...WATERFALL_COLUMN_OPTIONS, data: DATA_WITH_TOTAL_SUBTOTAL };
+        prepareTestOptions(options as any);
+
+        chart = AgEnterpriseCharts.create(options);
+        await compare();
+    });
+
+    it(`should render a waterfall-bar chart with total and subtotal bars`, async () => {
+        const options: AgChartOptions = {
+            ...switchSeriesType(WATERFALL_COLUMN_OPTIONS, 'waterfall-bar'),
+            data: DATA_WITH_TOTAL_SUBTOTAL,
+        };
         prepareTestOptions(options as any);
 
         chart = AgEnterpriseCharts.create(options);

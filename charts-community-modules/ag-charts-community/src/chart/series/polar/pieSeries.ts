@@ -138,6 +138,9 @@ class PieSeriesCalloutLabel extends Label {
 
     @Validate(NUMBER(0))
     maxCollisionOffset = 50;
+
+    @Validate(BOOLEAN)
+    avoidCollisions = true;
 }
 
 class PieSeriesSectorLabel extends Label {
@@ -375,7 +378,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
 
     visibleChanged() {
@@ -675,10 +678,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             fillOpacity: seriesFillOpacity,
             formatter,
             id: seriesId,
-            ctx: { callbackCache },
+            ctx: { callbackCache, highlightManager },
         } = this;
 
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
 
@@ -870,7 +873,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateNodes(seriesRect: BBox) {
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
@@ -1017,9 +1020,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
-        const textLength = Math.floor(text.length * visibleTextPart) - 1;
+        const textLength = visibleTextPart === 1 ? text.length : Math.floor(text.length * visibleTextPart) - 1;
         const hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
-        return { visibleTextPart, textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
+        return { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
     }
 
     private bboxIntersectsSurroundingSeries(box: BBox, dx = 0, dy = 0) {
@@ -1212,12 +1215,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             tempTextNode.setFont(this.calloutLabel);
             tempTextNode.setAlign(align);
             const box = tempTextNode.computeBBox();
-            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(
-                label.text,
-                box,
-                seriesRect
-            );
-            const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
+
+            let displayText = label.text;
+            let visible = true;
+            if (calloutLabel.avoidCollisions) {
+                const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
+                displayText = label.text.length === textLength ? label.text : `${label.text.substring(0, textLength)}…`;
+                visible = !hasVerticalOverflow;
+            }
 
             text.text = displayText;
             text.x = x;
@@ -1225,7 +1230,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             text.setFont(this.calloutLabel);
             text.setAlign(align);
             text.fill = color;
-            text.visible = !hasVerticalOverflow;
+            text.visible = visible;
         });
     }
 
@@ -1233,6 +1238,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset, minSpacing } = calloutLabel;
+
+        if (!calloutLabel.avoidCollisions) {
+            return null;
+        }
 
         this.maybeRefreshNodeData();
 
@@ -1278,7 +1287,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const box = text.computeBBox();
             label.box = box;
 
-            // Hide labels that where pushed to far by the collision avoidance algorithm
+            // Hide labels that where pushed too far by the collision avoidance algorithm
             if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
                 label.hidden = true;
                 return;
@@ -1610,7 +1619,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     animateEmptyUpdateReady() {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         const rotation = Math.PI / -2 + toRadians(this.rotation);
@@ -1618,7 +1627,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
             const datum: PieNodeDatum = node.datum;
 
-            this.animationManager?.animateMany<number>(
+            this.ctx.animationManager?.animateMany<number>(
                 `${this.id}_empty-update-ready_${node.id}`,
                 [
                     { from: rotation, to: datum.startAngle },
@@ -1643,7 +1652,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         this.calloutLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1652,7 +1661,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.sectorLabelSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;
@@ -1661,7 +1670,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.innerLabelsSelection.each((label) => {
-            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+            this.ctx.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
                 ...labelAnimationOptions,
                 onUpdate(opacity) {
                     label.opacity = opacity;

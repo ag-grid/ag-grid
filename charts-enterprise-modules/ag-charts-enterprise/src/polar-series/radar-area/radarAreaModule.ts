@@ -22,7 +22,6 @@ export const RadarAreaModule: _ModuleSupport.SeriesModule = {
         return {
             fill,
             stroke,
-            marker: { fill, stroke },
         };
     },
 };

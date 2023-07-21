@@ -3,7 +3,7 @@ import type { Scale } from '../../scale/scale';
 import type { ChartAxisDirection } from '../chartAxisDirection';
 import type { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
 
-interface CrossLineLabel {
+export interface CrossLineLabel {
     enabled?: boolean;
     text?: string;
     fontStyle?: FontStyle;

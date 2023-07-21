@@ -86,6 +86,7 @@ export {
     VerticalDirection,
     DropTarget,
     DragSource,
+    DragItem,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
 export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";

@@ -57,6 +57,16 @@ export function removeRepeatsFromArray<T>(array: T[], object: T) {
     }
 }
 
+export function removeFromUnorderedArray<T>(array: T[], object: T) {
+    const index = array.indexOf(object);
+
+    if (index >= 0) {
+        // preserve the last element, then shorten array length by 1 to delete index
+        array[index] = array[array.length - 1];
+        array.pop();
+    }
+}
+
 export function removeFromArray<T>(array: T[], object: T) {
     const index = array.indexOf(object);
 
@@ -65,8 +75,16 @@ export function removeFromArray<T>(array: T[], object: T) {
     }
 }
 
+export function removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromUnorderedArray(array, toRemove[i]);
+    }
+}
+
 export function removeAllFromArray<T>(array: T[], toRemove: T[]) {
-    toRemove.forEach(item => removeFromArray(array, item));
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromArray(array, toRemove[i]);
+    }
 }
 
 export function insertIntoArray<T>(array: T[], object: T, toIndex: number) {

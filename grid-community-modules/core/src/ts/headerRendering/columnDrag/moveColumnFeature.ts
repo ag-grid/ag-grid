@@ -222,8 +222,14 @@ export class MoveColumnFeature implements DropListener {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
-                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
+                    const isMarryChildren = !!movingGroup.getColGroupDef()?.marryChildren;
+                    const columnsToMove =  isMarryChildren
+                        // when marry children is true, we also have to move hidden
+                        // columns within the group, so grab them from the `providedColumnGroup`
+                        ? movingGroup.getProvidedColumnGroup().getLeafColumns()
+                        : movingGroup.getLeafColumns();
+
+                    columnsToMove.forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }

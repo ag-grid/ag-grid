@@ -137,5 +137,5 @@ frameworks: ["angular", "vue"]
 |be anything - the main point is that you can use the `context` mechanism to share
 |information between the components.
 |
-|A working example of this can be found in the [Cell Renderer](../component-cell-renderer/#example-dynamic-components) docs.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.
 </framework-specific-section>

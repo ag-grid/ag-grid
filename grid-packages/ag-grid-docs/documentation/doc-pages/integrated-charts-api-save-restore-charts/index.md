@@ -35,6 +35,6 @@ Note that an optional `chartContainer` can be specified when restoring a chart.
 
 ## Next Up
 
-Continue to the next section to learn about: [Downloading Chart Image](/integrated-charts-api-downloading-image/).
+Continue to the next section to learn about: [Chart Image Export](/integrated-charts-api-downloading-image/).
 
 

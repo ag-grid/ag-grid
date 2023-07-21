@@ -63,9 +63,11 @@ export class AutoWidthCalculator extends BeanStub {
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
         const eBodyContainer = this.centerRowContainerCtrl.getContainerElement();
-        eBodyContainer.appendChild(eDummyContainer);
 
         elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));
+
+        // only append the dummyContainer to the DOM after it contains all the necessary items
+        eBodyContainer.appendChild(eDummyContainer);
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.

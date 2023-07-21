@@ -535,13 +535,19 @@ export class Scene {
         ctx.restore();
     }
 
-    buildTree(node: Node): { name?: string; node?: any; dirty?: string } {
+    buildTree(node: Node): { name?: string; node?: any; dirty?: string; virtualParent?: Node } {
         const name = (node instanceof Group ? node.name : null) ?? node.id;
 
         return {
             name,
             node,
             dirty: RedrawType[node.dirty],
+            ...(node.parent?.isVirtual
+                ? {
+                      virtualParentDirty: RedrawType[node.parent.dirty],
+                      virtualParent: node.parent,
+                  }
+                : {}),
             ...node.children
                 .map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
@@ -549,6 +555,7 @@ export class Scene {
                     const {
                         node: { visible, opacity, zIndex, zIndexSubOrder },
                         node: childNode,
+                        virtualParent,
                     } = childTree;
                     if (!visible || opacity <= 0) {
                         treeNodeName = `(${treeNodeName})`;
@@ -563,7 +570,7 @@ export class Scene {
                             `zo: ${zIndexSubOrder
                                 .map((v: any) => (typeof v === 'function' ? `${v()} (fn)` : v))
                                 .join(' / ')}`,
-                        childNode.parent?.isVirtual === true && `(virtual parent)`,
+                        virtualParent && `(virtual parent)`,
                     ]
                         .filter((v) => !!v)
                         .join(' ');

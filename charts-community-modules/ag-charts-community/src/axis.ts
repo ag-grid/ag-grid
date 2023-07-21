@@ -862,8 +862,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         const ticks: TickDatum[] = [];
 
         let labelCount = 0;
-        let prevTickId;
-        let prevTickIdIndex = 0;
+        const tickIdCounts = new Map<string, number>();
         for (let i = 0; i < rawTicks.length; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
@@ -872,11 +871,12 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
             let tickId = tickLabel;
-            if (tickLabel === '' || tickLabel == undefined) {
-                tickId = `${prevTickId}_${i - prevTickIdIndex}`;
+            if (tickIdCounts.has(tickId)) {
+                const count = tickIdCounts.get(tickId)!;
+                tickIdCounts.set(tickId, count + 1);
+                tickId = `${tickId}_${count}`;
             } else {
-                prevTickId = tickId;
-                prevTickIdIndex = i;
+                tickIdCounts.set(tickId, 1);
             }
 
             ticks.push({ tick: rawTick, tickId, tickLabel, translationY });
@@ -1446,16 +1446,18 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
             duration: sectionDuration,
         };
 
+        const animationGroup = `${this.id}_${Math.random()}`;
+
         tickLabelGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(tickLabelGroupSelection, diff, options, node, datum, animationGroup);
         });
 
         gridLineGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(gridLineGroupSelection, diff, options, node, datum, animationGroup);
         });
 
         tickLineGroupSelection.each((node, datum) => {
-            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum);
+            this.animateSelectionNode(tickLineGroupSelection, diff, options, node, datum, animationGroup);
         });
     }
 
@@ -1464,7 +1466,8 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
         diff: AxisUpdateDiff,
         options: { delay: number; duration: number },
         node: Text | Line,
-        datum: TickDatum
+        datum: TickDatum,
+        animationGroup: string
     ) {
         const roundedTranslationY = Math.round(datum.translationY);
         let translate = { from: node.translationY, to: roundedTranslationY };
@@ -1485,11 +1488,13 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>> = Scale<a
 
         const props = [translate, opacity];
 
-        this.animationManager.debouncedAnimateMany(`${this.id}_ready-update_${node.id}`, props, {
+        this.animationManager.animateManyWithThrottle(`${this.id}_ready-update_${node.id}`, props, {
             disableInteractions: false,
             delay,
             duration,
             ease: easing.easeOut,
+            throttleId: this.id,
+            throttleGroup: animationGroup,
             onUpdate([translationY, opacity]) {
                 node.translationY = translationY;
                 node.opacity = opacity;

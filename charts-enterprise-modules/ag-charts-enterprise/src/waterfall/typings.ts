@@ -54,6 +54,8 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     xKey?: string;
     /** The key to use to retrieve y-values from the data. */
     yKey?: string;
+    /** The key to use to retrieve type-values from the data. */
+    typeKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
@@ -104,6 +106,8 @@ export interface AgWaterfallSeriesItemOptions {
 }
 
 export interface AgWaterfallSeriesLineOptions {
+    /** Whether or not the connector lines should be shown. */
+    enabled?: boolean;
     /** The colour to use for the connector lines. */
     stroke?: CssColor;
     /** The width in pixels of the connector lines. */

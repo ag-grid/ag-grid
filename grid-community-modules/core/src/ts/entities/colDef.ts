@@ -643,7 +643,7 @@ export interface ValueGetterParams<TData = any, TValue = any> extends BaseColDef
 export interface ValueGetterFunc<TData = any, TValue = any> {
     (params: ValueGetterParams<TData, TValue>): TValue | null | undefined;
 }
-export type HeaderLocation = 'chart' | 'clipboard' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | 'filterExpression' | null;
+export type HeaderLocation = 'chart' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | 'filterExpression' | null;
 export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/

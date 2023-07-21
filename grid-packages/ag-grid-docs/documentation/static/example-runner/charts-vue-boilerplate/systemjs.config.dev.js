@@ -42,7 +42,8 @@
             },
             'ag-charts-community': {
                 main: './dist/ag-charts-community.cjs.js',
-                defaultExtension: 'js'
+                defaultExtension: 'js',
+                "format": "cjs"
             },
             'ag-charts-enterprise': {
                 main: './dist/ag-charts-enterprise.cjs.js',

@@ -19,7 +19,7 @@ export enum PointerEvents {
 
 export type RenderContext = {
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    forceRender: boolean;
+    forceRender: boolean | 'dirtyTransform';
     resized: boolean;
     clipBBox?: BBox;
     stats?: {
@@ -104,7 +104,7 @@ export abstract class Node extends ChangeDetectable {
      * graph. This allows intermingling of child-nodes that are managed by different chart classes
      * without breaking scene-graph encapsulation.
      */
-    protected readonly isVirtual: boolean;
+    readonly isVirtual: boolean;
 
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
@@ -269,9 +269,9 @@ export abstract class Node extends ChangeDetectable {
         return matrix.transformBBox(bbox);
     }
 
-    private _dirtyTransform = false;
+    protected dirtyTransform = false;
     markDirtyTransform() {
-        this._dirtyTransform = true;
+        this.dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
 
@@ -401,7 +401,7 @@ export abstract class Node extends ChangeDetectable {
     }
 
     computeTransformMatrix() {
-        if (!this._dirtyTransform) {
+        if (!this.dirtyTransform) {
             return;
         }
 
@@ -427,7 +427,7 @@ export abstract class Node extends ChangeDetectable {
 
         matrix.inverseTo(this.inverseMatrix);
 
-        this._dirtyTransform = false;
+        this.dirtyTransform = false;
     }
 
     render(renderCtx: RenderContext): void {
@@ -470,7 +470,7 @@ export abstract class Node extends ChangeDetectable {
         return this._dirty;
     }
 
-    markClean(opts?: { force?: boolean; recursive?: boolean }) {
+    markClean(opts?: { force?: boolean; recursive?: boolean | 'virtual' }) {
         const { force = false, recursive = true } = opts ?? {};
 
         if (this._dirty === RedrawType.NONE && !force) {
@@ -479,10 +479,12 @@ export abstract class Node extends ChangeDetectable {
 
         this._dirty = RedrawType.NONE;
 
-        if (recursive) {
+        if (recursive !== false) {
             for (const child of this._virtualChildren) {
                 child.markClean({ force });
             }
+        }
+        if (recursive === true) {
             for (const child of this._children) {
                 child.markClean({ force });
             }
@@ -514,7 +516,7 @@ export abstract class Node extends ChangeDetectable {
 
     get nodeCount() {
         let count = 1;
-        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this.dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;
 
         const countChild = (child: Node) => {

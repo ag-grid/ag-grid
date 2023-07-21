@@ -16,7 +16,8 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    WithoutGridCommon
+    WithoutGridCommon,
+    DragItem
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -211,11 +212,15 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             },
-            onGridEnter: () => {
+            onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
-                    // when dragged into the grid, mimic what happens when checkbox is enabled
-                    // this handles the behaviour for pivot which is different to just hiding a column.
-                    this.onChangeCommon(true);
+                    // when dragged into the grid, restore the state that was active pre-drag
+                    this.modelItemUtils.updateColumns({
+                        columns: [this.column],
+                        visibleState: dragItem?.visibleState,
+                        pivotState: dragItem?.pivotState,
+                        eventType: 'toolPanelUi'
+                    })
                 }
             },
             onGridExit: () => {
@@ -232,11 +237,13 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private createDragItem() {
-        const visibleState: { [key: string]: boolean; } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        const colId = this.column.getColId();
+        const visibleState = { [colId]: this.column.isVisible() };
+        const pivotState = { [colId]: this.modelItemUtils.createPivotState(this.column) }
         return {
             columns: [this.column],
-            visibleState: visibleState
+            visibleState,
+            pivotState
         };
     }
 

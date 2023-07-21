@@ -152,7 +152,6 @@ const gridOptions = {
 }
 </snippet>
 
-
 The following example shows how the Chart Tool Panels can be omitted and ordered. Note the following:
 
 * The **Format** Tool Panel has been omitted.
@@ -160,6 +159,20 @@ The following example shows how the Chart Tool Panels can be omitted and ordered
 * The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
 <grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+## Chart Tool Panel API
+
+The Chart Tool Panels can be opened and closed programmatically using the following grid APIs:
+
+<api-documentation source='grid-api/api.json' section='charts' names='["openChartToolPanel", "closeChartToolPanel"]'></api-documentation>
+
+The example below demonstrates how you can open and close the Chart Tool Panels.
+
+- Click **Open Chart Tool Panel** to open the default `Settings` tab via `openChartToolPanel()`
+- Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
+- Click **Close Chart Tool Panel** to close via `closeChartToolPanel()`
+
+<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
 
 ## Next Up
 

@@ -29,6 +29,9 @@ const options: AgChartOptions = {
       yKey: "mac",
       yName: "Mac",
       stackGroup: "Devices",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "bar",
@@ -36,12 +39,18 @@ const options: AgChartOptions = {
       yKey: "ipad",
       yName: "iPad",
       stackGroup: "Devices",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "bar",
       xKey: "quarter",
       yKey: "wearables",
       yName: "Wearables",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "bar",

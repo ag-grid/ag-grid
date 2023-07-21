@@ -64,7 +64,7 @@
         "title": "Follow",
         "links": [
             {
-                "name": "Github",
+                "name": "GitHub",
                 "url": "https://github.com/ag-grid/ag-grid",
                 "iconName": "github"
             },

@@ -25,7 +25,6 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import type { Point } from '../../../scene/point';
 import type { ValidatePredicate } from '../../../util/validation';
 import {
-    BOOLEAN,
     NUMBER,
     OPT_FUNCTION,
     OPT_LINE_DASH,
@@ -136,9 +135,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(OPT_STRING)
     xName?: string = undefined;
 
-    @Validate(BOOLEAN)
-    hideInLegend: boolean = false;
-
     @Validate(OPT_STRING)
     yKey?: string = undefined;
 
@@ -150,6 +146,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             moduleCtx,
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
+            hasHighlightedLabels: true,
         });
 
         this.label.enabled = false;
@@ -170,14 +167,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return direction;
     }
 
-    @Validate(BOOLEAN)
-    grouped: boolean = false;
-
     @Validate(OPT_STRING)
     stackGroup?: string = undefined;
-
-    @Validate(OPT_STRING)
-    legendItemName?: string = undefined;
 
     @Validate(OPT_NUMBER())
     normalizedTo?: number;
@@ -189,7 +180,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected smallestDataInterval?: { x: number; y: number } = undefined;
     async processData(dataController: DataController) {
-        const { xKey, yKey, normalizedTo, seriesGrouping: { groupIndex = -1 } = {}, data = [] } = this;
+        const { xKey, yKey, normalizedTo, seriesGrouping: { groupIndex = this.id } = {}, data = [] } = this;
         const normalizedToAbs = Math.abs(normalizedTo ?? NaN);
 
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
@@ -203,7 +194,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             extraProps.push(normaliseGroupTo(this, [stackGroupName, stackGroupTrailingName], normaliseTo, 'range'));
         }
 
-        if (!this.animationManager?.skipAnimations && this.processedData) {
+        if (!this.ctx.animationManager?.skipAnimations && this.processedData) {
             extraProps.push(diff(this.processedData));
         }
 
@@ -650,23 +641,19 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yKey,
             yName,
             legendItemName,
-            hideInLegend,
             fill,
             stroke,
             fillOpacity,
             strokeOpacity,
             visible,
+            showInLegend,
         } = this;
 
-        if (!data?.length || !xKey || !yKey) {
+        if (!showInLegend || !data?.length || !xKey || !yKey) {
             return [];
         }
 
         const legendData: CategoryLegendDatum[] = [];
-
-        if (hideInLegend) {
-            return [];
-        }
 
         legendData.push({
             legendType: 'category',
@@ -677,6 +664,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             label: {
                 text: legendItemName ?? yName ?? yKey,
             },
+            legendItemName,
             marker: {
                 fill,
                 stroke,
@@ -688,28 +676,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
-    animateRect(
-        id: string,
-        rect: Rect,
-        props: Array<{ from: number; to: number }>,
-        duration: number,
-        delay: number = 0,
-        onComplete?: () => void
-    ) {
-        this.animationManager?.animateMany(id, props, {
-            delay,
-            duration,
-            ease: easing.easeOut,
-            onUpdate([x, width, y, height]) {
-                rect.x = x;
-                rect.width = width;
-                rect.y = y;
-                rect.height = height;
-            },
-            onComplete,
-        });
-    }
-
     animateEmptyUpdateReady({
         datumSelections,
         labelSelections,
@@ -717,19 +683,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         datumSelections: Array<Selection<Rect, BarNodeDatum>>;
         labelSelections: Array<Selection<Text, BarNodeDatum>>;
     }) {
-        const duration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const duration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -752,13 +709,22 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     { from: contextHeight, to: datum.height },
                 ];
 
-                this.animateRect(`${this.id}_empty-update-ready_${rect.id}`, rect, props, duration);
+                this.ctx.animationManager?.animateMany(`${this.id}_empty-update-ready_${rect.id}`, props, {
+                    duration,
+                    ease: easing.easeOut,
+                    onUpdate([x, width, y, height]) {
+                        rect.x = x;
+                        rect.width = width;
+                        rect.y = y;
+                        rect.height = height;
+                    },
+                });
             });
         });
 
         labelSelections.forEach((labelSelection) => {
             labelSelection.each((label) => {
-                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: duration,
@@ -776,7 +742,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
-        this.animationManager?.stop();
+        this.ctx.animationManager?.reset();
         datumSelections.forEach((datumSelection) => {
             this.resetSelectionRects(datumSelection);
         });
@@ -799,26 +765,15 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             return;
         }
 
-        const totalDuration = this.animationManager?.defaultOptions.duration ?? 1000;
+        const totalDuration = this.ctx.animationManager?.defaultOptions.duration ?? 1000;
         const labelDuration = 200;
 
         let sectionDuration = totalDuration;
-        if (diff.added.length > 0 && diff.removed.length > 0) {
-            sectionDuration = Math.floor(totalDuration / 3);
-        } else if (diff.added.length > 0 || diff.removed.length > 0) {
+        if (diff.added.length > 0 || diff.removed.length > 0) {
             sectionDuration = Math.floor(totalDuration / 2);
         }
 
-        let startingX = Infinity;
-        let startingY = 0;
-        datumSelections.forEach((datumSelection) =>
-            datumSelection.each((_, datum) => {
-                if (datum.yValue >= 0) {
-                    startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
-                }
-            })
-        );
+        const { startingX, startingY } = this.getDirectionStartingValues(datumSelections);
 
         const datumIdKey = this.processedData?.defs.keys?.[0];
 
@@ -830,6 +785,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         diff.removed.forEach((d: string[]) => {
             removedIds[d[0]] = true;
         });
+
+        const rectThrottleGroup = `${this.id}_${Math.random()}`;
+        const labelThrottleGroup = `${this.id}_${Math.random()}`;
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
@@ -857,16 +815,18 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     contextHeight = 0;
                 }
 
-                if (datumId !== undefined && addedIds[datumId] !== undefined) {
+                const isAdded = datumId !== undefined && addedIds[datumId] !== undefined;
+                const isRemoved = datumId !== undefined && removedIds[datumId] !== undefined;
+
+                if (isAdded) {
                     props = [
                         { from: contextX, to: datum.x },
                         { from: contextWidth, to: datum.width },
                         { from: contextY, to: datum.y },
                         { from: contextHeight, to: datum.height },
                     ];
-                    delay += sectionDuration;
                     duration = sectionDuration;
-                } else if (datumId !== undefined && removedIds[datumId] !== undefined) {
+                } else if (isRemoved) {
                     props = [
                         { from: datum.x, to: contextX },
                         { from: datum.width, to: contextWidth },
@@ -878,9 +838,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     cleanup = true;
                 }
 
-                this.animateRect(`${this.id}_waiting-update-ready_${rect.id}`, rect, props, duration, delay, () => {
-                    if (cleanup) datumSelection.cleanup();
-                });
+                this.ctx.animationManager?.animateManyWithThrottle(
+                    `${this.id}_waiting-update-ready_${rect.id}`,
+                    props,
+                    {
+                        delay,
+                        duration,
+                        ease: easing.easeOut,
+                        throttleId: `${this.id}_rects`,
+                        throttleGroup: rectThrottleGroup,
+                        onUpdate([x, width, y, height]) {
+                            rect.x = x;
+                            rect.width = width;
+                            rect.y = y;
+                            rect.height = height;
+                        },
+                        onComplete() {
+                            if (cleanup) datumSelection.cleanup();
+                        },
+                    }
+                );
             });
         });
 
@@ -888,11 +865,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             labelSelection.each((label) => {
                 label.opacity = 0;
 
-                this.animationManager?.animate(`${this.id}_waiting-update-ready_${label.id}`, {
+                this.ctx.animationManager?.animateWithThrottle(`${this.id}_waiting-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay: totalDuration,
                     duration: labelDuration,
+                    throttleId: `${this.id}_labels`,
+                    throttleGroup: labelThrottleGroup,
                     onUpdate: (opacity) => {
                         label.opacity = opacity;
                     },
@@ -909,6 +888,49 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.height = datum.height;
         });
         selection.cleanup();
+    }
+
+    protected getDirectionStartingValues(datumSelections: Array<Selection<Rect, BarNodeDatum>>) {
+        const isColumnSeries = this.getBarDirection() === ChartAxisDirection.Y;
+
+        const xAxis = this.axes[ChartAxisDirection.X];
+        const yAxis = this.axes[ChartAxisDirection.Y];
+
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
+
+        let startingX = Infinity;
+        let startingY = 0;
+
+        if (yAxis && isColumnSeries) {
+            if (isContinuousY) {
+                startingY = yAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingY = Math.max(startingY, datum.height + datum.y);
+                        }
+                    })
+                );
+            }
+        }
+
+        if (xAxis && !isColumnSeries) {
+            if (isContinuousX) {
+                startingX = xAxis.scale.convert(0);
+            } else {
+                datumSelections.forEach((datumSelection) =>
+                    datumSelection.each((_, datum) => {
+                        if (datum.yValue >= 0) {
+                            startingX = Math.min(startingX, datum.x);
+                        }
+                    })
+                );
+            }
+        }
+
+        return { startingX, startingY };
     }
 
     protected isLabelEnabled() {

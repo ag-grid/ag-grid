@@ -744,7 +744,7 @@ export class Legend {
         let newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled);
+            this.ctx.chartEventManager.legendItemClick(series, itemId, newEnabled, datum.legendItemName);
         }
 
         if (!newEnabled) {
@@ -793,7 +793,7 @@ export class Legend {
         event.consume();
 
         if (toggleSeriesVisible) {
-            const legendData: CategoryLegendDatum[] = chartSeries.reduce(
+            const legendData = chartSeries.reduce(
                 (ls, s) => [
                     ...ls,
                     ...s.getLegendData().filter((d): d is CategoryLegendDatum => d.legendType === 'category'),
@@ -812,7 +812,8 @@ export class Legend {
                 series,
                 itemId,
                 clickedItem?.enabled ?? false,
-                numVisibleItems
+                numVisibleItems,
+                clickedItem?.legendItemName
             );
         }
 

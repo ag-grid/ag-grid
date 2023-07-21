@@ -23,8 +23,6 @@ const { Group } = _Scene;
 
 const { createId } = _Util;
 
-type CrossLineLabelPosition = string;
-
 const CROSSLINE_LABEL_POSITIONS = [
     'top',
     'left',
@@ -55,7 +53,7 @@ const OPT_CROSSLINE_TYPE = predicateWithMessage(
     `expecting a crossLine type keyword such as 'range' or 'line'`
 );
 
-class PolarCrossLineLabel {
+class PolarCrossLineLabel implements _ModuleSupport.CrossLineLabel {
     @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
 
@@ -87,7 +85,7 @@ class PolarCrossLineLabel {
     color?: string = 'rgba(87, 87, 87, 1)';
 
     @Validate(OPT_CROSSLINE_LABEL_POSITION)
-    position?: CrossLineLabelPosition = undefined;
+    position?: _ModuleSupport.CrossLineLabel['position'] = undefined;
 
     @Validate(OPT_NUMBER(-360, 360))
     rotation?: number = undefined;
@@ -95,8 +93,6 @@ class PolarCrossLineLabel {
     @Validate(OPT_BOOLEAN)
     parallel?: boolean = undefined;
 }
-
-type CrossLineType = 'line' | 'range';
 
 export abstract class PolarCrossLine implements _ModuleSupport.CrossLine {
     protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
@@ -107,7 +103,7 @@ export abstract class PolarCrossLine implements _ModuleSupport.CrossLine {
     enabled?: boolean = undefined;
 
     @Validate(OPT_CROSSLINE_TYPE)
-    type?: CrossLineType = undefined;
+    type?: _ModuleSupport.CrossLineType = undefined;
 
     @Validate(OPT_ARRAY(2))
     range?: [any, any] = undefined;
@@ -133,7 +129,7 @@ export abstract class PolarCrossLine implements _ModuleSupport.CrossLine {
 
     shape: 'polygon' | 'circle' = 'polygon';
 
-    label: any = new PolarCrossLineLabel();
+    label = new PolarCrossLineLabel();
 
     scale?: _Scale.Scale<any, number> = undefined;
     clippedRange: [number, number] = [-Infinity, Infinity];
@@ -148,4 +144,31 @@ export abstract class PolarCrossLine implements _ModuleSupport.CrossLine {
     abstract update(visible: boolean): void;
 
     calculatePadding() {}
+
+    protected setLabelNodeProps(
+        node: _Scene.Text,
+        x: number,
+        y: number,
+        baseline: CanvasTextBaseline,
+        rotation: number
+    ) {
+        const { label } = this;
+
+        node.x = x;
+        node.y = y;
+        node.text = label.text;
+        node.textAlign = 'center';
+        node.textBaseline = baseline;
+
+        node.rotation = rotation;
+        node.rotationCenterX = x;
+        node.rotationCenterY = y;
+
+        node.fill = label.color;
+        node.fontFamily = label.fontFamily;
+        node.fontSize = label.fontSize;
+        node.fontStyle = label.fontStyle;
+
+        node.visible = true;
+    }
 }

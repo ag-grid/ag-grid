@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { setFixedHeight, setFixedWidth } from "../utils/dom";
+import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
 import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -113,5 +113,14 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         setFixedHeight(this.eViewport, scrollContainerSize);
         setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+    }
+
+    public getScrollPosition(): number {
+        return getScrollLeft(this.getViewport(), this.enableRtl);
+    }
+
+    public setScrollPosition(value: number): void {
+        if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+        setScrollLeft(this.getViewport(), value, this.enableRtl);
     }
 }

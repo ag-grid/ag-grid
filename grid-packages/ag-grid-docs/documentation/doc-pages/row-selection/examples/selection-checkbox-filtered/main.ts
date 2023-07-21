@@ -4,7 +4,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
-    { field: 'age', minWidth: 120, aggFunc: 'sum' },
+    { field: 'age', minWidth: 120 },
     { field: 'year', maxWidth: 120 },
     { field: 'date', minWidth: 150 },
     { field: 'gold', aggFunc: 'sum' },

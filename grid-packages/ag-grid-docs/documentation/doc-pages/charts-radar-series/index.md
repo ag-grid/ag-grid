@@ -170,7 +170,7 @@ export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions {
     type: 'angle-category';
     /** Configuration for the axis ticks. */
     tick?: AgAxisCategoryTickOptions;
-    /** Shape of axes. Default: `polygon` */
+    /** Shape of axis. Default: `polygon` */
     shape?: 'polygon' | 'circle';
 }
 
@@ -184,7 +184,7 @@ export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     max?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
-    /** Shape of axes. Default: `polygon` */
+    /** Shape of axis. Default: `polygon` */
     shape?: 'polygon' | 'circle';
     /** Configuration for the title shown next to the axis. */
     title?: AgAxisCaptionOptions;

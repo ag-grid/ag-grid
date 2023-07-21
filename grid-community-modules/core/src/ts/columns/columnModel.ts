@@ -37,7 +37,7 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
+import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
@@ -415,34 +415,10 @@ export class ColumnModel extends BeanStub {
 
         if (!primaryColumns) { return; }
 
-        this.gridColumns.sort((colA: Column, colB: Column) => {
-            const primaryIndexA = primaryColumns.indexOf(colA);
-            const primaryIndexB = primaryColumns.indexOf(colB);
-            // if both cols are present in primary, then we just return the position,
-            // so position is maintained.
-            const indexAPresent = primaryIndexA >= 0;
-            const indexBPresent = primaryIndexB >= 0;
+        const primaryColsOrdered = primaryColumns.filter(col => this.gridColumns.indexOf(col) >= 0);
+        const otherCols = this.gridColumns.filter(col => primaryColsOrdered.indexOf(col) < 0);
 
-            if (indexAPresent && indexBPresent) {
-                return primaryIndexA - primaryIndexB;
-            }
-
-            if (indexAPresent) {
-                // B is auto group column, so put B first
-                return 1;
-            }
-
-            if (indexBPresent) {
-                // A is auto group column, so put A first
-                return -1;
-            }
-
-            // otherwise both A and B are auto-group columns. so we just keep the order
-            // as they were already in.
-            const gridIndexA = this.gridColumns.indexOf(colA);
-            const gridIndexB = this.gridColumns.indexOf(colB);
-            return gridIndexA - gridIndexB;
-        });
+        this.gridColumns = [...otherCols, ...primaryColsOrdered];
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
     }
 
@@ -3522,7 +3498,7 @@ export class ColumnModel extends BeanStub {
                     left += column.getActualWidth();
                 });
             }
-            removeAllFromArray(allColumns, columns);
+            removeAllFromUnorderedArray(allColumns, columns);
         });
 
         // items left in allColumns are columns not displayed, so remove the left position. this is
@@ -3683,35 +3659,63 @@ export class ColumnModel extends BeanStub {
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
-            params.resizingCols.forEach(col => {
-                const indexOfCol = this.displayedColumnsCenter.indexOf(col);
-                if (flexAfterDisplayIndex < indexOfCol) {
-                    flexAfterDisplayIndex = indexOfCol;
+            const allResizingCols = new Set(params.resizingCols);
+            // find the last resizing col, as only cols after this one are affected by the resizing
+            let displayedCols = this.displayedColumnsCenter;
+            for (let i = displayedCols.length - 1; i >= 0; i--) {
+                if (allResizingCols.has(displayedCols[i])) {
+                    flexAfterDisplayIndex = i;
+                    break;
                 }
-            });
+            }
         }
 
-        const isColFlex = (col: Column) => {
-            const afterResizingCols = this.displayedColumnsCenter.indexOf(col) > flexAfterDisplayIndex;
-            return col.getFlex() && afterResizingCols;
+        // the width of all of the columns for which the width has been determined
+        let knownColumnsWidth = 0;
+
+        let flexingColumns: Column[] = [];
+
+        // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
+        let minimumFlexedWidth = 0;
+        let totalFlex = 0;
+        for (let i = 0; i < this.displayedColumnsCenter.length; i++) {
+            const isFlex = this.displayedColumnsCenter[i].getFlex() && i > flexAfterDisplayIndex;
+            if (isFlex) {
+                flexingColumns.push(this.displayedColumnsCenter[i]);
+                totalFlex += this.displayedColumnsCenter[i].getFlex();
+                minimumFlexedWidth += this.displayedColumnsCenter[i].getMinWidth() ?? 0;
+            } else {
+                knownColumnsWidth += this.displayedColumnsCenter[i].getActualWidth();
+            }
         };
-        const knownWidthColumns = this.displayedColumnsCenter.filter(col => !isColFlex(col));
-        const flexingColumns = this.displayedColumnsCenter.filter(col => isColFlex(col));
-        const changedColumns: Column[] = [];
 
         if (!flexingColumns.length) {
             return [];
+        }
+        
+        let changedColumns: Column[] = [];
+
+        // this is for performance to prevent trying to flex when unnecessary
+        if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
+            // known columns and the minimum width of all the flex cols are too wide for viewport
+            // so don't flex
+            flexingColumns.forEach(col => col.setActualWidth(col.getMinWidth() ?? 0));
+
+            // No columns should flex, but all have been changed. Swap arrays so events fire properly.
+            // Expensive logic won't execute as flex columns is empty.
+            changedColumns = flexingColumns;
+            flexingColumns = [];
         }
 
         const flexingColumnSizes: number[] = [];
         let spaceForFlexingColumns: number;
 
         outer: while (true) {
-            const totalFlex = flexingColumns.reduce((count, col) => count + col.getFlex(), 0);
-            spaceForFlexingColumns = this.flexViewportWidth - this.getWidthOfColsInList(knownWidthColumns);
+            spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
+            const spacePerFlex = spaceForFlexingColumns / totalFlex;
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
-                const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
+                const widthByFlexRule = spacePerFlex * col.getFlex();
                 let constrainedWidth = 0;
 
                 const minWidth = col.getMinWidth();
@@ -3727,9 +3731,10 @@ export class ColumnModel extends BeanStub {
                     // This column is not in fact flexing as it is being constrained to a specific size
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
-                    removeFromArray(flexingColumns, col);
+                    removeFromUnorderedArray(flexingColumns, col);
+                    totalFlex -= col.getFlex();
                     changedColumns.push(col);
-                    knownWidthColumns.push(col);
+                    knownColumnsWidth += col.getActualWidth();
                     continue outer;
                 }
 
@@ -3899,11 +3904,11 @@ export class ColumnModel extends BeanStub {
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
+            leftVisibleColumns, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
         this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'right', this.displayedTreeRight);
+            rightVisibleColumns, groupInstanceIdCreator, 'right', this.displayedTreeRight);
         this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
-            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
+            centerVisibleColumns, groupInstanceIdCreator, null, this.displayedTreeCentre);
 
         this.updateDisplayedMap();
     }

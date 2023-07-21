@@ -9,4 +9,13 @@ export const RADAR_SERIES_THEME = {
         color: 'rgb(70, 70, 70)',
         __overrides__: _Theme.OVERRIDE_SERIES_LABEL_DEFAULTS,
     },
+    marker: {
+        enabled: true,
+        fillOpacity: 1,
+        formatter: undefined,
+        shape: 'circle',
+        size: 6,
+        strokeOpacity: 1,
+        strokeWidth: 1,
+    },
 };

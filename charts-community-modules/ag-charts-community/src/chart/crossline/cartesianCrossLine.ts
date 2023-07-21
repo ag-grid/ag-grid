@@ -34,7 +34,7 @@ import {
 } from '../../util/validation';
 import type { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
 import { calculateLabelRotation } from '../label';
-import type { CrossLine } from './crossLine';
+import type { CrossLine, CrossLineLabel, CrossLineType } from './crossLine';
 
 const CROSSLINE_LABEL_POSITIONS = [
     'top',
@@ -66,7 +66,7 @@ const OPT_CROSSLINE_TYPE = predicateWithMessage(
     `expecting a crossLine type keyword such as 'range' or 'line'`
 );
 
-class CrossLineLabel {
+class CartesianCrossLineLabel implements CrossLineLabel {
     @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
 
@@ -109,8 +109,6 @@ class CrossLineLabel {
 
 type NodeData = number[];
 
-type CrossLineType = 'line' | 'range';
-
 export class CartesianCrossLine implements CrossLine {
     protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
     protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
@@ -146,7 +144,7 @@ export class CartesianCrossLine implements CrossLine {
     @Validate(OPT_LINE_DASH)
     lineDash?: [] = undefined;
 
-    label: CrossLineLabel = new CrossLineLabel();
+    label: CartesianCrossLineLabel = new CartesianCrossLineLabel();
 
     scale?: Scale<any, number> = undefined;
     clippedRange: [number, number] = [-Infinity, Infinity];

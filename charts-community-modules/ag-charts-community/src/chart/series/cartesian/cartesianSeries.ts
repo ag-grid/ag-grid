@@ -14,7 +14,7 @@ import { CategoryAxis } from '../../axis/categoryAxis';
 import type { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import type { Point } from '../../../scene/point';
-import { OPT_FUNCTION, Validate } from '../../../util/validation';
+import { OPT_FUNCTION, OPT_STRING, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import type { BBox } from '../../../scene/bbox';
 import type { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
@@ -55,6 +55,7 @@ interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     hasMarkers: boolean;
+    hasHighlightedLabels: boolean;
 }
 
 const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
@@ -98,6 +99,9 @@ export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
     N extends Node = Group
 > extends Series<C> {
+    @Validate(OPT_STRING)
+    legendItemName?: string = undefined;
+
     private _contextNodeData: C[] = [];
     get contextNodeData(): C[] {
         return this._contextNodeData?.slice();
@@ -134,8 +138,13 @@ export abstract class CartesianSeries<
             directionNames: DEFAULT_DIRECTION_NAMES,
         });
 
-        const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
-        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
+        const {
+            pathsPerSeries = 1,
+            hasMarkers = false,
+            hasHighlightedLabels = false,
+            pathsZIndexSubOrderOffset = [],
+        } = opts;
+        this.opts = { pathsPerSeries, hasMarkers, hasHighlightedLabels, pathsZIndexSubOrderOffset };
 
         this.animationState = new CartesianStateMachine('empty', {
             empty: {
@@ -182,8 +191,10 @@ export abstract class CartesianSeries<
     }
 
     addChartEventListeners(): void {
-        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
-        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.ctx.chartEventManager?.addListener('legend-item-double-click', (event) =>
+            this.onLegendItemDoubleClick(event)
+        );
     }
 
     destroy() {
@@ -225,7 +236,7 @@ export abstract class CartesianSeries<
 
     async update({ seriesRect }: { seriesRect?: BBox }) {
         const { visible } = this;
-        const { series } = this.highlightManager?.getActiveHighlight() ?? {};
+        const { series } = this.ctx.highlightManager?.getActiveHighlight() ?? {};
         const seriesHighlighted = series ? series === this : undefined;
 
         const newNodeDataDependencies = {
@@ -390,15 +401,17 @@ export abstract class CartesianSeries<
 
     getGroupZIndexSubOrder(
         type: 'data' | 'labels' | 'highlight' | 'path' | 'marker' | 'paths',
-        subIndex?: number
+        subIndex = 0
     ): ZIndexSubOrder {
         const result = super.getGroupZIndexSubOrder(type, subIndex);
-        switch (type) {
-            case 'paths':
-                if (typeof result[0] === 'number') {
-                    result[0] += this.opts.pathsZIndexSubOrderOffset[subIndex ?? 0] ?? 0;
-                }
-                break;
+        if (type === 'paths') {
+            const pathOffset = this.opts.pathsZIndexSubOrderOffset[subIndex] ?? 0;
+            const superFn = result[0];
+            if (typeof superFn === 'function') {
+                result[0] = () => +superFn() + pathOffset;
+            } else {
+                result[0] = +superFn + pathOffset;
+            }
         }
         return result;
     }
@@ -408,7 +421,7 @@ export abstract class CartesianSeries<
             highlightSelection,
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
-            opts: { hasMarkers },
+            opts: { hasMarkers, hasHighlightedLabels },
         } = this;
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
@@ -432,7 +445,10 @@ export abstract class CartesianSeries<
             await this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
             this.animationState.transition('highlight', highlightSelection);
         }
-        await this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+
+        if (hasHighlightedLabels) {
+            await this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
+        }
 
         await Promise.all(
             this.subGroups.map(async (subGroup, seriesIdx) => {
@@ -487,7 +503,7 @@ export abstract class CartesianSeries<
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
         const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData } = this;
 
-        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const highlightedDatum = this.ctx.highlightManager?.getActiveHighlight();
         const item =
             seriesHighlighted && highlightedDatum?.datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
         this.highlightSelection = await this.updateHighlightSelectionItem({ item, highlightSelection });
@@ -648,21 +664,32 @@ export abstract class CartesianSeries<
     }
 
     onLegendItemClick(event: LegendItemClickChartEvent) {
-        const { enabled, itemId, series } = event;
+        const { enabled, itemId, series, legendItemName } = event;
 
-        if (series.id !== this.id) return;
-        this.toggleSeriesItem(itemId, enabled);
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        } else if (matchedLegendItemName) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
     }
 
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
-        const { enabled, itemId, series, numVisibleItems } = event;
+        const { enabled, itemId, series, numVisibleItems, legendItemName } = event;
 
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
 
-        const wasClicked = series.id === this.id;
-        const newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
-
-        this.toggleSeriesItem(itemId, newEnabled);
+        const matchedLegendItemName = this.legendItemName != null && this.legendItemName === legendItemName;
+        if (series.id === this.id || matchedLegendItemName) {
+            // Double-clicked item should always become visible.
+            this.toggleSeriesItem(itemId, true);
+        } else if (enabled && totalVisibleItems === 1) {
+            // Other items should become visible if there is only one existing visible item.
+            this.toggleSeriesItem(itemId, true);
+        } else {
+            // Disable other items if not exactly one enabled.
+            this.toggleSeriesItem(itemId, false);
+        }
     }
 
     protected isPathOrSelectionDirty(): boolean {

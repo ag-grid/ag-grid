@@ -124,6 +124,11 @@ export class CellCtrl extends BeanStub {
         this.addFeatures();
     }
 
+    public shouldRestoreFocus(): boolean {
+        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
+    }
+
+
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => { this.cellPositionFeature?.destroy(); this.cellPositionFeature = null; });
@@ -657,6 +662,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
+        if (!this.cellComp) { return; }
+
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
