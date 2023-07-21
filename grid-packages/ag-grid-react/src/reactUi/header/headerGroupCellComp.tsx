@@ -1,29 +1,31 @@
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from 'ag-grid-community';
-import React, { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { useLayoutEffectOnce } from '../useEffectOnce';
 import { CssClasses } from '../utils';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const {context} = useContext(BeansContext);
+    const { ctrl } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState<"true" | "false">("false");
     const [title, setTitle] = useState<string>();
-    const [colId, setColId] = useState<string>();
     const [ariaExpanded, setAriaExpanded] = useState<'true'|'false'|undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
+    const colId = useMemo(() => ctrl.getColId(), []);
 
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
 
-    const { ctrl } = props;
 
-    useLayoutEffectOnce(() => {
-
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!eGui.current) {
+            return; // Cleanup?
+        }
         const compProxy: IHeaderGroupCellComp = {
             setWidth: width => {
                 if (eGui.current) {
@@ -31,7 +33,6 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
-            setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed) => {
@@ -43,7 +44,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eResize.current!);
 
-    });
+    }, []);
 
     // js comps
     useLayoutEffect(() => showJsComp(userCompDetails, context, eGui.current!), [userCompDetails]);
@@ -62,7 +63,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={eGui} className={className} title={title} col-id={colId} 
+        <div ref={setRef} className={className} title={title} col-id={colId} 
                     role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
             { reactUserComp && <UserCompClass { ...userCompDetails!.params } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
