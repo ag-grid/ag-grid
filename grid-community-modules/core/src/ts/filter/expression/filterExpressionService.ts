@@ -8,6 +8,13 @@ import { DataTypeService } from '../../columns/dataTypeService';
 import { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
 import { Events } from '../../eventKeys';
 import { ColExpressionParser } from './colExpressionParser';
+import { ExpressionEvaluators, EXPRESSION_EVALUATORS } from './expressionEvaluators';
+
+interface ExpressionProxy {
+    getValue(colId: string, node: IRowNode): any;
+
+    evaluators: ExpressionEvaluators
+}
 
 @Bean('filterExpressionService')
 export class FilterExpressionService extends BeanStub {
@@ -15,6 +22,7 @@ export class FilterExpressionService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
+    private expressionProxy: ExpressionProxy;
     private expression: string | null = null;
     private expressionFunction: Function | null;
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
@@ -22,6 +30,14 @@ export class FilterExpressionService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+        this.expressionProxy = {
+            getValue: (colId, node) => {
+                const column = this.columnModel.getGridColumn(colId);
+                return column ? this.valueService.getValue(column, node, true) : undefined;
+            },
+            evaluators: EXPRESSION_EVALUATORS
+        }
+
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => {
             this.columnAutocompleteEntries = null;
             this.columnNameToIdMap = {};
@@ -33,7 +49,7 @@ export class FilterExpressionService extends BeanStub {
     }
 
     public doesFilterPass(node: IRowNode): boolean {
-        return this.expressionFunction!(this.valueService, this.columnModel, node);
+        return this.expressionFunction!(this.expressionProxy, node);
     }
 
     public getExpression(): string | null {
@@ -67,38 +83,6 @@ export class FilterExpressionService extends BeanStub {
         };
     }
 
-    public updateExpression(expression: string, position: number, updateEntry: AutocompleteEntry, type?: string): {
-        updatedValue: string, updatedPosition: number
-    } {
-        let i = position - 1;
-        let startPosition = 0;
-
-        while (i >= 0) {
-            const char = expression[i];
-            if (char === ' ' || char === '(') {
-                startPosition = i + 1;
-                break;
-            }
-            i--;
-        }
-
-        i = position;
-        let endPosition = expression.length - 1;
-
-        while (i < expression.length) {
-            const char = expression[i];
-            if (char === ' ' || char === ')') {
-                endPosition = i - 1;
-                break;
-            }
-            i++;
-        }
-
-        const updatedValuePart = this.parseUpdatedExpressionPart(updateEntry, type);
-        const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(endPosition + 1);
-        return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
-    }
-
     public getColumnValue(updateEntry: AutocompleteEntry): string {
         const { displayValue } = updateEntry;
         return displayValue.includes(' ')
@@ -118,18 +102,8 @@ export class FilterExpressionService extends BeanStub {
 
     public updateAutocompleteCache(updateEntry: AutocompleteEntry, type?: string): void {
         if (type === 'column') {
-            this.columnNameToIdMap[updateEntry.displayValue] = updateEntry.key;
+            this.columnNameToIdMap[updateEntry.displayValue.toUpperCase()] = updateEntry.key;
         }
-    }
-
-    private parseUpdatedExpressionPart(updateEntry: AutocompleteEntry, type?: string): string {
-        const { displayValue, key } = updateEntry;
-        if (type === 'column') {
-            // cache for faster lookup
-            this.columnNameToIdMap[displayValue] = key;
-            return displayValue.includes(' ') ? `${ColExpressionParser.COL_START_CHAR}${displayValue}${ColExpressionParser.COL_END_CHAR}` : displayValue;
-        }
-        return displayValue ?? key;
     }
 
     private parseExpression(expression: string | null): Function | null {
@@ -145,7 +119,7 @@ export class FilterExpressionService extends BeanStub {
         const functionBody = expressionParser.getExpression();
         // TODO - remove
         console.log(functionBody);
-        return new Function('valueService', 'columnModel', 'node', functionBody);
+        return new Function('expressionProxy', 'node', functionBody);
     }
 
     private getColumnAutocompleteEntries(): AutocompleteEntry[] {
@@ -171,15 +145,16 @@ export class FilterExpressionService extends BeanStub {
     }
 
     private getColId(columnName: string): string | null {
-        const cachedColId = this.columnNameToIdMap[columnName];
+        const upperCaseColumnName = columnName.toUpperCase();
+        const cachedColId = this.columnNameToIdMap[upperCaseColumnName];
         if (cachedColId) { return cachedColId; }
 
         const columnAutocompleteEntries = this.getColumnAutocompleteEntries();
-        const colEntry = columnAutocompleteEntries.find(({ displayValue }) => displayValue === columnName);
+        const colEntry = columnAutocompleteEntries.find(({ displayValue }) => displayValue.toUpperCase() === upperCaseColumnName);
         if (colEntry) {
             const colId = colEntry.key;
             // cache for faster lookup
-            this.columnNameToIdMap[columnName] = colId;
+            this.columnNameToIdMap[upperCaseColumnName] = colId;
             return colId;
         }
         return null;

@@ -1,6 +1,6 @@
 import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from "./autocompleteParams";
 import { ColExpressionParser } from "./colExpressionParser";
-import { ExpressionParams, updateExpressionByWord } from "./expressionUtils";
+import { ExpressionParams, getSearchString, updateExpressionByWord } from "./expressionUtils";
 
 export class JoinExpressionParser {
     private valid: boolean = true;
@@ -9,7 +9,9 @@ export class JoinExpressionParser {
     private startedOperator: boolean = false;
     private expressionParsers: (JoinExpressionParser | ColExpressionParser)[] = [];
     private operators: string[] = [];
-    private activeOperator: number = -1;
+    private parsedOperators: string[] = [];
+    private operatorEndPositions: (number | undefined)[] = [];
+    private activeOperator: number = 0;
 
     constructor(
         private params: ExpressionParams,
@@ -27,7 +29,6 @@ export class JoinExpressionParser {
                 this.expressionParsers.push(nestedParser);
                 this.expectingExpression = false;
                 this.expectingOperator = true;
-                this.activeOperator++;
             } else if (char === ')') {
                 return i;
             } else if (char === ' ') {
@@ -37,6 +38,7 @@ export class JoinExpressionParser {
                         this.startedOperator = false;
                         this.expectingExpression = true;
                         this.parseOperator();
+                        this.operatorEndPositions[this.activeOperator] = i - 1;
                         this.activeOperator++;
                     }
                 }
@@ -46,10 +48,10 @@ export class JoinExpressionParser {
                 this.expressionParsers.push(nestedParser);
                 this.expectingExpression = false;
                 this.expectingOperator = true;
-                this.activeOperator++;
             } else if (this.expectingOperator) {
                 if (!this.startedOperator) {
                     this.operators.push('');
+                    this.operatorEndPositions.push(undefined);
                 }
                 this.startedOperator = true;
                 this.operators[this.activeOperator] += char;
@@ -71,8 +73,8 @@ export class JoinExpressionParser {
         let expression = hasMultipleExpressions ? '(' : '';
         this.expressionParsers.forEach((expressionParser, index) => {
             expression += expressionParser.getExpression();
-            if (index < this.expressionParsers.length - 1 && index < this.operators.length) {
-                expression += ` ${this.operators[index]} `;
+            if (index < this.expressionParsers.length - 1 && index < this.parsedOperators.length) {
+                expression += ` ${this.parsedOperators[index]} `;
             }
         });
         return hasMultipleExpressions ? expression + ')' : expression;
@@ -98,12 +100,15 @@ export class JoinExpressionParser {
             // beyond the end of the expression
             if (expressionParserIndex! < this.expressionParsers.length - 1) {
                 // in the middle of two expressions
-                return this.getJoinOperatorAutocompleteType();
+                return this.getJoinOperatorAutocompleteType(position, expressionParserIndex);
             }
-            // TODO - need a check here whether the last character is an operator
-            return this.expressionParsers.length === this.operators.length
-                ? this.params.columnAutocompleteTypeGenerator('')
-                : this.getJoinOperatorAutocompleteType();
+            if (this.expressionParsers.length === this.operators.length) {
+                const operatorEndPosition = this.operatorEndPositions[this.operatorEndPositions.length - 1];
+                return operatorEndPosition == null || position <= operatorEndPosition + 1
+                    ? this.getJoinOperatorAutocompleteType(position, this.operators.length - 1)
+                    : this.params.columnAutocompleteTypeGenerator('');
+            }
+            return this.getJoinOperatorAutocompleteType(position);
         }
 
         return autocompleteType;
@@ -160,16 +165,26 @@ export class JoinExpressionParser {
                 this.valid = false;
             }
         }
-        this.operators[this.activeOperator] = parsedValue;
+        this.parsedOperators.push(parsedValue);
     }
 
-    private getJoinOperatorAutocompleteType(): AutocompleteListParams {
-        // TODO
+    private getJoinOperatorAutocompleteType(position: number, operatorIndex?: number): AutocompleteListParams {
+        let searchString: string;
+        if (operatorIndex == null) {
+            searchString = '';
+        } else {
+            const operator = this.operators[operatorIndex];
+            const operatorEndPosition = this.operatorEndPositions[operatorIndex];
+            searchString = getSearchString(
+                operator,
+                position,
+                operatorEndPosition == null ? this.params.expression.length : (operatorEndPosition + 1)
+            );
+        }
         return {
             enabled: true,
             type: 'join',
-            // TODO
-            searchString: '',
+            searchString,
             entries: [
                 {
                     key: 'and',

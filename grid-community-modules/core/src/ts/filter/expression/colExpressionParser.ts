@@ -1,6 +1,6 @@
 import { BaseCellDataType } from "../../entities/dataType";
 import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from "./autocompleteParams";
-import { NUMBER_OPERATORS, Operator, STRING_OPERATORS } from "./expressionOperators";
+import { NUMBER_NUM_OPERANDS, STRING_NUM_OPERANDS } from "./expressionEvaluators";
 import { ExpressionParams, getSearchString, updateExpression, updateExpressionByWord } from "./expressionUtils";
 
 export class ColExpressionParser {
@@ -24,7 +24,6 @@ export class ColExpressionParser {
     private colId: string | null;
     private baseCellDataType: BaseCellDataType;
     private operator: string = '';
-    private parsedOperator: Operator;
     private expectedNumOperands: number = 0;
     private operands: string[] = [];
 
@@ -119,7 +118,8 @@ export class ColExpressionParser {
     }
 
     public getExpression(): string {
-        return this.parsedOperator?.getExpression(`valueService.getValue(columnModel.getGridColumn('${this.colId}'), node, true)`, this.operands) ?? '';
+        const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
+        return `expressionProxy.evaluators.${this.baseCellDataType}['${this.operator}'](expressionProxy.getValue('${this.colId}', node)${operands})`;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -156,7 +156,7 @@ export class ColExpressionParser {
     }
 
     private isBeyondEndPosition(position: number): boolean {
-        return this.complete && this.endPosition != null && position > this.endPosition && this.endPosition + 1 < this.params.expression.length;
+        return this.complete && this.endPosition != null && position > this.endPosition + 1 && this.endPosition + 1 < this.params.expression.length;
     }
 
     private parseColumn(): void {
@@ -173,11 +173,10 @@ export class ColExpressionParser {
     }
 
     private parseOperator(): void {
-        const { operators } = this.getValidOperators();
-        const operator = operators[this.operator];
-        if (operator) {
-            this.parsedOperator = operator;
-            this.expectedNumOperands = operator.getNumOperands();
+        const { numOperands } = this.getValidOperators();
+        const numOperand = numOperands[this.operator];
+        if (numOperand != null) {
+            this.expectedNumOperands = numOperand;
         } else {
             this.valid = false;
         }
@@ -196,23 +195,25 @@ export class ColExpressionParser {
                     }
                     return operand;
                 }
+                break;
             }
             default: {
                 parser = operand => escapeAndQuoteString(operand);
+                break;
             }
         }
         this.operands = this.operands.map(parser);
     }
 
-    private getValidOperators(): { operators: { [operator: string]: Operator }, type: string } {
+    private getValidOperators(): { numOperands: { [operator: string]: number }, type: string } {
         if (this.baseCellDataType === 'number') {
             return {
-                operators: NUMBER_OPERATORS,
+                numOperands: NUMBER_NUM_OPERANDS,
                 type: 'operator-number'
             };
         }
         return {
-            operators: STRING_OPERATORS,
+            numOperands: STRING_NUM_OPERANDS,
             type: 'operator-text'
         };
     }
@@ -255,12 +256,17 @@ export class ColExpressionParser {
     }
 
     private getOperatorAutocompleteType(position: number): AutocompleteListParams {
-        const { operators, type } = this.getValidOperators();
-        const entries = Object.keys(operators).map(key => ({ key }));
+        const { numOperands, type } = this.getValidOperators();
+        const entries = Object.keys(numOperands).map(key => ({ key }));
+        const searchString = getSearchString(
+            this.operator,
+            position,
+            this.operatorEndPosition == null ? this.params.expression.length : (this.operatorEndPosition + 1)
+        );
         return {
             enabled: true,
             type,
-            searchString: getSearchString(this.operator, position, this.operatorEndPosition == null ? this.params.expression.length : (this.operatorEndPosition + 1)),
+            searchString,
             entries
         };
     }
