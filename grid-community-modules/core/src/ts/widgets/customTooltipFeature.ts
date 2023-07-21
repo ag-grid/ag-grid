@@ -251,7 +251,7 @@ export class CustomTooltipFeature extends BeanStub {
 
     private showTooltip(): void {
         const params: WithoutGridCommon<ITooltipParams> = {
-            ...this.parentComp.getTooltipParams()
+            ...this.parentComp.getTooltipParams(),
         };
 
         if (!exists(params.value)) {
@@ -272,8 +272,8 @@ export class CustomTooltipFeature extends BeanStub {
     }
 
 
-    private hideTooltip(): void {
-        if (this.isInteractingWithTooltip) { return; }
+    public hideTooltip(forceHide?: boolean): void {
+        if (!forceHide && this.isInteractingWithTooltip) { return; }
         // check if comp exists - due to async, although we asked for
         // one, the instance may not be back yet
         if (this.tooltipComp) {
@@ -399,7 +399,9 @@ export class CustomTooltipFeature extends BeanStub {
             this.popupService.positionPopupByComponent({
                 ...params,
                 eventSource: this.parentComp.getGui(),
-                position: 'under'
+                position: 'under',
+                keepWithinBounds: true,
+                nudgeY: 5
             });
         }
     }
