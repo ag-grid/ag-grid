@@ -30,7 +30,6 @@ import { FocusService } from "../../../focusService";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setColId(id: string): void;
     setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
@@ -88,7 +87,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
-        this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
@@ -660,8 +658,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
-    private setupColId(): void {
-        this.comp.setColId(this.column.getColId());
+    public getColId() {
+        return this.column.getColId();
     }
 
     private addActiveHeaderMouseListeners(): void {
