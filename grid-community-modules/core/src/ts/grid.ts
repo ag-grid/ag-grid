@@ -99,7 +99,7 @@ import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
 import { FilterExpressionService } from "./filter/expression/filterExpressionService";
-import { AgAutocomplete } from "./filter/expression/agAutocomplete";
+import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { FilterExpressionBarComp } from "./filter/expression/filterExpressionBarComp";
 
 export interface GridParams {

@@ -5,7 +5,7 @@ import { ValueService } from '../../valueService/valueService';
 import { ColumnModel } from '../../columns/columnModel';
 import { ExpressionParser } from './expressionParser';
 import { DataTypeService } from '../../columns/dataTypeService';
-import { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
+import { AutocompleteEntry, AutocompleteListParams } from '../../widgets/autocompleteParams';
 import { Events } from '../../eventKeys';
 import { ColExpressionParser } from './colExpressionParser';
 import { ExpressionEvaluators, EXPRESSION_EVALUATORS } from './expressionEvaluators';

@@ -1,46 +1,43 @@
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { Autowired, PostConstruct } from '../../context/context';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { AgAutocompleteList } from './agAutocompleteList';
-import { PopupPositionParams, PopupService } from '../../widgets/popupService';
-import { KeyCode } from '../../constants/keyCode';
-import { AutocompleteParams, AutocompleteListParams } from './autocompleteParams';
+import { Component } from "./component";
+import { RefSelector } from "./componentAnnotations";
+import { Autowired } from "../context/context";
+import { AgInputTextField } from "./agInputTextField";
+import { AgAutocompleteList } from "./agAutocompleteList";
+import { PopupPositionParams, PopupService } from "./popupService";
+import { KeyCode } from "../constants/keyCode";
+import { AutocompleteParams, AutocompleteListParams } from "./autocompleteParams";
 
 export class AgAutocomplete extends Component {
     @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eAutocompleteInput') private eAutocompleteInput: AgInputTextField;
 
+    private params: AutocompleteParams;
     private isListOpen = false;
     private autocompleteList: AgAutocompleteList | null;
     private hidePopup: () => void;
     private autocompleteListParams: AutocompleteListParams;
     private lastPosition: number = 0;
 
-    constructor(private params?: AutocompleteParams) {
+    constructor() {
         super(/* html */`
             <div class="ag-autocomplete" role="presentation">
                 <ag-input-text-field ref="eAutocompleteInput"></ag-input-text-field>
             </div>`);
     }
 
-    public destroy(): void {
-        super.destroy();
-        if (this.autocompleteList) {
-            this.destroyBean(this.autocompleteList);
-        }
-    }
-
-    @PostConstruct
-    protected init(params?: AutocompleteParams): void {
-        this.params = params ?? this.params;
+    public init(params: AutocompleteParams): void {
+        this.params = params;
         this.eAutocompleteInput.onValueChange(value => this.onValueChanged(value));
         this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 
         this.addGuiEventListener('click', this.onClick.bind(this));
+
+        this.addDestroyFunc(() => {
+            this.destroyBean(this.autocompleteList);
+        });
     }
 
     private onValueChanged(value?: string | null): void {
@@ -202,6 +199,7 @@ export class AgAutocomplete extends Component {
 
     private openList(): void {
         this.isListOpen = true;
+        // this is unmanaged as it gets destroyed/created each time it is opened
         this.autocompleteList = this.createBean(new AgAutocompleteList({
             autocompleteEntries: this.autocompleteListParams.entries!,
             onConfirmed: () => this.confirmSelection(),

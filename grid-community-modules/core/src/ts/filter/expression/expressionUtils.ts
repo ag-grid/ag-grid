@@ -1,6 +1,6 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { DataTypeService } from "../../columns/dataTypeService";
-import { AutocompleteEntry, AutocompleteListParams } from "./autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 
 export interface ExpressionParams {
     expression: string;

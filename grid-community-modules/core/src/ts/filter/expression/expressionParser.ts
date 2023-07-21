@@ -1,4 +1,4 @@
-import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from "./autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
 import { JoinExpressionParser } from "./joinExpressionParser";
 import { ExpressionParams } from "./expressionUtils";
 
@@ -26,7 +26,7 @@ export class ExpressionParser {
         return this.joinExpressionParser.getAutocompleteListParams(position);
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutoCompleteUpdate {
+    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutocompleteUpdate {
         return this.joinExpressionParser.updateExpression(position, updateEntry);
     }
 }

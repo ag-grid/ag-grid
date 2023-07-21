@@ -1,5 +1,5 @@
 import { BaseCellDataType } from "../../entities/dataType";
-import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from "./autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
 import { NUMBER_NUM_OPERANDS, STRING_NUM_OPERANDS } from "./expressionEvaluators";
 import { ExpressionParams, getSearchString, updateExpression, updateExpressionByWord } from "./expressionUtils";
 
@@ -135,7 +135,7 @@ export class ColExpressionParser {
         return { enabled: false };
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutoCompleteUpdate | null {
+    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutocompleteUpdate | null {
         if (this.isColumnPosition(position)) {
             return updateExpression(
                 this.params.expression,

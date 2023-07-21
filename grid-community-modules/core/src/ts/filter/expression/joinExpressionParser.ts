@@ -1,4 +1,4 @@
-import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from "./autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
 import { ColExpressionParser } from "./colExpressionParser";
 import { ExpressionParams, getSearchString, updateExpressionByWord } from "./expressionUtils";
 
@@ -114,7 +114,7 @@ export class JoinExpressionParser {
         return autocompleteType;
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutoCompleteUpdate {
+    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutocompleteUpdate {
         const expression = this.params.expression;
 
         const expressionParserIndex = this.getExpressionParserIndex(position);

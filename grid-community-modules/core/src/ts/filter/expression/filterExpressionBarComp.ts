@@ -1,11 +1,11 @@
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgAutocomplete } from './agAutocomplete';
+import { AgAutocomplete } from '../../widgets/agAutocomplete';
 import { Autowired, PostConstruct } from '../../context/context';
 import { FilterExpressionService } from './filterExpressionService';
 import { FilterManager } from '../filterManager';
 import { ExpressionParser } from './expressionParser';
-import { AutocompleteEntry, AutocompleteListParams, AutoCompleteUpdate } from './autocompleteParams';
+import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from '../../widgets/autocompleteParams';
 
 export class FilterExpressionBarComp extends Component {
     @RefSelector('eFilterAutocomplete') private eFilterAutocomplete: HTMLElement;
@@ -23,17 +23,16 @@ export class FilterExpressionBarComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const translate = this.localeService.getLocaleTextFunc();
-        const autocomplete = this.createManagedBean(
-            new AgAutocomplete({
-                onValueChanged: (value) => this.createExpressionParser(value),
-                valueValidator: () => this.validateValue(),
-                listGenerator: (_value, position) => this.generateAutocompleteListParams(position),
-                onConfirmed: (value) => this.filterManager.setFilterExpression(value),
-                valueUpdater: ({ position, updateEntry, type }) =>
-                    this.updateExpression(position, updateEntry, type),
-                ariaLabel: translate('ariaLabelFilterExpressionAutocomplete', 'Filter Expression Autocomplete')
-            })
-        );
+        const autocomplete = this.createManagedBean(new AgAutocomplete());
+        autocomplete.init({
+            onValueChanged: (value) => this.createExpressionParser(value),
+            valueValidator: () => this.validateValue(),
+            listGenerator: (_value, position) => this.generateAutocompleteListParams(position),
+            onConfirmed: (value) => this.filterManager.setFilterExpression(value),
+            valueUpdater: ({ position, updateEntry, type }) =>
+                this.updateExpression(position, updateEntry, type),
+            ariaLabel: translate('ariaLabelFilterExpressionAutocomplete', 'Filter Expression Autocomplete')
+        });
         this.eFilterAutocomplete.appendChild(autocomplete.getGui());
     }
 
@@ -56,7 +55,7 @@ export class FilterExpressionBarComp extends Component {
         position: number,
         updateEntry: AutocompleteEntry,
         type?: string
-    ): AutoCompleteUpdate {
+    ): AutocompleteUpdate {
         this.filterExpressionService.updateAutocompleteCache(updateEntry, type);
         return this.expressionParser?.updateExpression(position, updateEntry) ?? this.filterExpressionService.getDefaultExpression(updateEntry);
     }

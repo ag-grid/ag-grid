@@ -8,7 +8,7 @@ export interface AutocompleteParams {
         position: number;
         updateEntry: AutocompleteEntry;
         type?: string;
-    }) => AutoCompleteUpdate;
+    }) => AutocompleteUpdate;
     ariaLabel: string;
 }
 
@@ -24,7 +24,7 @@ export interface AutocompleteEntry {
     displayValue?: any;
 }
 
-export interface AutoCompleteUpdate {
+export interface AutocompleteUpdate {
     updatedValue: string;
     updatedPosition: number;
 }

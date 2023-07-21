@@ -1,13 +1,16 @@
-import { escapeString } from "../../utils/string";
-import { exists } from "../../utils/generic";
-import { Component } from "../../widgets/component";
+import { escapeString } from "../utils/string";
+import { exists } from "../utils/generic";
+import { Component } from "./component";
 
 export class AgAutocompleteRow extends Component {
     private value: string;
     private hasHighlighting = false;
 
     constructor() {
-        super(/* html */`<div class="ag-autocomplete-row" role="presentation"><div class="ag-autocomplete-row-label"></div></div>`);
+        super(/* html */`
+        <div class="ag-autocomplete-row" role="presentation">
+            <div class="ag-autocomplete-row-label"></div>
+        </div>`);
     }
 
     public setState(value: string, selected: boolean): void {

@@ -1,13 +1,13 @@
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { VirtualList } from '../../widgets/virtualList';
-import { KeyCode } from '../../constants/keyCode';
-import { AgAutocompleteRow } from './agAutocompleteRow';
-import { fuzzySuggestions } from '../../utils/fuzzyMatch';
-import { PopupComponent } from '../../widgets/popupComponent';
-import { PostConstruct } from '../../context/context';
-import { AutocompleteEntry } from './autocompleteParams';
-import { exists } from '../../utils/generic';
+import { Component } from "./component";
+import { RefSelector } from "./componentAnnotations";
+import { VirtualList } from "./virtualList";
+import { KeyCode } from "../constants/keyCode";
+import { AgAutocompleteRow } from "./agAutocompleteRow";
+import { fuzzySuggestions } from "../utils/fuzzyMatch";
+import { PopupComponent } from "./popupComponent";
+import { PostConstruct } from "../context/context";
+import { AutocompleteEntry } from "./autocompleteParams";
+import { exists } from "../utils/generic";
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE = /* html */
