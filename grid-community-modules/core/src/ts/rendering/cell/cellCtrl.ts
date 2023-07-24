@@ -662,6 +662,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
+        if (!this.cellComp) { return; }
+
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
