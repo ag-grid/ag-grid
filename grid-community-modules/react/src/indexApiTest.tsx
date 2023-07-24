@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from './agGridReact';
 import useGridApis from "./useGridApi";
@@ -39,7 +40,5 @@ const App = () => {
     );
 };
 
-ReactDOM.render(
-    <App/>,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<App />);
