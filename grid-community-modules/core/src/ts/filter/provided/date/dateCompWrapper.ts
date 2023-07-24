@@ -11,7 +11,6 @@ export class DateCompWrapper {
     private dateComp: IDateComp | null | undefined;
     private tempValue: Date | null;
     private disabled: boolean | null;
-    private displayed: boolean | null;
     private alive = true;
     private context: Context;
     private eParent: HTMLElement;
@@ -93,6 +92,12 @@ export class DateCompWrapper {
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
             this.dateComp.afterGuiAttached(params);
+        }
+    }
+
+    public updateParams(params: IDateParams): void {
+        if (this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
+            this.dateComp.onParamsUpdated(params)
         }
     }
 

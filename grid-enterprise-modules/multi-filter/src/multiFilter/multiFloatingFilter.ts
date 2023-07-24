@@ -12,6 +12,7 @@ import {
     IMultiFilterModel,
     IFilter,
     FilterManager,
+    UserCompDetails,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
@@ -20,6 +21,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     private floatingFilters: IFloatingFilterComp[] = [];
+    private compDetailsList: UserCompDetails[] = [];
     private params: IFloatingFilterParams<MultiFilter>;
 
     constructor() {
@@ -29,27 +31,18 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {
         this.params = params;
 
-        const filterParams = params.filterParams as MultiFilterParams;
+        const { compDetailsList } = this.getCompDetailsList(params);
+        return this.setParams( compDetailsList );
+    }
+
+    private setParams(compDetailsList: UserCompDetails[]): AgPromise<void> {
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
-        MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
-            const floatingFilterParams: IFloatingFilterParams<IFilter> = {
-                ...params,
-                // set the parent filter instance for each floating filter to the relevant child filter instance
-                parentFilterInstance: (callback) => {   
-                    this.parentMultiFilterInstance((parent) => {
-                        const child = parent.getChildFilterInstance(index);
-                        if (child == null) { return; }
-
-                        callback(child);
-                    });
-                }
-            };
-            _.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
-
-            const floatingFilterPromise = this.createFloatingFilter(filterDef, floatingFilterParams);
+        compDetailsList.forEach(compDetails => {
+            const floatingFilterPromise = compDetails?.newAgStackInstance();
 
             if (floatingFilterPromise != null) {
+                this.compDetailsList.push(compDetails!);
                 floatingFilterPromises.push(floatingFilterPromise);
             }
         });
@@ -67,6 +60,57 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 }
             });
         });
+    }
+
+    public onParamsUpdated(params: IFloatingFilterParams<MultiFilter>): void {
+        this.params = params;
+        const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
+        const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
+            && newCompDetailsList.every((newCompDetails, index) => !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails));
+
+        if (allFloatingFilterCompsUnchanged) {
+            floatingFilterParamsList.forEach((floatingFilterParams, index) => {
+                const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
+                floatingFilter.onParamsUpdated?.(floatingFilterParams);
+            });
+        } else {
+            _.clearElement(this.getGui());
+            this.destroyBeans(this.floatingFilters);
+            this.floatingFilters = [];
+            this.compDetailsList = [];
+            this.setParams(newCompDetailsList);
+        }
+    }
+
+    private getCompDetailsList(params: IFloatingFilterParams<MultiFilter>): {
+        compDetailsList: UserCompDetails[], floatingFilterParamsList: IFloatingFilterParams<IFilter>[]
+    } {
+        const compDetailsList: UserCompDetails[] = [];
+        const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
+        const filterParams = params.filterParams as MultiFilterParams;
+
+        MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
+            const floatingFilterParams: IFloatingFilterParams<IFilter> = {
+                ...params,
+                // set the parent filter instance for each floating filter to the relevant child filter instance
+                parentFilterInstance: (callback) => {   
+                    this.parentMultiFilterInstance((parent) => {
+                        const child = parent.getChildFilterInstance(index);
+                        if (child == null) { return; }
+
+                        callback(child);
+                    });
+                }
+            };
+            _.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
+
+            const compDetails = this.getCompDetails(filterDef, floatingFilterParams);
+            if (compDetails) {
+                compDetailsList.push(compDetails);
+                floatingFilterParamsList.push(floatingFilterParams);
+            }
+        });
+        return { compDetailsList, floatingFilterParamsList };
     }
 
     public onParentModelChanged(model: IMultiFilterModel, event: FilterChangedEvent): void {
@@ -104,14 +148,13 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
+    private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(
             filterDef,
             () => this.filterManager.getDefaultFloatingFilter(this.params.column)
         ) ?? 'agReadOnlyFloatingFilter';
 
-        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
-        return compDetails ? compDetails.newAgStackInstance() : null;
+        return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
     }
 
     private parentMultiFilterInstance(cb: (instance: MultiFilter) => void): void {
