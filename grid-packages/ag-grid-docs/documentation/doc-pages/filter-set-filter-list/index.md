@@ -297,7 +297,7 @@ If case differences need to be normalised to remove redundant values from the da
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.
 
-`undefined`, `null` and `''`, as well as an empty array if using [Multiple Values Per Cell](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter Model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
+`undefined`, `null` and `''`, as well as an empty array if using [Multiple Values Per Cell](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter Model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`), as well as when setting the Filter Model via the API.
 
 ## Filter Value Types
 

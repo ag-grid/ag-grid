@@ -509,7 +509,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 });
 
                 model.forEach(unformattedKey => {
-                    const formattedKey = this.caseFormat(unformattedKey);
+                    const formattedKey = this.caseFormat(_.makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectKey(existingUnformattedKey);
