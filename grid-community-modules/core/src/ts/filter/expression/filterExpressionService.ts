@@ -8,12 +8,15 @@ import { DataTypeService } from '../../columns/dataTypeService';
 import { AutocompleteEntry, AutocompleteListParams } from '../../widgets/autocompleteParams';
 import { Events } from '../../eventKeys';
 import { ColExpressionParser } from './colExpressionParser';
-import { ExpressionEvaluators, EXPRESSION_EVALUATORS } from './expressionEvaluators';
+import { ExpressionEvaluatorParams, ExpressionOperators, EXPRESSION_OPERATORS } from './expressionEvaluators';
+import { ValueFormatterService } from '../../rendering/valueFormatterService';
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
 
-    evaluators: ExpressionEvaluators
+    getParams(colId: string): ExpressionEvaluatorParams;
+
+    operators: ExpressionOperators;
 }
 
 @Bean('filterExpressionService')
@@ -21,21 +24,26 @@ export class FilterExpressionService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private expressionProxy: ExpressionProxy;
     private expression: string | null = null;
     private expressionFunction: Function | null;
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private columnNameToIdMap: { [columnName: string]: string } = {};
+    private expressionOperators: ExpressionOperators;
+    private expressionEvaluatorParams: { [colId: string]: ExpressionEvaluatorParams } = {};
 
     @PostConstruct
     private postConstruct(): void {
+        this.expressionOperators = this.getExpressionOperators();
         this.expressionProxy = {
             getValue: (colId, node) => {
                 const column = this.columnModel.getGridColumn(colId);
                 return column ? this.valueService.getValue(column, node, true) : undefined;
             },
-            evaluators: EXPRESSION_EVALUATORS
+            getParams: (colId) => this.getExpressionEvaluatorParams(colId),
+            operators: this.expressionOperators
         }
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => {
@@ -70,7 +78,8 @@ export class FilterExpressionService extends BeanStub {
             dataTypeService: this.dataTypeService,
             columnAutocompleteTypeGenerator: searchString => this.getDefaultAutocompleteListParams(searchString),
             colIdResolver: columnName => this.getColId(columnName),
-            columnValueCreator: updateEntry => this.getColumnValue(updateEntry)
+            columnValueCreator: updateEntry => this.getColumnValue(updateEntry),
+            operators: this.expressionOperators,
         });
     }
 
@@ -158,5 +167,34 @@ export class FilterExpressionService extends BeanStub {
             return colId;
         }
         return null;
+    }
+
+    private getExpressionOperators(): ExpressionOperators {
+        // TODO translate display values
+        return EXPRESSION_OPERATORS;
+    }
+
+    private getExpressionEvaluatorParams(colId: string): ExpressionEvaluatorParams {
+        let params = this.expressionEvaluatorParams[colId];
+        if (!params) {
+            // TODO - handle other params
+            const column = this.columnModel.getGridColumn(colId);
+            if (column) {
+                const baseCellDataType = this.dataTypeService.getBaseDataType(column);
+                if (baseCellDataType === 'dateString') {
+                    params = {
+                        convertToDate: this.dataTypeService.getDateParserFunction() as (value: string) => Date
+                    };
+                } else if (baseCellDataType === 'object') {
+                    const valueFormatter = this.dataTypeService.getDataTypeDefinition(column)?.valueFormatter;
+                    params = {
+                        convertToString: (value, node) => this.valueFormatterService.formatValue(column, node, value, valueFormatter)
+                            ?? (typeof value.toString === 'function' ? value.toString() : '')
+                    };
+                }
+            }
+            this.expressionEvaluatorParams[colId] = params ?? {};
+        }
+        return params;
     }
 }

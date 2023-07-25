@@ -1,7 +1,6 @@
 import { BaseCellDataType } from "../../entities/dataType";
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
-import { NUMBER_NUM_OPERANDS, STRING_NUM_OPERANDS } from "./expressionEvaluators";
-import { ExpressionParams, getSearchString, updateExpression, updateExpressionByWord } from "./expressionUtils";
+import { ExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart, updateExpressionByWord } from "./expressionUtils";
 
 export class ColExpressionParser {
     public static readonly COL_START_CHAR = '[';
@@ -24,11 +23,12 @@ export class ColExpressionParser {
     private colId: string | null;
     private baseCellDataType: BaseCellDataType;
     private operator: string = '';
+    private parsedOperator: string;
     private expectedNumOperands: number = 0;
     private operands: string[] = [];
 
     constructor(
-        private params: ExpressionParams,
+        private params: ExpressionParserParams,
         public readonly startPosition: number
     ) {}
 
@@ -51,15 +51,19 @@ export class ColExpressionParser {
                     }
                 } else if (this.expectingOperator) {
                     if (this.startedOperator) {
-                        this.expectingOperator = false;
-                        this.parseOperator();
-                        this.operatorEndPosition = i - 1;
-                        if (this.expectedNumOperands > 0) {
-                            this.activeOperand = 0;
-                            this.operands.push('');
+                        const isMultiPart = this.parseOperator();
+                        if (isMultiPart) {
+                            this.operator += char;
                         } else {
-                            this.complete = true;
-                            return this.returnEndPosition(i);
+                            this.expectingOperator = false;
+                            this.operatorEndPosition = i - 1;
+                            if (this.expectedNumOperands > 0) {
+                                this.activeOperand = 0;
+                                this.operands.push('');
+                            } else {
+                                this.complete = true;
+                                return this.returnEndPosition(i);
+                            }
                         }
                     }
                 } else if (this.activeOperand >= 0) {
@@ -119,7 +123,7 @@ export class ColExpressionParser {
 
     public getExpression(): string {
         const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
-        return `expressionProxy.evaluators.${this.baseCellDataType}['${this.operator}'](expressionProxy.getValue('${this.colId}', node)${operands})`;
+        return `expressionProxy.operators.${this.baseCellDataType}.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -142,6 +146,13 @@ export class ColExpressionParser {
                 this.startPosition,
                 this.columnEndPosition ?? this.params.expression.length - 1,
                 this.params.columnValueCreator(updateEntry)
+            );
+        } else if (this.isOperatorPosition(position)) {
+            return updateExpressionFromStart(
+                this.params.expression,
+                this.columnEndPosition + 1,
+                this.operatorEndPosition ?? this.params.expression.length,
+                updateEntry
             );
         }
         return updateExpressionByWord(this.params.expression, position, updateEntry);
@@ -172,13 +183,30 @@ export class ColExpressionParser {
         this.baseCellDataType = 'text';
     }
 
-    private parseOperator(): void {
-        const { numOperands } = this.getValidOperators();
-        const numOperand = numOperands[this.operator];
-        if (numOperand != null) {
-            this.expectedNumOperands = numOperand;
+    private parseOperator(): boolean {
+        const operatorsForType = this.params.operators[this.baseCellDataType];
+        let partialMatch = false;
+        const operatorLowerCase = this.operator.toLocaleLowerCase();
+        const partialSearchValue = operatorLowerCase + ' ';
+        const parsedOperator = Object.entries(operatorsForType).find(([_key, { displayValue }]) => {
+            const displayValueLowerCase = displayValue.toLocaleLowerCase();
+            if (displayValueLowerCase.startsWith(partialSearchValue)) {
+                partialMatch = true;
+            }
+            return displayValueLowerCase === operatorLowerCase;
+        });
+        if (parsedOperator) {
+            const [key, _displayValue] = parsedOperator;
+            this.parsedOperator = key;
+            this.expectedNumOperands = operatorsForType[key].numOperands;
+            return false;
         } else {
-            this.valid = false;
+            if (partialMatch) {
+                return true;
+            } else {
+                this.valid = false;
+                return false;
+            }
         }
     }
 
@@ -203,19 +231,6 @@ export class ColExpressionParser {
             }
         }
         this.operands = this.operands.map(parser);
-    }
-
-    private getValidOperators(): { numOperands: { [operator: string]: number }, type: string } {
-        if (this.baseCellDataType === 'number') {
-            return {
-                numOperands: NUMBER_NUM_OPERANDS,
-                type: 'operator-number'
-            };
-        }
-        return {
-            numOperands: STRING_NUM_OPERANDS,
-            type: 'operator-text'
-        };
     }
 
     private onComplete(): void {
@@ -256,8 +271,7 @@ export class ColExpressionParser {
     }
 
     private getOperatorAutocompleteType(position: number): AutocompleteListParams {
-        const { numOperands, type } = this.getValidOperators();
-        const entries = Object.keys(numOperands).map(key => ({ key }));
+        const entries = Object.entries(this.params.operators[this.baseCellDataType]).map(([key, { displayValue }]) => ({ key, displayValue }));
         const searchString = getSearchString(
             this.operator,
             position,
@@ -265,7 +279,7 @@ export class ColExpressionParser {
         );
         return {
             enabled: true,
-            type,
+            type: `operator-${this.baseCellDataType}`,
             searchString,
             entries
         };

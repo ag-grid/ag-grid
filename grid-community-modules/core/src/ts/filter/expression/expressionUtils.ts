@@ -1,14 +1,16 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { DataTypeService } from "../../columns/dataTypeService";
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { ExpressionOperators } from "./expressionEvaluators";
 
-export interface ExpressionParams {
+export interface ExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
     columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
     columnValueCreator: (updateEntry: AutocompleteEntry) => string;
     colIdResolver: (columnName: string) => string | null;
+    operators: ExpressionOperators;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
@@ -41,6 +43,22 @@ export function updateExpressionByWord(expression: string, position: number, upd
             break;
         }
         i++;
+    }
+
+    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key);
+}
+
+export function updateExpressionFromStart(expression: string, position: number, endPosition: number, updateEntry: AutocompleteEntry): {
+    updatedValue: string, updatedPosition: number
+} {
+    let startPosition = position;
+
+    while (startPosition < endPosition) {
+        const char = expression[startPosition];
+        if (char !== ' ') {
+            break;
+        }
+        startPosition++;
     }
 
     return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key);

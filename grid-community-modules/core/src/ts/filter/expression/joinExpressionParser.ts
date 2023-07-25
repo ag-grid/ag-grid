@@ -1,6 +1,6 @@
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
 import { ColExpressionParser } from "./colExpressionParser";
-import { ExpressionParams, getSearchString, updateExpressionByWord } from "./expressionUtils";
+import { ExpressionParserParams, getSearchString, updateExpressionByWord } from "./expressionUtils";
 
 export class JoinExpressionParser {
     private valid: boolean = true;
@@ -14,7 +14,7 @@ export class JoinExpressionParser {
     private activeOperator: number = 0;
 
     constructor(
-        private params: ExpressionParams,
+        private params: ExpressionParserParams,
         public readonly startPosition: number
     ) {}
 
