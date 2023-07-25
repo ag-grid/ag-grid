@@ -49,7 +49,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setColId: id => setAttribute('col-id', id),
-            setTitle: title => setAttribute('title', title),
             setAriaDescription: label => setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),

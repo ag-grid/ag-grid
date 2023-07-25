@@ -35,7 +35,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             setWidth: width => eGui.style.width = width,
             setColId: id => eGui.setAttribute("col-id", id),
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setTitle: title => setAttribute("title", title),
             setUserCompDetails: details => this.setUserCompDetails(details)
         };
 
