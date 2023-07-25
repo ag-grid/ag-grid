@@ -71,6 +71,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
+        this.cellCtrl = cellCtrl;
 
         this.setTemplate(/* html */`<div comp-id="${this.getCompId()}"/>`);
 
@@ -113,7 +114,6 @@ export class CellComp extends Component implements TooltipParentComp {
             getParentOfValue: () => this.getParentOfValue()
         };
 
-        this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
     }
 
