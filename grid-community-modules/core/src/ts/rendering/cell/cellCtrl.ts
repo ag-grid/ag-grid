@@ -51,15 +51,6 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
-    setTabIndex(tabIndex: number): void;
-    setRole(role: string): void;
-    setColId(colId: string): void;
-    setTitle(title: string | undefined): void;
-
-    setIncludeSelection(include: boolean): void;
-    setIncludeRowDrag(include: boolean): void;
-    setIncludeDndSource(include: boolean): void;
-
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -102,6 +93,8 @@ export class CellCtrl extends BeanStub {
     private includeSelection: boolean;
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
+    private colIdSanitised: string;
+    private tabIndexStr: string | undefined;
 
     private suppressRefreshCell = false;
 
@@ -119,6 +112,15 @@ export class CellCtrl extends BeanStub {
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
+
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+        this.colIdSanitised = escapeString(this.column.getId())!;
+        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndexStr = '-1';
+        }
 
         this.createCellPosition();
         this.addFeatures();
@@ -224,7 +226,6 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
-        this.setupControlComps();
 
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
@@ -232,17 +233,9 @@ export class CellCtrl extends BeanStub {
 
         this.setAriaColIndex();
 
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
-            this.cellComp.setTabIndex(-1);
-        }
-
-        const colIdSanitised = escapeString(this.column.getId());
-        this.cellComp.setColId(colIdSanitised!);
-        this.cellComp.setRole('gridcell');
-
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.setComp(comp);
+        this.tooltipFeature?.setComp(eGui);
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
@@ -315,6 +308,21 @@ export class CellCtrl extends BeanStub {
     public getInstanceId(): string {
         return this.instanceId;
     }
+    public getIncludeSelection(): boolean {
+        return this.includeSelection;
+    }
+    public getIncludeRowDrag(): boolean {
+        return this.includeRowDrag;
+    }
+    public getIncludeDndSource(): boolean {
+        return this.includeDndSource;
+    }
+    public getColumnIdSanitised(): string {
+        return this.colIdSanitised;
+    }
+    public getTabIndexStr(): string | undefined {
+        return this.tabIndexStr;
+    }
 
     private showValue(forceNewCellRendererInstance = false): void {
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
@@ -322,17 +330,6 @@ export class CellCtrl extends BeanStub {
         const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
-    }
-
-    private setupControlComps(): void {
-        const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
-
-        this.cellComp.setIncludeSelection(this.includeSelection);
-        this.cellComp.setIncludeDndSource(this.includeDndSource);
-        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     }
 
     public isForceWrapper(): boolean {

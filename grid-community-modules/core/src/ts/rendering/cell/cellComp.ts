@@ -77,30 +77,31 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.getGui();
 
         this.forceWrapper = cellCtrl.isForceWrapper();
+        this.includeSelection = cellCtrl.getIncludeSelection();
+        this.includeRowDrag = cellCtrl.getIncludeRowDrag();
+        this.includeDndSource = cellCtrl.getIncludeDndSource();
 
         this.refreshWrapper(false);
 
-        const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name: string, value: string | null | undefined) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             } else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+
+        setAriaRole(eGui, 'gridcell');
+        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        const tabIndex = cellCtrl.getTabIndexStr();
+        if (tabIndex !== undefined) {
+            setAttribute('tabindex', tabIndex)
+        }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
-            getFocusableElement: () => this.getFocusableElement(),
-            setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => setAriaRole(eGui, role),
-            setColId: colId => setAttribute('col-id', colId),
-            setTitle: title => setAttribute('title', title),
-
-            setIncludeSelection: include => this.includeSelection = include,
-            setIncludeRowDrag: include => this.includeRowDrag = include,
-            setIncludeDndSource: include => this.includeDndSource = include,
+            getFocusableElement: () => this.getFocusableElement(),            
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),

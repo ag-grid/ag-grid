@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 
@@ -47,7 +47,5 @@ const App = () => {
     );
 };
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<App />);
