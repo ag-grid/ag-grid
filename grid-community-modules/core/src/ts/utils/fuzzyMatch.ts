@@ -40,7 +40,7 @@ export function fuzzySuggestions(
     if (hideIrrelevant) {
         thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
     }
-    if (filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
+    if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
         const bestMatch = thisSuggestions[0].relevance;
         const limit = bestMatch * filterByPercentageOfBestMatch;
         thisSuggestions = thisSuggestions.filter(suggestion => limit - suggestion.relevance < 0);
