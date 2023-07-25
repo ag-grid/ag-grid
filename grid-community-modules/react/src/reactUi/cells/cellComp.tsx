@@ -141,6 +141,7 @@ const CellComp = (props: {
     const includeDndSource = cellCtrl.getIncludeDndSource();
     const tabIndex = cellCtrl.getTabIndex();
     const colId = cellCtrl.getColumnIdSanitised();
+    const cellInstanceId = cellCtrl.getInstanceId();
 
     const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
     const [editDetails, setEditDetails ] = useState<EditDetails>();
@@ -384,7 +385,6 @@ const CellComp = (props: {
         }
     });
 
-    const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), [cellCtrl]);
 
     const showContents = () => (
         <>
