@@ -93,9 +93,9 @@ export class CellComp extends Component implements TooltipParentComp {
 
         setAriaRole(eGui, 'gridcell');
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
-        const tabIndex = cellCtrl.getTabIndexStr();
+        const tabIndex = cellCtrl.getTabIndex();
         if (tabIndex !== undefined) {
-            setAttribute('tabindex', tabIndex)
+            setAttribute('tabindex', tabIndex.toString());
         }
 
         const compProxy: ICellComp = {

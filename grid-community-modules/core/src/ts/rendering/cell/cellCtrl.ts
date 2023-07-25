@@ -94,7 +94,7 @@ export class CellCtrl extends BeanStub {
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
     private colIdSanitised: string;
-    private tabIndexStr: string | undefined;
+    private tabIndex: number | undefined;
 
     private suppressRefreshCell = false;
 
@@ -119,7 +119,7 @@ export class CellCtrl extends BeanStub {
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
         this.colIdSanitised = escapeString(this.column.getId())!;
         if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
-            this.tabIndexStr = '-1';
+            this.tabIndex = -1;
         }
 
         this.createCellPosition();
@@ -320,8 +320,8 @@ export class CellCtrl extends BeanStub {
     public getColumnIdSanitised(): string {
         return this.colIdSanitised;
     }
-    public getTabIndexStr(): string | undefined {
-        return this.tabIndexStr;
+    public getTabIndex(): number | undefined {
+        return this.tabIndex;
     }
 
     private showValue(forceNewCellRendererInstance = false): void {

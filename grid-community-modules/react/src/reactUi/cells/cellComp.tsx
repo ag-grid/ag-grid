@@ -139,6 +139,7 @@ const CellComp = (props: {
     const includeSelection = cellCtrl.getIncludeSelection();
     const includeRowDrag = cellCtrl.getIncludeRowDrag();
     const includeDndSource = cellCtrl.getIncludeDndSource();
+    const tabIndex = cellCtrl.getTabIndex();
     const colId = cellCtrl.getColumnIdSanitised();
 
     const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
@@ -318,11 +319,6 @@ const CellComp = (props: {
 
         if (!cellCtrl) { return; }
 
-        const tabIndex = cellCtrl.getTabIndexStr();
-        if (tabIndex !== undefined) {
-            eGui.current.setAttribute('tabindex', tabIndex);
-        }
-
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
@@ -420,6 +416,7 @@ const CellComp = (props: {
         <div
             ref={setRef}
             style={ userStyles }
+            tabIndex={ tabIndex }
             role={'gridcell'}
             col-id={colId}
         >
