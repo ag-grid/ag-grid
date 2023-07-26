@@ -10,11 +10,11 @@ export default class CustomTooltip extends Component {
     onFormSubmit(e) {
         e.preventDefault();
 
-        const { node, column } = this.props;
+        const { node } = this.props;
         const target = this.inputRef.current;
 
         if (target.value && node) {
-            node.setDataValue(column, target.value);
+            node.setDataValue('athlete', target.value);
             if (this.props.hideTooltipCallback) {
                 this.props.hideTooltipCallback();
             }

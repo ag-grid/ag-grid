@@ -47,12 +47,12 @@ export class CustomTooltip implements ITooltipAngularComp {
     onFormSubmit(e: Event) {
         e.preventDefault();
 
-        const { node, column } = this.params;
+        const { node } = this.params;
 
         const input = (e.target as HTMLElement).querySelector('input') as HTMLInputElement;
 
         if (input.value) {
-            node?.setDataValue(column as any, input.value);
+            node?.setDataValue('athlete' as any, input.value);
 
             if (this.params.hideTooltipCallback) {
                 this.params.hideTooltipCallback();

@@ -8,11 +8,11 @@ export default props => {
 
     const onFormSubmit = (e) => {
         e.preventDefault();
-        const { node, column } = props;
+        const { node } = props;
         const target = inputEl.current;
 
         if (target.value && node) {
-            node.setDataValue(column, target.value);
+            node.setDataValue('athlete', target.value);
             if (props.hideTooltipCallback) {
                 props.hideTooltipCallback();
             }
