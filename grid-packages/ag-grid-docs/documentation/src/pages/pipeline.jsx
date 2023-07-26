@@ -193,7 +193,7 @@ const Pipeline = ({ location }) => {
                     </div>
 
                     <GlobalContextConsumer>
-                        {({ colorMode }) => {
+                        {({ darkMode }) => {
                             return (
                                 <Grid
                                     gridHeight={'78vh'}
@@ -213,7 +213,7 @@ const Pipeline = ({ location }) => {
                                     masterDetail={true}
                                     rowData={rowData}
                                     onGridReady={gridReady}
-                                    theme={colorMode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
+                                    theme={darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'}
                                 ></Grid>
                             );
                         }}
