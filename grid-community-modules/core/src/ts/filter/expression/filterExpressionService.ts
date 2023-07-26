@@ -1,22 +1,22 @@
-import { Autowired, Bean, PostConstruct } from '../../context/context';
-import { BeanStub } from '../../context/beanStub';
-import { IRowNode } from '../../interfaces/iRowNode';
-import { ValueService } from '../../valueService/valueService';
-import { ColumnModel } from '../../columns/columnModel';
-import { ExpressionParser } from './expressionParser';
-import { DataTypeService } from '../../columns/dataTypeService';
-import { AutocompleteEntry, AutocompleteListParams } from '../../widgets/autocompleteParams';
-import { Events } from '../../eventKeys';
-import { ColExpressionParser } from './colExpressionParser';
-import { ExpressionEvaluatorParams, ExpressionOperators, EXPRESSION_OPERATORS } from './expressionEvaluators';
-import { ValueFormatterService } from '../../rendering/valueFormatterService';
+import { Autowired, Bean, PostConstruct } from "../../context/context";
+import { BeanStub } from "../../context/beanStub";
+import { IRowNode } from "../../interfaces/iRowNode";
+import { ValueService } from "../../valueService/valueService";
+import { ColumnModel } from "../../columns/columnModel";
+import { FilterExpressionParser } from "./filterExpressionParser";
+import { DataTypeService } from "../../columns/dataTypeService";
+import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { Events } from "../../eventKeys";
+import { ColFilterExpressionParser } from "./colFilterExpressionParser";
+import { BooleanFilterExpressionOperators, FilterExpressionEvaluatorParams, FilterExpressionOperators, ScalarFilterExpressionOperators, TextFilterExpressionOperators } from "./filterExpressionOperators";
+import { ValueFormatterService } from "../../rendering/valueFormatterService";
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
 
-    getParams(colId: string): ExpressionEvaluatorParams;
+    getParams(colId: string): FilterExpressionEvaluatorParams;
 
-    operators: ExpressionOperators;
+    operators: FilterExpressionOperators;
 }
 
 @Bean('filterExpressionService')
@@ -31,8 +31,8 @@ export class FilterExpressionService extends BeanStub {
     private expressionFunction: Function | null;
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private columnNameToIdMap: { [columnName: string]: string } = {};
-    private expressionOperators: ExpressionOperators;
-    private expressionEvaluatorParams: { [colId: string]: ExpressionEvaluatorParams } = {};
+    private expressionOperators: FilterExpressionOperators;
+    private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams } = {};
 
     @PostConstruct
     private postConstruct(): void {
@@ -69,10 +69,10 @@ export class FilterExpressionService extends BeanStub {
         this.expressionFunction = this.parseExpression(this.expression);
     }
 
-    public createExpressionParser(expression: string | null): ExpressionParser | null {
+    public createExpressionParser(expression: string | null): FilterExpressionParser | null {
         if (!expression) { return null; }
 
-        return new ExpressionParser({
+        return new FilterExpressionParser({
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
@@ -95,7 +95,7 @@ export class FilterExpressionService extends BeanStub {
     public getColumnValue(updateEntry: AutocompleteEntry): string {
         const { displayValue } = updateEntry;
         return displayValue.includes(' ')
-            ? `${ColExpressionParser.COL_START_CHAR}${displayValue}${ColExpressionParser.COL_END_CHAR}`
+            ? `${ColFilterExpressionParser.COL_START_CHAR}${displayValue}${ColFilterExpressionParser.COL_END_CHAR}`
             : displayValue;
     }
 
@@ -169,12 +169,21 @@ export class FilterExpressionService extends BeanStub {
         return null;
     }
 
-    private getExpressionOperators(): ExpressionOperators {
-        // TODO translate display values
-        return EXPRESSION_OPERATORS;
+    private getExpressionOperators(): FilterExpressionOperators {
+        const translate = this.localeService.getLocaleTextFunc();
+        // TODO allow active operators to be overridden from config
+        const dateActiveOperators = ['equals', 'notEqual', 'greaterThan', 'lessThan', 'inRange', 'blank', 'notBlank'];
+        return {
+            text: new TextFilterExpressionOperators({ translate }),
+            boolean: new BooleanFilterExpressionOperators({ translate }),
+            object: new TextFilterExpressionOperators<any>({ translate, valueParser: (v, node, params) => params.convertToString!(v, node) }),
+            number: new ScalarFilterExpressionOperators<number>({ translate }),
+            date: new ScalarFilterExpressionOperators<Date>({ translate, activeOperators: dateActiveOperators }),
+            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, valueParser: (v, params) => params.convertToDate!(v), activeOperators: dateActiveOperators })
+        }
     }
 
-    private getExpressionEvaluatorParams(colId: string): ExpressionEvaluatorParams {
+    private getExpressionEvaluatorParams(colId: string): FilterExpressionEvaluatorParams {
         let params = this.expressionEvaluatorParams[colId];
         if (!params) {
             // TODO - handle other params
@@ -191,9 +200,11 @@ export class FilterExpressionService extends BeanStub {
                         convertToString: (value, node) => this.valueFormatterService.formatValue(column, node, value, valueFormatter)
                             ?? (typeof value.toString === 'function' ? value.toString() : '')
                     };
+                } else {
+                    params = {};
                 }
             }
-            this.expressionEvaluatorParams[colId] = params ?? {};
+            this.expressionEvaluatorParams[colId] = params;
         }
         return params;
     }

@@ -1,20 +1,20 @@
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
-import { ColExpressionParser } from "./colExpressionParser";
-import { ExpressionParserParams, getSearchString, updateExpressionByWord } from "./expressionUtils";
+import { ColFilterExpressionParser } from "./colFilterExpressionParser";
+import { FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
 
-export class JoinExpressionParser {
+export class JoinFilterExpressionParser {
     private valid: boolean = true;
     private expectingExpression: boolean = true;
     private expectingOperator: boolean = false;
     private startedOperator: boolean = false;
-    private expressionParsers: (JoinExpressionParser | ColExpressionParser)[] = [];
+    private expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
     private operators: string[] = [];
     private parsedOperators: string[] = [];
     private operatorEndPositions: (number | undefined)[] = [];
     private activeOperator: number = 0;
 
     constructor(
-        private params: ExpressionParserParams,
+        private params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {}
 
@@ -24,7 +24,7 @@ export class JoinExpressionParser {
         while (i < expression.length) {
             const char = expression[i];
             if (char === '(') {
-                const nestedParser = new JoinExpressionParser(this.params, i + 1);
+                const nestedParser = new JoinFilterExpressionParser(this.params, i + 1);
                 i = nestedParser.parseExpression();
                 this.expressionParsers.push(nestedParser);
                 this.expectingExpression = false;
@@ -43,7 +43,7 @@ export class JoinExpressionParser {
                     }
                 }
             } else if (this.expectingExpression) {
-                const nestedParser = new ColExpressionParser(this.params, i);
+                const nestedParser = new ColFilterExpressionParser(this.params, i);
                 i = nestedParser.parseExpression();
                 this.expressionParsers.push(nestedParser);
                 this.expectingExpression = false;

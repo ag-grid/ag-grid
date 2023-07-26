@@ -1,16 +1,16 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { DataTypeService } from "../../columns/dataTypeService";
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
-import { ExpressionOperators } from "./expressionEvaluators";
+import { FilterExpressionOperators } from "./filterExpressionOperators";
 
-export interface ExpressionParserParams {
+export interface FilterExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
     columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
     columnValueCreator: (updateEntry: AutocompleteEntry) => string;
     colIdResolver: (columnName: string) => string | null;
-    operators: ExpressionOperators;
+    operators: FilterExpressionOperators;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

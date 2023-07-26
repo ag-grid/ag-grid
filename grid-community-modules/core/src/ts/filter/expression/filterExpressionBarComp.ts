@@ -4,7 +4,7 @@ import { AgAutocomplete } from '../../widgets/agAutocomplete';
 import { Autowired, PostConstruct } from '../../context/context';
 import { FilterExpressionService } from './filterExpressionService';
 import { FilterManager } from '../filterManager';
-import { ExpressionParser } from './expressionParser';
+import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from '../../widgets/autocompleteParams';
 
 export class FilterExpressionBarComp extends Component {
@@ -12,7 +12,7 @@ export class FilterExpressionBarComp extends Component {
     @Autowired('filterExpressionService') private filterExpressionService: FilterExpressionService;
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    private expressionParser: ExpressionParser | null = null;
+    private expressionParser: FilterExpressionParser | null = null;
 
     constructor() {
         super(/* html */ `

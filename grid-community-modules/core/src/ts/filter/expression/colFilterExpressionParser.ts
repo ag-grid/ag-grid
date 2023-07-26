@@ -1,8 +1,8 @@
 import { BaseCellDataType } from "../../entities/dataType";
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
-import { ExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart, updateExpressionByWord } from "./expressionUtils";
+import { FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart, updateExpressionByWord } from "./filterExpressionUtils";
 
-export class ColExpressionParser {
+export class ColFilterExpressionParser {
     public static readonly COL_START_CHAR = '[';
     public static readonly COL_END_CHAR = ']';
 
@@ -28,7 +28,7 @@ export class ColExpressionParser {
     private operands: string[] = [];
 
     constructor(
-        private params: ExpressionParserParams,
+        private params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {}
 
@@ -51,7 +51,7 @@ export class ColExpressionParser {
                     }
                 } else if (this.expectingOperator) {
                     if (this.startedOperator) {
-                        const isMultiPart = this.parseOperator();
+                        const isMultiPart = this.parseOperator(false);
                         if (isMultiPart) {
                             this.operator += char;
                         } else {
@@ -80,11 +80,11 @@ export class ColExpressionParser {
             } else if (char === ')') {
                 this.onComplete();
                 return this.returnEndPosition(i - 1, true);
-            } else if (char === ColExpressionParser.COL_START_CHAR && this.expectingColumn) {
+            } else if (char === ColFilterExpressionParser.COL_START_CHAR && this.expectingColumn) {
                 // TODO - add handling for if [ or ] appear in the columns names
                 this.quotedColumn = true;
                 this.startedColumn = true;
-            } else if (char === ColExpressionParser.COL_END_CHAR && this.expectingColumn && this.quotedColumn) {
+            } else if (char === ColFilterExpressionParser.COL_END_CHAR && this.expectingColumn && this.quotedColumn) {
                 this.expectingColumn = false;
                 this.expectingOperator = true;
                 this.parseColumn();
@@ -123,7 +123,7 @@ export class ColExpressionParser {
 
     public getExpression(): string {
         const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
-        return `expressionProxy.operators.${this.baseCellDataType}.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
+        return `expressionProxy.operators.${this.baseCellDataType}.operators.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -183,31 +183,18 @@ export class ColExpressionParser {
         this.baseCellDataType = 'text';
     }
 
-    private parseOperator(): boolean {
-        const operatorsForType = this.params.operators[this.baseCellDataType];
-        let partialMatch = false;
-        const operatorLowerCase = this.operator.toLocaleLowerCase();
-        const partialSearchValue = operatorLowerCase + ' ';
-        const parsedOperator = Object.entries(operatorsForType).find(([_key, { displayValue }]) => {
-            const displayValueLowerCase = displayValue.toLocaleLowerCase();
-            if (displayValueLowerCase.startsWith(partialSearchValue)) {
-                partialMatch = true;
-            }
-            return displayValueLowerCase === operatorLowerCase;
-        });
+    private parseOperator(isComplete: boolean): boolean {
+        const operatorForType = this.params.operators[this.baseCellDataType];
+        const parsedOperator = operatorForType.findOperator(this.operator);
         if (parsedOperator) {
-            const [key, _displayValue] = parsedOperator;
-            this.parsedOperator = key;
-            this.expectedNumOperands = operatorsForType[key].numOperands;
+            this.parsedOperator = parsedOperator;
+            this.expectedNumOperands = operatorForType.operators[parsedOperator].numOperands;
             return false;
-        } else {
-            if (partialMatch) {
-                return true;
-            } else {
-                this.valid = false;
-                return false;
-            }
+        } 
+        if (isComplete) {
+            this.valid = false;
         }
+        return parsedOperator === null; // is partial match
     }
 
     private parseOperand(): void {
@@ -235,7 +222,7 @@ export class ColExpressionParser {
 
     private onComplete(): void {
         if (this.expectingOperator && this.startedOperator) {
-            this.parseOperator();
+            this.parseOperator(true);
             if (this.expectedNumOperands > 0) {
                 this.valid = false;
             } else {
@@ -271,7 +258,7 @@ export class ColExpressionParser {
     }
 
     private getOperatorAutocompleteType(position: number): AutocompleteListParams {
-        const entries = Object.entries(this.params.operators[this.baseCellDataType]).map(([key, { displayValue }]) => ({ key, displayValue }));
+        const entries = this.params.operators[this.baseCellDataType].getEntries();
         const searchString = getSearchString(
             this.operator,
             position,

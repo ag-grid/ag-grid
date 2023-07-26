@@ -1,15 +1,15 @@
 import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
-import { JoinExpressionParser } from "./joinExpressionParser";
-import { ExpressionParserParams } from "./expressionUtils";
+import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
+import { FilterExpressionParserParams } from "./filterExpressionUtils";
 
-export class ExpressionParser {
-    private joinExpressionParser: JoinExpressionParser;
+export class FilterExpressionParser {
+    private joinExpressionParser: JoinFilterExpressionParser;
     private valid: boolean = false;
 
-    constructor(private params: ExpressionParserParams) {}
+    constructor(private params: FilterExpressionParserParams) {}
 
     public parseExpression(): void {
-        this.joinExpressionParser = new JoinExpressionParser(this.params, 0);
+        this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);
         const i = this.joinExpressionParser.parseExpression();
         this.valid = i >= this.params.expression.length - 1 && this.joinExpressionParser.isValid();
     }
