@@ -72,6 +72,13 @@ $icon-size: 2em;
 
 // Color constants
 // ===========================================
+
+// Darkmode selector. To be used as an interpolated Sass parent selector
+// #{$darkmode-selector} & {
+//     [DARKMODE STYLES]
+// }
+$darkmode-selector: "[data-dark-mode='true']";
+
 // Names from color-name.com
 $abstract-colors: (
     // Brand (from logo)

@@ -65,7 +65,7 @@
         height: 100%;
     }
 
-    [data-color-mode='dark'] & {
+    [data-dark-mode='dark'] & {
         fill: var(--primary-200);
     }
 }

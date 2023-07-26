@@ -30,7 +30,7 @@ code {
     color: var(--code-text-color);
     border: 1px solid rgba(black, 0.1);
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         font-size: 1em;
         border: none;
         background-color: transparent;
