@@ -9,7 +9,7 @@ import { useWindowSize } from '../../utils/use-window-size';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
-import { ColorModeToggle } from './ColorModeToggle';
+import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
@@ -119,7 +119,7 @@ const HeaderNav = ({ path }) => {
                 <nav id={isDesktop ? 'main-nav' : undefined}>
                     <ul className={classnames(styles.navItemList, 'list-style-none')}>
                         <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                        <ColorModeToggle />
+                        <DarkModeToggle />
                     </ul>
                 </nav>
             </Collapsible>

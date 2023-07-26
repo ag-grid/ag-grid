@@ -625,9 +625,7 @@ const Example = () => {
         const params = new URLSearchParams(window.location.search);
         const theme =
             params.get('theme') ||
-            (JSON.parse(LocalStorage.get('context')).colorMode === 'light'
-                ? 'ag-theme-alpine'
-                : 'ag-theme-alpine-dark');
+            (JSON.parse(LocalStorage.get('context')).darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
 
         setGridTheme(theme);
     }, []);

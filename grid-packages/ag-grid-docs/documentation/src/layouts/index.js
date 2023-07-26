@@ -15,7 +15,7 @@ import styles from './index.module.scss';
  */
 export const Layout = ({
     children,
-    pageContext: { frameworks, framework = 'javascript', layout, pageName, colorMode },
+    pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
     // spl todo: refactor next week!
