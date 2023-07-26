@@ -26,6 +26,8 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     node?: IRowNode<TData>;
     /** Data for the row node in question. */
     data?: TData;
+    /** A callback function that hides the tooltip */
+    hideTooltipCallback?: () => void;
 }
 
 export interface ITooltipComp extends IComponent<ITooltipParams> { }

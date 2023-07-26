@@ -1132,14 +1132,17 @@
 
     .ag-tooltip {
         position: absolute;
-        pointer-events: none;
         z-index: 99999;
     }
 
     .ag-tooltip-custom {
         position: absolute;
-        pointer-events: none;
         z-index: 99999;
+    }
+
+    .ag-tooltip:not(.ag-tooltip-interactive),
+    .ag-tooltip-custom:not(.ag-tooltip-interactive) {
+        pointer-events: none;
     }
 
     // /**

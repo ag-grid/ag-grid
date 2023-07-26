@@ -57,7 +57,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     showParentFilter: () => void;
 }
 
-export interface IFloatingFilter {
+export interface IFloatingFilter<P = any> {
 
     /**
      * Gets called every time the parent filter changes.
@@ -73,9 +73,12 @@ export interface IFloatingFilter {
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
+
+    /** A hook to perform any necessary operations when the column definition is updated. */
+    onParamsUpdated?(params: IFloatingFilterParams<P>): void;
 }
 
-export interface IFloatingFilterComp<P = any> extends IFloatingFilter, IComponent<IFloatingFilterParams<P>> {
+export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {
 }
 
 export interface BaseFloatingFilterChange {

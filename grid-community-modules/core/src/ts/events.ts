@@ -386,6 +386,15 @@ export interface FlashCellsEvent<TData = any, TContext = any> extends AgGridEven
     cells: any;
 }
 
+export interface TooltipEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    parentGui: HTMLElement;
+}
+export interface TooltipShowEvent<TData = any, TContext = any> extends TooltipEvent<TData, TContext> {
+    tooltipGui: HTMLElement;
+}
+
+export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEvent<TData, TContext> {}
+
 export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
 

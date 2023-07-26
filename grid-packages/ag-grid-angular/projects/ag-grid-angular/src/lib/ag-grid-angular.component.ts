@@ -156,6 +156,8 @@ import {
     TabToNextHeaderParams,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    TooltipHideEvent,
+    TooltipShowEvent,
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
@@ -314,18 +316,29 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMenuHide: boolean | undefined = undefined;
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`      */
     @Input() public enableBrowserTooltips: boolean | undefined = undefined;
+    /** The trigger that will cause tooltips to show and hide.
+         *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
+         *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+         * Default: 'hover'
+         */
+    @Input() public tooltipTrigger: 'hover' | 'focus' | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * Default: `2000`
          */
     @Input() public tooltipShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
          * Default: `10000`
          */
     @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`      */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
+    /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
+         * tooltip itself it being hovered or has focus.
+         * Default: `false`
+         */
+    @Input() public tooltipInteraction: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).     */
     @Input() public popupParent: HTMLElement | null | undefined = undefined;
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
@@ -1136,6 +1149,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<CellContextMenuEvent<TData>>();
     /** A change to range selection has occurred.     */
     @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<RangeSelectionChangedEvent<TData>>();
+    /** A tooltip has been displayed     */
+    @Output() public tooltipShow: EventEmitter<TooltipShowEvent<TData>> = new EventEmitter<TooltipShowEvent<TData>>();
+    /** A tooltip was hidden     */
+    @Output() public tooltipHide: EventEmitter<TooltipHideEvent<TData>> = new EventEmitter<TooltipHideEvent<TData>>();
     /** Sort has changed. The grid also listens for this and updates the model.     */
     @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
     /** @deprecated v29.2     */
@@ -1258,6 +1275,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressMaxRenderedRowRestriction: boolean | null | '';
     static ngAcceptInputType_excludeChildrenWhenTreeDataFiltering: boolean | null | '';
     static ngAcceptInputType_tooltipMouseTrack: boolean | null | '';
+    static ngAcceptInputType_tooltipInteraction: boolean | null | '';
     static ngAcceptInputType_keepDetailRows: boolean | null | '';
     static ngAcceptInputType_paginateChildRows: boolean | null | '';
     static ngAcceptInputType_preventDefaultOnContextMenu: boolean | null | '';

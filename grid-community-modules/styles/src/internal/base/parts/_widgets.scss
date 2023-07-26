@@ -488,14 +488,11 @@
         padding: var(--ag-grid-size);
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-card-radius);
-        transition: opacity 1s;
         white-space: normal;
-        &.ag-tooltip-hiding {
-            opacity: 0;
-        }
     }
 
-    .ag-tooltip-custom {
+    .ag-tooltip.ag-tooltip-animate,
+    .ag-tooltip-custom.ag-tooltip-animate {
         transition: opacity 1s;
         &.ag-tooltip-hiding {
             opacity: 0;

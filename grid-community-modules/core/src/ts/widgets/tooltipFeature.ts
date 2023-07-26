@@ -99,6 +99,7 @@ export class TooltipFeature extends BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            hideTooltipCallback: () => this.genericTooltipFeature.hideTooltip(true)
         };
 
     }
