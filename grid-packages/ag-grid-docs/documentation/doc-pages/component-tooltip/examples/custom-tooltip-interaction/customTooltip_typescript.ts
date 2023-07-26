@@ -22,7 +22,7 @@ export class CustomTooltip implements ITooltipComp {
                 </div>
                 <form class="panel-body">
                     <div class="form-group">
-                        <input type="text" class="form-control" id="name" placeholder="Name" value="${data.athlete}">
+                        <input type="text" class="form-control" id="name" placeholder="Name" autocomplete="off" value="${data.athlete}" onfocus="this.select()">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                     <p>Total: ${data.total}</p>

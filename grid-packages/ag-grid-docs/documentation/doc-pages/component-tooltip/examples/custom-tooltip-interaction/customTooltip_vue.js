@@ -8,7 +8,7 @@ export default {
           </div>
           <form class="panel-body" @submit="onFormSubmit($event)">
             <div class="form-group">
-              <input type="text" class="form-control" id="name" placeholder="Name" :value="athlete" />
+              <input type="text" class="form-control" id="name" placeholder="Name" autocomplete="off" :value="athlete" @focus="$event.target.select()" />
               <button type="submit" class="btn btn-primary">Submit</button>
             </div>
             <p>Total: {{total}}</p>

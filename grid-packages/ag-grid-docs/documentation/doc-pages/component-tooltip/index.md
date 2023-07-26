@@ -109,6 +109,12 @@ The example below enables tooltip interaction to demonstrate a scenario where to
 
 ## Interactive Custom Tooltips
 
+The example below enables tooltip interaction with custom tooltips. Note following:
+
+- Tooltip is enabled for the Athlete and Country columns.
+- Tooltips will not disappear while being hovered.
+- The tooltip is working as a **Cell Editor** which updated the value of the `Athlete` Column and then closes itself by calling `hideTooltipCallback()`.
+
 <grid-example title='Custom Tooltip Interaction' name='custom-tooltip-interaction' type='generated' options='{ "extras": ["bootstrap"]}'></grid-example>
 
 ## Using Browser Tooltips

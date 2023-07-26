@@ -12,7 +12,7 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
             </div>
             <form class="panel-body" (submit)="onFormSubmit($event)">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="name" placeholder="Name" value="{{data.athlete}}">
+                    <input type="text" class="form-control" id="name" placeholder="Name" autocomplete="off" value="{{data.athlete}}" (focus)="$event.target.select()">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
                 <p>Total: {{data.total}}</p>
@@ -20,17 +20,6 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
         </div>`,
     styles: [
         `
-            :host {
-                position: absolute;
-                overflow: visible;
-                pointer-events: none;
-                transition: opacity 1s;
-            }
-
-            :host.ag-tooltip-hiding {
-                opacity: 0;
-            }
-
             .custom-tooltip p {
                 margin: 5px;
                 white-space: nowrap;

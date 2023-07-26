@@ -26,7 +26,7 @@ export default props => {
             </div>
             <form className="panel-body" onSubmit={onFormSubmit}>
                 <div className="form-group">
-                    <input type="text" ref={inputEl} className="form-control" id="name" placeholder="Name" defaultValue={data.athlete} />
+                    <input type="text" ref={inputEl} className="form-control" id="name" placeholder="Name" autoComplete="off" defaultValue={data.athlete} onFocus={ e => e.target.select() }/>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
                 <p>Total: {data.total}</p>
