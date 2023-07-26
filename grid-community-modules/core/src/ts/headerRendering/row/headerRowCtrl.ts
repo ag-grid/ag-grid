@@ -1,6 +1,6 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, PreDestroy } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
@@ -16,12 +16,10 @@ import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
 
 export interface IHeaderRowComp {
-    setTransform(transform: string): void;
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void;
     setWidth(width: string): void;
-    setAriaRowIndex(rowIndex: number): void;
 }
 
 let instanceIdSequence = 0;
@@ -35,17 +33,33 @@ export class HeaderRowCtrl extends BeanStub {
     private rowIndex: number;
     private pinned: ColumnPinnedType;
     private type: HeaderRowType;
+    private headerRowClass: string;
 
     private instanceId = instanceIdSequence++;
 
     private headerCellCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
+
+    private isPrintLayout: boolean;
+    private isEnsureDomOrder: boolean;
 
     constructor(rowIndex: number, pinned: ColumnPinnedType, type: HeaderRowType) {
         super();
         this.rowIndex = rowIndex;
         this.pinned = pinned;
         this.type = type;
+
+        const typeClass = type == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
+            type == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+        this.headerRowClass = `ag-header-row ${typeClass}`;
+
     }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+    }
+
 
     public getInstanceId(): number {
         return this.instanceId;
@@ -54,20 +68,25 @@ export class HeaderRowCtrl extends BeanStub {
     public setComp(comp: IHeaderRowComp): void {
         this.comp = comp;
 
-        this.onRowHeightChanged();
-        this.onVirtualColumnsChanged();
-        this.setWidth();
+        this.setWidth(); // React comp not currently using state for width
 
         this.addEventListeners();
+    }
 
+    public getHeaderRowClass(): string {
+        return this.headerRowClass;
+    }
+    public getAriaRowIndex(): number {
+        return this.rowIndex + 1;
+    }
+    public getTransform(): string | undefined {
         if (isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
-            this.comp.setTransform('translateZ(0)');
+            return 'translateZ(0)';
         }
-
-        comp.setAriaRowIndex(this.rowIndex + 1);
     }
+
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -78,6 +97,8 @@ export class HeaderRowCtrl extends BeanStub {
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('ensureDomOrder', (e) => this.isEnsureDomOrder = e.currentValue);
+
         this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
@@ -92,6 +113,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();
@@ -111,9 +133,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-
-        if (printLayout) {
+        if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) { return 0; }
 
@@ -127,6 +147,13 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
+        var { topOffset, rowHeight } = this.getTopAndHeight();
+
+        this.comp.setTop(topOffset + 'px');
+        this.comp.setHeight(rowHeight + 'px');
+    }
+
+    public getTopAndHeight() {
         let headerRowCount = this.columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
@@ -153,10 +180,8 @@ export class HeaderRowCtrl extends BeanStub {
 
         for (let i = 0; i < this.rowIndex; i++) { topOffset += sizes[i]; }
 
-        const thisRowHeight = sizes[this.rowIndex] + 'px';
-
-        this.comp.setTop(topOffset + 'px');
-        this.comp.setHeight(thisRowHeight);
+        const rowHeight = sizes[this.rowIndex];
+        return { topOffset, rowHeight };
     }
 
     public getPinned(): ColumnPinnedType {
@@ -168,6 +193,12 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
+        const ctrlsToDisplay = this.getHeaderCtrls();
+        const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+    }
+
+    public getHeaderCtrls() {
         const oldCtrls = this.headerCellCtrls;
         this.headerCellCtrls = {};
         const columns = this.getColumnsInViewport();
@@ -232,12 +263,11 @@ export class HeaderRowCtrl extends BeanStub {
         });
 
         const ctrlsToDisplay = getAllValuesInObject(this.headerCellCtrls);
-        this.comp.setHeaderCtrls(ctrlsToDisplay);
+        return ctrlsToDisplay;
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
     private getColumnsInViewportPrintLayout(): IHeaderColumn[] {

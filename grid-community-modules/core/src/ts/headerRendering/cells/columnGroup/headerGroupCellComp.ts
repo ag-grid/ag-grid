@@ -29,11 +29,12 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const setAttribute = (key: string, value: string | undefined) =>
                 value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
 
+        eGui.setAttribute("col-id", this.ctrl.getColId());
+
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
-            setColId: id => eGui.setAttribute("col-id", id),
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
             setUserCompDetails: details => this.setUserCompDetails(details)
         };

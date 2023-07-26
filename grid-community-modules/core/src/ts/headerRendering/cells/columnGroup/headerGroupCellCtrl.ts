@@ -30,7 +30,6 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
-    setColId(id: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
 }
@@ -61,7 +60,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
         this.addClasses();
-        this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
@@ -178,8 +176,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         }
     }
 
-    private addAttributes(): void {
-        this.comp.setColId(this.columnGroup.getUniqueId());
+    public getColId() {
+        return this.columnGroup.getUniqueId();
     }
 
     private addClasses(): void {
