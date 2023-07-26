@@ -1310,6 +1310,8 @@
         "enableBrowserTooltips": {},
         "tooltipShowDelay": {},
         "tooltipHideDelay": {},
-        "tooltipMouseTrack": {}
+        "tooltipMouseTrack": {},
+        "tooltipTrigger": {},
+        "tooltipInteraction": {}
     }
 }
