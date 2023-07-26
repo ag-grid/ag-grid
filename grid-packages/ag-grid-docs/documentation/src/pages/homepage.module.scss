@@ -233,7 +233,7 @@ gatsby-fast-refresh {
         }
 
         // WIP darkmode adjustment for customer logos
-        [data-color-mode='dark'] & {
+        #{$darkmode-selector} & {
             filter: grayscale(100%) invert(1) brightness(1.25);
         }
     }
@@ -310,7 +310,7 @@ gatsby-fast-refresh {
 }
 
 // Invert plunker logo for darkmode
-[data-color-mode='dark'] .projectPlunker img {
+#{$darkmode-selector} .projectPlunker img {
     filter: invert(1);
 }
 

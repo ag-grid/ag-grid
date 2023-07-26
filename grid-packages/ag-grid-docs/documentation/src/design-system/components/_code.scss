@@ -24,7 +24,7 @@ pre.code code {
     -ms-hyphens: none;
     hyphens: none;
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         -webkit-font-smoothing: subpixel-antialiased;
 
         color: var(--neutral-900);
@@ -52,7 +52,7 @@ pre.code {
     overflow: visible;
     overflow-y: auto !important;
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         --comment-color: hsl(120, 30%, 40%);
         --tag-color: var(--red-500);
         --string-color: var(--pink-700);
@@ -87,7 +87,7 @@ pre.code > code {
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
     overflow-x: auto !important;
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         --default-background-color: var(--background-100);
         --default-text-color: var(--neutral-900);
     }

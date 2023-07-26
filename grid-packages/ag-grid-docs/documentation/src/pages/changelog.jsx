@@ -346,14 +346,10 @@ const Changelog = ({ location }) => {
                                     isRowMaster={isRowMaster}
                                     masterDetail
                                     onGridReady={gridReady}
-<<<<<<< HEAD
                                     onFirstDataRendered={() => {
                                         applyFixVersionFilter();
                                     }}
                                     theme={colorMode === 'light' ? 'ag-theme-alpine' : 'ag-theme-alpine-dark'}
-=======
-                                    theme={darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'}
->>>>>>> 4e107b0a3a (AG-3390 - Refactor colorMode => darkMode boolean)
                                 ></Grid>
                             );
                         }}

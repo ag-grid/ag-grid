@@ -27,7 +27,7 @@
         margin: 0;
     }
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         --alert-background-color: var(--background-600);
     }
 }
@@ -35,7 +35,7 @@
 .alert.info {
     --text-color: var(--dark-blue-300);
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         --text-color: var(--white);
     }
 }
@@ -56,7 +56,7 @@
         --text-color: var(--orange-700);
     }
 
-    [data-color-mode='dark'] & {
+    #{$darkmode-selector} & {
         --alert-background-color: var(--orange-800);
         --text-color: var(--white);
 
