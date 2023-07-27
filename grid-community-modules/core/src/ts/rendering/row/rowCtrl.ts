@@ -47,9 +47,7 @@ export interface IRowComp {
     setRowIndex(rowIndex: string): void;
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
-    setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: RowStyle): void;
-    setRole(role: string): void;
+    setUserStyles(styles: RowStyle | undefined): void;
 }
 
 interface RowGui {
@@ -118,11 +116,13 @@ export class RowCtrl extends BeanStub {
     private lastMouseDownOnDragger = false;
 
     private rowLevel: number;
-
+    private rowStyles: RowStyle | undefined;
     private readonly printLayout: boolean;
 
     private updateColumnListsPending = false;
 
+    private rowId: string | null = null;
+    private tabIndex: number | undefined;
     private businessKeySanitised: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
@@ -142,6 +142,10 @@ export class RowCtrl extends BeanStub {
         this.printLayout = printLayout;
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+        this.rowId = escapeString(rowNode.id);
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
 
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
@@ -150,8 +154,11 @@ export class RowCtrl extends BeanStub {
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
+        this.rowStyles = this.processStylesFromGridOptions();
 
         this.addListeners();
+
+        this.createAllCellCtrls();
     }
 
     private initRowBusinessKey(): void {
@@ -163,6 +170,16 @@ export class RowCtrl extends BeanStub {
         if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
+    }
+
+    public getRowId(){
+        return this.rowId;
+    }
+    public getRowStyles(){
+        return this.rowStyles;
+    }
+    public getTabIndex() {
+        return this.tabIndex;
     }
 
     public isSticky(): boolean {
@@ -232,16 +249,15 @@ export class RowCtrl extends BeanStub {
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
-        this.setStylesFromGridOptions(gui);
+        this.setStylesFromGridOptions(false, gui); // no need to calculate styles already set in constructor
 
         if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate);
+        this.updateColumnLists(!this.useAnimationFrameForCreate, false, true);
 
         const comp = gui.rowComp;
-        comp.setRole('row');
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
@@ -252,12 +268,8 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        this.setRowCompRowId(comp);
+        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
         this.setRowCompRowBusinessKey(comp);
-
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            comp.setTabIndex(-1);
-        }
 
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
@@ -305,12 +317,17 @@ export class RowCtrl extends BeanStub {
         if (this.businessKeySanitised == null) { return; }
             comp.setRowBusinessKey(this.businessKeySanitised);
     }
+    public getBusinessKey(): string | null {
+        return this.businessKeySanitised;
+    }
 
-    private setRowCompRowId(comp: IRowComp) {
-        const rowId = escapeString(this.rowNode.id);
-        if (rowId == null) { return; }
+    private setRowCompRowId(comp: IRowComp, updateId: boolean) {
+        if(updateId){
+            this.rowId = escapeString(this.rowNode.id);
+        }
+        if (this.rowId == null) { return; }
 
-        comp.setRowId(rowId);
+        comp.setRowId(this.rowId);
     }
 
     private executeSlideAndFadeAnimations(gui: RowGui): void {
@@ -443,7 +460,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false, useExistingCtrls = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -452,7 +469,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl(useFlushSync);
+            this.updateColumnListsImpl(useExistingCtrls, useFlushSync);
             return;
         }
 
@@ -460,7 +477,7 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl(true);
+                this.updateColumnListsImpl(useExistingCtrls, true);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -507,8 +524,40 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(useFlushSync = false): void {
+    private updateColumnListsImpl(useExistingCtrls: boolean, useFlushSync: boolean): void {
         this.updateColumnListsPending = false;
+        if(!useExistingCtrls){
+            this.createAllCellCtrls();
+        }
+
+        this.setCellCtrls(useFlushSync);
+    }
+
+    private setCellCtrls(useFlushSync: boolean) {
+        this.allRowGuis.forEach(item => {
+            const cellControls = this.getCellCtrlsForContainer(item.containerType);
+            item.rowComp.setCellCtrls(cellControls, useFlushSync);
+        });
+    }
+
+    public getCellCtrlsForContainer(containerType: RowContainerType) {
+        
+        switch (containerType) {
+            case RowContainerType.LEFT:
+                return this.leftCellCtrls.list;
+            case RowContainerType.RIGHT:
+                return this.rightCellCtrls.list;
+            case RowContainerType.FULL_WIDTH:
+                return [];
+            case RowContainerType.CENTER:
+                return this.centerCellCtrls.list;
+            default:
+                const exhaustiveCheck: never = containerType;
+                throw new Error(`Unhandled case: ${exhaustiveCheck}`);
+        }
+    }
+
+    private createAllCellCtrls() {
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
@@ -524,12 +573,6 @@ export class RowCtrl extends BeanStub {
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
-
-        this.allRowGuis.forEach(item => {
-            const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
-                item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
-        });
     }
 
     private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: ColumnPinnedType): boolean {
@@ -556,15 +599,18 @@ export class RowCtrl extends BeanStub {
         return REMOVE_CELL;
     }
 
+    public getDomOrder(): boolean {
+        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        return isEnsureDomOrder || this.gridOptionsService.isDomLayout('print');
+    }
+
     private listenOnDomOrder(gui: RowGui): void {
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+            gui.rowComp.setDomOrder(this.getDomOrder());
         };
 
         this.addManagedPropertyListener('domLayout', listener);
-        listener();
+        this.addManagedPropertyListener('ensureDomOrder', listener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -702,7 +748,7 @@ export class RowCtrl extends BeanStub {
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp);
+            this.setRowCompRowId(gui.rowComp, true);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });
@@ -724,7 +770,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private postProcessCss(): void {
-        this.setStylesFromGridOptions();
+        this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
@@ -1183,9 +1229,11 @@ export class RowCtrl extends BeanStub {
         );
     }
 
-    private setStylesFromGridOptions(gui?: RowGui): void {
-        const rowStyles = this.processStylesFromGridOptions();
-        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(rowStyles));
+    private setStylesFromGridOptions(updateStyles : boolean, gui?: RowGui): void {
+        if(updateStyles){
+            this.rowStyles = this.processStylesFromGridOptions();
+        }
+        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(this.rowStyles));
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
@@ -1216,7 +1264,7 @@ export class RowCtrl extends BeanStub {
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }
 
-    public processStylesFromGridOptions(): any {
+    public processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
         const rowStyle = this.gridOptionsService.get('rowStyle');
 
@@ -1583,13 +1631,17 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    public getRowIndex(){
+        return this.rowNode.getRowIndexString();
+    }
+
     private updateRowIndexes(gui?: RowGui): void {
-        const rowIndexStr = this.rowNode.getRowIndexString();
+        const rowIndexStr = this.getRowIndex()
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 
-        this.forEachGui(gui, c => {
+        this.forEachGui(gui, c => {            
             c.rowComp.setRowIndex(rowIndexStr);
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
