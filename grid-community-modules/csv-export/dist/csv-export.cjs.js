@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -796,7 +796,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.5';
+var VERSION = '30.0.6';
 
 var CsvExportModule = {
     version: VERSION,

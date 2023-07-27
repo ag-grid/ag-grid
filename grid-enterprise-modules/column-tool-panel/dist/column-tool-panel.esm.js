@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
+          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -43584,7 +43584,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.5
+ * @version v30.0.6
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -44045,7 +44045,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTY4OTUzMzE0MDAzNw==';
+LicenseManager.RELEASE_INFORMATION = 'MTY5MDI5NDc3MDg0Mg==';
 
 var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44114,7 +44114,7 @@ __decorate$u([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '30.0.5';
+const VERSION$3 = '30.0.6';
 
 const EnterpriseCoreModule = {
     version: VERSION$3,
@@ -48324,7 +48324,7 @@ FilterAggregatesStage = __decorate$c([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '30.0.5';
+const VERSION$2 = '30.0.6';
 
 var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49875,7 +49875,7 @@ ToolPanelColDefService = __decorate$1([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '30.0.5';
+const VERSION$1 = '30.0.6';
 
 const SideBarModule = {
     version: VERSION$1,
@@ -50115,7 +50115,7 @@ ModelItemUtils = __decorate([
 ], ModelItemUtils);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.5';
+const VERSION = '30.0.6';
 
 const ColumnsToolPanelModule = {
     version: VERSION,

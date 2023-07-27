@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { CssClassManager } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp.mjs';

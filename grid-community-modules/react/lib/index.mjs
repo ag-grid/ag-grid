@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';

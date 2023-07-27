@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 export const useEffectOnce = (effect) => {
     const effectFn = useRef(effect);

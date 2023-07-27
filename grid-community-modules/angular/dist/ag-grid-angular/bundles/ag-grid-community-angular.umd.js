@@ -410,7 +410,7 @@
   }
   function __addDisposableResource(env, value, async) {
       if (value !== null && value !== void 0) {
-          if (typeof value !== "object")
+          if (typeof value !== "object" && typeof value !== "function")
               throw new TypeError("Object expected.");
           var dispose;
           if (async) {

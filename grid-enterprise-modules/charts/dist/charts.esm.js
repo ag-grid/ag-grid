@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
+          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -43647,7 +43647,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.5
+ * @version v30.0.6
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -44108,7 +44108,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTY4OTUzMzE0MDAzNw==';
+LicenseManager.RELEASE_INFORMATION = 'MTY5MDI5NDc3MDg0Mg==';
 
 var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44177,7 +44177,7 @@ __decorate$1n([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '30.0.5';
+const VERSION$3 = '30.0.6';
 
 const EnterpriseCoreModule = {
     version: VERSION$3,
@@ -77046,7 +77046,7 @@ function applySeriesValues(target, options, _a) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$2 = '8.0.5';
+var VERSION$2 = '8.0.6';
 
 var __extends$1 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -84093,7 +84093,7 @@ __decorate$8([
 ], GridChartComp.prototype, "init", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '30.0.5';
+const VERSION$1 = '30.0.6';
 
 var __rest = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -86457,7 +86457,7 @@ SelectionHandleFactory = __decorate$1([
 ], SelectionHandleFactory);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.5';
+const VERSION = '30.0.6';
 
 const RangeSelectionModule = {
     version: VERSION,

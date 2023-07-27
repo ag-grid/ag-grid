@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { useEffect, useState } from 'react';
 const useGridApis = (gridRef) => {
     const [gridApi, setGridApi] = useState(null);

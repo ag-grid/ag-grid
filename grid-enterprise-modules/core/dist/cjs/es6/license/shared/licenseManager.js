@@ -284,4 +284,4 @@ class LicenseManager {
     }
 }
 exports.LicenseManager = LicenseManager;
-LicenseManager.RELEASE_INFORMATION = 'MTY4OTUzMzE0MDAzNw==';
+LicenseManager.RELEASE_INFORMATION = 'MTY5MDI5NDc3MDg0Mg==';

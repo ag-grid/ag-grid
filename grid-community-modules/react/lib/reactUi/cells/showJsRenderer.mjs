@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { useCallback, useContext, useEffect } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { useEffectOnce } from '../useEffectOnce.mjs';
