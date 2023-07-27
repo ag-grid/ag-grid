@@ -1,6 +1,6 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
-import { classesList, agFlushSync } from '../utils';
+import { classesList, agFlushSync, getNextValue } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
@@ -41,30 +41,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
     function updateRowCtrlsOrdered(useFlushSync: boolean) {
-
         agFlushSync(useFlushSync, () => {
-            setRowCtrlsOrdered(prev => {
-                const rowCtrls = rowCtrlsRef.current;
-
-                if (rowCtrls.length === 0 && prev.length === 0) {
-                    return prev;
-                }
-
-                if (domOrderRef.current) {
-                    return rowCtrls;
-                }
-                // if dom order not important, we don't want to change the order
-                // of the elements in the dom, as this would break transition styles
-                const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
-                const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-
-                if (oldRows.length === prev.length && newRows.length === 0) {
-                    // no change, so return previous array to avoid re-render
-                    return prev;
-                }
-
-                return [...oldRows, ...newRows];
-            });
+            setRowCtrlsOrdered(prev => getNextValue(prev, rowCtrlsRef.current, domOrderRef.current)!);
         })
     }
 

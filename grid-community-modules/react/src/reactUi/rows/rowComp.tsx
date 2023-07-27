@@ -1,53 +1,9 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
-import { isComponentStateless, agFlushSync } from '../utils';
+import { isComponentStateless, agFlushSync, getNextValue } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
-
-const maintainOrderOnColumns = (prev: CellCtrl[] | null, next: CellCtrl[], domOrder: boolean): CellCtrl[] => {
-    if(prev == next){
-        // If same array instance nothing to do.
-        // Relies on rowCtrl maintaining the same array instance
-        return prev;
-    }
-
-    // if dom order important, we don't want to change the order
-    // if prev is empty just return next immediately as no previous order to maintain
-    if (domOrder || prev == null || prev.length === 0 && next.length > 0) {
-        return next;
-    }
-
-    // if dom order not important, we don't want to change the order
-    // of the elements in the dom, as this would break transition styles
-    const oldCellCtrls: CellCtrl[] = [];
-    const newCellCtrls: CellCtrl[] = [];
-    const prevMap: Map<string, CellCtrl> = new Map();
-
-    for (let i = 0; i < prev.length; i++) {
-        const c = prev[i];
-        prevMap.set(c.getInstanceId(), c)
-    }
-
-    for (let i = 0; i < next.length; i++) {
-        const c = next[i];
-        const instanceId = c.getInstanceId();
-        if (prevMap.has(instanceId)) {
-            oldCellCtrls.push(c);
-        }else{
-            newCellCtrls.push(c)
-        }
-    }
-
-    if (oldCellCtrls.length === prev.length && newCellCtrls.length === 0) {
-        return prev;
-    }
-
-    if(oldCellCtrls.length === 0 && newCellCtrls.length === next.length){
-        return next;
-    }
-    return [...oldCellCtrls, ...newCellCtrls];
-}
 
 const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) => {
 
@@ -64,9 +20,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getRowStyles());
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(
-        isFullWidth ? null : maintainOrderOnColumns([],
-            rowCtrl.getCellCtrlsForContainer(containerType),
-            domOrderRef.current));
+        isFullWidth ? null : getNextValue([], rowCtrl.getCellCtrlsForContainer(containerType), domOrderRef.current));
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
@@ -140,7 +94,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
                // agFlushSync(useFlushSync, () => {
-                    setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrderRef.current));
+                    setCellCtrls(prev => getNextValue(prev, next, domOrderRef.current));
                // });
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
