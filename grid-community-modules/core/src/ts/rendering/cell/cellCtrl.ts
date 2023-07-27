@@ -87,7 +87,7 @@ export class CellCtrl extends BeanStub {
     private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
 
     private cellPosition: CellPosition;
-
+    private hasCellRenderer: boolean;
     private editing: boolean;
 
     private includeSelection: boolean;
@@ -121,9 +121,11 @@ export class CellCtrl extends BeanStub {
         if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
             this.tabIndex = -1;
         }
+        this.hasCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
 
         this.createCellPosition();
         this.addFeatures();
+        this.updateAndFormatValue(true);
     }
 
     public shouldRestoreFocus(): boolean {
@@ -213,10 +215,6 @@ export class CellCtrl extends BeanStub {
         this.eGui = eGui;
         this.printLayout = printLayout;
 
-        // we force to make sure formatter gets called at least once,
-        // even if value has not changed (is is undefined)
-        this.updateAndFormatValue(true);
-
         this.addDomData();
 
         this.onCellFocused();
@@ -250,7 +248,7 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.forEach(func => func());
             this.onCellCompAttachedFuncs = [];
         }
-}
+    }
 
     private setupAutoHeight(eCellWrapper: HTMLElement): void {
         if (!this.column.isAutoHeight()) { return; }
@@ -323,11 +321,17 @@ export class CellCtrl extends BeanStub {
     public getTabIndex(): number | undefined {
         return this.tabIndex;
     }
+    public getValueToDisplay(): any {
+        return this.valueFormatted != null ? this.valueFormatted : this.value;
+    }
 
     private showValue(forceNewCellRendererInstance = false): void {
-        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
-        const params = this.createCellRendererParams();
-        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        const valueToDisplay = this.getValueToDisplay();
+        let compDetails: UserCompDetails | undefined;
+        if (this.hasCellRenderer) {
+            const params = this.createCellRendererParams();
+            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }

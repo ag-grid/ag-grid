@@ -143,7 +143,7 @@ const CellComp = (props: {
     const colId = cellCtrl.getColumnIdSanitised();
     const cellInstanceId = cellCtrl.getInstanceId();
 
-    const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
+    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>({ compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
@@ -330,10 +330,18 @@ const CellComp = (props: {
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails({
-                    value,
-                    compDetails,
-                    force
+                setRenderDetails(prev => {
+
+
+                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                        return {
+                            value,
+                            compDetails,
+                            force
+                        }
+                    } else {
+                        return prev;
+                    }
                 });
             },
             
@@ -358,7 +366,7 @@ const CellComp = (props: {
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
         cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
 
-    }, [cellCtrl]);
+    }, []);
 
     const reactCellRendererStateless = useMemo(() => {
         const res =
