@@ -1,6 +1,6 @@
-import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
-import { FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
+import { AutocompleteUpdate, FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
 
 export class JoinFilterExpressionParser {
     private valid: boolean = true;
@@ -68,6 +68,10 @@ export class JoinFilterExpressionParser {
             this.expressionParsers.length === this.operators.length + 1;
     }
 
+    public getValidationMessage(): string | null {
+        return 'TODO';
+    }
+
     public getExpression(): string {
         const hasMultipleExpressions = this.expressionParsers.length > 1;
         let expression = hasMultipleExpressions ? '(' : '';
@@ -114,7 +118,7 @@ export class JoinFilterExpressionParser {
         return autocompleteType;
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutocompleteUpdate {
+    public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
         const expression = this.params.expression;
 
         const expressionParserIndex = this.getExpressionParserIndex(position);
@@ -127,11 +131,14 @@ export class JoinFilterExpressionParser {
 
         const expressionParser = this.expressionParsers[expressionParserIndex];
 
-        const updatedExpression = expressionParser.updateExpression(position, updateEntry);
+        const updatedExpression = expressionParser.updateExpression(position, updateEntry, type);
 
         if (updatedExpression == null) {
             // beyond the end of the expression, just do simple update
-            return updateExpressionByWord(this.params.expression, position, updateEntry);
+            const parsedUpdateEntry = type === 'column'
+                ? { key: updateEntry.key, displayValue: this.params.columnValueCreator(updateEntry) }
+                : updateEntry;
+            return updateExpressionByWord(this.params.expression, position, parsedUpdateEntry);
         }
         return updatedExpression;
     }

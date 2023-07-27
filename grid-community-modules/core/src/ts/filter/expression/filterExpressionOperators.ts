@@ -30,7 +30,7 @@ export interface DataTypeFilterExpressionOperators<TValue> {
     operators: {
         [operator: string]: FilterExpressionOperator<TValue>;
     };
-    getEntries(): AutocompleteEntry[];
+    getEntries(activeOperators?: string[]): AutocompleteEntry[];
     findOperator(displayValue: string): string | null | undefined;
 };
 
@@ -63,21 +63,17 @@ function findOperator<TValue>(displayValue: string, operators: { [operator: stri
     }
 }
 
-function filterOperators<TValue>(operators: { [operator: string]: FilterExpressionOperator<TValue> }, activeOperators?: string[]): { [operator: string]: FilterExpressionOperator<TValue> } {
-    if (activeOperators) {
-        Object.keys(operators).forEach(key => {
-            if (!activeOperators.includes(key)) {
-                delete operators[key];
-            }
-        });
-    }
-    return operators;
+function getEntries<TValue>(operators: { [operator: string]: FilterExpressionOperator<TValue> }, activeOperatorKeys?: string[]): AutocompleteEntry[] {
+    const keys = activeOperatorKeys ?? Object.keys(operators);
+        return keys.map(key => ({
+            key,
+            displayValue: operators[key].displayValue
+        }));
 }
 
 export interface TextFilterExpressionOperatorsParams<TValue = string> {
     translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
     valueParser?: (value: TValue, node: IRowNode, params: FilterExpressionEvaluatorParams) => string;
-    activeOperators?: string[];
 }
 
 export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<TValue> {
@@ -90,8 +86,8 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         this.initOperators();
     }
 
-    public getEntries(): AutocompleteEntry[] {
-        return Object.entries(this.operators).map(([key, { displayValue }]) => ({ key, displayValue }));
+    public getEntries(activeOperators?: string[]): AutocompleteEntry[] {
+       return getEntries(this.operators, activeOperators);
     }
 
     public findOperator(displayValue: string): string | null | undefined {
@@ -99,8 +95,8 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
     }
 
     private initOperators(): void {
-        const { translate, activeOperators } = this.params;
-        this.operators = filterOperators({
+        const { translate } = this.params;
+        this.operators = {
             contains: {
                 displayValue: translate('filterExpressionContains', 'contains'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
@@ -141,7 +137,7 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
                 evaluator: (value) => value != null && (typeof value !== 'string' || value.trim().length > 0),
                 numOperands: 0
             },
-        }, activeOperators);
+        };
     }
 
     private evaluateExpression(
@@ -161,8 +157,7 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
 
 export interface ScalarFilterExpressionOperatorsParams<ParsedTValue extends number | Date, TValue = ParsedTValue> {
     translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
-    valueParser?: (value: TValue, params: FilterExpressionEvaluatorParams) => ParsedTValue
-    activeOperators?: string[];
+    valueParser?: (value: TValue, params: FilterExpressionEvaluatorParams) => ParsedTValue;
 }
 
 export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date, TValue = ParsedTValue> implements DataTypeFilterExpressionOperators<TValue> {
@@ -175,8 +170,8 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
         this.initOperators();
     }
 
-    public getEntries(): AutocompleteEntry[] {
-        return Object.entries(this.operators).map(([key, { displayValue }]) => ({ key, displayValue }));
+    public getEntries(activeOperators?: string[]): AutocompleteEntry[] {
+        return getEntries(this.operators, activeOperators);
     }
 
     public findOperator(displayValue: string): string | null | undefined {
@@ -184,8 +179,8 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
     }
 
     private initOperators(): void {
-        const { translate, activeOperators } = this.params;
-        this.operators = filterOperators({
+        const { translate } = this.params;
+        this.operators = {
             equals: {
                 displayValue: translate('filterExpression', '='),
                 evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInEquals, (v, o) => v === o),
@@ -238,7 +233,7 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
                 evaluator: (value) => value != null,
                 numOperands: 0
             }
-        }, activeOperators);
+        };
     }
 
     private evaluateSingleOperandExpression(
@@ -267,7 +262,6 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
 
 export interface BooleanFilterExpressionOperatorsParams {
     translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
-    activeOperators?: string[];
 }
 
 export class BooleanFilterExpressionOperators implements DataTypeFilterExpressionOperators<boolean> {
@@ -277,8 +271,8 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
         this.initOperators();
     }
 
-    public getEntries(): AutocompleteEntry[] {
-        return Object.entries(this.operators).map(([key, { displayValue }]) => ({ key, displayValue }));
+    public getEntries(activeOperators?: string[]): AutocompleteEntry[] {
+        return getEntries(this.operators, activeOperators);
     }
 
     public findOperator(displayValue: string): string | null | undefined {
@@ -286,8 +280,8 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
     }
 
     private initOperators(): void {
-        const { translate,activeOperators } = this.params;
-        this.operators = filterOperators({
+        const { translate } = this.params;
+        this.operators = {
             true: {
                 displayValue: translate('filterExpressionTrue', 'is true'),
                 evaluator: (value) => !!value,
@@ -298,6 +292,6 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
                 evaluator: (value) => value === false,
                 numOperands: 0
             },
-        }, activeOperators);
+        };
     }
 }

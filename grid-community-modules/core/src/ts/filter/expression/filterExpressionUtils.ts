@@ -13,6 +13,11 @@ export interface FilterExpressionParserParams {
     operators: FilterExpressionOperators;
 }
 
+export interface AutocompleteUpdate {
+    updatedValue: string;
+    updatedPosition: number;
+}
+
 export function getSearchString(value: string, position: number, endPosition: number): string {
     const numChars = endPosition - position;
     return numChars ? value.slice(0, value.length - numChars) : value;

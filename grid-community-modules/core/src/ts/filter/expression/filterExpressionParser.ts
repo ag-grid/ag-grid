@@ -1,6 +1,6 @@
-import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AutocompleteUpdate, FilterExpressionParserParams } from "./filterExpressionUtils";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -18,6 +18,10 @@ export class FilterExpressionParser {
         return this.valid;
     }
 
+    public getValidationMessage(): string | null {
+        return this.joinExpressionParser.getValidationMessage();
+    }
+
     public getExpression(): string {
         return `return ${this.joinExpressionParser.getExpression()};`;
     }
@@ -26,7 +30,7 @@ export class FilterExpressionParser {
         return this.joinExpressionParser.getAutocompleteListParams(position);
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry): AutocompleteUpdate {
-        return this.joinExpressionParser.updateExpression(position, updateEntry);
+    public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
+        return this.joinExpressionParser.updateExpression(position, updateEntry, type);
     }
 }

@@ -1,19 +1,6 @@
-export interface AutocompleteParams {
-    onValueChanged?: (value: string | null) => void;
-    valueValidator?: (value: string | null) => string | null;
-    listGenerator: (value: string | null, position: number) => AutocompleteListParams;
-    onConfirmed: (value: string | null) => void;
-    valueUpdater: (params: {
-        value: string | null;
-        position: number;
-        updateEntry: AutocompleteEntry;
-        type?: string;
-    }) => AutocompleteUpdate;
-    ariaLabel: string;
-}
-
 export interface AutocompleteListParams {
     enabled: boolean;
+    /** list will only get recreated if the type changes */
     type?: string;
     searchString?: string;
     entries?: AutocompleteEntry[];
@@ -22,9 +9,4 @@ export interface AutocompleteListParams {
 export interface AutocompleteEntry {
     key: string;
     displayValue?: any;
-}
-
-export interface AutocompleteUpdate {
-    updatedValue: string;
-    updatedPosition: number;
 }

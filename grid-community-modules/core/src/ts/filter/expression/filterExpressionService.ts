@@ -171,22 +171,19 @@ export class FilterExpressionService extends BeanStub {
 
     private getExpressionOperators(): FilterExpressionOperators {
         const translate = this.localeService.getLocaleTextFunc();
-        // TODO allow active operators to be overridden from config
-        const dateActiveOperators = ['equals', 'notEqual', 'greaterThan', 'lessThan', 'inRange', 'blank', 'notBlank'];
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate, valueParser: (v, node, params) => params.convertToString!(v, node) }),
             number: new ScalarFilterExpressionOperators<number>({ translate }),
-            date: new ScalarFilterExpressionOperators<Date>({ translate, activeOperators: dateActiveOperators }),
-            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, valueParser: (v, params) => params.convertToDate!(v), activeOperators: dateActiveOperators })
+            date: new ScalarFilterExpressionOperators<Date>({ translate }),
+            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, valueParser: (v, params) => params.convertToDate!(v) })
         }
     }
 
     private getExpressionEvaluatorParams(colId: string): FilterExpressionEvaluatorParams {
         let params = this.expressionEvaluatorParams[colId];
         if (!params) {
-            // TODO - handle other params
             const column = this.columnModel.getGridColumn(colId);
             if (column) {
                 const baseCellDataType = this.dataTypeService.getBaseDataType(column);
@@ -202,6 +199,18 @@ export class FilterExpressionService extends BeanStub {
                     };
                 } else {
                     params = {};
+                }
+                const { filterParams } = column.getColDef();
+                if (filterParams) {
+                    [
+                        'caseSensitive', 'inRangeInclusive', 'includeBlanksInEquals',
+                        'includeBlanksInLessThan', 'includeBlanksInGreaterThan', 'includeBlanksInRange'
+                    ].forEach((param: keyof FilterExpressionEvaluatorParams) => {
+                        const paramValue = filterParams[param];
+                        if (paramValue) {
+                            params[param] = paramValue
+                        }
+                    });
                 }
             }
             this.expressionEvaluatorParams[colId] = params;

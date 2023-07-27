@@ -1,6 +1,7 @@
+import { Column } from "../../entities/column";
 import { BaseCellDataType } from "../../entities/dataType";
-import { AutocompleteEntry, AutocompleteListParams, AutocompleteUpdate } from "../../widgets/autocompleteParams";
-import { FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart, updateExpressionByWord } from "./filterExpressionUtils";
+import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { AutocompleteUpdate, FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart } from "./filterExpressionUtils";
 
 export class ColFilterExpressionParser {
     public static readonly COL_START_CHAR = '[';
@@ -121,6 +122,10 @@ export class ColFilterExpressionParser {
         return this.valid && this.complete;
     }
 
+    public getValidationMessage(): string | null {
+        return 'TODO';
+    }
+
     public getExpression(): string {
         const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
         return `expressionProxy.operators.${this.baseCellDataType}.operators.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
@@ -155,7 +160,7 @@ export class ColFilterExpressionParser {
                 updateEntry
             );
         }
-        return updateExpressionByWord(this.params.expression, position, updateEntry);
+        return null;
     }
 
     private isColumnPosition(position: number): boolean {
@@ -258,7 +263,13 @@ export class ColFilterExpressionParser {
     }
 
     private getOperatorAutocompleteType(position: number): AutocompleteListParams {
-        const entries = this.params.operators[this.baseCellDataType].getEntries();
+        const column = this.colId ? this.params.columnModel.getGridColumn(this.colId) : null;
+        if (!column) {
+            return { enabled: false };
+        }
+
+        const activeOperators = this.getActiveOperators(column);
+        const entries = this.params.operators[this.baseCellDataType].getEntries(activeOperators);
         const searchString = getSearchString(
             this.operator,
             position,
@@ -270,5 +281,12 @@ export class ColFilterExpressionParser {
             searchString,
             entries
         };
+    }
+
+    private getActiveOperators(column: Column): string[] | undefined {
+        const filterOptions = column.getColDef().filterParams?.filterOptions;
+        if (!filterOptions) { return undefined; }
+        const isValid = filterOptions.every((filterOption: any) => typeof filterOption === 'string');
+        return isValid ? filterOptions : undefined;
     }
 }
