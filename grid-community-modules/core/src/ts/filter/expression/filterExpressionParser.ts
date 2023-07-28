@@ -9,11 +9,11 @@ export class FilterExpressionParser {
 
     constructor(private params: FilterExpressionParserParams) {}
 
-    public parseExpression(): this {
+    public parseExpression(): string {
         this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);
         const i = this.joinExpressionParser.parseExpression();
         this.valid = i >= this.params.expression.length - 1 && this.joinExpressionParser.isValid();
-        return this;
+        return this.params.expression;
     }
 
     public isValid(): boolean {
@@ -24,12 +24,12 @@ export class FilterExpressionParser {
         return this.params.translate('filterExpressionInvalid', 'Invalid Filter Value');
     }
 
-    public getExpression(): string {
-        return `return ${this.joinExpressionParser.getExpression()};`;
+    public getFunction(): string {
+        return `return ${this.joinExpressionParser.getFunction()};`;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams {
-        return this.joinExpressionParser.getAutocompleteListParams(position);
+        return this.joinExpressionParser.getAutocompleteListParams(position) ?? { enabled: false };
     }
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {

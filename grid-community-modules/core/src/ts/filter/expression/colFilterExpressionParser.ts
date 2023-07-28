@@ -10,10 +10,10 @@ export class ColFilterExpressionParser {
 
     private valid: boolean = true;
     private complete: boolean = false;
-    private endPosition: number | undefined = undefined;
+    private endPosition: number | undefined;
     private expectingColumn: boolean = true;
     private startedColumn: boolean = false;
-    private quotedColumn: boolean = false;
+    private hasColumnStartChar: boolean = false;
     private columnEndPosition: number;
     private expectingOperator: boolean = false;
     private startedOperator: boolean = false;
@@ -22,7 +22,7 @@ export class ColFilterExpressionParser {
     private startedOperand: boolean = false;
     private quotedOperand: boolean = false;
     private colName: string = '';
-    private colId: string | null;
+    private colId: string;
     private baseCellDataType: BaseCellDataType;
     private operator: string = '';
     private parsedOperator: string;
@@ -42,23 +42,15 @@ export class ColFilterExpressionParser {
             if (char === ' ') {
                 if (this.expectingColumn) {
                     if (this.startedColumn) {
-                        if (this.quotedColumn) {
-                            this.colName += char;
-                        } else {
-                            this.expectingColumn = false;
-                            this.expectingOperator = true;
-                            this.parseColumn();
-                            this.columnEndPosition = i - 1;
-                        }
+                        this.colName += char;
                     }
                 } else if (this.expectingOperator) {
                     if (this.startedOperator) {
-                        const isMultiPart = this.parseOperator(false);
+                        const isMultiPart = this.parseOperator(false, i - 1);
                         if (isMultiPart) {
                             this.operator += char;
                         } else {
                             this.expectingOperator = false;
-                            this.operatorEndPosition = i - 1;
                             if (this.expectedNumOperands > 0) {
                                 this.activeOperand = 0;
                                 this.operands.push('');
@@ -80,18 +72,17 @@ export class ColFilterExpressionParser {
                     }
                 }
             } else if (char === ')') {
-                this.onComplete();
+                this.onComplete(i - 1);
                 return this.returnEndPosition(i - 1, true);
             } else if (char === ColFilterExpressionParser.COL_START_CHAR && this.expectingColumn) {
                 // TODO - add handling for if [ or ] appear in the columns names
-                this.quotedColumn = true;
                 this.startedColumn = true;
-            } else if (char === ColFilterExpressionParser.COL_END_CHAR && this.expectingColumn && this.quotedColumn) {
+                this.hasColumnStartChar = true;
+            } else if (char === ColFilterExpressionParser.COL_END_CHAR && this.hasColumnStartChar) {
                 this.expectingColumn = false;
                 this.expectingOperator = true;
-                this.parseColumn();
-                this.columnEndPosition = i;
-            } else if (char === `'` && this.activeOperand >= 0) {
+                this.parseColumn(i);
+            } else if ((char === `'` || char === `"`) && this.activeOperand >= 0) {
                 if (this.quotedOperand) {
                     if (this.onOperandComplete()) {
                         return this.returnEndPosition(i, true);
@@ -115,7 +106,7 @@ export class ColFilterExpressionParser {
             }
             i++;
         }
-        this.onComplete();
+        this.onComplete(i - 1);
         return this.returnEndPosition(i);
     }
 
@@ -123,7 +114,7 @@ export class ColFilterExpressionParser {
         return this.valid && this.complete;
     }
 
-    public getExpression(): string {
+    public getFunction(): string {
         const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
         return `expressionProxy.operators.${this.baseCellDataType}.operators.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
     }
@@ -163,15 +154,12 @@ export class ColFilterExpressionParser {
     public getModel(): AdvancedFilterModel {
         const model = {
             filterType: this.baseCellDataType,
-            colId: this.colId!,
+            colId: this.colId,
             type: this.parsedOperator,
         };
         const unquote = (operand: string) => operand.slice(1, operand.length - 2);
-        switch (this.operands.length) {
-            case 2:
-                (model as any).filterTo = unquote(this.operands[1]);
-            case 1:
-                (model as any).filter = unquote(this.operands[0]);
+        if (this.operands.length) {
+            (model as any).filter = unquote(this.operands[0]);
         }
         return model as AdvancedFilterModel;
     }
@@ -188,9 +176,13 @@ export class ColFilterExpressionParser {
         return this.complete && this.endPosition != null && position > this.endPosition + 1 && this.endPosition + 1 < this.params.expression.length;
     }
 
-    private parseColumn(): void {
-        this.colId = this.params.colIdResolver(this.colName);
-        if (this.colId) {
+    private parseColumn(endPosition: number): void {
+        this.columnEndPosition = endPosition;
+        const colValue = this.params.colIdResolver(this.colName);
+        if (colValue) {
+            this.colId = colValue.colId;
+            this.checkAndUpdateExpression(this.colName, colValue.columnName, endPosition - 1);
+            this.colName = colValue.columnName;
             const column = this.params.columnModel.getGridColumn(this.colId);
             if (column) {
                 this.baseCellDataType = this.params.dataTypeService.getBaseDataType(column) ?? 'text';
@@ -201,12 +193,16 @@ export class ColFilterExpressionParser {
         this.baseCellDataType = 'text';
     }
 
-    private parseOperator(isComplete: boolean): boolean {
+    private parseOperator(isComplete: boolean, endPosition: number): boolean {
         const operatorForType = this.params.operators[this.baseCellDataType];
         const parsedOperator = operatorForType.findOperator(this.operator);
         if (parsedOperator) {
+            this.operatorEndPosition = endPosition;
             this.parsedOperator = parsedOperator;
             this.expectedNumOperands = operatorForType.operators[parsedOperator].numOperands;
+            const operatorDisplayValue = operatorForType.operators[parsedOperator].displayValue;
+            this.checkAndUpdateExpression(this.operator, operatorDisplayValue, endPosition);
+            this.operator = operatorDisplayValue;
             return false;
         } 
         if (isComplete) {
@@ -217,7 +213,7 @@ export class ColFilterExpressionParser {
 
     private parseOperand(): void {
         // TODO escape quotes in string
-        const escapeAndQuoteString = (operand: string) => `'${operand}'`;
+        const escapeAndQuoteString = (operand: string) => `"${operand}"`;
         let parser: (operand: string) => string;
         switch (this.baseCellDataType) {
             case 'number': {
@@ -238,9 +234,20 @@ export class ColFilterExpressionParser {
         this.operands = this.operands.map(parser);
     }
 
-    private onComplete(): void {
+    private checkAndUpdateExpression(userValue: string, displayValue: string, endPosition: number): void {
+        if (displayValue !== userValue) {
+            this.params.expression = updateExpression(
+                this.params.expression,
+                endPosition - userValue.length + 1,
+                endPosition,
+                displayValue
+            ).updatedValue;
+        }
+    }
+
+    private onComplete(endPosition: number): void {
         if (this.expectingOperator && this.startedOperator) {
-            this.parseOperator(true);
+            this.parseOperator(true, endPosition);
             if (this.expectedNumOperands > 0) {
                 this.valid = false;
             } else {

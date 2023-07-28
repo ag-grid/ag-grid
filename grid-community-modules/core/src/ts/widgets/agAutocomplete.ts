@@ -316,10 +316,12 @@ export class AgAutocomplete extends Component {
         return this.valid;
     }
 
-    public setValue(value: string, position: number): void {
+    public setValue(value: string, position?: number, silent?: boolean): void {
         this.eAutocompleteInput.setValue(value, true);
-        this.setCaret(position);
-        this.updateValue(value);
+        this.setCaret(position ?? this.lastPosition);
+        if (!silent) {
+            this.updateValue(value);
+        }
     }
 
     public setForceLastSelection(forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean): this {

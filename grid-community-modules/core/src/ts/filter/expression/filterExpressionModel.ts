@@ -31,7 +31,6 @@ export type ScalarAdvancedFilterModelType =
     | 'lessThanOrEqual'
     | 'greaterThan'
     | 'greaterThanOrEqual'
-    | 'inRange'
     | 'blank'
     | 'notBlank';
 
@@ -51,7 +50,6 @@ export interface NumberAdvancedFilterModel {
     colId: string;
     type: ScalarAdvancedFilterModelType;
     filter?: number;
-    filterTo?: number;
 }
 
 export interface DateAdvancedFilterModel {
@@ -59,7 +57,6 @@ export interface DateAdvancedFilterModel {
     colId: string;
     type: ScalarAdvancedFilterModelType;
     filter?: Date;
-    filterTo?: Date;
 }
 
 export interface DateStringAdvancedFilterModel {
@@ -67,7 +64,6 @@ export interface DateStringAdvancedFilterModel {
     colId: string;
     type: ScalarAdvancedFilterModelType;
     filter?: string;
-    filterTo?: string;
 }
 
 export interface BooleanAdvancedFilterModel {

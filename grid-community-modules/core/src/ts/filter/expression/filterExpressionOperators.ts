@@ -3,11 +3,9 @@ import { IRowNode } from "../../interfaces/iRowNode";
 
 export interface FilterExpressionEvaluatorParams {
     caseSensitive?: boolean;
-    inRangeInclusive?: boolean;
     includeBlanksInEquals?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
-    includeBlanksInRange?: boolean;
     convertToDate?: (value: string) => Date;
     convertToString?: (value: any, node: IRowNode) => string;
 }
@@ -211,18 +209,6 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
                 evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v <= o),
                 numOperands: 1
             },
-            inRange: {
-                displayValue: translate('filterExpressionInRange', 'in range'),
-                evaluator: (value, _node, params, operand1, operand2) => this.evaluateDoubleOperandExpression(
-                    value,
-                    params,
-                    operand1!,
-                    operand2!,
-                    !!params.includeBlanksInRange,
-                    (v, o1, o2) => params.inRangeInclusive ? v >= o1 && v <= o2 : v > o1 && v < o2
-                ),
-                numOperands: 2
-            },
             blank: {
                 displayValue: translate('filterExpressionBlank', 'is blank'),
                 evaluator: (value) => value == null,
@@ -245,18 +231,6 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
     ): boolean {
         if (value == null) { return nullsMatch; }
         return expression(this.valueParser(value, params), this.valueParser(operand, params));
-    }
-
-    private evaluateDoubleOperandExpression(
-        value: TValue | null | undefined,
-        params: FilterExpressionEvaluatorParams,
-        operand1: TValue,
-        operand2: TValue,
-        nullsMatch: boolean,
-        expression: (value: ParsedTValue, operand1: ParsedTValue, operand2: ParsedTValue) => boolean
-    ): boolean {
-        if (value == null) { return nullsMatch; }
-        return expression(this.valueParser(value, params), this.valueParser(operand1, params), this.valueParser(operand2, params));
     }
 }
 

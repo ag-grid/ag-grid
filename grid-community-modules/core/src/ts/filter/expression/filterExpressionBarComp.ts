@@ -54,7 +54,12 @@ export class FilterExpressionBarComp extends Component {
     private onValueChanged(value: string | null): void {
         this.expression = value;
         this.expressionParser = this.filterExpressionService.createExpressionParser(value);
-        this.expressionParser?.parseExpression();
+        const updatedExpression = this.expressionParser?.parseExpression();
+        if (updatedExpression && updatedExpression !== value) {
+            setTimeout(() => {
+                this.eAutocomplete.setValue(updatedExpression, undefined, true);
+            });
+        }
     }
 
     private onValueConfirmed(value: string | null, isValid: boolean): void {

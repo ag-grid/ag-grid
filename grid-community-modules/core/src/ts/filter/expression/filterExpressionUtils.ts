@@ -9,7 +9,7 @@ export interface FilterExpressionParserParams {
     dataTypeService: DataTypeService;
     columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
     columnValueCreator: (updateEntry: AutocompleteEntry) => string;
-    colIdResolver: (columnName: string) => string | null;
+    colIdResolver: (columnName: string) => { colId: string, columnName: string } | null;
     operators: FilterExpressionOperators;
     joinOperators: { and: string, or: string };
     translate: (key: string, defaultValue: string, variableValues?: string[]) => string;
