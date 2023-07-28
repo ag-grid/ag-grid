@@ -17,7 +17,7 @@ const Announcements = ({framework}) => (
             <header>
                 <b className="font-size-large">Version 30.0.6</b>
                 <span className="text-secondary font-size-large">Jul 28</span>
-                <a href={"blog.ag-grid.com/ag-grid-es-modules-and-commonjs/"}>ES Modules & CommonJS</a>
+                <a href="https://blog.ag-grid.com/ag-grid-es-modules-and-commonjs/">ES Modules & CommonJS</a>
             </header>
             <a
                 className="font-size-small"
