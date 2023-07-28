@@ -126,6 +126,7 @@ import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
+import { AdvancedFilterModel } from "./filter/expression/filterExpressionModel";
 
 export interface DetailGridInfo {
     /**
@@ -697,12 +698,12 @@ export class GridApi<TData = any> {
         this.gos.set('quickFilterText', newFilter);
     }
 
-    public getFilterExpression(): string | null {
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
         return this.filterManager.getFilterExpression();
     }
 
-    public setFilterExpression(expression: string | null): void {
-        this.filterManager.setFilterExpression(expression);
+    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
+        this.filterManager.setFilterExpression(advancedFilterModel);
     }
 
     /** 

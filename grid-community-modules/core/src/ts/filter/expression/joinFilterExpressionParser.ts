@@ -1,5 +1,6 @@
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
+import { AdvancedFilterModel } from "./filterExpressionModel";
 import { AutocompleteUpdate, FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
 
 export class JoinFilterExpressionParser {
@@ -9,7 +10,7 @@ export class JoinFilterExpressionParser {
     private startedOperator: boolean = false;
     private expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
     private operators: string[] = [];
-    private parsedOperators: string[] = [];
+    private parsedOperator: 'and' | 'or';
     private operatorEndPositions: (number | undefined)[] = [];
     private activeOperator: number = 0;
 
@@ -68,20 +69,12 @@ export class JoinFilterExpressionParser {
             this.expressionParsers.length === this.operators.length + 1;
     }
 
-    public getValidationMessage(): string | null {
-        return 'TODO';
-    }
-
     public getExpression(): string {
         const hasMultipleExpressions = this.expressionParsers.length > 1;
-        let expression = hasMultipleExpressions ? '(' : '';
-        this.expressionParsers.forEach((expressionParser, index) => {
-            expression += expressionParser.getExpression();
-            if (index < this.expressionParsers.length - 1 && index < this.parsedOperators.length) {
-                expression += ` ${this.parsedOperators[index]} `;
-            }
-        });
-        return hasMultipleExpressions ? expression + ')' : expression;
+        const expression = this.expressionParsers.map(
+            expressionParser => expressionParser.getExpression()).join(` ${this.parsedOperator === 'or' ? '||' : '&&'} `
+        );
+        return hasMultipleExpressions ? `(${expression})` : expression;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams {
@@ -134,13 +127,37 @@ export class JoinFilterExpressionParser {
         const updatedExpression = expressionParser.updateExpression(position, updateEntry, type);
 
         if (updatedExpression == null) {
-            // beyond the end of the expression, just do simple update
-            const parsedUpdateEntry = type === 'column'
-                ? { key: updateEntry.key, displayValue: this.params.columnValueCreator(updateEntry) }
-                : updateEntry;
-            return updateExpressionByWord(this.params.expression, position, parsedUpdateEntry);
+            if (type === 'column') {
+                // beyond the end of the expression, just do simple update
+                return updateExpressionByWord(this.params.expression, position, {
+                    key: updateEntry.key, displayValue: this.params.columnValueCreator(updateEntry)
+                });    
+            } else {
+                let { expression } = this.params;
+                if (expressionParserIndex === 0) {
+                    // if first operator, need to update all others
+                    for (let i = this.operatorEndPositions.length - 1; i > 0; i--) {
+                        const operatorEndPosition = this.operatorEndPositions[i];
+                        if (operatorEndPosition == null) { continue; }
+                        expression = updateExpressionByWord(expression, operatorEndPosition, updateEntry).updatedValue;
+                    }
+                }
+                return updateExpressionByWord(expression, position, updateEntry);
+            }
         }
         return updatedExpression;
+    }
+
+    public getModel(): AdvancedFilterModel {
+        if (this.expressionParsers.length > 1) {
+            return {
+                filterType: 'join',
+                type: this.parsedOperator === 'or' ? 'OR' : 'AND',
+                conditions: this.expressionParsers.map(parser => parser.getModel())
+            };
+        } else {
+            return this.expressionParsers[0].getModel();
+        }
     }
 
     private getExpressionParserIndex(position: number): number | undefined {
@@ -158,21 +175,22 @@ export class JoinFilterExpressionParser {
     }
 
     private parseOperator(): void {
-        let parsedValue = this.operators[this.activeOperator];
-        switch (parsedValue) {
-            case 'and': {
-                parsedValue = '&&';
-                break;
+        const value = this.operators[this.activeOperator]?.toLocaleLowerCase();
+        const entry = Object.entries(this.params.joinOperators).find(
+            ([_key, displayValue]) => value === displayValue.toLocaleLowerCase()
+        ) as ['and' | 'or', string] | undefined;
+        const parsedValue = entry?.[0];
+        if (this.activeOperator) {
+            if (parsedValue !== this.parsedOperator) {
+                this.valid = false;
             }
-            case 'or': {
-                parsedValue = '||';
-                break;
-            }
-            default: {
+        } else {
+            if (parsedValue) {
+                this.parsedOperator = parsedValue;
+            } else {
                 this.valid = false;
             }
         }
-        this.parsedOperators.push(parsedValue);
     }
 
     private getJoinOperatorAutocompleteType(position: number, operatorIndex?: number): AutocompleteListParams {
@@ -188,18 +206,18 @@ export class JoinFilterExpressionParser {
                 operatorEndPosition == null ? this.params.expression.length : (operatorEndPosition + 1)
             );
         }
+        // if operator already chosen, don't allow other operators
+        const entries = operatorIndex || (operatorIndex == null && this.activeOperator) ? [
+            { key:  this.parsedOperator, displayValue: this.params.joinOperators[this.parsedOperator] }
+        ] : [
+            { key: 'and', displayValue: this.params.joinOperators.and },
+            { key: 'or', displayValue: this.params.joinOperators.or }
+        ];
         return {
             enabled: true,
             type: 'join',
             searchString,
-            entries: [
-                {
-                    key: 'and',
-                },
-                {
-                    key: 'or',
-                }
-            ]
+            entries
         };
     }
 }

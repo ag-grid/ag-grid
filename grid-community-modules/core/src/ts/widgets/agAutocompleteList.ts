@@ -19,6 +19,8 @@ export class AgAutocompleteList extends PopupComponent {
 
     private virtualList: VirtualList;
 
+    private autocompleteEntries: AutocompleteEntry[];
+
     // as the user moves the mouse, the selectedValue changes
     private selectedValue: AutocompleteEntry;
 
@@ -28,6 +30,8 @@ export class AgAutocompleteList extends PopupComponent {
         autocompleteEntries: AutocompleteEntry[];
         onConfirmed: () => void;
         onCancelled: () => void;
+        useFuzzySearch?: boolean;
+        forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
     }) {
         super(AgAutocompleteList.TEMPLATE);
     }
@@ -38,13 +42,14 @@ export class AgAutocompleteList extends PopupComponent {
 
     @PostConstruct
     protected init(): void {
+        this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList('autocomplete'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
 
         this.virtualList.setModel({
-            getRowCount: () => this.params.autocompleteEntries.length,
-            getRow: (index: number) => this.params.autocompleteEntries[index]
+            getRowCount: () => this.autocompleteEntries.length,
+            getRow: (index: number) => this.autocompleteEntries[index]
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -81,7 +86,7 @@ export class AgAutocompleteList extends PopupComponent {
     public onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
-        const oldIndex = this.params.autocompleteEntries.indexOf(this.selectedValue);
+        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
         const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
 
         this.checkSetSelectedValue(newIndex);
@@ -91,23 +96,70 @@ export class AgAutocompleteList extends PopupComponent {
         this.searchString = searchString;
         if (exists(searchString)) {
             this.runSearch();
+        } else {
+            // reset
+            this.autocompleteEntries = this.params.autocompleteEntries;
+            this.virtualList.refresh();
+            this.checkSetSelectedValue(0);
         }
         this.updateSearchInList();
     }
 
-    private runSearch() {
-        const values = this.params.autocompleteEntries;
-        const searchStrings = values.map(v => v.displayValue ?? v.key);
+    private runContainsSearch(searchString: string, searchStrings: string[]): { topMatch: string | undefined, allMatches: string[] } {
+        let topMatch: string | undefined;
+        let topMatchStartsWithSearchString = false;
+        const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const allMatches = searchStrings.filter(string => {
+            const lowerCaseString = string.toLocaleLowerCase();
+            const index = lowerCaseString.indexOf(lowerCaseSearchString);
+            const startsWithSearchString = index === 0;
+            const isMatch = index >= 0;
+            // top match is shortest value that starts with the search string, otherwise shortest value that includes the search string
+            if (isMatch && (
+                !topMatch ||
+                (!topMatchStartsWithSearchString && startsWithSearchString) ||
+                (topMatchStartsWithSearchString === startsWithSearchString && string.length < topMatch.length)
+            )) {
+                topMatch = string;
+                topMatchStartsWithSearchString = startsWithSearchString;
+            }
+            return isMatch;
+        });
+        if (!topMatch && allMatches.length) {
+            topMatch = allMatches[0];
+        }
+        return { topMatch, allMatches };
+    }
 
-        const topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
+    private runSearch() {
+        const { autocompleteEntries } = this.params;
+        const searchStrings = autocompleteEntries.map(v => v.displayValue ?? v.key);
+
+        let matchingStrings: string[];
+        let topSuggestion: string | undefined;
+        if (this.params.useFuzzySearch) {
+            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true);
+            topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
+        } else {
+            const containsMatches = this.runContainsSearch(this.searchString, searchStrings);
+            matchingStrings = containsMatches.allMatches;
+            topSuggestion = containsMatches.topMatch;
+        }
+
+        let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) => matchingStrings.includes(displayValue ?? key));
+        if (!filteredEntries.length && this.selectedValue && this.params?.forceLastSelection?.(this.selectedValue, this.searchString)) {
+            filteredEntries = [this.selectedValue];
+        }
+        this.autocompleteEntries = filteredEntries;
+        this.virtualList.refresh();
 
         if (!topSuggestion) {
             return;
         }
 
-        const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
+        const topSuggestionIndex = matchingStrings.indexOf(topSuggestion);
 
-        this.setSelectedValue(topSuggestionIndex);
+        this.checkSetSelectedValue(topSuggestionIndex);
     }
 
     private updateSearchInList(): void {
@@ -115,13 +167,13 @@ export class AgAutocompleteList extends PopupComponent {
     }
 
     private checkSetSelectedValue(index: number): void {
-        if (index >= 0 && index < this.params.autocompleteEntries.length) {
+        if (index >= 0 && index < this.autocompleteEntries.length) {
             this.setSelectedValue(index);
         }
     }
 
     private setSelectedValue(index: number): void {
-        const value = this.params.autocompleteEntries[index];
+        const value = this.autocompleteEntries[index];
 
         if (this.selectedValue === value) { return; }
 

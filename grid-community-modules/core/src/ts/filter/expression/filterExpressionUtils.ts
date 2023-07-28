@@ -11,6 +11,8 @@ export interface FilterExpressionParserParams {
     columnValueCreator: (updateEntry: AutocompleteEntry) => string;
     colIdResolver: (columnName: string) => string | null;
     operators: FilterExpressionOperators;
+    joinOperators: { and: string, or: string };
+    translate: (key: string, defaultValue: string, variableValues?: string[]) => string;
 }
 
 export interface AutocompleteUpdate {

@@ -26,10 +26,20 @@ export class AgAutocompleteRow extends Component {
     }
 
     public setSearchString(searchString: string): void {
-        if (exists(searchString) && this.value?.toLocaleLowerCase().startsWith(searchString.toLocaleLowerCase())) {
-            this.hasHighlighting = true;
-            this.getGui().lastElementChild!.innerHTML = `<b>${escapeString(this.value.slice(0, searchString.length))}</b>${escapeString(this.value.slice(searchString.length))}`;
-        } else if (this.hasHighlighting) {
+        let keepHighlighting = false;
+        if (exists(searchString)) {
+            const index = this.value?.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
+            if (index >= 0) {
+                keepHighlighting = true;
+                this.hasHighlighting = true;
+                const highlightEndIndex = index + searchString.length;
+                const startPart = escapeString(this.value.slice(0, index));
+                const highlightedPart = escapeString(this.value.slice(index, highlightEndIndex));
+                const endPart = escapeString(this.value.slice(highlightEndIndex));
+                this.getGui().lastElementChild!.innerHTML = `${startPart}<b>${highlightedPart}</b>${endPart}`;
+            }
+        }
+        if (!keepHighlighting && this.hasHighlighting) {
             this.hasHighlighting = false;
             this.render();
         }

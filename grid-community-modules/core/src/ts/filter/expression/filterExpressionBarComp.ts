@@ -33,6 +33,7 @@ export class FilterExpressionBarComp extends Component {
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())
+            .setForceLastSelection((lastSelection, searchString) => this.forceLastSelection(lastSelection, searchString))
             .setInputAriaLabel(translate('ariaLabelFilterExpressionInput', 'Advanced Filter Input'))
             .setListAriaLabel(translate('ariaLabelFilterExpressionAutocomplete', 'Advanced Filter Autocomplete'));
 
@@ -58,8 +59,9 @@ export class FilterExpressionBarComp extends Component {
 
     private onValueConfirmed(value: string | null, isValid: boolean): void {
         if (!isValid) { return; }
-        this.filterManager.setFilterExpression(value);
         setDisabled(this.eApplyFilterButton, true);
+        this.filterExpressionService.setExpressionDisplayValue(value);
+        this.filterManager.onFilterChanged();
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {
@@ -88,5 +90,9 @@ export class FilterExpressionBarComp extends Component {
     ): AutocompleteUpdate {
         this.filterExpressionService.updateAutocompleteCache(updateEntry, type);
         return this.expressionParser?.updateExpression(position, updateEntry, type) ?? this.filterExpressionService.getDefaultExpression(updateEntry);
+    }
+
+    private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {
+        return !!searchString.toLocaleLowerCase().match(`^${(displayValue ?? key).toLocaleLowerCase()}\\s*$`);
     }
 }

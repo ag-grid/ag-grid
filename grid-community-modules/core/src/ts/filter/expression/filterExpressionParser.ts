@@ -1,6 +1,7 @@
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
 import { AutocompleteUpdate, FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AdvancedFilterModel } from "./filterExpressionModel";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -8,10 +9,11 @@ export class FilterExpressionParser {
 
     constructor(private params: FilterExpressionParserParams) {}
 
-    public parseExpression(): void {
+    public parseExpression(): this {
         this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);
         const i = this.joinExpressionParser.parseExpression();
         this.valid = i >= this.params.expression.length - 1 && this.joinExpressionParser.isValid();
+        return this;
     }
 
     public isValid(): boolean {
@@ -19,7 +21,7 @@ export class FilterExpressionParser {
     }
 
     public getValidationMessage(): string | null {
-        return this.joinExpressionParser.getValidationMessage();
+        return this.params.translate('filterExpressionInvalid', 'Invalid Filter Value');
     }
 
     public getExpression(): string {
@@ -32,5 +34,9 @@ export class FilterExpressionParser {
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
         return this.joinExpressionParser.updateExpression(position, updateEntry, type);
+    }
+
+    public getModel(): AdvancedFilterModel | null {
+        return this.isValid() ? this.joinExpressionParser.getModel() : null;
     }
 }

@@ -23,6 +23,7 @@ import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
 import { FilterExpressionService } from './expression/filterExpressionService';
+import { AdvancedFilterModel } from './expression/filterExpressionModel';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -921,12 +922,12 @@ export class FilterManager extends BeanStub {
         return !isSameComponentClass;
     }
 
-    public getFilterExpression(): string | null {
-        return this.filterExpressionService.getExpression();
+    public getFilterExpression(): AdvancedFilterModel | null {
+        return this.filterExpressionService.getModel();
     }
 
-    public setFilterExpression(expression: string | null): void {
-        this.filterExpressionService.setExpression(expression);
+    public setFilterExpression(expression: AdvancedFilterModel | null): void {
+        this.filterExpressionService.setModel(expression);
         this.onFilterChanged();
     }
 

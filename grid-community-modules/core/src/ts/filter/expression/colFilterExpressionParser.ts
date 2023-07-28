@@ -1,6 +1,7 @@
 import { Column } from "../../entities/column";
 import { BaseCellDataType } from "../../entities/dataType";
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { AdvancedFilterModel } from "./filterExpressionModel";
 import { AutocompleteUpdate, FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionFromStart } from "./filterExpressionUtils";
 
 export class ColFilterExpressionParser {
@@ -122,10 +123,6 @@ export class ColFilterExpressionParser {
         return this.valid && this.complete;
     }
 
-    public getValidationMessage(): string | null {
-        return 'TODO';
-    }
-
     public getExpression(): string {
         const operands = this.expectedNumOperands === 0 ? '' : `, ${this.operands.join(', ')}`;
         return `expressionProxy.operators.${this.baseCellDataType}.operators.${this.parsedOperator}.evaluator(expressionProxy.getValue('${this.colId}', node), node, expressionProxy.getParams('${this.colId}')${operands})`;
@@ -161,6 +158,22 @@ export class ColFilterExpressionParser {
             );
         }
         return null;
+    }
+
+    public getModel(): AdvancedFilterModel {
+        const model = {
+            filterType: this.baseCellDataType,
+            colId: this.colId!,
+            type: this.parsedOperator,
+        };
+        const unquote = (operand: string) => operand.slice(1, operand.length - 2);
+        switch (this.operands.length) {
+            case 2:
+                (model as any).filterTo = unquote(this.operands[1]);
+            case 1:
+                (model as any).filter = unquote(this.operands[0]);
+        }
+        return model as AdvancedFilterModel;
     }
 
     private isColumnPosition(position: number): boolean {

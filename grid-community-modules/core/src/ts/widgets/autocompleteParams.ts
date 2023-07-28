@@ -8,5 +8,5 @@ export interface AutocompleteListParams {
 
 export interface AutocompleteEntry {
     key: string;
-    displayValue?: any;
+    displayValue?: string;
 }

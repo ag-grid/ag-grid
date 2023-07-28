@@ -47,6 +47,7 @@ export class AgAutocomplete extends Component {
     private listAriaLabel: string;
     private listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
     private validator?: (value: string | null) => string | null;
+    private forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
 
     constructor() {
         super(/* html */`
@@ -241,7 +242,8 @@ export class AgAutocomplete extends Component {
             onCancelled: () => {
                 this.closeList();
                 this.setCaret(this.lastPosition);
-            }
+            },
+            forceLastSelection: this.forceLastSelection
         }));
         const ePopupGui = this.autocompleteList.getGui();
 
@@ -318,5 +320,10 @@ export class AgAutocomplete extends Component {
         this.eAutocompleteInput.setValue(value, true);
         this.setCaret(position);
         this.updateValue(value);
+    }
+
+    public setForceLastSelection(forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean): this {
+        this.forceLastSelection = forceLastSelection;
+        return this;
     }
 }
