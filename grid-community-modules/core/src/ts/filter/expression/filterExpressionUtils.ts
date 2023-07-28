@@ -77,3 +77,14 @@ export function updateExpression(expression: string, startPosition: number, endP
     const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(endPosition + 1);
     return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
 }
+
+export function checkAndUpdateExpression(params: FilterExpressionParserParams, userValue: string, displayValue: string, endPosition: number): void {
+    if (displayValue !== userValue) {
+        params.expression = updateExpression(
+            params.expression,
+            endPosition - userValue.length + 1,
+            endPosition,
+            displayValue
+        ).updatedValue;
+    }
+}

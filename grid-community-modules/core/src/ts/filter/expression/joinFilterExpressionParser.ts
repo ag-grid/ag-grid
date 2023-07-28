@@ -1,7 +1,7 @@
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { AdvancedFilterModel } from "./filterExpressionModel";
-import { AutocompleteUpdate, FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionByWord } from "./filterExpressionUtils";
+import { AutocompleteUpdate, checkAndUpdateExpression, FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
 
 export class JoinFilterExpressionParser {
     private valid: boolean = true;
@@ -197,30 +197,19 @@ export class JoinFilterExpressionParser {
             if (parsedValue !== this.parsedOperator) {
                 this.valid = false;
             } else if (operator !== displayValue) {
-                this.checkAndUpdateExpression(operator, displayValue!, endPosition);
+                checkAndUpdateExpression(this.params, operator, displayValue!, endPosition);
                 this.operators[this.activeOperator];
             }
         } else {
             if (parsedValue) {
                 this.parsedOperator = parsedValue;
                 if (operator !== displayValue) {
-                    this.checkAndUpdateExpression(operator, displayValue!, endPosition);
+                    checkAndUpdateExpression(this.params, operator, displayValue!, endPosition);
                     this.operators[this.activeOperator];
                 }
             } else {
                 this.valid = false;
             }
-        }
-    }
-
-    private checkAndUpdateExpression(userValue: string, displayValue: string, endPosition: number): void {
-        if (displayValue !== userValue) {
-            this.params.expression = updateExpression(
-                this.params.expression,
-                endPosition - userValue.length + 1,
-                endPosition,
-                displayValue
-            ).updatedValue;
         }
     }
 
