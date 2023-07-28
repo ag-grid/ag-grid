@@ -974,6 +974,12 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
         this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
+    public getStaticCssClasses(): string[] {
+        const heightCssClass = 
+        this.column.isAutoHeight() == true ? CSS_AUTO_HEIGHT : CSS_NORMAL_HEIGHT;
+        
+        return [CSS_CELL, CSS_CELL_NOT_INLINE_EDITING, heightCssClass];
+    }
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }

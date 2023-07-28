@@ -157,10 +157,10 @@ const CellComp = (props: {
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
-
+    
     const eCellWrapper = useRef<HTMLDivElement>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
-
+    
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement>();
     const [cellValueVersion, setCellValueVersion] = useState(0);
@@ -171,6 +171,16 @@ const CellComp = (props: {
     
     const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
     const showCellWrapper = forceWrapper || showTools;
+
+    const staticCssClassesCtrl = useMemo(() => {
+        const classes = cellCtrl.getStaticCssClasses();
+        if(!showCellWrapper) {
+            classes.push('ag-cell-value');
+        }
+        return classes;
+    }, []);
+    const staticCssClasses = useRef(staticCssClassesCtrl.join(' '));
+    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!, staticCssClassesCtrl), []);
 
     const setCellEditorRef = useCallback((popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
@@ -197,7 +207,6 @@ const CellComp = (props: {
         [setCellEditorRef]
     );
 
-    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
@@ -391,7 +400,7 @@ const CellComp = (props: {
             // If it is editing then it is likely the focus was moved to the editor and we should not move it back.
             eGui.current.focus({ preventScroll: true });
         }
-    });
+    }, [showCellWrapper, editDetails, cellCtrl, cssClassManager]);
 
 
     const showContents = () => (
@@ -427,6 +436,7 @@ const CellComp = (props: {
             tabIndex={ tabIndex }
             role={'gridcell'}
             col-id={colId}
+            className={ staticCssClasses.current }
         >
             { showCellWrapper
                 ? (

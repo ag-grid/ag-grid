@@ -6,8 +6,9 @@ export class CssClassManager {
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: { [cssClass: string]: boolean } = {};
 
-    constructor(getGui: () => HTMLElement) {
+    constructor(getGui: () => HTMLElement, initialClasses?: string[]) {
         this.getGui = getGui;
+        initialClasses?.forEach(cls => this.cssClassStates[cls] = true);
     }
 
     public addCssClass(className: string): void {
@@ -67,7 +68,14 @@ export class CssClassManager {
             }
         }
 
-        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
+        const currentState = this.cssClassStates[className];
+        if(!addOrRemove && currentState === undefined) {
+            // we don't need to remove a class that was never added
+            this.cssClassStates[className] = addOrRemove;
+            return;
+        }
+
+        const updateNeeded = currentState !== addOrRemove;
         if (updateNeeded && className.length) {
             const eGui = this.getGui();
             if (eGui) {
