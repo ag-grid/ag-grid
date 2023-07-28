@@ -1,14 +1,34 @@
 import React from 'react';
-import { Announcement } from './Announcement';
+import {Announcement} from './Announcement';
+import { hostPrefix } from '../utils/consts';
 import styles from './Announcements.module.scss';
+import versionStyles from './Version.module.scss';
 import DocumentationLink from './DocumentationLink';
 import Version from './Version';
+import {Icon} from "./Icon";
 
 /**
  * These are the announcement cards shown underneath the left-hand navigation menu.
  */
-const Announcements = ({ framework }) => (
+const Announcements = ({framework}) => (
     <>
+        <div className={styles.versions}>
+            <div className={versionStyles.version}>
+            <header>
+                <b className="font-size-large">Version 30.0.6</b>
+                <span className="text-secondary font-size-large">Jul 28</span>
+                <a href={"blog.ag-grid.com/ag-grid-es-modules-and-commonjs/"}>ES Modules & CommonJS</a>
+            </header>
+            <a
+                className="font-size-small"
+                href={`${hostPrefix}/changelog/?fixVersion=30.0.6`}
+                target="_blank"
+                rel="noreferrer"
+            >
+                30.0.6 change log <Icon name="arrowRight" />
+            </a>
+            </div>
+        </div>
         <div className={styles.versions}>
             <Version
                 version="30.0.0"
@@ -34,7 +54,7 @@ const Announcements = ({ framework }) => (
             ></Version>
         </div>
 
-        <SimpleMailingListSignup />
+        <SimpleMailingListSignup/>
 
         <Announcement title="Community or Enterprise?">
             <p className="font-size-small">
@@ -81,7 +101,7 @@ const SimpleMailingListSignup = () => {
                             placeholder="email address"
                             required
                         />
-                        <div style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true">
+                        <div style={{position: 'absolute', left: '-5000px'}} aria-hidden="true">
                             <input
                                 type="text"
                                 name="b_9b44b788c97fa5b498fbbc9b5_9353cf87ce"
