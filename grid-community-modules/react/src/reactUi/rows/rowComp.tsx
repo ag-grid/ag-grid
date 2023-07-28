@@ -20,7 +20,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getRowStyles());
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(
-        isFullWidth ? null : getNextValue([], rowCtrl.getCellCtrlsForContainer(containerType), domOrderRef.current));
+        isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType));
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
@@ -93,9 +93,11 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-               // agFlushSync(useFlushSync, () => {
+                //DO we need to flushSync here anymore? Initial render has the cells in normal use case.
+                // Does it change for if cell renderers are used? As they are set in second pass.
+                //agFlushSync(useFlushSync, () => {
                     setCellCtrls(prev => getNextValue(prev, next, domOrderRef.current));
-               // });
+                //});
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,

@@ -83,11 +83,13 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                     }
                 },
                 setRowCtrls: (rowCtrls, useFlushSync) => {
-                    if (rowCtrlsRef.current !== rowCtrls) {
-                        const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
-                        rowCtrlsRef.current = rowCtrls;
-                        updateRowCtrlsOrdered(useFlush);
+                    //If the reference is the same, we don't need to do anything, or if both are empty
+                    if(rowCtrlsRef.current === rowCtrls || (rowCtrlsRef.current.length === 0 && rowCtrls.length === 0)) {
+                        return;
                     }
+                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                    rowCtrlsRef.current = rowCtrls;
+                    updateRowCtrlsOrdered(useFlush);
                 },
                 setDomOrder: domOrder => {
                     if (domOrderRef.current != domOrder) {

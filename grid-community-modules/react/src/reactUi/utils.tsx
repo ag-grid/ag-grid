@@ -81,7 +81,7 @@ export function getNextValue<T extends { getInstanceId: () => string }>(prev: T[
     // If maintaining dom order just return next
     // If prev is empty just return next immediately as no previous order to maintain
     // If prev was not empty but next is empty return next immediately
-    if (maintainOrder || (prev.length === 0 && next.length > 0) || (prev.length > 0 && next.length > 0)) {
+    if (maintainOrder || (prev.length === 0 && next.length > 0) || (prev.length > 0 && next.length === 0)) {
         return next;
     }
 
