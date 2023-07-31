@@ -8,33 +8,26 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-| ## Testing with Jest
+| ## Testing with Jest 
 | 
+| If you're using [Modules](/packages-modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using Packages then this configuration is not required.
+|
 | In order to test AG Grid with Jest you'll need to make the following configuration changes:
 |
-| In `jest.config.js` add the following line:
+| In `jest.config.js` add the following lines:
 |
-| `resolver: '&lt;rootDir>myResolver.js',`
-|
-| Then create a file called `myResolver.js` in the root directory of your project:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-|module.exports = (request, options) => {
-|    return options.defaultResolver(request, {
-|        ...options,
-|        packageFilter: pkg => {
-|            const packageName = pkg.name;
-|            const agDependency = packageName.startsWith("@ag-grid") || packageName.startsWith("ag-grid");
-|            return {
-|                ...pkg,
-|                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
-|                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
-|            };
-|        },
-|    });
-|};
+|module.exports = {
+|  "transform": {
+|    "^.+\\.(ts|tsx|js|jsx|mjs)$": [
+|      "babel-jest"  // or "ts-test" or whichever transformer you're using
+|    ]
+|  },
+|  transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
+}
 </snippet>
 </framework-specific-section>
 
@@ -407,6 +400,42 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
+| ### Using Jest with Angular (for example with an Nx/Angular project)
+|
+| In order to test AG Grid with Jest you'll need to make the following configuration changes:
+|
+| In `jest.config.js` add the following line:
+|
+| `resolver: '&lt;rootDir>myResolver.js',`
+|
+| Then create a file called `myResolver.js` in the root directory of your project:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+|module.exports = (request, options) => {
+|    return options.defaultResolver(request, {
+|        ...options,
+|        packageFilter: pkg => {
+|            const packageName = pkg.name;
+|            if(packageName === '@ag-grid-community/angular') {
+|                return {
+|                    ...pkg,
+|                };
+|            }
+|            const agDependency = packageName.startsWith("@ag-grid");
+|            return {
+|                ...pkg,
+|                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
+|                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
+|            };
+|        },
+|    });
+|};
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | We will walk through how you can use testing AG Grid as part of your Angular application,
 | using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
 |
@@ -640,42 +669,6 @@ testing with AG Grid in this section.
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-| ### Using Jest with Angular (for example with an Nx/Angular project)
-|
-| In order to test AG Grid with Jest you'll need to make the following configuration changes:
-|
-| In `jest.config.js` add the following line:
-|
-| `resolver: '&lt;rootDir>myResolver.js',`
-|
-| Then create a file called `myResolver.js` in the root directory of your project:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
-|module.exports = (request, options) => {
-|    return options.defaultResolver(request, {
-|        ...options,
-|        packageFilter: pkg => {
-|            const packageName = pkg.name;
-|            if(packageName === '@ag-grid-community/angular' || packageName === 'ag-grid-angular') {
-|                return {
-|                    ...pkg,
-|                };
-|            }
-|            const agDependency = packageName.startsWith("@ag-grid") || packageName.startsWith("ag-grid");
-|            return {
-|                ...pkg,
-|                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
-|                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
-|            };
-|        },
-|    });
-|};
-</snippet>
-</framework-specific-section>
-
 
 <framework-specific-section frameworks="angular">
 |## Next Up
@@ -684,11 +677,30 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
+| ## Testing with Jest 
+| 
+| If you're using [Modules](/packages-modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using Packages then this configuration is not required.
+|
+| In order to test AG Grid with Jest you'll need to make the following configuration changes:
+|
+| In `jest.config.js` add the following lines:
+|
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| We will walk through how you can use testing AG Grid as part of your React application, using default
-| build tools provided when using the [Create React App](https://github.com/facebook/create-react-app) utility.
+<snippet transform={false}>
+|module.exports = {
+|  "transform": {
+|    "^.+\\.(ts|tsx|js|jsx|mjs)$": [
+|      "babel-jest"  // or "ts-test" or whichever transformer you're using
+|    ]
+|  },
+|  transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
+}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |
 | ## Waiting for the Grid to be Initialised
 |

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
+          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -32869,7 +32869,7 @@ function applySeriesValues(target, options, _a) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '8.0.5';
+var VERSION$1 = '8.0.6';
 
 var __extends$_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -41373,7 +41373,7 @@ var GridChartComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.5';
+var VERSION = '30.0.6';
 
 var __assign$1 = (undefined && undefined.__assign) || function () {
     __assign$1 = Object.assign || function(t) {

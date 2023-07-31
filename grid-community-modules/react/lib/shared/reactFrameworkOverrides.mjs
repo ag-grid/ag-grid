@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { VanillaFrameworkOverrides } from "@ag-grid-community/core";
 import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer.mjs";
 import DetailCellRenderer from "../reactUi/cellRenderer/detailCellRenderer.mjs";

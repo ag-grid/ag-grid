@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.5
+// ag-grid-react v30.0.6
 export declare const classesList: (...list: (string | null | undefined)[]) => string;
 export declare class CssClasses {
     private classesMap;

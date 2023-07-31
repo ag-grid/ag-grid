@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { useEffect } from 'react';
 const useReactCommentEffect = (comment, eForCommentRef) => {
     useEffect(() => {

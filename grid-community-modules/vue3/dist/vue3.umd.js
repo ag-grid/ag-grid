@@ -47652,7 +47652,7 @@ var BarColumnLabelPlacement;
 // CONCATENATED MODULE: ../core/dist/esm/es6/main.mjs
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.5
+ * @version v30.0.6
  * @link https://www.ag-grid.com/
  * @license MIT
  */

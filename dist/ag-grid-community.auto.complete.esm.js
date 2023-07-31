@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.5
+          * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -44305,7 +44305,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.5
+ * @version v30.0.6
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -46094,7 +46094,7 @@ ImmutableService = __decorate$5([
 ], ImmutableService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '30.0.5';
+const VERSION$2 = '30.0.6';
 
 const ClientSideRowModelModule = {
     version: VERSION$2,
@@ -46783,7 +46783,7 @@ InfiniteRowModel = __decorate$2([
 ], InfiniteRowModel);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '30.0.5';
+const VERSION$1 = '30.0.6';
 
 const InfiniteRowModelModule = {
     version: VERSION$1,
@@ -47503,7 +47503,7 @@ GridSerializer = __decorate([
 ], GridSerializer);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.5';
+const VERSION = '30.0.6';
 
 const CsvExportModule = {
     version: VERSION,

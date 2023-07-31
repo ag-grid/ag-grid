@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.5
+// ag-grid-react v30.0.6
 import { Context, UserCompDetails } from 'ag-grid-community';
 import { MutableRefObject } from 'react';
 /**

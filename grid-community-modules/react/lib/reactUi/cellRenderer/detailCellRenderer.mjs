@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import React, { useState, useMemo, useRef, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
 import { CssClasses } from "../utils.mjs";
 import { ModuleRegistry } from "@ag-grid-community/core";

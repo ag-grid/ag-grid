@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.5
+// @ag-grid-community/react v30.0.6
 import { GroupCellRendererCtrl, _ } from "@ag-grid-community/core";
 import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { BeansContext } from "../beansContext.mjs";
