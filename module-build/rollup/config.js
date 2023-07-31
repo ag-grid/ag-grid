@@ -68,7 +68,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './esm-main.auto.js',
             format: 'es',
             env: 'development',
-            extension: '.auto.esm.mjs',
+            extension: '.auto.esm.js',
+            useEsmEs5: true,
             config: {
                 external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
             },
@@ -93,7 +94,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             inputMainFile: './esm-main.auto.js',
             format: 'es',
             env: 'production',
-            extension: '.auto.esm.min.mjs',
+            extension: '.auto.esm.min.js',
+            useEsmEs5: true,
             config: {
                 external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
             },
@@ -150,7 +152,7 @@ function genConfig(build, sourceDirectory, moduleName) {
         ...(build.config ? build.config : {}),
         input: path.resolve(sourceDirectory, build.inputMainFile),
         plugins: [
-            nodeResolve()      // for utils package - defaulting to use index.js
+            nodeResolve({useEsmEs5: build.useEsmEs5})      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
