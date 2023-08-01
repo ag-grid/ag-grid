@@ -8,11 +8,11 @@ export default (props: ITooltipParams & { type: string }) => {
 
     const onFormSubmit = (e: any) => {
         e.preventDefault();
-        const { node, column } = props;
+        const { node } = props;
         const target = inputEl.current as HTMLInputElement;
 
         if (target.value && node) {
-            node.setDataValue(column as any, target.value);
+            node.setDataValue('athlete', target.value);
             if (props.hideTooltipCallback) {
                 props.hideTooltipCallback();
             }
@@ -26,7 +26,7 @@ export default (props: ITooltipParams & { type: string }) => {
             </div>
             <form className="panel-body" onSubmit={onFormSubmit}>
                 <div className="form-group">
-                    <input type="text" className="form-control" id="name" placeholder="Name" autoComplete="off" defaultValue={data.athlete} onFocus={ e => e.target.select() } />
+                    <input type="text" ref={inputEl} className="form-control" id="name" placeholder="Name" autoComplete="off" defaultValue={data.athlete} onFocus={ e => e.target.select() } />
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
                 <p>Total: {data.total}</p>

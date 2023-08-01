@@ -35,12 +35,12 @@ export class CustomTooltip implements ITooltipComp {
     onFormSubmit(e: Event) {
         e.preventDefault();
         const { params } = this;
-        const { node, column } = params;
+        const { node } = params;
 
         const target = ((e.target as Element).querySelector('input') as HTMLInputElement);
 
         if (target?.value) {
-            node?.setDataValue(column as any, target.value);
+            node?.setDataValue('athlete', target.value);
             if (this.params.hideTooltipCallback) {
                 this.params.hideTooltipCallback();
             }

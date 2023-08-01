@@ -34,12 +34,12 @@ export default {
     onFormSubmit(e) {
       e.preventDefault();
           const { params } = this;
-          const { node, column } = params;
+          const { node } = params;
   
           const target = e.target.querySelector('input');
   
           if (target.value) {
-              node.setDataValue(column, target.value);
+              node.setDataValue('athlete', target.value);
               if (this.params.hideTooltipCallback) {
                   this.params.hideTooltipCallback();
               }

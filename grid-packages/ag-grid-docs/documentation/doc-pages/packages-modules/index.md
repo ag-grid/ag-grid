@@ -8,7 +8,12 @@ There are two main ways to add AG Grid to your application depending on your req
 
 [Packages](/packages/) are the easiest way to use AG Grid as every feature is implicitly available. However, this will mean that your application bundle includes every grid feature, some of which are not required by your application and so bloat your bundle size.
 
+Packages also default to **CommonJS ES5** format which will generally make integration into other build & testing tools (specifically Jest) easier. 
+
 [Modules](/modules) are suitable if bundle size is critical to your application. They enable you to only include the functionality you need resulting in a minimal bundle size at the cost of additional config required to register modules in your application.
+
+Modules also default to **ES6 ES Modules** - this alone generally results in an overall bundle size of 10-15% but not all tooling supports ESM out of the box yet (specifically testing tools such as Jest). All 
+off these tools can be accommodated but extra configuration would be required (see [Testing](/testing) for more details).
 
 If you're unsure whether to use `packages` or `modules` then we'd recommend starting with `packages` as every grid feature is available and you do not have to worry about registering modules.
 

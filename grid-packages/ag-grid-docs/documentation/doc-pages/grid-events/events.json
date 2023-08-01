@@ -302,5 +302,16 @@
             }
         },
         "pinnedRowDataChanged": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Tooltips",
+            "page": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip/"
+            }
+        },
+        "tooltipShow": {},
+        "tooltipHide": {}
     }
 }

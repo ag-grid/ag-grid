@@ -54,8 +54,8 @@
                 defaultExtension: 'jsx'
             },
             'ag-grid-react': {
-                main: './lib/main.mjs',
-                defaultExtension: 'mjs'
+                main: './lib/main.js',
+                defaultExtension: 'js'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.min.js',

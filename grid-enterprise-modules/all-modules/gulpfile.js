@@ -88,6 +88,11 @@ const webpackTask = (minify, styles, libraryTarget) => {
                 ] : [],
             },
             devtool: false,
+            resolve: {
+                alias: {
+                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/esm/es6/main.mjs')
+                }
+            },
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,

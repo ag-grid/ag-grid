@@ -3,10 +3,9 @@
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "module": "ES6",
-    "target": "ES6",
+    "module": "commonjs",
+    "target": "es5",
     "jsx": "react",
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "types": [
       "react",
