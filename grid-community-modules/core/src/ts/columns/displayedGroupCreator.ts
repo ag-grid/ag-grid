@@ -1,12 +1,10 @@
 import { Column, ColumnPinnedType } from "../entities/column";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { last } from "../utils/array";
 import { exists } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
@@ -160,37 +158,5 @@ export class DisplayedGroupCreator extends BeanStub {
                 this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
-    }
-
-    private getOriginalPathForColumn(balancedColumnTree: IProvidedColumn[], column: Column): ProvidedColumnGroup[] | null {
-        const result: ProvidedColumnGroup[] = [];
-        let found = false;
-
-        const recursePath = (columnTree: IProvidedColumn[], dept: number): void => {
-            for (let i = 0; i < columnTree.length; i++) {
-                // quit the search, so 'result' is kept with the found result
-                if (found) { return; }
-
-                const node = columnTree[i];
-
-                if (node instanceof ProvidedColumnGroup) {
-                    recursePath(node.getChildren(), dept + 1);
-                    result[dept] = node;
-                } else if (node === column) {
-                    found = true;
-                }
-            }
-        };
-
-        recursePath(balancedColumnTree, 0);
-
-        // it's possible we didn't find a path. this happens if the column is generated
-        // by the grid (auto-group), in that the definition didn't come from the client. in this case,
-        // we create a fake original path.
-        if (found) { return result; }
-
-        console.warn('AG Grid: could not get path');
-
-        return null;
     }
 }

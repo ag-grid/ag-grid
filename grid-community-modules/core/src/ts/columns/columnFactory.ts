@@ -111,6 +111,10 @@ export class ColumnFactory extends BeanStub {
             nextChild = autoGroup;
         }
 
+        if (dept === 0) {
+            column.setOriginalParent(null);
+        }
+
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     }
