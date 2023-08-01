@@ -11,6 +11,11 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
+    public onParamsUpdated(params: IFloatingFilterParams<TextFilter>): void {
+        super.onParamsUpdated(params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+    }
+
     protected getDefaultFilterOptions(): string[] {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
@@ -19,9 +24,7 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
         return this.filterModelFormatter;
     }
 
-    protected createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService {
-        return this.createManagedBean(new FloatingFilterTextInputService({
-            ariaLabel
-        }));
+    protected createFloatingFilterInputService(): FloatingFilterInputService {
+        return this.createManagedBean(new FloatingFilterTextInputService());
     }
 }

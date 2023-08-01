@@ -3818,7 +3818,20 @@ export class ColumnModel extends BeanStub {
         //
         // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
         // for this reason we need to manually dispatch resize events after the resize has been done for each column.
-        colsToSpread.forEach(column => column.resetActualWidth(source));
+        colsToSpread.forEach(column => {
+            column.resetActualWidth(source);
+
+            const widthOverride = limitsMap?.[column.getId()];
+            const minOverride = (widthOverride?.minWidth ?? params?.defaultMinWidth);
+            const maxOverride = (widthOverride?.maxWidth ?? params?.defaultMaxWidth);
+
+            const colWidth = column.getActualWidth();
+            if (typeof minOverride === 'number' && colWidth < minOverride) {
+                column.setActualWidth(minOverride, source, true);
+            } else if (typeof maxOverride === 'number' && colWidth > maxOverride) {
+                column.setActualWidth(maxOverride, source, true);
+            }
+        });
 
         while (!finishedResizing) {
             finishedResizing = true;
@@ -3828,7 +3841,7 @@ export class ColumnModel extends BeanStub {
                 colsToSpread.forEach((column: Column) => {
                     const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth;
                     if (typeof widthOverride === 'number') {
-                        column.setActualWidth(widthOverride);
+                        column.setActualWidth(widthOverride, source, true);
                         return;
                     }
                     column.setMinimum(source);

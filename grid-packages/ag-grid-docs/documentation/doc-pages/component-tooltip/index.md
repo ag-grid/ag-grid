@@ -89,7 +89,35 @@ The example below enables mouse tracking to demonstrate a scenario where tooltip
 
 <grid-example title='Tooltip Mouse Tracking' name='tooltip-mouse-tracking' type='generated' options='{ "extras": ["bootstrap"] }'></grid-example>
 
-## Example: Using Browser Tooltips
+## Interactive Tooltips
+
+By default, it is impossible to click on tooltips and hovering them has no effect. If `tooltipInteraction=true` is set in the gridOptions, the tooltips will not disappear while being hovered and you will be able to click and select the text within the tooltip.
+
+<snippet>
+const gridOptions = {
+    tooltipInteraction: true
+}
+</snippet>
+
+The example below enables tooltip interaction to demonstrate a scenario where tooltips will not disappear while hovered. Note following: 
+
+- Tooltip is enabled for the **Athlete** and **Country** columns.
+- Tooltips will not disappear while being hovered.
+- Tooltips content can be selected and copied.
+
+<grid-example title='Tooltip Interaction' name='tooltip-interaction' type='generated'></grid-example>
+
+## Interactive Custom Tooltips
+
+The example below enables tooltip interaction with custom tooltips. Note following:
+
+- Tooltip is enabled for the Athlete and Country columns.
+- Tooltips will not disappear while being hovered.
+- The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
+
+<grid-example title='Custom Tooltip Interaction' name='custom-tooltip-interaction' type='generated' options='{ "extras": ["bootstrap"]}'></grid-example>
+
+## Using Browser Tooltips
 
 The example below demonstrates how to use the default browser tooltips.
 
