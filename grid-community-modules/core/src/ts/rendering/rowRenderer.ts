@@ -668,7 +668,7 @@ export class RowRenderer extends BeanStub {
                 }
             });
 
-        this.refreshFullWidthRows(params.rowNodes);
+        this.refreshFullWidthRows(params.rowNodes as RowNode[]);
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
@@ -1041,37 +1041,42 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    public refreshFullWidthRow(rowNode: RowNode) {
-        this.refreshFullWidthRows([rowNode]);
+    public refreshFullWidthRow(rowNode: RowNode, suppressEvent = false) {
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
+                const ctrl = dataStruct[rowNode.rowIndex!];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
+            }
+
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
+            }
+        }
+
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
 
-    private refreshFullWidthRows(rowNodes?: IRowNode[]) {
-        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
-
-        let redraw = false;
-        const indicesToForce: number[] = [];
-        fullWidthCtrls.forEach(fullWidthCtrl => {
-            const refreshed = fullWidthCtrl.refreshFullWidth();
-            if (refreshed) {
-                return;
-            }
-
-            const node = fullWidthCtrl.getRowNode();
-            if (node.sticky) {
-                this.stickyRowFeature.refreshStickyNode(node);
-            } else {
-                indicesToForce.push(node.rowIndex!);
-            }
-            redraw = true;
-        });
-
-        if (indicesToForce.length > 0) {
-            this.removeRowCtrls(indicesToForce);
-        }
-
-        if (redraw) {
-            this.redraw();
-        }
+    private refreshFullWidthRows(rowNodes?: RowNode[]) {
+        rowNodes?.forEach(node => this.refreshFullWidthRow(node, true));
+        this.dispatchDisplayedRowsChanged(false);
     }
 
     private createOrUpdateRowCtrl(

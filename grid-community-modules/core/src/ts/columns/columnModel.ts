@@ -274,13 +274,13 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsService.isTreeData();
 
-        this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('groupDisplayType', () => this.onGroupDisplayTypeChanged());
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('columnTypes', (params) => this.onSharedColDefChanged(params.source));
     }
 
-    private onAutoGroupColumnDefChanged() {
+    private onGroupDisplayTypeChanged() {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) { return; }
 
@@ -290,9 +290,18 @@ export class ColumnModel extends BeanStub {
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
+    private onAutoGroupColumnDefChanged() {
+        if (this.groupAutoColumns) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
+        }
+    }
+
     private onSharedColDefChanged(source: ColumnEventType = 'api'): void {
-        // likewise for autoGroupCol, the default col def impacts this
-        this.forceRecreateAutoGroups = true;
+        // if we aren't going to force, update the auto cols in place
+        if (!this.forceRecreateAutoGroups && this.groupAutoColumns) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
+
+        }
         this.createColumnsFromColumnDefs(true, source);
     }
 
@@ -3949,8 +3958,7 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof ColumnGroup) {
-                const columnGroup = child;
-                columnGroup.calculateDisplayedColumns();
+                child.calculateDisplayedColumns();
             }
         });
     }

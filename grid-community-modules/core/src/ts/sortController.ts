@@ -201,15 +201,21 @@ export class SortController extends BeanStub {
         });
 
         const indexMap: Map<Column, number> = new Map();
-        allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
+        allSortedCols.forEach((col, idx) => {
+            if (col.getSort()) {
+                indexMap.set(col, idx);
+            }
 
-        // add the row group cols back
-        if (isSortLinked) {
-            sortedRowGroupCols.forEach(col => {
-                const groupDisplayCol =  this.columnModel.getGroupDisplayColumnForGroup(col.getId())!;
-                indexMap.set(col, indexMap.get(groupDisplayCol)!);
-            });
-        }
+            // add the group cols back
+            if (isSortLinked) {
+                const sourceCols = this.columnModel.getSourceColumnsForGroupColumn(col);
+                sourceCols?.forEach(sourceCol => {
+                    if (sourceCol.getSort()) {
+                        indexMap.set(sourceCol, idx);
+                    }
+                });
+            }
+        });
 
         return indexMap;
     }
@@ -251,7 +257,7 @@ export class SortController extends BeanStub {
         }
 
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = !!column.getColDef().field;
+        const columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
 
         const firstSort = sortableColumns[0].getSort();
