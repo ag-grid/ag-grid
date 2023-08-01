@@ -3,6 +3,7 @@ import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
+import { getNextValueIfDifferent } from '../utils';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
@@ -20,36 +21,9 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const eGui = useRef<HTMLDivElement | null>(null);
 
-    const setCellCtrlsMaintainOrder = useCallback((prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[], forceOrder: boolean) => {
-        if (prev.length === 0 && next.length === 0) {
-            // Avoid unnecessary re-rendering
-            return prev;
-        };
-
-        // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
-        if (forceOrder) {
-            return next;
-        }
-
-        // if not maintaining order, we want to keep the dom elements we have and add new ones to the end,
-        // otherwise we will loose transition effects as elements are placed in different dom locations
-        const prevMap = _.mapById(prev, c => c.getInstanceId());
-        const nextMap = _.mapById(next, c => c.getInstanceId());
-
-        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
-        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
-
-        if (oldCtrlsWeAreKeeping.length === prev.length && newCtrls.length === 0) {
-            return prev;
-        }
-
-        return [...oldCtrlsWeAreKeeping, ...newCtrls];
-    }, []);
-
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!e) {
-            // Are we missing destroy logic here?
             return;
         }
 
@@ -57,7 +31,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: (ctrls, forceOrder) =>
-                setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls, forceOrder)),
+                setCellCtrls(prev => getNextValueIfDifferent(prev, ctrls, forceOrder)!),
             setWidth: width => {
                 if (eGui.current) {
                     eGui.current.style.width = width;

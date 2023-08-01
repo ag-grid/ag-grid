@@ -57,11 +57,6 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-
-    // Outdated comment:
-    // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
 

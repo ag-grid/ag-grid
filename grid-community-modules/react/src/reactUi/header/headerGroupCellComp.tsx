@@ -23,7 +23,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current) {
-            return; // Cleanup?
+            return;
         }
         const compProxy: IHeaderGroupCellComp = {
             setWidth: width => {
