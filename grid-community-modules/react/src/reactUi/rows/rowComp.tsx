@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
-import { isComponentStateless, agFlushSync, getNextValue } from '../utils';
+import { isComponentStateless, getNextValueIfDifferent } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 
@@ -92,12 +92,8 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             setUserStyles: (styles: RowStyle | undefined) => setUserStyles(styles),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: (next, useFlushSync) => {
-                //DO we need to flushSync here anymore? Initial render has the cells in normal use case.
-                // Does it change for if cell renderers are used? As they are set in second pass.
-                //agFlushSync(useFlushSync, () => {
-                    setCellCtrls(prev => getNextValue(prev, next, domOrderRef.current));
-                //});
+            setCellCtrls: (next) => {
+                setCellCtrls(prev => getNextValueIfDifferent(prev, next, domOrderRef.current));
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,

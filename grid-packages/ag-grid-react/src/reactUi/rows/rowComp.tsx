@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
-import { isComponentStateless, agFlushSync, getNextValue } from '../utils';
+import { isComponentStateless, getNextValueIfDifferent } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 
@@ -20,7 +20,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getRowStyles());
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(
-        isFullWidth ? null : getNextValue([], rowCtrl.getCellCtrlsForContainer(containerType), domOrderRef.current));
+        isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType));
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
@@ -92,10 +92,8 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             setUserStyles: (styles: RowStyle | undefined) => setUserStyles(styles),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: (next, useFlushSync) => {
-               // agFlushSync(useFlushSync, () => {
-                    setCellCtrls(prev => getNextValue(prev, next, domOrderRef.current));
-               // });
+            setCellCtrls: (next) => {
+                setCellCtrls(prev => getNextValueIfDifferent(prev, next, domOrderRef.current));
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,

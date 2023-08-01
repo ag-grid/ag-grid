@@ -39,7 +39,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
+    setCellCtrls(cellCtrls: CellCtrl[]): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -255,7 +255,7 @@ export class RowCtrl extends BeanStub {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate, false, true);
+        this.updateColumnLists(!this.useAnimationFrameForCreate, true);
 
         const comp = gui.rowComp;
 
@@ -460,7 +460,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false, useExistingCtrls = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useExistingCtrls = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -469,7 +469,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl(useExistingCtrls, useFlushSync);
+            this.updateColumnListsImpl(useExistingCtrls);
             return;
         }
 
@@ -477,7 +477,7 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl(useExistingCtrls, true);
+                this.updateColumnListsImpl(useExistingCtrls);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -524,19 +524,19 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(useExistingCtrls: boolean, useFlushSync: boolean): void {
+    private updateColumnListsImpl(useExistingCtrls: boolean): void {
         this.updateColumnListsPending = false;
         if(!useExistingCtrls){
             this.createAllCellCtrls();
         }
 
-        this.setCellCtrls(useFlushSync);
+        this.setCellCtrls();
     }
 
-    private setCellCtrls(useFlushSync: boolean) {
+    private setCellCtrls() {
         this.allRowGuis.forEach(item => {
             const cellControls = this.getCellCtrlsForContainer(item.containerType);
-            item.rowComp.setCellCtrls(cellControls, useFlushSync);
+            item.rowComp.setCellCtrls(cellControls);
         });
     }
 
@@ -820,7 +820,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
-        this.updateColumnLists(false, true);
+        this.updateColumnLists();
     }
 
     public getRowPosition(): RowPosition {

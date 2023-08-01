@@ -1,6 +1,6 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
-import { classesList, agFlushSync, getNextValue } from '../utils';
+import { classesList, getNextValueIfDifferent } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
@@ -9,7 +9,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
 
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
@@ -19,8 +18,10 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const eContainer = useRef<HTMLDivElement | null>(null);
 
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
+    const orderedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
+    const rowUpdateCallback = useRef<(() => void) | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
@@ -29,22 +30,15 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // no need to useMemo for boolean types
     const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER 
-                    || name === RowContainerName.BOTTOM_CENTER 
-                    || name === RowContainerName.STICKY_TOP_CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER
+        || name === RowContainerName.BOTTOM_CENTER
+        || name === RowContainerName.STICKY_TOP_CENTER;
     const template3 = !template1 && !template2;
 
     const topLevelRef = template1 ? eWrapper : template2 ? eViewport : eContainer;
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
-    // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
-    // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered(useFlushSync: boolean) {
-        agFlushSync(useFlushSync, () => {
-            setRowCtrlsOrdered(prev => getNextValue(prev, rowCtrlsRef.current, domOrderRef.current)!);
-        })
-    }
 
     const areElementsReady = useCallback(() => {
         if (template1) {
@@ -70,31 +64,53 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         }
     }, []);
 
+    // With React 18 this will use the new useSyncExternalStore hook
+    // With React 17 this will use the useState hook as the renderer is synchronous anyway.
+    let rowCtrlsOrdered: RowCtrl[];
+    if ((React as any).useSyncExternalStore) {
+        const sub = useCallback((callback: any) => {
+            rowUpdateCallback.current = callback;
+            return () => {
+                rowUpdateCallback.current = null;
+            }
+        }, []);
+
+        rowCtrlsOrdered = React.useSyncExternalStore(sub, () => orderedRowCtrlsRef.current);
+    } else {
+        const [ctrlsOrdered, setCtrlsOrdered] = useState<RowCtrl[]>([]);
+        rowUpdateCallback.current = () => setCtrlsOrdered(orderedRowCtrlsRef.current);
+        rowCtrlsOrdered = ctrlsOrdered;
+    }
+
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
             context.destroyBean(rowContainerCtrlRef.current);
             rowContainerCtrlRef.current = null;
         }
         if (areElementsReady()) {
+
+            const updateRowCtrlsOrdered = () => {
+                orderedRowCtrlsRef.current = getNextValueIfDifferent(orderedRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+                if (rowUpdateCallback.current) {
+                    rowUpdateCallback.current();
+                }
+            }
+
             const compProxy: IRowContainerComp = {
                 setViewportHeight: (height: string) => {
                     if (eViewport.current) {
                         eViewport.current.style.height = height;
                     }
                 },
-                setRowCtrls: (rowCtrls, useFlushSync) => {
-                    //If the reference is the same, we don't need to do anything, or if both are empty
-                    if(rowCtrlsRef.current === rowCtrls || (rowCtrlsRef.current.length === 0 && rowCtrls.length === 0)) {
-                        return;
-                    }
-                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                setRowCtrls: (rowCtrls) => {
+                    // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlush);
+                    updateRowCtrlsOrdered();
                 },
                 setDomOrder: domOrder => {
                     if (domOrderRef.current != domOrder) {
                         domOrderRef.current = domOrder;
-                        updateRowCtrlsOrdered(false);
+                        updateRowCtrlsOrdered();
                     }
                 },
                 setContainerWidth: width => {
@@ -110,18 +126,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     }, [areElementsReady, areElementsRemoved]);
 
-    const setContainerRef = useCallback((e: HTMLDivElement) => {
-        eContainer.current = e;
-        setRef();
-    }, [setRef]);
-    const setViewportRef = useCallback((e: HTMLDivElement) => {
-        eViewport.current = e;
-        setRef();
-    }, [setRef]);
-    const setWrapperRef = useCallback((e: HTMLDivElement) => {
-        eWrapper.current = e;
-        setRef();
-    }, [setRef]);
+    const setContainerRef = useCallback((e: HTMLDivElement) => { eContainer.current = e; setRef(); }, [setRef]);
+    const setViewportRef = useCallback((e: HTMLDivElement) => { eViewport.current = e; setRef(); }, [setRef]);
+    const setWrapperRef = useCallback((e: HTMLDivElement) => { eWrapper.current = e; setRef(); }, [setRef]);
 
     const buildContainer = () => (
         <div
