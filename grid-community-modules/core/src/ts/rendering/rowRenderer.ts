@@ -933,7 +933,7 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
-        const ret = [];
+        const ret: number[] = [];
 
         for (let i = 0; i < indexesToDraw.length; i++) {
             const rowNode = this.paginationProxy.getRow(i);
