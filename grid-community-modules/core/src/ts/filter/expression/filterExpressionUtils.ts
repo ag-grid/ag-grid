@@ -25,9 +25,13 @@ export function getSearchString(value: string, position: number, endPosition: nu
     return numChars ? value.slice(0, value.length - numChars) : value;
 }
 
-export function updateExpressionByWord(expression: string, position: number, updateEntry: AutocompleteEntry): {
-    updatedValue: string, updatedPosition: number
-} {
+export function updateExpressionByWord(
+    expression: string,
+    position: number,
+    updateEntry: AutocompleteEntry,
+    appendSpace?: boolean,
+    appendQuote?: boolean
+): { updatedValue: string, updatedPosition: number } {
     let i = position - 1;
     let startPosition = 0;
 
@@ -52,12 +56,17 @@ export function updateExpressionByWord(expression: string, position: number, upd
         i++;
     }
 
-    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key);
+    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
 }
 
-export function updateExpressionFromStart(expression: string, position: number, endPosition: number, updateEntry: AutocompleteEntry): {
-    updatedValue: string, updatedPosition: number
-} {
+export function updateExpressionFromStart(
+    expression: string,
+    position: number,
+    endPosition: number,
+    updateEntry: AutocompleteEntry,
+    appendSpace?: boolean,
+    appendQuote?: boolean
+): { updatedValue: string, updatedPosition: number } {
     let startPosition = position;
 
     while (startPosition < endPosition) {
@@ -68,17 +77,40 @@ export function updateExpressionFromStart(expression: string, position: number, 
         startPosition++;
     }
 
-    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key);
+    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
 }
 
-export function updateExpression(expression: string, startPosition: number, endPosition: number, updatedValuePart: string): {
-    updatedValue: string, updatedPosition: number
-} {
-    const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(endPosition + 1);
-    return { updatedValue, updatedPosition: startPosition + updatedValuePart.length };
+export function updateExpression(
+    expression: string,
+    startPosition: number,
+    endPosition: number,
+    updatedValuePart: string,
+    appendSpace?: boolean,
+    appendQuote?: boolean
+): { updatedValue: string, updatedPosition: number } {
+    const secondPartStartPosition = endPosition + (startPosition === endPosition ? 0 : 1);
+    let positionOffset = 0;
+    if (appendSpace) {
+        if (expression[secondPartStartPosition] === ' ') {
+            // already a space, just move the position
+            positionOffset = 1;
+        } else {
+            updatedValuePart += ' ';
+            if (appendQuote) {
+                updatedValuePart += `"`;
+            }
+        }
+    }
+    const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(secondPartStartPosition);
+    return { updatedValue, updatedPosition: startPosition + updatedValuePart.length + positionOffset };
 }
 
-export function checkAndUpdateExpression(params: FilterExpressionParserParams, userValue: string, displayValue: string, endPosition: number): void {
+export function checkAndUpdateExpression(
+    params: FilterExpressionParserParams,
+    userValue: string,
+    displayValue: string,
+    endPosition: number
+): void {
     if (displayValue !== userValue) {
         params.expression = updateExpression(
             params.expression,

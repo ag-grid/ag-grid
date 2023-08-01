@@ -7,6 +7,7 @@ import { PopupPositionParams, PopupService } from "./popupService";
 import { KeyCode } from "../constants/keyCode";
 import { AutocompleteEntry, AutocompleteListParams } from "./autocompleteParams";
 import { AgEvent } from "../events";
+import { makeNull } from "../utils/generic";
 
 export interface AutocompleteValueChangedEvent extends AgEvent {
     value: string | null;
@@ -71,7 +72,7 @@ export class AgAutocomplete extends Component {
     }
 
     private onValueChanged(value?: string | null): void {
-        const parsedValue = value ?? null;
+        const parsedValue = makeNull(value);
         this.updateValue(parsedValue);
         this.updateAutocompleteList(parsedValue);
     }
@@ -284,7 +285,7 @@ export class AgAutocomplete extends Component {
     }
 
     public getValue(): string | null {
-        return this.eAutocompleteInput.getValue() ?? null;
+        return makeNull(this.eAutocompleteInput.getValue());
     }
 
     public setInputPlaceholder(placeholder: string): this {
@@ -322,6 +323,7 @@ export class AgAutocomplete extends Component {
         if (!silent) {
             this.updateValue(value);
         }
+        this.updateAutocompleteList(value);
     }
 
     public setForceLastSelection(forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean): this {

@@ -1,7 +1,7 @@
 import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { AdvancedFilterModel } from "./filterExpressionModel";
-import { AutocompleteUpdate, checkAndUpdateExpression, FilterExpressionParserParams, getSearchString, updateExpressionByWord } from "./filterExpressionUtils";
+import { AutocompleteUpdate, checkAndUpdateExpression, FilterExpressionParserParams, getSearchString, updateExpression, updateExpressionByWord } from "./filterExpressionUtils";
 
 export class JoinFilterExpressionParser {
     private valid: boolean = true;
@@ -128,8 +128,10 @@ export class JoinFilterExpressionParser {
 
         if (expressionParserIndex == null) {
             // positioned before the expression
-            const updatedValuePart = updateEntry.displayValue ?? updateEntry.key;
-            return { updatedValue: `${updatedValuePart} ${expression}`, updatedPosition: updatedValuePart.length };
+            const updatedValuePart = type === 'column'
+                ? this.params.columnValueCreator(updateEntry)
+                : updateEntry.displayValue ?? updateEntry.key;
+            return updateExpression(expression, 0, 0, updatedValuePart, true);
         }
 
         const expressionParser = this.expressionParsers[expressionParserIndex];
@@ -141,7 +143,7 @@ export class JoinFilterExpressionParser {
                 // beyond the end of the expression, just do simple update
                 return updateExpressionByWord(this.params.expression, position, {
                     key: updateEntry.key, displayValue: this.params.columnValueCreator(updateEntry)
-                });    
+                }, true);    
             } else {
                 let { expression } = this.params;
                 if (expressionParserIndex === 0) {
@@ -152,7 +154,7 @@ export class JoinFilterExpressionParser {
                         expression = updateExpressionByWord(expression, operatorEndPosition, updateEntry).updatedValue;
                     }
                 }
-                return updateExpressionByWord(expression, position, updateEntry);
+                return updateExpressionByWord(expression, position, updateEntry, true);
             }
         }
         return updatedExpression;

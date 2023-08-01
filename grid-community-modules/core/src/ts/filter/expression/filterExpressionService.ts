@@ -97,6 +97,10 @@ export class FilterExpressionService extends BeanStub {
         this.setExpressionDisplayValue(expression);
     }
 
+    public getExpressionDisplayValue(): string | null {
+        return this.expression;
+    }
+
     public setExpressionDisplayValue(expression: string | null): void {
         this.expression = expression;
         this.expressionFunction = this.parseExpression(this.expression);
@@ -135,7 +139,7 @@ export class FilterExpressionService extends BeanStub {
     public getDefaultExpression(updateEntry: AutocompleteEntry): {
         updatedValue: string, updatedPosition: number
     } {
-        const updatedValue = this.getColumnValue(updateEntry);
+        const updatedValue = this.getColumnValue(updateEntry) + ' ';
         return {
             updatedValue,
             updatedPosition: updatedValue.length

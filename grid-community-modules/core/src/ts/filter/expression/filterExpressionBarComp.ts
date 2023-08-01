@@ -56,9 +56,7 @@ export class FilterExpressionBarComp extends Component {
         this.expressionParser = this.filterExpressionService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
-            setTimeout(() => {
-                this.eAutocomplete.setValue(updatedExpression, undefined, true);
-            });
+            this.eAutocomplete.setValue(updatedExpression, undefined, true);
         }
     }
 
@@ -79,7 +77,7 @@ export class FilterExpressionBarComp extends Component {
     }
 
     private onValidChanged(isValid: boolean): void {
-        setDisabled(this.eApplyFilterButton, !isValid || this.expression === this.filterManager.getFilterExpression());
+        setDisabled(this.eApplyFilterButton, !isValid || this.expression === this.filterExpressionService.getExpressionDisplayValue());
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {
