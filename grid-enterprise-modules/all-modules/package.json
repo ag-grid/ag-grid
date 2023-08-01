@@ -63,6 +63,7 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "@ag-grid-community/all-modules": "~30.0.6",
+    "@ag-grid-enterprise/advanced-filter": "~30.0.6",
     "@ag-grid-enterprise/charts": "~30.0.6",
     "@ag-grid-enterprise/clipboard": "~30.0.6",
     "@ag-grid-enterprise/column-tool-panel": "~30.0.6",

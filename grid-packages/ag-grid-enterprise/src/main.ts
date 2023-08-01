@@ -1,5 +1,6 @@
 import { ModuleRegistry } from "ag-grid-community";
 
+import { AdvancedFilterModule } from "@ag-grid-enterprise/advanced-filter";
 import { GridChartsModule } from "@ag-grid-enterprise/charts";
 import { ClipboardModule } from "@ag-grid-enterprise/clipboard";
 import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
@@ -19,6 +20,7 @@ import { StatusBarModule } from "@ag-grid-enterprise/status-bar";
 import { ViewportRowModelModule } from "@ag-grid-enterprise/viewport-row-model";
 
 ModuleRegistry.__registerModules([
+    AdvancedFilterModule,
     ClipboardModule,
     ColumnsToolPanelModule,
     ExcelExportModule,

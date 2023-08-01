@@ -153,6 +153,13 @@
     "exported": "MultiFilterModule"
   },
   {
+    "title": "Advanced Filter<enterprise-icon></enterprise-icon>",
+    "shortname": "advancedfilter",
+    "module": "@ag-grid-enterprise/advanced-filter",
+    "enterprise": true,
+    "exported": "AdvancedFilterModule"
+  },
+  {
     "title": "Side Bar<enterprise-icon></enterprise-icon>",
     "shortname": "sidebar",
     "module": "@ag-grid-enterprise/side-bar",
