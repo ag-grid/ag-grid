@@ -3,7 +3,7 @@ import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
@@ -22,8 +22,8 @@ import { PropertyChangedEvent } from '../gridOptionsService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
-import { FilterExpressionService } from './expression/filterExpressionService';
-import { AdvancedFilterModel } from './expression/filterExpressionModel';
+import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -35,7 +35,7 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('filterExpressionService') private filterExpressionService: FilterExpressionService;
+    @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -59,6 +59,8 @@ export class FilterManager extends BeanStub {
     private externalFilterPresent: boolean;
 
     private aggFiltering: boolean;
+
+    private isAdvancedFilterEnabled = false;
 
     @PostConstruct
     public init(): void {
@@ -88,6 +90,10 @@ export class FilterManager extends BeanStub {
 
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
+
+        this.setAdvancedFilterEnabled(this.gridOptionsService.is('enableAdvancedFilter'));
+        this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setAdvancedFilterEnabled(!!event.currentValue))
+        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setFilterExpression(event.currentValue));
     }
 
     private isExternalFilterPresentCallback() {
@@ -225,7 +231,15 @@ export class FilterManager extends BeanStub {
         return this.isColumnFilterPresent()
             || this.isQuickFilterPresent() 
             || this.isExternalFilterPresent()
-            || this.filterExpressionService.isFilterPresent();
+            || this.isAdvancedFilterPresent();
+    }
+
+    private isAdvancedFilterPresent(): boolean {
+        return this.isAdvancedFilterEnabled && this.advancedFilterService.isFilterPresent();
+    }
+
+    private setAdvancedFilterEnabled(advancedFilterEnabled: boolean): void {
+        this.isAdvancedFilterEnabled = advancedFilterEnabled && !!this.advancedFilterService && this.rowModel.getType() === 'clientSide';
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -508,7 +522,7 @@ export class FilterManager extends BeanStub {
             return false;
         }
 
-        if (this.filterExpressionService.isFilterPresent() && !this.filterExpressionService.doesFilterPass(params.rowNode)) {
+        if (this.isAdvancedFilterPresent() && !this.advancedFilterService.doesFilterPass(params.rowNode)) {
             return false;
         }
 
@@ -923,11 +937,12 @@ export class FilterManager extends BeanStub {
     }
 
     public getFilterExpression(): AdvancedFilterModel | null {
-        return this.filterExpressionService.getModel();
+        return this.isAdvancedFilterEnabled ? this.advancedFilterService.getModel() : null;
     }
 
     public setFilterExpression(expression: AdvancedFilterModel | null): void {
-        this.filterExpressionService.setModel(expression);
+        if (!this.isAdvancedFilterEnabled) { return; }
+        this.advancedFilterService.setModel(expression);
         this.onFilterChanged();
     }
 

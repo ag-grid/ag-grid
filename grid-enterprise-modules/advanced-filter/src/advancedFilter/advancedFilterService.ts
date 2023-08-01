@@ -1,16 +1,29 @@
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { BeanStub } from "../../context/beanStub";
-import { IRowNode } from "../../interfaces/iRowNode";
-import { ValueService } from "../../valueService/valueService";
-import { ColumnModel } from "../../columns/columnModel";
+import {
+    AdvancedFilterModel,
+    AutocompleteEntry,
+    AutocompleteListParams,
+    Autowired,
+    Bean,
+    BeanStub,
+    ColumnModel,
+    DataTypeService,
+    Events,
+    IAdvancedFilterService,
+    IRowNode,
+    PostConstruct,
+    PropertyChangedEvent,
+    ValueFormatterService,
+    ValueService,
+} from "@ag-grid-community/core";
 import { FilterExpressionParser } from "./filterExpressionParser";
-import { DataTypeService } from "../../columns/dataTypeService";
-import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
-import { Events } from "../../eventKeys";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
-import { BooleanFilterExpressionOperators, FilterExpressionEvaluatorParams, FilterExpressionOperators, ScalarFilterExpressionOperators, TextFilterExpressionOperators } from "./filterExpressionOperators";
-import { ValueFormatterService } from "../../rendering/valueFormatterService";
-import { AdvancedFilterModel } from "./filterExpressionModel";
+import {
+    BooleanFilterExpressionOperators,
+    FilterExpressionEvaluatorParams,
+    FilterExpressionOperators,
+    ScalarFilterExpressionOperators,
+    TextFilterExpressionOperators,
+} from "./filterExpressionOperators";
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
@@ -20,8 +33,8 @@ interface ExpressionProxy {
     operators: FilterExpressionOperators;
 }
 
-@Bean('filterExpressionService')
-export class FilterExpressionService extends BeanStub {
+@Bean('advancedFilterService')
+export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
@@ -35,6 +48,7 @@ export class FilterExpressionService extends BeanStub {
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { and: string, or: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams } = {};
+    private includeHiddenColumns = false;
 
     @PostConstruct
     private postConstruct(): void {
@@ -48,11 +62,13 @@ export class FilterExpressionService extends BeanStub {
             getParams: (colId) => this.getExpressionEvaluatorParams(colId),
             operators: this.expressionOperators
         }
+        this.includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => {
-            this.columnAutocompleteEntries = null;
-            this.columnNameToIdMap = {};
-        })
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.resetColumnCaches());
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event: PropertyChangedEvent) => {
+            this.includeHiddenColumns = !!event.currentValue;
+            this.resetColumnCaches();
+        });
     }
 
     public isFilterPresent(): boolean {
@@ -173,11 +189,16 @@ export class FilterExpressionService extends BeanStub {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getAllGridColumns();
-        const entries = columns.map(column => ({
-            key: column.getColId(),
-            displayValue: this.columnModel.getDisplayNameForColumn(column, 'filterExpression')!
-        }));
+        const columns = this.columnModel.getAllPrimaryColumns() ?? [];
+        const entries: AutocompleteEntry[] = [];
+        columns.forEach(column => {
+            if (this.includeHiddenColumns || column.isVisible() || column.isRowGroupActive()) {
+                entries.push({
+                    key: column.getColId(),
+                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'filterExpression')!
+                });
+            }
+        });
         entries.sort((a, b) => {
             const aValue = a.displayValue ?? '';
             const bValue = b.displayValue ?? '';
@@ -259,5 +280,10 @@ export class FilterExpressionService extends BeanStub {
             this.expressionEvaluatorParams[colId] = params;
         }
         return params;
+    }
+
+    private resetColumnCaches(): void {
+        this.columnAutocompleteEntries = null;
+        this.columnNameToIdMap = {};
     }
 }

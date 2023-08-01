@@ -1,7 +1,6 @@
-import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
 import { AutocompleteUpdate, FilterExpressionParserParams } from "./filterExpressionUtils";
-import { AdvancedFilterModel } from "./filterExpressionModel";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;

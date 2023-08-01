@@ -43,6 +43,7 @@ module.exports = merge(common, {
             "@ag-grid-community/client-side-row-model": path.resolve(__dirname, "../../../grid-community-modules/client-side-row-model/src/main.ts"),
             "@ag-grid-community/infinite-row-model": path.resolve(__dirname, "../../../grid-community-modules/infinite-row-model/src/main.ts"),
             "@ag-grid-community/csv-export": path.resolve(__dirname, "../../../grid-community-modules/csv-export/src/main.ts"),
+            "@ag-grid-enterprise/advanced-filter": path.resolve(__dirname, "../../../grid-enterprise-modules/advanced-filter/src/main.ts"),
             "@ag-grid-enterprise/core": path.resolve(__dirname, "../../../grid-enterprise-modules/core/src/main.ts"),
             "@ag-grid-enterprise/charts": path.resolve(__dirname, "../../../grid-enterprise-modules/charts/src/main.ts"),
             "@ag-grid-enterprise/clipboard": path.resolve(__dirname, "../../../grid-enterprise-modules/clipboard/src/main.ts"),

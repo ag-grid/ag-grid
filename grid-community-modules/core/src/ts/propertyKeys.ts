@@ -5,7 +5,7 @@ type GridOptionKey = keyof GridOptions;
 
 type GetKeys<T, U> = {
     [K in keyof T]: U extends T[K] ? K :
-    (T[K] extends U | undefined ? K : never) //Reverse match for string literal types
+    (T[K] extends U | null | undefined ? K : never) //Reverse match for string literal types
 }[keyof T];
 
 /**
@@ -49,7 +49,7 @@ export class PropertyKeys {
         'defaultColGroupDef', 'defaultColDef', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
-        'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions'
+        'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions', 'advancedFilterModel'
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
@@ -90,7 +90,8 @@ export class PropertyKeys {
         'serverSideSortOnServer', 'serverSideFilterOnServer', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction',
         'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation',
         'enableCellEditingOnBackspace', 'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky',
-        'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter', 'suppressCutToClipboard'
+        'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter', 'suppressCutToClipboard', 'enableAdvancedFilter',
+        'includeHiddenColumnsInAdvancedFilter'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

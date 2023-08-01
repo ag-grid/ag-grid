@@ -16,6 +16,7 @@ import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module } from 
 
 // @START_IMPORTS@
 import {
+    AdvancedFilterModel,
     AgChartTheme,
     AgChartThemeOverrides,
     AsyncTransactionsFlushed,
@@ -471,6 +472,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
+    @Input() public enableAdvancedFilter: boolean | undefined = undefined;
+    @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
+    @Input() public includeHiddenColumnsInAdvancedFilter: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.
@@ -1312,5 +1316,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
+    static ngAcceptInputType_enableAdvancedFilter: boolean | null | '';
+    static ngAcceptInputType_includeHiddenColumnsInAdvancedFilter: boolean | null | '';
     // @END@
 }

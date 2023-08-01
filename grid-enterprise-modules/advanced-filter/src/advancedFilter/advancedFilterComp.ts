@@ -1,18 +1,26 @@
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from '../../widgets/agAutocomplete';
-import { Autowired, PostConstruct } from '../../context/context';
-import { FilterExpressionService } from './filterExpressionService';
-import { FilterManager } from '../filterManager';
+import {
+    AgAutocomplete,
+    AutocompleteEntry,
+    AutocompleteListParams,
+    AutocompleteOptionSelectedEvent,
+    AutocompleteValidChangedEvent,
+    AutocompleteValueChangedEvent,
+    AutocompleteValueConfirmedEvent,
+    Autowired,
+    Component,
+    FilterManager,
+    PostConstruct,
+    RefSelector,
+    _
+} from '@ag-grid-community/core';
+import { AdvancedFilterService } from './advancedFilterService';
 import { FilterExpressionParser } from './filterExpressionParser';
-import { AutocompleteEntry, AutocompleteListParams } from '../../widgets/autocompleteParams';
-import { setDisabled } from '../../utils/dom';
 import { AutocompleteUpdate } from './filterExpressionUtils';
 
-export class FilterExpressionBarComp extends Component {
+export class AdvancedFilterComp extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
-    @Autowired('filterExpressionService') private filterExpressionService: FilterExpressionService;
+    @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('filterManager') private filterManager: FilterManager;
 
     private expressionParser: FilterExpressionParser | null = null;
@@ -48,12 +56,12 @@ export class FilterExpressionBarComp extends Component {
 
         this.eApplyFilterButton.innerText = translate('filterExpressionApply', 'Apply');
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.getValue(), this.eAutocomplete.isValid()));
-        setDisabled(this.eApplyFilterButton, true);
+        _.setDisabled(this.eApplyFilterButton, true);
     }
 
     private onValueChanged(value: string | null): void {
         this.expression = value;
-        this.expressionParser = this.filterExpressionService.createExpressionParser(value);
+        this.expressionParser = this.advancedFilterService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
             this.eAutocomplete.setValue(updatedExpression, undefined, true);
@@ -62,8 +70,8 @@ export class FilterExpressionBarComp extends Component {
 
     private onValueConfirmed(value: string | null, isValid: boolean): void {
         if (!isValid) { return; }
-        setDisabled(this.eApplyFilterButton, true);
-        this.filterExpressionService.setExpressionDisplayValue(value);
+        _.setDisabled(this.eApplyFilterButton, true);
+        this.advancedFilterService.setExpressionDisplayValue(value);
         this.filterManager.onFilterChanged();
     }
 
@@ -77,13 +85,13 @@ export class FilterExpressionBarComp extends Component {
     }
 
     private onValidChanged(isValid: boolean): void {
-        setDisabled(this.eApplyFilterButton, !isValid || this.expression === this.filterExpressionService.getExpressionDisplayValue());
+        _.setDisabled(this.eApplyFilterButton, !isValid || this.expression === this.advancedFilterService.getExpressionDisplayValue());
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {
         return this.expressionParser
             ? this.expressionParser.getAutocompleteListParams(position)
-            : this.filterExpressionService.getDefaultAutocompleteListParams('');
+            : this.advancedFilterService.getDefaultAutocompleteListParams('');
     }
 
     private updateExpression(
@@ -91,8 +99,8 @@ export class FilterExpressionBarComp extends Component {
         updateEntry: AutocompleteEntry,
         type?: string
     ): AutocompleteUpdate {
-        this.filterExpressionService.updateAutocompleteCache(updateEntry, type);
-        return this.expressionParser?.updateExpression(position, updateEntry, type) ?? this.filterExpressionService.getDefaultExpression(updateEntry);
+        this.advancedFilterService.updateAutocompleteCache(updateEntry, type);
+        return this.expressionParser?.updateExpression(position, updateEntry, type) ?? this.advancedFilterService.getDefaultExpression(updateEntry);
     }
 
     private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {

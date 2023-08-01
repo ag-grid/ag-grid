@@ -1,5 +1,4 @@
-import { AutocompleteEntry } from "../../widgets/autocompleteParams";
-import { IRowNode } from "../../interfaces/iRowNode";
+import { AutocompleteEntry, IRowNode } from "@ag-grid-community/core";
 
 export interface FilterExpressionEvaluatorParams {
     caseSensitive?: boolean;

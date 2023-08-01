@@ -72,6 +72,7 @@
     "@ag-grid-community/infinite-row-model": "~30.0.6",
     "@ag-grid-community/react": "~30.0.6",
     "@ag-grid-community/vue": "~30.0.6",
+    "@ag-grid-enterprise/advanced-filter": "~30.0.6",
     "@ag-grid-enterprise/charts": "~30.0.6",
     "@ag-grid-enterprise/clipboard": "~30.0.6",
     "@ag-grid-enterprise/column-tool-panel": "~30.0.6",

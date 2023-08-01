@@ -126,7 +126,7 @@ import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
-import { AdvancedFilterModel } from "./filter/expression/filterExpressionModel";
+import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 
 export interface DetailGridInfo {
     /**
@@ -698,14 +698,6 @@ export class GridApi<TData = any> {
         this.gos.set('quickFilterText', newFilter);
     }
 
-    public getAdvancedFilterModel(): AdvancedFilterModel | null {
-        return this.filterManager.getFilterExpression();
-    }
-
-    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.filterManager.setFilterExpression(advancedFilterModel);
-    }
-
     /** 
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
@@ -726,6 +718,27 @@ export class GridApi<TData = any> {
      */
     public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
         this.gos.set('includeHiddenColumnsInQuickFilter', value);
+    }
+
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+            return this.filterManager.getFilterExpression();
+        }
+        return null;
+    }
+
+    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.setFilterExpression(advancedFilterModel);
+        }
+    }
+
+    public enableAdvancedFilter(enabled: boolean): void {
+        this.gos.set('enableAdvancedFilter', enabled);
+    }
+
+    public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
+        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
     }
 
     /**

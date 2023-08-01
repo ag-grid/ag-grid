@@ -1,7 +1,5 @@
-import { Column } from "../../entities/column";
-import { BaseCellDataType } from "../../entities/dataType";
-import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
-import { AdvancedFilterModel } from "./filterExpressionModel";
+
+import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams, BaseCellDataType, Column } from "@ag-grid-community/core";
 import {
     AutocompleteUpdate,
     checkAndUpdateExpression,

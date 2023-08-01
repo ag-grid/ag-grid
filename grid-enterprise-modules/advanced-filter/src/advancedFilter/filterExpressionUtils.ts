@@ -1,6 +1,4 @@
-import { ColumnModel } from "../../columns/columnModel";
-import { DataTypeService } from "../../columns/dataTypeService";
-import { AutocompleteEntry, AutocompleteListParams } from "../../widgets/autocompleteParams";
+import { AutocompleteEntry, AutocompleteListParams, ColumnModel, DataTypeService } from "@ag-grid-community/core";
 import { FilterExpressionOperators } from "./filterExpressionOperators";
 
 export interface FilterExpressionParserParams {
