@@ -38,6 +38,42 @@ export class AutoGroupColService extends BeanStub {
         return groupAutoColumns;
     }
 
+    public updateAutoGroupColumns(autoGroupColumns: Column[]) {
+        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index));
+    }
+
+    /**
+     * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
+     */
+    private updateOneAutoGroupColumn(colToUpdate: Column, index: number) {
+        // if one provided by user, use it, otherwise create one
+        let defaultAutoColDef: ColDef = this.generateDefaultColDef(colToUpdate);
+
+        const userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
+        mergeDeep(defaultAutoColDef, userAutoColDef);
+
+        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colToUpdate.getId());
+
+        defaultAutoColDef.colId = colToUpdate.getId();
+
+        // if showing many cols, we don't want to show more than one with a checkbox for selection
+        if (index && index > 0) {
+            defaultAutoColDef.headerCheckboxSelection = false;
+        }
+
+        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        if (isSortingCoupled) {
+            // if col is coupled sorting, and has sort attribute, we want to ignore this
+            // because we only accept the sort on creation of the col
+            defaultAutoColDef.sort = undefined;
+            defaultAutoColDef.sortIndex = undefined;
+        }
+
+
+        colToUpdate.setColDef(defaultAutoColDef, null);
+        this.columnFactory.applyColumnState(colToUpdate, defaultAutoColDef);
+    }
+
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
     private createOneAutoGroupColumn(existingCols: Column[], rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
@@ -76,23 +112,9 @@ export class AutoGroupColService extends BeanStub {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
-        const existingCol = existingCols.find( col => col.getId()==colId );
-
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (existingCol) {
-            if (isSortingCoupled) {
-                // if col is coupled sorting, and has sort attribute, we want to ignore this
-                // because we only accept the sort on creation of the col
-                defaultAutoColDef.sort = undefined;
-                defaultAutoColDef.sortIndex = undefined;
-            }
-
-            existingCol.setColDef(defaultAutoColDef, null);
-            this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
-            return existingCol;
-        }
-
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
+        const hasOwnData = defaultAutoColDef.valueGetter || defaultAutoColDef.field != null;
+        if (isSortingCoupled && !hasOwnData) {
             // if no field, then this column cannot hold its own sort state
             defaultAutoColDef.sort = null;
             defaultAutoColDef.sortIndex = null;
@@ -112,8 +134,7 @@ export class AutoGroupColService extends BeanStub {
             headerName: localeTextFunc('group', 'Group')
         };
 
-        const userHasProvidedGroupCellRenderer =
-            userDef &&
+        const userHasProvidedGroupCellRenderer = userDef &&
             (userDef.cellRenderer || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
