@@ -251,7 +251,7 @@ export class SortController extends BeanStub {
         }
 
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = !!column.getColDef().field || !!column.getColDef().valueGetter;
+        const columnHasUniqueData = column.getColDef().field == null || !!column.getColDef().valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
 
         const firstSort = sortableColumns[0].getSort();
