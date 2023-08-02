@@ -17,7 +17,6 @@ import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root ref="gridHeader"></ag-header-root>
-        <ag-advanced-filter></ag-advanced-filter>
         <div class="ag-floating-top" ref="eTop" role="presentation">
             <ag-row-container ref="topLeftContainer" name="${RowContainerName.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerName.TOP_CENTER}"></ag-row-container>

@@ -8,5 +8,7 @@ export interface IAdvancedFilterService {
 
     getModel(): AdvancedFilterModel | null;
 
-    setModel(model: AdvancedFilterModel | null): void
+    setModel(model: AdvancedFilterModel | null): void;
+
+    setupComp(eCompToInsertBefore: HTMLElement): void;
 }

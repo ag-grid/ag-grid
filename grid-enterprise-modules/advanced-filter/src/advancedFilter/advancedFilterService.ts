@@ -24,6 +24,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from "./filterExpressionOperators";
+import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
@@ -167,6 +168,11 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             const { key: colId, displayValue } = updateEntry;
             this.columnNameToIdMap[updateEntry.displayValue!.toLocaleUpperCase()] = { colId, columnName: displayValue! };
         }
+    }
+
+    public setupComp(eCompToInsertBefore: HTMLElement): void {
+        const eAdvancedFilterComp = this.createManagedBean(new AdvancedFilterHeaderComp());
+        eCompToInsertBefore.insertAdjacentElement('beforebegin', eAdvancedFilterComp.getGui());
     }
 
     private parseExpression(expression: string | null): Function | null {

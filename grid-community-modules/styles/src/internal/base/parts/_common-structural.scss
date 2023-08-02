@@ -821,6 +821,24 @@
         justify-content: center;
     }
 
+    .ag-advanced-filter-header {
+        display: flex;
+        align-items: center;
+        padding-left: var(--ag-cell-horizontal-padding);
+        padding-right: var(--ag-cell-horizontal-padding);
+    }
+
+    .ag-advanced-filter {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .ag-advanced-filter-apply-button {
+        line-height: normal;
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
+    }
+
     // /**
     //  ****************************
     //  * Floating Filter

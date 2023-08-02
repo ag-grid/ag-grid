@@ -1,7 +1,7 @@
 @use "ag";
 
 @mixin output {
-    .ag-header {
+    .ag-header, .ag-advanced-filter-header {
         background-color: var(--ag-header-background-color);
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }

@@ -20,6 +20,7 @@ import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 import { AnimationFrameService } from "../misc/animationFrameService";
+import { IAdvancedFilterService } from "../interfaces/iAdvancedFilterService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -65,6 +66,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
     @Autowired('rowModel') public rowModel: IRowModel;
+    @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -115,6 +117,8 @@ export class GridBodyCtrl extends BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+
+        this.advancedFilterService?.setupComp?.(eTop);
 
         this.ctrlsService.registerGridBodyCtrl(this);
     }

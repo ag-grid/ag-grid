@@ -28,10 +28,10 @@ export class AdvancedFilterComp extends Component {
 
     constructor() {
         super(/* html */ `
-        <div style="padding: 10px; background-color: var(--ag-header-background-color); border-bottom: var(--ag-borders-critical) var(--ag-border-color); display: flex;" role="presentation">
-            <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
-            <button class="ag-button ag-standard-button ag-filter-apply-panel-button" style="line-height: 1;" ref="eApplyFilterButton"></button>
-        </div>`);
+            <div class="ag-advanced-filter" role="presentation">
+                <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
+                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
+            </div>`);
     }
 
     @PostConstruct
