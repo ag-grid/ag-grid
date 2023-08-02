@@ -293,7 +293,7 @@ export class ColFilterExpressionParser {
             return updateExpression(
                 this.params.expression,
                 this.startPosition,
-                this.columnParser?.endPosition ?? this.params.expression.length - 1,
+                this.columnParser?.endPosition ?? this.params.expression.length,
                 this.params.columnValueCreator(updateEntry),
                 true
             );

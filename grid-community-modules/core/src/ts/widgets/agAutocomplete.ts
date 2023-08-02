@@ -64,7 +64,7 @@ export class AgAutocomplete extends Component {
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 
-        this.addGuiEventListener('click', this.onClick.bind(this));
+        this.addGuiEventListener('click', this.updatePositionAndList.bind(this));
 
         this.addDestroyFunc(() => {
             this.destroyBean(this.autocompleteList);
@@ -125,7 +125,12 @@ export class AgAutocomplete extends Component {
                 break;
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                this.onLeftRightKeyDown(key);
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                // input position is updated after this is called, so do async
+                setTimeout(() => {
+                    this.updatePositionAndList();
+                });
                 break;
             case KeyCode.ESCAPE:
                 this.onEscapeKeyDown(event);
@@ -178,33 +183,13 @@ export class AgAutocomplete extends Component {
         }
     }
 
-    private onLeftRightKeyDown(key: string): void {
-        // this executes before the caret is moved, so work out the correct position
-        const originalPosition = this.lastPosition;
-        const value = this.eAutocompleteInput.getValue() ?? null;
-        let position = originalPosition ?? 0;
-        if (key === KeyCode.LEFT) {
-            position -= 1;
-        } else if (key === KeyCode.RIGHT) {
-            position += 1;
-        }
-        const length = value?.length ?? 0;
-        if (position < 0) {
-            position = 0;
-        } else if (position > length) {
-            position = length;
-        }
-        this.lastPosition = position;
-        this.updateAutocompleteList(value);
-    }
-
     private onEscapeKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         this.closeList();
         this.setCaret(this.lastPosition);
     }
 
-    private onClick(): void {
+    private updatePositionAndList(): void {
         this.updateLastPosition();
         this.updateAutocompleteList(this.eAutocompleteInput.getValue() ?? null);
     }

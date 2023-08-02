@@ -24,6 +24,7 @@ import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import { doOnce } from '../utils/function';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -60,7 +61,7 @@ export class FilterManager extends BeanStub {
 
     private aggFiltering: boolean;
 
-    private isAdvancedFilterEnabled = false;
+    private advancedFilterEnabled = false;
 
     @PostConstruct
     public init(): void {
@@ -235,11 +236,21 @@ export class FilterManager extends BeanStub {
     }
 
     private isAdvancedFilterPresent(): boolean {
-        return this.isAdvancedFilterEnabled && this.advancedFilterService.isFilterPresent();
+        return this.advancedFilterEnabled && this.advancedFilterService.isFilterPresent();
     }
 
     private setAdvancedFilterEnabled(advancedFilterEnabled: boolean): void {
-        this.isAdvancedFilterEnabled = advancedFilterEnabled && !!this.advancedFilterService && this.rowModel.getType() === 'clientSide';
+        const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+        if (advancedFilterEnabled && !isClientSideRowModel) {
+            doOnce(() => {
+                console.warn('AG Grid: Advanced Filter is only supported with the Client-Side Row Model.');
+            }, 'advancedFilterCSRM')
+        }
+        this.advancedFilterEnabled = advancedFilterEnabled && !!this.advancedFilterService && isClientSideRowModel;
+    }
+
+    public isAdvancedFilterEnabled(): boolean {
+        return this.advancedFilterEnabled;
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -812,6 +823,9 @@ export class FilterManager extends BeanStub {
 
     // for group filters, can change dynamically whether they are allowed or not
     public isFilterAllowed(column: Column): boolean {
+        if (this.advancedFilterEnabled) {
+            return false;
+        }
         const isFilterAllowed = column.isFilterAllowed();
         if (!isFilterAllowed) {
             return false;
@@ -937,13 +951,20 @@ export class FilterManager extends BeanStub {
     }
 
     public getFilterExpression(): AdvancedFilterModel | null {
-        return this.isAdvancedFilterEnabled ? this.advancedFilterService.getModel() : null;
+        return this.advancedFilterEnabled ? this.advancedFilterService.getModel() : null;
     }
 
     public setFilterExpression(expression: AdvancedFilterModel | null): void {
-        if (!this.isAdvancedFilterEnabled) { return; }
+        if (!this.advancedFilterEnabled) { return; }
         this.advancedFilterService.setModel(expression);
         this.onFilterChanged();
+    }
+
+    public hasFloatingFilters(): boolean {
+        if (this.advancedFilterEnabled) { return false; }
+        const gridColumns = this.columnModel.getAllGridColumns();
+        if (!gridColumns) { return false; }
+        return gridColumns.some(col => col.getColDef().floatingFilter);
     }
 
     protected destroy() {

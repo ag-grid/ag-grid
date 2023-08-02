@@ -192,7 +192,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const columns = this.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
         columns.forEach(column => {
-            if (this.includeHiddenColumns || column.isVisible() || column.isRowGroupActive()) {
+            if (column.getColDef().filter && (this.includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
                     key: column.getColId(),
                     displayValue: this.columnModel.getDisplayNameForColumn(column, 'filterExpression')!

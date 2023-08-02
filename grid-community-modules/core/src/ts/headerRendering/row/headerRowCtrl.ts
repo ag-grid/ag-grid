@@ -14,6 +14,7 @@ import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
+import { FilterManager } from "../../filter/filterManager";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -30,6 +31,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -132,7 +134,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         let numberOfFloating = 0;
 
-        if (this.columnModel.hasFloatingFilters()) {
+        if (this.filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
