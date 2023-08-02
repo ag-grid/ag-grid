@@ -63,6 +63,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     }
 
     public getHeaderHeight(): number {

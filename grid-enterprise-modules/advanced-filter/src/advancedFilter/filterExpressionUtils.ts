@@ -86,7 +86,7 @@ export function updateExpression(
     appendSpace?: boolean,
     appendQuote?: boolean
 ): { updatedValue: string, updatedPosition: number } {
-    const secondPartStartPosition = endPosition + (startPosition === endPosition ? 0 : 1);
+    const secondPartStartPosition = endPosition + (!expression.length ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
         if (expression[secondPartStartPosition] === ' ') {
@@ -117,4 +117,8 @@ export function checkAndUpdateExpression(
             displayValue
         ).updatedValue;
     }
+}
+
+export function escapeQuotes(value: string): string {
+    return value.replace(/(['"])/, '\\$1');
 }

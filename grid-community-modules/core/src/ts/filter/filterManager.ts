@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -92,7 +92,7 @@ export class FilterManager extends BeanStub {
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
 
-        this.setAdvancedFilterEnabled(this.gridOptionsService.is('enableAdvancedFilter'));
+        this.setAdvancedFilterEnabled(this.gridOptionsService.is('enableAdvancedFilter'), true);
         this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setAdvancedFilterEnabled(!!event.currentValue))
         this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setFilterExpression(event.currentValue));
     }
@@ -239,7 +239,8 @@ export class FilterManager extends BeanStub {
         return this.advancedFilterEnabled && this.advancedFilterService.isFilterPresent();
     }
 
-    private setAdvancedFilterEnabled(advancedFilterEnabled: boolean): void {
+    private setAdvancedFilterEnabled(advancedFilterEnabled: boolean, silent?: boolean): void {
+        const previousValue = this.advancedFilterEnabled;
         const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
         if (advancedFilterEnabled && !isClientSideRowModel) {
             doOnce(() => {
@@ -247,6 +248,14 @@ export class FilterManager extends BeanStub {
             }, 'advancedFilterCSRM')
         }
         this.advancedFilterEnabled = advancedFilterEnabled && !!this.advancedFilterService && isClientSideRowModel;
+        if (!silent && this.advancedFilterEnabled !== previousValue) {
+            const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
+                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+                enabled: this.advancedFilterEnabled
+            };
+            this.eventService.dispatchEvent(event);
+        }
+
     }
 
     public isAdvancedFilterEnabled(): boolean {

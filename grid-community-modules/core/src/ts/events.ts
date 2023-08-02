@@ -654,3 +654,8 @@ export interface RowContainerHeightChanged<TData = any, TContext = any> extends 
 export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { afterScroll: boolean } // not documented
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
+
+// internal event
+export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    enabled: boolean;
+}

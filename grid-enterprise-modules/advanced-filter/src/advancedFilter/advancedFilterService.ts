@@ -186,8 +186,6 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         if (!isValid) { return null; }
 
         const functionBody = expressionParser.getFunction();
-        // TODO - remove
-        console.log(functionBody);
         return new Function('expressionProxy', 'node', functionBody);
     }
 

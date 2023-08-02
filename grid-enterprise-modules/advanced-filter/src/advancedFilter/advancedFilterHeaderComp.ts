@@ -1,7 +1,9 @@
 import {
+    AdvancedFilterEnabledChangedEvent,
     Autowired,
     ColumnModel,
     Component,
+    Events,
     FilterManager,
     PostConstruct,
     RefSelector,
@@ -29,6 +31,9 @@ export class AdvancedFilterHeaderComp extends Component {
         this.setupAdvancedFilter(this.filterManager.isAdvancedFilterEnabled());
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
+
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.setupAdvancedFilter(enabled));
     }
 
     private setupAdvancedFilter(enabled: boolean): void {
@@ -38,7 +43,7 @@ export class AdvancedFilterHeaderComp extends Component {
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eGui = this.eAdvancedFilter.getGui();
             
-            const height = `${this.columnModel.getFloatingFiltersHeight() + 1}px`;
+            const height = `${this.columnModel.getFloatingFiltersHeight() - 1}px`;
             this.eAdvancedFilter.getGui().style.height = height;
             this.eAdvancedFilter.getGui().style.minHeight = height;
 

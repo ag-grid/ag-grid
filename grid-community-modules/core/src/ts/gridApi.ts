@@ -733,7 +733,7 @@ export class GridApi<TData = any> {
         }
     }
 
-    public enableAdvancedFilter(enabled: boolean): void {
+    public setEnableAdvancedFilter(enabled: boolean): void {
         this.gos.set('enableAdvancedFilter', enabled);
     }
 

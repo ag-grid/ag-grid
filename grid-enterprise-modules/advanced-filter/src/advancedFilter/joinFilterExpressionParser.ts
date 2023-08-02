@@ -140,9 +140,7 @@ export class JoinFilterExpressionParser {
         if (updatedExpression == null) {
             if (type === 'column') {
                 // beyond the end of the expression, just do simple update
-                return updateExpressionByWord(this.params.expression, position, {
-                    key: updateEntry.key, displayValue: this.params.columnValueCreator(updateEntry)
-                }, true);    
+                return updateExpression(expression, position, expression.length - 1, this.params.columnValueCreator(updateEntry), true); 
             } else {
                 let { expression } = this.params;
                 if (expressionParserIndex === 0) {

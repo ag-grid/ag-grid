@@ -64,6 +64,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
         if (this.columnModel.isReady()) {
