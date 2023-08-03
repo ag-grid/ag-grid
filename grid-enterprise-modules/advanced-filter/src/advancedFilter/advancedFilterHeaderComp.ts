@@ -54,7 +54,7 @@ export class AdvancedFilterHeaderComp extends Component {
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eGui = this.eAdvancedFilter.getGui();
             
-            const height = `${this.columnModel.getFloatingFiltersHeight() - 1}px`;
+            const height = `${this.columnModel.getFloatingFiltersHeight()}px`;
             this.getGui().style.height = height;
             this.getGui().style.minHeight = height;
 

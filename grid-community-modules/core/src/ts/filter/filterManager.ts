@@ -118,6 +118,10 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
+        if (this.advancedFilterEnabled) {
+            this.warnAdvancedFilters();
+            return;
+        }
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getFilterModel();
 
@@ -254,6 +258,13 @@ export class FilterManager extends BeanStub {
                 enabled: this.advancedFilterEnabled
             };
             this.eventService.dispatchEvent(event);
+            if (this.advancedFilterEnabled) {
+                // destroy columns filters
+                if (this.allColumnFilters.size) {
+                    this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
+                    this.onFilterChanged();
+                }
+            }
         }
 
     }
@@ -910,7 +921,7 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed'): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
         filterWrapper.filterPromise!.then(filter => {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
@@ -974,6 +985,45 @@ export class FilterManager extends BeanStub {
         const gridColumns = this.columnModel.getAllGridColumns();
         if (!gridColumns) { return false; }
         return gridColumns.some(col => col.getColDef().floatingFilter);
+    }
+
+    public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
+        if (this.advancedFilterEnabled) {
+            this.warnAdvancedFilters();
+            return undefined;
+        }
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) { return; }
+            const unwrapped = unwrapUserComp(instance) as any;
+            callback(unwrapped);
+        });
+        const unwrapped = unwrapUserComp(res);
+        return unwrapped as any;
+    }
+
+    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
+        const column = this.columnModel.getPrimaryColumn(key);
+
+        if (!column) { return undefined; }
+
+        const filterPromise = this.getFilterComponent(column, 'NO_UI');
+        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
+
+        if (currentValue) {
+            setTimeout(callback, 0, currentValue);
+        } else if (filterPromise) {
+            filterPromise.then(comp => {
+                callback(comp!);
+            });
+        }
+
+        return currentValue;
+    }
+
+    private warnAdvancedFilters(): void {
+        doOnce(() => {
+            console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        }, 'advancedFiltersCompatibility');
     }
 
     protected destroy() {

@@ -987,32 +987,7 @@ export class GridApi<TData = any> {
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
-        const res = this.getFilterInstanceImpl(key, instance => {
-            if (!callback) { return; }
-            const unwrapped = unwrapUserComp(instance) as any;
-            callback(unwrapped);
-        });
-        const unwrapped = unwrapUserComp(res);
-        return unwrapped as any;
-    }
-
-    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
-        const column = this.columnModel.getPrimaryColumn(key);
-
-        if (!column) { return undefined; }
-
-        const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
-
-        if (currentValue) {
-            setTimeout(callback, 0, currentValue);
-        } else if (filterPromise) {
-            filterPromise.then(comp => {
-                callback(comp!);
-            });
-        }
-
-        return currentValue;
+        return this.filterManager.getFilterInstance(key, callback);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */

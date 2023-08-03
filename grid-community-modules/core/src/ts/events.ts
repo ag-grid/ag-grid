@@ -157,7 +157,7 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
 
 // internal event
 export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed';
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled';
     column: Column;
 }
 
