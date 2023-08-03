@@ -5,7 +5,7 @@ import {
     checkAndUpdateExpression,
     FilterExpressionParserParams,
     getSearchString,
-    updateExpressionFromStart,
+    findStartAndUpdateExpression,
     updateExpression,
     escapeQuotes,
 } from "./filterExpressionUtils";
@@ -13,7 +13,7 @@ import {
 interface Parser {
     type: string;
     parse(char: string, position: number): boolean | undefined;
-    complete?(position: number): void;
+    complete(position: number): void;
     getRawValue(): string;
     getParsedValue(): string;
 }
@@ -68,7 +68,7 @@ class ColumnParser implements Parser {
     private parseColumn(fromComplete: boolean, endPosition: number): boolean {
         this.endPosition = endPosition;
         const colValue = this.params.colIdResolver(this.colName);
-        if (colValue) {
+        if (colValue && this.hasStartChar) {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
             this.colName = colValue.columnName;
@@ -323,7 +323,7 @@ export class ColFilterExpressionParser {
                     this.doesOperatorNeedQuotes(type, updateEntry.key)
                 );
             }
-            return updateExpressionFromStart(
+            return findStartAndUpdateExpression(
                 this.params.expression,
                 this.columnParser!.endPosition! + 1,
                 this.operatorParser?.endPosition ?? this.params.expression.length,

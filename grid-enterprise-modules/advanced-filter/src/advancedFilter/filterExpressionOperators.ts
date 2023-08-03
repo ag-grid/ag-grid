@@ -40,19 +40,20 @@ export interface FilterExpressionOperators {
     object: DataTypeFilterExpressionOperators<any>;
 };
 
-function findOperator<TValue>(displayValue: string, operators: { [operator: string]: FilterExpressionOperator<TValue> }): string | null | undefined {
+// null = partial match, undefined = no match
+export function findMatch<T>(searchValue: string, values: { [key: string]: T }, getDisplayValue: (value: T) => string): string | null | undefined {
     let partialMatch = false;
-    const operatorLowerCase = displayValue.toLocaleLowerCase();
-    const partialSearchValue = operatorLowerCase + ' ';
-    const parsedOperator = Object.entries(operators).find(([_key, { displayValue }]) => {
-        const displayValueLowerCase = displayValue.toLocaleLowerCase();
+    const searchValueLowerCase = searchValue.toLocaleLowerCase();
+    const partialSearchValue = searchValueLowerCase + ' ';
+    const parsedValue = Object.entries(values).find(([_key, value]) => {
+        const displayValueLowerCase = getDisplayValue(value).toLocaleLowerCase();
         if (displayValueLowerCase.startsWith(partialSearchValue)) {
             partialMatch = true;
         }
-        return displayValueLowerCase === operatorLowerCase;
+        return displayValueLowerCase === searchValueLowerCase;
     });
-    if (parsedOperator) {
-        return parsedOperator[0];
+    if (parsedValue) {
+        return parsedValue[0];
     } else if (partialMatch) {
         return null;
     } else {
@@ -88,7 +89,7 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
     }
 
     public findOperator(displayValue: string): string | null | undefined {
-        return findOperator(displayValue, this.operators);
+        return findMatch(displayValue, this.operators, ({displayValue}) => displayValue);
     }
 
     private initOperators(): void {
@@ -172,7 +173,7 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
     }
 
     public findOperator(displayValue: string): string | null | undefined {
-        return findOperator(displayValue, this.operators);
+        return findMatch(displayValue, this.operators, ({displayValue}) => displayValue);
     }
 
     private initOperators(): void {
@@ -249,7 +250,7 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
     }
 
     public findOperator(displayValue: string): string | null | undefined {
-        return findOperator(displayValue, this.operators);
+        return findMatch(displayValue, this.operators, ({displayValue}) => displayValue);
     }
 
     private initOperators(): void {

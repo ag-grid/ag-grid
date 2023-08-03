@@ -23,41 +23,7 @@ export function getSearchString(value: string, position: number, endPosition: nu
     return numChars ? value.slice(0, value.length - numChars) : value;
 }
 
-export function updateExpressionByWord(
-    expression: string,
-    position: number,
-    updateEntry: AutocompleteEntry,
-    appendSpace?: boolean,
-    appendQuote?: boolean
-): { updatedValue: string, updatedPosition: number } {
-    let i = position - 1;
-    let startPosition = 0;
-
-    while (i >= 0) {
-        const char = expression[i];
-        if (char === ' ' || char === '(') {
-            startPosition = i + 1;
-            break;
-        }
-        i--;
-    }
-
-    i = position;
-    let endPosition = expression.length - 1;
-
-    while (i < expression.length) {
-        const char = expression[i];
-        if (char === ' ' || char === ')') {
-            endPosition = i - 1;
-            break;
-        }
-        i++;
-    }
-
-    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
-}
-
-export function updateExpressionFromStart(
+export function findStartAndUpdateExpression(
     expression: string,
     position: number,
     endPosition: number,
@@ -73,6 +39,30 @@ export function updateExpressionFromStart(
             break;
         }
         startPosition++;
+    }
+
+    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
+}
+
+export function findEndAndUpdateExpression(
+    expression: string,
+    position: number,
+    startPosition: number,
+    endPosition: number | undefined,
+    updateEntry: AutocompleteEntry,
+    appendSpace?: boolean,
+    appendQuote?: boolean
+): { updatedValue: string, updatedPosition: number } {
+    if (endPosition == null) {
+        endPosition = position;
+        while (endPosition < expression.length) {
+            const char = expression[endPosition];
+            if (char === ' ') {
+                endPosition = endPosition - 1;
+                break;
+            }
+            endPosition++;
+        }
     }
 
     return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
