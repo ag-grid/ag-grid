@@ -102,8 +102,8 @@ class OperatorParser {
         }
         return findEndAndUpdateExpression(expression,
             position,
-            this.operatorStartPositions[operatorIndex],
-            this.operatorEndPositions[operatorIndex],
+            this.operatorStartPositions.length ? this.operatorStartPositions[operatorIndex] : expression.length,
+            this.operatorEndPositions.length ? this.operatorEndPositions[operatorIndex] : undefined,
             updateEntry,
             true
         );
