@@ -1,6 +1,9 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@ag-grid-community/client-side-row-model': ~30.0.6
+  '@ag-grid-community/core': ~30.0.6
+  '@ag-grid-community/styles': ~30.0.6
   prettier: 2.7.1
   rollup: ^2.77.2
   rollup-preset-solid: ^1.4.0
@@ -11,6 +14,9 @@ specifiers:
   vite-plugin-solid: ^2.3.0
 
 devDependencies:
+  '@ag-grid-community/client-side-row-model': 30.0.6
+  '@ag-grid-community/core': 30.0.6
+  '@ag-grid-community/styles': 30.0.6
   prettier: 2.7.1
   rollup: 2.77.2
   rollup-preset-solid: 1.4.0
@@ -21,6 +27,20 @@ devDependencies:
   vite-plugin-solid: 2.3.0_solid-js@1.4.8+vite@3.0.4
 
 packages:
+
+  /@ag-grid-community/client-side-row-model/30.0.6:
+    resolution: {integrity: sha512-0LQ8PpBtAIQM+cudqbnkU0ncd1fHbrdbdkXm3jb5YipGEISA1WEaXB6RvVxZxBYS0uhrpik2D2UeEQUjiHGUvA==}
+    dependencies:
+      '@ag-grid-community/core': 30.0.6
+    dev: true
+
+  /@ag-grid-community/core/30.0.6:
+    resolution: {integrity: sha512-NRVKlLfQK/A0k78rg46z2CsiyKHrZr9TQP9CGalFc1rPk97YYesO0zxy59KYTzoZhxo/E0M16aW4gpS3SBD90A==}
+    dev: true
+
+  /@ag-grid-community/styles/30.0.6:
+    resolution: {integrity: sha512-p6mBmG2FFmGigWXEYnfWSd58FI7/GlV7R0Tl3ZZqm87H9BpgwZv/83R3xqtNzV3vS6gsiW3yZ3D9i89l3DC+1g==}
+    dev: true
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -71,7 +91,7 @@ packages:
       convert-source-map: 1.8.0
       debug: 4.3.2
       gensync: 1.0.0-beta.2
-      json5: 2.2.1
+      json5: 2.2.3
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -2311,8 +2331,8 @@ packages:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
     dev: true
 
-  /json5/2.2.1:
-    resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==}
+  /json5/2.2.3:
+    resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
     dev: true
