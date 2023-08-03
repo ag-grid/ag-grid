@@ -184,9 +184,12 @@ export class AgAutocomplete extends Component {
     }
 
     private onEscapeKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.closeList();
-        this.setCaret(this.lastPosition);
+        if (this.isListOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.closeList();
+            this.setCaret(this.lastPosition);
+        }
     }
 
     private updatePositionAndList(): void {

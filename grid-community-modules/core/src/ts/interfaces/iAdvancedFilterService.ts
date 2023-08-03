@@ -11,4 +11,6 @@ export interface IAdvancedFilterService {
     setModel(model: AdvancedFilterModel | null): void;
 
     setupComp(eCompToInsertBefore: HTMLElement): void;
+
+    focusComp(): boolean;
 }

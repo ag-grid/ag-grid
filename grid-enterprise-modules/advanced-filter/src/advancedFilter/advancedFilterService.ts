@@ -50,6 +50,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionJoinOperators: { and: string, or: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams } = {};
     private includeHiddenColumns = false;
+    private eAdvancedFilterHeaderComp: AdvancedFilterHeaderComp | undefined;
 
     @PostConstruct
     private postConstruct(): void {
@@ -171,8 +172,16 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public setupComp(eCompToInsertBefore: HTMLElement): void {
-        const eAdvancedFilterComp = this.createManagedBean(new AdvancedFilterHeaderComp());
-        eCompToInsertBefore.insertAdjacentElement('beforebegin', eAdvancedFilterComp.getGui());
+        this.eAdvancedFilterHeaderComp = this.createManagedBean(new AdvancedFilterHeaderComp());
+        eCompToInsertBefore.insertAdjacentElement('beforebegin', this.eAdvancedFilterHeaderComp.getGui());
+    }
+
+    public focusComp(): boolean {
+        if (this.eAdvancedFilterHeaderComp) {
+            this.eAdvancedFilterHeaderComp.getFocusableElement().focus();
+            return true;
+        }
+        return false;
     }
 
     private parseExpression(expression: string | null): Function | null {

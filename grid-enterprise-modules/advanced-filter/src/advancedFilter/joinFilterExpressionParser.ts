@@ -46,7 +46,7 @@ class OperatorParser {
     }
 
     public isValid(): boolean {
-        return this.valid && !!this.parsedOperator;
+        return this.valid && (!this.operators.length || !!this.parsedOperator);
     }
 
     public getFunction(): string {

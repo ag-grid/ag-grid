@@ -55,6 +55,7 @@ export class AdvancedFilterComp extends Component {
             ({ isValid }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid));
 
         this.eApplyFilterButton.innerText = translate('filterExpressionApply', 'Apply');
+        this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.getValue(), this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, true);
     }

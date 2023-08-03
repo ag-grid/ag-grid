@@ -822,6 +822,7 @@
     }
 
     .ag-advanced-filter-header {
+        position: relative;
         display: flex;
         align-items: center;
         padding-left: var(--ag-cell-horizontal-padding);
