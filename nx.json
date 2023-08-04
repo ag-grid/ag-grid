@@ -8,7 +8,8 @@
           "build-docs",
           "build-docs-initial",
           "generate-doc-files",
-          "build-css"
+          "build-css",
+          "test"
         ]
       }
     }
