@@ -74,6 +74,8 @@ export class CellCtrl extends BeanStub {
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
 
+    private focusEventToRestore: CellFocusedEvent | undefined;
+
     private printLayout: boolean;
 
     private value: any;
@@ -217,7 +219,7 @@ export class CellCtrl extends BeanStub {
 
         this.addDomData();
 
-        this.onCellFocused();
+        this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
 
@@ -934,9 +936,21 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (!this.cellComp || this.beans.gridOptionsService.is('suppressCellFocus')) { return; }
-
+        if(this.beans.gridOptionsService.is('suppressCellFocus')){
+            return;
+        }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+
+        if (!this.cellComp) {
+            if (cellFocused && event?.forceBrowserFocus) {
+                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
+                // so lets save the event to apply it when setComp is called in the next turn.
+                this.focusEventToRestore = event;
+            }
+            return;
+        }
+        // Clear the saved focus event
+        this.focusEventToRestore = undefined;
 
         this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
 
