@@ -242,6 +242,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.originalParent = originalParent;
     }
 
+    /**
+     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
+     * 
+     * Parent may contain a duplicate but not identical group when the group is split.
+     */
     public getOriginalParent(): ProvidedColumnGroup | null {
         return this.originalParent;
     }

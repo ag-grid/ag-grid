@@ -111,6 +111,10 @@ export class ColumnFactory extends BeanStub {
             nextChild = autoGroup;
         }
 
+        if (dept === 0) {
+            column.setOriginalParent(null);
+        }
+
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     }
@@ -288,11 +292,11 @@ export class ColumnFactory extends BeanStub {
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-            const colDefMerged = this.mergeColDefs(colDef, colId);
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         } else {
-            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -397,33 +401,33 @@ export class ColumnFactory extends BeanStub {
         });
     }
 
-    public mergeColDefs(colDef: ColDef, colId: string): ColDef {
+    public addColumnDefaultAndTypes(colDef: ColDef, colId: string): ColDef {
         // start with empty merged definition
-        const colDefMerged: ColDef = {} as ColDef;
+        const res: ColDef = {} as ColDef;
 
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
-        mergeDeep(colDefMerged, defaultColDef, false, true);
+        mergeDeep(res, defaultColDef, false, true);
 
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
 
         if (columnType) {
-            this.assignColumnTypes(columnType, colDefMerged);
+            this.assignColumnTypes(columnType, res);
         }
 
         // merge properties from column definitions
-        mergeDeep(colDefMerged, colDef, false, true);
+        mergeDeep(res, colDef, false, true);
 
         const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
+            mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
         }
 
-        this.dataTypeService.validateColDef(colDefMerged);
+        this.dataTypeService.validateColDef(res);
 
-        return colDefMerged;
+        return res;
     }
 
     private assignColumnTypes(typeKeys: string[], colDefMerged: ColDef) {
