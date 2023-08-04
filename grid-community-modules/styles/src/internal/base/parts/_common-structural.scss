@@ -1254,19 +1254,8 @@
         align-items: center;
     }
 
-    .ag-rich-select-value-icon {
-        flex: 1 1 auto;
-        order: 1;
-        @include ag.unthemed-rtl(( text-align: right ));
-    }
-
-
     .ag-rich-select-list {
         position: relative;
-    }
-
-    .ag-rich-select-virtual-list-item {
-        display: flex;
     }
 
     .ag-rich-select-row {

@@ -17,7 +17,8 @@ import { VirtualList } from "./virtualList";
 
 export type AgRichSelectValue = (object | string | number);
 
-interface IRichSelectParams extends IAgLabel {
+export interface IRichSelectParams extends IAgLabel {
+    value?: AgRichSelectValue;
     valueList?: AgRichSelectValue[]
     userCompDetails?: UserCompDetails;
     valueFormatter?: (value: any) => any;
@@ -66,6 +67,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
+        this.eWrapper.classList.add('ag-rich-select-value');
 
         const debounceDelay = exists(this.searchDebounceDelay) ? this.searchDebounceDelay : 300;
         this.clearSearchString = debounce(this.clearSearchString, debounceDelay);
@@ -203,9 +205,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
 
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(v => this.valueFormatter(v));
-        }
-
-        if (typeof values[0] === 'object' && this.searchStringCreator) {
+        } else if (typeof values[0] === 'object' && this.searchStringCreator) {
             searchStrings = this.searchStringCreator(values);
         }
 
