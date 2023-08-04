@@ -1,8 +1,9 @@
-import { ICellEditorParams } from "./iCellEditor";;
+import { AgRichSelectValue } from "../widgets/agRichSelect";
+import { ICellEditorParams } from "./iCellEditor";
 
 export interface IRichCellEditorParams extends ICellEditorParams {
 /** The list of values to be selected from. */
-    values: (object | string | number)[];
+    values: AgRichSelectValue[];
 /** The row height, in pixels, of each value. */
     cellHeight: number;
 /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */

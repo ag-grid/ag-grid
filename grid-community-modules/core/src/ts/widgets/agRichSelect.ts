@@ -15,7 +15,8 @@ import { Component } from "./component";
 import { PopupService } from "./popupService";
 import { VirtualList } from "./virtualList";
 
-type AgRichSelectValue = (object | string | number);
+export type AgRichSelectValue = (object | string | number);
+
 interface IRichSelectParams extends IAgLabel {
     valueList?: AgRichSelectValue[]
     userCompDetails?: UserCompDetails;
