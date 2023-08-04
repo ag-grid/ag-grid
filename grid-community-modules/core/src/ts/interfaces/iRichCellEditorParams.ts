@@ -1,11 +1,8 @@
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ICellEditorParams } from "./iCellEditor";
-
-type CellValue = object | string | number;
+import { ICellEditorParams } from "./iCellEditor";;
 
 export interface IRichCellEditorParams extends ICellEditorParams {
 /** The list of values to be selected from. */
-    values: CellValue[];
+    values: (object | string | number)[];
 /** The row height, in pixels, of each value. */
     cellHeight: number;
 /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */

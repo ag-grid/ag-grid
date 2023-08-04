@@ -45,17 +45,6 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
         this.eDisplayField.setAttribute('id', displayId);
         setAriaDescribedBy(this.eWrapper, displayId);
 
-        const clickHandler = () => {
-            if (this.skipClick) {
-                this.skipClick = false;
-                return;
-            }
-
-            if (this.isDisabled()) { return; }
-
-            this.pickerComponent = this.showPicker();
-        };
-
         const eGui = this.getGui();
 
         this.addManagedListener(eGui, 'mousedown', (e: MouseEvent) => {
@@ -70,23 +59,9 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
             }
         });
 
-        this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            switch (e.key) {
-                case KeyCode.UP:
-                case KeyCode.DOWN:
-                case KeyCode.ENTER:
-                case KeyCode.SPACE:
-                    clickHandler();
-                case KeyCode.ESCAPE:
-                    if (this.isPickerDisplayed) {
-                        e.preventDefault();
-                    }
-                    break;
-            }
-        });
-
-        this.addManagedListener(this.eWrapper, 'click', clickHandler);
-        this.addManagedListener(this.eLabel, 'click', clickHandler);
+        this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListener(this.eWrapper, 'click', this.clickHandler.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
 
         if (this.pickerIcon) {
             const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsService);
@@ -104,6 +79,32 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
         }
 
         super.refreshLabel();
+    }
+
+    private clickHandler(): void {
+        if (this.skipClick) {
+            this.skipClick = false;
+            return;
+        }
+
+        if (this.isDisabled()) { return; }
+
+        this.pickerComponent = this.showPicker();
+    }
+
+    protected onKeyDown(e: KeyboardEvent): void {
+        switch (e.key) {
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+            case KeyCode.ENTER:
+            case KeyCode.SPACE:
+                this.clickHandler();
+            case KeyCode.ESCAPE:
+                if (this.isPickerDisplayed) {
+                    e.preventDefault();
+                }
+                break;
+        }
     }
 
     public setAriaLabel(label: string): this {

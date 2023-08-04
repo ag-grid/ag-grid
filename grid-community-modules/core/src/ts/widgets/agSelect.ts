@@ -18,11 +18,15 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         super(config, 'ag-select', 'smallDown', 'listbox');
     }
 
-    @PostConstruct
-    public init(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
+        this.createListComponent();
+        this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
+    }
+
+    private createListComponent(): void {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
-        this.eWrapper.tabIndex = 0;
 
         this.listComponent.addManagedListener(
             this.listComponent,
