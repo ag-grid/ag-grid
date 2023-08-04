@@ -298,9 +298,8 @@ export class ColumnModel extends BeanStub {
 
     private onSharedColDefChanged(source: ColumnEventType = 'api'): void {
         // if we aren't going to force, update the auto cols in place
-        if (!this.forceRecreateAutoGroups && this.groupAutoColumns) {
+        if (this.groupAutoColumns) {
             this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
-
         }
         this.createColumnsFromColumnDefs(true, source);
     }
@@ -3992,8 +3991,7 @@ export class ColumnModel extends BeanStub {
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
 
         if (needAutoColumns) {
-            const existingCols = this.groupAutoColumns || [];
-            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(existingCols, this.rowGroupColumns);
+            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
@@ -4118,7 +4116,7 @@ export class ColumnModel extends BeanStub {
     public resetColumnDefIntoColumn(column: Column): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) { return false; }
-        const newColDef = this.columnFactory.mergeColDefs(userColDef, column.getColId());
+        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
         column.setColDef(newColDef, userColDef);
         return true;
     }
