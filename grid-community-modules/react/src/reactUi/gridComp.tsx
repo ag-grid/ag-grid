@@ -28,7 +28,9 @@ const GridComp = ({ context }: GridCompProps) => {
     const gridCtrlRef = useRef<GridCtrl | null>(null);
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
-    const eGridBodyParentRef = useRef<HTMLDivElement>(null);
+    // eGridBodyParent is state as we use it in render
+    const [eGridBodyParent,setGridBodyParent] = useState<HTMLDivElement | null>(null);
+
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
     const onTabKeyDown = useCallback(() => undefined, []);
@@ -96,7 +98,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
@@ -109,7 +111,6 @@ const GridComp = ({ context }: GridCompProps) => {
         const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
         const additionalEls: HTMLDivElement[] = [];
         const eRootWrapper = eRootWrapperRef.current!;
-        const eGridBodyParent = eGridBodyParentRef.current!;
 
         if (gridCtrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
@@ -163,7 +164,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 }
             });
         }
-    }, [tabGuardReady])
+    }, [tabGuardReady, eGridBodyParent, beans])
 
     const rootWrapperClasses = useMemo(()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
     const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
@@ -174,7 +175,6 @@ const GridComp = ({ context }: GridCompProps) => {
         cursor: cursor != null ? cursor : ''
     }), [userSelect, cursor]);
 
-    const eGridBodyParent = eGridBodyParentRef.current;
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
@@ -183,7 +183,7 @@ const GridComp = ({ context }: GridCompProps) => {
     
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
-            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef } role="presentation">
+            <div className={ rootWrapperBodyClasses } ref={ setGridBodyParent } role="presentation">
                 {initialised && eGridBodyParent && beans &&
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp
