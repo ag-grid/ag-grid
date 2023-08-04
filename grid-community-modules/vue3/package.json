@@ -23,9 +23,9 @@
   ],
   "scripts": {
     "clean": "rimraf dist lib .hash",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html && npm run hash",
-    "build-prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc --sourceMap false && rm ./dist/demo.html && npm run hash",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html",
+    "build-docs": "npm run build",
+    "build-prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc --sourceMap false && rm ./dist/demo.html",
     "test:unit": "vue-cli-service test:unit",
     "test:e2ex": "vue-cli-service test:e2e"
   },

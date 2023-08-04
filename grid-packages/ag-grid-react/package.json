@@ -6,7 +6,8 @@
   "typings": "./lib/main.d.ts",
   "scripts": {
     "clean": "rimraf bundles lib .hash",
-    "build": "npx gulp && npm run hash",
+    "build": "npx gulp",
+    "build-docs-initial": "npm run build",
     "build-prod": "npm run build",
     "umd": "npx rollup -c",
     "testx": "npx jest",
@@ -15,8 +16,7 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "npx cross-env NODE_ENV=test npx cypress open",
     "cypress:e2e": "npx cross-env NODE_ENV=test npx cypress run --spec 'cypress/integration/*spec.js'",
-    "cypress:components": "npx cross-env NODE_ENV=test npx cypress run --spec 'cypress/components/**/*spec.js'",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "cypress:components": "npx cross-env NODE_ENV=test npx cypress run --spec 'cypress/components/**/*spec.js'"
   },
   "repository": {
     "type": "git",

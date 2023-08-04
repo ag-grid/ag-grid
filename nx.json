@@ -4,7 +4,11 @@
       "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
-          "build_OFF"
+          "build",
+          "build-docs",
+          "build-docs-initial",
+          "generate-doc-files",
+          "build-css"
         ]
       }
     }
