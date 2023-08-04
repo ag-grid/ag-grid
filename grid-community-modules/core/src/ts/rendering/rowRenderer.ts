@@ -184,7 +184,6 @@ export class RowRenderer extends BeanStub {
 
         return this.stickyRowFeature.getStickyRowCtrls();
     }
-
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
@@ -195,7 +194,13 @@ export class RowRenderer extends BeanStub {
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+
+        if(zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        }else{
+            this.allRowCtrls = liveList;
+        }
     }
 
     private onCellFocusChanged(event?: CellFocusedEvent) {
