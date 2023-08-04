@@ -1,10 +1,11 @@
-import { AutocompleteEntry, AutocompleteListParams, ColumnModel, DataTypeService } from "@ag-grid-community/core";
+import { AutocompleteEntry, AutocompleteListParams, ColumnModel, DataTypeService, ValueParserService } from "@ag-grid-community/core";
 import { FilterExpressionOperators } from "./filterExpressionOperators";
 
 export interface FilterExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
+    valueParserService: ValueParserService;
     columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
     columnValueCreator: (updateEntry: AutocompleteEntry) => string;
     colIdResolver: (columnName: string) => { colId: string, columnName: string } | null;

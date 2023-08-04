@@ -51,6 +51,16 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         return false;
     }
 
+    public refreshComp(): void {
+        this.eAdvancedFilterComp?.refresh();
+        this.eAdvancedFilterHeaderComp?.refresh();
+    }
+
+    public setInputDisabled(disabled: boolean): void {
+        this.eAdvancedFilterComp?.setInputDisabled(disabled);
+        this.eAdvancedFilterHeaderComp?.setInputDisabled(disabled);
+    }
+
     private onEnabledChanged(enabled: boolean): void {
         this.enabled = enabled;
         this.updateComps();

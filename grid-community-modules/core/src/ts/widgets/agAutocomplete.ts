@@ -305,17 +305,24 @@ export class AgAutocomplete extends Component {
         return this.valid;
     }
 
-    public setValue(value: string, position?: number, silent?: boolean): void {
+    public setValue(value: string, position?: number, silent?: boolean, updateListOnlyIfOpen?: boolean): void {
         this.eAutocompleteInput.setValue(value, true);
         this.setCaret(position ?? this.lastPosition);
         if (!silent) {
             this.updateValue(value);
         }
-        this.updateAutocompleteList(value);
+        if (!updateListOnlyIfOpen || this.isListOpen) {
+            this.updateAutocompleteList(value);
+        }
     }
 
     public setForceLastSelection(forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean): this {
         this.forceLastSelection = forceLastSelection;
+        return this;
+    }
+
+    public setInputDisabled(disabled: boolean): this {
+        this.eAutocompleteInput.setDisabled(disabled);
         return this;
     }
 }

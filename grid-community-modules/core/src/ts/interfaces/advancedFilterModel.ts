@@ -72,9 +72,9 @@ export interface BooleanAdvancedFilterModel {
     type: BooleanAdvancedFilterModelType;
 }
 
-export interface ObjectAdvancedFilterModel {
+export interface ObjectAdvancedFilterModel<TValue = any> {
     filterType: 'object';
     colId: string;
     type: TextAdvancedFilterModelType;
-    filter?: string;
+    filter?: TValue;
 }

@@ -31,8 +31,9 @@ import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
-import { RowDataUpdateStartedEvent } from '../events';
+import { DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { ColumnUtils } from './columnUtils';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -433,7 +434,15 @@ export class DataTypeService extends BeanStub {
             if (columnTypeOverridesExist) {
                 this.columnModel.processResizeOperations();
             }
+            const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
+                type: Events.EVENT_DATA_TYPES_INFERRED
+            }
+            this.eventService.dispatchEvent(dataTypesInferredEvent);
         });
+    }
+
+    public isPendingInference(): boolean {
+        return this.isWaitingForRowData;
     }
 
     private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {

@@ -13,9 +13,11 @@ import {
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
+    NewColumnsLoadedEvent,
     PostConstruct,
     PropertyChangedEvent,
     ValueFormatterService,
+    ValueParserService,
     ValueService,
     WithoutGridCommon,
     _
@@ -45,6 +47,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
     @Autowired('rowModel') private rowModel: IRowModel;
 
     private enabled: boolean;
@@ -80,6 +83,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setEnabled(!!event.currentValue))
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.resetColumnCaches());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
+            (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event: PropertyChangedEvent) => {
             this.includeHiddenColumns = !!event.currentValue;
             this.resetColumnCaches();
@@ -121,15 +126,24 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                     columnName = colId;
                 }
                 const operator = this.expressionOperators[model.filterType]?.operators?.[model.type]?.displayValue ?? model.type;
-                const { filter: operand1, filterTo: operand2 } = model as any;
-                const operands = operand1 == null ? '' : ` ${operand1}${operand2 == null ? '' : ' ' + operand2}`
-                return `${columnName} ${operator}${operands}`;
+                const { filter } = model as any;
+                const column = this.columnModel.getGridColumn(colId);
+                let operands = '';
+                if (column && filter != null) {
+                    let operand1 = this.valueFormatterService.formatValue(column, null, filter) ?? _.toStringOrNull(filter);
+                    if (operand1 && this.dataTypeService.getBaseDataType(column) !== 'number') {
+                        operand1 = `"${operand1}"`;
+                    }
+                    operands = operand1 == null ? '' : ` ${operand1}`
+                }
+                return `[${columnName}] ${operator}${operands}`;
             }
         };
 
         const expression = model ? parseModel(model) : null;
 
         this.setExpressionDisplayValue(expression);
+        this.ctrl.refreshComp();
     }
 
     public getExpressionDisplayValue(): string | null {
@@ -149,6 +163,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
+            valueParserService: this.valueParserService,
             columnAutocompleteTypeGenerator: searchString => this.getDefaultAutocompleteListParams(searchString),
             colIdResolver: columnName => this.getColId(columnName),
             columnValueCreator: updateEntry => this.getColumnValue(updateEntry),
@@ -328,5 +343,22 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = {};
+    }
+
+    private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
+        if (event.source !== 'gridInitializing') { return; }
+
+        const setModel = () => this.setModel(this.gridOptionsService.get('advancedFilterModel') ?? null);
+
+        if (this.dataTypeService.isPendingInference()) {
+            this.ctrl.setInputDisabled(true);
+            const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
+                destroyFunc?.();
+                setModel();
+                this.ctrl.setInputDisabled(false);
+            });
+        } else {
+            setModel();
+        }
     }
 }

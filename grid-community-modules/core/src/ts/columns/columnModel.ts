@@ -390,12 +390,13 @@ export class ColumnModel extends BeanStub {
             dispatchEventsFunc();
         }
 
-        this.dispatchNewColumnsLoaded();
+        this.dispatchNewColumnsLoaded(source);
     }
 
-    private dispatchNewColumnsLoaded(): void {
+    private dispatchNewColumnsLoaded(source: ColumnEventType): void {
         const newColumnsLoadedEvent: WithoutGridCommon<NewColumnsLoadedEvent> = {
-            type: Events.EVENT_NEW_COLUMNS_LOADED
+            type: Events.EVENT_NEW_COLUMNS_LOADED,
+            source
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);

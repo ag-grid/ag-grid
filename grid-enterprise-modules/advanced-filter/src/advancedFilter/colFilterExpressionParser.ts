@@ -14,8 +14,6 @@ interface Parser {
     type: string;
     parse(char: string, position: number): boolean | undefined;
     complete(position: number): void;
-    getRawValue(): string;
-    getParsedValue(): string;
 }
 
 class ColumnParser implements Parser {
@@ -51,13 +49,13 @@ class ColumnParser implements Parser {
         return undefined;
     }
     
-    public getRawValue(): string {
+    public getDisplayValue(): string {
         return (this.hasStartChar ? ColFilterExpressionParser.COL_START_CHAR : '') +
             this.colName +
             (this.hasEndChar ? ColFilterExpressionParser.COL_END_CHAR : '');
     }
 
-    public getParsedValue(): string {
+    public getColId(): string {
         return this.colId;
     }
 
@@ -119,11 +117,11 @@ class OperatorParser implements Parser {
         this.parseOperator(true, position);
     }
 
-    public getRawValue(): string {
+    public getDisplayValue(): string {
         return this.operator;
     }
 
-    public getParsedValue(): string {
+    public getOperatorKey(): string {
         return this.parsedOperator;
     }
 
@@ -191,12 +189,12 @@ class OperandParser implements Parser {
     public complete(position: number): void {
         this.parseOperand(true, position);
     }
-    
+
     public getRawValue(): string {
         return this.operand;
     }
 
-    public getParsedValue(): string {
+    public getQuotedValue(): string {
         return this.parsedOperand;
     }
 
@@ -287,9 +285,9 @@ export class ColFilterExpressionParser {
     }
 
     public getFunction(): string {
-        const colId = escapeQuotes(this.columnParser!.getParsedValue());
-        const operator = this.operatorParser?.getParsedValue();
-        const operand = this.operatorParser?.expectedNumOperands === 0 ? '' : `, ${this.operandParser!.getParsedValue()}`;
+        const colId = escapeQuotes(this.columnParser!.getColId());
+        const operator = this.operatorParser?.getOperatorKey();
+        const operand = this.operatorParser?.expectedNumOperands === 0 ? '' : `, ${this.operandParser!.getQuotedValue()}`;
         return `expressionProxy.operators.${this.columnParser!.baseCellDataType}.operators.${operator}.evaluator(expressionProxy.getValue('${colId}', node), node, expressionProxy.getParams('${colId}')${operand})`;
     }
 
@@ -336,14 +334,16 @@ export class ColFilterExpressionParser {
     }
 
     public getModel(): AdvancedFilterModel {
+        const colId = this.columnParser!.getColId();
         const model = {
             filterType: this.columnParser!.baseCellDataType,
-            colId: this.columnParser!.getParsedValue(),
-            type: this.operatorParser!.getParsedValue(),
+            colId,
+            type: this.operatorParser!.getOperatorKey(),
         };
-        const unquote = (operand: string) => operand.slice(1, operand.length - 2);
         if (this.operatorParser!.expectedNumOperands) {
-            (model as any).filter = unquote(this.operandParser!.getParsedValue());
+            const operandString = this.operandParser!.getRawValue();
+            const operand = this.params.valueParserService.parseValue(this.params.columnModel.getGridColumn(colId)!, null, operandString, undefined);
+            (model as any).filter = operand;
         }
         return model as AdvancedFilterModel;
     }
@@ -370,16 +370,16 @@ export class ColFilterExpressionParser {
     }
 
     private getColumnSearchString(position: number): string {
-        const columnName = this.columnParser?.getRawValue();
+        const columnName = this.columnParser?.getDisplayValue() ?? '';
         const searchString = getSearchString(
-            columnName ?? '',
+            columnName,
             position,
             this.columnParser?.endPosition == null
                 ? this.params.expression.length
                 : (this.columnParser.endPosition + 1)
         );
         const containsStartChar = this.columnParser?.hasStartChar && searchString.length > 0;
-        const containsEndChar = this.columnParser?.hasEndChar && searchString.length === columnName!.length + 2;
+        const containsEndChar = this.columnParser?.hasEndChar && searchString.length === columnName.length + 2;
         if (containsStartChar) {
             return searchString.slice(1, containsEndChar ? -1 : undefined);
         }
@@ -387,7 +387,7 @@ export class ColFilterExpressionParser {
     }
 
     private getColumnEndPosition(position: number): number {
-        if (this.columnParser?.getParsedValue()) {
+        if (this.columnParser?.getColId()) {
             return this.columnParser.endPosition!;
         }
         const { expression } = this.params;
@@ -407,7 +407,7 @@ export class ColFilterExpressionParser {
     }
 
     private getOperatorAutocompleteListParams(position: number): AutocompleteListParams {
-        const colId = this.columnParser?.getParsedValue();
+        const colId = this.columnParser?.getColId();
         const column = colId ? this.params.columnModel.getGridColumn(colId) : null;
         if (!column) {
             return { enabled: false };
@@ -417,7 +417,7 @@ export class ColFilterExpressionParser {
         const baseCellDataType = this.columnParser!.baseCellDataType;
         const entries = this.params.operators[baseCellDataType].getEntries(activeOperators);
         const searchString = this.operatorParser?.startPosition != null && position < this.operatorParser.startPosition ? '' : getSearchString(
-            this.operatorParser?.getRawValue() ?? '',
+            this.operatorParser?.getDisplayValue() ?? '',
             position,
             this.operatorParser?.endPosition == null ? this.params.expression.length : (this.operatorParser.endPosition + 1)
         );

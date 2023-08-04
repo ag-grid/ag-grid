@@ -74,7 +74,9 @@ export interface ColumnEverythingChangedEvent<TData = any, TContext = any> exten
     source: string;
 }
 
-export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface GridColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
@@ -655,7 +657,12 @@ export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends 
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 
-// internal event
+/**-----------------*/
+/** Internal EVENTS */
+/**-----------------*/
+
 export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     enabled: boolean;
 }
+
+export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }

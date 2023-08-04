@@ -52,6 +52,14 @@ export class AdvancedFilterHeaderComp extends Component {
         this.setupAdvancedFilter(enabled);
     }
 
+    public refresh(): void {
+        this.eAdvancedFilter?.refresh();
+    }
+
+    public setInputDisabled(disabled: boolean): void {
+        this.eAdvancedFilter?.setInputDisabled(disabled);
+    }
+
     private setupAdvancedFilter(enabled: boolean): void {
         const eGui = this.getGui();
         if (enabled) {
