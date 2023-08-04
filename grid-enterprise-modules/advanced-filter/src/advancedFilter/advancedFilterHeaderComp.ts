@@ -1,42 +1,38 @@
 import {
-    AdvancedFilterEnabledChangedEvent,
     Autowired,
     ColumnModel,
     Component,
     Events,
     FilterManager,
     FocusService,
+    HeaderNavigationService,
     KeyCode,
     PostConstruct,
-    RefSelector,
     _
 } from "@ag-grid-community/core";
 import { AdvancedFilterComp } from "./advancedFilterComp";
 
 export class AdvancedFilterHeaderComp extends Component {
-    @RefSelector('eAdvancedFilterHeader') private eAdvancedFilterHeader: HTMLElement;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
-    private enabled = false;
 
-    constructor() {
+    constructor(private enabled: boolean) {
         super(/* html */ `
-            <div class="ag-advanced-filter-header" role="presentation" ref="eAdvancedFilterHeader" tabindex="-1">
+            <div class="ag-advanced-filter-header" role="row">
             </div>`);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        _.setDisplayed(this.eAdvancedFilterHeader, false);
-        this.setupAdvancedFilter(this.filterManager.isAdvancedFilterEnabled());
+        this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.setupAdvancedFilter(enabled));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onGridColumnsChanged());
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -47,24 +43,53 @@ export class AdvancedFilterHeaderComp extends Component {
         });
     }
 
-    private setupAdvancedFilter(enabled: boolean): void {
+    public getFocusableElement(): HTMLElement {
+        return this.eAdvancedFilter?.getGui() ?? this.getGui();
+    }
+
+    public setEnabled(enabled: boolean): void {
         if (enabled === this.enabled) { return; }
+        this.setupAdvancedFilter(enabled);
+    }
+
+    private setupAdvancedFilter(enabled: boolean): void {
+        const eGui = this.getGui();
         if (enabled) {
             // unmanaged as can be recreated
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
-            const eGui = this.eAdvancedFilter.getGui();
+            const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
+            this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
             
             const height = `${this.columnModel.getFloatingFiltersHeight()}px`;
-            this.getGui().style.height = height;
-            this.getGui().style.minHeight = height;
+            eGui.style.height = height;
+            eGui.style.minHeight = height;
 
-            this.eAdvancedFilterHeader.appendChild(eGui);
+            this.setAriaRowIndex();
+            _.setAriaRole(eAdvancedFilterGui, 'gridcell');
+            _.setAriaColIndex(eAdvancedFilterGui, 1);
+            this.setAriaColumnCount(eAdvancedFilterGui);
+
+            eGui.appendChild(eAdvancedFilterGui);
         } else {
-            _.clearElement(this.eAdvancedFilterHeader);
+            _.clearElement(eGui);
             this.destroyBean(this.eAdvancedFilter)
         }
-        _.setDisplayed(this.eAdvancedFilterHeader, enabled);
+        _.setDisplayed(eGui, enabled);
         this.enabled = enabled;
+    }
+    
+    private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
+        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns()?.length ?? 0);
+    }
+
+    private setAriaRowIndex(): void {
+        _.setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
+    }
+
+    private onGridColumnsChanged(): void {
+        if (!this.eAdvancedFilter) { return; }
+        this.setAriaColumnCount(this.eAdvancedFilter.getGui());
+        this.setAriaRowIndex();
     }
 
     private onKeyDown(event: KeyboardEvent): void {

@@ -318,6 +318,8 @@ export interface GridOptions<TData = any> {
     enableAdvancedFilter?: boolean;
     advancedFilterModel?: AdvancedFilterModel | null;
     includeHiddenColumnsInAdvancedFilter?: boolean;
+    /** DOM element to use as the parent for advanced filter */
+    advancedFilterParent?: HTMLElement | null;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

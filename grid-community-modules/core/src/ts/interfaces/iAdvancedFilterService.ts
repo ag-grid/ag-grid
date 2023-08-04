@@ -1,7 +1,10 @@
 import { IRowNode } from "./iRowNode";
 import { AdvancedFilterModel } from "./advancedFilterModel";
+import { IAdvancedFilterCtrl } from "./iAdvancedFilterCtrl";
 
 export interface IAdvancedFilterService {
+    isEnabled(): boolean;
+
     isFilterPresent(): boolean;
 
     doesFilterPass(node: IRowNode): boolean;
@@ -10,7 +13,7 @@ export interface IAdvancedFilterService {
 
     setModel(model: AdvancedFilterModel | null): void;
 
-    setupComp(eCompToInsertBefore: HTMLElement): void;
+    isHeaderActive(): boolean;
 
-    focusComp(): boolean;
+    getCtrl(): IAdvancedFilterCtrl;
 }

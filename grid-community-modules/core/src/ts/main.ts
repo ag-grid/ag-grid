@@ -133,6 +133,7 @@ export {
     ScalarAdvancedFilterModelType,
     BooleanAdvancedFilterModelType
 }  from './interfaces/advancedFilterModel';
+export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel

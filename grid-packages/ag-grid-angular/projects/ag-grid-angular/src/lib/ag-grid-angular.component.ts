@@ -475,6 +475,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
     @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
     @Input() public includeHiddenColumnsInAdvancedFilter: boolean | undefined = undefined;
+    /** DOM element to use as the parent for advanced filter     */
+    @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.

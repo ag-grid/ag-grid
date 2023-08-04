@@ -559,7 +559,7 @@ export class GridApi<TData = any> {
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
     }
 
-    /** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     public isAnyFilterPresent(): boolean {
         return this.filterManager.isAnyFilterPresent();
     }
@@ -739,6 +739,10 @@ export class GridApi<TData = any> {
 
     public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
         this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
+    }
+
+    public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
+        this.gos.set('advancedFilterParent', advancedFilterParent);
     }
 
     /**
@@ -1031,12 +1035,12 @@ export class GridApi<TData = any> {
         this.sortController.onSortChanged('api');
     }
 
-    /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /** Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
     public setFilterModel(model: any) {
         this.filterManager.setFilterModel(model);
     }
 
-    /** Gets the current state of all the advanced filters. Used for saving filter state. */
+    /** Gets the current state of all the column filters. Used for saving filter state. */
     public getFilterModel(): { [key: string]: any; } {
         return this.filterManager.getFilterModel();
     }

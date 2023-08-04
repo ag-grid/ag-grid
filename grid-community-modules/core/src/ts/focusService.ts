@@ -374,7 +374,7 @@ export class FocusService extends BeanStub {
         const { direction, fromTab, allowUserOverride, event, fromCell } = params;
         let { headerPosition } = params;
 
-        if (fromCell && this.filterManager.isAdvancedFilterEnabled()) {
+        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(headerPosition);
         }
 
@@ -411,7 +411,7 @@ export class FocusService extends BeanStub {
         if (!headerPosition) { return false; }
 
         if (headerPosition.headerRowIndex === -1) {
-            if (this.filterManager.isAdvancedFilterEnabled()) {
+            if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             } else {
                 return this.focusGridView(headerPosition.column as Column);
@@ -452,7 +452,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
-        if (this.filterManager.isAdvancedFilterEnabled()) {
+        if (this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
         } else {
             return this.focusLastHeader(event);
@@ -633,7 +633,7 @@ export class FocusService extends BeanStub {
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
         this.advancedFilterFocusColumn = position?.column as Column | undefined;
-        return this.advancedFilterService.focusComp();
+        return this.advancedFilterService.getCtrl().focusHeaderComp();
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {

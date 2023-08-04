@@ -1,4 +1,5 @@
 import {
+    AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
     AutocompleteEntry,
     AutocompleteListParams,
@@ -8,12 +9,16 @@ import {
     ColumnModel,
     DataTypeService,
     Events,
+    IAdvancedFilterCtrl,
     IAdvancedFilterService,
+    IRowModel,
     IRowNode,
     PostConstruct,
     PropertyChangedEvent,
     ValueFormatterService,
     ValueService,
+    WithoutGridCommon,
+    _
 } from "@ag-grid-community/core";
 import { FilterExpressionParser } from "./filterExpressionParser";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
@@ -24,7 +29,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from "./filterExpressionOperators";
-import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
+import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
@@ -40,6 +45,11 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('rowModel') private rowModel: IRowModel;
+
+    private enabled: boolean;
+    private ctrl: AdvancedFilterCtrl;
+    private includeHiddenColumns = false;
 
     private expressionProxy: ExpressionProxy;
     private expression: string | null = null;
@@ -49,11 +59,13 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { and: string, or: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams } = {};
-    private includeHiddenColumns = false;
-    private eAdvancedFilterHeaderComp: AdvancedFilterHeaderComp | undefined;
 
     @PostConstruct
     private postConstruct(): void {
+        this.setEnabled(this.gridOptionsService.is('enableAdvancedFilter'), true);
+
+        this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
+
         this.expressionOperators = this.getExpressionOperators();
         this.expressionJoinOperators = this.getExpressionJoinOperators();
         this.expressionProxy = {
@@ -66,11 +78,16 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
         this.includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
 
+        this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setEnabled(!!event.currentValue))
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.resetColumnCaches());
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event: PropertyChangedEvent) => {
             this.includeHiddenColumns = !!event.currentValue;
             this.resetColumnCaches();
         });
+    }
+
+    public isEnabled(): boolean {
+        return this.enabled;
     }
 
     public isFilterPresent(): boolean {
@@ -171,17 +188,30 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
     }
 
-    public setupComp(eCompToInsertBefore: HTMLElement): void {
-        this.eAdvancedFilterHeaderComp = this.createManagedBean(new AdvancedFilterHeaderComp());
-        eCompToInsertBefore.insertAdjacentElement('beforebegin', this.eAdvancedFilterHeaderComp.getGui());
+    public isHeaderActive(): boolean {
+        return !this.gridOptionsService.get('advancedFilterParent');
     }
 
-    public focusComp(): boolean {
-        if (this.eAdvancedFilterHeaderComp) {
-            this.eAdvancedFilterHeaderComp.getFocusableElement().focus();
-            return true;
+    public getCtrl(): IAdvancedFilterCtrl {
+        return this.ctrl;
+    }
+
+    private setEnabled(enabled: boolean, silent?: boolean): void {
+        const previousValue = this.enabled;
+        const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+        if (enabled && !isClientSideRowModel) {
+            _.doOnce(() => {
+                console.warn('AG Grid: Advanced Filter is only supported with the Client-Side Row Model.');
+            }, 'advancedFilterCSRM')
         }
-        return false;
+        this.enabled = enabled && isClientSideRowModel;
+        if (!silent && this.enabled !== previousValue) {
+            const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
+                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+                enabled: this.enabled
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private parseExpression(expression: string | null): Function | null {

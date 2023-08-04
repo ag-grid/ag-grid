@@ -61,8 +61,6 @@ export class FilterManager extends BeanStub {
 
     private aggFiltering: boolean;
 
-    private advancedFilterEnabled = false;
-
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
@@ -92,9 +90,9 @@ export class FilterManager extends BeanStub {
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
 
-        this.setAdvancedFilterEnabled(this.gridOptionsService.is('enableAdvancedFilter'), true);
-        this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setAdvancedFilterEnabled(!!event.currentValue))
         this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setFilterExpression(event.currentValue));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
     }
 
     private isExternalFilterPresentCallback() {
@@ -118,7 +116,7 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
-        if (this.advancedFilterEnabled) {
+        if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return;
         }
@@ -240,37 +238,29 @@ export class FilterManager extends BeanStub {
     }
 
     private isAdvancedFilterPresent(): boolean {
-        return this.advancedFilterEnabled && this.advancedFilterService.isFilterPresent();
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isFilterPresent();
     }
 
-    private setAdvancedFilterEnabled(advancedFilterEnabled: boolean, silent?: boolean): void {
-        const previousValue = this.advancedFilterEnabled;
-        const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
-        if (advancedFilterEnabled && !isClientSideRowModel) {
-            doOnce(() => {
-                console.warn('AG Grid: Advanced Filter is only supported with the Client-Side Row Model.');
-            }, 'advancedFilterCSRM')
-        }
-        this.advancedFilterEnabled = advancedFilterEnabled && !!this.advancedFilterService && isClientSideRowModel;
-        if (!silent && this.advancedFilterEnabled !== previousValue) {
-            const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
-                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-                enabled: this.advancedFilterEnabled
-            };
-            this.eventService.dispatchEvent(event);
-            if (this.advancedFilterEnabled) {
-                // destroy columns filters
-                if (this.allColumnFilters.size) {
-                    this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
-                    this.onFilterChanged();
-                }
+    private onAdvancedFilterEnabledChanged(enabled: boolean): void {
+        if (enabled) {
+            if (this.allColumnFilters.size) {
+                this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
+                this.onFilterChanged();
+            }
+        } else {
+            if (this.advancedFilterService?.isFilterPresent()) {
+                this.advancedFilterService.setModel(null);
+                this.onFilterChanged();
             }
         }
-
     }
 
     public isAdvancedFilterEnabled(): boolean {
-        return this.advancedFilterEnabled;
+        return this.advancedFilterService?.isEnabled();
+    }
+
+    public isAdvancedFilterHeaderActive(): boolean {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isHeaderActive();
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -843,7 +833,7 @@ export class FilterManager extends BeanStub {
 
     // for group filters, can change dynamically whether they are allowed or not
     public isFilterAllowed(column: Column): boolean {
-        if (this.advancedFilterEnabled) {
+        if (this.isAdvancedFilterEnabled()) {
             return false;
         }
         const isFilterAllowed = column.isFilterAllowed();
@@ -971,24 +961,24 @@ export class FilterManager extends BeanStub {
     }
 
     public getFilterExpression(): AdvancedFilterModel | null {
-        return this.advancedFilterEnabled ? this.advancedFilterService.getModel() : null;
+        return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
     }
 
     public setFilterExpression(expression: AdvancedFilterModel | null): void {
-        if (!this.advancedFilterEnabled) { return; }
+        if (!this.isAdvancedFilterEnabled()) { return; }
         this.advancedFilterService.setModel(expression);
         this.onFilterChanged();
     }
 
     public hasFloatingFilters(): boolean {
-        if (this.advancedFilterEnabled) { return false; }
+        if (this.isAdvancedFilterEnabled()) { return false; }
         const gridColumns = this.columnModel.getAllGridColumns();
         if (!gridColumns) { return false; }
         return gridColumns.some(col => col.getColDef().floatingFilter);
     }
 
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
-        if (this.advancedFilterEnabled) {
+        if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return undefined;
         }
@@ -1024,6 +1014,14 @@ export class FilterManager extends BeanStub {
         doOnce(() => {
             console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
         }, 'advancedFiltersCompatibility');
+    }
+
+    public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
+        this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    }
+
+    public getHeaderRowCount(): number {
+        return this.isAdvancedFilterHeaderActive() ? 1 : 0;
     }
 
     protected destroy() {
