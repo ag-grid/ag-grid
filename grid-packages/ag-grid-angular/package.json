@@ -5,11 +5,11 @@
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
-    "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build && npm run hash",
+    "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build",
+    "build-docs-initial": "npm run build",
     "build-prod": "npm run build",
     "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
-    "lint": "./node_modules/.bin/ng lint",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "lint": "./node_modules/.bin/ng lint"
   },
   "repository": {
     "type": "git",

@@ -11,16 +11,18 @@ function getTscPath() {
 module.exports.watchValidateExampleTypes = async () => {
     console.log("Watching TS example files only...");
     const tsc = getTscPath();
-    const tsWatch = cp.spawn(tsc, ['--watch', "--project", "./grid-packages/ag-grid-docs/documentation/tsconfig.watch.json"], {
+    const tsWatch = cp.spawn(tsc, ['--watch', "--preserveWatchOutput", "--project", "./grid-packages/ag-grid-docs/documentation/tsconfig.watch.json"], {
         cwd: WINDOWS ? '..\\..\\' : '../../',
         stdio: 'pipe',
         encoding: 'buffer'
     });
+
     tsWatch.stdout.on('data', processStdio((output) => {
-        if (!output.includes("Found 0 errors.")) {
-            console.error('Example Validator: ' + output);
+        const formattedOutput = output.split('\n').map(line => `Example Validator: ${line}`).join("\n")
+        if (formattedOutput.includes("Found 0 errors.")) {
+            console.log(formattedOutput);
         } else {
-            console.log('Example Validator: ' + output);
+            console.error(formattedOutput);
         }
     }));
 
