@@ -74,14 +74,23 @@ const GridBodyComp = () => {
             beansToDestroy.current.push(comp);
             return comp;
         };
-        eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-        eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
 
-        eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-        eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
+        const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
+            eParent.appendChild(eChild);
+            destroyFuncs.current.push(() => eParent.removeChild(eChild));
+        }
+
+        if (eRoot.current) {
+            attachToDom(eRoot.current!, document.createComment(' AG Fake Horizontal Scroll '));
+            attachToDom(eRoot.current!, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+
+            attachToDom(eRoot.current!, document.createComment(' AG Overlay Wrapper '));
+            attachToDom(eRoot.current!, newComp('AG-OVERLAY-WRAPPER').getGui());
+        }
+
         if (eBody.current) {
-            eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
-            eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+            attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
+            attachToDom(eBody.current, newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
