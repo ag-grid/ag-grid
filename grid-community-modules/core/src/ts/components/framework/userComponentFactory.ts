@@ -46,6 +46,7 @@ import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
+import { IRichSelectParams } from "../../widgets/agRichSelect";
 
 export type DefinitionObject =
     GridOptions
@@ -53,7 +54,7 @@ export type DefinitionObject =
     | ColGroupDef
     | IFilterDef
     | SetFilterParams
-    | IRichCellEditorParams
+    | IRichSelectParams
     | ToolPanelDef
     | StatusPanelDef;
 

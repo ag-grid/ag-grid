@@ -1,16 +1,19 @@
-import { UserCompDetails } from "../components/framework/userComponentFactory";
-import { PostConstruct } from "../context/context";
+import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
+import { Autowired, PostConstruct } from "../context/context";
+import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { bindCellRendererToHtmlElement } from "../utils/dom";
 import { exists } from "../utils/generic";
-import { AgRichSelect } from "./agRichSelect";
+import { AgRichSelect, IRichSelectParams } from "./agRichSelect";
 import { Component } from "./component";
 
 export class RichSelectRow extends Component {
 
     private value: any;
 
-    constructor(private readonly userCompDetails?: UserCompDetails) {
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+
+    constructor(private readonly params: IRichSelectParams) {
         super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
@@ -19,10 +22,15 @@ export class RichSelectRow extends Component {
         this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
     }
 
-    public setState(value: any, valueFormatted: string, selected: boolean): void {
-        const rendererSuccessful = this.populateWithRenderer(valueFormatted);
+    public setState(value: any, selected: boolean): void {
+        let formattedValue = value;
+
+        if (this.params.valueFormatter) {
+            formattedValue = this.params.valueFormatter(value);
+        }
+        const rendererSuccessful = this.populateWithRenderer(formattedValue);
         if (!rendererSuccessful) {
-            this.populateWithoutRenderer(value, valueFormatted);
+            this.populateWithoutRenderer(value, formattedValue);
         }
 
         this.value = value;
@@ -49,9 +57,23 @@ export class RichSelectRow extends Component {
     private populateWithRenderer(value: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
+        let userCompDetails: UserCompDetails | undefined;
 
-        if (cellRendererPromise) {
-            cellRendererPromise = this.userCompDetails?.newAgStackInstance();
+        const { valueFormatter } = this.params;
+
+        const valueFormatted = valueFormatter ? valueFormatter(value) : value;
+
+        if (this.params.cellRenderer) {
+            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
+                value,
+                valueFormatted,
+                api: this.gridOptionsService.api
+            } as ICellRendererParams);
+            
+        }
+
+        if (userCompDetails) {
+            cellRendererPromise = userCompDetails.newAgStackInstance();
         }
 
         if (cellRendererPromise) {
@@ -71,7 +93,7 @@ export class RichSelectRow extends Component {
         return false;
     }
 
-    private onMouseUp(e: MouseEvent): void {
+    private onMouseUp(): void {
         const richSelectComp = this.parentComponent as AgRichSelect;
         richSelectComp.setValue(this.value, false, true);
     }

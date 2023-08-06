@@ -8,7 +8,7 @@ import { setElementWidth, isVisible } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabel } from './agAbstractLabel';
 
-export abstract class AgPickerField<TElement extends HTMLElement, TValue> extends AgAbstractField<TValue> {
+export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractField<TValue, TConfig> {
     public abstract showPicker(): Component;
     protected value: TValue;
     protected isPickerDisplayed: boolean = false;
@@ -21,7 +21,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
-    constructor(config?: IAgLabel, className?: string, private readonly pickerIcon?: string, ariaRole?: string) {
+    constructor(config?: TConfig, className?: string, private readonly pickerIcon?: string, ariaRole?: string) {
         super(config,
             /* html */ `<div class="ag-picker-field" role="presentation">
                 <div ref="eLabel"></div>

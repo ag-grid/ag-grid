@@ -1,26 +1,20 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { KeyCreatorParams } from "@ag-grid-community/core";
-import { IRichSelectParams } from "@ag-grid-community/core";
-import { Autowired, UserComponentFactory } from "@ag-grid-community/core";
 import {
     AgRichSelect,
     ICellEditor,
     IRichCellEditorParams,
-    RefSelector,
+    KeyCreatorParams,
+    IRichSelectParams,
+    AgRichSelectValue,
     PopupComponent,
-    KeyCode,
     _,
 } from "@ag-grid-community/core";
-import { AgRichSelectValue } from "@ag-grid-community/core/dist/cjs/es5/widgets/agRichSelect";
+
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     private params: IRichCellEditorParams;
     private focusAfterAttached: boolean;
-    private startedByEnter: boolean = false;
     private richSelect: AgRichSelect;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     constructor() {
         super(/* html */ 
@@ -41,6 +35,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const richSelectParams = this.buildRichSelectParams();
 
         this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
+        this.getGui().appendChild(this.richSelect.getGui());
 
         this.focusAfterAttached = cellStartedEdit;
 
@@ -50,17 +45,12 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private buildRichSelectParams(): IRichSelectParams {
-        const { value, values, colDef, formatValue } = this.params;
-        const userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
-            value,
-            valueFormatted: formatValue(value),
-            api: this.gridOptionsService.api
-        } as ICellRendererParams);
+        const { cellRenderer, value, values, colDef, formatValue } = this.params;
 
         const ret: IRichSelectParams = {
             value: value,
             valueList: values,
-            userCompDetails,
+            cellRenderer,
             valueFormatter: formatValue
         }
 
@@ -88,19 +78,16 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     public afterGuiAttached(): void {
-        // const selectedIndex = this.params.values.indexOf(this.selectedValue);
-
         const { focusAfterAttached, params } = this;
-
-        this.richSelect.showPicker();
 
         if (focusAfterAttached) {
             this.richSelect.getFocusableElement().focus();
         }
 
+        this.richSelect.showPicker();
+
         const { eventKey } = params;
         if (eventKey) {
-            this.startedByEnter = eventKey === KeyCode.ENTER;
             if (eventKey?.length === 1) {
                 this.richSelect.searchText(eventKey);
             }

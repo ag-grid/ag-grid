@@ -1,6 +1,7 @@
-import { UserCompDetails } from "../components/framework/userComponentFactory";
+import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
 import { KeyCode } from "../constants/keyCode";
 import { Autowired } from "../context/context";
+import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaExpanded } from "../utils/aria";
 import { bindCellRendererToHtmlElement, clearElement, getAbsoluteWidth, getInnerHeight, setElementWidth } from "../utils/dom";
@@ -20,45 +21,34 @@ export type AgRichSelectValue = (object | string | number);
 export interface IRichSelectParams extends IAgLabel {
     value?: AgRichSelectValue;
     valueList?: AgRichSelectValue[]
-    userCompDetails?: UserCompDetails;
+    cellRenderer?: any;
     valueFormatter?: (value: any) => any;
     searchStringCreator?: (values: AgRichSelectValue[]) => string[]
 }
 
-export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
+export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectValue, IRichSelectParams> {
 
     private searchString = '';
     private listComponent: VirtualList;
     private searchDebounceDelay: number;
     private values: AgRichSelectValue[];
-    private userCompDetails: UserCompDetails | undefined;
-    private valueFormatter: (value: any) => any;
-    private searchStringCreator: ((values: AgRichSelectValue[]) => string[]) | undefined;
     private hideList: ((event?: any) => void) | null;
     private highlightedItem: number = -1;
 
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(config?: IRichSelectParams) {
-        super(config, 'ag-rich-select', 'smallDown', 'listbox');
+    constructor(params?: IRichSelectParams) {
+        super(params, 'ag-rich-select', 'smallDown', 'listbox');
 
-        if (!config) {
-            this.valueFormatter = value => value;
-            return;
+        const { value, valueList } = params || {};
+
+
+        if (value != null) {
+            this.value = value;
         }
 
-        const { userCompDetails, valueFormatter, searchStringCreator, valueList } = config;
-        this.userCompDetails = userCompDetails;
-
-        if (valueFormatter) {
-            this.valueFormatter = this.valueFormatter;
-        }
-
-        if (searchStringCreator) {
-            this.searchStringCreator = searchStringCreator
-        }
-
-        if (valueList) {
+        if (valueList != null) {
             this.setValueList(valueList);
         }
     }
@@ -88,22 +78,34 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     private renderSelectedValue(): void {
-        const { value, eDisplayField } = this;
+        const { value, eDisplayField, config } = this;
+        const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
+
+        let userCompDetails: UserCompDetails | undefined;
+
+        if (config.cellRenderer) {
+            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
+                value,
+                valueFormatted,
+                api: this.gridOptionsService.api
+            } as ICellRendererParams);
+        }
 
         let userCompDetailsPromise: AgPromise<any> | undefined;
 
-        if (this.userCompDetails) {
-            userCompDetailsPromise = this.userCompDetails.newAgStackInstance();
+        if (userCompDetails) {
+            userCompDetailsPromise = userCompDetails.newAgStackInstance();
         }
 
         if (userCompDetailsPromise) {
+            clearElement(eDisplayField);
             bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
             userCompDetailsPromise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
         } else {
             if (exists(this.value)) {
-                eDisplayField.innerText = value;
+                eDisplayField.innerText = valueFormatted;
             } else {
                 clearElement(eDisplayField);
             }
@@ -181,6 +183,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
 
     public searchText(key: KeyboardEvent | string) {
         if (typeof key !== 'string') {
+            key.preventDefault();
             let keyString = key.key;
 
             if (keyString === KeyCode.BACKSPACE) {
@@ -203,10 +206,12 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
         const values = this.values;
         let searchStrings: string[] | undefined;
 
+        const { valueFormatter = (value => value), searchStringCreator } = this.config;
+
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
-            searchStrings = values.map(v => this.valueFormatter(v));
-        } else if (typeof values[0] === 'object' && this.searchStringCreator) {
-            searchStrings = this.searchStringCreator(values);
+            searchStrings = values.map(v => valueFormatter(v));
+        } else if (typeof values[0] === 'object' && searchStringCreator) {
+            searchStrings = searchStringCreator(values);
         }
 
         if (!searchStrings) {
@@ -260,12 +265,11 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     private createRowComponent(value: any): Component {
-        const displayValue = this.valueFormatter(value);
-        const row = new RichSelectRow();
+        const row = new RichSelectRow(this.config);
         row.setParentComponent(this);
 
         this.getContext().createBean(row);
-        row.setState(value, displayValue, value === this.value);
+        row.setState(value, value === this.value);
 
         return row;
     }
@@ -304,7 +308,6 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, string> {
 
     protected onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
-        event.preventDefault();
 
         switch (key) {
             case KeyCode.DOWN:
