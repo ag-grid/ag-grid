@@ -220,11 +220,15 @@ function readAsJsFile(tsFilePath) {
 }
 
 const skipFramework = framework => {
-    if (!process.env.FW_EXAMPLES_TO_GENERATE) {
+    if (!process.env.AG_FW_EXAMPLES_TO_GENERATE) {
         return false;
     }
 
-    return !(process.env.FW_EXAMPLES_TO_GENERATE === framework);
+    return !(process.env.AG_FW_EXAMPLES_TO_GENERATE === framework);
+}
+
+const skipPackages = () => {
+    return !!process.env.AG_SKIP_PACKAGE_EXAMPLES;
 }
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
@@ -723,7 +727,11 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
         if (!tsRegistered) {
             require('ts-node').register();
         }
-        generateExamples('grid', ['packages', 'modules'], scope, trigger, done);
+        const importTypes = ['modules'];
+        if(!skipPackages()) {
+            importTypes.push('packages');
+        }
+        generateExamples('grid', importTypes, scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate grid examples', e);
 

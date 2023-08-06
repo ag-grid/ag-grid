@@ -9,7 +9,7 @@
     "start": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve",
     "start-new": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-new",
     "serve-core-only": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-core-only",
-    "serve-core-only-new": "npm run clean-examples-dir && FW_EXAMPLES_TO_GENERATE=vanilla NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-core-only-new",
+    "serve-core-only-new": "npm run clean-examples-dir && AG_FW_EXAMPLES_TO_GENERATE=vanilla AG_SKIP_PACKAGE_EXAMPLES=true NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-core-only-new",
     "serve-with-formatting": "NODE_OPTIONS=--openssl-legacy-provider  ./node_modules/.bin/gulp serve-with-formatting",
     "serve-charts-core-only": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp serve-charts-core-only",
     "serve-framework-only-new": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp serve-framework-only-new",

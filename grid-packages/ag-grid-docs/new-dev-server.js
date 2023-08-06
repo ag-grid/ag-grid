@@ -778,7 +778,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 chartsOnly,
                 skipExampleGeneration,
                 skipAutoDocGeneration,
-                AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK
+                AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK,
+                AG_FW_EXAMPLES_TO_GENERATE: process.env.AG_FW_EXAMPLES_TO_GENERATE,
+                AG_SKIP_PACKAGE_EXAMPLES: process.env.AG_SKIP_PACKAGE_EXAMPLES
             });
 
             if (chartsOnly) {
