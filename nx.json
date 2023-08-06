@@ -19,6 +19,11 @@
       "dependsOn": [
         "^build"
       ]
+    },
+    "build-prod": {
+      "dependsOn": [
+        "^build-prod"
+      ]
     }
   }
 }
