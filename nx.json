@@ -24,6 +24,11 @@
       "dependsOn": [
         "^build-prod"
       ]
+    },
+    "package": {
+      "dependsOn": [
+        "^package"
+      ]
     }
   }
 }
