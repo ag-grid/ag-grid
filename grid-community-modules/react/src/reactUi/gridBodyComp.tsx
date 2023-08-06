@@ -1,10 +1,9 @@
 import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _ } from '@ag-grid-community/core';
-import React, { memo, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
-import { useLayoutEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface SectionProperties {
@@ -15,7 +14,7 @@ interface SectionProperties {
 
 const GridBodyComp = () => {
 
-    const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
+    const { context, agStackComponentsRegistry, resizeObserverService } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
@@ -25,7 +24,7 @@ const GridBodyComp = () => {
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
-    
+
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
@@ -39,12 +38,15 @@ const GridBodyComp = () => {
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eRoot.current!), []);
 
-    const eRoot = useRef<HTMLDivElement>(null);
+    const eRoot = useRef<HTMLDivElement | null>(null);
     const eTop = useRef<HTMLDivElement>(null);
     const eStickyTop = useRef<HTMLDivElement>(null);
     const eBody = useRef<HTMLDivElement>(null);
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
+
+    const beansToDestroy = useRef<any[]>([]);
+    const destroyFuncs = useRef<(() => void)[]>([]);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
@@ -52,25 +54,31 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    useLayoutEffectOnce(() => {
-        const beansToDestroy: any[] = [];
-        const destroyFuncs: (() => void)[] = [];
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eRoot.current = e;
+        if (!eRoot.current) {
+            context.destroyBeans(beansToDestroy.current);
+            destroyFuncs.current.forEach(f => f());
+
+            beansToDestroy.current = [];
+            destroyFuncs.current = [];
+
+            return;
+        }
 
         if (!context) { return; }
 
         const newComp = (tag: string) => {
             const CompClass = agStackComponentsRegistry.getComponentClass(tag);
             const comp = context.createBean(new CompClass());
-            beansToDestroy.push(comp);
+            beansToDestroy.current.push(comp);
             return comp;
         };
-        if (eRoot.current) {
-            eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-            eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+        eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
+        eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
 
-            eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-            eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-        }
+        eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
+        eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
         if (eBody.current) {
             eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
             eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
@@ -98,12 +106,12 @@ const GridBodyComp = () => {
             },
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
-                destroyFuncs.push(() => unsubscribeFromResize());
+                destroyFuncs.current.push(() => unsubscribeFromResize());
             }
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
-        beansToDestroy.push(ctrl);
+        beansToDestroy.current.push(ctrl);
         ctrl.setComp(
             compProxy,
             eRoot.current!,
@@ -113,12 +121,7 @@ const GridBodyComp = () => {
             eStickyTop.current!
         );
 
-        return () => {
-            context.destroyBeans(beansToDestroy);
-            destroyFuncs.forEach(f => f());
-        };
-
-    });
+    }, []);
 
     const rootClasses = useMemo(() =>
         classesList('ag-root', 'ag-unselectable', layoutClass),
@@ -182,7 +185,7 @@ const GridBodyComp = () => {
     );
 
     return (
-        <div ref={eRoot} className={rootClasses} role="treegrid">
+        <div ref={setRef} className={rootClasses} role="treegrid">
             <GridHeaderComp/>
             { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,
