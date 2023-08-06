@@ -1,8 +1,8 @@
-import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
+import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
+export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = IAgLabelParams> extends AgAbstractLabel<TConfig> {
     public static EVENT_CHANGED = 'valueChange';
 
     protected previousValue: TValue | null | undefined;

@@ -3,25 +3,23 @@ import { KeyCode } from "../constants/keyCode";
 import { Autowired } from "../context/context";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
-import { setAriaExpanded } from "../utils/aria";
-import { bindCellRendererToHtmlElement, clearElement, getAbsoluteWidth, getInnerHeight, setElementWidth } from "../utils/dom";
+import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
 import { exists } from "../utils/generic";
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
-import { IAgLabel } from "./agAbstractLabel";
-import { AgPickerField } from "./agPickerField";
+import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { RichSelectRow } from "./agRichSelectRow";
 import { Component } from "./component";
-import { PopupService } from "./popupService";
 import { VirtualList } from "./virtualList";
 
 export type AgRichSelectValue = (object | string | number);
 
-export interface IRichSelectParams extends IAgLabel {
+export interface IRichSelectParams extends IPickerFieldParams {
     value?: AgRichSelectValue;
     valueList?: AgRichSelectValue[]
     cellRenderer?: any;
+    cellRowHeight?: number;
     valueFormatter?: (value: any) => any;
     searchStringCreator?: (values: AgRichSelectValue[]) => string[]
 }
@@ -29,20 +27,27 @@ export interface IRichSelectParams extends IAgLabel {
 export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectValue, IRichSelectParams> {
 
     private searchString = '';
-    private listComponent: VirtualList;
+    private listComponent: VirtualList | undefined;
     private searchDebounceDelay: number;
     private values: AgRichSelectValue[];
-    private hideList: ((event?: any) => void) | null;
     private highlightedItem: number = -1;
+    private cellRowHeight: number;
 
-    @Autowired('popupService') private popupService: PopupService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(params?: IRichSelectParams) {
-        super(params, 'ag-rich-select', 'smallDown', 'listbox');
+    constructor(config?: IRichSelectParams) {
+        super({
+            pickerAriaLabelKey: 'ariaLabelRichSelectField',
+            pickerAriaLabelValue: 'Rich Select Field',
+            pickerType: 'ag-list',
+            ...config,
+        }, 'ag-rich-select', 'smallDown', 'listbox');
 
-        const { value, valueList } = params || {};
+        const { cellRowHeight, value, valueList } = config || {};
 
+        if (cellRowHeight) {
+            this.cellRowHeight = cellRowHeight;
+        }
 
         if (value != null) {
             this.value = value;
@@ -66,10 +71,14 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createManagedBean(new VirtualList({ cssIdentifier: 'rich-select' }));
+        this.listComponent = this.createManagedBean(new VirtualList({ cssIdentifier: 'rich-select' }))
         this.listComponent.getGui().classList.add('ag-rich-select-list');
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
         this.listComponent.setParentComponent(this);
+
+        if (this.cellRowHeight) {
+            this.listComponent.setRowHeight(this.cellRowHeight);
+        }
 
         const eListComponent = this.listComponent.getGui();
 
@@ -114,71 +123,46 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
 
     public setValueList(valueList: (object | string | number)[]): void {
         this.values = valueList;
+
+        if (this.value == null) { return; }
+
+        for (let i = 0; i < valueList.length; i++) {
+            if (valueList[i] === this.value) {
+                this.highlightedItem = i;
+                break;
+            }
+        }
     }
 
     public setRowHeight(height: number): void {
-        this.listComponent.setRowHeight(height);
+        if (height !== this.cellRowHeight) {
+            this.cellRowHeight = height;
+        }
+
+        if (this.listComponent) {
+            this.listComponent.setRowHeight(height);
+        }
     }
 
-    public showPicker(): Component {
+    protected getPickerComponent(): Component {
         const { values }  = this;
 
-        this.listComponent.setModel({
+        this.listComponent!.setModel({
             getRowCount: () => values.length,
             getRow: (index: number) => values[index]
         });
 
-        const listGui = this.listComponent.getGui();
-        const eDocument = this.gridOptionsService.getDocument();
+        return this.listComponent!;
 
-        const destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
-            if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
-                this.hideList();
-            }
-        });
+    }
 
-        const translate = this.localeService.getLocaleTextFunc();
+    public showPicker() {
+        super.showPicker();
+        this.listComponent!.refresh();
+    }
 
-        this.listComponent.refresh();
-
-        const addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: listGui,
-            closeOnEsc: true,
-            closedCallback: () => {
-                this.hideList = null;
-                this.highlightedItem = -1;
-                this.isPickerDisplayed = false;
-                destroyMouseWheelFunc!();
-
-                if (this.isAlive()) {
-                    setAriaExpanded(this.eWrapper, false);
-                    this.getFocusableElement().focus();
-                }
-            },
-            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
-        });
-
-        if (addPopupRes) {
-            this.hideList = addPopupRes.hideFunc;
-        }
-        this.isPickerDisplayed = true;
-
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
-        setAriaExpanded(this.eWrapper, true);
-
-        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
-        listGui.style.position = 'absolute';
-
-        this.popupService.positionPopupByComponent({
-            type: 'ag-list',
-            eventSource: this.eWrapper,
-            ePopup: listGui,
-            position: 'under',
-            keepWithinBounds: true
-        });
-
-        return this.listComponent;
+    protected beforeHidePicker(): void {
+        this.highlightedItem = -1;
     }
 
     public searchText(key: KeyboardEvent | string) {
@@ -234,7 +218,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
     }
 
     private selectListItem(index: number): void {
-        if (!this.isPickerDisplayed || index < 0 || index >= this.values.length) { return; }
+        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) { return; }
 
         this.highlightedItem = index;
         this.listComponent.ensureIndexVisible(index);
@@ -253,8 +237,8 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
 
         this.value = value;
 
-        if (fromPicker && this.hideList) {
-            this.hideList();
+        if (fromPicker) {
+            this.hidePicker();
         } else {
             this.selectListItem(index);
         }
@@ -275,6 +259,8 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
     }
 
     private onMouseMove(mouseEvent: MouseEvent): void {
+        if (!this.listComponent) { return; }
+
         const rect = this.listComponent.getGui().getBoundingClientRect();
         const scrollTop = this.listComponent.getScrollTop();
         const mouseY = mouseEvent.clientY - rect.top + scrollTop;
@@ -315,9 +301,8 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
                 this.onNavigationKeyDown(event, key);
                 break;
             case KeyCode.ESCAPE:
-                if (this.hideList) {
-                    this.hideList();
-                    this.hideList = null;
+                if (this.isPickerDisplayed) {
+                    this.hidePicker();
                 }
                 break;
             case KeyCode.ENTER:

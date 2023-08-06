@@ -51,7 +51,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             value: value,
             valueList: values,
             cellRenderer,
-            valueFormatter: formatValue
+            valueFormatter: formatValue,
+            pickerAriaLabelKey: 'ariaLabelRichSelectField',
+            pickerAriaLabelValue: 'Rich Select Field',
+            pickerType: 'ag-list',
         }
 
         if (typeof values[0] === 'object' && colDef.keyCreator) {

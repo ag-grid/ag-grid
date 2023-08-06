@@ -278,8 +278,9 @@ export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup, PopupPositionParams } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
-export { AgAbstractLabel, IAgLabel } from "./widgets/agAbstractLabel";
-export { AgPickerField } from "./widgets/agPickerField";
+
+export { AgAbstractLabel, IAgLabelParams } from "./widgets/agAbstractLabel";
+export { AgPickerField, IPickerFieldParams } from "./widgets/agPickerField";
 export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
 export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
 

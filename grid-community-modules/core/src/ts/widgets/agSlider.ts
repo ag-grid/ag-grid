@@ -1,6 +1,6 @@
 import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
-import { AgAbstractLabel, LabelAlignment, IAgLabel } from "./agAbstractLabel";
+import { AgAbstractLabel, LabelAlignment, IAgLabelParams } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
@@ -21,7 +21,7 @@ export class AgSlider extends AgAbstractLabel {
 
     protected labelAlignment: LabelAlignment = 'top';
 
-    constructor(config?: IAgLabel) {
+    constructor(config?: IAgLabelParams) {
         super(config, AgSlider.TEMPLATE);
     }
 

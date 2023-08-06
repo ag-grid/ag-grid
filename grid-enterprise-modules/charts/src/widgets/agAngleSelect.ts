@@ -1,4 +1,4 @@
-import { AgAbstractField, AgInputNumberField, Autowired, DragService, AgAbstractLabel, DragListenerParams, IAgLabel, RefSelector, _ } from "@ag-grid-community/core";
+import { AgAbstractField, AgInputNumberField, Autowired, DragService, AgAbstractLabel, DragListenerParams, IAgLabelParams, RefSelector, _ } from "@ag-grid-community/core";
 
 
 export class AgAngleSelect extends AgAbstractLabel {
@@ -30,7 +30,7 @@ export class AgAngleSelect extends AgAbstractLabel {
     private offsetY: number = 0;
     private dragListener: DragListenerParams;
 
-    constructor(config?: IAgLabel) {
+    constructor(config?: IAgLabelParams) {
         super(config, AgAngleSelect.TEMPLATE);
     }
 

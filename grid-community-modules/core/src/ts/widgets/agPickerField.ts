@@ -1,20 +1,32 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy } from "../utils/aria";
+import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
-import { setElementWidth, isVisible } from "../utils/dom";
+import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
-import { IAgLabel } from './agAbstractLabel';
+import { IAgLabelParams } from './agAbstractLabel';
+import { AddPopupParams, PopupService } from "./popupService";
+import { Autowired } from "../context/context";
 
-export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractField<TValue, TConfig> {
-    public abstract showPicker(): Component;
+export interface IPickerFieldParams extends IAgLabelParams {
+    pickerType: string;
+    pickerAriaLabelKey: string;
+    pickerAriaLabelValue: string;
+}
+
+export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfig extends IPickerFieldParams = IPickerFieldParams> extends AgAbstractField<TValue, TConfig> {
+    protected abstract getPickerComponent(): Component;
     protected value: TValue;
     protected isPickerDisplayed: boolean = false;
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
-    private pickerComponent: Component;
+    protected pickerComponent: Component | undefined;
+    private hidePopupCallback: (() => void) | null = null;
+    private destroyMouseWheelFunc: (() => null) | undefined;
+
+    @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
@@ -50,8 +62,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
         this.addManagedListener(eGui, 'mousedown', (e: MouseEvent) => {
             if (
                 !this.skipClick &&
-                this.pickerComponent &&
-                this.pickerComponent.isAlive() &&
+                this.pickerComponent?.isAlive() &&
                 isVisible(this.pickerComponent.getGui()) &&
                 eGui.contains(e.target as HTMLElement)
             ) {
@@ -88,8 +99,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
         }
 
         if (this.isDisabled()) { return; }
-
-        this.pickerComponent = this.showPicker();
+        this.showPicker();
     }
 
     protected onKeyDown(e: KeyboardEvent): void {
@@ -107,6 +117,76 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
         }
     }
 
+    public showPicker() {
+        if (!this.pickerComponent) {
+            this.pickerComponent = this.getPickerComponent();
+        }
+
+        const eDocument = this.gridOptionsService.getDocument();
+        const ePicker = this.pickerComponent.getGui();
+
+        this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
+            if (!ePicker.contains(e.target as HTMLElement)) {
+                this.hidePicker();
+            }
+        });
+
+        const translate = this.localeService.getLocaleTextFunc();
+
+        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue } = this.config;
+
+        const popupParams: AddPopupParams = {
+            modal: true,
+            eChild: ePicker,
+            closeOnEsc: true,
+            closedCallback: () => {
+                this.beforeHidePicker();
+                if (this.isAlive()) {
+                    setAriaExpanded(this.eWrapper, false);
+                    this.getFocusableElement().focus();
+                }
+            },
+            ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue)
+        }
+
+        const addPopupRes = this.popupService.addPopup(popupParams);
+
+        this.isPickerDisplayed = true;
+
+        setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
+        setAriaExpanded(this.eWrapper, true);
+
+        ePicker.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
+        ePicker.style.position = 'absolute';
+
+        this.popupService.positionPopupByComponent({
+            type: pickerType,
+            eventSource: this.eWrapper,
+            ePopup: ePicker,
+            position: 'under',
+            keepWithinBounds: true
+        });
+
+        this.hidePopupCallback = addPopupRes.hideFunc;
+    }
+
+    protected beforeHidePicker(): void {
+        if (this.destroyMouseWheelFunc) {
+            this.destroyMouseWheelFunc();
+            this.destroyMouseWheelFunc = undefined;
+        }
+
+        this.isPickerDisplayed = false;
+        this.pickerComponent = undefined;
+        this.hidePopupCallback = null;
+    }
+
+    public hidePicker(): void {
+        if (this.hidePopupCallback) {
+            this.hidePopupCallback();
+        }
+    }
+
     public setAriaLabel(label: string): this {
         setAriaLabel(this.eWrapper, label);
 
@@ -120,5 +200,10 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
 
     public getFocusableElement(): HTMLElement {
         return this.eWrapper;
+    }
+
+    protected destroy(): void {
+        this.hidePicker();
+        super.destroy();
     }
 }

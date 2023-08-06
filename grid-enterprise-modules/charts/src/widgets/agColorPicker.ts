@@ -1,13 +1,18 @@
 import { AgColorPanel } from "./agColorPanel";
-import { _, IAgLabel, AgPickerField, AgDialog } from "@ag-grid-community/core";
+import { _, IPickerFieldParams, AgPickerField, AgDialog, Component } from "@ag-grid-community/core";
 
-interface ColorPickerConfig extends IAgLabel {
+interface ColorPickerConfig extends IPickerFieldParams {
     color: string;
 }
 
 export class AgColorPicker extends AgPickerField<HTMLElement, string> {
     constructor(config?: ColorPickerConfig) {
-        super(config, 'ag-color-picker', 'colorPicker');
+        super({
+            pickerAriaLabelKey: 'ariaLabelColorPicker',
+            pickerAriaLabelValue: 'Color Picker',
+            pickerType: 'ag-list',
+            ...config,
+        }, 'ag-color-picker', 'colorPicker');
 
         if (config && config.color) {
             this.value = config.color;
@@ -22,8 +27,9 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         }
     }
 
-    public showPicker() {
+    protected getPickerComponent(): Component {
         const eGuiRect = this.getGui().getBoundingClientRect();
+
         const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
@@ -35,9 +41,19 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             y: eGuiRect.top - 250
         }));
 
+        return colorDialog;
+    }
+
+    public showPicker() {
         this.isPickerDisplayed = true;
 
-        colorDialog.addCssClass('ag-color-dialog');
+        if (!this.pickerComponent) {
+            this.pickerComponent = this.getPickerComponent();
+        }
+
+        const colorDialog = this.pickerComponent as AgDialog;
+
+        this.pickerComponent.addCssClass('ag-color-dialog');
         _.setAriaExpanded(this.eWrapper, true);
 
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
@@ -71,9 +87,14 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             }
 
             this.isPickerDisplayed = false;
+            this.pickerComponent = undefined;
         });
+    }
 
-        return colorDialog;
+    public hidePicker(): void {
+        if (this.pickerComponent) {
+            (this.pickerComponent as AgDialog).close();
+        }
     }
 
     public setValue(color: string): this {
