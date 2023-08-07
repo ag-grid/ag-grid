@@ -728,11 +728,11 @@ export class RowCtrl extends BeanStub {
     private onRowNodeDataChanged(event: DataChangedEvent): void {
         // if master row has updated, then need to also try to refresh the detail node
         if (this.rowNode.detailNode) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
+            this.beans.rowRenderer.redrawRow(this.rowNode.detailNode);
         }
 
         if (this.isFullWidth()) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
 

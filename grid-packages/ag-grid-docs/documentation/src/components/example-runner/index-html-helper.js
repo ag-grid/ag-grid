@@ -55,7 +55,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             const indexHtml = exampleInfo.getFile('index.html');
 
             if (!indexHtml) {
-                throw new Error(`Could not find index.html for "${exampleInfo.name}" example`);
+                console.error(`Could not find index.html for "${exampleInfo.name}" example - is example generation skipping packages?`);
+                return;
             }
 
             if (internalFramework === 'typescript') {

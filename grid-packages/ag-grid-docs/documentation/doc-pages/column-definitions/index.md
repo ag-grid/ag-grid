@@ -118,8 +118,10 @@ const gridOptions = {
         // make every column use 'text' filter by default
         filter: 'agTextColumnFilter',
     },
-    // if we had column groups, we could provide default group items here
-    defaultColGroupDef: {},
+    // a default column group definition with properties that get applied to every column group 
+    defaultColGroupDef: {
+      marryChildren: true,
+    },
     // define a column type (you can define as many as you like)
     columnTypes: {
         nonEditableColumn: { editable: false },

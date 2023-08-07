@@ -57,13 +57,12 @@ const App = () => {
 };
 ```
 
+If you do NOT use `useState` or `useMemo`, then the grid will be provided with a new set of Column Definitions **every time**
+the parent component is rendered. This will result in unexpected behaviour in the grid, such as the column state 
+(column order, width etc...) getting reset.
+
 <warning>
-| If you do NOT use `useState` or `useMemo`, then the grid will be provided with a new set of Column Definitions **every time**
-| the parent component is rendered. This will result in unexpected behaviour in the grid, such as the column state 
-| (column order, width etc...) getting reset.
-| 
-| Please use `useState` if your application changes Column Definitions and `useMemo` if your application does not change
-| Column Definitions.
+If your application changes Column Definitions use `useState`, otherwise use `useMemo`.
 </warning>
 
 ```jsx
@@ -77,9 +76,6 @@ const App = () => {
     return <AgGridReact columnDefs={columnDefs} />;
 };
 ```
-
-All examples in the documentation use `useState` for Column Definitions. However all code snippets in the documentation
-leave these hooks out for easier reading.
 
 ## Object Properties vs Simple Properties
 
@@ -169,7 +165,7 @@ const App = () => {
                 onCellClicked={onCellClicked} 
                 onCellValueChanged={onCellValueChanged}
                 onFilterOpened={onFilterOpened}
-                />;
+            />;
 };
 ```
 

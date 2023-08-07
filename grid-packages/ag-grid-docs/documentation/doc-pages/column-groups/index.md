@@ -165,20 +165,20 @@ Using the **Column Property** `suppressSpanHeaderHeight` the Grid will balance t
 
 <snippet>
 const gridOptions = {
-  columnDefs: [
-    {
-      headerName: 'Athlete Details',
-      children: [
-        { field: 'athlete' },
-        { field: 'country' },
-      ],
-    },
-    {
-      field: 'age',
-      width: 90,
-      suppressSpanHeaderHeight: true
-    }
-  ]
+    columnDefs: [
+        {
+            headerName: 'Athlete Details',
+            children: [
+                { field: 'athlete' },
+                { field: 'country' },
+            ],
+        },
+        {
+            field: 'age',
+            width: 90,
+            suppressSpanHeaderHeight: true,
+        }
+    ]
 }
 </snippet>
 

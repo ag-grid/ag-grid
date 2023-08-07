@@ -30,12 +30,11 @@
   },
   "scripts": {
     "dev": "vite serve dev",
-    "build": "rollup -c && npm run hash",
+    "build": "rollup -c",
     "build-prod": "npm run build",
     "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
     "update-deps": "taze -w && pnpm i",
-    "typecheck": "tsc --noEmit",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {},
   "peerDependencies": {
