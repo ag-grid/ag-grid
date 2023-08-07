@@ -7,15 +7,14 @@
   "types": "main.d.ts",
   "scripts": {
     "clean": "rimraf dist main.d.ts .hash",
-    "build": "npm run customise && npx gulp && npm run rollup && npm run hash",
+    "build": "npm run customise && npx gulp && npm run rollup",
     "build-prod": "npm run build",
     "package": "npx gulp copy-umd-files",
     "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
     "test:ci": "/bin/sh ./test-modifications.sh",
     "test:dev": "echo \"No tests to run.\"",
     "customise": "node customise.js",
-    "rollup": "mkdir -p dist && node build.js",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "rollup": "mkdir -p dist && node build.js"
   },
   "repository": {
     "type": "git",

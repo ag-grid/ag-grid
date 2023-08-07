@@ -485,7 +485,7 @@ export class RowContainerCtrl extends BeanStub {
                 return this.rowRenderer.getBottomRowCtrls();
 
             default:
-                return this.rowRenderer.getRowCtrls();
+                return this.rowRenderer.getCentreRowCtrls();
         }
     }
 }

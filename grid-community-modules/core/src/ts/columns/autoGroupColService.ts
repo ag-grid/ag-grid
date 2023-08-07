@@ -14,7 +14,7 @@ export class AutoGroupColService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
-    public createAutoGroupColumns(existingCols: Column[], rowGroupColumns: Column[]): Column[] {
+    public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
         const doingTreeData = this.gridOptionsService.isTreeData();
@@ -29,19 +29,21 @@ export class AutoGroupColService extends BeanStub {
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols, rowGroupCol, index));
+                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols));
+            groupAutoColumns.push(this.createOneAutoGroupColumn());
         }
 
         return groupAutoColumns;
     }
 
+    public updateAutoGroupColumns(autoGroupColumns: Column[]) {
+        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index));
+    }
+
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoGroupColumn(existingCols: Column[], rowGroupCol?: Column, index?: number): Column {
-        // if one provided by user, use it, otherwise create one
-        let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol);
+    private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
@@ -50,61 +52,68 @@ export class AutoGroupColService extends BeanStub {
             colId = GROUP_AUTO_COLUMN_ID;
         }
 
-        const userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
-        mergeDeep(defaultAutoColDef, userAutoColDef);
+        const colDef = this.createAutoGroupColDef(colId, rowGroupCol, index);
+        colDef.colId = colId;
 
-        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colId);
+        const newCol = new Column(colDef, null, colId, true);
+        this.context.createBean(newCol);
+        return newCol;
+    }
 
-        defaultAutoColDef.colId = colId;
+    /**
+     * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
+     */
+    private updateOneAutoGroupColumn(colToUpdate: Column, index: number) {
+        const oldColDef = colToUpdate.getColDef();
+        const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
+        const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
+        const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
+        colToUpdate.setColDef(colDef, null);
+        this.columnFactory.applyColumnState(colToUpdate, colDef);
+    }
+
+    private createAutoGroupColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
+        // if one provided by user, use it, otherwise create one
+        let res: ColDef = this.createBaseColDef(underlyingColumn);
+
+        const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
+        mergeDeep(res, autoGroupColumnDef);
+
+        res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
 
         // For tree data the filter is always allowed
         if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
-                missing(defaultAutoColDef.field) &&
-                missing(defaultAutoColDef.valueGetter) &&
-                missing(defaultAutoColDef.filterValueGetter) &&
-                defaultAutoColDef.filter !== 'agGroupColumnFilter';
+                missing(res.field) &&
+                missing(res.valueGetter) &&
+                missing(res.filterValueGetter) &&
+                res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
-                defaultAutoColDef.filter = false;
+                res.filter = false;
             }
         }
 
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index && index > 0) {
-            defaultAutoColDef.headerCheckboxSelection = false;
+            res.headerCheckboxSelection = false;
         }
-
-        const existingCol = existingCols.find( col => col.getId()==colId );
 
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (existingCol) {
-            if (isSortingCoupled) {
-                // if col is coupled sorting, and has sort attribute, we want to ignore this
-                // because we only accept the sort on creation of the col
-                defaultAutoColDef.sort = undefined;
-                defaultAutoColDef.sortIndex = undefined;
-            }
-
-            existingCol.setColDef(defaultAutoColDef, null);
-            this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
-            return existingCol;
+        const hasOwnData = res.valueGetter || res.field != null;
+        if (isSortingCoupled && !hasOwnData) {
+            // if col is coupled sorting, and has sort attribute, we want to ignore this
+            // because we only accept the sort on creation of the col
+            res.sort = undefined;
+            res.sortIndex = undefined;
+            res.initialSort = undefined;
         }
 
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
-            // if no field, then this column cannot hold its own sort state
-            defaultAutoColDef.sort = null;
-            defaultAutoColDef.sortIndex = null;
-            defaultAutoColDef.initialSort = null;
-        }
-
-        const newCol = new Column(defaultAutoColDef, null, colId, true);
-        this.context.createBean(newCol);
-        return newCol;
+        return res;
     }
 
-    private generateDefaultColDef(rowGroupCol?: Column): ColDef {
+    private createBaseColDef(rowGroupCol?: Column): ColDef {
         const userDef = this.gridOptionsService.get('autoGroupColumnDef');
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
@@ -112,8 +121,7 @@ export class AutoGroupColService extends BeanStub {
             headerName: localeTextFunc('group', 'Group')
         };
 
-        const userHasProvidedGroupCellRenderer =
-            userDef &&
+        const userHasProvidedGroupCellRenderer = userDef &&
             (userDef.cellRenderer || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
@@ -123,7 +131,6 @@ export class AutoGroupColService extends BeanStub {
 
         // we never allow moving the group column
         // defaultAutoColDef.suppressMovable = true;
-
         if (rowGroupCol) {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
@@ -147,5 +154,4 @@ export class AutoGroupColService extends BeanStub {
 
         return res;
     }
-
 }
