@@ -457,11 +457,20 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
         }
     }));
 
+    // the modules default to esm so the typings do too - we run this to keep them in sync
+    const tsEsmWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch', "tsconfig-esm.json"], {
+        cwd: '../../',
+        stdio: 'inherit',
+        encoding: 'buffer'
+    });
+
     process.on('exit', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
     process.on('SIGINT', () => {
         tsWatch.kill();
+        tsEsmWatch.kill();
     });
 };
 
@@ -482,6 +491,13 @@ const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
 
         return;
     }
+
+    // the modules default to esm so the typings do too - we run this to keep them in sync
+    cp.spawnSync(tsc, ["--build", "tsconfig-esm.json", ], {
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
+    });
 
 
     // temp addition for AG-7340
