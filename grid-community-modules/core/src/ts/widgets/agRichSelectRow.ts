@@ -96,6 +96,7 @@ export class RichSelectRow extends Component {
     private onMouseUp(): void {
         const richSelectComp = this.parentComponent as AgRichSelect;
         richSelectComp.setValue(this.value, false, true);
+        richSelectComp.hidePicker();
     }
 
 }

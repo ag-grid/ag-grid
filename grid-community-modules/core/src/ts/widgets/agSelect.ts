@@ -1,11 +1,10 @@
 import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
-import { Component } from "./component";
 
-export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
+export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
-    protected listComponent: AgList | undefined;;
+    protected listComponent: AgList | undefined;
     private pickerFocusOutListener: (() => null) | undefined;
 
     constructor(config?: IPickerFieldParams) {
@@ -41,13 +40,13 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             AgAbstractField.EVENT_CHANGED,
             () => {
                 if (!this.listComponent) { return; }
-                this.setValue(this.listComponent.getValue(), false, true);
+                this.setValue(this.listComponent.getValue()!, false, true);
                 this.hidePicker();
             }
         );
     }
 
-    protected getPickerComponent(): Component {
+    protected getPickerComponent(): AgList {
         return this.listComponent!;
     }
 
@@ -71,6 +70,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             this.pickerFocusOutListener();
             this.pickerFocusOutListener = undefined;
         }
+
+        super.beforeHidePicker();
     }
 
     public addOptions(options: ListOption[]): this {
@@ -85,7 +86,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return this;
     }
 
-    public setValue(value?: string | null, silent?: boolean, fromPicker?: boolean): this {
+    public setValue(value?: string | null , silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) { return this; }
 
         if (!fromPicker) {
@@ -98,7 +99,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
 
-        return super.setValue(value, silent);
+        return super.setValue(value, silent, fromPicker);
     }
 
     protected destroy(): void {

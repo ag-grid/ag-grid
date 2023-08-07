@@ -5,7 +5,7 @@ interface ColorPickerConfig extends IPickerFieldParams {
     color: string;
 }
 
-export class AgColorPicker extends AgPickerField<HTMLElement, string> {
+export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgDialog> {
     constructor(config?: ColorPickerConfig) {
         super({
             pickerAriaLabelKey: 'ariaLabelColorPicker',
@@ -27,7 +27,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         }
     }
 
-    protected getPickerComponent(): Component {
+    protected getPickerComponent(): AgDialog {
         const eGuiRect = this.getGui().getBoundingClientRect();
 
         const colorDialog = this.createBean(new AgDialog({

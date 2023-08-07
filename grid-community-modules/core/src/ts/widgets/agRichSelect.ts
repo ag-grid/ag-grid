@@ -24,7 +24,7 @@ export interface IRichSelectParams extends IPickerFieldParams {
     searchStringCreator?: (values: AgRichSelectValue[]) => string[]
 }
 
-export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectValue, IRichSelectParams> {
+export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectParams, VirtualList> {
 
     private searchString = '';
     private listComponent: VirtualList | undefined;
@@ -123,15 +123,21 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
 
     public setValueList(valueList: (object | string | number)[]): void {
         this.values = valueList;
+        this.highlightSelectedValue();
+    }
 
-        if (this.value == null) { return; }
+    private highlightSelectedValue(): void {
+        const { values, value } = this;
 
-        for (let i = 0; i < valueList.length; i++) {
-            if (valueList[i] === this.value) {
+        if (value == null) { return; }
+
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] === value) {
                 this.highlightedItem = i;
                 break;
             }
         }
+
     }
 
     public setRowHeight(height: number): void {
@@ -144,7 +150,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
         }
     }
 
-    protected getPickerComponent(): Component {
+    protected getPickerComponent(): VirtualList {
         const { values }  = this;
 
         this.listComponent!.setModel({
@@ -153,16 +159,17 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
         });
 
         return this.listComponent!;
-
     }
 
     public showPicker() {
         super.showPicker();
+        this.highlightSelectedValue();
         this.listComponent!.refresh();
     }
 
     protected beforeHidePicker(): void {
         this.highlightedItem = -1;
+        super.beforeHidePicker();
     }
 
     public searchText(key: KeyboardEvent | string) {
@@ -228,24 +235,20 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
         });
     }
 
-    public setValue(value?: any, silent?: boolean, fromPicker?: boolean): this {
-        if (this.value === value) { return this; }
-
+    public setValue(value: AgRichSelectValue, silent?: boolean, fromPicker?: boolean): this {
         const index = this.values.indexOf(value);
 
         if (index === -1) { return this; }
 
         this.value = value;
 
-        if (fromPicker) {
-            this.hidePicker();
-        } else {
+        if (!fromPicker) {
             this.selectListItem(index);
         }
 
         this.renderSelectedValue();
 
-        return super.setValue(value, silent);
+        return super.setValue(value, silent, fromPicker);
     }
 
     private createRowComponent(value: any): Component {
@@ -288,8 +291,11 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
         this.selectListItem(newIndex);
     }
 
-    private onEnterKeyDown(): void {
+    private onEnterKeyDown(e: KeyboardEvent): void {
         if (!this.isPickerDisplayed) { return; }
+        e.preventDefault();
+        this.setValue(this.values[this.highlightedItem], false, true);
+        this.hidePicker();
     }
 
     protected onKeyDown(event: KeyboardEvent): void {
@@ -306,7 +312,7 @@ export class AgRichSelect extends AgPickerField<HTMLSelectElement, AgRichSelectV
                 }
                 break;
             case KeyCode.ENTER:
-                this.onEnterKeyDown();
+                this.onEnterKeyDown(event);
                 break;
             default:
                 this.searchText(event);

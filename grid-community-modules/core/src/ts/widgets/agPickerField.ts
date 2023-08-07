@@ -16,8 +16,10 @@ export interface IPickerFieldParams extends IAgLabelParams {
     pickerAriaLabelValue: string;
 }
 
-export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfig extends IPickerFieldParams = IPickerFieldParams> extends AgAbstractField<TValue, TConfig> {
-    protected abstract getPickerComponent(): Component;
+export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams = IPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
+    public static EVENT_PICKER_VALUE_SELECTED = 'pickerValueSelected';
+
+    protected abstract getPickerComponent(): TComponent;
     protected value: TValue;
     protected isPickerDisplayed: boolean = false;
     protected isDestroyingPicker: boolean = false;
@@ -30,7 +32,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
+    @RefSelector('eDisplayField') protected readonly eDisplayField: HTMLElement;
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
     constructor(config?: TConfig, className?: string, private readonly pickerIcon?: string, ariaRole?: string) {
@@ -141,10 +143,6 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
             closeOnEsc: true,
             closedCallback: () => {
                 this.beforeHidePicker();
-                if (this.isAlive()) {
-                    setAriaExpanded(this.eWrapper, false);
-                    this.getFocusableElement().focus();
-                }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue)
         }
@@ -200,6 +198,16 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue, TConfi
 
     public getFocusableElement(): HTMLElement {
         return this.eWrapper;
+    }
+
+    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
+        super.setValue(value, silent);
+
+        if (fromPicker) {
+            this.dispatchEvent({ type: AgPickerField.EVENT_PICKER_VALUE_SELECTED })
+        }
+
+        return this;
     }
 
     protected destroy(): void {

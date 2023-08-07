@@ -1,3 +1,4 @@
+import { AgPickerField } from "@ag-grid-community/core";
 import {
     AgRichSelect,
     ICellEditor,
@@ -35,7 +36,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const richSelectParams = this.buildRichSelectParams();
 
         this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
-        this.getGui().appendChild(this.richSelect.getGui());
+        this.appendChild(this.richSelect);
+
+        this.addManagedListener(this.richSelect, AgPickerField.EVENT_PICKER_VALUE_SELECTED, () => params.stopEditing());
 
         this.focusAfterAttached = cellStartedEdit;
 
@@ -101,7 +104,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         return this.richSelect.getValue();
     }
 
-    isPopup(): boolean {
+    public isPopup(): boolean {
         return false;
     }
 }
