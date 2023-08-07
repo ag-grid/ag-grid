@@ -13,7 +13,7 @@ const ReleaseVersionNotes = ({ releaseNotes, markdownContent, versions, fixVersi
             ) : releaseNotes ? (
                 <div dangerouslySetInnerHTML={{ __html: releaseNotes }}></div>
             ) : (
-                <div className='text-secondary'>No release notes available for AG Grid v{fixVersion}</div>
+                <div className='text-secondary'></div>
             )}
         </Collapsible>
     );

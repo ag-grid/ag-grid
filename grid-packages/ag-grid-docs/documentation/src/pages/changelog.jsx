@@ -57,7 +57,7 @@ const Changelog = ({ location }) => {
         fetch(`${hostPrefix}/changelog/changelog.json`)
             .then((response) => response.json())
             .then((data) => {
-                const gridVersions = [...data.map((row) => row.versions[0])];
+                const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
                 setRowData(data);
             });
@@ -147,7 +147,6 @@ const Changelog = ({ location }) => {
         wrapHeaderText: true,
         suppressMenu: true,
         filter: true,
-        floatingFilter: true,
         suppressKeyboardEvent: (params) => {
             if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
                 params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
