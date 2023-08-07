@@ -14,6 +14,11 @@ export interface FilterExpressionParserParams {
     translate: (key: string, defaultValue: string, variableValues?: string[]) => string;
 }
 
+export interface FilterExpression {
+    functionBody: string;
+    args: any[];
+}
+
 export interface AutocompleteUpdate {
     updatedValue: string;
     updatedPosition: number;

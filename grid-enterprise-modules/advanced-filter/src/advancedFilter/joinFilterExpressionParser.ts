@@ -201,10 +201,10 @@ export class JoinFilterExpressionParser {
             this.expressionParsers.length === this.operatorParser.getNumOperators() + 1;
     }
 
-    public getFunction(): string {
+    public getFunction(args: any[]): string {
         const hasMultipleExpressions = this.expressionParsers.length > 1;
         const expression = this.expressionParsers.map(
-            expressionParser => expressionParser.getFunction()).join(` ${this.operatorParser.getFunction()} `
+            expressionParser => expressionParser.getFunction(args)).join(` ${this.operatorParser.getFunction()} `
         );
         return hasMultipleExpressions ? `(${expression})` : expression;
     }

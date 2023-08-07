@@ -25,6 +25,7 @@ export class AdvancedFilterComp extends Component {
 
     private expressionParser: FilterExpressionParser | null = null;
     private expression: string | null = null;
+    private isApplyDisabled = true;
 
     constructor() {
         super(/* html */ `
@@ -59,7 +60,7 @@ export class AdvancedFilterComp extends Component {
         this.eApplyFilterButton.innerText = translate('filterExpressionApply', 'Apply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.getValue(), this.eAutocomplete.isValid()));
-        _.setDisabled(this.eApplyFilterButton, true);
+        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 
     public refresh(): void {
@@ -81,7 +82,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValueConfirmed(value: string | null, isValid: boolean): void {
-        if (!isValid) { return; }
+        if (!isValid || this.isApplyDisabled) { return; }
         _.setDisabled(this.eApplyFilterButton, true);
         this.advancedFilterService.setExpressionDisplayValue(value);
         this.filterManager.onFilterChanged();
@@ -97,7 +98,8 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValidChanged(isValid: boolean): void {
-        _.setDisabled(this.eApplyFilterButton, !isValid || this.expression === this.advancedFilterService.getExpressionDisplayValue());
+        this.isApplyDisabled = !isValid || this.expression === this.advancedFilterService.getExpressionDisplayValue();
+        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {

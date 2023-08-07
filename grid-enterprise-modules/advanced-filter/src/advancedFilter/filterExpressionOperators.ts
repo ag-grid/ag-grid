@@ -1,31 +1,30 @@
 import { AutocompleteEntry, IRowNode } from "@ag-grid-community/core";
 
-export interface FilterExpressionEvaluatorParams {
+export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;
     includeBlanksInEquals?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
-    convertToDate?: (value: string) => Date;
-    convertToString?: (value: any, node: IRowNode) => string;
+    valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
-export type FilterExpressionEvaluator<TValue> = (
+export type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
     value: TValue | null | undefined,
     node: IRowNode,
-    params: FilterExpressionEvaluatorParams,
-    operand1?: TValue,
-    operand2?: TValue
+    params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
+    operand1?: ConvertedTValue,
+    operand2?: ConvertedTValue
 ) => boolean;
 
-export interface FilterExpressionOperator<TValue> {
+export interface FilterExpressionOperator<ConvertedTValue, TValue = ConvertedTValue> {
     displayValue: string;
-    evaluator: FilterExpressionEvaluator<TValue>;
+    evaluator: FilterExpressionEvaluator<ConvertedTValue, TValue>;
     numOperands: number;
 }
 
-export interface DataTypeFilterExpressionOperators<TValue> {
+export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = ConvertedTValue> {
     operators: {
-        [operator: string]: FilterExpressionOperator<TValue>;
+        [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue>;
     };
     getEntries(activeOperators?: string[]): AutocompleteEntry[];
     findOperator(displayValue: string): string | null | undefined;
@@ -36,8 +35,8 @@ export interface FilterExpressionOperators {
     number: DataTypeFilterExpressionOperators<number>;
     boolean: DataTypeFilterExpressionOperators<boolean>;
     date: DataTypeFilterExpressionOperators<Date>;
-    dateString: DataTypeFilterExpressionOperators<string>;
-    object: DataTypeFilterExpressionOperators<any>;
+    dateString: DataTypeFilterExpressionOperators<Date, string>;
+    object: DataTypeFilterExpressionOperators<string, any>;
 };
 
 // null = partial match, undefined = no match
@@ -61,7 +60,7 @@ export function findMatch<T>(searchValue: string, values: { [key: string]: T }, 
     }
 }
 
-function getEntries<TValue>(operators: { [operator: string]: FilterExpressionOperator<TValue> }, activeOperatorKeys?: string[]): AutocompleteEntry[] {
+function getEntries<ConvertedTValue, TValue = ConvertedTValue>(operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> }, activeOperatorKeys?: string[]): AutocompleteEntry[] {
     const keys = activeOperatorKeys ?? Object.keys(operators);
         return keys.map(key => ({
             key,
@@ -69,18 +68,14 @@ function getEntries<TValue>(operators: { [operator: string]: FilterExpressionOpe
         }));
 }
 
-export interface TextFilterExpressionOperatorsParams<TValue = string> {
+export interface FilterExpressionOperatorsParams {
     translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
-    valueParser?: (value: TValue, node: IRowNode, params: FilterExpressionEvaluatorParams) => string;
 }
 
-export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<TValue> {
-    public operators: { [operator: string]: FilterExpressionOperator<TValue> };
+export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<string, TValue> {
+    public operators: { [operator: string]: FilterExpressionOperator<string, TValue> };
 
-    private valueParser: (value: TValue, node: IRowNode, params: FilterExpressionEvaluatorParams) => string
-
-    constructor(private params: TextFilterExpressionOperatorsParams<TValue>) {
-        this.valueParser = params.valueParser ?? (v => v as any);
+    constructor(private params: FilterExpressionOperatorsParams) {
         this.initOperators();
     }
 
@@ -141,30 +136,26 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
     private evaluateExpression(
         value: TValue | null | undefined,
         node: IRowNode,
-        params: FilterExpressionEvaluatorParams,
-        operand: TValue,
+        params: FilterExpressionEvaluatorParams<string, TValue>,
+        operand: string,
         nullsMatch: boolean,
         expression: (value: string, operand: string) => boolean
     ): boolean {
         if (value == null) { return nullsMatch; }
         return params.caseSensitive
-            ? expression(this.valueParser(value, node, params), this.valueParser(operand, node, params))
-            : expression(this.valueParser(value, node, params).toLocaleLowerCase(), this.valueParser(operand, node, params).toLocaleLowerCase());
+            ? expression(params.valueConverter(value, node), operand)
+            : expression(params.valueConverter(value, node).toLocaleLowerCase(), operand.toLocaleLowerCase());
     }
 }
 
-export interface ScalarFilterExpressionOperatorsParams<ParsedTValue extends number | Date, TValue = ParsedTValue> {
-    translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
-    valueParser?: (value: TValue, params: FilterExpressionEvaluatorParams) => ParsedTValue;
+export interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterExpressionOperatorsParams {
+    equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
 }
 
-export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date, TValue = ParsedTValue> implements DataTypeFilterExpressionOperators<TValue> {
-    public operators: { [operator: string]: FilterExpressionOperator<TValue> };
+export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date, TValue = ConvertedTValue> implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue> {
+    public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };
 
-    private valueParser: (value: TValue, params: FilterExpressionEvaluatorParams) => ParsedTValue
-
-    constructor(private params: ScalarFilterExpressionOperatorsParams<ParsedTValue, TValue>) {
-        this.valueParser = params.valueParser ?? (v => v as any);
+    constructor(private params: ScalarFilterExpressionOperatorsParams<ConvertedTValue>) {
         this.initOperators();
     }
 
@@ -177,36 +168,36 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
     }
 
     private initOperators(): void {
-        const { translate } = this.params;
+        const { translate, equals } = this.params;
         this.operators = {
             equals: {
                 displayValue: translate('filterExpression', '='),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInEquals, (v, o) => v === o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInEquals, equals!),
                 numOperands: 1
             },
             notEqual: {
                 displayValue: translate('filterExpressionNotEqual', '!='),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInEquals, (v, o) => v != o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInEquals, (v, o) => !equals!(v, o)),
                 numOperands: 1
             },
             greaterThan: {
                 displayValue: translate('filterExpressionGreaterThan', '>'),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v > o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v > o),
                 numOperands: 1
             },
             greaterThanOrEqual: {
                 displayValue: translate('filterExpressionGreaterThanOrEqual', '>='),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v >= o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v >= o),
                 numOperands: 1
             },
             lessThan: {
                 displayValue: translate('filterExpressionLessThan', '<'),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v < o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v < o),
                 numOperands: 1
             },
             lessThanOrEqual: {
                 displayValue: translate('filterExpressionLessThanOrEqual', '<='),
-                evaluator: (value, _node, params, operand1) => this.evaluateSingleOperandExpression(value, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v <= o),
+                evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v <= o),
                 numOperands: 1
             },
             blank: {
@@ -224,24 +215,21 @@ export class ScalarFilterExpressionOperators<ParsedTValue extends number | Date,
 
     private evaluateSingleOperandExpression(
         value: TValue | null | undefined,
-        params: FilterExpressionEvaluatorParams,
-        operand: TValue,
+        node: IRowNode,
+        params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
+        operand: ConvertedTValue,
         nullsMatch: boolean,
-        expression: (value: ParsedTValue, operand: ParsedTValue) => boolean
+        expression: (value: ConvertedTValue, operand: ConvertedTValue) => boolean
     ): boolean {
         if (value == null) { return nullsMatch; }
-        return expression(this.valueParser(value, params), this.valueParser(operand, params));
+        return expression(params.valueConverter(value, node), operand);
     }
-}
-
-export interface BooleanFilterExpressionOperatorsParams {
-    translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
 }
 
 export class BooleanFilterExpressionOperators implements DataTypeFilterExpressionOperators<boolean> {
     public operators: { [operator: string]: FilterExpressionOperator<boolean> };
 
-    constructor(private params: BooleanFilterExpressionOperatorsParams) {
+    constructor(private params: FilterExpressionOperatorsParams) {
         this.initOperators();
     }
 

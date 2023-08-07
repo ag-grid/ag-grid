@@ -7,7 +7,7 @@ import {
     getSearchString,
     findStartAndUpdateExpression,
     updateExpression,
-    escapeQuotes,
+    escapeQuotes
 } from "./filterExpressionUtils";
 
 interface Parser {
@@ -284,11 +284,19 @@ export class ColFilterExpressionParser {
         return this.isComplete() && this.columnParser!.valid && this.operatorParser!.valid && (!this.operandParser || this.operandParser!.valid);
     }
 
-    public getFunction(): string {
-        const colId = escapeQuotes(this.columnParser!.getColId());
+    public getFunction(args: any[]): string {
+        const colId = this.columnParser!.getColId();
+        const escapedColId = escapeQuotes(colId);
         const operator = this.operatorParser?.getOperatorKey();
-        const operand = this.operatorParser?.expectedNumOperands === 0 ? '' : `, ${this.operandParser!.getQuotedValue()}`;
-        return `expressionProxy.operators.${this.columnParser!.baseCellDataType}.operators.${operator}.evaluator(expressionProxy.getValue('${colId}', node), node, expressionProxy.getParams('${colId}')${operand})`;
+        let operand: string;
+        if (this.operatorParser?.expectedNumOperands === 0) {
+            operand = '';
+        } else {
+            const argsIndex = args.length;
+            args.push(this.getOperandValue(colId));
+            operand = `, args[${argsIndex}]`;
+        }
+        return `expressionProxy.operators.${this.columnParser!.baseCellDataType}.operators.${operator}.evaluator(expressionProxy.getValue('${escapedColId}', node), node, expressionProxy.getParams('${escapedColId}')${operand})`;
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -341,11 +349,25 @@ export class ColFilterExpressionParser {
             type: this.operatorParser!.getOperatorKey(),
         };
         if (this.operatorParser!.expectedNumOperands) {
-            const operandString = this.operandParser!.getRawValue();
-            const operand = this.params.valueParserService.parseValue(this.params.columnModel.getGridColumn(colId)!, null, operandString, undefined);
-            (model as any).filter = operand;
+            (model as any).filter = this.getOperandValue(colId);
         }
         return model as AdvancedFilterModel;
+    }
+
+    private getOperandValue(colId: string): any {
+        let operand: any = this.operandParser!.getRawValue();
+        const { baseCellDataType } = this.columnParser!;
+        switch (baseCellDataType) {
+            case 'number':
+            case 'boolean':
+            case 'date':
+            case 'dateString':
+                operand = this.params.valueParserService.parseValue(this.params.columnModel.getGridColumn(colId)!, null, operand, undefined);
+        }
+        if (baseCellDataType === 'dateString') {
+            return this.params.dataTypeService.getDateParserFunction()(operand as string);
+        }
+        return operand;
     }
 
     private isComplete(): boolean {

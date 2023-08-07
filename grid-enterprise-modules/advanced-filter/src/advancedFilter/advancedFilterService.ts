@@ -36,7 +36,7 @@ import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
 
-    getParams(colId: string): FilterExpressionEvaluatorParams;
+    getParams(colId: string): FilterExpressionEvaluatorParams<any>;
 
     operators: FilterExpressionOperators;
 }
@@ -57,11 +57,12 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionProxy: ExpressionProxy;
     private expression: string | null = null;
     private expressionFunction: Function | null;
+    private expressionArgs: any[] | null;
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { and: string, or: string };
-    private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams } = {};
+    private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
     @PostConstruct
     private postConstruct(): void {
@@ -100,7 +101,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public doesFilterPass(node: IRowNode): boolean {
-        return this.expressionFunction!(this.expressionProxy, node);
+        return this.expressionFunction!(this.expressionProxy, node, this.expressionArgs);
     }
 
     public getModel(): AdvancedFilterModel | null {
@@ -152,7 +153,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     public setExpressionDisplayValue(expression: string | null): void {
         this.expression = expression;
-        this.expressionFunction = this.parseExpression(this.expression);
+        this.parseAndSetExpression(this.expression);
     }
 
     public createExpressionParser(expression: string | null): FilterExpressionParser | null {
@@ -229,18 +230,23 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
     }
 
-    private parseExpression(expression: string | null): Function | null {
+    private parseAndSetExpression(expression: string | null): void {
+        this.expressionFunction = null;
+        this.expressionArgs = null;
+
         const expressionParser = this.createExpressionParser(expression);
 
-        if (!expressionParser) { return null; }
+        if (!expressionParser) { return; }
 
         expressionParser.parseExpression();
         const isValid = expressionParser.isValid();
 
-        if (!isValid) { return null; }
+        if (!isValid) { return; }
 
-        const functionBody = expressionParser.getFunction();
-        return new Function('expressionProxy', 'node', functionBody);
+        const { functionBody, args } = expressionParser.getFunction();
+
+        this.expressionFunction = new Function('expressionProxy', 'node', 'args', functionBody);
+        this.expressionArgs = args;
     }
 
     private getColumnAutocompleteEntries(): AutocompleteEntry[] {
@@ -292,10 +298,10 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
-            object: new TextFilterExpressionOperators<any>({ translate, valueParser: (v, node, params) => params.convertToString!(v, node) }),
-            number: new ScalarFilterExpressionOperators<number>({ translate }),
-            date: new ScalarFilterExpressionOperators<Date>({ translate }),
-            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, valueParser: (v, params) => params.convertToDate!(v) })
+            object: new TextFilterExpressionOperators<any>({ translate }),
+            number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
+            date: new ScalarFilterExpressionOperators<Date>({ translate, equals: (v: Date, o: Date) => v.getTime() === o.getTime() }),
+            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, equals: (v: Date, o: Date) => v.getTime() === o.getTime() })
         }
     }
 
@@ -304,38 +310,43 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         return { and: translate('filterExpressionAnd', 'AND'), or: translate('filterExpressionOr', 'OR') }
     }
 
-    private getExpressionEvaluatorParams(colId: string): FilterExpressionEvaluatorParams {
+    private getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(colId: string): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {
         let params = this.expressionEvaluatorParams[colId];
         if (!params) {
             const column = this.columnModel.getGridColumn(colId);
             if (column) {
                 const baseCellDataType = this.dataTypeService.getBaseDataType(column);
-                if (baseCellDataType === 'dateString') {
-                    params = {
-                        convertToDate: this.dataTypeService.getDateParserFunction() as (value: string) => Date
-                    };
-                } else if (baseCellDataType === 'object') {
-                    const valueFormatter = this.dataTypeService.getDataTypeDefinition(column)?.valueFormatter;
-                    params = {
-                        convertToString: (value, node) => this.valueFormatterService.formatValue(column, node, value, valueFormatter)
-                            ?? (typeof value.toString === 'function' ? value.toString() : '')
-                    };
-                } else {
-                    params = {};
+                switch (baseCellDataType) {
+                    case 'dateString':
+                        params = {
+                            valueConverter: this.dataTypeService.getDateParserFunction()
+                        };
+                        break;
+                    case 'object':
+                        params = {
+                            valueConverter: (value, node) => this.valueFormatterService.formatValue(column, node, value)
+                                ?? (typeof value.toString === 'function' ? value.toString() : '')
+                        };
+                        break;
+                    default:
+                        params = { valueConverter: (v: any) => v };
+                        break;
                 }
                 const { filterParams } = column.getColDef();
                 if (filterParams) {
                     [
                         'caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'
-                    ].forEach((param: keyof FilterExpressionEvaluatorParams) => {
+                    ].forEach((param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
                         const paramValue = filterParams[param];
                         if (paramValue) {
                             params[param] = paramValue
                         }
                     });
                 }
+                this.expressionEvaluatorParams[colId] = params;
+            } else {
+                params = { valueConverter: (v: any) => v };
             }
-            this.expressionEvaluatorParams[colId] = params;
         }
         return params;
     }

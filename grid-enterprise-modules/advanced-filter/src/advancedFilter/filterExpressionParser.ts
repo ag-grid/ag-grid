@@ -1,6 +1,6 @@
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { AutocompleteUpdate, FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AutocompleteUpdate, FilterExpression, FilterExpressionParserParams } from "./filterExpressionUtils";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -23,8 +23,13 @@ export class FilterExpressionParser {
         return this.params.translate('filterExpressionInvalid', 'Invalid Filter Value');
     }
 
-    public getFunction(): string {
-        return `return ${this.joinExpressionParser.getFunction()};`;
+    public getFunction(): FilterExpression {
+        const args: any[] = [];
+        const functionBody = `return ${this.joinExpressionParser.getFunction(args)};`;
+        return {
+            functionBody,
+            args
+        };
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams {
