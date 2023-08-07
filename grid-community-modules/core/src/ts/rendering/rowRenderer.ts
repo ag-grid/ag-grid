@@ -23,7 +23,7 @@ import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists, missing } from "../utils/generic";
+import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { doOnce, executeInAWhile } from "../utils/function";
@@ -173,10 +173,6 @@ export class RowRenderer extends BeanStub {
         }
 
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
-    }
-
-    public getRowCtrls(): RowCtrl[] {
-        return this.allRowCtrls;
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
@@ -389,6 +385,10 @@ export class RowRenderer extends BeanStub {
         return this.topRowCtrls;
     }
 
+    public getCentreRowCtrls(): RowCtrl[] {
+        return this.allRowCtrls;
+    }
+
     public getBottomRowCtrls(): RowCtrl[] {
         return this.bottomRowCtrls;
     }
@@ -425,36 +425,51 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate(params);
     }
 
-    // if the row nodes are not rendered, no index is returned
-    private getRenderedIndexesForRowNodes(rowNodes: IRowNode[]): string[] {
-        const result: string[] = [];
-
-        if (missing(rowNodes)) { return result; }
-
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, renderedRow: RowCtrl) => {
-            const rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                result.push(index);
+    public redrawRow(rowNode: RowNode, suppressEvent = false) {
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
+                const ctrl = dataStruct[rowNode.rowIndex!];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
             }
-        });
 
-        return result;
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
+            }
+        }
+
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
 
     public redrawRows(rowNodes?: IRowNode[]): void {
         // if no row nodes provided, then refresh everything
-        const partialRefresh = rowNodes != null && rowNodes.length > 0;
+        const partialRefresh = rowNodes != null;
 
         if (partialRefresh) {
-            const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes!);
-            // remove the rows
-            this.removeRowCtrls(indexesToRemove);
+            rowNodes?.forEach(node => this.redrawRow(node as RowNode, true));
+            this.dispatchDisplayedRowsChanged(false);
+            return;
         }
 
-        // add draw them again
-        this.redrawAfterModelUpdate({
-            recycleRows: partialRefresh
-        });
+        this.redrawAfterModelUpdate();
     }
 
     private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
@@ -662,7 +677,16 @@ export class RowRenderer extends BeanStub {
                 }
             });
 
-        this.refreshFullWidthRows(params.rowNodes as RowNode[]);
+        if (params.rowNodes) {
+            // refresh the full width rows too
+            this.getRowCtrls(params.rowNodes).forEach(rowCtrl => {
+                if (!rowCtrl.isFullWidth()) {
+                    return;
+                }
+                this.redrawRow(rowCtrl.getRowNode(), true);
+            });
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
@@ -761,14 +785,26 @@ export class RowRenderer extends BeanStub {
         return rowIdsMap.normal[id] != null;
     }
 
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    public getRowCtrls(rowNodes?: IRowNode[] | null): RowCtrl[] {
+        const rowIdsMap = this.mapRowNodes(rowNodes);
+        const allRowCtrls = this.getAllRowCtrls();
+        if (!rowNodes || !rowIdsMap) {
+            return allRowCtrls;
+        }
+
+        return allRowCtrls.filter(rowCtrl => {
+            const rowNode = rowCtrl.getRowNode();
+            return this.isRowInMap(rowNode, rowIdsMap);
+        });
+    }
+
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        const rowIdsMap = this.mapRowNodes(rowNodes);
-        const res: CellCtrl[] = [];
-
         let colIdsMap: any;
-
         if (exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
@@ -779,12 +815,8 @@ export class RowRenderer extends BeanStub {
             });
         }
 
-        const processRow = (rowCtrl: RowCtrl) => {
-            const rowNode: RowNode = rowCtrl.getRowNode();
-
-            // skip this row if it is missing from the provided list
-            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
-
+        const res: CellCtrl[] = [];
+        this.getRowCtrls(rowNodes).forEach(rowCtrl => {
             rowCtrl.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -793,10 +825,7 @@ export class RowRenderer extends BeanStub {
 
                 res.push(cellCtrl);
             });
-        };
-
-        this.getAllRowCtrls().forEach(row => processRow(row));
-
+        });
         return res;
     }
 
@@ -1021,44 +1050,6 @@ export class RowRenderer extends BeanStub {
 
             return true;
         });
-    }
-
-    public refreshFullWidthRow(rowNode: RowNode, suppressEvent = false) {
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        } else {
-            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
-                const ctrl = dataStruct[rowNode.rowIndex!];
-                if (!ctrl) {
-                    return;
-                }
-                if (ctrl.getRowNode() !== rowNode) {
-                    return;
-                }
-                ctrl.destroyFirstPass();
-                ctrl.destroySecondPass();
-                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
-            }
-
-            switch (rowNode.rowPinned) {
-                case 'top':
-                    destroyAndRecreateCtrl(this.topRowCtrls);
-                case 'bottom':
-                    destroyAndRecreateCtrl(this.bottomRowCtrls);
-                default:
-                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
-                    this.updateAllRowCtrls();
-            }
-        }
-
-        if (!suppressEvent) {
-            this.dispatchDisplayedRowsChanged(false);
-        }
-    }
-
-    private refreshFullWidthRows(rowNodes?: RowNode[]) {
-        rowNodes?.forEach(node => this.refreshFullWidthRow(node, true));
-        this.dispatchDisplayedRowsChanged(false);
     }
 
     private createOrUpdateRowCtrl(
