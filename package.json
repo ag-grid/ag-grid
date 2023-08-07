@@ -30,6 +30,7 @@
     "package-3": "npx lerna run package --scope \"'{ag-grid-documentation,ag-grid-angular-cli-package-example,ag-grid-react-package-example,ag-grid-vue-package-example,ag-grid-vue3-package-example,ag-grid-solid-package-example}'\"",
     "package": "npm run package-1 && npm run package-2 && npm run package-3",
     "test": "npx lerna run test --stream",
+    "test:e2e": "npx lerna run test:e2e",
     "cleanCoreDependencies": "npx lerna clean --yes --scope \"'{ag-grid-angular,ag-grid-solid,ag-grid-react,ag-grid-vue,ag-grid-docs}'\"",
     "bootstrapCoreDependencies": "npx lerna bootstrap --scope '{ag-grid-angular,ag-grid-solid,ag-grid-react,ag-grid-vue,ag-grid-docs}'",
     "buildCoreDependencies": "npx lerna run build --scope '{ag-grid-angular,ag-grid-solid,ag-grid-react,ag-grid-vue,ag-grid-docs}'",

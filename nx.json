@@ -9,7 +9,8 @@
           "build-docs-initial",
           "generate-doc-files",
           "build-css",
-          "test"
+          "test",
+          "test:e2e"
         ]
       }
     }
