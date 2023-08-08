@@ -1,6 +1,9 @@
 import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
 import { KeyCode } from "../constants/keyCode";
 import { Autowired } from "../context/context";
+import { Events } from "../eventKeys";
+import { FieldPickerValueSelectedEvent } from "../events";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
@@ -75,6 +78,9 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         this.listComponent.getGui().classList.add('ag-rich-select-list');
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
         this.listComponent.setParentComponent(this);
+        this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
+            this.onListValueSelected(e.value, e.fromEnterKey);
+        });
 
         if (this.cellRowHeight) {
             this.listComponent.setRowHeight(this.cellRowHeight);
@@ -82,7 +88,7 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
 
         const eListComponent = this.listComponent.getGui();
 
-        this.addManagedListener(eListComponent, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(eListComponent, 'mousemove', this.onPickerMouseMove.bind(this));
         this.addManagedListener(eListComponent, 'mousedown', e => e.preventDefault());
     }
 
@@ -248,12 +254,12 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
 
         this.renderSelectedValue();
 
-        return super.setValue(value, silent, fromPicker);
+        return super.setValue(value, silent);
     }
 
     private createRowComponent(value: any): Component {
         const row = new RichSelectRow(this.config);
-        row.setParentComponent(this);
+        row.setParentComponent(this.listComponent!);
 
         this.getContext().createBean(row);
         row.setState(value, value === this.value);
@@ -261,15 +267,27 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         return row;
     }
 
-    private onMouseMove(mouseEvent: MouseEvent): void {
+    private getRowForMouseEvent(e: MouseEvent): number {
+        const { listComponent } = this;
+
+        if (!listComponent) { return  -1; }
+
+
+        const eGui = listComponent?.getGui();
+        const rect = eGui.getBoundingClientRect();
+        const scrollTop = listComponent.getScrollTop();
+        const mouseY = e.clientY - rect.top + scrollTop;
+
+        return Math.floor(mouseY / listComponent.getRowHeight());
+    }
+
+    private onPickerMouseMove(e: MouseEvent): void {
         if (!this.listComponent) { return; }
+        const row = this.getRowForMouseEvent(e);
 
-        const rect = this.listComponent.getGui().getBoundingClientRect();
-        const scrollTop = this.listComponent.getScrollTop();
-        const mouseY = mouseEvent.clientY - rect.top + scrollTop;
-        const row = Math.floor(mouseY / this.listComponent.getRowHeight());
-
-        this.selectListItem(row);
+        if (row !== -1) {
+            this.selectListItem(row);
+        }
     }
 
     private onNavigationKeyDown(event: any, key: string): void {
@@ -294,8 +312,24 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
     private onEnterKeyDown(e: KeyboardEvent): void {
         if (!this.isPickerDisplayed) { return; }
         e.preventDefault();
-        this.setValue(this.values[this.highlightedItem], false, true);
+
+        this.onListValueSelected(this.values[this.highlightedItem], true);
+    }
+
+    private onListValueSelected(value: AgRichSelectValue, fromEnterKey: boolean): void {
+        this.setValue(value, false, true);
+        this.dispatchPickerEvent(value, fromEnterKey);
         this.hidePicker();
+    }
+
+    private dispatchPickerEvent(value: AgRichSelectValue, fromEnterKey: boolean): void {
+        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
+            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            fromEnterKey,
+            value
+        };
+
+        this.dispatchEvent(event);
     }
 
     protected onKeyDown(event: KeyboardEvent): void {

@@ -666,3 +666,10 @@ export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> 
 }
 
 export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+
+export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    value: any;
+}
+export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
+    fromEnterKey: boolean;
+}

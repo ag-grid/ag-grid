@@ -1,15 +1,15 @@
-import { AgPickerField } from "@ag-grid-community/core";
 import {
     AgRichSelect,
+    Events,
     ICellEditor,
     IRichCellEditorParams,
     KeyCreatorParams,
     IRichSelectParams,
     AgRichSelectValue,
     PopupComponent,
-    _,
+    FieldPickerValueSelectedEvent,
+    _
 } from "@ag-grid-community/core";
-
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
@@ -38,7 +38,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
         this.appendChild(this.richSelect);
 
-        this.addManagedListener(this.richSelect, AgPickerField.EVENT_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
+        this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
         this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this))
 
         this.focusAfterAttached = cellStartedEdit;
@@ -48,8 +48,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
     }
 
-    private onEditorPickerValueSelected(): void {
-        this.params.stopEditing();
+    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
+        this.params.stopEditing(!e.fromEnterKey);
     }
 
     private onEditorFocusOut(e: FocusEvent): void {
@@ -89,7 +89,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         return ret;
     }
-
 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state

@@ -1,10 +1,13 @@
 import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
 import { Autowired, PostConstruct } from "../context/context";
+import { Events } from "../eventKeys";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { bindCellRendererToHtmlElement } from "../utils/dom";
 import { exists } from "../utils/generic";
-import { AgRichSelect, IRichSelectParams } from "./agRichSelect";
+import { IRichSelectParams } from "./agRichSelect";
+import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
 
 export class RichSelectRow extends Component {
@@ -94,9 +97,14 @@ export class RichSelectRow extends Component {
     }
 
     private onMouseUp(): void {
-        const richSelectComp = this.parentComponent as AgRichSelect;
-        richSelectComp.setValue(this.value, false, true);
-        richSelectComp.hidePicker();
+        const parent = this.getParentComponent();
+        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
+            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            fromEnterKey: false,
+            value: this.value
+        };
+
+        parent?.dispatchEvent(event);
     }
 
 }

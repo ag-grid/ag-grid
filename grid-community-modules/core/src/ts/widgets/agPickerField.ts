@@ -17,7 +17,6 @@ export interface IPickerFieldParams extends IAgLabelParams {
 }
 
 export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams = IPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
-    public static EVENT_PICKER_VALUE_SELECTED = 'pickerValueSelected';
 
     protected abstract getPickerComponent(): TComponent;
     protected value: TValue;
@@ -198,16 +197,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     public getFocusableElement(): HTMLElement {
         return this.eWrapper;
-    }
-
-    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
-        super.setValue(value, silent);
-
-        if (fromPicker) {
-            this.dispatchEvent({ type: AgPickerField.EVENT_PICKER_VALUE_SELECTED })
-        }
-
-        return this;
     }
 
     protected destroy(): void {
