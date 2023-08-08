@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, ColumnGroup } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -26,6 +26,17 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotMode: true,
 
   animateRows: true,
+}
+
+function expand(key?: string) {
+  if (key) {
+    gridOptions.columnApi.setColumnGroupState([{ groupId: key, open: true }]);
+    return;
+  }
+
+  const existingState = gridOptions.columnApi!.getColumnGroupState();
+  const expandedState = existingState.map((s: { groupId: string, open: boolean }) => ({ groupId: s.groupId, open: true }));
+  gridOptions.columnApi.setColumnGroupState(expandedState);
 }
 
 // setup the grid after the page has finished loading
@@ -112,7 +123,7 @@ function createPivotColDefs(request: IServerSideGetRowsRequest, pivotFields: str
         colDef['field'] = colId
 
         // comment out this line to remove expandable groups
-        colDef['columnGroupShow'] = (valueCol.id === 'total') ? 'closed' : 'open';
+        colDef['columnGroupShow'] = (valueCol.id === 'total') ? undefined : 'open';
       }
 
       var children = addColDef(colId, parts, [])
