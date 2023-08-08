@@ -185,7 +185,6 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 function format(source, parser, destination) {
     const formatted = source;
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
-        console.log("AG_EXAMPLE_DISABLE_FORMATTING=true - skipping formatting");
         return formatted;
     }
     try {
