@@ -2,8 +2,8 @@ import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
 import { AgAbstractLabel, LabelAlignment, IAgLabelParams } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
-import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
+import { Events } from "../eventKeys";
 
 export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE = /* html */
@@ -31,7 +31,7 @@ export class AgSlider extends AgAbstractLabel {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
-        const eventChanged = AgAbstractField.EVENT_CHANGED;
+        const eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue()!);
             this.eSlider.setValue(textValue.toString(), true);
@@ -82,7 +82,7 @@ export class AgSlider extends AgAbstractLabel {
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
 
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
 
         return this;
     }

@@ -1,9 +1,9 @@
 import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
+import { Events } from '../eventKeys';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = IAgLabelParams> extends AgAbstractLabel<TConfig> {
-    public static EVENT_CHANGED = 'valueChange';
 
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
@@ -21,7 +21,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = I
     }
 
     public onValueChange(callbackFn: (newValue?: TValue | null) => void) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
 
         return this;
     }
@@ -53,7 +53,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = I
         this.value = value;
 
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         }
 
         return this;

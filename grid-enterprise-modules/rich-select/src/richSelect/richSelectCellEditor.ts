@@ -38,13 +38,23 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
         this.appendChild(this.richSelect);
 
-        this.addManagedListener(this.richSelect, AgPickerField.EVENT_PICKER_VALUE_SELECTED, () => params.stopEditing());
+        this.addManagedListener(this.richSelect, AgPickerField.EVENT_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
+        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this))
 
         this.focusAfterAttached = cellStartedEdit;
 
         if (_.exists(cellHeight)) {
             this.richSelect.setRowHeight(cellHeight);
         }
+    }
+
+    private onEditorPickerValueSelected(): void {
+        this.params.stopEditing();
+    }
+
+    private onEditorFocusOut(e: FocusEvent): void {
+        if (this.richSelect.getGui().contains(e.relatedTarget as Element)) { return; }
+        this.params.stopEditing(true);
     }
 
     private buildRichSelectParams(): IRichSelectParams {
@@ -107,4 +117,5 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     public isPopup(): boolean {
         return false;
     }
+
 }

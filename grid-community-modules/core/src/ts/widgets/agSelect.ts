@@ -1,6 +1,7 @@
 import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
+import { Events } from "../eventKeys";
 
 export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
@@ -37,7 +38,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
 
         this.listComponent.addManagedListener(
             this.listComponent,
-            AgAbstractField.EVENT_CHANGED,
+            Events.EVENT_FIELD_VALUE_CHANGED,
             () => {
                 if (!this.listComponent) { return; }
                 this.setValue(this.listComponent.getValue()!, false, true);
@@ -99,7 +100,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
 
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
 
-        return super.setValue(value, silent, fromPicker);
+        return super.setValue(value, silent);
     }
 
     protected destroy(): void {
