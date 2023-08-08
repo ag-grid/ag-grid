@@ -6,6 +6,8 @@
         "cacheableOperations": [
           "build",
           "build-docs",
+          "build-prod",
+          "package",
           "build-docs-initial",
           "generate-doc-files",
           "build-css",

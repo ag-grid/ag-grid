@@ -21,6 +21,7 @@
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "node scripts/patchLerna.js && node customise.js && npx lerna bootstrap --no-ci",
+    "ci-bootstrap-if-necessary": "./scripts/bootstrapBasedOnChangeset.sh",
     "bootstrap-single-thread": "npx lerna bootstrap --no-ci --concurrency 1",
     "build-tsc": "npx tsc --build",
     "build": "npx lerna run build",
@@ -57,7 +58,7 @@
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK= && npm start",
-    "docs-new": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK= && npm run start-new",
+    "docs-new": "cd grid-packages/ag-grid-docs && npm run start-new",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "docs-core-only-new": "cd grid-packages/ag-grid-docs && npm run serve-core-only-new",
     "docs-react-only": "cd grid-packages/ag-grid-docs && export AG_SERVE_FRAMEWORK=react && npm run serve-framework-only",
@@ -104,6 +105,7 @@
     "nx": "^16.6.0",
     "rollup": "^2.74.1",
     "terser": "^4.3.9",
-    "typescript": "~4.3.5"
+    "typescript": "~4.3.5",
+    "fs-extra": "11.1.1"
   }
 }

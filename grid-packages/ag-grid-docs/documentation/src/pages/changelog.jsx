@@ -31,7 +31,7 @@ const Changelog = ({ location }) => {
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
-    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
 
@@ -57,7 +57,7 @@ const Changelog = ({ location }) => {
         fetch(`${hostPrefix}/changelog/changelog.json`)
             .then((response) => response.json())
             .then((data) => {
-                const gridVersions = [...data.map((row) => row.versions[0])];
+                const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
                 setRowData(data);
             });
@@ -258,6 +258,7 @@ const Changelog = ({ location }) => {
                 width: 300,
                 minWidth: 200,
                 flex: 1,
+                filter: 'agTextColumnFilter'
             },
             {
                 field: 'versions',
@@ -305,11 +306,12 @@ const Changelog = ({ location }) => {
                         </Alert>
 
                         <ReleaseVersionNotes
-                            releaseNotes={currentReleaseNotes}
-                            markdownContent={markdownContent}
+                            releaseNotes={fixVersion === ALL_FIX_VERSIONS ? undefined : currentReleaseNotes}
+                            markdownContent={fixVersion === ALL_FIX_VERSIONS ? undefined : markdownContent}
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
+                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
                         />
                     </section>
 

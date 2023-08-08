@@ -84,6 +84,10 @@ The example below demonstrates server-side Pivoting. Note the following:
 - New column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
 
+<note>
+The pivot result columns are displayed in the order they are supplied to `columnApi.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
+</note>
+
 <grid-example title='Simple Pivot' name='simple-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ## Example: Pivot Column Groups
