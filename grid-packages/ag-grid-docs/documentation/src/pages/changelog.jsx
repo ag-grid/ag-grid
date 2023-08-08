@@ -31,7 +31,7 @@ const Changelog = ({ location }) => {
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
-    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
 
@@ -147,6 +147,7 @@ const Changelog = ({ location }) => {
         wrapHeaderText: true,
         suppressMenu: true,
         filter: true,
+        floatingFilter: true,
         suppressKeyboardEvent: (params) => {
             if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
                 params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
@@ -257,6 +258,7 @@ const Changelog = ({ location }) => {
                 width: 300,
                 minWidth: 200,
                 flex: 1,
+                filter: 'agTextColumnFilter'
             },
             {
                 field: 'versions',
@@ -304,11 +306,12 @@ const Changelog = ({ location }) => {
                         </Alert>
 
                         <ReleaseVersionNotes
-                            releaseNotes={currentReleaseNotes}
-                            markdownContent={markdownContent}
+                            releaseNotes={fixVersion === ALL_FIX_VERSIONS ? undefined : currentReleaseNotes}
+                            markdownContent={fixVersion === ALL_FIX_VERSIONS ? undefined : markdownContent}
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
+                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
                         />
                     </section>
 
