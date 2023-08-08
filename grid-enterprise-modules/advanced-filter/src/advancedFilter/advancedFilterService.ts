@@ -111,10 +111,11 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public setModel(model: AdvancedFilterModel | null): void {
-        const parseModel = (model: AdvancedFilterModel): string | null => {
+        const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
             if (model.filterType === 'join') {
                 const operator = model.type === 'OR' ? this.expressionJoinOperators.or : this.expressionJoinOperators.and;
-                return `(${model.conditions.map(condition => parseModel(condition)).join(` ${operator} `)})`;
+                const expression = model.conditions.map(condition => parseModel(condition)).join(` ${operator} `);
+                return isFirstParent ? expression : `(${expression})`;
             } else {
                 const { colId } = model;
                 const columnEntries = this.getColumnAutocompleteEntries();
@@ -141,7 +142,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             }
         };
 
-        const expression = model ? parseModel(model) : null;
+        const expression = model ? parseModel(model, true) : null;
 
         this.setExpressionDisplayValue(expression);
         this.ctrl.refreshComp();
@@ -259,7 +260,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             if (column.getColDef().filter && (this.includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
                     key: column.getColId(),
-                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'filterExpression')!
+                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
                 });
             }
         });
@@ -307,7 +308,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     private getExpressionJoinOperators(): { and: string, or: string } {
         const translate = this.localeService.getLocaleTextFunc();
-        return { and: translate('filterExpressionAnd', 'AND'), or: translate('filterExpressionOr', 'OR') }
+        return { and: translate('advancedFilterAnd', 'AND'), or: translate('advancedFilterOr', 'OR') }
     }
 
     private getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(colId: string): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {

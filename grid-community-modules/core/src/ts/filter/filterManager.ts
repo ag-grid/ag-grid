@@ -90,7 +90,7 @@ export class FilterManager extends BeanStub {
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
 
-        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setFilterExpression(event.currentValue));
+        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setAdvancedFilterModel(event.currentValue));
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
     }
@@ -960,11 +960,11 @@ export class FilterManager extends BeanStub {
         return !isSameComponentClass;
     }
 
-    public getFilterExpression(): AdvancedFilterModel | null {
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
         return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
     }
 
-    public setFilterExpression(expression: AdvancedFilterModel | null): void {
+    public setAdvancedFilterModel(expression: AdvancedFilterModel | null): void {
         if (!this.isAdvancedFilterEnabled()) { return; }
         this.advancedFilterService.setModel(expression);
         this.onFilterChanged();

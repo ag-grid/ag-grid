@@ -161,6 +161,7 @@ export class AgAutocomplete extends Component {
     private onTabKeyDown(event: KeyboardEvent): void {
         if (this.isListOpen) {
             event.preventDefault();
+            event.stopPropagation();
             this.confirmSelection();
         }    
     }

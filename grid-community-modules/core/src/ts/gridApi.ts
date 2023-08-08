@@ -720,27 +720,39 @@ export class GridApi<TData = any> {
         this.gos.set('includeHiddenColumnsInQuickFilter', value);
     }
 
+    /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
-            return this.filterManager.getFilterExpression();
+            return this.filterManager.getAdvancedFilterModel();
         }
         return null;
     }
-
+    
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
-            this.filterManager.setFilterExpression(advancedFilterModel);
+            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
         }
     }
 
+    /** Enable/disable the Advanced Filter */
     public setEnableAdvancedFilter(enabled: boolean): void {
         this.gos.set('enableAdvancedFilter', enabled);
     }
 
+    /** 
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
     public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
         this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
     }
 
+    /**
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
     public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
         this.gos.set('advancedFilterParent', advancedFilterParent);
     }

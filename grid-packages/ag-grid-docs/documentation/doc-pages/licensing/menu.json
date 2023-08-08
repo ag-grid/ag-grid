@@ -834,6 +834,12 @@
             ]
           },
           {
+            "title": "Advanced Filter",
+            "url": "/filter-advanced/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "External Filter",
             "url": "/filter-external/",
             "showInCollapsed": true

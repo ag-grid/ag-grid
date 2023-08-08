@@ -43,8 +43,8 @@ export class AdvancedFilterComp extends Component {
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())
             .setForceLastSelection((lastSelection, searchString) => this.forceLastSelection(lastSelection, searchString))
-            .setInputAriaLabel(translate('ariaLabelFilterExpressionInput', 'Advanced Filter Input'))
-            .setListAriaLabel(translate('ariaLabelFilterExpressionAutocomplete', 'Advanced Filter Autocomplete'));
+            .setInputAriaLabel(translate('ariaAdvancedFilterInput', 'Advanced Filter Input'))
+            .setListAriaLabel(translate('ariaLabelAdvancedFilterAutocomplete', 'Advanced Filter Autocomplete'));
 
         this.refresh();
 
@@ -57,7 +57,7 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
             ({ isValid }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid));
 
-        this.eApplyFilterButton.innerText = translate('filterExpressionApply', 'Apply');
+        this.eApplyFilterButton.innerText = translate('advancedFilterApply', 'Apply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.getValue(), this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);

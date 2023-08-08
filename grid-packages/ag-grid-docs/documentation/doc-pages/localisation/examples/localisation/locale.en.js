@@ -53,6 +53,27 @@ const AG_GRID_LOCALE_EN = {
     // Group Column Filter
     groupFilterSelect: 'Select field:',
 
+    // Advanced Filter
+    advancedFilterContains: 'contains',
+    advancedFilterNotContains: 'does not contain',
+    advancedFilterTextEquals: 'equals',
+    advancedFilterTextNotEqual: 'does not equal',
+    advancedFilterStartsWith: 'starts with',
+    advancedFilterEndsWith: 'ends with',
+    advancedFilterBlank: 'is blank',
+    advancedFilterNotBlank: 'is not blank',
+    advancedFilterEquals: '=',
+    advancedFilterNotEqual: '!=',
+    advancedFilterGreaterThan: '>',
+    advancedFilterGreaterThanOrEqual: '>=',
+    advancedFilterLessThan: '<',
+    advancedFilterLessThanOrEqual: '<=',
+    advancedFilterTrue: 'is true',
+    advancedFilterFalse: 'is false',
+    advancedFilterAnd: 'AND',
+    advancedFilterOr: 'OR',
+    advancedFilterApply: 'Apply',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',
@@ -281,6 +302,7 @@ const AG_GRID_LOCALE_EN = {
     secondaryAxis: 'Secondary Axis',
 
     // ARIA
+    ariaAdvancedFilterInput: 'Advanced Filter Autocomplete',
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
@@ -334,7 +356,7 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelSubMenu: 'SubMenu',
     ariaLabelAggregationFunction: 'Aggregation Function',
-    ariaLabelFilterExpressionAutocomplete: 'Filter Expression Autocomplete',
+    ariaLabelAdvancedFilterAutocomplete: 'Advanced Filter Autocomplete',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

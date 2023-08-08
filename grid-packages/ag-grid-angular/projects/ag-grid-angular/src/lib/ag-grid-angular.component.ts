@@ -472,10 +472,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
+    /** Set to true to enable the Advanced Filter. Default: `false`     */
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
+    /** Allows the state of the Advanced Filter to be set before the grid is loaded.     */
     @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
+    /** Hidden columns are excluded from the Advanced Filter by default.
+         * To include hidden columns, set to `true`.
+         * Default: `false`
+         */
     @Input() public includeHiddenColumnsInAdvancedFilter: boolean | undefined = undefined;
-    /** DOM element to use as the parent for advanced filter     */
+    /** DOM element to use as the parent for the Advanced Filter to allow it to appear outside of the grid.
+         * Set to `null` or `undefined` to appear inside the grid.
+         */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
