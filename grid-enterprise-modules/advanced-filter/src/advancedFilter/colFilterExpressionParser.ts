@@ -152,7 +152,6 @@ class OperandParser implements Parser {
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
-    private parsedOperand: string;
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -194,35 +193,17 @@ class OperandParser implements Parser {
         return this.operand;
     }
 
-    public getQuotedValue(): string {
-        return this.parsedOperand;
-    }
-
     private parseOperand(fromComplete: boolean, position: number): void {
         this.endPosition = position;
         if (fromComplete && this.quotes) {
             // missing end quote
             this.valid = false;
-        }
-        const escapeAndQuoteString = (operand: string) => `'${escapeQuotes(operand)}'`;
-        let parser: (operand: string) => string;
-        switch (this.baseCellDataType) {
-            case 'number': {
-                parser = operand => {
-                    const value = parseFloat(operand);
-                    if (isNaN(value)) {
-                        this.valid = false;
-                    }
-                    return operand;
-                }
-                break;
-            }
-            default: {
-                parser = operand => escapeAndQuoteString(operand);
-                break;
+        } else if (this.baseCellDataType === 'number') {
+            const value = parseFloat(this.operand);
+            if (isNaN(value)) {
+                this.valid = false;
             }
         }
-        this.parsedOperand = parser(this.operand);
     }
 }
 

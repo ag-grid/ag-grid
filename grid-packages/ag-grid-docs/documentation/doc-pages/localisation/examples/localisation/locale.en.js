@@ -302,7 +302,7 @@ const AG_GRID_LOCALE_EN = {
     secondaryAxis: 'Secondary Axis',
 
     // ARIA
-    ariaAdvancedFilterInput: 'Advanced Filter Autocomplete',
+    ariaAdvancedFilterInput: 'Advanced Filter Input',
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
