@@ -115,4 +115,23 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
 
         return super.setDisabled(disabled);
     }
+
+    public setAutoComplete(value: boolean | string) {
+        const autoCompleteValue = typeof value === 'string'
+            // When a string is provided, use it as the value of the autocomplete attribute.
+            // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
+            ? value
+            : (value === true)
+                ? 'on'
+                // Default to 'off' if the value is not a string or a boolean true.
+                // As of August 2023, Chrome does not always honour the autocomplete="off" attribute.
+                // Ref: https://bugs.chromium.org/p/chromium/issues/detail?id=914451
+                // so we need to set a random value to the attribute to prevent the browser from auto filling the input
+                : `off-${Math.random().toString(36).substring(2, 8)}`;
+            
+
+        addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
+        return this;
+    }
 }
