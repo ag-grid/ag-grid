@@ -27,18 +27,21 @@ const gridOptions: GridOptions<IOlympicData> = {
           field: 'gold',
           headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Gold (-)' : 'Gold',
           valueGetter: valueGetter,
+          cellDataType: 'number',
           minWidth: 100
         },
         {
           field: 'silver',
           headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Silver (-)' : 'Silver',
           valueGetter: valueGetter,
+          cellDataType: 'number',
           minWidth: 100
         },
         {
           field: 'bronze',
           headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Bronze (-)' : 'Bronze',
           valueGetter: valueGetter,
+          cellDataType: 'number',
           minWidth: 100
         },
       ]
