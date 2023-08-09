@@ -25,19 +25,19 @@ const gridOptions: GridOptions<IOlympicData> = {
       children: [
         {
           field: 'gold',
-          headerValueGetter: headerValueGetter('Gold'),
+          headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Gold (-)' : 'Gold',
           valueGetter: valueGetter,
           minWidth: 100
         },
         {
           field: 'silver',
-          headerValueGetter: headerValueGetter('Silver'),
+          headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Silver (-)' : 'Silver',
           valueGetter: valueGetter,
           minWidth: 100
         },
         {
           field: 'bronze',
-          headerValueGetter: headerValueGetter('Bronze'),
+          headerValueGetter: (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? 'Bronze (-)' : 'Bronze',
           valueGetter: valueGetter,
           minWidth: 100
         },
@@ -55,12 +55,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   enableAdvancedFilter: true,
 }
 
-function headerValueGetter(columnName: string): HeaderValueGetterFunc<IOlympicData, number> {
-  return (params: HeaderValueGetterParams<IOlympicData, number>) => params.location === 'advancedFilter' ? `${columnName} (-)` : columnName;
-}
-
 function valueGetter(params: ValueGetterParams<IOlympicData, number>) {
-  return params.data ? params.data[params.colDef.field] * -1 : null,
+  return params.data ? params.data[params.colDef.field!] * -1 : null;
 }
 
 var includeHiddenColumns = false;

@@ -39,6 +39,7 @@ The different properties that can be set for each column are explained in the se
 - The **Group** column does not appear in the filter, but its underlying column - **Country** - always appears.
 - The **Athlete** column has Filter Params defined, so that it only shows the `contains` option and is case sensitive.
 - The **Gold**, **Silver** and **Bronze** columns in the **Medals (-)** column group have a `headerValueGetter` defined and use the `location` property to have a different name in the filter (with a `(-)` suffix).
+
 <grid-example title='Configuring Columns' name='configuring-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "rowgrouping", "advancedfilter"] }'></grid-example>
 
 ### Including Hidden Columns
