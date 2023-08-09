@@ -11,7 +11,7 @@ CHANGESET_FILE=$1
 echo "CHANGESET_FILE: $CHANGESET_FILE"
 
 PACKAGE_JSON_COUNT=`grep "package.json" $CHANGESET_FILE | wc -l`
-if [ "$PACKAGE_JSON_COUNT" -ne 0 ] || [ ! -d "$PWD/node_modules" ]
+if [ "$PACKAGE_JSON_COUNT" -ne 0 ] || [ ! -d "$PWD/grid-community-modules/core/node_modules" ]
 then
   echo "Changeset includes one or more package.json files or node_modules doesn't exist (ie a clean build) - running bootstrap"
   npm run bootstrap
