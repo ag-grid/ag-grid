@@ -39,7 +39,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             },
         };
 
-        ctrl.setComp(compProxy);
+        ctrl.setComp(compProxy, false);
     }, []);
 
     const style = useMemo( ()=> ({
