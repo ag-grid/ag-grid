@@ -2,20 +2,19 @@ import {
     AgRichSelect,
     Events,
     ICellEditor,
-    IRichCellEditorParams,
     KeyCreatorParams,
-    IRichSelectParams,
-    AgRichSelectValue,
+    RichSelectParams,
     PopupComponent,
     FieldPickerValueSelectedEvent,
+    RichCellEditorParams,
     _
 } from "@ag-grid-community/core";
 
-export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
+export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
 
-    private params: IRichCellEditorParams;
+    private params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
-    private richSelect: AgRichSelect;
+    private richSelect: AgRichSelect<TValue>;
 
     constructor() {
         super(/* html */ 
@@ -23,7 +22,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         );
     }
 
-    public init(params: IRichCellEditorParams): void {
+    public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
         const  { cellStartedEdit, values, cellHeight } = params;
@@ -35,7 +34,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         const richSelectParams = this.buildRichSelectParams();
 
-        this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
+        this.richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
         this.appendChild(this.richSelect);
 
         this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
@@ -48,7 +47,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
     }
 
-    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
+    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent<TData>): void {
         this.params.stopEditing(!e.fromEnterKey);
     }
 
@@ -57,10 +56,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.params.stopEditing(true);
     }
 
-    private buildRichSelectParams(): IRichSelectParams {
+    private buildRichSelectParams(): RichSelectParams<TValue> {
         const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay } = this.params;
 
-        const ret: IRichSelectParams = {
+        const ret: RichSelectParams = {
             value: value,
             valueList: values,
             cellRenderer,
@@ -72,7 +71,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
 
         if (typeof values[0] === 'object' && colDef.keyCreator) {
-            ret.searchStringCreator = (values: AgRichSelectValue[]) => values.map((value: AgRichSelectValue) => {
+            ret.searchStringCreator = (values: TValue[]) => values.map((value: TValue) => {
                 const keyParams: KeyCreatorParams = {
                     value: value,
                     colDef: this.params.colDef,

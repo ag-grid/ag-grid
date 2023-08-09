@@ -5,18 +5,18 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { bindCellRendererToHtmlElement } from "../utils/dom";
-import { exists } from "../utils/generic";
-import { IRichSelectParams } from "./agRichSelect";
+import { RichSelectParams } from "./agRichSelect";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
+import { escapeString } from "../utils/string";
 
-export class RichSelectRow extends Component {
+export class RichSelectRow<TValue> extends Component {
 
-    private value: any;
+    private value: TValue;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(private readonly params: IRichSelectParams) {
+    constructor(private readonly params: RichSelectParams<TValue>) {
         super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
@@ -25,7 +25,7 @@ export class RichSelectRow extends Component {
         this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
     }
 
-    public setState(value: any, selected: boolean): void {
+    public setState(value: TValue, selected: boolean): void {
         let formattedValue = value;
 
         if (this.params.valueFormatter) {
@@ -44,20 +44,13 @@ export class RichSelectRow extends Component {
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     }
 
-    private populateWithoutRenderer(value: any, valueFormatted: string) {
-        const valueToRender = valueFormatted ?? value;
+    private populateWithoutRenderer(value: any, valueFormatted: any) {
+        const eGui = this.getGui();
 
-        if (exists(valueToRender) && valueToRender !== '') {
-            // not using innerHTML to prevent injection of HTML
-            // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
-            this.getGui().textContent = valueToRender.toString();
-        } else {
-            // putting in blank, so if missing, at least the user can click on it
-            this.getGui().innerHTML = '&nbsp;';
-        }
+        eGui.textContent = escapeString(valueFormatted ?? value) ?? '&nbsp;';
     }
 
-    private populateWithRenderer(value: string): boolean {
+    private populateWithRenderer(value: TValue): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
@@ -82,7 +75,7 @@ export class RichSelectRow extends Component {
         if (cellRendererPromise) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {
-            this.getGui().innerText = value;
+            this.getGui().innerText = value as unknown as string;
         }
 
         if (cellRendererPromise) {

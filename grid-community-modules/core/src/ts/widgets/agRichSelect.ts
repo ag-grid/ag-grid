@@ -16,30 +16,28 @@ import { RichSelectRow } from "./agRichSelectRow";
 import { Component } from "./component";
 import { VirtualList } from "./virtualList";
 
-export type AgRichSelectValue = (object | string | number);
-
-export interface IRichSelectParams extends IPickerFieldParams {
-    value?: AgRichSelectValue;
-    valueList?: AgRichSelectValue[]
+export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
+    value?: TValue;
+    valueList?: TValue[]
     cellRenderer?: any;
     cellRowHeight?: number;
     searchDebounceDelay?: number;
-    valueFormatter?: (value: any) => any;
-    searchStringCreator?: (values: AgRichSelectValue[]) => string[]
+    valueFormatter?: (value: TValue) => any;
+    searchStringCreator?: (values: TValue[]) => string[]
 }
 
-export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectParams, VirtualList> {
+export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelectParams<TValue>, VirtualList> {
 
     private searchString = '';
     private listComponent: VirtualList | undefined;
     private searchDebounceDelay: number;
-    private values: AgRichSelectValue[];
+    private values: TValue[];
     private highlightedItem: number = -1;
     private cellRowHeight: number;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(config?: IRichSelectParams) {
+    constructor(config?: RichSelectParams<TValue>) {
         super({
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
             pickerAriaLabelValue: 'Rich Select Field',
@@ -132,7 +130,7 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         }
     }
 
-    public setValueList(valueList: (object | string | number)[]): void {
+    public setValueList(valueList: TValue[]): void {
         this.values = valueList;
         this.highlightSelectedValue();
     }
@@ -241,12 +239,12 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         this.highlightedItem = index;
         this.listComponent.ensureIndexVisible(index);
 
-        this.listComponent.forEachRenderedRow((cmp: RichSelectRow, idx: number) => {
+        this.listComponent.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
             cmp.updateHighlighted(index === idx);
         });
     }
 
-    public setValue(value: AgRichSelectValue, silent?: boolean, fromPicker?: boolean): this {
+    public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
         const index = this.values.indexOf(value);
 
         if (index === -1) { return this; }
@@ -262,8 +260,8 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         return super.setValue(value, silent);
     }
 
-    private createRowComponent(value: any): Component {
-        const row = new RichSelectRow(this.config);
+    private createRowComponent(value: TValue): Component {
+        const row = new RichSelectRow<TValue>(this.config);
         row.setParentComponent(this.listComponent!);
 
         this.getContext().createBean(row);
@@ -321,13 +319,13 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         this.onListValueSelected(this.values[this.highlightedItem], true);
     }
 
-    private onListValueSelected(value: AgRichSelectValue, fromEnterKey: boolean): void {
+    private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
         this.hidePicker();
     }
 
-    private dispatchPickerEvent(value: AgRichSelectValue, fromEnterKey: boolean): void {
+    private dispatchPickerEvent(value: TValue, fromEnterKey: boolean): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey,
