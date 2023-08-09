@@ -215,7 +215,6 @@ const mobileDefaultCols = [
         editable: true,
         cellRenderer: 'countryCellRenderer',
         cellClass: 'vAlign',
-        cellEditorPopup: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
@@ -377,7 +376,6 @@ const desktopDefaultCols = [
                 width: 150,
                 editable: true,
                 cellRenderer: 'countryCellRenderer',
-                cellEditorPopup: true,
                 suppressFillHandle: true,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,

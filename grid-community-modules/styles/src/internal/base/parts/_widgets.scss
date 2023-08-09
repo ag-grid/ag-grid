@@ -168,7 +168,6 @@
 
     .ag-rich-select-list {
         width: 100%;
-        min-width: 200px;
         height: calc(var(--ag-row-height) * 6.5); // intentional
     }
 
@@ -179,6 +178,10 @@
         padding-bottom: 0;
         @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
         @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+    }
+
+    .ag-popup-editor .ag-rich-select-value {
+        min-width: 200px;
     }
 
     .ag-rich-select-virtual-list-item {
