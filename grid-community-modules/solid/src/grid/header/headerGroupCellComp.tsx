@@ -4,28 +4,25 @@ import { CssClasses } from '../core/utils';
 import UserComp from '../userComps/userComp';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
+    const { ctrl } = props;
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getCssResizableClasses, setResizableCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getResizableAriaHidden, setResizableAriaHidden] = createSignal<"true" | "false">("false");
     const [getWidth, setWidth] = createSignal<string>();
-    const [getTitle, setTitle] = createSignal<string>();
-    const [getColId, setColId] = createSignal<string>();
+    const [getColId, setColId] = createSignal<string>(ctrl.getColId());
     const [getAriaExpanded, setAriaExpanded] = createSignal<'true'|'false'|undefined>();
     const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails>();
 
     let eGui: HTMLDivElement;
     let eResize: HTMLDivElement;
 
-    const { ctrl } = props;
 
     onMount( () => {
 
         const compProxy: IHeaderGroupCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => setCssClasses(getCssClasses().setClass(name, on)),
-            setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
@@ -53,7 +50,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const getResizableClassName = createMemo( ()=> 'ag-header-cell-resize ' + getCssResizableClasses().toString() );
 
     return (
-        <div ref={eGui!} class={getClassName()} style={style()} title={getTitle()} col-id={getColId()} 
+        <div ref={eGui!} class={getClassName()} style={style()} col-id={getColId()} 
                     role="columnheader" tabIndex={-1} aria-expanded={getAriaExpanded()}>
 
             { getUserCompDetails() 

@@ -45,7 +45,7 @@ export interface IGridBodyComp extends LayoutView {
     setRowCount(count: number): void;
     setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
-    setPinnedTopBottomOverflowY(overflow: string): void;
+    setPinnedTopBottomOverflowY(overflow: 'scroll' | 'hidden'): void;
     registerBodyViewportResizeListener(listener: (() => void)): void;
     setBodyViewportWidth(width: string): void;
 }

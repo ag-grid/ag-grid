@@ -23,7 +23,7 @@ const GridBodyComp = () => {
 
     const [getMovingCss, setMovingCss] = createSignal<string | null>(null);
     const [getForceVerticalScrollClass, setForceVerticalScrollClass] = createSignal<string | null>(null);
-    const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal<string>('');
+    const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal<'scroll' | 'hidden' | null>(null);
     const [getCellSelectableCss, setCellSelectableCss] = createSignal<string | null>(null);
 
     // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
@@ -75,10 +75,10 @@ const GridBodyComp = () => {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
+            setCellSelectableCss: (cssClass: string | null, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: setBodyViewportWidth,
 
-            registerBodyViewportResizeListener: listener => {
+            registerBodyViewportResizeListener: (listener: () => void) => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport!, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());
             }
@@ -122,24 +122,24 @@ const GridBodyComp = () => {
         classesList('ag-floating-bottom', getCellSelectableCss())
     );
 
-    const getTopStyle = createMemo(() => ({
-        height: getTopHeight,
-        'min-height': getTopHeight,
-        display: getTopDisplay,
-        'overflow-y': (getTopAndBottomOverflowY as any)
+    const getTopStyle : any = createMemo(() => ({
+       height: getTopHeight(),
+        'min-height': getTopHeight(),
+        display: getTopDisplay(),
+        'overflow-y': getTopAndBottomOverflowY()
     }));
 
     const getStickyTopStyle = createMemo(() => ({
-        height: getStickyTopHeight,
-        top: getStickyTopTop,
-        width: getStickyTopWidth
+        height: getStickyTopHeight(),
+        top: getStickyTopTop(),
+        width: getStickyTopWidth()
     }));
 
-    const getBottomStyle = createMemo(() => ({
-        height: getBottomHeight,
-        'min-height': getBottomHeight,
-        display: getBottomDisplay,
-        'overflow-y': (getTopAndBottomOverflowY as any)
+    const getBottomStyle: any = createMemo(() => ({
+        height: getBottomHeight(),
+        'min-height': getBottomHeight(),
+        display: getBottomDisplay(),
+        'overflow-y': getTopAndBottomOverflowY()
     }));
 
     const getBodyViewportStyle = createMemo(() => ({

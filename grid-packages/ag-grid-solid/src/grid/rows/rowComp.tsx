@@ -55,9 +55,8 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     const [getRowIndex, setRowIndex] = createSignal<string>();
     const [getRowId, setRowId] = createSignal<string>();
-    const [getRole, setRole] = createSignal<string>();
     const [getRowBusinessKey, setRowBusinessKey] = createSignal<string>();
-    const [getTabIndex, setTabIndex] = createSignal<number>();
+    const [getTabIndex, setTabIndex] = createSignal<number | undefined>(rowCtrl.getTabIndex());
     const [getUserStyles, setUserStyles] = createSignal<RowStyle>();
     const [getCellCtrls, setCellCtrls] = createSignal<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [getFullWidthCompDetails, setFullWidthCompDetails] = createSignal<UserCompDetails>();
@@ -123,9 +122,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRowIndex: value => setRowIndex(value),
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
-            setTabIndex: value => setTabIndex(value),
             setUserStyles: (styles: RowStyle) => setUserStyles(styles),
-            setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
@@ -167,7 +164,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     return (
         <div
             ref={ eGui! }
-            // role={ role() } /// FIXME
+            role='row'
             style={ getRowStyles() }
             row-index={ getRowIndex() }
             row-id={ getRowId() }
