@@ -25,6 +25,7 @@ import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import { doOnce } from '../utils/function';
+import { DataTypeService } from '../columns/dataTypeService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -36,6 +37,7 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
     @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
@@ -60,6 +62,9 @@ export class FilterManager extends BeanStub {
     private externalFilterPresent: boolean;
 
     private aggFiltering: boolean;
+
+    // when we're waiting for cell data types to be inferred, we need to defer filter model updates
+    private filterModelUpdateQueue: { [key: string]: any; }[] = [];
 
     @PostConstruct
     public init(): void {
@@ -93,6 +98,8 @@ export class FilterManager extends BeanStub {
         this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setAdvancedFilterModel(event.currentValue));
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
+
+        this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => this.processFilterModelUpdateQueue());
     }
 
     private isExternalFilterPresentCallback() {
@@ -120,6 +127,12 @@ export class FilterManager extends BeanStub {
             this.warnAdvancedFilters();
             return;
         }
+
+        if (this.dataTypeService.isPendingInference()) {
+            this.filterModelUpdateQueue.push(model);
+            return;
+        }
+
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getFilterModel();
 
@@ -1022,6 +1035,11 @@ export class FilterManager extends BeanStub {
 
     public getHeaderRowCount(): number {
         return this.isAdvancedFilterHeaderActive() ? 1 : 0;
+    }
+
+    private processFilterModelUpdateQueue(): void {
+        this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
+        this.filterModelUpdateQueue = [];
     }
 
     protected destroy() {

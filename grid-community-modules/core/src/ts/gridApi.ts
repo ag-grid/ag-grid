@@ -1047,7 +1047,13 @@ export class GridApi<TData = any> {
         this.sortController.onSortChanged('api');
     }
 
-    /** Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /**
+     * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
+     * If inferring cell data types, and row data is provided asynchronously and is yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition,
+     * or provide cell data types for every column.
+     */
     public setFilterModel(model: any) {
         this.filterManager.setFilterModel(model);
     }
