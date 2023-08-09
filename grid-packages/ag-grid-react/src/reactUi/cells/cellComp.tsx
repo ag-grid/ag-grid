@@ -143,7 +143,8 @@ const CellComp = (props: {
     const colId = cellCtrl.getColumnIdSanitised();
     const cellInstanceId = cellCtrl.getInstanceId();
 
-    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>({ compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
+    // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
+    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>( cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
