@@ -13,7 +13,7 @@ import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { SortController } from "../../../sortController";
 import { ColumnSortState, getAriaSortState } from "../../../utils/aria";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
@@ -27,7 +27,7 @@ import { SortDirection } from "../../../entities/colDef";
 import { isBrowserSafari } from "../../../utils/browser";
 import { FocusService } from "../../../focusService";
 
-export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setColId(id: string): void;
@@ -253,7 +253,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
 
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
 
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }

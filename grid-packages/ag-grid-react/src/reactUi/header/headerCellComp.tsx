@@ -8,7 +8,6 @@ import { useLayoutEffectOnce } from '../useEffectOnce';
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const { context } = useContext(BeansContext);
-    const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaSort, setAriaSort] = useState<ColumnSortState>();
     const [ariaDescription, setAriaDescription] = useState<string>();
@@ -32,7 +31,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             },
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
 
             setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
@@ -66,7 +64,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         <div
             ref={eGui}
             className="ag-header-cell"
-            title={ title }
             col-id={ colId }
             aria-sort={ ariaSort }
             role="columnheader"

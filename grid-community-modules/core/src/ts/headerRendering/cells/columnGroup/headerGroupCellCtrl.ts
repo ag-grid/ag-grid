@@ -17,7 +17,7 @@ import { GridApi } from "../../../gridApi";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
@@ -26,7 +26,7 @@ import { GroupResizeFeature } from "./groupResizeFeature";
 import { GroupWidthFeature } from "./groupWidthFeature";
 import { IHeaderGroupParams } from "./headerGroupComp";
 
-export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
@@ -154,7 +154,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
 
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
     }
 
     private setupExpandable(): void {

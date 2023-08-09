@@ -12,7 +12,6 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState<"true" | "false">("false");
-    const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaExpanded, setAriaExpanded] = useState<'true'|'false'|undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
@@ -32,7 +31,6 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed))
@@ -62,7 +60,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={eGui} className={className} title={title} col-id={colId} 
+        <div ref={eGui} className={className} col-id={colId} 
                     role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
             { reactUserComp && <UserCompClass { ...userCompDetails!.params } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
