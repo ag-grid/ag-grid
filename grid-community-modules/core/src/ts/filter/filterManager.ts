@@ -3,9 +3,9 @@ import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -22,6 +22,9 @@ import { PropertyChangedEvent } from '../gridOptionsService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
+import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import { doOnce } from '../utils/function';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -33,6 +36,7 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -85,6 +89,10 @@ export class FilterManager extends BeanStub {
 
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
+
+        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setAdvancedFilterModel(event.currentValue));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
     }
 
     private isExternalFilterPresentCallback() {
@@ -108,6 +116,10 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return;
+        }
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getFilterModel();
 
@@ -216,6 +228,39 @@ export class FilterManager extends BeanStub {
 
     public isExternalFilterPresent(): boolean {
         return this.externalFilterPresent;
+    }
+
+    public isChildFilterPresent(): boolean {
+        return this.isColumnFilterPresent()
+            || this.isQuickFilterPresent() 
+            || this.isExternalFilterPresent()
+            || this.isAdvancedFilterPresent();
+    }
+
+    private isAdvancedFilterPresent(): boolean {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isFilterPresent();
+    }
+
+    private onAdvancedFilterEnabledChanged(enabled: boolean): void {
+        if (enabled) {
+            if (this.allColumnFilters.size) {
+                this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
+                this.onFilterChanged();
+            }
+        } else {
+            if (this.advancedFilterService?.isFilterPresent()) {
+                this.advancedFilterService.setModel(null);
+                this.onFilterChanged();
+            }
+        }
+    }
+
+    public isAdvancedFilterEnabled(): boolean {
+        return this.advancedFilterService?.isEnabled();
+    }
+
+    public isAdvancedFilterHeaderActive(): boolean {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isHeaderActive();
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -495,6 +540,10 @@ export class FilterManager extends BeanStub {
 
         // lastly, check column filter
         if (this.isColumnFilterPresent() && !this.doColumnFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+            return false;
+        }
+
+        if (this.isAdvancedFilterPresent() && !this.advancedFilterService.doesFilterPass(params.rowNode)) {
             return false;
         }
 
@@ -784,6 +833,9 @@ export class FilterManager extends BeanStub {
 
     // for group filters, can change dynamically whether they are allowed or not
     public isFilterAllowed(column: Column): boolean {
+        if (this.isAdvancedFilterEnabled()) {
+            return false;
+        }
         const isFilterAllowed = column.isFilterAllowed();
         if (!isFilterAllowed) {
             return false;
@@ -859,7 +911,7 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed'): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
         filterWrapper.filterPromise!.then(filter => {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
@@ -906,6 +958,70 @@ export class FilterManager extends BeanStub {
             (oldComponentClass?.render && newComponentClass?.render &&
                 oldComponentClass.render === newComponentClass.render);
         return !isSameComponentClass;
+    }
+
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
+        return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
+    }
+
+    public setAdvancedFilterModel(expression: AdvancedFilterModel | null): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        this.advancedFilterService.setModel(expression);
+        this.onFilterChanged();
+    }
+
+    public hasFloatingFilters(): boolean {
+        if (this.isAdvancedFilterEnabled()) { return false; }
+        const gridColumns = this.columnModel.getAllGridColumns();
+        if (!gridColumns) { return false; }
+        return gridColumns.some(col => col.getColDef().floatingFilter);
+    }
+
+    public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return undefined;
+        }
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) { return; }
+            const unwrapped = unwrapUserComp(instance) as any;
+            callback(unwrapped);
+        });
+        const unwrapped = unwrapUserComp(res);
+        return unwrapped as any;
+    }
+
+    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
+        const column = this.columnModel.getPrimaryColumn(key);
+
+        if (!column) { return undefined; }
+
+        const filterPromise = this.getFilterComponent(column, 'NO_UI');
+        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
+
+        if (currentValue) {
+            setTimeout(callback, 0, currentValue);
+        } else if (filterPromise) {
+            filterPromise.then(comp => {
+                callback(comp!);
+            });
+        }
+
+        return currentValue;
+    }
+
+    private warnAdvancedFilters(): void {
+        doOnce(() => {
+            console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        }, 'advancedFiltersCompatibility');
+    }
+
+    public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
+        this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    }
+
+    public getHeaderRowCount(): number {
+        return this.isAdvancedFilterHeaderActive() ? 1 : 0;
     }
 
     protected destroy() {

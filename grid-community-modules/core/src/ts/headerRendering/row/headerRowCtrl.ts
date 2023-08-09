@@ -14,6 +14,7 @@ import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
+import { FilterManager } from "../../filter/filterManager";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -30,6 +31,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -75,6 +77,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
@@ -132,7 +135,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         let numberOfFloating = 0;
 
-        if (this.columnModel.hasFloatingFilters()) {
+        if (this.filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }

@@ -16,7 +16,8 @@ import {
     ManagedFocusFeature,
     FocusService,
     KeyCode,
-    WithoutGridCommon
+    WithoutGridCommon,
+    FilterManager
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { SideBarDefParser } from "./sideBarDefParser";
@@ -26,6 +27,7 @@ export class SideBarComp extends Component implements ISideBar {
 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('filterManager') private filterManager: FilterManager;
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
@@ -157,11 +159,13 @@ export class SideBarComp extends Component implements ISideBar {
         this.sideBar = SideBarDefParser.parse(sideBarRaw);
 
         if (!!this.sideBar && !!this.sideBar.toolPanels) {
+            const toolPanelDefs = this.sideBar.toolPanels as ToolPanelDef[];
+            this.createToolPanelsAndSideButtons(toolPanelDefs);
+            if (!this.toolPanelWrappers.length) { return; }
+
             const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
 
-            const toolPanelDefs = this.sideBar.toolPanels as ToolPanelDef[];
-            this.createToolPanelsAndSideButtons(toolPanelDefs);
             this.setSideBarPosition(this.sideBar.position);
 
             if (!this.sideBar.hiddenByDefault) {
@@ -213,6 +217,12 @@ export class SideBarComp extends Component implements ISideBar {
             const moduleMissing =
                 !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) { return false; }
+            if (this.filterManager.isAdvancedFilterEnabled()) {
+                _.doOnce(() => {
+                    console.warn('AG Grid: Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
+                }, 'advancedFilterToolPanel');
+                return false;
+            }
         }
 
         return true;

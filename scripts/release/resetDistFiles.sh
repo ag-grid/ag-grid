@@ -21,6 +21,7 @@ git reset grid-packages/ag-grid-vue3/dist
 git reset grid-packages/ag-grid-community/dist
 git reset grid-packages/ag-grid-community/main.d.ts
 git reset grid-packages/ag-grid-angular/dist
+git reset grid-enterprise-modules/advanced-filter/dist
 git reset grid-enterprise-modules/all-modules/dist
 git reset grid-enterprise-modules/all-modules/ts-lint-rules/dist
 git reset grid-enterprise-modules/charts/dist

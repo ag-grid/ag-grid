@@ -44,7 +44,9 @@ export class ComponentUtil {
         Events.EVENT_CELL_FOCUS_CLEARED,
         Events.EVENT_GRID_STYLES_CHANGED,
         Events.EVENT_FILTER_DESTROYED,
-        Events.EVENT_ROW_DATA_UPDATE_STARTED
+        Events.EVENT_ROW_DATA_UPDATE_STARTED,
+        Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+        Events.EVENT_DATA_TYPES_INFERRED,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented

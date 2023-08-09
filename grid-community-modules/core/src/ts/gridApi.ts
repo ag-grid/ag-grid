@@ -126,6 +126,7 @@ import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
+import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 
 export interface DetailGridInfo {
     /**
@@ -558,7 +559,7 @@ export class GridApi<TData = any> {
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
     }
 
-    /** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     public isAnyFilterPresent(): boolean {
         return this.filterManager.isAnyFilterPresent();
     }
@@ -717,6 +718,43 @@ export class GridApi<TData = any> {
      */
     public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
         this.gos.set('includeHiddenColumnsInQuickFilter', value);
+    }
+
+    /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+            return this.filterManager.getAdvancedFilterModel();
+        }
+        return null;
+    }
+    
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
+    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        }
+    }
+
+    /** Enable/disable the Advanced Filter */
+    public setEnableAdvancedFilter(enabled: boolean): void {
+        this.gos.set('enableAdvancedFilter', enabled);
+    }
+
+    /** 
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
+        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
+    }
+
+    /**
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
+        this.gos.set('advancedFilterParent', advancedFilterParent);
     }
 
     /**
@@ -965,32 +1003,7 @@ export class GridApi<TData = any> {
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
-        const res = this.getFilterInstanceImpl(key, instance => {
-            if (!callback) { return; }
-            const unwrapped = unwrapUserComp(instance) as any;
-            callback(unwrapped);
-        });
-        const unwrapped = unwrapUserComp(res);
-        return unwrapped as any;
-    }
-
-    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
-        const column = this.columnModel.getPrimaryColumn(key);
-
-        if (!column) { return undefined; }
-
-        const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
-
-        if (currentValue) {
-            setTimeout(callback, 0, currentValue);
-        } else if (filterPromise) {
-            filterPromise.then(comp => {
-                callback(comp!);
-            });
-        }
-
-        return currentValue;
+        return this.filterManager.getFilterInstance(key, callback);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
@@ -1034,12 +1047,12 @@ export class GridApi<TData = any> {
         this.sortController.onSortChanged('api');
     }
 
-    /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /** Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
     public setFilterModel(model: any) {
         this.filterManager.setFilterModel(model);
     }
 
-    /** Gets the current state of all the advanced filters. Used for saving filter state. */
+    /** Gets the current state of all the column filters. Used for saving filter state. */
     public getFilterModel(): { [key: string]: any; } {
         return this.filterManager.getFilterModel();
     }

@@ -6,6 +6,7 @@ export * from "../../../../../grid-enterprise-modules/core/src/main";
 export * from "../../../../../charts-community-modules/ag-charts-community/src/main";
 
 /* MODULES - Don't delete this line */
+const AdvancedFilterModule = require("../../../../../grid-enterprise-modules/advanced-filter/dist/cjs/es5/advancedFilterModule").AdvancedFilterModule;
 const GridChartsModule = require("../../../../../grid-enterprise-modules/charts/dist/cjs/es5/gridChartsModule").GridChartsModule;
 const ClipboardModule = require("../../../../../grid-enterprise-modules/clipboard/dist/cjs/es5/clipboardModule").ClipboardModule;
 const ColumnsToolPanelModule = require("../../../../../grid-enterprise-modules/column-tool-panel/dist/cjs/es5/columnsToolPanelModule").ColumnsToolPanelModule;
@@ -26,6 +27,7 @@ const ViewportRowModelModule = require("../../../../../grid-enterprise-modules/v
 const ClientSideRowModelModule = require("../../../../../grid-community-modules/client-side-row-model/dist/cjs/es5/clientSideRowModelModule").ClientSideRowModelModule;
 const CsvExportModule = require("../../../../../grid-community-modules/csv-export/dist/cjs/es5/csvExportModule").CsvExportModule;
 const InfiniteRowModelModule = require("../../../../../grid-community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule").InfiniteRowModelModule;
+ModuleRegistry.register(AdvancedFilterModule);
 ModuleRegistry.register(GridChartsModule);
 ModuleRegistry.register(ClipboardModule);
 ModuleRegistry.register(ColumnsToolPanelModule);

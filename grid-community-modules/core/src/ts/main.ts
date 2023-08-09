@@ -119,6 +119,23 @@ export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
+export {
+    AdvancedFilterModel,
+    JoinAdvancedFilterModel,
+    ColumnAdvancedFilterModel,
+    TextAdvancedFilterModel,
+    NumberAdvancedFilterModel,
+    BooleanAdvancedFilterModel,
+    DateAdvancedFilterModel,
+    DateStringAdvancedFilterModel,
+    ObjectAdvancedFilterModel,
+    TextAdvancedFilterModelType,
+    ScalarAdvancedFilterModelType,
+    BooleanAdvancedFilterModelType
+}  from './interfaces/advancedFilterModel';
+export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
+export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
+
 // gridPanel
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
@@ -262,6 +279,8 @@ export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 export { AgAbstractLabel, IAgLabel } from "./widgets/agAbstractLabel";
 export { AgPickerField } from "./widgets/agPickerField";
+export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
+export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
 
 // range
 export {
@@ -302,7 +321,7 @@ export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
-export { GridOptionsService } from "./gridOptionsService";
+export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
@@ -404,7 +423,9 @@ export {
     ValueFormatterLiteParams,
     ValueParserLiteFunc,
     ValueParserLiteParams,
+    BaseCellDataType
 } from "./entities/dataType";
+export { DataTypeService } from "./columns/dataTypeService";
 export {
     GridOptions,
     IsApplyServerSideTransaction,

@@ -74,7 +74,9 @@ export interface ColumnEverythingChangedEvent<TData = any, TContext = any> exten
     source: string;
 }
 
-export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface GridColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
@@ -157,7 +159,7 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
 
 // internal event
 export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed';
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled';
     column: Column;
 }
 
@@ -654,3 +656,13 @@ export interface RowContainerHeightChanged<TData = any, TContext = any> extends 
 export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { afterScroll: boolean } // not documented
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
+
+/**-----------------*/
+/** Internal EVENTS */
+/**-----------------*/
+
+export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    enabled: boolean;
+}
+
+export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
