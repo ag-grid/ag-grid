@@ -1,11 +1,11 @@
-import { IAgLabel } from './agAbstractLabel';
+import { IAgLabelParams } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
 import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
 import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
 import { exists } from '../utils/generic';
 
-export interface IInputField extends IAgLabel {
+export interface IInputField extends IAgLabelParams {
     value?: any;
     width?: number;
 }

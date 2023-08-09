@@ -43,7 +43,7 @@ export class AgAutocompleteList extends PopupComponent {
     @PostConstruct
     protected init(): void {
         this.autocompleteEntries = this.params.autocompleteEntries;
-        this.virtualList = this.createManagedBean(new VirtualList('autocomplete'));
+        this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
 

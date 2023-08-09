@@ -1,7 +1,7 @@
 import { AgCheckbox } from './agCheckbox';
 import { Events } from '../eventKeys';
-import { CheckboxChangedEvent } from '../events';
 import { IInputField } from './agAbstractInputField';
+import { CheckboxChangedEvent } from '../events';
 
 export class AgRadioButton extends AgCheckbox {
     constructor(config?: IInputField) {

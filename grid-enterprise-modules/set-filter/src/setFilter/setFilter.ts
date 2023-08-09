@@ -378,7 +378,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
 
-        const virtualList = this.virtualList = this.createBean(new VirtualList('filter', isTree ? 'tree' : 'listbox', filterListName));
+        const virtualList = this.virtualList = this.createBean(new VirtualList({
+            cssIdentifier: 'filter',
+            ariaRole: isTree ? 'tree' : 'listbox',
+            listName: filterListName
+        }));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (isTree) {

@@ -184,7 +184,7 @@ export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/t
 export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
 export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
 export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
-export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { IRichCellEditorParams, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
@@ -260,6 +260,7 @@ export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
+export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
@@ -277,8 +278,9 @@ export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup, PopupPositionParams } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
-export { AgAbstractLabel, IAgLabel } from "./widgets/agAbstractLabel";
-export { AgPickerField } from "./widgets/agPickerField";
+
+export { AgAbstractLabel, IAgLabelParams } from "./widgets/agAbstractLabel";
+export { AgPickerField, IPickerFieldParams } from "./widgets/agPickerField";
 export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
 export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
 

@@ -127,7 +127,6 @@ Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorPara
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
-        cellEditorPopup: true,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
             cellHeight: 20,

@@ -8,7 +8,6 @@ import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
-import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { SetFilterParams } from "../../interfaces/iSetFilter";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
@@ -46,6 +45,7 @@ import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
+import { RichSelectParams } from "../../widgets/agRichSelect";
 
 export type DefinitionObject =
     GridOptions
@@ -53,7 +53,7 @@ export type DefinitionObject =
     | ColGroupDef
     | IFilterDef
     | SetFilterParams
-    | IRichCellEditorParams
+    | RichSelectParams
     | ToolPanelDef
     | StatusPanelDef;
 
@@ -110,7 +110,8 @@ export class UserComponentFactory extends BeanStub {
     public getFullWidthGroupRowInnerCellRenderer(def: any, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, InnerRendererComponent, null, params);
     }
-    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
+
+    public getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 

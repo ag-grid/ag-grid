@@ -1,6 +1,5 @@
 import {
     _,
-    AgAbstractField,
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
@@ -18,6 +17,7 @@ import {
     DragSource,
     DragSourceType,
     DropTarget,
+    Events,
     PostConstruct,
     SeriesChartType
 } from "@ag-grid-community/core";
@@ -185,7 +185,7 @@ export class ChartDataPanel extends Component {
     }
 
     private addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
-        this.addManagedListener(component, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(component, Events.EVENT_FIELD_VALUE_CHANGED, () => {
             columnState.selected = component.getValue();
             this.chartController.updateForPanelChange(columnState);
         });
