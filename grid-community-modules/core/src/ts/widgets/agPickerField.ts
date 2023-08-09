@@ -110,6 +110,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             case KeyCode.ENTER:
             case KeyCode.SPACE:
                 this.clickHandler();
+                break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
