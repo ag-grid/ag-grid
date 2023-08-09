@@ -58,12 +58,13 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private buildRichSelectParams(): IRichSelectParams {
-        const { cellRenderer, value, values, colDef, formatValue } = this.params;
+        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay } = this.params;
 
         const ret: IRichSelectParams = {
             value: value,
             valueList: values,
             cellRenderer,
+            searchDebounceDelay,
             valueFormatter: formatValue,
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
             pickerAriaLabelValue: 'Rich Select Field',

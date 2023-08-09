@@ -23,6 +23,7 @@ export interface IRichSelectParams extends IPickerFieldParams {
     valueList?: AgRichSelectValue[]
     cellRenderer?: any;
     cellRowHeight?: number;
+    searchDebounceDelay?: number;
     valueFormatter?: (value: any) => any;
     searchStringCreator?: (values: AgRichSelectValue[]) => string[]
 }
@@ -46,7 +47,7 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
             ...config,
         }, 'ag-rich-select', 'smallDown', 'listbox');
 
-        const { cellRowHeight, value, valueList } = config || {};
+        const { cellRowHeight, value, valueList, searchDebounceDelay } = config || {};
 
         if (cellRowHeight) {
             this.cellRowHeight = cellRowHeight;
@@ -59,6 +60,10 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         if (valueList != null) {
             this.setValueList(valueList);
         }
+
+        if (searchDebounceDelay != null) {
+            this.searchDebounceDelay = searchDebounceDelay;
+        }
     }
 
     protected postConstruct(): void {
@@ -67,7 +72,7 @@ export class AgRichSelect extends AgPickerField<AgRichSelectValue, IRichSelectPa
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
         this.eWrapper.classList.add('ag-rich-select-value');
 
-        const debounceDelay = exists(this.searchDebounceDelay) ? this.searchDebounceDelay : 300;
+        const debounceDelay = this.searchDebounceDelay ?? 300;
         this.clearSearchString = debounce(this.clearSearchString, debounceDelay);
 
         this.renderSelectedValue();
