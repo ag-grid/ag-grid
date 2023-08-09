@@ -155,6 +155,6 @@ gulp.task('serve-website-only',     require('./dev-server').bind(null, false,   
 gulp.task('serve-framework-only',   require('./dev-server').bind(null, false,           true,                  false,       true,                 true));
 
 gulp.task('serve-new',                  require('./new-dev-server').bind(null, false,           true,                  false,       false,                false));
-gulp.task('serve-core-only-new',        require('./new-dev-server').bind(null, true,            true,                  false,       false,                true));
+gulp.task('serve-core-only-new',        require('./new-dev-server').bind(null, true,            true,                  false,       false,                false));
 gulp.task('serve-website-only-new',     require('./new-dev-server').bind(null, false,           true,                  false,       true,                 false));
 gulp.task('serve-framework-only-new',   require('./new-dev-server').bind(null, false,           true,                  false,       true,                 true));
