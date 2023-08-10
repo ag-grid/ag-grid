@@ -100,6 +100,11 @@ const AboutPage = () => {
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
+                                <img src="../images/team/Salmen.jpg" alt="Salmen Hichri, Developer" />
+                                <h3>Salmen Hichris</h3>
+                                <p>Developer, Grid Core</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 <h3>Alan Treadway</h3>
                                 <p>Lead Developer, Data Visualisation</p>
@@ -123,7 +128,7 @@ const AboutPage = () => {
                                 <p>Head of Customer Services</p>
                             </div>
                             <div>
-                                <img src="../images/team/kiril.png" alt="Kiril Matev, Technical Product Manager" />
+                                <img src="../images/team/kiril.jpg" alt="Kiril Matev, Technical Product Manager" />
                                 <h3>Kiril Matev</h3>
                                 <p>Technical Product Manager</p>
                             </div>
@@ -199,6 +204,14 @@ const AboutPage = () => {
                                 <p>Business Development Manager</p>
                             </div>
                             <div>
+                                <img
+                                    src="../images/team/jordan.jpeg"
+                                    alt="Jordan Shekoni, Customer Experience Manager"
+                                />
+                                <h3>Jordan Shekoni</h3>
+                                <p>Key Account Manager </p>
+                            </div>
+                            <div>
                                 <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
                                 <h3>Rob Dunkiert</h3>
                                 <p>Customer Experience Manager</p>
@@ -222,14 +235,6 @@ const AboutPage = () => {
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <img
-                                    src="../images/team/jordan.jpeg"
-                                    alt="Jordan Shekoni, Customer Experience Manager"
-                                />
-                                <h3>Jordan Shekoni</h3>
-                                <p>Customer Experience Manager</p>
-                            </div>
-                            <div>
                                 <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
                                 <h3>Tobi Aguda</h3>
                                 <p>Customer Experience Manager</p>
@@ -237,6 +242,16 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/kylie.jpg" alt="Kylie Slevin, Customer Experience Manager" />
                                 <h3>Kylie Slevin</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/alexR.jpg" alt="Alex Russell, Customer Experience Manager" />
+                                <h3>Alex Russell</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/becca.jpg" alt="Rebecca Mihigo, Customer Experience Manager" />
+                                <h3>Rebecca Mihigo</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
