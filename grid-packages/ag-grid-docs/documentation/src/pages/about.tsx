@@ -16,9 +16,8 @@ const AboutPage = () => {
                     </section>
 
                     <section>
-
                         <article>
-                            <br/>
+                            <br />
                             <p>
                                 Born out of frustration with existing solutions, <strong>AG Grid</strong> evolved from a
                                 side project to becoming the leading JavaScript datagrid on the market. We are a company
@@ -30,9 +29,9 @@ const AboutPage = () => {
                             </p>
                             <p>
                                 Today, <strong>AG Grid</strong> is a self-funded, bootstrapped company with thousands of
-                                customers globally. Even though we've already created the world's best Javascript datagrid,
-                                our work isn't over: we're forging ahead with the development of new features to show the
-                                world what’s possible in a Javascript datagrid.
+                                customers globally. Even though we've already created the world's best Javascript
+                                datagrid, our work isn't over: we're forging ahead with the development of new features
+                                to show the world what’s possible in a Javascript datagrid.
                             </p>
                         </article>
                     </section>
@@ -42,15 +41,13 @@ const AboutPage = () => {
 
                         <article>
                             <p>
-                                We believe that a datagrid should be framework-agnostic, providing developers with flexibility
-                                and future-proofing their work. This philosophy is mirrored in our name; ‘AG' stands for agnostic.
-
-                                Our experience is in building Enterprise applications: we know that the datagrid is at
-                                the core of an Enterprise application, and needs to deliver performance and a rich
-                                feature set.
-
-                                We pride ourselves on offering what others typically charge for. <strong>AG Grid
-                                Community</strong> delivers features comparable to our competition, free of charge.
+                                We believe that a datagrid should be framework-agnostic, providing developers with
+                                flexibility and future-proofing their work. This philosophy is mirrored in our name;
+                                ‘AG' stands for agnostic. Our experience is in building Enterprise applications: we know
+                                that the datagrid is at the core of an Enterprise application, and needs to deliver
+                                performance and a rich feature set. We pride ourselves on offering what others typically
+                                charge for. <strong>AG Grid Community</strong> delivers features comparable to our
+                                competition, free of charge.
                             </p>
                         </article>
                     </section>
@@ -100,7 +97,7 @@ const AboutPage = () => {
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <img src="../images/team/Salmen.jpg" alt="Salmen Hichri, Developer" />
+                                <img src="../images/team/salmen.jpg" alt="Salmen Hichri, Developer" />
                                 <h3>Salmen Hichris</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
