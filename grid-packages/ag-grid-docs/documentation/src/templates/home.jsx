@@ -43,7 +43,8 @@ const urlMap = {
     },
     angular: {
         'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
-        example: 'https://codesandbox.io/p/sandbox/ag-grid-angular-example-zly6rt?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1-2%2C1',
+        example:
+            'https://codesandbox.io/p/sandbox/ag-grid-angular-example-zly6rt?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1-2%2C1',
         thinkster: 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
         'example-title': 'CodeSandbox Example',
         'example-icon': 'codesandbox',
@@ -199,8 +200,7 @@ const HomePage = ({ pageContext: { framework } }) => {
                 <p className="font-size-extra-large">Start developing with the best JavaScript Grid in the world.</p>
                 <p className="font-size-medium">
                     You can get started with <a href="./getting-started/">a simple sample project and tutorial</a>,
-                    watch our extensive selection of <a href="./videos/">videos</a>, or use our documentation to learn
-                    how to <a href="./npm/">install with NPM</a> or review the{' '}
+                    watch our extensive selection of <a href="./videos/">videos</a>, or review the{' '}
                     <a href="./grid-options/">grid options</a>.
                 </p>
                 <p className="font-size-medium">
