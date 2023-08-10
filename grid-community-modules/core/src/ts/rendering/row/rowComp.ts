@@ -32,6 +32,12 @@ export class RowComp extends Component {
 
         const eGui = this.getGui();
         const style = eGui.style;
+        this.domOrder = this.rowCtrl.getDomOrder();
+        setAriaRole(eGui, 'row');
+        const tabIndex = this.rowCtrl.getTabIndex();
+        if (tabIndex != null) {
+            eGui.setAttribute('tabindex', tabIndex.toString());
+        }
 
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
@@ -39,14 +45,12 @@ export class RowComp extends Component {
             showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: RowStyle) => addStylesToElement(eGui, styles),
+            setUserStyles: (styles: RowStyle | undefined) => addStylesToElement(eGui, styles),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
-            setRole: role => setAriaRole(eGui, role),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
-            setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType);

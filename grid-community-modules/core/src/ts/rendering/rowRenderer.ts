@@ -180,7 +180,6 @@ export class RowRenderer extends BeanStub {
 
         return this.stickyRowFeature.getStickyRowCtrls();
     }
-
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
@@ -191,7 +190,13 @@ export class RowRenderer extends BeanStub {
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+
+        if(zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        }else{
+            this.allRowCtrls = liveList;
+        }
     }
 
     private onCellFocusChanged(event?: CellFocusedEvent) {
@@ -517,6 +522,12 @@ export class RowRenderer extends BeanStub {
         const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
+        }
+
+        this.workOutFirstAndLastRowsToRender();
+
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
         }
 
         this.recycleRows(rowsToRecycle, animate);
@@ -877,14 +888,15 @@ export class RowRenderer extends BeanStub {
 
     private onBodyScroll(e: BodyScrollEvent) {
         if (e.direction !== 'vertical') { return; }
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
 
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redraw(afterScroll = true) {
+    public redraw(params: { afterScroll?: boolean } = {}) {
+        const { afterScroll } = params;
         let cellFocused: CellPosition | undefined;
 
         // only try to refocus cells shifting in and out of sticky container
@@ -892,6 +904,20 @@ export class RowRenderer extends BeanStub {
         if (this.stickyRowFeature && browserSupportsPreventScroll()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
         }
+
+        const oldFirstRow = this.firstRenderedRow;
+        const oldLastRow = this.lastRenderedRow;
+        this.workOutFirstAndLastRowsToRender();
+
+        let hasStickyRowChanges = false;
+
+        if (this.stickyRowFeature) {
+            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+        }
+
+        const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged) { return; }
 
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
@@ -941,22 +967,19 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
-        indexesToDraw = indexesToDraw.filter(index => {
-            const rowNode = this.paginationProxy.getRow(index);
-            return rowNode && !rowNode.sticky;
-        });
+        const ret: number[] = [];
 
-        return indexesToDraw;
+        for (let i = 0; i < indexesToDraw.length; i++) {
+            const rowNode = this.paginationProxy.getRow(i);
+            if (rowNode && !rowNode.sticky) {
+                ret.push(indexesToDraw[i]);
+            }
+        }
+
+        return ret;
     }
 
     private recycleRows(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
-        this.rowContainerHeightService.updateOffset();
-        this.workOutFirstAndLastRowsToRender();
-
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
-
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
@@ -1034,7 +1057,7 @@ export class RowRenderer extends BeanStub {
 
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
@@ -1155,6 +1178,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
+        this.rowContainerHeightService.updateOffset();
         let newFirst: number;
         let newLast: number;
 

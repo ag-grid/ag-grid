@@ -13,7 +13,7 @@ import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { SortController } from "../../../sortController";
 import { ColumnSortState, getAriaSortState } from "../../../utils/aria";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
@@ -27,10 +27,9 @@ import { SortDirection } from "../../../entities/colDef";
 import { isBrowserSafari } from "../../../utils/browser";
 import { FocusService } from "../../../focusService";
 
-export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setColId(id: string): void;
     setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
@@ -88,7 +87,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
-        this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
@@ -253,7 +251,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
 
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
 
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
@@ -660,8 +658,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
-    private setupColId(): void {
-        this.comp.setColId(this.column.getColId());
+    public getColId() {
+        return this.column.getColId();
     }
 
     private addActiveHeaderMouseListeners(): void {

@@ -4,9 +4,14 @@ export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | unde
     if (object == null) { return; }
 
     if (Array.isArray(object)) {
-        object.forEach((value, index) => callback(`${index}`, value));
-    } else {
-        Object.keys(object).forEach(key => callback(key, object[key]));
+        for (let i = 0; i < object.length; i++) {
+            callback(i.toString(), object[i]);
+        }
+        return;
+    }
+
+    for (const [key, value ] of Object.entries(object)) {
+        callback(key, value);
     }
 }
 

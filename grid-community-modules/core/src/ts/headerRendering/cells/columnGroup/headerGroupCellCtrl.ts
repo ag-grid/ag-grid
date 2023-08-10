@@ -17,7 +17,7 @@ import { GridApi } from "../../../gridApi";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
@@ -26,11 +26,10 @@ import { GroupResizeFeature } from "./groupResizeFeature";
 import { GroupWidthFeature } from "./groupWidthFeature";
 import { IHeaderGroupParams } from "./headerGroupComp";
 
-export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
-    setColId(id: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
 }
@@ -61,7 +60,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
         this.addClasses();
-        this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
@@ -154,7 +152,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
 
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
     }
 
     private setupExpandable(): void {
@@ -178,8 +176,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         }
     }
 
-    private addAttributes(): void {
-        this.comp.setColId(this.columnGroup.getUniqueId());
+    public getColId() {
+        return this.columnGroup.getUniqueId();
     }
 
     private addClasses(): void {

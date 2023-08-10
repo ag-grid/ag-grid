@@ -262,6 +262,10 @@ export class Context {
     public destroy(): void {
         if (this.destroyed) { return; }
 
+        // Set before doing the destroy, so if context.destroy() gets called via another bean
+        // we are marked as destroyed already to prevent running destroy() twice
+        this.destroyed = true;
+
         this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
@@ -270,8 +274,6 @@ export class Context {
         this.contextParams.providedBeanInstances = null;
 
         ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
-
-        this.destroyed = true;
 
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
