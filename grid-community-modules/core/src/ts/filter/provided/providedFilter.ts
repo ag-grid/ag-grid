@@ -13,6 +13,7 @@ import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
+import { FilterChangedEventSourceType } from '../../events';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -361,7 +362,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
+            const source: FilterChangedEventSourceType = 'columnFilter';
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange, source });
         }
 
         const { closeOnApply } = this.providedFilterParams;

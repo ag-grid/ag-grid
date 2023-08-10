@@ -84,7 +84,7 @@ export class AdvancedFilterComp extends Component {
         if (!isValid || this.isApplyDisabled) { return; }
         _.setDisabled(this.eApplyFilterButton, true);
         this.advancedFilterService.applyExpression();
-        this.filterManager.onFilterChanged();
+        this.filterManager.onFilterChanged({ source: 'advancedFilter' });
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {

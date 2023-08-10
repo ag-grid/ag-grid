@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
+import { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -1034,9 +1034,12 @@ export class GridApi<TData = any> {
     */
     public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
 
-    /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
-    public onFilterChanged() {
-        this.filterManager.onFilterChanged();
+    /**
+     * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
+     * @param source The source of the filter change event. If not specified defaults to `'api'`.
+     */
+    public onFilterChanged(source: FilterChangedEventSourceType = 'api') {
+        this.filterManager.onFilterChanged({ source });
     }
 
     /**
