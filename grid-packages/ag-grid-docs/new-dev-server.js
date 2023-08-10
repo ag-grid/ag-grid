@@ -681,13 +681,17 @@ const watchFrameworkModules = async () => {
             cwd: frameworkDirectory,
             persistent: true
         }).on('change', debounce(() => {
-            let result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs"], {
+            const result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs", (process.env.AG_SERVE_FRAMEWORK ? `--projects=@ag-grid-community/${process.env.AG_SERVE_FRAMEWORK}` : '')], {
                 stdio: 'inherit',
                 cwd: '../../'
             });
 
             if (result && result.status !== 0) {
-                 console.log('ERROR Building Frameworks');
+                 console.error('********* ERROR Building Frameworks');
+            } else {
+                console.log("************************************************************");
+                console.log("******************** Frameworks Updated ********************");
+                console.log("************************************************************");
             }
         }));
     });

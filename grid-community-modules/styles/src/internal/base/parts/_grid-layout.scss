@@ -196,7 +196,7 @@
         background-color: var(--ag-control-panel-background-color);
     }
 
-    .ag-popup-editor {
+    .ag-popup-editor, .ag-autocomplete-list-popup {
         @include ag.card();
         background-color: var(--ag-control-panel-background-color);
         padding: 0;

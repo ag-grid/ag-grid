@@ -20,6 +20,7 @@ import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 import { AnimationFrameService } from "../misc/animationFrameService";
+import { FilterManager } from "../filter/filterManager";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -65,6 +66,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
     @Autowired('rowModel') public rowModel: IRowModel;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -115,6 +117,8 @@ export class GridBodyCtrl extends BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+
+        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
 
         this.ctrlsService.registerGridBodyCtrl(this);
     }
@@ -233,7 +237,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);

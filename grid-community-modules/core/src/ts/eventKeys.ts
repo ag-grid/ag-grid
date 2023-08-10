@@ -239,5 +239,13 @@ export class Events {
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
 
+    // Advanced Filters
+    public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';
+    public static EVENT_DATA_TYPES_INFERRED: 'dataTypesInferred' = 'dataTypesInferred';
+
+    // Widgets
+    public static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged' = 'fieldValueChanged';
+    public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

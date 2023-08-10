@@ -91,7 +91,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
-        this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.cbSelect, Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();

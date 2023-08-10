@@ -8,7 +8,7 @@ This section show how rows can be added, removed and updated using the Server-Si
 Server-Side Transactions require [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 </note>
 
-##Transaction API
+## Transaction API
 
 The SSRM Transaction API allows rows to be added, removed or updated in the grid:
 

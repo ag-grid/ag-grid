@@ -8,7 +8,7 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField, ITextInputField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
-import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
+import { TextFilterParams, TextFilter, TextFilterModel, ITextFilterParams } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
 import { clearElement } from '../../../utils/dom';
@@ -19,7 +19,7 @@ export interface FloatingFilterInputService {
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
     setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
-    setParams(params: { ariaLabel: string }): void;
+    setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void;
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
@@ -45,6 +45,10 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         this.eFloatingFilterTextInput.setDisabled(!editable);
     }
 
+    public setAutoComplete(autoComplete: boolean | string): void {
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
+    }
+
     public getValue(): string | null | undefined {
         return this.eFloatingFilterTextInput.getValue();
     }
@@ -57,8 +61,12 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
        this.valueChangedListener = listener;
     }
 
-    public setParams(params: { ariaLabel: string }): void {
+    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
         this.setAriaLabel(params.ariaLabel);
+
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
     }
 
     private setAriaLabel(ariaLabel: string): void {
@@ -115,7 +123,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     private setTextInputParams(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
         this.params = params;
 
-        this.floatingFilterInputService.setParams({ ariaLabel: this.getAriaLabel(params) });
+        const autoComplete = (params.filterParams as ITextFilterParams | undefined)?.browserAutoComplete ?? false;
+        this.floatingFilterInputService.setParams({
+            ariaLabel: this.getAriaLabel(params),
+            autoComplete,
+        });
 
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         

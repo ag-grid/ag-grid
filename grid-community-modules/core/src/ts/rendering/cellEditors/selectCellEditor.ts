@@ -23,7 +23,11 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     private startedByEnter: boolean = false;
 
     constructor() {
-        super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
+        super(/* html */
+            `<div class="ag-cell-edit-wrapper">
+                <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
+            </div>`
+        );
     }
 
     public init(params: ISelectCellEditorParams): void {

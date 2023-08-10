@@ -11,7 +11,8 @@ export class ClientSideValuesExtractor<V> {
         private readonly valueService: ValueService,
         private readonly treeDataOrGrouping: boolean,
         private readonly treeData: boolean,
-        private readonly getDataPath?: GetDataPath
+        private readonly getDataPath: GetDataPath | undefined,
+        private readonly groupAllowUnbalanced: boolean
     ) {
     }
 
@@ -97,8 +98,8 @@ export class ClientSideValuesExtractor<V> {
         if (dataPath) {
             dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey))) as any;
         }
-        if (dataPath?.some(treeKey => treeKey == null)) {
-            dataPath = null;
+        if (!treeData && this.groupAllowUnbalanced && dataPath?.some(treeKey => treeKey == null)) {
+            dataPath = dataPath.filter(treeKey => treeKey != null);
         }
         addValue(this.createKey(dataPath as any), dataPath as any);
     }

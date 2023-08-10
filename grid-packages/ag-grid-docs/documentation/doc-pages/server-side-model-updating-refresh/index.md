@@ -4,6 +4,10 @@ enterprise: true
 ---
 This section demonstrates refreshing rows in order to reflect changes at the source while using the Server-Side Row Model (SSRM).
 
+<note>
+It is advised to use [Row ID's](../server-side-model-configuration/#providing-row-ids) when using Server-Side Refresh. Row ID's allow the grid to retain row state between refreshes, such as row height, expanded state, and cell flashing.
+</note>
+
 ## Refresh API
 
 The grid API `refreshServerSide(params)` instructs the grid to start reloading all loaded rows for a specified group.

@@ -297,7 +297,15 @@ const isUseMemoProp = (propName) => [
     'dataTypeDefinitions',
     'defaultColDef',
     'defaultColGroupDef',
+    'defaultExcelExportParams',
     'sideBar',
+    'statusBar',
+    'aggFuncs',
+    'excelStyles',
+    'popupParent',
+    'chartToolPanelsDef',
+    'customChartThemes',
+    'chartThemeOverrides'
 ].includes(propName);
 
 

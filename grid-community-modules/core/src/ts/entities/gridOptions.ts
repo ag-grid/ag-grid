@@ -96,6 +96,7 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
+import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 
 export interface GridOptions<TData = any> {
 
@@ -314,6 +315,21 @@ export interface GridOptions<TData = any> {
     includeHiddenColumnsInQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
+    /** Set to true to enable the Advanced Filter. Default: `false` */
+    enableAdvancedFilter?: boolean;
+    /** Allows the state of the Advanced Filter to be set before the grid is loaded. */
+    advancedFilterModel?: AdvancedFilterModel | null;
+    /**
+     * Hidden columns are excluded from the Advanced Filter by default.
+     * To include hidden columns, set to `true`.
+     * Default: `false`
+     */
+    includeHiddenColumnsInAdvancedFilter?: boolean;
+    /**
+     * DOM element to use as the parent for the Advanced Filter to allow it to appear outside of the grid.
+     * Set to `null` or `undefined` to appear inside the grid.
+     */
+    advancedFilterParent?: HTMLElement | null;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

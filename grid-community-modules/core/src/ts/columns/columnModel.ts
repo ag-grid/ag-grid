@@ -398,12 +398,13 @@ export class ColumnModel extends BeanStub {
             dispatchEventsFunc();
         }
 
-        this.dispatchNewColumnsLoaded();
+        this.dispatchNewColumnsLoaded(source);
     }
 
-    private dispatchNewColumnsLoaded(): void {
+    private dispatchNewColumnsLoaded(source: ColumnEventType): void {
         const newColumnsLoadedEvent: WithoutGridCommon<NewColumnsLoadedEvent> = {
-            type: Events.EVENT_NEW_COLUMNS_LOADED
+            type: Events.EVENT_NEW_COLUMNS_LOADED,
+            source
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
@@ -4024,12 +4025,6 @@ export class ColumnModel extends BeanStub {
 
     public getGridBalancedTree(): IProvidedColumn[] {
         return this.gridBalancedTree;
-    }
-
-    public hasFloatingFilters(): boolean {
-        if (!this.gridColumns) { return false; }
-        const res = this.gridColumns.some(col => col.getColDef().floatingFilter);
-        return res;
     }
 
     public getFirstDisplayedColumn(): Column | null {

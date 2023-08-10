@@ -350,6 +350,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialPivotIndex?: number;
     /**
+     * Only for CSRM, see [SSRM Pivoting](https://ag-grid.com/javascript-data-grid/server-side-model-pivoting/).
+     * 
      * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
      */
@@ -643,7 +645,7 @@ export interface ValueGetterParams<TData = any, TValue = any> extends BaseColDef
 export interface ValueGetterFunc<TData = any, TValue = any> {
     (params: ValueGetterParams<TData, TValue>): TValue | null | undefined;
 }
-export type HeaderLocation = 'chart' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | null;
+export type HeaderLocation = 'chart' | 'columnDrop' | 'columnToolPanel' | 'csv' | 'filterToolPanel' | 'groupFilter' | 'header' | 'model' | 'advancedFilter' | null;
 export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/

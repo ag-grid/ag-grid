@@ -21,13 +21,10 @@
         --button-text-color: var(--medium-electric-blue);
     }
 
-    .isOpen & {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-
-        svg {
-            transform: rotate(90deg);
-        }
+    &:disabled {
+        cursor: default;
+        color: black;
+        background-color: var(--bright-blue-gray);
     }
 
     svg {
@@ -67,6 +64,11 @@
         .showMoreLink {
             background-image: none;
         }
+    }
+
+    &.noContent {
+        border: none;
+        padding: 0 !important;
     }
 }
 

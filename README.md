@@ -124,3 +124,4 @@ AG Grid is developed by a team of co-located developers in London. If you want t
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE file](./LICENSE.txt) for more info.
+

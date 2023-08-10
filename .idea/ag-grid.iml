@@ -137,6 +137,8 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/side-bar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/set-filter/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/set-filter/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/advanced-filter/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/advanced-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-anglar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-community/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-vue/lib" />

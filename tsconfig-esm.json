@@ -26,6 +26,7 @@
     { "path" :  "grid-enterprise-modules/set-filter/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/multi-filter/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/viewport-row-model/tsconfig.esm.es6.docs.json" },
+    { "path" :  "grid-enterprise-modules/advanced-filter/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/all-modules/tsconfig.esm.es6.docs.json" }
   ],
   "files": []

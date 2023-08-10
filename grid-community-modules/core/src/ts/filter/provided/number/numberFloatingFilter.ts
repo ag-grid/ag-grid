@@ -35,6 +35,11 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.eFloatingFilterTextInput.setDisplayed(!this.numberInputActive);
     }
 
+    public setAutoComplete(autoComplete: boolean | string): void {
+        this.eFloatingFilterNumberInput.setAutoComplete(autoComplete);
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
+    }
+
     public getValue(): string | null | undefined {
         return this.getActiveInputElement().getValue();
     }
@@ -56,8 +61,12 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.addManagedListener(element, 'keydown', listener);
     }
 
-    public setParams(params: { ariaLabel: string }): void {
+    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
         this.setAriaLabel(params.ariaLabel);
+        
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
     }
 
     private setAriaLabel(ariaLabel: string): void {
