@@ -24,7 +24,6 @@ export class AdvancedFilterComp extends Component {
     @Autowired('filterManager') private filterManager: FilterManager;
 
     private expressionParser: FilterExpressionParser | null = null;
-    private expression: string | null = null;
     private isApplyDisabled = true;
 
     constructor() {
@@ -51,7 +50,7 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALUE_CHANGED,
             ({ value }: AutocompleteValueChangedEvent) => this.onValueChanged(value));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALUE_CONFIRMED,
-            ({ value, isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(value, isValid));
+            ({ value, isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_OPTION_SELECTED,
             ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) => this.onOptionSelected(position, updateEntry, autocompleteType));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
@@ -59,13 +58,13 @@ export class AdvancedFilterComp extends Component {
 
         this.eApplyFilterButton.innerText = translate('advancedFilterApply', 'Apply');
         this.activateTabIndex([this.eApplyFilterButton]);
-        this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.getValue(), this.eAutocomplete.isValid()));
+        this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 
     public refresh(): void {
         const expression = this.advancedFilterService.getExpressionDisplayValue();
-        this.eAutocomplete.setValue(expression ?? '', expression?.length, true, true);
+        this.eAutocomplete.setValue(expression ?? '', expression?.length, false, true);
     }
 
     public setInputDisabled(disabled: boolean): void {
@@ -73,7 +72,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValueChanged(value: string | null): void {
-        this.expression = value;
+        this.advancedFilterService.setExpressionDisplayValue(value);
         this.expressionParser = this.advancedFilterService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
@@ -81,10 +80,10 @@ export class AdvancedFilterComp extends Component {
         }
     }
 
-    private onValueConfirmed(value: string | null, isValid: boolean): void {
+    private onValueConfirmed(isValid: boolean): void {
         if (!isValid || this.isApplyDisabled) { return; }
         _.setDisabled(this.eApplyFilterButton, true);
-        this.advancedFilterService.setExpressionDisplayValue(value);
+        this.advancedFilterService.applyExpression();
         this.filterManager.onFilterChanged();
     }
 
@@ -98,7 +97,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValidChanged(isValid: boolean): void {
-        this.isApplyDisabled = !isValid || this.expression === this.advancedFilterService.getExpressionDisplayValue();
+        this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 

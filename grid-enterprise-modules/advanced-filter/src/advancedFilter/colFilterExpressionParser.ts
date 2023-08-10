@@ -22,6 +22,7 @@ class ColumnParser implements Parser {
     public valid = true;
     public endPosition: number | undefined;
     public baseCellDataType: BaseCellDataType;
+    public column: Column | null | undefined;
     public hasStartChar = false;
     public hasEndChar = false;
     private colName: string = '';
@@ -70,9 +71,9 @@ class ColumnParser implements Parser {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
             this.colName = colValue.columnName;
-            const column = this.params.columnModel.getGridColumn(this.colId);
-            if (column) {
-                this.baseCellDataType = this.params.dataTypeService.getBaseDataType(column) ?? 'text';
+            this.column = this.params.columnModel.getGridColumn(this.colId);
+            if (this.column) {
+                this.baseCellDataType = this.params.dataTypeService.getBaseDataType(this.column) ?? 'text';
                 return true;
             }
         }
@@ -152,11 +153,13 @@ class OperandParser implements Parser {
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
+    private modelValue: number | string;
 
     constructor(
         private params: FilterExpressionParserParams,
         public readonly startPosition: number,
-        private readonly baseCellDataType: BaseCellDataType
+        private readonly baseCellDataType: BaseCellDataType,
+        private readonly column: Column | null | undefined,
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {
@@ -193,14 +196,19 @@ class OperandParser implements Parser {
         return this.operand;
     }
 
+    public getModelValue(): string | number {
+        return this.modelValue;
+    }
+
     private parseOperand(fromComplete: boolean, position: number): void {
         this.endPosition = position;
+        this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote
             this.valid = false;
         } else if (this.baseCellDataType === 'number') {
-            const value = parseFloat(this.operand);
-            if (isNaN(value)) {
+            this.modelValue = this.params.valueParserService.parseValue(this.column!, null, this.operand, undefined);
+            if (isNaN(this.modelValue as number)) {
                 this.valid = false;
             }
         }
@@ -241,7 +249,7 @@ export class ColFilterExpressionParser {
                         this.operatorParser = new OperatorParser(this.params, i, this.columnParser!.baseCellDataType);
                         parser = this.operatorParser;
                     } else {
-                        this.operandParser = new OperandParser(this.params, i, this.columnParser!.baseCellDataType)
+                        this.operandParser = new OperandParser(this.params, i, this.columnParser!.baseCellDataType, this.columnParser!.column);
                         parser = this.operandParser;
                     }
                     this.parser = parser;
@@ -274,7 +282,7 @@ export class ColFilterExpressionParser {
             operand = '';
         } else {
             const argsIndex = args.length;
-            args.push(this.getOperandValue(colId));
+            args.push(this.getOperandValue());
             operand = `, args[${argsIndex}]`;
         }
         return `expressionProxy.operators.${this.columnParser!.baseCellDataType}.operators.${operator}.evaluator(expressionProxy.getValue('${escapedColId}', node), node, expressionProxy.getParams('${escapedColId}')${operand})`;
@@ -330,20 +338,20 @@ export class ColFilterExpressionParser {
             type: this.operatorParser!.getOperatorKey(),
         };
         if (this.operatorParser!.expectedNumOperands) {
-            (model as any).filter = this.getOperandValue(colId);
+            (model as any).filter = this.operandParser!.getModelValue();
         }
         return model as AdvancedFilterModel;
     }
 
-    private getOperandValue(colId: string): any {
+    private getOperandValue(): any {
         let operand: any = this.operandParser!.getRawValue();
-        const { baseCellDataType } = this.columnParser!;
+        const { baseCellDataType, column } = this.columnParser!;
         switch (baseCellDataType) {
             case 'number':
             case 'boolean':
             case 'date':
             case 'dateString':
-                operand = this.params.valueParserService.parseValue(this.params.columnModel.getGridColumn(colId)!, null, operand, undefined);
+                operand = this.params.valueParserService.parseValue(column!, null, operand, undefined);
         }
         if (baseCellDataType === 'dateString') {
             return this.params.dataTypeService.getDateParserFunction()(operand as string);
@@ -410,8 +418,7 @@ export class ColFilterExpressionParser {
     }
 
     private getOperatorAutocompleteListParams(position: number): AutocompleteListParams {
-        const colId = this.columnParser?.getColId();
-        const column = colId ? this.params.columnModel.getGridColumn(colId) : null;
+        const column = this.columnParser?.column;
         if (!column) {
             return { enabled: false };
         }

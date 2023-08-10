@@ -32,6 +32,8 @@ The following example demonstrates the Advanced Filter:
 
 For a column to appear in the Advanced Filter, it needs to have `filter: true` (or set to a non-null and non-false value).
 
+The type of the filter options displayed is based on the [Cell Data Type](/cell-data-types/) of the column.
+
 The different properties that can be set for each column are explained in the sections below, and demonstrated in the following example:
 - The **Age** column is not available in the filter as `filter = false`.
 - The **Sport** column is not available in the filter by default as hidden columns are excluded.

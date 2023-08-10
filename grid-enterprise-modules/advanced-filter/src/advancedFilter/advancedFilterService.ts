@@ -55,6 +55,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private includeHiddenColumns = false;
 
     private expressionProxy: ExpressionProxy;
+    private appliedExpression: string | null = null;
+    /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
     private expressionFunction: Function | null;
     private expressionArgs: any[] | null;
@@ -131,12 +133,15 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                 const { filter } = model as any;
                 const column = this.columnModel.getGridColumn(colId);
                 let operands = '';
-                if (column && filter != null) {
-                    let operand1 = this.valueFormatterService.formatValue(column, null, filter) ?? _.toStringOrNull(filter);
-                    if (operand1 && this.dataTypeService.getBaseDataType(column) !== 'number') {
-                        operand1 = `"${operand1}"`;
+                if (filter != null) {
+                    let operand1;
+                    if (model.filterType === 'number') {
+                        operand1 = _.toStringOrNull(filter) ?? '';
+                    } else {
+                        operand1 = column ? this.valueFormatterService.formatValue(column, null, filter) : filter;
+                        operand1 = `"${operand1 ?? _.toStringOrNull(filter) ?? ''}"`;
                     }
-                    operands = operand1 == null ? '' : ` ${operand1}`
+                    operands = ` ${operand1}`;
                 }
                 return `[${columnName}] ${operator}${operands}`;
             }
@@ -145,6 +150,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const expression = model ? parseModel(model, true) : null;
 
         this.setExpressionDisplayValue(expression);
+        this.applyExpression();
         this.ctrl.refreshComp();
     }
 
@@ -154,7 +160,10 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     public setExpressionDisplayValue(expression: string | null): void {
         this.expression = expression;
-        this.parseAndSetExpression(this.expression);
+    }
+
+    public isCurrentExpressionApplied(): boolean {
+        return this.appliedExpression === this.expression;
     }
 
     public createExpressionParser(expression: string | null): FilterExpressionParser | null {
@@ -231,11 +240,12 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
     }
 
-    private parseAndSetExpression(expression: string | null): void {
+    public applyExpression(): void {
         this.expressionFunction = null;
         this.expressionArgs = null;
+        this.appliedExpression = null;
 
-        const expressionParser = this.createExpressionParser(expression);
+        const expressionParser = this.createExpressionParser(this.expression);
 
         if (!expressionParser) { return; }
 
@@ -248,6 +258,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         this.expressionFunction = new Function('expressionProxy', 'node', 'args', functionBody);
         this.expressionArgs = args;
+        this.appliedExpression = this.expression;
     }
 
     private getColumnAutocompleteEntries(): AutocompleteEntry[] {
