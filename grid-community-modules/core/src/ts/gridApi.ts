@@ -1815,6 +1815,9 @@ export class GridApi<TData = any> {
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
+        if (!this.focusService.isCellFocused(cellPosition)) {
+            this.focusService.setFocusedCell(cellPosition);
+        }
         cell.startRowOrCellEdit(params.key);
     }
 
