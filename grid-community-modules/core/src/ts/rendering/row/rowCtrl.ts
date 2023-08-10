@@ -1376,8 +1376,11 @@ export class RowCtrl extends BeanStub {
     }
 
     private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
-        const list = gui ? [gui] : this.allRowGuis;
-        list.forEach(callback);
+        if (gui) {
+            callback(gui);
+        } else {
+            this.allRowGuis.forEach(callback);
+        }
     }
 
     private onRowHeightChanged(gui?: RowGui): void {
