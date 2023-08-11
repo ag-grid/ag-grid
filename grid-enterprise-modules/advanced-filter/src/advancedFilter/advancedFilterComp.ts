@@ -88,8 +88,8 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {
-        const { updatedValue, updatedPosition } = this.updateExpression(position, updateEntry, type);
-        this.eAutocomplete.setValue(updatedValue, updatedPosition);
+        const { updatedValue, updatedPosition, hideAutocomplete } = this.updateExpression(position, updateEntry, type);
+        this.eAutocomplete.setValue(updatedValue, updatedPosition, undefined, hideAutocomplete);
     }
 
     private validateValue(): string | null {

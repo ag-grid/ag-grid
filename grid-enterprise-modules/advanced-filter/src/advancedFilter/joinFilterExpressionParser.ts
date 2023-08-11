@@ -5,8 +5,9 @@ import {
     AutocompleteUpdate,
     checkAndUpdateExpression,
     FilterExpressionParserParams,
-    getSearchString, updateExpression,
-    findEndAndUpdateExpression
+    findEndPosition,
+    getSearchString,
+    updateExpression
 } from "./filterExpressionUtils";
 
 class OperatorParser {
@@ -87,6 +88,7 @@ class OperatorParser {
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, operatorIndex: number): AutocompleteUpdate {
         let { expression } = this.params;
+        const updatedValuePart = updateEntry.displayValue ?? updateEntry.key;
         if (operatorIndex === 0) {
             // need to update all others
             for (let i = this.operatorEndPositions.length - 1; i > 0; i--) {
@@ -96,15 +98,18 @@ class OperatorParser {
                     expression,
                     this.operatorStartPositions[i],
                     operatorEndPosition,
-                    updateEntry.displayValue ?? updateEntry.key
+                    updatedValuePart
                 ).updatedValue;
             }
         }
-        return findEndAndUpdateExpression(expression,
-            position,
-            this.operatorStartPositions.length ? this.operatorStartPositions[operatorIndex] : expression.length,
-            this.operatorEndPositions.length ? this.operatorEndPositions[operatorIndex] : undefined,
-            updateEntry,
+        const startPosition = this.operatorStartPositions.length > operatorIndex ? this.operatorStartPositions[operatorIndex] : expression.length;
+        const endPosition = (this.operatorEndPositions.length > operatorIndex ? this.operatorEndPositions[operatorIndex] : undefined)
+            ?? findEndPosition(expression, position);
+        return updateExpression(
+            expression,
+            startPosition,
+            endPosition,
+            updatedValuePart,
             true
         );
     }

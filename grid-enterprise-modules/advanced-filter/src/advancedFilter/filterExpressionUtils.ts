@@ -22,56 +22,12 @@ export interface FilterExpression {
 export interface AutocompleteUpdate {
     updatedValue: string;
     updatedPosition: number;
+    hideAutocomplete?: boolean;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
     const numChars = endPosition - position;
     return numChars ? value.slice(0, value.length - numChars) : value;
-}
-
-export function findStartAndUpdateExpression(
-    expression: string,
-    position: number,
-    endPosition: number,
-    updateEntry: AutocompleteEntry,
-    appendSpace?: boolean,
-    appendQuote?: boolean
-): { updatedValue: string, updatedPosition: number } {
-    let startPosition = position;
-
-    while (startPosition < endPosition) {
-        const char = expression[startPosition];
-        if (char !== ' ') {
-            break;
-        }
-        startPosition++;
-    }
-
-    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
-}
-
-export function findEndAndUpdateExpression(
-    expression: string,
-    position: number,
-    startPosition: number,
-    endPosition: number | undefined,
-    updateEntry: AutocompleteEntry,
-    appendSpace?: boolean,
-    appendQuote?: boolean
-): { updatedValue: string, updatedPosition: number } {
-    if (endPosition == null) {
-        endPosition = position;
-        while (endPosition < expression.length) {
-            const char = expression[endPosition];
-            if (char === ' ') {
-                endPosition = endPosition - 1;
-                break;
-            }
-            endPosition++;
-        }
-    }
-
-    return updateExpression(expression, startPosition, endPosition, updateEntry.displayValue ?? updateEntry.key, appendSpace, appendQuote);
 }
 
 export function updateExpression(
@@ -81,7 +37,7 @@ export function updateExpression(
     updatedValuePart: string,
     appendSpace?: boolean,
     appendQuote?: boolean
-): { updatedValue: string, updatedPosition: number } {
+): AutocompleteUpdate {
     const secondPartStartPosition = endPosition + (!expression.length ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
@@ -97,6 +53,31 @@ export function updateExpression(
     }
     const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(secondPartStartPosition);
     return { updatedValue, updatedPosition: startPosition + updatedValuePart.length + positionOffset };
+}
+
+export function findStartPosition(expression: string, position: number, endPosition: number) {
+    let startPosition = position;
+    while (startPosition < endPosition) {
+        const char = expression[startPosition];
+        if (char !== ' ') {
+            break;
+        }
+        startPosition++;
+    }
+    return startPosition;
+}
+
+export function findEndPosition(expression: string, position: number) {
+    let endPosition = position;
+    while (endPosition < expression.length) {
+        const char = expression[endPosition];
+        if (char === ' ') {
+            endPosition = endPosition - 1;
+            break;
+        }
+        endPosition++;
+    }
+    return endPosition;
 }
 
 export function checkAndUpdateExpression(

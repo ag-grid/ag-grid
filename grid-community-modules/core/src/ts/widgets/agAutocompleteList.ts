@@ -208,6 +208,7 @@ export class AgAutocompleteList extends PopupComponent {
     }
 
     public getSelectedValue(): AutocompleteEntry | null {
+        if (!this.autocompleteEntries.length) { return null };
         return this.selectedValue ?? null;
     }
 }

@@ -5,9 +5,10 @@ import {
     checkAndUpdateExpression,
     FilterExpressionParserParams,
     getSearchString,
-    findStartAndUpdateExpression,
     updateExpression,
-    escapeQuotes
+    escapeQuotes,
+    findEndPosition,
+    findStartPosition
 } from "./filterExpressionUtils";
 
 interface Parser {
@@ -102,11 +103,11 @@ class OperatorParser implements Parser {
 
     public parse(char: string, position: number): boolean | undefined {
         if (char === ' ' || char === ')') {
-            const isMultiPart = this.parseOperator(false, position - 1);
-            if (isMultiPart) {
-                this.operator += char;
-            } else {
+            const isMatch = this.parseOperator(false, position - 1);
+            if (isMatch) {
                 return true;
+            } else {
+                this.operator += char;
             }
         } else {
             this.operator += char;
@@ -137,12 +138,13 @@ class OperatorParser implements Parser {
             const operatorDisplayValue = operator.displayValue;
             checkAndUpdateExpression(this.params, this.operator, operatorDisplayValue, endPosition);
             this.operator = operatorDisplayValue;
-            return false;
-        } 
-        if (fromComplete) {
+            return true;
+        }
+        const isPartialMatch = parsedOperator === null;
+        if (fromComplete || !isPartialMatch) {
             this.valid = false;
         }
-        return parsedOperator === null; // is partial match
+        return false;
     }
 }
 
@@ -298,34 +300,42 @@ export class ColFilterExpressionParser {
     }
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate | null {
+        const { expression } = this.params;
         if (this.isColumnPosition(position)) {
             return updateExpression(
                 this.params.expression,
                 this.startPosition,
-                this.getColumnEndPosition(position),
+                this.columnParser?.getColId() ? this.columnParser!.endPosition! : findEndPosition(expression, position),
                 this.params.columnValueCreator(updateEntry),
                 true
             );
         } else if (this.isOperatorPosition(position)) {
+            const baseCellDataType = this.getBaseCellDataTypeFromOperatorAutocompleteType(type);
+            const hasOperand = this.hasOperand(baseCellDataType, updateEntry.key);
+            const doesOperandNeedQuotes = hasOperand && this.doesOperandNeedQuotes(baseCellDataType);
+            let update: AutocompleteUpdate;
             if (this.operatorParser?.startPosition != null && position < this.operatorParser.startPosition) {
                 // in between multiple spaces, just insert direct
-                return updateExpression(
-                    this.params.expression,
+                update = updateExpression(
+                    expression,
                     position,
                     position,
                     updateEntry.displayValue ?? updateEntry.key,
-                    true,
-                    this.doesOperatorNeedQuotes(type, updateEntry.key)
+                    hasOperand,
+                    doesOperandNeedQuotes
+                );
+            } else {
+                const endPosition = this.operatorParser?.getOperatorKey() ? this.operatorParser!.endPosition! : findEndPosition(expression, position);
+                update = updateExpression(
+                    expression,
+                    findStartPosition(expression, this.columnParser!.endPosition! + 1, endPosition),
+                    endPosition,
+                    updateEntry.displayValue ?? updateEntry.key,
+                    hasOperand,
+                    doesOperandNeedQuotes
                 );
             }
-            return findStartAndUpdateExpression(
-                this.params.expression,
-                this.columnParser!.endPosition! + 1,
-                this.operatorParser?.endPosition ?? this.params.expression.length,
-                updateEntry,
-                true,
-                this.doesOperatorNeedQuotes(type, updateEntry.key)
-            );
+            return { ...update, hideAutocomplete: !hasOperand };
         }
         return null;
     }
@@ -397,26 +407,6 @@ export class ColFilterExpressionParser {
         return searchString;
     }
 
-    private getColumnEndPosition(position: number): number {
-        if (this.columnParser?.getColId()) {
-            return this.columnParser.endPosition!;
-        }
-        const { expression } = this.params;
-        if (position === expression.length || expression[position] === ' ') {
-            return position - 1;
-        }
-        let endPosition = position;
-        while (endPosition < expression.length) {
-            const char = expression[endPosition];
-            if (char === ' ') {
-                endPosition = endPosition - 1;
-                break;
-            }
-            endPosition++;
-        }
-        return endPosition;
-    }
-
     private getOperatorAutocompleteListParams(position: number): AutocompleteListParams {
         const column = this.columnParser?.column;
         if (!column) {
@@ -446,14 +436,15 @@ export class ColFilterExpressionParser {
         return isValid ? filterOptions : undefined;
     }
 
-    private doesOperatorNeedQuotes(type?: string, key?: string): boolean {
-        const baseCellDataType = type?.replace('operator-', '') as BaseCellDataType;
-        if (
-            baseCellDataType === 'number' ||
-            (baseCellDataType && key && this.params.operators[baseCellDataType]?.operators?.[key]?.numOperands === 0)
-        ) {
-            return false;
-        }
-        return true;
+    private getBaseCellDataTypeFromOperatorAutocompleteType(type?: string): BaseCellDataType | undefined {
+        return type?.replace('operator-', '') as BaseCellDataType;
+    }
+
+    private hasOperand(baseCellDataType?: BaseCellDataType, operator?: string): boolean {
+        return !baseCellDataType || !operator || this.params.operators[baseCellDataType]?.operators?.[operator]?.numOperands > 0;
+    }
+
+    private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {
+        return baseCellDataType !== 'number';
     }
 }
