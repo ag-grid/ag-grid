@@ -230,9 +230,15 @@ export class DataModel<
     private readonly propertyProcessors: (PropertyValueProcessorDefinition<D> & InternalDefinition)[];
     private readonly reducers: (ReducerOutputPropertyDefinition<any> & InternalDefinition)[];
     private readonly processors: (ProcessorOutputPropertyDefinition<any> & InternalDefinition)[];
+    private readonly mode: 'standalone' | 'integrated';
 
-    public constructor(opts: DataModelOptions<K, Grouped>) {
-        const { props } = opts;
+    public constructor(
+        opts: DataModelOptions<K, Grouped> & {
+            readonly mode?: 'standalone' | 'integrated';
+        }
+    ) {
+        const { props, mode = 'standalone' } = opts;
+        this.mode = mode;
 
         // Validate that keys appear before values in the definitions, as output ordering depends
         // on configuration ordering, but we process keys before values.
@@ -915,6 +921,8 @@ export class DataModel<
 
     buildAccessors(...defs: { property: string }[]) {
         const result: Record<string, (d: any) => any> = {};
+        if (this.mode === 'integrated') return result;
+
         for (const def of defs) {
             const isPath = def.property.indexOf('.') >= 0 || def.property.indexOf('[') >= 0;
             if (!isPath) continue;
