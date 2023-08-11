@@ -441,7 +441,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        const headerHeight = headerCtrl.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
         let height = 0;

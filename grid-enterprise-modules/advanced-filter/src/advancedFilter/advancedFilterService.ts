@@ -76,7 +76,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         this.expressionJoinOperators = this.getExpressionJoinOperators();
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.columnModel.getGridColumn(colId);
+                const column = this.columnModel.getPrimaryColumn(colId);
                 return column ? this.valueService.getValue(column, node, true) : undefined;
             },
             getParams: (colId) => this.getExpressionEvaluatorParams(colId),
@@ -131,7 +131,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                 }
                 const operator = this.expressionOperators[model.filterType]?.operators?.[model.type]?.displayValue ?? model.type;
                 const { filter } = model as any;
-                const column = this.columnModel.getGridColumn(colId);
+                const column = this.columnModel.getPrimaryColumn(colId);
                 let operands = '';
                 if (filter != null) {
                     let operand1;
@@ -325,7 +325,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(colId: string): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {
         let params = this.expressionEvaluatorParams[colId];
         if (!params) {
-            const column = this.columnModel.getGridColumn(colId);
+            const column = this.columnModel.getPrimaryColumn(colId);
             if (column) {
                 const baseCellDataType = this.dataTypeService.getBaseDataType(column);
                 switch (baseCellDataType) {

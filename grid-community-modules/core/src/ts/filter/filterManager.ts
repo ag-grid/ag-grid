@@ -1037,6 +1037,10 @@ export class FilterManager extends BeanStub {
         return this.isAdvancedFilterHeaderActive() ? 1 : 0;
     }
 
+    public getHeaderHeight(): number {
+        return this.isAdvancedFilterHeaderActive() ? this.advancedFilterService.getCtrl().getHeaderHeight() : 0;
+    }
+
     private processFilterModelUpdateQueue(): void {
         this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
         this.filterModelUpdateQueue = [];

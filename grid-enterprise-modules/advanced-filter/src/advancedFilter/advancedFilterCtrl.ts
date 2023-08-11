@@ -56,6 +56,10 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.eAdvancedFilterHeaderComp?.refresh();
     }
 
+    public getHeaderHeight(): number {
+        return this.eAdvancedFilterHeaderComp?.getHeight() ?? 0;
+    }
+
     public setInputDisabled(disabled: boolean): void {
         this.eAdvancedFilterComp?.setInputDisabled(disabled);
         this.eAdvancedFilterHeaderComp?.setInputDisabled(disabled);
@@ -69,6 +73,9 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private updateComps(): void {
         this.setAdvancedFilterComp();
         this.setHeaderCompEnabled();
+        this.eventService.dispatchEvent({
+            type: Events.EVENT_HEADER_HEIGHT_CHANGED
+        });
     }
 
     private setAdvancedFilterComp(): void {

@@ -192,4 +192,4 @@ The following example demonstrates displaying the Advanced Filter outside of the
 
 The Advanced Filter will only work on leaf-level rows when using [Aggregation](/aggregation/). The `groupAggFiltering` property will be ignored.
 
-When [Pivoting](/pivoting/), Pivot Result Columns will not appear in the Advanced Filter.
+When [Pivoting](/pivoting/), Pivot Result Columns will not appear in the Advanced Filter. However, primary columns (including underlying group and pivot columns) will be shown in the Advanced Filter.

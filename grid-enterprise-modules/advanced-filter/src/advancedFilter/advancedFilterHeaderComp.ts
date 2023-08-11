@@ -19,6 +19,7 @@ export class AdvancedFilterHeaderComp extends Component {
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
+    private height: number;
 
     constructor(private enabled: boolean) {
         super(/* html */ `
@@ -56,6 +57,10 @@ export class AdvancedFilterHeaderComp extends Component {
         this.eAdvancedFilter?.refresh();
     }
 
+    public getHeight(): number {
+        return this.height;
+    }
+
     public setInputDisabled(disabled: boolean): void {
         this.eAdvancedFilter?.setInputDisabled(disabled);
     }
@@ -68,7 +73,8 @@ export class AdvancedFilterHeaderComp extends Component {
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
             
-            const height = `${this.columnModel.getFloatingFiltersHeight()}px`;
+            this.height = this.columnModel.getFloatingFiltersHeight();
+            const height = `${this.height}px`;
             eGui.style.height = height;
             eGui.style.minHeight = height;
 
@@ -80,7 +86,8 @@ export class AdvancedFilterHeaderComp extends Component {
             eGui.appendChild(eAdvancedFilterGui);
         } else {
             _.clearElement(eGui);
-            this.destroyBean(this.eAdvancedFilter)
+            this.destroyBean(this.eAdvancedFilter);
+            this.height = 0;
         }
         _.setDisplayed(eGui, enabled);
         this.enabled = enabled;
