@@ -20,7 +20,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getRowStyles());
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(
-        isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType));
+        isFullWidth ? null : null); // 
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
@@ -63,12 +63,12 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) { return; }
-
+        
         if (!eGui.current) {
             rowCtrl.unsetComp(containerType);
             return;
         }
+        if (!rowCtrl.isAlive()) { return; }
 
         const compProxy: IRowComp = {
             // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
