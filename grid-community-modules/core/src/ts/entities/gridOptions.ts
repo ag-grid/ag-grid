@@ -733,6 +733,12 @@ export interface GridOptions<TData = any> {
     /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
+    /**
+     * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
+     * Default: `_`
+     */
+    serverSidePivotResultFieldSeparator?: string;
+
     // *** Row Model: Viewport *** //
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */
     viewportDatasource?: IViewportDatasource;

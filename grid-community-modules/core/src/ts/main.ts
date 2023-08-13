@@ -493,6 +493,7 @@ export {
 } from "./interfaces/iCommon";
 
 export * from "./propertyKeys";
+export { IPivotColDefService } from "./interfaces/iPivotColDefService";
 export { IProvidedColumn } from "./interfaces/iProvidedColumn";
 export { IHeaderColumn } from "./interfaces/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";

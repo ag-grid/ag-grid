@@ -813,6 +813,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
+    /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
+         * Default: `_`
+         */
+    @Input() public serverSidePivotResultFieldSeparator: string | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
     /** When using viewport row model, sets the page size for the viewport.     */

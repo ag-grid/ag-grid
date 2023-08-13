@@ -29,7 +29,7 @@ import {
     IRowNode,
     ISelectionService
 } from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
+import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
@@ -47,6 +47,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
+    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -213,6 +214,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const info = params.storeInfo || params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
+        }
+
+        if (params.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(params.pivotResultFields);
         }
 
         const nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
