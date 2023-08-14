@@ -340,6 +340,10 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                                 ?? (typeof value.toString === 'function' ? value.toString() : '')
                         };
                         break;
+                    case 'text': 
+                    case undefined: 
+                        params = { valueConverter: (v: any) => _.toStringOrNull(v) };
+                        break;
                     default:
                         params = { valueConverter: (v: any) => v };
                         break;
