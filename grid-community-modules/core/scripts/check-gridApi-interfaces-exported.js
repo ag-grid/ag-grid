@@ -41,7 +41,7 @@ function getPublicTypes(fileContents) {
     const toIgnore = [
     'TData', 'Blob', '', 'Document', 'Function', 'HTMLElement', 'KeyboardEvent', 'MouseEvent', 'Touch',
     // Some just missed by this script due to use of import * from ./events
-    'OverlayWrapperComponent', 'AgEvent', 'ColumnEventType', 'SelectionEventSourceType'];
+    'OverlayWrapperComponent', 'AgEvent', 'ColumnEventType', 'SelectionEventSourceType', 'FilterChangedEventSourceType'];
     matchesPublicMethods.forEach(m => {
         const params = m[2].split(/\W/).map(i => i.trim());
         const returnType = m[4].split(/\W/).map(i => i.trim());
