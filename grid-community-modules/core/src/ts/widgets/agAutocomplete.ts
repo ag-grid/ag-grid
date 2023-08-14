@@ -189,7 +189,7 @@ export class AgAutocomplete extends Component {
             event.preventDefault();
             event.stopPropagation();
             this.closeList();
-            this.setCaret(this.lastPosition);
+            this.setCaret(this.lastPosition, true);
         }
     }
 
@@ -198,9 +198,9 @@ export class AgAutocomplete extends Component {
         this.updateAutocompleteList(this.eAutocompleteInput.getValue() ?? null);
     }
 
-    private setCaret(position: number): void {
+    private setCaret(position: number, setFocus?: boolean): void {
         const eDocument = this.gridOptionsService.getDocument();
-        if (eDocument.activeElement === eDocument.body) {
+        if (setFocus && eDocument.activeElement === eDocument.body) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }
@@ -235,7 +235,7 @@ export class AgAutocomplete extends Component {
             onConfirmed: () => this.confirmSelection(),
             onCancelled: () => {
                 this.closeList();
-                this.setCaret(this.lastPosition);
+                this.setCaret(this.lastPosition, true);
             },
             forceLastSelection: this.forceLastSelection
         }));
@@ -310,9 +310,16 @@ export class AgAutocomplete extends Component {
         return this.valid;
     }
 
-    public setValue(value: string, position?: number, silent?: boolean, updateListOnlyIfOpen?: boolean): void {
+    public setValue(params: {
+        value: string,
+        position?: number,
+        silent?: boolean,
+        updateListOnlyIfOpen?: boolean,
+        restoreFocus?: boolean
+    }): void {
+        const { value, position, silent, updateListOnlyIfOpen, restoreFocus } = params;
         this.eAutocompleteInput.setValue(value, true);
-        this.setCaret(position ?? this.lastPosition);
+        this.setCaret(position ?? this.lastPosition, restoreFocus);
         if (!silent) {
             this.updateValue(value);
         }

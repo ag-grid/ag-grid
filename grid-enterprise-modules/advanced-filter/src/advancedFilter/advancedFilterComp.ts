@@ -50,7 +50,7 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALUE_CHANGED,
             ({ value }: AutocompleteValueChangedEvent) => this.onValueChanged(value));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALUE_CONFIRMED,
-            ({ value, isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid));
+            ({ isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_OPTION_SELECTED,
             ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) => this.onOptionSelected(position, updateEntry, autocompleteType));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
@@ -64,7 +64,7 @@ export class AdvancedFilterComp extends Component {
 
     public refresh(): void {
         const expression = this.advancedFilterService.getExpressionDisplayValue();
-        this.eAutocomplete.setValue(expression ?? '', expression?.length, false, true);
+        this.eAutocomplete.setValue({ value: expression ?? '', position: expression?.length, updateListOnlyIfOpen: true });
     }
 
     public setInputDisabled(disabled: boolean): void {
@@ -76,7 +76,7 @@ export class AdvancedFilterComp extends Component {
         this.expressionParser = this.advancedFilterService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
-            this.eAutocomplete.setValue(updatedExpression, undefined, true);
+            this.eAutocomplete.setValue({ value: updatedExpression, silent: true, restoreFocus: true });
         }
     }
 
@@ -89,7 +89,12 @@ export class AdvancedFilterComp extends Component {
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {
         const { updatedValue, updatedPosition, hideAutocomplete } = this.updateExpression(position, updateEntry, type);
-        this.eAutocomplete.setValue(updatedValue, updatedPosition, undefined, hideAutocomplete);
+        this.eAutocomplete.setValue({
+            value: updatedValue,
+            position: updatedPosition,
+            updateListOnlyIfOpen: hideAutocomplete, 
+            restoreFocus: true
+        });
     }
 
     private validateValue(): string | null {
