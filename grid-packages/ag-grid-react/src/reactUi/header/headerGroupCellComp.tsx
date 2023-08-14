@@ -9,8 +9,8 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const {context} = useContext(BeansContext);
     const { ctrl } = props;
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState<"true" | "false">("false");
     const [ariaExpanded, setAriaExpanded] = useState<'true'|'false'|undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();

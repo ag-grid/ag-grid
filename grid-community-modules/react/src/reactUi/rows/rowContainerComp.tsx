@@ -77,7 +77,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
         rowCtrlsOrdered = React.useSyncExternalStore(sub, () => orderedRowCtrlsRef.current);
     } else {
-        const [ctrlsOrdered, setCtrlsOrdered] = useState<RowCtrl[]>([]);
+        const [ctrlsOrdered, setCtrlsOrdered] = useState<RowCtrl[]>(() => []);
         rowUpdateCallback.current = () => setCtrlsOrdered(orderedRowCtrlsRef.current);
         rowCtrlsOrdered = ctrlsOrdered;
     }

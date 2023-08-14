@@ -197,8 +197,10 @@ const CellComp = (props: {
         (cellRenderer: ICellEditor | undefined) => setCellEditorRef(false, cellRenderer), 
         [setCellEditorRef]
     );
-
-    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
+    let cssClassManager = useRef<CssClassManager>();
+    if(!cssClassManager.current){
+        cssClassManager.current = new CssClassManager(() => eGui.current!);
+    }    
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
@@ -322,7 +324,7 @@ const CellComp = (props: {
         if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
-            addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
+            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
             
@@ -381,10 +383,10 @@ const CellComp = (props: {
 
     useEffect(() => {
         if (!eGui.current) { return; }
-        cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
-        cssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+        cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
+        cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
 
         if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {

@@ -18,10 +18,10 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const [innerCompDetails, setInnerCompDetails] = useState<UserCompDetails>();
     const [childCount, setChildCount] = useState<string>();
     const [value, setValue] = useState<any>();
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
-    const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
-    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses('ag-invisible'));
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
+    const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
+    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(() => new CssClasses('ag-invisible'));
 
     useImperativeHandle(ref, () => {
         return {

@@ -15,9 +15,9 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const transform = useMemo(() => ctrl.getTransform(), []);
 
-    const [height, setHeight] = useState<string>(rowHeight + 'px');
-    const [top, setTop] = useState<string>(topOffset + 'px');
-    const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(ctrl.getHeaderCtrls());
+    const [height, setHeight] = useState<string>(() => rowHeight + 'px');
+    const [top, setTop] = useState<string>(() => topOffset + 'px');
+    const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
     const eGui = useRef<HTMLDivElement | null>(null);
 

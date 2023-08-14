@@ -8,8 +8,8 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
     const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [detailGridOptions, setDetailGridOptions] = useState<GridOptions>();
     const [detailRowData, setDetailRowData] = useState<any[]>();
 

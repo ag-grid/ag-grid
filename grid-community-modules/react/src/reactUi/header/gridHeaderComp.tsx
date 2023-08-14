@@ -8,7 +8,7 @@ import HeaderRowContainerComp from './headerRowContainerComp';
 
 const GridHeaderComp = () => {
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [height, setHeight] = useState<string>();
 
     const {context} = useContext(BeansContext);

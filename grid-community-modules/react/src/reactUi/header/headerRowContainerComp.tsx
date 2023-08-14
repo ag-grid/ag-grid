@@ -9,7 +9,7 @@ import HeaderRowComp from './headerRowComp';
 
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [ariaHidden, setAriaHidden] = useState<true | false>(false);
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
 

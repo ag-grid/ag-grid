@@ -14,19 +14,18 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
 
-    const [rowIndex, setRowIndex] = useState<string>(rowCtrl.getRowIndex());
-    const [rowId, setRowId] = useState<string | null>(rowCtrl.getRowId());
-    const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(rowCtrl.getBusinessKey());
+    const [rowIndex, setRowIndex] = useState<string>(() => rowCtrl.getRowIndex());
+    const [rowId, setRowId] = useState<string | null>(() => rowCtrl.getRowId());
+    const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.getBusinessKey());
 
-    const [userStyles, setUserStyles] = useState<RowStyle | undefined>(rowCtrl.getRowStyles());
-    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(
-        isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType));
+    const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.getRowStyles());
+    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType)); //rowCtrl.getCellCtrlsForContainer(containerType)
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop(containerType));
-    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform(containerType));
+    const [top, setTop] = useState<string | undefined>(() => rowCtrl.getInitialRowTop(containerType));
+    const [transform, setTransform] = useState<string | undefined>(() => rowCtrl.getInitialTransform(containerType));
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
@@ -55,8 +54,10 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
-
+    let cssClassManager = useRef<CssClassManager>();
+    if(!cssClassManager.current){
+        cssClassManager.current = new CssClassManager(() => eGui.current!);
+    }
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
 
@@ -78,7 +79,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
             // i found using React for managing classes at the row level was to slow, as modifying classes caused a lot of
             // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
-            addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
+            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
 
             setDomOrder: domOrder => domOrderRef.current = domOrder,
             setRowIndex: value => setRowIndex(value),

@@ -11,7 +11,7 @@ const useJsCellRenderer = (
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
 
-        const {context, userComponentFactory} = useContext(BeansContext);
+        const {context} = useContext(BeansContext);
 
         const destroyCellRenderer = useCallback(() => {
             const comp = jsCellRendererRef.current;

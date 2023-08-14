@@ -8,9 +8,9 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses('ag-header-cell', 'ag-floating-filter'));
-    const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(new CssClasses());
-    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(new CssClasses('ag-floating-filter-button', 'ag-hidden'));
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses('ag-header-cell', 'ag-floating-filter'));
+    const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(() => new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<"true" | "false">("false");
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
