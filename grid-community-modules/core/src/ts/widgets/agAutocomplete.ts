@@ -199,7 +199,11 @@ export class AgAutocomplete extends Component {
     }
 
     private setCaret(position: number): void {
-        this.eAutocompleteInput.getFocusableElement().focus();
+        const eDocument = this.gridOptionsService.getDocument();
+        if (eDocument.activeElement === eDocument.body) {
+            // clicking on the list loses focus, so restore
+            this.eAutocompleteInput.getFocusableElement().focus();
+        }
         this.eAutocompleteInput.getInputElement().setSelectionRange(position, position);
     }
 
