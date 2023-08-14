@@ -1,7 +1,11 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, Grid, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { SliderFloatingFilter } from './sliderFloatingFilter_typescript';
 
+const filterParams: INumberFilterParams = {
+  filterOptions: ['greaterThan'],
+  maxNumConditions: 1,
+};
 
 const columnDefs: ColDef[] = [
   { field: 'country', filter: false },
@@ -9,17 +13,19 @@ const columnDefs: ColDef[] = [
   { field: 'name', filter: false },
   {
     field: 'gold',
+    filter: 'agNumberColumnFilter',
+    filterParams: filterParams,
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     },
-    filter: 'agNumberColumnFilter',
     suppressMenu: false,
   },
   {
     field: 'silver',
     filter: 'agNumberColumnFilter',
+    filterParams: filterParams,
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
@@ -30,6 +36,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'bronze',
     filter: 'agNumberColumnFilter',
+    filterParams: filterParams,
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 10,
