@@ -381,7 +381,7 @@ const CellComp = (props: {
         return !!res;
     }, [renderDetails]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!eGui.current) { return; }
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
