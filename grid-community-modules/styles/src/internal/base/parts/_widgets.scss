@@ -143,16 +143,19 @@
         &:not(.ag-cell-editor, .ag-label-align-top) {
             height: var(--ag-list-item-height);
         }
+
         .ag-picker-field-display {
             margin: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .ag-picker-field-icon {
             display: flex;
             align-items: center;
         }
+
         &.ag-disabled {
             opacity: 0.5;
         }
@@ -168,7 +171,7 @@
 
     .ag-rich-select-list {
         width: 100%;
-        height: calc(var(--ag-row-height) * 6.5); // intentional
+        height: auto;
     }
 
     .ag-rich-select-value {

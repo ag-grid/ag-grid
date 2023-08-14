@@ -109,6 +109,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             case KeyCode.DOWN:
             case KeyCode.ENTER:
             case KeyCode.SPACE:
+                e.preventDefault();
                 this.clickHandler();
                 break;
             case KeyCode.ESCAPE:
@@ -127,11 +128,13 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const eDocument = this.gridOptionsService.getDocument();
         const ePicker = this.pickerComponent.getGui();
 
-        this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
-            if (!ePicker.contains(e.target as HTMLElement)) {
-                this.hidePicker();
-            }
-        });
+        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+            this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
+                if (!ePicker.contains(e.target as HTMLElement)) {
+                    this.hidePicker();
+                }
+            });
+        }
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -143,6 +146,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             closeOnEsc: true,
             closedCallback: () => {
                 this.beforeHidePicker();
+
+                if (this.isAlive()) {
+                    this.getFocusableElement().focus();
+                }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue)
         }
@@ -152,9 +159,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         this.isPickerDisplayed = true;
 
         setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
+        this.eWrapper.classList.add('ag-picker-expanded');
         setAriaExpanded(this.eWrapper, true);
 
-        ePicker.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
+        ePicker.style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
         ePicker.style.position = 'absolute';
 
         this.popupService.positionPopupByComponent({
@@ -174,6 +182,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             this.destroyMouseWheelFunc = undefined;
         }
 
+        this.eWrapper.classList.remove('ag-picker-expanded');
         this.isPickerDisplayed = false;
         this.pickerComponent = undefined;
         this.hidePopupCallback = null;
