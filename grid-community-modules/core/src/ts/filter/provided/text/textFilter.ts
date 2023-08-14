@@ -85,11 +85,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * Possible values are:
      * - `true` to allow the default browser autocomplete/autofill behaviour.
      * - `false` to disable the browser autocomplete/autofill behavior.
-<<<<<<< HEAD
-     * - A **string** to used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-=======
      * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
->>>>>>> 90c887c7db (Updated jsdoc in textFilter)
      * Default: `false`.
      */
     browserAutoComplete?: boolean | string;
