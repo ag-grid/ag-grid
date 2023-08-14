@@ -127,7 +127,21 @@ export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGr
     source: SelectionEventSourceType;
 }
 
+export type FilterChangedEventSourceType =
+    'api' |
+    'quickFilter' |
+    'columnFilter' |
+    'advancedFilter';
+
 export interface FilterChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /**
+     * The source that triggered the filter change event. Can be one of the following:
+     * - `api` - triggered by an API call
+     * - `quickFilter` - triggered by user filtering from Quick Filter
+     * - `columnFilter` - triggered by user filtering from Column Menu
+     * - `advancedFilter` - triggered by user filtering from Advanced Filter
+     */
+    source?: FilterChangedEventSourceType;
     /** True if the filter was changed as a result of data changing */
     afterDataChange?: boolean;
     /** True if filter was changed via floating filter */

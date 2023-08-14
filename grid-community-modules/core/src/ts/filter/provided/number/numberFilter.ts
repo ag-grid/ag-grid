@@ -37,11 +37,11 @@ export interface INumberFilterParams extends IScalarFilterParams {
      */
     allowedCharPattern?: string;
     /**
-     * Overrides the browser's autocomplete/autofill behaviour by updating autocomplete attribute on the input field used in the filter.
+     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input. Possible values are:
      * Possible values are:
-     * - `true` to keep the the default autocomplete/autofill behaviour.
-     * - `false` to disable the autocomplete/autofill.
-     * - A **string** to used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute.
+     * - `true` to allow the default browser autocomplete/autofill behaviour.
+     * - `false` to disable the browser autocomplete/autofill behavior.
+     * - A **string** to used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
      * Default: `false`.
      */
     browserAutoComplete?: boolean | string;
