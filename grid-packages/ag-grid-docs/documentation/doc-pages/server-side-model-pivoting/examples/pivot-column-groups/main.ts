@@ -28,14 +28,14 @@ const gridOptions: GridOptions<IOlympicData> = {
   animateRows: true,
 }
 
-function expand(key?: string) {
+function expand(key?: string, open = false) {
   if (key) {
-    gridOptions.columnApi!.setColumnGroupState([{ groupId: key, open: true }]);
+    gridOptions.columnApi!.setColumnGroupState([{ groupId: key, open: open }]);
     return;
   }
 
   const existingState = gridOptions.columnApi!.getColumnGroupState();
-  const expandedState = existingState.map((s: { groupId: string, open: boolean }) => ({ groupId: s.groupId, open: true }));
+  const expandedState = existingState.map((s: { groupId: string, open: boolean }) => ({ groupId: s.groupId, open: open }));
   gridOptions.columnApi!.setColumnGroupState(expandedState);
 }
 
