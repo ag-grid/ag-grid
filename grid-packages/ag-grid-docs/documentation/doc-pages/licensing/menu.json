@@ -385,6 +385,11 @@
         "icon": "docs-styling",
         "items": [
           {
+            "title": "AG Grid Design System",
+            "url": "/ag-grid-design-system/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Global Styling",
             "url": "/global-style/",
             "showInCollapsed": true,
@@ -500,11 +505,6 @@
                 "showInCollapsed": false
               }
             ]
-          },
-          {
-            "title": "AG Grid Design System",
-            "url": "/ag-grid-design-system/",
-            "showInCollapsed": true
           }
         ]
       },
