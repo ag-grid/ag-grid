@@ -1052,6 +1052,12 @@
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
+        "serverSidePivotResultFieldSeparator": {
+            "more": {
+                "name": "Providing Pivot Result Fields",
+                "url": "/server-side-model-pivoting/#providing-pivot-result-fields-simple"
+            }
+        },
         "serverSideSortAllLevels": {},
         "serverSideOnlyRefreshFilteredGroups": {},
         "serverSideInitialRowCount": {
