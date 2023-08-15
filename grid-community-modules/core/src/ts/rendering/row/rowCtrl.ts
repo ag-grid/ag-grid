@@ -158,7 +158,10 @@ export class RowCtrl extends BeanStub {
 
         this.addListeners();
 
-        this.createAllCellCtrls();
+        if(!this.isFullWidth()){
+            // Create cells ctrls in constructor so they are available immediately for cell comps
+            this.createAllCellCtrls();
+        }
     }
 
     private initRowBusinessKey(): void {
