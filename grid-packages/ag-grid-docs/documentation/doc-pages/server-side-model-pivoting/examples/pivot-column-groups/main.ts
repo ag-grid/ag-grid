@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   animateRows: true,
 
-  processPivotResultColDef: colDef => {
+  processPivotResultColDef: (colDef: ColDef) => {
     const pivotValueColumn = colDef.pivotValueColumn;
 
     if (!pivotValueColumn) return;
