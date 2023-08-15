@@ -3,7 +3,7 @@ import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useM
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
-import { BeansContext } from '../beansContext';
+import { BeansContext, DebounceCellRendering } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
 
 export enum CellCompState { ShowValue, EditValue }
@@ -134,6 +134,7 @@ const CellComp = (props: {
 }) => {
 
     const { context } = useContext(BeansContext);
+    const debounceCellRendering  = useContext(DebounceCellRendering)
     const { cellCtrl, printLayout, editingRow } = props;
 
     const includeSelection = cellCtrl.getIncludeSelection();
@@ -144,7 +145,9 @@ const CellComp = (props: {
     const cellInstanceId = cellCtrl.getInstanceId();
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
-    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>( cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
+    // Could argue that this should only be required for CellRenderers that are slow but if you have lots of cells on a low spec machine then this helps
+    // Also avoids mismatch between cell value and cell renderer value when using debounceCellRendering
+    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>( cellCtrl.getIsCellRenderer() || debounceCellRendering ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
@@ -333,19 +336,25 @@ const CellComp = (props: {
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails(prev => {
-
-
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force
+                const updater = () => {
+                    setRenderDetails(prev => {
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force
+                            }
+                        } else {
+                            return prev;
                         }
-                    } else {
-                        return prev;
-                    }
-                });
+                    });
+                };
+
+                if (debounceCellRendering) {
+                    setTimeout(() => updater(), 1); // test 0 does not work, needs to be 1
+                } else {
+                    updater();
+                }
             },
             
             setEditDetails: (compDetails, popup, popupPosition) => {

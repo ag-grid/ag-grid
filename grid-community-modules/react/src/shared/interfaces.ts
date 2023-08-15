@@ -36,6 +36,7 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     /** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     children?: any;
+    debounceCellRendering?: boolean;
 }
 
 export interface AgReactUiProps<TData = any> extends SharedProps<TData> {

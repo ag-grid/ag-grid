@@ -18,6 +18,7 @@ import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 import GridComp from './gridComp';
+import { DebounceCellRendering } from './beansContext';
 
 function debug(msg: string, obj?: any) {
     // console.log(msg, obj);
@@ -171,8 +172,11 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
     return (
         <div style={style} className={props.className} ref={setRef}>
-            {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
-            {portalManager.current?.getPortals() ?? null}
+            <DebounceCellRendering.Provider value={props.debounceCellRendering ?? false}>
+
+                {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
+                {portalManager.current?.getPortals() ?? null}
+            </DebounceCellRendering.Provider>
         </div>
     );
 };
