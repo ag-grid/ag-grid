@@ -1,4 +1,5 @@
 import { AutocompleteEntry, AutocompleteListParams, ColumnModel, DataTypeService, ValueParserService } from "@ag-grid-community/core";
+import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import { FilterExpressionOperators } from "./filterExpressionOperators";
 
 export interface FilterExpressionParserParams {
@@ -11,7 +12,7 @@ export interface FilterExpressionParserParams {
     colIdResolver: (columnName: string) => { colId: string, columnName: string } | null;
     operators: FilterExpressionOperators;
     joinOperators: { and: string, or: string };
-    translate: (key: string, defaultValue: string, variableValues?: string[]) => string;
+    translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
 
 export interface FilterExpression {
@@ -23,6 +24,12 @@ export interface AutocompleteUpdate {
     updatedValue: string;
     updatedPosition: number;
     hideAutocomplete?: boolean;
+}
+
+export interface FilterExpressionValidationError {
+    message: string;
+    startPosition: number;
+    endPosition: number;
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

@@ -1,4 +1,5 @@
 import { AutocompleteEntry, IRowNode } from "@ag-grid-community/core";
+import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;
@@ -69,7 +70,7 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(operators: { [ope
 }
 
 export interface FilterExpressionOperatorsParams {
-    translate: (key: string, defaultValue: string, variableValues?: string[] | undefined) => string;
+    translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
 
 export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<string, TValue> {
@@ -91,42 +92,42 @@ export class TextFilterExpressionOperators<TValue = string> implements DataTypeF
         const { translate } = this.params;
         this.operators = {
             contains: {
-                displayValue: translate('advancedFilterContains', 'contains'),
+                displayValue: translate('advancedFilterContains'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.includes(o)),
                 numOperands: 1
             },
             notContains: {
-                displayValue: translate('advancedFilterNotContains', 'does not contain'),
+                displayValue: translate('advancedFilterNotContains'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, true, (v, o) => !v.includes(o)),
                 numOperands: 1
             },
             equals: {
-                displayValue: translate('advancedFilterTextEquals', 'equals'),
+                displayValue: translate('advancedFilterTextEquals'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v === o),
                 numOperands: 1
             },
             notEqual: {
-                displayValue: translate('advancedFilterTextNotEqual', 'does not equal'),
+                displayValue: translate('advancedFilterTextNotEqual'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, true, (v, o) => v != o),
                 numOperands: 1
             },
             startsWith: {
-                displayValue: translate('advancedFilterStartsWith', 'starts with'),
+                displayValue: translate('advancedFilterStartsWith'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.startsWith(o)),
                 numOperands: 1
             },
             endsWith: {
-                displayValue: translate('advancedFilterEndsWith', 'ends with'),
+                displayValue: translate('advancedFilterEndsWith'),
                 evaluator: (value, node, params, operand1) => this.evaluateExpression(value, node, params, operand1!, false, (v, o) => v.endsWith(o)),
                 numOperands: 1
             },
             blank: {
-                displayValue: translate('advancedFilterBlank', 'is blank'),
+                displayValue: translate('advancedFilterBlank'),
                 evaluator: (value) => value == null || (typeof value === 'string' && value.trim().length === 0),
                 numOperands: 0
             },
             notBlank: {
-                displayValue: translate('advancedFilterNotBlank', 'is not blank'),
+                displayValue: translate('advancedFilterNotBlank'),
                 evaluator: (value) => value != null && (typeof value !== 'string' || value.trim().length > 0),
                 numOperands: 0
             },
@@ -171,42 +172,42 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
         const { translate, equals } = this.params;
         this.operators = {
             equals: {
-                displayValue: translate('advancedFilterEquals', '='),
+                displayValue: translate('advancedFilterEquals'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInEquals, equals!),
                 numOperands: 1
             },
             notEqual: {
-                displayValue: translate('advancedFilterNotEqual', '!='),
+                displayValue: translate('advancedFilterNotEqual'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInEquals, (v, o) => !equals!(v, o)),
                 numOperands: 1
             },
             greaterThan: {
-                displayValue: translate('advancedFilterGreaterThan', '>'),
+                displayValue: translate('advancedFilterGreaterThan'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v > o),
                 numOperands: 1
             },
             greaterThanOrEqual: {
-                displayValue: translate('advancedFilterGreaterThanOrEqual', '>='),
+                displayValue: translate('advancedFilterGreaterThanOrEqual'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInGreaterThan, (v, o) => v >= o),
                 numOperands: 1
             },
             lessThan: {
-                displayValue: translate('advancedFilterLessThan', '<'),
+                displayValue: translate('advancedFilterLessThan'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v < o),
                 numOperands: 1
             },
             lessThanOrEqual: {
-                displayValue: translate('advancedFilterLessThanOrEqual', '<='),
+                displayValue: translate('advancedFilterLessThanOrEqual'),
                 evaluator: (value, node, params, operand1) => this.evaluateSingleOperandExpression(value, node, params, operand1!, !!params.includeBlanksInLessThan, (v, o) => v <= o),
                 numOperands: 1
             },
             blank: {
-                displayValue: translate('advancedFilterBlank', 'is blank'),
+                displayValue: translate('advancedFilterBlank'),
                 evaluator: (value) => value == null,
                 numOperands: 0
             },
             notBlank: {
-                displayValue: translate('advancedFilterNotBlank', 'is not blank'),
+                displayValue: translate('advancedFilterNotBlank'),
                 evaluator: (value) => value != null,
                 numOperands: 0
             }
@@ -245,22 +246,22 @@ export class BooleanFilterExpressionOperators implements DataTypeFilterExpressio
         const { translate } = this.params;
         this.operators = {
             true: {
-                displayValue: translate('advancedFilterTrue', 'is true'),
+                displayValue: translate('advancedFilterTrue'),
                 evaluator: (value) => !!value,
                 numOperands: 0
             },
             false: {
-                displayValue: translate('advancedFilterFalse', 'is false'),
+                displayValue: translate('advancedFilterFalse'),
                 evaluator: (value) => value === false,
                 numOperands: 0
             },
             blank: {
-                displayValue: translate('advancedFilterBlank', 'is blank'),
+                displayValue: translate('advancedFilterBlank'),
                 evaluator: (value) => value == null,
                 numOperands: 0
             },
             notBlank: {
-                displayValue: translate('advancedFilterNotBlank', 'is not blank'),
+                displayValue: translate('advancedFilterNotBlank'),
                 evaluator: (value) => value != null,
                 numOperands: 0
             }

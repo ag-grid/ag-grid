@@ -1,22 +1,24 @@
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
+import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { findMatch } from "./filterExpressionOperators";
 import {
     AutocompleteUpdate,
     checkAndUpdateExpression,
     FilterExpressionParserParams,
+    FilterExpressionValidationError,
     findEndPosition,
     getSearchString,
     updateExpression
 } from "./filterExpressionUtils";
 
 class OperatorParser {
-    private valid: boolean = true;
     private operators: string[] = [];
     private parsedOperator: 'and' | 'or';
     private operatorStartPositions: number[] = [];
     private operatorEndPositions: (number | undefined)[] = [];
     private activeOperator: number = 0;
+    private validationError: FilterExpressionValidationError | null = null;
 
     constructor(
         private params: FilterExpressionParserParams
@@ -42,12 +44,17 @@ class OperatorParser {
             }
             i++;
         }
+        this.parseOperator(i - 1);
 
         return i;
     }
 
     public isValid(): boolean {
-        return this.valid && (!this.operators.length || !!this.parsedOperator);
+        return !this.validationError && (!this.operators.length || !!this.parsedOperator);
+    }
+
+    public getValidationError(): FilterExpressionValidationError | null {
+        return this.validationError;
     }
 
     public getFunction(): string {
@@ -123,7 +130,7 @@ class OperatorParser {
     }
 
     private parseOperator(endPosition: number): boolean {
-        const operator = this.operators[this.activeOperator];
+        const operator = this.operators.length > this.activeOperator ? this.operators[this.activeOperator] : '';
         const parsedValue = findMatch(operator, this.params.joinOperators, v => v) as 'and' | 'or';
         if (parsedValue) {
             // exact match
@@ -131,7 +138,13 @@ class OperatorParser {
             const displayValue = this.params.joinOperators[parsedValue];
             if (this.activeOperator) {
                 if (parsedValue !== this.parsedOperator) {
-                    this.valid = false;
+                    if (!this.validationError) {
+                        this.validationError = {
+                            message: this.params.translate('advancedFilterValidationJoinOperatorMismatch'),
+                            startPosition: endPosition - operator.length + 1,
+                            endPosition
+                        };
+                    }
                     return false;
                 }
             } else {
@@ -147,19 +160,25 @@ class OperatorParser {
             return false;
         } else {
             // no match
-            this.valid = false;
+            if (!this.validationError) {
+                this.validationError = {
+                    message: this.params.translate('advancedFilterValidationInvalidJoinOperator'),
+                    startPosition: endPosition - operator.length + 1,
+                    endPosition
+                };
+            }
             return true;
         }
     }
 }
 
 export class JoinFilterExpressionParser {
-    private valid: boolean = true;
     private expectingExpression: boolean = true;
     private expectingOperator: boolean = false;
     private expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
     private operatorParser: OperatorParser = new OperatorParser(this.params);
     private endPosition: number;
+    private missingEndBracket: boolean = false;
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -195,15 +214,45 @@ export class JoinFilterExpressionParser {
             }
             i++;
         }
+        if (this.startPosition > 0) {
+            this.missingEndBracket = true
+        }
 
         return i;
     }
 
     public isValid(): boolean {
-        return this.valid &&
-            this.expressionParsers.every(expressionParser => expressionParser.isValid()) &&
+        return !this.missingEndBracket &&
+            this.expressionParsers.length === this.operatorParser.getNumOperators() + 1 &&
             this.operatorParser.isValid() &&
-            this.expressionParsers.length === this.operatorParser.getNumOperators() + 1;
+            this.expressionParsers.every(expressionParser => expressionParser.isValid());
+    }
+
+    public getValidationError(): FilterExpressionValidationError | null {
+        const operatorError = this.operatorParser.getValidationError();
+        for (let i = 0; i < this.expressionParsers.length; i ++) {
+            const expressionError = this.expressionParsers[i].getValidationError();
+            if (expressionError) {
+                return operatorError && operatorError.startPosition < expressionError.startPosition
+                    ? operatorError
+                    : expressionError;
+            }
+        };
+        if (operatorError) { return operatorError; }
+        let translateKey: keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined;
+        if (this.expressionParsers.length === this.operatorParser.getNumOperators()) {
+            translateKey = 'advancedFilterValidationMissingCondition';
+        } else if (this.missingEndBracket) {
+            translateKey = 'advancedFilterValidationMissingEndBracket';
+        }
+        if (translateKey) {
+            return {
+                message: this.params.translate(translateKey),
+                startPosition: this.params.expression.length,
+                endPosition: this.params.expression.length
+            }
+        }
+        return null;
     }
 
     public getFunction(args: any[]): string {
