@@ -46,7 +46,8 @@
     "vue-class-component": "^7.0.0",
     "vue-property-decorator": "^8.2.0",
     "vue-template-compiler": "^2.6.10",
-    "rimraf": "3.0.2"
+    "rimraf": "3.0.2",
+    "cross-env": "7.0.3"
   },
   "peerDependencies": {
     "ag-grid-community": "~30.0.6",
