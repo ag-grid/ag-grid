@@ -20,7 +20,12 @@ export class FilterExpressionParser {
     }
 
     public getValidationMessage(): string | null {
-        return this.params.translate('filterExpressionInvalid', 'Invalid Filter Value');
+        const error = this.joinExpressionParser.getValidationError();
+        if (!error) { return null; }
+        const { message, startPosition, endPosition } = error;
+        return startPosition < this.params.expression.length
+            ? this.params.translate('advancedFilterValidationMessage', [message, this.params.expression.slice(startPosition, endPosition + 1).trim()])
+            : this.params.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
     public getFunction(): FilterExpression {

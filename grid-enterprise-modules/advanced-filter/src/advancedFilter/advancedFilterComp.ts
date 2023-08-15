@@ -9,8 +9,10 @@ import {
     Autowired,
     Component,
     FilterManager,
+    ITooltipParams,
     PostConstruct,
     RefSelector,
+    WithoutGridCommon,
     _
 } from '@ag-grid-community/core';
 import { AdvancedFilterService } from './advancedFilterService';
@@ -36,14 +38,12 @@ export class AdvancedFilterComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const translate = this.localeService.getLocaleTextFunc();
-
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())
             .setForceLastSelection((lastSelection, searchString) => this.forceLastSelection(lastSelection, searchString))
-            .setInputAriaLabel(translate('ariaAdvancedFilterInput', 'Advanced Filter Input'))
-            .setListAriaLabel(translate('ariaLabelAdvancedFilterAutocomplete', 'Advanced Filter Autocomplete'));
+            .setInputAriaLabel(this.advancedFilterService.translate('ariaAdvancedFilterInput'))
+            .setListAriaLabel(this.advancedFilterService.translate('ariaLabelAdvancedFilterAutocomplete'));
 
         this.refresh();
 
@@ -54,9 +54,9 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_OPTION_SELECTED,
             ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) => this.onOptionSelected(position, updateEntry, autocompleteType));
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
-            ({ isValid }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid));
+            ({ isValid, validationMessage }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid, validationMessage));
 
-        this.eApplyFilterButton.innerText = translate('advancedFilterApply', 'Apply');
+        this.eApplyFilterButton.innerText = this.advancedFilterService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
@@ -69,6 +69,12 @@ export class AdvancedFilterComp extends Component {
 
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
+    }
+
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+        const res = super.getTooltipParams();
+        res.location = 'advancedFilter';
+        return res;
     }
 
     private onValueChanged(value: string | null): void {
@@ -101,9 +107,10 @@ export class AdvancedFilterComp extends Component {
         return this.expressionParser?.isValid() ? null : (this.expressionParser?.getValidationMessage() ?? null);
     }
 
-    private onValidChanged(isValid: boolean): void {
+    private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+        this.setTooltip(validationMessage, 1000);
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {

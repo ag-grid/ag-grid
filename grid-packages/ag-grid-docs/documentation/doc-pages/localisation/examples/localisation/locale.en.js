@@ -73,6 +73,18 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Apply',
+    advancedFilterValidationMissingColumn: 'Column is missing',
+    advancedFilterValidationMissingOption: 'Option is missing',
+    advancedFilterValidationMissingValue: 'Value is missing',
+    advancedFilterValidationInvalidColumn: 'Column not found',
+    advancedFilterValidationInvalidOption: 'Option not found',
+    advancedFilterValidationMissingQuote: 'Value is missing an end quote',
+    advancedFilterValidationNotANumber: 'Value is not a number',
+    advancedFilterValidationMissingCondition: 'Condition is missing',
+    advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
+    advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMessage: 'Expression has an error. ${variable1} - ${variable2}.',
+    advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
 
     // Side Bar
     columns: 'Columns',

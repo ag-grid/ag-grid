@@ -32,6 +32,7 @@ import {
     TextFilterExpressionOperators,
 } from "./filterExpressionOperators";
 import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
+import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 
 interface ExpressionProxy {
     getValue(colId: string, node: IRowNode): any;
@@ -169,7 +170,6 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     public createExpressionParser(expression: string | null): FilterExpressionParser | null {
         if (!expression) { return null; }
 
-        const translate= this.localeService.getLocaleTextFunc();
         return new FilterExpressionParser({
             expression,
             columnModel: this.columnModel,
@@ -180,7 +180,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             columnValueCreator: updateEntry => this.getColumnValue(updateEntry),
             operators: this.expressionOperators,
             joinOperators: this.expressionJoinOperators,
-            translate
+            translate: (key, variableValues) => this.translate(key, variableValues)
         });
     }
 
@@ -261,6 +261,14 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         this.appliedExpression = this.expression;
     }
 
+    public translate(key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]): string {
+        let defaultValue = ADVANCED_FILTER_LOCALE_TEXT[key];
+        if (typeof defaultValue === 'function') {
+            defaultValue = defaultValue(variableValues!);
+        }
+        return this.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
+    }
+
     private getColumnAutocompleteEntries(): AutocompleteEntry[] {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
@@ -306,7 +314,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     private getExpressionOperators(): FilterExpressionOperators {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => this.translate(key, variableValues);
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
@@ -318,8 +326,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     private getExpressionJoinOperators(): { and: string, or: string } {
-        const translate = this.localeService.getLocaleTextFunc();
-        return { and: translate('advancedFilterAnd', 'AND'), or: translate('advancedFilterOr', 'OR') }
+        return { and: this.translate('advancedFilterAnd'), or: this.translate('advancedFilterOr') }
     }
 
     private getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(colId: string): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {

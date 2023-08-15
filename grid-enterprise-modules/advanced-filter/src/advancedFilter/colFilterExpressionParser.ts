@@ -1,5 +1,6 @@
 
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams, BaseCellDataType, Column } from "@ag-grid-community/core";
+import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 import {
     AutocompleteUpdate,
     checkAndUpdateExpression,
@@ -8,13 +9,15 @@ import {
     updateExpression,
     escapeQuotes,
     findEndPosition,
-    findStartPosition
+    findStartPosition,
+    FilterExpressionValidationError
 } from "./filterExpressionUtils";
 
 interface Parser {
     type: string;
     parse(char: string, position: number): boolean | undefined;
     complete(position: number): void;
+    getValidationError(): FilterExpressionValidationError | null;
 }
 
 class ColumnParser implements Parser {
@@ -63,6 +66,14 @@ class ColumnParser implements Parser {
 
     public complete(position: number): void {
         this.parseColumn(true, position);
+    }
+
+    public getValidationError(): FilterExpressionValidationError | null {
+        return this.valid ? null : {
+            message: this.params.translate('advancedFilterValidationInvalidColumn'),
+            startPosition: this.startPosition,
+            endPosition: this.endPosition ?? this.params.expression.length - 1
+        };
     }
 
     private parseColumn(fromComplete: boolean, endPosition: number): boolean {
@@ -119,6 +130,14 @@ class OperatorParser implements Parser {
         this.parseOperator(true, position);
     }
 
+    public getValidationError(): FilterExpressionValidationError | null {
+        return this.valid ? null : {
+            message: this.params.translate('advancedFilterValidationInvalidOption'),
+            startPosition: this.startPosition,
+            endPosition: this.endPosition ?? this.params.expression.length - 1
+        };
+    }
+
     public getDisplayValue(): string {
         return this.operator;
     }
@@ -156,6 +175,7 @@ class OperandParser implements Parser {
     private quotes: `'` | `"` | undefined;
     private operand = '';
     private modelValue: number | string;
+    private validationMessage: string | null = null;
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -194,6 +214,14 @@ class OperandParser implements Parser {
         this.parseOperand(true, position);
     }
 
+    public getValidationError(): FilterExpressionValidationError | null {
+        return this.validationMessage ? {
+            message: this.validationMessage,
+            startPosition: this.startPosition,
+            endPosition: this.endPosition ?? this.params.expression.length - 1
+        } : null;
+    }
+
     public getRawValue(): string {
         return this.operand;
     }
@@ -208,10 +236,12 @@ class OperandParser implements Parser {
         if (fromComplete && this.quotes) {
             // missing end quote
             this.valid = false;
+            this.validationMessage = this.params.translate('advancedFilterValidationMissingQuote');
         } else if (this.baseCellDataType === 'number') {
             this.modelValue = this.params.valueParserService.parseValue(this.column!, null, this.operand, undefined);
             if (isNaN(this.modelValue as number)) {
                 this.valid = false;
+                this.validationMessage = this.params.translate('advancedFilterValidationNotANumber');
             }
         }
     }
@@ -273,6 +303,28 @@ export class ColFilterExpressionParser {
 
     public isValid(): boolean {
         return this.isComplete() && this.columnParser!.valid && this.operatorParser!.valid && (!this.operandParser || this.operandParser!.valid);
+    }
+
+    public getValidationError(): FilterExpressionValidationError | null {
+        const validationError = this.columnParser?.getValidationError() ?? this.operatorParser?.getValidationError() ?? this.operandParser?.getValidationError();
+        if (validationError) { return validationError; }
+        const endPosition = this.params.expression.length;
+        let translateKey: keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined;
+        if (!this.columnParser) {
+            translateKey = 'advancedFilterValidationMissingColumn';
+        } else if (!this.operatorParser) {
+            translateKey =  'advancedFilterValidationMissingOption';
+        } else if (this.operatorParser.expectedNumOperands && !this.operandParser) {
+            translateKey = 'advancedFilterValidationMissingValue';
+        }
+        if (translateKey) {
+            return {
+                message: this.params.translate(translateKey),
+                startPosition: endPosition,
+                endPosition
+            };
+        }
+        return null;
     }
 
     public getFunction(args: any[]): string {

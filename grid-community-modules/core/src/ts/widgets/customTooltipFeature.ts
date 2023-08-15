@@ -38,8 +38,6 @@ export class CustomTooltipFeature extends BeanStub {
     private tooltipShowDelay: number;
     private tooltipHideDelay: number;
 
-    private parentComp: TooltipParentComp;
-
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;
     private interactiveTooltipTimeoutId: number | undefined;
@@ -65,9 +63,12 @@ export class CustomTooltipFeature extends BeanStub {
     private tooltipFocusInListener: (() => null) | null;
     private tooltipFocusOutListener: (() => null) | null;
 
-    constructor(parentComp: TooltipParentComp) {
+    constructor(
+        private parentComp: TooltipParentComp,
+        private tooltipShowDelayOverride?: number,
+        private tooltipHideDelayOverride?: number
+    ) {
         super();
-        this.parentComp = parentComp;
     }
 
     @PostConstruct
@@ -101,21 +102,23 @@ export class CustomTooltipFeature extends BeanStub {
         }
     }
 
-    private getTooltipDelay(type: 'show' | 'hide'): number {
-        const tooltipShowDelay = this.gridOptionsService.getNum('tooltipShowDelay');
-        const tooltipHideDelay = this.gridOptionsService.getNum('tooltipHideDelay');
-        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
-        const capitalisedType = capitalise(type);
-
+    private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number | undefined {
+        const delay = this.gridOptionsService.getNum(delayOption);
         if (exists(delay)) {
             if (delay < 0) {
-                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
+                doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
             }
-
             return Math.max(200, delay);
         }
+        return undefined;
+    }
 
-        return type === 'show' ? this.DEFAULT_SHOW_TOOLTIP_DELAY : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+    private getTooltipDelay(type: 'show' | 'hide'): number {
+        if (type === 'show') {
+            return this.getGridOptionsTooltipDelay('tooltipShowDelay') ?? this.tooltipShowDelayOverride ?? this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        } else {
+            return this.getGridOptionsTooltipDelay('tooltipHideDelay') ?? this.tooltipHideDelayOverride ?? this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        }
     }
 
     protected destroy(): void {
