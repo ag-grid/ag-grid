@@ -47,7 +47,8 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         );
     }
 
-    protected getPickerComponent(): AgList {
+    protected createPickerComponent() {
+        // do not create the picker every time to save state
         return this.listComponent!;
     }
 

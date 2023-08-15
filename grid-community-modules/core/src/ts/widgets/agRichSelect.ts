@@ -159,7 +159,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
     }
 
-    protected getPickerComponent(): VirtualList {
+    protected createPickerComponent() {
         const { values }  = this;
 
         this.listComponent!.setModel({
@@ -167,6 +167,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             getRow: (index: number) => values[index]
         });
 
+        // do not create the picker every time to save state
         return this.listComponent!;
     }
 

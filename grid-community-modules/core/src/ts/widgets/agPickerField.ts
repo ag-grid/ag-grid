@@ -18,14 +18,16 @@ export interface IPickerFieldParams extends IAgLabelParams {
 
 export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams = IPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
 
-    protected abstract getPickerComponent(): TComponent;
-    protected value: TValue;
+    protected abstract createPickerComponent(): TComponent;
+
+    protected pickerComponent: TComponent | undefined;
     protected isPickerDisplayed: boolean = false;
-    protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
-    protected pickerComponent: Component | undefined;
-    private hidePopupCallback: (() => void) | null = null;
+
+    private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
+    
+    protected value: TValue;
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -39,7 +41,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             /* html */ `<div class="ag-picker-field" role="presentation">
                 <div ref="eLabel"></div>
                 <div ref="eWrapper"
-                    class="ag-wrapper ag-picker-field-wrapper"
+                    class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed"
                     tabIndex="-1"
                     aria-expanded="false"
                     ${ariaRole ? `role="${ariaRole}"` : ''}
@@ -121,12 +123,25 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     }
 
     public showPicker() {
+        this.isPickerDisplayed = true;
+
         if (!this.pickerComponent) {
-            this.pickerComponent = this.getPickerComponent();
+            this.pickerComponent = this.createPickerComponent();
         }
 
+        const hidePopupCallback = this.renderAndPositionPicker();
+
+        this.hideCurrentPicker = () => {
+            hidePopupCallback();
+            this.toggleExpandedStyles(false);
+        }
+
+        this.toggleExpandedStyles(true);
+    }
+
+    protected renderAndPositionPicker(): (() => void) {
         const eDocument = this.gridOptionsService.getDocument();
-        const ePicker = this.pickerComponent.getGui();
+        const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
             this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
@@ -156,12 +171,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
-        this.isPickerDisplayed = true;
-
         setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
-        this.eWrapper.classList.add('ag-picker-expanded');
-        setAriaExpanded(this.eWrapper, true);
-
         ePicker.style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
         ePicker.style.position = 'absolute';
 
@@ -173,7 +183,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             keepWithinBounds: true
         });
 
-        this.hidePopupCallback = addPopupRes.hideFunc;
+        return addPopupRes.hideFunc;
     }
 
     protected beforeHidePicker(): void {
@@ -182,15 +192,22 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             this.destroyMouseWheelFunc = undefined;
         }
 
-        this.eWrapper.classList.remove('ag-picker-expanded');
+        this.toggleExpandedStyles(false);
         this.isPickerDisplayed = false;
         this.pickerComponent = undefined;
-        this.hidePopupCallback = null;
+        this.hideCurrentPicker = null;
+    }
+
+    protected toggleExpandedStyles(expanded: boolean): void {
+        if (!this.isAlive()) { return; }
+        setAriaExpanded(this.eWrapper, expanded);
+        this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
+        this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
     }
 
     public hidePicker(): void {
-        if (this.hidePopupCallback) {
-            this.hidePopupCallback();
+        if (this.hideCurrentPicker) {
+            this.hideCurrentPicker();
         }
     }
 

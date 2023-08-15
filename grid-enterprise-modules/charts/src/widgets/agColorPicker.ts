@@ -6,6 +6,9 @@ interface ColorPickerConfig extends IPickerFieldParams {
 }
 
 export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgDialog> {
+
+    private isDestroyingPicker: boolean;
+
     constructor(config?: ColorPickerConfig) {
         super({
             pickerAriaLabelKey: 'ariaLabelColorPicker',
@@ -27,7 +30,7 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
         }
     }
 
-    protected getPickerComponent(): AgDialog {
+    protected createPickerComponent() {
         const eGuiRect = this.getGui().getBoundingClientRect();
 
         const colorDialog = this.createBean(new AgDialog({
@@ -44,31 +47,23 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
         return colorDialog;
     }
 
-    public showPicker() {
-        this.isPickerDisplayed = true;
-
-        if (!this.pickerComponent) {
-            this.pickerComponent = this.getPickerComponent();
-        }
-
-        const colorDialog = this.pickerComponent as AgDialog;
-
-        this.pickerComponent.addCssClass('ag-color-dialog');
-        _.setAriaExpanded(this.eWrapper, true);
-
+    protected renderAndPositionPicker(): (() => void) {
+        const pickerComponent = this.pickerComponent!;
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
+        pickerComponent.addCssClass('ag-color-dialog');
+
         colorPanel.addDestroyFunc(() => {
-            if (colorDialog.isAlive()) {
-                this.destroyBean(colorDialog);
+            if (pickerComponent.isAlive()) {
+                this.destroyBean(pickerComponent);
             }
         });
 
-        colorDialog.setParentComponent(this);
-        colorDialog.setBodyComponent(colorPanel);
+        pickerComponent.setParentComponent(this);
+        pickerComponent.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
 
-        colorDialog.addDestroyFunc(() => {
+        pickerComponent.addDestroyFunc(() => {
             // here we check if the picker was already being
             // destroyed to avoid a stack overflow
             if (!this.isDestroyingPicker) {
@@ -80,20 +75,12 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
             } else {
                 this.isDestroyingPicker = false;
             }
-
-            if (this.isAlive()) {
-                _.setAriaExpanded(this.eWrapper, false);
-                this.getFocusableElement().focus();
-            }
-
-            this.isPickerDisplayed = false;
-            this.pickerComponent = undefined;
         });
-    }
 
-    public hidePicker(): void {
-        if (this.pickerComponent) {
-            (this.pickerComponent as AgDialog).close();
+        return () => {
+            if (this.pickerComponent) {
+                this.pickerComponent.close();
+            }
         }
     }
 
