@@ -86,6 +86,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         primaryPivotColumns: Column[]
     ): ColGroupDef[] | ColDef[]  {
         const measureColumns = this.columnModel.getValueColumns();
+        const pivotDefaultExpanded = this.gridOptionsService.getNum('pivotDefaultExpanded') ?? 0
 
         if (index >= maxDepth) { // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
@@ -111,12 +112,16 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         // Recursive case
         const groups: ColGroupDef[] = [];
         _.iterateObject(uniqueValue, (key, value) => {
+            // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
+            const openByDefault = pivotDefaultExpanded === -1 || (index < pivotDefaultExpanded)
+
             const newPivotKeys = [...pivotKeys, key];
             groups.push({
                 children: this.recursivelyBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
                 headerName: key,
                 pivotKeys: newPivotKeys,
                 columnGroupShow: 'open',
+                openByDefault: openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
             })
         });

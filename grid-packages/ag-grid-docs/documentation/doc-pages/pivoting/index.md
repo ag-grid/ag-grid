@@ -266,6 +266,40 @@ The example below demonstrates Pivot Row Totals as follows:
 
 <grid-example title='Pivot Row Totals' name='row-totals' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
+## Opening Pivot Group Levels by Default
+
+To open all pivot groups down to a given group depth level use the `pivotDefaultExpanded` grid option as shown below: 
+
+<snippet>
+const gridOptions = {
+|    columnDefs: [
+|    { field: 'country', rowGroup: true, enableRowGroup: true },
+|    { field: 'athlete' },
+|    { field: 'sport', pivot: true, enablePivot: true },
+|    { field: 'year', pivot: true, enablePivot: true },
+|    { field: 'date', pivot: true, enablePivot: true },
+|    { field: 'gold', aggFunc: 'sum' },
+|    { field: 'silver', aggFunc: 'sum' },
+|    { field: 'bronze', aggFunc: 'sum' },
+|  ],
+|  
+|  // first (sport) row group will be open by default
+|  pivotDefaultExpanded: 1,
+|
+|  // other grid options ...
+}
+</snippet>
+
+In the snippet above, the first level row group `sport` will be expanded by default as `pivotDefaultExpanded = 1`.
+
+By default `pivotDefaultExpanded = 0` which means no groups are expanded by default. To expand all row groups
+set `pivotDefaultExpanded = -1`.
+
+The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first `sport` row group is expanded by default as `pivotDefaultExpanded = 1`.
+
+<grid-example title='Open Pivot Group By Default' name='open-pivot-group-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+
 ## Pivot Column Group Totals
 
 When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided aggregation function on the value columns to 'roll-up' each group level.

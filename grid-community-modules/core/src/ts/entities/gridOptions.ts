@@ -479,6 +479,8 @@ export interface GridOptions<TData = any> {
     pivotMode?: boolean;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
+    /** If pivoting, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
+    pivotDefaultExpanded?: number;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */
     pivotColumnGroupTotals?: 'before' | 'after';
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */
