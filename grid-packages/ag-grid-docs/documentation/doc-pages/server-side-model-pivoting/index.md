@@ -62,9 +62,42 @@ these to the grid in order for the grid to display the correct columns for the a
 For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the
 data, e.g. `2000`, `2002`, `2004` e.t.c.
 
-Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
+### Providing Pivot Result Fields (Simple)
+
+The simplest way to provide pivot result columns is by returning the fields containing your pivoted data via the `pivotResultFields` attribute in the `getRows` success callback. These fields are used to generate pivot result columns and appropriate column groups, by splitting the string by `serverSidePivotResultSeparator` (which defaults to `_`).
+
+The following example has the following basic configuration:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
+        { field: 'total', aggFunc: 'sum' },
+    ],
+    rowModelType: 'serverSide',
+    pivotMode: true,
+}
+</snippet>
+
+The example below demonstrates `serverSideManagedPivotResultColumns` in action, note the following:
+- The `pivotResultFields` attribute is returned from the server, and then passed to the grid via the `getRows` success callback. These are logged to the console as a demonstration.
+- The grid splits the `pivotResultFields` by `_` and creates the pivot result columns and column groups. The generated columns use the provided fields to access the data from the rows.
+- Because the final section of the `pivotResultField` string is `total`, the grid links the secondary column to the primary column with the id `total`. This allows the grid to populate the aggregation function, e.g. `sum` for the secondary column.
+
+<grid-example title='Simple Managed Pivot' name='simple-managed-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+<note>
+When using managed columns, you can use [Pivot Callbacks](/pivoting/#pivot-result-column-definitions) to customise the pivot result column definitions.
+</note>
+
+### Providing Pivot Result Columns (Advanced)
+
+For more flexibility, you can provide the pivot result columns yourself via the API.
 
 <api-documentation source='column-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
+
+Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
 <snippet>
 gridOptions.columnApi.setPivotResultColumns(pivotColDefs);
@@ -72,17 +105,21 @@ gridOptions.columnApi.setPivotResultColumns(pivotColDefs);
 
 There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the field (or value getter) that you set for the columns match.
 
-## Example: Simple Pivot
+The following example has the following basic configuration:
 
-The example below demonstrates server-side Pivoting. Note the following:
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
+        { field: 'total', aggFunc: 'sum' },
+    ],
+    rowModelType: 'serverSide',
+    pivotMode: true,
+}
+</snippet>
 
-- Pivot mode is enabled through the grid option `pivotMode=true`.
-- A pivot is placed on the **Year** column via `pivot=true` defined on the column definition.
-- Rows are grouped by **Country** with `rowGroup=true` defined on the column definition.
-- Values in the **Total** column are aggregated as `aggFunc='sum'` as defined on the column definition.
-- The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-- New column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
-- Open the browser's dev console to view the request supplied to the datasource.
+The example below demonstrates providing pivot result columns via API. Note that new column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 
 <note>
 The pivot result columns are displayed in the order they are supplied to `columnApi.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
@@ -101,7 +138,6 @@ The example below demonstrates server-side Pivoting with multiple row groups whe
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
 - New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
-
 
 <grid-example title='Pivot Column Groups' name='pivot-column-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 

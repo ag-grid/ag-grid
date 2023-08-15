@@ -26,6 +26,18 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotMode: true,
 
   animateRows: true,
+
+  processPivotResultColDef: colDef => {
+    const pivotValueColumn = colDef.pivotValueColumn;
+
+    if (!pivotValueColumn) return;
+
+    // if column is not the total column, it should only be shown when expanded.
+    // this will enable expandable column groups.
+    if (pivotValueColumn.getColId() !== 'total') {
+      colDef.columnGroupShow = 'open';
+    }
+  }
 }
 
 function expand(key?: string, open = false) {
@@ -67,34 +79,21 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
       var response = server.getData(request)
 
-      // add pivot colDefs in the grid based on the resulting data
-      addPivotColDefs(request, response, params.columnApi)
-
       // simulating real server call with a 500ms delay
       setTimeout(function () {
         if (response.success) {
           // supply data to grid
-          params.success({ rowData: response.rows, rowCount: response.lastRow })
+          params.success({
+            rowData: response.rows,
+            rowCount: response.lastRow,
+            pivotResultFields: response.pivotFields,
+          });
         } else {
           params.fail()
         }
       }, 500)
     },
   }
-}
-
-function addPivotColDefs(request: IServerSideGetRowsRequest, response: any, columnApi: ColumnApi) {
-  // check if pivot colDefs already exist
-  var existingPivotColDefs = columnApi.getPivotResultColumns()
-  if (existingPivotColDefs && existingPivotColDefs.length > 0) {
-    return
-  }
-
-  // create pivot colDef's based of data returned from the server
-  var pivotColDefs = createPivotColDefs(request, response.pivotFields)
-
-  // supply pivot result columns to the grid
-  columnApi.setPivotResultColumns(pivotColDefs)
 }
 
 function createPivotColDefs(request: IServerSideGetRowsRequest, pivotFields: string[]) {
