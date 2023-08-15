@@ -117,6 +117,7 @@ export class RowCtrl extends BeanStub {
 
     private rowLevel: number;
     private rowStyles: RowStyle | undefined;
+    private readonly emptyStyle: RowStyle = {};
     private readonly printLayout: boolean;
 
     private updateColumnListsPending = false;
@@ -1292,8 +1293,11 @@ export class RowCtrl extends BeanStub {
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-
-        return Object.assign({}, rowStyle, rowStyleFuncResult);
+        if(rowStyleFuncResult || rowStyle){
+            return Object.assign({}, rowStyle, rowStyleFuncResult);
+        }
+        // Return constant reference for React
+        return this.emptyStyle;
     }
 
     private onRowSelected(gui?: RowGui): void {

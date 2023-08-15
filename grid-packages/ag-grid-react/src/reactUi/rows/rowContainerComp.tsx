@@ -90,8 +90,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         if (areElementsReady()) {
 
             const updateRowCtrlsOrdered = () => {
+                const prev = orderedRowCtrlsRef.current;
                 orderedRowCtrlsRef.current = getNextValueIfDifferent(orderedRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
-                if (rowUpdateCallback.current) {
+                if (rowUpdateCallback.current && prev !== orderedRowCtrlsRef.current) {
                     rowUpdateCallback.current();
                 }
             }
