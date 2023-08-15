@@ -692,6 +692,12 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        
+        if (this.rowNode.detail) {
+            // if the master row node has updated data, we also want to try to refresh the detail row
+            this.addManagedListener(this.rowNode.parent!, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        }
+
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
@@ -729,13 +735,11 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
-        // if master row has updated, then need to also try to refresh the detail node
-        if (this.rowNode.detailNode) {
-            this.beans.rowRenderer.redrawRow(this.rowNode.detailNode);
-        }
-
         if (this.isFullWidth()) {
-            this.beans.rowRenderer.redrawRow(this.rowNode);
+            const refresh = this.refreshFullWidth();
+            if (!refresh) {
+                this.beans.rowRenderer.redrawRow(this.rowNode);
+            }
             return;
         }
 

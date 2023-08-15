@@ -694,7 +694,10 @@ export class RowRenderer extends BeanStub {
                 if (!rowCtrl.isFullWidth()) {
                     return;
                 }
-                this.redrawRow(rowCtrl.getRowNode(), true);
+                const refreshed = rowCtrl.refreshFullWidth();
+                if (!refreshed) {
+                    this.redrawRow(rowCtrl.getRowNode(), true);
+                }
             });
             this.dispatchDisplayedRowsChanged(false);
         }
