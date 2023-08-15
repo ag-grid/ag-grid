@@ -1,4 +1,5 @@
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
+import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { findMatch } from "./filterExpressionOperators";
 import {
@@ -177,6 +178,7 @@ export class JoinFilterExpressionParser {
     private expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
     private operatorParser: OperatorParser = new OperatorParser(this.params);
     private endPosition: number;
+    private missingEndBracket: boolean = false;
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -212,14 +214,18 @@ export class JoinFilterExpressionParser {
             }
             i++;
         }
+        if (this.startPosition > 0) {
+            this.missingEndBracket = true
+        }
 
         return i;
     }
 
     public isValid(): boolean {
-        return this.expressionParsers.every(expressionParser => expressionParser.isValid()) &&
+        return !this.missingEndBracket &&
+            this.expressionParsers.length === this.operatorParser.getNumOperators() + 1 &&
             this.operatorParser.isValid() &&
-            this.expressionParsers.length === this.operatorParser.getNumOperators() + 1;
+            this.expressionParsers.every(expressionParser => expressionParser.isValid());
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
@@ -233,12 +239,18 @@ export class JoinFilterExpressionParser {
             }
         };
         if (operatorError) { return operatorError; }
+        let translateKey: keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined;
         if (this.expressionParsers.length === this.operatorParser.getNumOperators()) {
+            translateKey = 'advancedFilterValidationMissingCondition';
+        } else if (this.missingEndBracket) {
+            translateKey = 'advancedFilterValidationMissingEndBracket';
+        }
+        if (translateKey) {
             return {
-                message: this.params.translate('advancedFilterValidationMissingCondition'),
+                message: this.params.translate(translateKey),
                 startPosition: this.params.expression.length,
                 endPosition: this.params.expression.length
-            };
+            }
         }
         return null;
     }

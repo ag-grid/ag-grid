@@ -83,6 +83,7 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationMessage: 'Expression has an error. ${variable1} - ${variable2}.',
     advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
 

@@ -30,6 +30,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
+    advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationMessage: (variableValues: string[]) => `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
     advancedFilterValidationMessageAtEnd: (variableValues: string[]) => `Expression has an error. ${variableValues[0]} at end of expression.`,
 };
