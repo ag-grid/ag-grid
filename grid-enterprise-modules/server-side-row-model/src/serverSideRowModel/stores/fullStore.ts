@@ -9,6 +9,7 @@ import {
     LoadSuccessParams,
     NumberSequence,
     PostConstruct,
+    PostSortRowsParams,
     PreDestroy,
     RowBounds,
     RowNode,
@@ -27,7 +28,7 @@ import {
     WithoutGridCommon,
     IsApplyServerSideTransactionParams,
     IRowNode,
-    ISelectionService
+    ISelectionService,
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -77,6 +78,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private info: any = {};
 
+    private postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined;
+
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
@@ -109,6 +112,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
+
+
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     }
 
     @PreDestroy
@@ -302,6 +308,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+        if(this.postSortFunc) {
+            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: this.nodesAfterSort };
+            this.postSortFunc(params);
+        }
     }
 
     private filterRowNodes(): void {
