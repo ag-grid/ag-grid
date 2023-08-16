@@ -62,26 +62,28 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
         pickerComponent.setParentComponent(this);
         pickerComponent.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
+        colorPanel.getGui().focus();
 
         pickerComponent.addDestroyFunc(() => {
             // here we check if the picker was already being
             // destroyed to avoid a stack overflow
             if (!this.isDestroyingPicker) {
+                this.beforeHidePicker();
                 this.isDestroyingPicker = true;
 
                 if (colorPanel.isAlive()) {
                     this.destroyBean(colorPanel);
+                }
+
+                if (this.isAlive()) {
+                    this.getFocusableElement().focus();
                 }
             } else {
                 this.isDestroyingPicker = false;
             }
         });
 
-        return () => {
-            if (this.pickerComponent) {
-                this.pickerComponent.close();
-            }
-        }
+        return () => this.pickerComponent?.close();
     }
 
     public setValue(color: string): this {

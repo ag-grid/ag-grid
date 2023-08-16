@@ -4,7 +4,7 @@ import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
-import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
+import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight, FOCUSABLE_EXCLUDE } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
@@ -50,6 +50,9 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
                     <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                 </div>
             </div>`, className);
+
+        this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
+        this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
     }
 
     protected postConstruct() {
@@ -73,9 +76,11 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             }
         });
 
+        const focusEl = this.getFocusableElement();
+
         this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(this.eWrapper, 'click', this.clickHandler.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
+        this.addManagedListener(focusEl, 'click', this.clickHandler.bind(this));
 
         if (this.pickerIcon) {
             const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsService);
@@ -117,6 +122,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
+                    e.stopPropagation();
+                    if (this.hideCurrentPicker) {
+                        this.hideCurrentPicker();
+                    }
                 }
                 break;
         }
@@ -129,12 +138,11 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             this.pickerComponent = this.createPickerComponent();
         }
 
-        const hidePopupCallback = this.renderAndPositionPicker();
+        const pickerGui = this.pickerComponent.getGui();
+        pickerGui.addEventListener('focusin', this.onPickerFocusIn);
+        pickerGui.addEventListener('focusout', this.onPickerFocusOut);
 
-        this.hideCurrentPicker = () => {
-            hidePopupCallback();
-            this.toggleExpandedStyles(false);
-        }
+        this.hideCurrentPicker = this.renderAndPositionPicker();
 
         this.toggleExpandedStyles(true);
     }
@@ -166,7 +174,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
                     this.getFocusableElement().focus();
                 }
             },
-            ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue)
+            ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
         }
 
         const addPopupRes = this.popupService.addPopup(popupParams);
@@ -193,6 +201,12 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         }
 
         this.toggleExpandedStyles(false);
+
+        const pickerGui = this.pickerComponent!.getGui();
+
+        pickerGui.removeEventListener('focusin', this.onPickerFocusIn);
+        pickerGui.removeEventListener('focusout', this.onPickerFocusOut);
+
         this.isPickerDisplayed = false;
         this.pickerComponent = undefined;
         this.hideCurrentPicker = null;
@@ -203,6 +217,22 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         setAriaExpanded(this.eWrapper, expanded);
         this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
+    }
+
+    private onPickerFocusIn(): void {
+        this.togglePickerHasFocus(true);
+    }
+
+    private onPickerFocusOut(e: FocusEvent): void {
+        if (!this.pickerComponent?.getGui().contains(e.relatedTarget as Element)) {
+            this.togglePickerHasFocus(false);
+        }
+    }
+
+    private togglePickerHasFocus(focused: boolean): void {
+        if (!this.pickerComponent) { return; }
+
+        this.eWrapper.classList.toggle('ag-picker-has-focus', focused);
     }
 
     public hidePicker(): void {

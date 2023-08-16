@@ -54,7 +54,7 @@ select {
 
     &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+        box-shadow: var(--ag-input-focus-box-shadow);
     }
 }
 
