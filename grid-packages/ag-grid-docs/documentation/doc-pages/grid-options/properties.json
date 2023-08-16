@@ -660,6 +660,12 @@
         },
         "pivotMode": {},
         "pivotPanelShow": {},
+        "pivotDefaultExpanded": {
+            "more": {
+                "name": "Opening Pivot Group Levels by Default",
+                "url": "/pivoting/#opening-pivot-group-levels-by-default"
+            }
+        },
         "pivotColumnGroupTotals": {
             "more": {
                 "name": "Pivot Column Group Totals",
