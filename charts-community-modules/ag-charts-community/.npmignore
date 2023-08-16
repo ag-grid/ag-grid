@@ -8,9 +8,13 @@ coverage
 .lint-staged
 .husky
 .prettierignore
+.prettierrc
+.hash
 gulpfile.js
-jest.*.js
+jest.*
 tsconfig.*
+*.sh
 
 dist/**/*.test.*
+typings/**
 *.map
