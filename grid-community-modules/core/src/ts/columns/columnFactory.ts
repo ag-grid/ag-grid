@@ -10,7 +10,7 @@ import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { removeFromUnorderedArray } from '../utils/array';
+import { removeFromArray } from '../utils/array';
 import { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
@@ -251,7 +251,7 @@ export class ColumnFactory extends BeanStub {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingGroup) {
-            removeFromUnorderedArray(existingGroups, existingGroup);
+            removeFromArray(existingGroups, existingGroup);
         }
 
         if (existingGroup && existingGroup.isExpanded()) {
@@ -286,7 +286,7 @@ export class ColumnFactory extends BeanStub {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingColsCopy && column) {
-            removeFromUnorderedArray(existingColsCopy, column);
+            removeFromArray(existingColsCopy, column);
         }
 
         if (!column) {
