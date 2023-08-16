@@ -973,9 +973,10 @@ export class RowRenderer extends BeanStub {
         const ret: number[] = [];
 
         for (let i = 0; i < indexesToDraw.length; i++) {
-            const rowNode = this.paginationProxy.getRow(i);
+            const currRow = indexesToDraw[i];
+            const rowNode = this.paginationProxy.getRow(currRow);
             if (rowNode && !rowNode.sticky) {
-                ret.push(indexesToDraw[i]);
+                ret.push(currRow);
             }
         }
 
