@@ -103,6 +103,8 @@
         background-color: var(--ag-background-color);
         overflow-y: auto;
         overflow-x: hidden;
+        border-radius: var(--ag-border-radius);
+        border: var(--ag-borders) var(--ag-border-color);
     }
 
     .ag-list-item {
@@ -397,6 +399,7 @@
     .ag-rich-select-list {
         width: 100%;
         height: auto;
+        border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
     }
 

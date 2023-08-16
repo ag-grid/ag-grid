@@ -1,7 +1,7 @@
-import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
+import { KeyCode } from "../constants/keyCode";
 
 export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
@@ -26,6 +26,20 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
     private createListComponent(): void {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
+
+        this.listComponent.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === KeyCode.TAB) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
+                    key: e.key,
+                    shiftKey: e.shiftKey,
+                    ctrlKey: e.ctrlKey,
+                    bubbles: true
+                }));
+            };
+        })
 
         this.listComponent.addManagedListener(
             this.listComponent,
@@ -60,7 +74,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         const ePicker = this.listComponent.getGui();
         this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e: FocusEvent) => {
             if (!ePicker.contains(e.relatedTarget as HTMLElement)) {
-                this.hidePicker()
+                this.hidePicker();
             }
         });
 

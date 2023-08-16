@@ -182,23 +182,24 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         super.beforeHidePicker();
     }
 
-    public searchText(key: KeyboardEvent | string) {
-        if (typeof key !== 'string') {
-            key.preventDefault();
-            let keyString = key.key;
+    public searchText(searchKey: KeyboardEvent | string) {
+        if (typeof searchKey !== 'string') {
+            let { key } = searchKey;
 
-            if (keyString === KeyCode.BACKSPACE) {
+            if (key === KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);
-                keyString = '';
-            } else if (!isEventFromPrintableCharacter(key)) {
+                key = '';
+            } else if (!isEventFromPrintableCharacter(searchKey)) {
                 return;
             }
 
-            this.searchText(keyString);
+            searchKey.preventDefault();
+
+            this.searchText(key);
             return;
         }
 
-        this.searchString += key;
+        this.searchString += searchKey;
         this.runSearch();
         this.clearSearchString();
     }

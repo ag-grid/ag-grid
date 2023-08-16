@@ -188,7 +188,8 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             eventSource: this.eWrapper,
             ePopup: ePicker,
             position: 'under',
-            keepWithinBounds: true
+            keepWithinBounds: true,
+            nudgeY: 4
         });
 
         return addPopupRes.hideFunc;
