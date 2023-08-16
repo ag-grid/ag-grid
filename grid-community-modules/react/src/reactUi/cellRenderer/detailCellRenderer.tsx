@@ -28,8 +28,8 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         }));
     }
 
-    if (props.template && typeof props.template === 'string') {
-        _.doOnce(() => console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.'), "React_detailCellRenderer.template");
+    if (props.template) {
+        _.doOnce(() => console.warn('AG Grid: detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/'), "React_detailCellRenderer.template");
     }
 
     const setRef = useCallback((e: HTMLDivElement) => {
