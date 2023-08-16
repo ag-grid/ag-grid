@@ -179,6 +179,7 @@ export class JoinFilterExpressionParser {
     private operatorParser: OperatorParser = new OperatorParser(this.params);
     private endPosition: number;
     private missingEndBracket: boolean = false;
+    private extraEndBracket: boolean = false;
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -190,7 +191,7 @@ export class JoinFilterExpressionParser {
         const { expression } = this.params;
         while (i < expression.length) {
             const char = expression[i];
-            if (char === '(') {
+            if (char === '(' && !this.expectingOperator) {
                 const nestedParser = new JoinFilterExpressionParser(this.params, i + 1);
                 i = nestedParser.parseExpression();
                 this.expressionParsers.push(nestedParser);
@@ -198,6 +199,9 @@ export class JoinFilterExpressionParser {
                 this.expectingOperator = true;
             } else if (char === ')') {
                 this.endPosition = i - 1;
+                if (this.startPosition === 0) {
+                    this.extraEndBracket = true;
+                }
                 return i;
             } else if (char === ' ') {
                 // ignore extra whitespace
@@ -223,6 +227,7 @@ export class JoinFilterExpressionParser {
 
     public isValid(): boolean {
         return !this.missingEndBracket &&
+            !this.extraEndBracket &&
             this.expressionParsers.length === this.operatorParser.getNumOperators() + 1 &&
             this.operatorParser.isValid() &&
             this.expressionParsers.every(expressionParser => expressionParser.isValid());
@@ -239,6 +244,13 @@ export class JoinFilterExpressionParser {
             }
         };
         if (operatorError) { return operatorError; }
+        if (this.extraEndBracket) {
+            return {
+                message: this.params.translate('advancedFilterValidationExtraEndBracket'),
+                startPosition: this.endPosition + 1,
+                endPosition: this.endPosition + 1
+            }
+        }
         let translateKey: keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined;
         if (this.expressionParsers.length === this.operatorParser.getNumOperators()) {
             translateKey = 'advancedFilterValidationMissingCondition';
@@ -264,7 +276,7 @@ export class JoinFilterExpressionParser {
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
-        if (this.endPosition != null && position > this.endPosition) {
+        if (this.endPosition != null && position > this.endPosition + 1) {
             return undefined
         }
         if (!this.expressionParsers.length) {
@@ -316,7 +328,7 @@ export class JoinFilterExpressionParser {
             const updatedValuePart = type === 'column'
                 ? this.params.columnValueCreator(updateEntry)
                 : updateEntry.displayValue ?? updateEntry.key;
-            return updateExpression(expression, 0, 0, updatedValuePart, true);
+            return updateExpression(expression, this.startPosition, this.startPosition, updatedValuePart, true);
         }
 
         const expressionParser = this.expressionParsers[expressionParserIndex];

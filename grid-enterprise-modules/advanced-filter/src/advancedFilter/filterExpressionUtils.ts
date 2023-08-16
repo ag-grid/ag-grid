@@ -33,6 +33,7 @@ export interface FilterExpressionValidationError {
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
+    if (!value) { return ''; }
     const numChars = endPosition - position;
     return numChars ? value.slice(0, value.length - numChars) : value;
 }
