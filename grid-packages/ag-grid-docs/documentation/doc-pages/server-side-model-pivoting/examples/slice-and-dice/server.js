@@ -12,7 +12,7 @@ function createServerSideDatasource(fakeServer, gridOptions) {
                     params.success({
                         rowData: resultForGrid,
                         rowCount: lastRow,
-                        pivotFields: pivotFields,
+                        pivotResultFields: pivotFields,
                     });
                 }
             );

@@ -80,7 +80,7 @@ const gridOptions = {
 }
 </snippet>
 
-The example below demonstrates `serverSideManagedPivotResultColumns` in action, note the following:
+The example below demonstrates this in action, note the following:
 - The `pivotResultFields` attribute is returned from the server, and then passed to the grid via the `getRows` success callback. These are logged to the console as a demonstration.
 - The grid splits the `pivotResultFields` by `_` and creates the pivot result columns and column groups. The generated columns use the provided fields to access the data from the rows.
 - Because the final section of the `pivotResultField` string is `total`, the grid links the secondary column to the primary column with the id `total`. This allows the grid to populate the aggregation function, e.g. `sum` for the secondary column.
@@ -88,7 +88,7 @@ The example below demonstrates `serverSideManagedPivotResultColumns` in action, 
 <grid-example title='Simple Managed Pivot' name='simple-managed-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 <note>
-When using managed columns, you can use [Pivot Callbacks](/pivoting/#pivot-result-column-definitions) to customise the pivot result column definitions.
+When using managed columns, you can use [Pivot Callbacks](../pivoting/#pivot-result-column-definitions) to customise the pivot result column definitions.
 </note>
 
 ### Providing Pivot Result Columns (Advanced)
@@ -153,7 +153,7 @@ The example demonstrates the following:
 
 - You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
 
-- Columns **Athlete, Age, Country, Year** and **Sport** all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
+- Columns **Age, Country, Year** and **Sport** all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
 
 - Note that when you pivot, it is not possible to drill all the way down the leaf levels.
 

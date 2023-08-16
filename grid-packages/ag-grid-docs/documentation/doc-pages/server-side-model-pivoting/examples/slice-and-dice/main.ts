@@ -7,10 +7,11 @@ declare function getCountries(): string[];
 const countries = getCountries();
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', enableRowGroup: true, enablePivot: true, filter: false },
+  { field: 'athlete', enableRowGroup: true, filter: false },
   {
     field: 'age',
     enableRowGroup: true,
+    enablePivot: true,
     filter: CustomAgeFilter,
   },
   {
