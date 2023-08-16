@@ -83,10 +83,11 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     /**
      * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
      * Possible values are:
-     * - `true` to allow the default browser autocomplete/autofill behaviour.
-     * - `false` to disable the browser autocomplete/autofill behavior.
+     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
+     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
      * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-     * Default: `false`.
+     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+     * Default: `false`
      */
     browserAutoComplete?: boolean | string;
     /**
