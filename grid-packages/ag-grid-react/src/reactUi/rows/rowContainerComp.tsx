@@ -1,6 +1,6 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
 import React, { useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
-import { classesList, getNextValueIfDifferent } from '../utils';
+import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
@@ -21,7 +21,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const orderedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
-    const rowUpdateCallback = useRef<(() => void) | null>();
+    const rowUpdateCallback = useRef<((useFlushSync: boolean) => void) | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
@@ -67,7 +67,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     // With React 18 this will use the new useSyncExternalStore hook
     // With React 17 this will use the useState hook as the renderer is synchronous anyway.
     let rowCtrlsOrdered: RowCtrl[];
-    if ((React as any).useSyncExternalStore) {
+    if ((React as any).useSyncExternalStore && false) {
         const sub = useCallback((callback: any) => {
             rowUpdateCallback.current = callback;
             return () => {
@@ -78,7 +78,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         rowCtrlsOrdered = React.useSyncExternalStore(sub, () => orderedRowCtrlsRef.current);
     } else {
         const [ctrlsOrdered, setCtrlsOrdered] = useState<RowCtrl[]>(() => []);
-        rowUpdateCallback.current = () => setCtrlsOrdered(orderedRowCtrlsRef.current);
+        rowUpdateCallback.current = (useFlushSync: boolean) => {
+         agFlushSync(useFlushSync,() => {
+            setCtrlsOrdered(orderedRowCtrlsRef.current);
+            });
+        }
         rowCtrlsOrdered = ctrlsOrdered;
     }
 
@@ -89,11 +93,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         }
         if (areElementsReady()) {
 
-            const updateRowCtrlsOrdered = () => {
+            const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const prev = orderedRowCtrlsRef.current;
                 orderedRowCtrlsRef.current = getNextValueIfDifferent(orderedRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
                 if (rowUpdateCallback.current && prev !== orderedRowCtrlsRef.current) {
-                    rowUpdateCallback.current();
+                    rowUpdateCallback.current(useFlushSync);
                 }
             }
 
@@ -103,15 +107,16 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                         eViewport.current.style.height = height;
                     }
                 },
-                setRowCtrls: (rowCtrls) => {
+                setRowCtrls: (rowCtrls, useFlushSync) => {
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
+                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(useFlush);
                 },
                 setDomOrder: domOrder => {
                     if (domOrderRef.current != domOrder) {
                         domOrderRef.current = domOrder;
-                        updateRowCtrlsOrdered();
+                        updateRowCtrlsOrdered(false);
                     }
                 },
                 setContainerWidth: width => {
