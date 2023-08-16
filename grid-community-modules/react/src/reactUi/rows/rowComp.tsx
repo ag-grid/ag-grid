@@ -15,7 +15,6 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     const isFullWidth = rowCtrl.isFullWidth();
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.getRowStyles());
-   // const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => isFullWidth ? null : rowCtrl.getCellCtrlsForContainer(containerType));
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
