@@ -18,12 +18,7 @@ import React, {
 import { createRoot } from "react-dom/client"
 
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([
-  ClientSideRowModelModule,
-  MasterDetailModule,
-  MenuModule,
-  ColumnsToolPanelModule,
-])
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])
 
 let allRowData
 

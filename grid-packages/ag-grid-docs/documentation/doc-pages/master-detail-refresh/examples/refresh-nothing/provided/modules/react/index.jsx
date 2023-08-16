@@ -12,12 +12,7 @@ import React, { Component } from "react"
 import { createRoot } from "react-dom/client"
 
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([
-  ClientSideRowModelModule,
-  MasterDetailModule,
-  MenuModule,
-  ColumnsToolPanelModule,
-])
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])
 
 class GridExample extends Component {
   constructor(props) {
