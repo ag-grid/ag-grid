@@ -1,11 +1,14 @@
+
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, FirstDataRenderedEvent, GetRowIdFunc, GetRowIdParams, Grid, GridOptions, GridReadyEvent, IDetailCellRendererParams } from '@ag-grid-community/core';
+import { IAccount } from './interfaces'
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -17,10 +20,10 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, Me
 let allRowData: any[];
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact>(null);
+    const gridRef = useRef<AgGridReact<IAccount>>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState();
+    const [rowData, setRowData] = useState<IAccount[]>();
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         // group cell renderer needed for expand / collapse icons
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -33,12 +36,14 @@ const GridExample = () => {
             flex: 1,
         }
     }, []);
-    const getRowId = useCallback(function (params: GetRowIdParams) {
-        return params.data.account;
+    const getRowId = useMemo<GetRowIdFunc>(() => {
+        return (params: GetRowIdParams) => {
+            return params.data.account;
+        }
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
-            refreshStrategy: 'rows',
+            refreshStrategy: 'everything',
             detailGridOptions: {
                 rowSelection: 'multiple',
                 enableCellChangeFlash: true,
@@ -57,11 +62,10 @@ const GridExample = () => {
                     sortable: true,
                 },
             },
-            getDetailRowData: (params: GetDetailRowDataParams) => {
-                // params.successCallback([]);
+            getDetailRowData: (params) => {
                 params.successCallback(params.data.callRecords);
             },
-        }
+        } as IDetailCellRendererParams<IAccount, ICallRecord>
     }, []);
 
 
@@ -69,7 +73,7 @@ const GridExample = () => {
 
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
             .then(resp => resp.json())
-            .then(data => {
+            .then((data: IAccount[]) => {
                 allRowData = data;
                 setRowData(data);
             });
@@ -103,14 +107,14 @@ const GridExample = () => {
             };
             gridRef.current!.api.applyTransaction(tran);
         }, 2000);
-    }, [])
+    }, [allRowData])
 
 
     return (
         <div style={containerStyle}>
 
             <div style={gridStyle} className="ag-theme-alpine">
-                <AgGridReact
+                <AgGridReact<IAccount>
                     ref={gridRef}
                     rowData={rowData}
                     columnDefs={columnDefs}
@@ -123,11 +127,10 @@ const GridExample = () => {
                     onFirstDataRendered={onFirstDataRendered}
                 />
             </div>
-
         </div>
     );
 
 }
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<GridExample />);
+root.render(<StrictMode><GridExample /></StrictMode>);
