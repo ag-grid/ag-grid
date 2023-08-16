@@ -39,7 +39,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[]): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -158,11 +158,6 @@ export class RowCtrl extends BeanStub {
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.addListeners();
-
-        if(!this.isFullWidth()){
-            // Create cells ctrls in constructor so they are available immediately for cell comps
-            this.createAllCellCtrls();
-        }
     }
 
     private initRowBusinessKey(): void {
@@ -259,7 +254,7 @@ export class RowCtrl extends BeanStub {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate, true);
+        this.updateColumnLists(!this.useAnimationFrameForCreate, false);
 
         const comp = gui.rowComp;
 
@@ -464,7 +459,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false, useExistingCtrls = false): void {
+    private updateColumnLists(suppressAnimationFrame: boolean, useFlushSync: boolean): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -473,7 +468,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl(useExistingCtrls);
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
 
@@ -481,7 +476,7 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl(useExistingCtrls);
+                this.updateColumnListsImpl(true);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -528,23 +523,21 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(useExistingCtrls: boolean): void {
+    private updateColumnListsImpl(useFlushSync: boolean): void {
         this.updateColumnListsPending = false;
-        if(!useExistingCtrls){
-            this.createAllCellCtrls();
-        }
+        this.createAllCellCtrls();
 
-        this.setCellCtrls();
+        this.setCellCtrls(useFlushSync);
     }
 
-    private setCellCtrls() {
+    private setCellCtrls(useFlushSync: boolean) {
         this.allRowGuis.forEach(item => {
             const cellControls = this.getCellCtrlsForContainer(item.containerType);
-            item.rowComp.setCellCtrls(cellControls);
+            item.rowComp.setCellCtrls(cellControls, useFlushSync);
         });
     }
 
-    public getCellCtrlsForContainer(containerType: RowContainerType) {
+    private getCellCtrlsForContainer(containerType: RowContainerType) {
         
         switch (containerType) {
             case RowContainerType.LEFT:
@@ -721,7 +714,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onColumnMoved(): void {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
 
     private addListenersForCellComps(): void {
@@ -820,7 +813,7 @@ export class RowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
-        this.updateColumnLists(true);
+        this.updateColumnLists(true, false);
 
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
             this.rowNode.checkAutoHeights();
@@ -828,7 +821,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
 
     public getRowPosition(): RowPosition {
@@ -892,7 +885,7 @@ export class RowCtrl extends BeanStub {
         this.centerCellCtrls = this.removeCellCtrl(this.centerCellCtrls, cellCtrl);
         this.leftCellCtrls = this.removeCellCtrl(this.leftCellCtrls, cellCtrl);
         this.rightCellCtrls = this.removeCellCtrl(this.rightCellCtrls, cellCtrl);
-        this.updateColumnLists();
+        this.updateColumnLists(false, false);
     }
 
     private removeCellCtrl(prev: CellCtrlListAndMap, cellCtrlToRemove: CellCtrl): CellCtrlListAndMap {
