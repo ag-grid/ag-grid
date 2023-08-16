@@ -449,6 +449,10 @@ export class EnterpriseMenu extends BeanStub {
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
+        if (!!this.column.getColDef().showRowGroup) {
+            result.push('rowUnGroup');
+        }
+
         if (allowRowGroup && this.column.isPrimary()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');

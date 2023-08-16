@@ -124,6 +124,7 @@ const AG_GRID_LOCALE_EN = {
     autosizeAllColumns: 'Autosize All Columns',
     groupBy: 'Group by',
     ungroupBy: 'Un-Group by',
+    ungroupAll: 'Un-Group All',
     addToValues: 'Add ${variable} to values',
     removeFromValues: 'Remove ${variable} from values',
     addToLabels: 'Add ${variable} to labels',
