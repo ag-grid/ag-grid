@@ -4,6 +4,7 @@ const AG_GRID_LOCALE_EN = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
+    addCurrentSelectionToFilter: 'Add current selection to filter',
     searchOoo: 'Search...',
     blanks: '(Blanks)',
     noMatches: 'No matches',

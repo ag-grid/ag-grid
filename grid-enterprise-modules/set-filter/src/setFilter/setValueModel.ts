@@ -70,6 +70,9 @@ export class SetValueModel<V> implements IEventEmitter {
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
 
+    /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
+    private addCurrentSelectionToFilter: boolean = false;
+
     /** Values provided to the filter for use. */
     private providedValues: SetFilterValues<any, V> | null = null;
 
@@ -84,6 +87,15 @@ export class SetValueModel<V> implements IEventEmitter {
 
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
+
+    // Here we keep track of the keys that are currently being used for filtering.
+    // In most cases, the filtering keys are the same as the selected keys,
+    // but for the specific case when excelMode = 'windows' and the user has ticked 'Add current selection to filter'
+    // the filtering keys can be different from the selected keys.
+    //
+    // To make the filtering super fast, we store the keys in an Set rather than using the default array.
+    private filteringKeys: Set<string | null> | null = null;
+    private noAppliedFilteringKeys: boolean = false;
 
     private initialised: boolean = false;
 
@@ -376,6 +388,11 @@ export class SetValueModel<V> implements IEventEmitter {
             return false;
         }
 
+        if (value === null) {
+            // Reset 'Add current selection to filter' checkbox when clearing mini filter
+            this.setAddCurrentSelectionToFilter(false);
+        }
+
         this.miniFilterText = value;
         this.updateDisplayedValues('miniFilter');
 
@@ -394,7 +411,12 @@ export class SetValueModel<V> implements IEventEmitter {
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key), allKeys, this.availableKeys, source);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable(
+                (key: string | null) => this.getValue(key),
+                allKeys,
+                this.availableKeys,
+                source,
+            );
             return;
         }
 
@@ -428,6 +450,10 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.displayValueModel.getSelectAllItem();
     }
 
+    public getAddSelectionToFilterItem(): string | SetFilterModelTreeItem {
+        return this.displayValueModel.getAddSelectionToFilterItem();
+    }
+
     public hasSelections(): boolean {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedKeys.size > 0 :
@@ -446,13 +472,38 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.allValues.get(key)!;
     }
 
+    public setAddCurrentSelectionToFilter(value: boolean) {
+        this.addCurrentSelectionToFilter = value;
+    }
+
+    private isInWindowsExcelMode(): boolean {
+        return this.filterParams.excelMode === 'windows';
+    }
+
+    public isAddCurrentSelectionToFilterChecked(): boolean {
+        return this.isInWindowsExcelMode() && this.addCurrentSelectionToFilter;
+    }
+
+    public showAddCurrentSelectionToFilter(): boolean {
+        // We only show the 'Add current selection to filter' option
+        // when excel mode is enabled with 'windows' mode
+        // and when the users types a value in the mini filter.
+        return (
+            this.isInWindowsExcelMode()
+            && this.miniFilterText !== null
+            && this.miniFilterText.length > 0
+        );
+    }
+
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
             this.selectedKeys = new Set(this.allValues.keys());
         } else {
             // ensure everything that matches the mini filter is selected
-            if (clearExistingSelection) { this.selectedKeys.clear(); }
+            if (clearExistingSelection) {
+                this.selectedKeys.clear();
+            }
 
             this.displayValueModel.forEachDisplayedKey(key => this.selectedKeys.add(key));
         }
@@ -494,7 +545,22 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     public getModel(): SetFilterModelValue | null {
-        return this.hasSelections() ? Array.from(this.selectedKeys) : null;
+        // When excelMode = 'windows' and the user has ticked 'Add current selection to filter'
+        // the filtering keys can be different from the selected keys, and they should be included
+        // in the model.
+        const filteringKeys = this.isAddCurrentSelectionToFilterChecked()
+            ? this.filteringKeys
+            : null;
+
+        const modelKeys = filteringKeys && filteringKeys.size > 0
+            // Filtering keys are present, use a set structure to avoid duplicates
+            ? new Set<string | null>([
+                ...Array.from(filteringKeys ?? []).map(this.caseFormat),
+                ...Array.from(this.selectedKeys ?? []).map(this.caseFormat),
+            ])
+            : this.selectedKeys;
+
+        return this.hasSelections() ? Array.from(modelKeys) : null;
     }
 
     public setModel(model: SetFilterModelValue | null): AgPromise<void> {
@@ -571,5 +637,31 @@ export class SetValueModel<V> implements IEventEmitter {
             }
             return 0;
         };
+    }
+
+    public setAppliedModelKeys(appliedModelKeys: Set<string | null> | null): void {
+        this.filteringKeys = appliedModelKeys;
+        this.noAppliedFilteringKeys = !this.filteringKeys || this.filteringKeys.size === 0;
+    }
+
+    public addToAppliedModelKeys(appliedModelKey: string | null): void {
+        if (!this.filteringKeys) {
+            this.filteringKeys = new Set();
+        }
+
+        this.filteringKeys.add(appliedModelKey);
+        this.noAppliedFilteringKeys = false;
+    }
+
+    public getAppliedModelKeys(): Set<string | null> | null {
+        return this.filteringKeys;
+    }
+
+    public hasAppliedModelKey(appliedModelKey: string | null): boolean {
+        return this.filteringKeys ? this.filteringKeys.has(appliedModelKey) : false;
+    }
+
+    public hasAnyAppliedModelKey(): boolean {
+        return !this.noAppliedFilteringKeys;
     }
 }

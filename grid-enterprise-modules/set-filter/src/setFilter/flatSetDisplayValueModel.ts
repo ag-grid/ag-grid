@@ -60,6 +60,11 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         return SetFilterDisplayValue.SELECT_ALL;
     }
 
+    getAddSelectionToFilterItem(): string {
+        return SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
+    }
+
+
     public getDisplayedKeys(): (string | null)[] {
         return this.displayedKeys;
     }
