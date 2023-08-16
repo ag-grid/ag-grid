@@ -26,11 +26,15 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     @Autowired('gridOptionsService') private gos: GridOptionsService;
 
     private fieldSeparator: string;
+    private pivotDefaultExpanded: number;
 
     @PostConstruct
     public init(): void {
         this.fieldSeparator = this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
         this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', (propChange) => this.fieldSeparator = propChange.currentValue);
+
+        this.pivotDefaultExpanded = this.gos.getNum('pivotDefaultExpanded') ?? 0;
+        this.addManagedPropertyListener('pivotDefaultExpanded', (propChange) => this.pivotDefaultExpanded = propChange.currentValue);
     }
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
@@ -86,8 +90,6 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         primaryPivotColumns: Column[]
     ): ColGroupDef[] | ColDef[]  {
         const measureColumns = this.columnModel.getValueColumns();
-        const pivotDefaultExpanded = this.gridOptionsService.getNum('pivotDefaultExpanded') ?? 0
-
         if (index >= maxDepth) { // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
         }
@@ -113,7 +115,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         const groups: ColGroupDef[] = [];
         _.iterateObject(uniqueValue, (key, value) => {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
-            const openByDefault = pivotDefaultExpanded === -1 || (index < pivotDefaultExpanded)
+            const openByDefault = this.pivotDefaultExpanded === -1 || (index < this.pivotDefaultExpanded);
 
             const newPivotKeys = [...pivotKeys, key];
             groups.push({
@@ -123,7 +125,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                 columnGroupShow: 'open',
                 openByDefault: openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
-            })
+            });
         });
         groups.sort(comparator);
         return groups;

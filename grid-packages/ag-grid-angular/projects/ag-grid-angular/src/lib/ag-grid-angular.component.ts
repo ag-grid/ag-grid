@@ -602,6 +602,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public pivotMode: boolean | undefined = undefined;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never`     */
     @Input() public pivotPanelShow: 'always' | 'onlyWhenPivoting' | 'never' | undefined = undefined;
+    /** If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
+    @Input() public pivotDefaultExpanded: number | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.     */
     @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.     */
