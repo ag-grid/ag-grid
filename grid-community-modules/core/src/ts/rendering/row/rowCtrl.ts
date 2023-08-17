@@ -254,7 +254,7 @@ export class RowCtrl extends BeanStub {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate, false);
+        this.updateColumnLists(!this.useAnimationFrameForCreate);
 
         const comp = gui.rowComp;
 
@@ -459,7 +459,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame: boolean, useFlushSync: boolean): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -714,7 +714,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onColumnMoved(): void {
-        this.updateColumnLists(false, true);
+        this.updateColumnLists();
     }
 
     private addListenersForCellComps(): void {
@@ -813,7 +813,7 @@ export class RowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
-        this.updateColumnLists(true, false);
+        this.updateColumnLists(true);
 
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
             this.rowNode.checkAutoHeights();
@@ -885,7 +885,7 @@ export class RowCtrl extends BeanStub {
         this.centerCellCtrls = this.removeCellCtrl(this.centerCellCtrls, cellCtrl);
         this.leftCellCtrls = this.removeCellCtrl(this.leftCellCtrls, cellCtrl);
         this.rightCellCtrls = this.removeCellCtrl(this.rightCellCtrls, cellCtrl);
-        this.updateColumnLists(false, false);
+        this.updateColumnLists();
     }
 
     private removeCellCtrl(prev: CellCtrlListAndMap, cellCtrlToRemove: CellCtrl): CellCtrlListAndMap {

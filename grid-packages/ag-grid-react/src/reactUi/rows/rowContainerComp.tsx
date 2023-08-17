@@ -9,7 +9,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
 

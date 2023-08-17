@@ -147,6 +147,9 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             ref={setRef}
             role={'row'}
             style={rowStyles}
+            row-index={ rowIndex }
+            row-id={ rowId }
+            row-business-key={ rowBusinessKey }
             tabIndex={tabIndex}
         >
             {showCells && showCellsJsx()}
