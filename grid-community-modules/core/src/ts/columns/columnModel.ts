@@ -1026,7 +1026,7 @@ export class ColumnModel extends BeanStub {
     public setRowGroupColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.setPrimaryColumnList(colKeys, this.rowGroupColumns,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED, true,
             this.setRowGroupActive.bind(this),
             source);
     }
@@ -1076,7 +1076,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public setPivotColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
-        this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED,
+        this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED, true,
             (added: boolean, column: Column) => {
                 column.setPivotActive(added, source);
             }, source
@@ -1106,9 +1106,14 @@ export class ColumnModel extends BeanStub {
         colKeys: (string | Column)[],
         masterList: Column[],
         eventName: string,
+        detectOrderChange: boolean,
         columnCallback: (added: boolean, column: Column) => void,
-        source: ColumnEventType
+        source: ColumnEventType,
     ): void {
+
+        const changes: Map<Column, number> = new Map();
+        // store all original cols and their index.
+        masterList.forEach((col, idx) => changes.set(col, idx));
 
         masterList.length = 0;
 
@@ -1121,6 +1126,24 @@ export class ColumnModel extends BeanStub {
             });
         }
 
+        masterList.forEach((col, idx) => {
+            const oldIndex = changes.get(col);
+            // if the column was not in the list, we add it as it's a change
+            // idx is irrelevant now.
+            if (oldIndex === undefined) {
+                changes.set(col, 0);
+                return;
+            }
+
+            if (detectOrderChange && oldIndex !== idx) {
+                // if we're detecting order changes, and the indexes differ, we retain this as it's changed
+                return;
+            }
+            
+            // otherwise remove this col, as it's unchanged.
+            changes.delete(col);
+        });
+
         (this.primaryColumns || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
@@ -1132,12 +1155,13 @@ export class ColumnModel extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        this.dispatchColumnChangedEvent(eventName, masterList, source);
+        this.dispatchColumnChangedEvent(eventName, [...changes.keys()], source);
     }
 
     public setValueColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.setPrimaryColumnList(colKeys, this.valueColumns,
             Events.EVENT_COLUMN_VALUE_CHANGED,
+            false,
             this.setValueActive.bind(this),
             source
         );
@@ -1439,13 +1463,14 @@ export class ColumnModel extends BeanStub {
     public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType = "api"): void {
         const column = this.rowGroupColumns[fromIndex];
 
+        const impactedColumns = this.rowGroupColumns.slice(fromIndex, toIndex);
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
 
         const event: WithoutGridCommon<ColumnRowGroupChangedEvent> = {
             type: Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            columns: this.rowGroupColumns,
-            column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
+            columns: impactedColumns,
+            column: impactedColumns.length === 1 ? impactedColumns[0] : null,
             source: source
         };
 
@@ -2255,11 +2280,21 @@ export class ColumnModel extends BeanStub {
 
                 if (unchanged) { return; }
 
-                // returning all columns rather than what has changed!
+                const changes = new Set(colsBefore);
+                colsAfter.forEach(id => {
+                    // if the first list had it, delete it, as it's unchanged.
+                    if (!changes.delete(id)) {
+                        // if the second list has it, and first doesn't, add it.
+                        changes.add(id);
+                    }
+                });
+                
+                const changesArr = [...changes];
+
                 const event: WithoutGridCommon<ColumnEvent> = {
                     type: eventType,
-                    columns: colsAfter,
-                    column: colsAfter.length === 1 ? colsAfter[0] : null,
+                    columns: changesArr,
+                    column: changesArr.length === 1 ? changesArr[0] : null,
                     source: source
                 };
 
@@ -2305,12 +2340,7 @@ export class ColumnModel extends BeanStub {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                // we pass all value columns, now the ones that changed. this is the same
-                // as pivot and rowGroup cols, but different to all other properties below.
-                // this is more for backwards compatibility, as it's always been this way.
-                // really it should be the other way, as the order of the cols makes no difference
-                // for valueColumns (apart from displaying them in the tool panel).
-                this.dispatchColumnChangedEvent(Events.EVENT_COLUMN_VALUE_CHANGED, this.valueColumns, source);
+                this.dispatchColumnChangedEvent(Events.EVENT_COLUMN_VALUE_CHANGED, changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width != c.getActualWidth();
