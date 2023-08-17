@@ -61,8 +61,7 @@ select {
 input[type='text'],
 input[type='search'],
 input[type='email'],
-input[type='number'],
-.ag-picker-field-wrapper {
+input[type='number'] {
     padding: math.div(6em, 16) math.div(12em, 16);
     line-height: var(--line-height-normal);
     border-radius: var(--border-radius);
@@ -78,7 +77,14 @@ input[type='number'],
 
     &:hover:not(:disabled):not([readonly]),
     &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly])
+    &:focus-visible:not(:disabled):not([readonly]) {
+        border-color: var(--input-focus-border-color);
+    }
+}
+
+.ag-picker-field-wrapper {
+    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    &:focus:not(:disabled):not([readonly]),
     &.ag-picker-has-focus {
         border-color: var(--input-focus-border-color);
     }
