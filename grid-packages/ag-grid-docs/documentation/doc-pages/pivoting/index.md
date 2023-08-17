@@ -264,7 +264,7 @@ To open all pivot groups down to a given group depth level use the `pivotDefault
 |        { field: 'bronze', aggFunc: 'sum' },
 |        { field: 'bronze', aggFunc: 'sum' },
 |    ],
-|    // first (sport) pivot group will be open by default
+|    // first (sport) pivot group level will be open by default
 |    pivotDefaultExpanded: 1,
 |    // other grid options ...
 | }
