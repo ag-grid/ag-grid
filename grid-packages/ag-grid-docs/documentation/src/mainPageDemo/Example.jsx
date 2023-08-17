@@ -75,6 +75,8 @@ export class CountryCellRendererJs {
     init(params) {
         this.eGui = document.createElement('span');
         this.eGui.style.cursor = 'default';
+        this.eGui.style.overflow = 'hidden';
+        this.eGui.style.textOverflow = 'ellipsis';
 
         if (params.value === undefined) {
             return null;

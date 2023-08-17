@@ -5,6 +5,9 @@ export class ColourCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         const eGui = this.eGui = document.createElement('div');
+        eGui.style.overflow = 'hidden';
+        eGui.style.textOverflow = 'ellipsis';
+
         const colorSpan = document.createElement('span');
         const text = document.createTextNode(params.value);
         colorSpan.style.borderLeft = '10px solid ' + params.value;

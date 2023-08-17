@@ -720,8 +720,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private formatValue(value: any): any {
-        const res = this.callValueFormatter(value);
-        return res != null ? res : value;
+        return this.callValueFormatter(value) ?? value;
     }
 
     private callValueFormatter(value: any): any {

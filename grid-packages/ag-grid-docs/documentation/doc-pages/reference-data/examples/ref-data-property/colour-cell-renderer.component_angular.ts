@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, Host} from "@angular/core";
 import {ICellRendererParams} from "@ag-grid-community/core";
 import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 

@@ -9,6 +9,7 @@ import { RichSelectParams } from "./agRichSelect";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
 import { escapeString } from "../utils/string";
+import { exists } from "../utils/generic";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -45,9 +46,16 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
+        const eDocument = this.gridOptionsService.getDocument();
         const eGui = this.getGui();
 
-        eGui.textContent = escapeString(valueFormatted ?? value) ?? '&nbsp;';
+        const span = eDocument.createElement('span');
+        span.style.overflow = 'hidden';
+        span.style.textOverflow = 'ellipsis';
+        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value);
+        span.textContent =  exists(parsedValue) ? parsedValue : '&nbsp;';
+
+        eGui.appendChild(span);
     }
 
     private populateWithRenderer(value: TValue): boolean {
@@ -57,7 +65,8 @@ export class RichSelectRow<TValue> extends Component {
 
         const { valueFormatter } = this.params;
 
-        const valueFormatted = valueFormatter ? valueFormatter(value) : value;
+        const formattedValue = valueFormatter ? valueFormatter(value) : null;
+        const valueFormatted = exists(formattedValue) ? formattedValue : value;
 
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
@@ -74,8 +83,6 @@ export class RichSelectRow<TValue> extends Component {
 
         if (cellRendererPromise) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
-        } else {
-            this.getGui().innerText = value as unknown as string;
         }
 
         if (cellRendererPromise) {

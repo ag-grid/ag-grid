@@ -30,6 +30,8 @@ export class CountryCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('span')
         this.eGui.style.cursor = 'default'
+        this.eGui.style.overflow = 'hidden';
+        this.eGui.style.textOverflow = 'ellipsis';
 
         //get flags from here: http://www.freeflagicons.com/
         if (

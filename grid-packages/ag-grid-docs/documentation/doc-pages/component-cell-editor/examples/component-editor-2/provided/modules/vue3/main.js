@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 class CountryCellRenderer {
     init(params) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = `${params.value.name}`;
+        this.eGui.innerHTML = `<span style="overflow: hidden; text-overflow: ellipsis">${params.value.name}</span>`;
     }
 
     getGui() {

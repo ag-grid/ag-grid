@@ -8,8 +8,15 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 @Component({
     selector: 'simple-component',
     template: `
-        <div><span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span>{{params.value}}</div>
-    `
+        <div [style.overflow]="'hidden'" [style.textOverflow]="'ellipsis'"><span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span>{{params.value}}</div>
+    `,
+    styles: [
+        `
+            :host {
+                overflow: hidden;
+            }
+        `
+    ]
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
