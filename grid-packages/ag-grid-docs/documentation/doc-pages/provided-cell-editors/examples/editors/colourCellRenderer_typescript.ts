@@ -4,10 +4,14 @@ export class ColourCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
 
     init(params: ICellRendererParams) {
-        this.eGui = document.createElement('div');
-        this.eGui.innerText = params.value;
-        this.eGui.style.borderLeft = '10px solid ' + params.value;
-        this.eGui.style.paddingLeft = '5px';
+        const eGui = this.eGui = document.createElement('div');
+        const colorSpan = document.createElement('span');
+        const text = document.createTextNode(params.value);
+        colorSpan.style.borderLeft = '10px solid ' + params.value;
+        colorSpan.style.paddingRight = '5px';
+
+        eGui.appendChild(colorSpan)
+        eGui.append(text);
     }
 
     getGui() {

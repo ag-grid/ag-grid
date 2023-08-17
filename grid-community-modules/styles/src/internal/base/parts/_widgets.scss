@@ -401,10 +401,10 @@
         height: auto;
         border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
+        max-height: calc(var(--ag-row-height)*6.5);
     }
 
     .ag-rich-select-value {
-        height: var(--ag-row-height);
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         padding-top: 0;
         padding-bottom: 0;
@@ -413,6 +413,7 @@
     }
 
     .ag-popup-editor .ag-rich-select-value {
+        height: var(--ag-row-height);
         min-width: 200px;
     }
 

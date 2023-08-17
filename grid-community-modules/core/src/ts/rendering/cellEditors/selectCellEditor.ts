@@ -70,7 +70,11 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         }
 
         if (this.startedByEnter) {
-            this.eSelect.showPicker();
+            setTimeout(() => {
+                if (this.isAlive()) {
+                    this.eSelect.showPicker();
+                }
+            });
         }
     }
 

@@ -3,10 +3,13 @@ import React, {Component} from "react";
 export default class ColourCellRenderer extends Component {
     render() {
         return (
-            <span style={{
+            <div>
+                <span style={{
                     borderLeft: '10px solid ' + this.props.value,
-                    paddingLeft: '5px'
-                }}>{this.props.value}</span>
+                    paddingRight: '5px'
+                }}></span>
+                {this.props.value}
+            </div>
         )
     }
 };

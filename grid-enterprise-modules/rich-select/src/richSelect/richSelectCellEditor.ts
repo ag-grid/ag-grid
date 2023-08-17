@@ -95,18 +95,23 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public afterGuiAttached(): void {
         const { focusAfterAttached, params } = this;
 
-        if (focusAfterAttached) {
-            this.richSelect.getFocusableElement().focus();
-        }
+        setTimeout(() => {
+            if (!this.isAlive()) { return; }
 
-        this.richSelect.showPicker();
-
-        const { eventKey } = params;
-        if (eventKey) {
-            if (eventKey?.length === 1) {
-                this.richSelect.searchText(eventKey);
+            if (focusAfterAttached) {
+                this.richSelect.getFocusableElement().focus();
             }
-        }
+    
+            this.richSelect.showPicker();
+    
+            const { eventKey } = params;
+            if (eventKey) {
+                if (eventKey?.length === 1) {
+                    this.richSelect.searchText(eventKey);
+                }
+            }
+
+        });
     }
 
     public getValue(): any {

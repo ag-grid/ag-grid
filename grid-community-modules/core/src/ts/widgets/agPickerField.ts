@@ -4,7 +4,7 @@ import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
-import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight, FOCUSABLE_EXCLUDE } from "../utils/dom";
+import { setElementWidth, isVisible, getAbsoluteWidth } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
@@ -29,7 +29,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     
     protected value: TValue;
 
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('popupService') protected popupService: PopupService;
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
@@ -180,7 +180,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const addPopupRes = this.popupService.addPopup(popupParams);
 
         setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
-        ePicker.style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
         ePicker.style.position = 'absolute';
 
         this.popupService.positionPopupByComponent({

@@ -1247,11 +1247,13 @@
     .ag-rich-select {
         cursor: default;
         outline: none;
+        height: 100%;
     }
 
     .ag-rich-select-value {
         display: flex;
         align-items: center;
+        height: 100%;
     }
 
     .ag-rich-select-list {

@@ -208,7 +208,7 @@ export class PopupService extends BeanStub {
         const { ePopup, nudgeX, nudgeY, keepWithinBounds, eventSource, alignSide = 'left', position = 'over', column, rowNode, type } = params;
 
         const sourceRect = eventSource.getBoundingClientRect();
-        const parentRect = this.getParentRect();
+        const parentRect = this.getParentRect() as DOMRect;
 
         const popupIdx = this.getPopupIndex(ePopup);
 
@@ -231,20 +231,41 @@ export class PopupService extends BeanStub {
                 this.setAlignedStyles(ePopup, 'over');
             } else {
                 this.setAlignedStyles(ePopup, 'under');
-                y = (sourceRect.top - parentRect.top + sourceRect.height);
+                const alignSide = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
+                if (alignSide === 'under') {
+                    y = (sourceRect.top - parentRect.top + sourceRect.height);
+                } else {
+                    y = (sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2) - parentRect.top;
+                }
             }
 
             return { x, y };
         };
 
         this.positionPopup({
-            ePopup: ePopup,
-            nudgeX: nudgeX,
-            nudgeY: nudgeY,
-            keepWithinBounds: keepWithinBounds,
+            ePopup,
+            nudgeX,
+            nudgeY,
+            keepWithinBounds,
             updatePosition,
             postProcessCallback: () => this.callPostProcessPopup(type, ePopup, eventSource, null, column, rowNode)
         });
+    }
+
+    private shouldRenderUnderOrAbove(ePopup: HTMLElement, targetCompRect: DOMRect, parentRect: DOMRect, nudgeY: number): 'under' | 'above' {
+        const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
+        const spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        const spaceRequired = ePopup.offsetHeight + nudgeY;
+
+        if (spaceAvailableUnder > spaceRequired) {
+            return 'under';
+        }
+
+        if (spaceAvailableAbove > spaceRequired || spaceAvailableAbove > spaceAvailableUnder) {
+            return 'above';
+        }
+
+        return 'under';
     }
 
     private setAlignedStyles(ePopup: HTMLElement, positioned: 'right' | 'left' | 'over' | 'above' | 'under' | null) {

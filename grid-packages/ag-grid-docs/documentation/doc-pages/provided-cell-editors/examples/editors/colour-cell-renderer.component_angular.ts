@@ -8,7 +8,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 @Component({
     selector: 'simple-component',
     template: `
-        <span [style.borderLeft]="'10px solid ' + params.value" [style.paddingLeft]="'5px'">{{params.value}}</span>
+        <div><span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span>{{params.value}}</div>
     `
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
