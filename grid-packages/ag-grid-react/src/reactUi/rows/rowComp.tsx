@@ -56,7 +56,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     let cssClassManager = useRef<CssClassManager>();
     if(!cssClassManager.current){
-        cssClassManager.current = new CssClassManager(() => eGui.current!);
+        cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
@@ -96,7 +96,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
         };
-        rowCtrl.setComp(compProxy, eGui.current!, containerType);
+        rowCtrl.setComp(compProxy, eGui.current, containerType);
 
     }, []);
 

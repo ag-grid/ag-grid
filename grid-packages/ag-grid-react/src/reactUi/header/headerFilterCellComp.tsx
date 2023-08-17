@@ -12,7 +12,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(() => new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<"true" | "false">("false");
-    const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
+    const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             setMenuIcon: eIcon => eButtonShowMainFilter.current?.appendChild(eIcon)
         };
 
-        ctrl.setComp(compProxy, eGui.current!, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
+        ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
 
     }, []);
 

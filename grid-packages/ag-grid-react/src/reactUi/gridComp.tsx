@@ -90,7 +90,7 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect
         };
 
-        gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
+        gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
 
         setInitialised(true);
 
@@ -98,9 +98,9 @@ const GridComp = ({ context }: GridCompProps) => {
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) { return; }
 
-        const gridCtrl = gridCtrlRef.current!;
+        const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
         const {agStackComponentsRegistry} = beans;
 
@@ -110,7 +110,7 @@ const GridComp = ({ context }: GridCompProps) => {
         const WatermarkClass = agStackComponentsRegistry.getComponentClass('AG-WATERMARK');
         const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
         const additionalEls: HTMLDivElement[] = [];
-        const eRootWrapper = eRootWrapperRef.current!;
+        const eRootWrapper = eRootWrapperRef.current;
 
         if (gridCtrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());

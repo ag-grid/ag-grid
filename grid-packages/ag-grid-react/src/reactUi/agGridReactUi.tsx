@@ -79,7 +79,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current!),
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
             },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides(true),
@@ -132,7 +132,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(
-            eGui.current!,
+            eGui.current,
             gridOptionsRef.current,
             createUiCallback,
             acceptChangesCallback,

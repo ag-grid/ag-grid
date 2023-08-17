@@ -144,7 +144,7 @@ const CellComp = (props: {
     const cellInstanceId = cellCtrl.getInstanceId();
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
-    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>( cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
+    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>(() => cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
@@ -199,7 +199,7 @@ const CellComp = (props: {
     );
     let cssClassManager = useRef<CssClassManager>();
     if(!cssClassManager.current){
-        cssClassManager.current = new CssClassManager(() => eGui.current!);
+        cssClassManager.current = new CssClassManager(() => eGui.current);
     }    
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
@@ -367,7 +367,7 @@ const CellComp = (props: {
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
 
     }, []);
 

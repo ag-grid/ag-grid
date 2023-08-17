@@ -38,7 +38,7 @@ const GridBodyComp = () => {
 
     let cssClassManager = useRef<CssClassManager>();
     if(!cssClassManager.current){
-        cssClassManager.current = new CssClassManager(() => eRoot.current!);
+        cssClassManager.current = new CssClassManager(() => eRoot.current);
     }
 
     const eRoot = useRef<HTMLDivElement | null>(null);
@@ -83,13 +83,11 @@ const GridBodyComp = () => {
             destroyFuncs.current.push(() => eParent.removeChild(eChild));
         }
 
-        if (eRoot.current) {
-            attachToDom(eRoot.current!, document.createComment(' AG Fake Horizontal Scroll '));
-            attachToDom(eRoot.current!, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+        attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
+        attachToDom(eRoot.current, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
 
-            attachToDom(eRoot.current!, document.createComment(' AG Overlay Wrapper '));
-            attachToDom(eRoot.current!, newComp('AG-OVERLAY-WRAPPER').getGui());
-        }
+        attachToDom(eRoot.current, document.createComment(' AG Overlay Wrapper '));
+        attachToDom(eRoot.current, newComp('AG-OVERLAY-WRAPPER').getGui());
 
         if (eBody.current) {
             attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
@@ -97,8 +95,16 @@ const GridBodyComp = () => {
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: count => _.setAriaColCount(eRoot.current!, count),
-            setRowCount: count => _.setAriaRowCount(eRoot.current!, count),
+            setColumnCount: count => {
+                if(eRoot.current){
+                    _.setAriaColCount(eRoot.current, count)
+                }
+            } ,
+            setRowCount: count => {
+                if (eRoot.current) {
+                    _.setAriaRowCount(eRoot.current, count);
+                }
+            },
             setTopHeight,
             setBottomHeight,
             setStickyTopHeight,
@@ -117,8 +123,10 @@ const GridBodyComp = () => {
                 }
             },
             registerBodyViewportResizeListener: listener => {
-                const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
-                destroyFuncs.current.push(() => unsubscribeFromResize());
+                if(eBodyViewport.current){
+                    const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
+                    destroyFuncs.current.push(() => unsubscribeFromResize());
+                }
             }
         };
 
@@ -126,7 +134,7 @@ const GridBodyComp = () => {
         beansToDestroy.current.push(ctrl);
         ctrl.setComp(
             compProxy,
-            eRoot.current!,
+            eRoot.current,
             eBodyViewport.current!,
             eTop.current!,
             eBottom.current!,

@@ -60,7 +60,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         };
 
         headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
-        headerRowCtrlRef.current.setComp(compProxy, eGui.current!);
+        headerRowCtrlRef.current.setComp(compProxy, eGui.current);
 
     }, []);
 

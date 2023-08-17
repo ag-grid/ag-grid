@@ -54,7 +54,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         };
 
         ctrlRef.current = context.createBean(new GroupCellRendererCtrl());
-        ctrlRef.current.init(compProxy, eGui.current!, eCheckboxRef.current!, eExpandedRef.current!, eContractedRef.current!, GroupCellRenderer, props);
+        ctrlRef.current.init(compProxy, eGui.current, eCheckboxRef.current!, eExpandedRef.current!, eContractedRef.current!, GroupCellRenderer, props);
 
     }, []);
 

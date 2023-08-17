@@ -1,12 +1,12 @@
 export class CssClassManager {
 
-    private getGui: () => HTMLElement;
+    private getGui: () => HTMLElement | undefined | null;
 
     // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: { [cssClass: string]: boolean } = {};
 
-    constructor(getGui: () => HTMLElement) {
+    constructor(getGui: () => (HTMLElement | undefined | null)) {
         this.getGui = getGui;
     }
 

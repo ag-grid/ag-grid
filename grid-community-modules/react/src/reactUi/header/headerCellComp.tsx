@@ -19,7 +19,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     let cssClassManager = useRef<CssClassManager>();
     if(!cssClassManager.current){
-        cssClassManager.current = new CssClassManager(() => eGui.current!);
+        cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
@@ -35,8 +35,16 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaDescription: label => _.setAriaDescription(eGui.current!, label),
-            setAriaSort: sort => sort ? _.setAriaSort(eGui.current!, sort) : _.removeAriaSort(eGui.current!),
+            setAriaDescription: label => {
+                if (eGui.current) {
+                    _.setAriaDescription(eGui.current, label)
+                }
+            },
+            setAriaSort: sort => {
+                if (eGui.current) {
+                    sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current)
+                }
+            },
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: () => userCompRef.current || undefined
         };

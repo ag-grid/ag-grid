@@ -86,7 +86,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
                 }
             };
 
-            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current!, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
             checkRowSizeFunc();
         }
     }, []);

@@ -40,7 +40,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
 
-        ctrl.setComp(compProxy, eGui.current!, eResize.current!);
+        ctrl.setComp(compProxy, eGui.current, eResize.current!);
 
     }, []);
 

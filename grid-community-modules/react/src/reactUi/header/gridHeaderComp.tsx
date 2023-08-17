@@ -28,7 +28,7 @@ const GridHeaderComp = () => {
         };
 
         gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
-        gridCtrlRef.current.setComp(compProxy, eGui.current!, eGui.current!);
+        gridCtrlRef.current.setComp(compProxy, eGui.current, eGui.current);
     }, []);
 
     const className = useMemo( ()=> {

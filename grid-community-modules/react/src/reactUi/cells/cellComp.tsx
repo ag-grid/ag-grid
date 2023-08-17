@@ -199,7 +199,7 @@ const CellComp = (props: {
     );
     let cssClassManager = useRef<CssClassManager>();
     if(!cssClassManager.current){
-        cssClassManager.current = new CssClassManager(() => eGui.current!);
+        cssClassManager.current = new CssClassManager(() => eGui.current);
     }    
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
@@ -367,7 +367,7 @@ const CellComp = (props: {
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
 
     }, []);
 

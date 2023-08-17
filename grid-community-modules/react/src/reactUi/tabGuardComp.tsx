@@ -49,9 +49,6 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
     const setupCtrl = useCallback(() => {
 
-        const eTopGuard = topTabGuardRef.current!;
-        const eBottomGuard = bottomTabGuardRef.current!;
-
         if (!topTabGuardRef.current && !bottomTabGuardRef.current) {
             // Clean up after both refs have been removed
             context.destroyBean(tabGuardCtrlRef.current);
@@ -66,8 +63,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
             tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
                 comp: compProxy,
-                eTopGuard: eTopGuard,
-                eBottomGuard: eBottomGuard,
+                eTopGuard: topTabGuardRef.current,
+                eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
 
                 onTabKeyDown: onTabKeyDown,
