@@ -29,7 +29,6 @@ export class AgAutocompleteList extends PopupComponent {
     constructor(private params: {
         autocompleteEntries: AutocompleteEntry[];
         onConfirmed: () => void;
-        onCancelled: () => void;
         useFuzzySearch?: boolean;
         forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
     }) {
@@ -52,35 +51,13 @@ export class AgAutocompleteList extends PopupComponent {
             getRow: (index: number) => this.autocompleteEntries[index]
         });
 
-        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
-
         const virtualListGui = this.virtualList.getGui();
 
         this.addManagedListener(virtualListGui, 'click', () => this.params.onConfirmed());
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(virtualListGui, 'mousedown', (e) => e.preventDefault());
 
         this.setSelectedValue(0);
-    }
-
-    private onKeyDown(event: KeyboardEvent): void {
-        const key = event.key;
-        event.preventDefault();
-
-        switch (key) {
-            case KeyCode.ENTER:
-                this.params.onConfirmed();
-                break;
-            case KeyCode.TAB:
-                this.params.onConfirmed();
-                break;
-            case KeyCode.ESCAPE:
-                this.params.onCancelled();
-                break;
-            case KeyCode.DOWN:
-            case KeyCode.UP:
-                this.onNavigationKeyDown(event, key);
-                break;
-        }
     }
 
     public onNavigationKeyDown(event: any, key: string): void {

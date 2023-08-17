@@ -69,6 +69,8 @@ export class AgAutocomplete extends Component {
         this.addDestroyFunc(() => {
             this.destroyBean(this.autocompleteList);
         });
+
+        this.addGuiEventListener('focusout', () => this.onFocusOut());
     }
 
     private onValueChanged(value?: string | null): void {
@@ -193,6 +195,10 @@ export class AgAutocomplete extends Component {
         }
     }
 
+    private onFocusOut(): void {
+        if (this.isListOpen) { this.closeList(); }
+    }
+
     private updatePositionAndList(): void {
         this.updateLastPosition();
         this.updateAutocompleteList(this.eAutocompleteInput.getValue() ?? null);
@@ -233,10 +239,6 @@ export class AgAutocomplete extends Component {
         this.autocompleteList = this.createBean(new AgAutocompleteList({
             autocompleteEntries: this.autocompleteListParams.entries!,
             onConfirmed: () => this.confirmSelection(),
-            onCancelled: () => {
-                this.closeList();
-                this.setCaret(this.lastPosition, true);
-            },
             forceLastSelection: this.forceLastSelection
         }));
         const ePopupGui = this.autocompleteList.getGui();
