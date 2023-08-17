@@ -42,7 +42,6 @@ const executeLernaCommand = (arguments) => {
 const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community']));
 const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-enterprise']));
 const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community', '../../grid-enterprise']));
-const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules').concat(getScopeForModules('../../charts-enterprise-modules')))
 
 module.exports.cleanCommunityModules = () => executeLernaCommand(['clean', '--yes', getCommunityScopes()]);
 module.exports.cleanEnterpriseModules = () => executeLernaCommand(['clean', '--yes', getEnterpriseScopes()]);
@@ -56,10 +55,7 @@ module.exports.buildCommunityModules = () => executeLernaCommand(['run', 'build'
 module.exports.buildEnterpriseModules = () => executeLernaCommand(['run', 'build', getEnterpriseScopes()]);
 module.exports.buildModules = () => executeLernaCommand(['run', 'build', getModuleScopes()]);
 
-module.exports.buildChartsModules = () => executeLernaCommand(['run', 'build', getChartsModuleScopes()]);
-
 module.exports.packageModules = () => executeLernaCommand(['run', 'package', getModuleScopes()]);
-module.exports.packageCharts = () => executeLernaCommand(['run', 'package', getChartsModuleScopes()]);
 
 module.exports.testCommunityModules = () => executeLernaCommand(['run', 'test', getCommunityScopes()]);
 module.exports.testEnterpriseModules = () => executeLernaCommand(['run', 'test', getEnterpriseScopes()]);

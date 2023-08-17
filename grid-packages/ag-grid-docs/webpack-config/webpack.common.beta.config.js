@@ -12,7 +12,6 @@ module.exports = {
     resolve: {
         alias: {
             "@ag-grid-community/core": path.resolve(__dirname, "../../../grid-community-modules/core/src/ts/main.ts"),
-            "ag-charts-community": path.resolve(__dirname, "../../../charts-community-modules/ag-charts-community/src/main.ts")
         },
         extensions: [".ts", ".tsx", ".js"]
     },

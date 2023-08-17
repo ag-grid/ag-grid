@@ -2,8 +2,6 @@
   "packages": [
     "grid-community-modules/*",
     "grid-enterprise-modules/*",
-    "charts-community-modules/*",
-    "charts-enterprise-modules/*",
     "grid-packages/*",
     "charts-examples/*",
     "grid-examples/*",

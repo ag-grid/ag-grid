@@ -1,16 +1,16 @@
-const {JSDOM} = require('jsdom');
-const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
-const sucrase = require("sucrase");
+const { JSDOM } = require('jsdom');
+const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
+const sucrase = require('sucrase');
 
-const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('../../charts-community-modules/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('../../charts-community-modules/ag-charts-react/package.json').version;
-const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
-const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
-const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
+const agGridVersion = '^' + require('../../grid-community-modules/core/package.json').version;
+const agChartsVersion = '^' + require('../../node_modules/ag-charts-community/package.json').version;
+const agChartsAngularVersion = '^' + require('../../node_modules/ag-charts-angular/package.json').version;
+const agChartsReactVersion = '^' + require('../../node_modules/ag-charts-react/package.json').version;
+const agGridEnterpriseVersion = '^' + require('../../grid-enterprise-modules/core/package.json').version;
+const agGridReactVersion = '^' + require('../../grid-community-modules/react/package.json').version;
+const agGridAngularVersion = '^' + require('../../grid-community-modules/angular/package.json').version;
 
-const getGenericInterface = require('./documentation/shared-types/generators')
+const getGenericInterface = require('./documentation/shared-types/generators');
 
 window.Date = Date;
 global.window = window;
@@ -29,7 +29,7 @@ const parsers = {
     ts: 'typescript',
 };
 
-const encodingOptions = {encoding: 'utf8'};
+const encodingOptions = { encoding: 'utf8' };
 
 function writeFile(destination, contents) {
     // allow developers to override the example theme with an environment variable
@@ -52,26 +52,30 @@ function writeFile(destination, contents) {
 }
 
 function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, forceConversion = false) {
-    files.forEach(sourceFile => {
+    files.forEach((sourceFile) => {
         const filename = path.basename(sourceFile);
-        const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
+        const destinationFile = path.join(
+            dest,
+            tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename
+        );
 
         const updateImports = (src) => {
-
-            if (!forceConversion &&
-                (!destinationFile.endsWith('.ts') &&
-                    !destinationFile.endsWith('.tsx') &&
-                    !destinationFile.endsWith('.jsx'))) {
+            if (
+                !forceConversion &&
+                !destinationFile.endsWith('.ts') &&
+                !destinationFile.endsWith('.tsx') &&
+                !destinationFile.endsWith('.jsx')
+            ) {
                 return src;
             }
 
             const {
                 parseFile,
                 extractImportStatements,
-                addBindingImports
+                addBindingImports,
             } = require(`./src/example-generation/parser-utils.ts`);
             src = tokenToReplace ? src.replace(tokenToReplace, '') : src;
-            const parsed = parseFile(src)
+            const parsed = parseFile(src);
             const imports = extractImportStatements(parsed);
 
             let formattedImports = '';
@@ -79,7 +83,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                 let importStrings = [];
                 const convertToPackage = importType === 'packages';
                 addBindingImports(imports, importStrings, convertToPackage, true);
-                formattedImports = `${importStrings.join('\n')}\n`
+                formattedImports = `${importStrings.join('\n')}\n`;
 
                 // Remove the original import statements
                 src = src.replace(/import.*from.*\n/g, '').replace(/import.*?;\n/g, '');
@@ -89,10 +93,15 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                         .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
                         .replace(/ModuleRegistry.registerModules.*?\n/, '');
 
-
                     const ensureRegistryUsed = ['[modules]=', ':modules=', 'modules={', 'modules:'];
-                    if (ensureRegistryUsed.some(toCheck => src.includes(toCheck)) && !sourceFile.includes('/provided/')) {
-                        throw new Error(sourceFile + ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().')
+                    if (
+                        ensureRegistryUsed.some((toCheck) => src.includes(toCheck)) &&
+                        !sourceFile.includes('/provided/')
+                    ) {
+                        throw new Error(
+                            sourceFile +
+                                ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().'
+                        );
                     }
                 }
                 // Need to ensure that useStrict and noChecks remain at the top of the file.
@@ -106,13 +115,17 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                     src = src.replace(`//@ts-nocheck\n`, '');
                     addNoCheck = true;
                 }
-                src = (addNoCheck ? `//@ts-nocheck\n` : '') + (addStrict ? `'use strict';\n` : '') + formattedImports + src
+                src =
+                    (addNoCheck ? `//@ts-nocheck\n` : '') +
+                    (addStrict ? `'use strict';\n` : '') +
+                    formattedImports +
+                    src;
             }
 
             return src;
-        }
+        };
 
-        writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
+        writeFile(destinationFile, updateImports(getFileContents(sourceFile)));
     });
 }
 
@@ -121,7 +134,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
 // childMessageRenderer_vue.js -> childMessageRendererVue.js
 function extractComponentFileNames(scripts, token, replaceValue = '') {
-    return scripts.map(script => path.basename(script).replace(token, replaceValue));
+    return scripts.map((script) => path.basename(script).replace(token, replaceValue));
 }
 
 function getFileContents(path) {
@@ -130,13 +143,14 @@ function getFileContents(path) {
 
 function forEachExample(done, name, regex, generateExample, scope = '*', trigger) {
     const pattern = trigger && trigger.endsWith('.md') ? trigger : `documentation/doc-pages/${scope}/*.md`;
-    const specificExample = trigger && (matches = /documentation\/doc-pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
+    const specificExample =
+        trigger && (matches = /documentation\/doc-pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
 
     glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
         const examplesToProcess = [];
 
-        files.forEach(file => {
+        files.forEach((file) => {
             const contents = getFileContents(file);
             const section = path.dirname(file).replace('documentation/doc-pages/', '');
 
@@ -145,8 +159,11 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
             while ((matches = regex.exec(contents))) {
                 const [example, type, optionsCapture, options] = matches.slice(1);
 
-                if ((type === 'generated' || type === 'mixed' || type === 'typescript') && (!specificExample || example === specificExample)) {
-                    examplesToProcess.push({file, section, example, options, type});
+                if (
+                    (type === 'generated' || type === 'mixed' || type === 'typescript') &&
+                    (!specificExample || example === specificExample)
+                ) {
+                    examplesToProcess.push({ file, section, example, options, type });
                 }
             }
         });
@@ -155,7 +172,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         let errorInGeneration = false;
 
-        examplesToProcess.forEach(({file, section, example, options, type}) => {
+        examplesToProcess.forEach(({ file, section, example, options, type }) => {
             try {
                 const examplePath = path.join('./documentation/doc-pages', section, 'examples', example);
 
@@ -174,10 +191,12 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         const count = processedExamples.size;
 
-        console.log(`\u2714 ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+        console.log(
+            `\u2714 ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`
+        );
 
         if (done) {
-            done(errorInGeneration ? "Error in example generation" : undefined);
+            done(errorInGeneration ? 'Error in example generation' : undefined);
         }
     });
 }
@@ -194,11 +213,11 @@ function format(source, parser, destination) {
             parser,
             singleQuote: true,
             trailingComma: 'es5',
-            pluginSearchDirs: turnOffOrganise ? ["./prettier-no-op"] : ["./"],
-            plugins: turnOffOrganise ? [] : ["prettier-plugin-organize-imports"],
-        })
+            pluginSearchDirs: turnOffOrganise ? ['./prettier-no-op'] : ['./'],
+            plugins: turnOffOrganise ? [] : ['prettier-plugin-organize-imports'],
+        });
     } catch (error) {
-        console.log(destination, error)
+        console.log(destination, error);
         return formatted;
     }
 }
@@ -208,47 +227,58 @@ function deepCloneObject(object) {
 }
 
 function readAsJsFile(tsFilePath) {
-    const tsFile = fs.readFileSync(tsFilePath, 'utf8')
+    const tsFile = fs
+        .readFileSync(tsFilePath, 'utf8')
         // Remove imports that are not required in javascript
         .replace(/import ((.|\n)*?)from.*\n/g, '')
         // Remove export statement
-        .replace(/export /g, "")
+        .replace(/export /g, '');
 
-    let jsFile = sucrase.transform(tsFile, {transforms: ["typescript"]}).code;
+    let jsFile = sucrase.transform(tsFile, { transforms: ['typescript'] }).code;
 
     return jsFile;
 }
 
-const skipFramework = framework => {
+const skipFramework = (framework) => {
     if (!process.env.AG_FW_EXAMPLES_TO_GENERATE) {
         return false;
     }
 
     return !(process.env.AG_FW_EXAMPLES_TO_GENERATE === framework);
-}
+};
 
 const skipPackages = () => {
     return !!process.env.AG_SKIP_PACKAGE_EXAMPLES;
-}
+};
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
+    const [
+        parser,
+        vanillaToVue,
+        vanillaToVue3,
+        vanillaToReact,
+        vanillaToReactFunctional,
+        vanillaToReactFunctionalTs,
+        vanillaToAngular,
+        vanillaToTypescript,
+    ] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
-    importTypes.forEach(importType => {
+    importTypes.forEach((importType) => {
         appModuleAngular.set(importType, require(`${prefix}${importType}-angular-app-module.ts`).appModuleAngular);
     });
 
     return (examplePath, type, options) => {
         //          section                 example        glob
         // eg pages/accessing-data/examples/using-for-each/*.js
-        const createExamplePath = pattern => path.join(examplePath, pattern);
+        const createExamplePath = (pattern) => path.join(examplePath, pattern);
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         function addRawScripts(fileMap, convertToJs, fileExtension = '.ts') {
-            const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts', '**/interfaces.ts']});
-            tsScripts.forEach(tsFile => {
-
+            const tsScripts = getMatchingPaths('*.ts', {
+                ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts', '**/interfaces.ts'],
+            });
+            tsScripts.forEach((tsFile) => {
                 let fileContents, fileName;
                 if (convertToJs) {
                     fileContents = readAsJsFile(tsFile);
@@ -258,10 +288,12 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     fileName = path.parse(tsFile).base.replace('.ts', fileExtension);
                 }
 
-                importTypes.forEach(importType => fileMap.set(importType, {
-                    ...fileMap.get(importType),
-                    [fileName]: fileContents
-                }));
+                importTypes.forEach((importType) =>
+                    fileMap.set(importType, {
+                        ...fileMap.get(importType),
+                        [fileName]: fileContents,
+                    })
+                );
             });
 
             return fileMap;
@@ -275,7 +307,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 const exampleInterfaces = getFileContents(interfaceFile[0]);
                 interfaces.push(exampleInterfaces);
             }
-            if (tsBindings.tData && !interfaces.some(i => i.includes(tsBindings.tData))) {
+            if (tsBindings.tData && !interfaces.some((i) => i.includes(tsBindings.tData))) {
                 interfaces.push(getGenericInterface(tsBindings.tData));
             }
             if (interfaces.length > 0) {
@@ -308,7 +340,9 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
         }
 
         // get the rest of the scripts
-        const rawScripts = getMatchingPaths('*.js', {ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}']});
+        const rawScripts = getMatchingPaths('*.js', {
+            ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'],
+        });
 
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
@@ -325,20 +359,33 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
         // for anything but vanilla JS we need all stylesheets (including any created styles.css from inline styles)
         const allStylesheets = stylesheets.concat(inlineStyles ? ['styles.css'] : []);
 
-        const {
-            bindings,
-            typedBindings
-        } = parser(examplePath, mainScript, mainFile, indexHtml, options, type, providedExamples);
+        const { bindings, typedBindings } = parser(
+            examplePath,
+            mainScript,
+            mainFile,
+            indexHtml,
+            options,
+            type,
+            providedExamples
+        );
 
-        const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
+        const writeExampleFiles = (
+            importType,
+            framework,
+            tokenToReplace,
+            frameworkScripts,
+            files,
+            subdirectory,
+            componentPostfix = ''
+        ) => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
             if (!fs.existsSync(scriptsPath)) {
-                fs.mkdirSync(scriptsPath, {recursive: true});
+                fs.mkdirSync(scriptsPath, { recursive: true });
             }
 
-            Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
+            Object.keys(files).forEach((name) => writeFile(path.join(scriptsPath, name), files[name]));
 
             if (inlineStyles) {
                 writeFile(path.join(basePath, 'styles.css'), inlineStyles);
@@ -354,7 +401,6 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {
-
             const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const sourcePath = path.join(providedRootPath, 'modules', framework);
 
@@ -363,23 +409,37 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             if (importType === 'packages' && !suppressProvidePackageConversion) {
                 // Convert the modules provided example into a packages version
-                fs.mkdirSync(destPath, {recursive: true});
+                fs.mkdirSync(destPath, { recursive: true });
 
                 let fileOrFolders = fs.readdirSync(sourcePath);
-                let files = fileOrFolders.filter(f => f.includes('.'));
-                let folders = fileOrFolders.filter(f => !f.includes('.'));
+                let files = fileOrFolders.filter((f) => f.includes('.'));
+                let folders = fileOrFolders.filter((f) => !f.includes('.'));
 
                 if (files.length > 0) {
-                    copyFiles(files.map(f => sourcePath + '/' + f), destPath, `_IGNORE`, '', 'packages', true);
+                    copyFiles(
+                        files.map((f) => sourcePath + '/' + f),
+                        destPath,
+                        `_IGNORE`,
+                        '',
+                        'packages',
+                        true
+                    );
                 }
                 if (folders) {
-                    folders.forEach(f => {
+                    folders.forEach((f) => {
                         const folderPath = sourcePath + '/' + f;
                         const subDest = destPath + '/' + f;
-                        fs.mkdirSync(subDest, {recursive: true});
+                        fs.mkdirSync(subDest, { recursive: true });
                         let subFiles = fs.readdirSync(folderPath);
-                        copyFiles(subFiles.map(s => folderPath + '/' + s), subDest, `_IGNORE`, '', 'packages', true);
-                    })
+                        copyFiles(
+                            subFiles.map((s) => folderPath + '/' + s),
+                            subDest,
+                            `_IGNORE`,
+                            '',
+                            'packages',
+                            true
+                        );
+                    });
                 }
             } else {
                 fs.copySync(sourcePath, destPath);
@@ -391,7 +451,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
         if (!incremental) {
             fs.emptyDirSync(genDir);
         } else {
-            fs.mkdirSync(genDir, {recursive: true});
+            fs.mkdirSync(genDir, { recursive: true });
         }
 
         if (type !== 'typescript') {
@@ -399,50 +459,81 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             if (!skipFramework('react')) {
                 if (type === 'mixed' && providedExamples['react']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'react', providedExamples['react'])
+                    );
                 } else {
-                    const reactScripts = getMatchingPaths('*_react.*', {ignore: ['**/*.tsx']});
+                    const reactScripts = getMatchingPaths('*_react.*', { ignore: ['**/*.tsx'] });
                     let reactConfigs = new Map();
 
                     try {
-                        const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'), allStylesheets);
-                        importTypes.forEach(importType => reactConfigs.set(importType, {'index.jsx': getSource(importType)}));
-                        reactConfigs = addRawScripts(reactConfigs, true)
+                        const getSource = vanillaToReact(
+                            deepCloneObject(bindings),
+                            extractComponentFileNames(reactScripts, '_react'),
+                            allStylesheets
+                        );
+                        importTypes.forEach((importType) =>
+                            reactConfigs.set(importType, { 'index.jsx': getSource(importType) })
+                        );
+                        reactConfigs = addRawScripts(reactConfigs, true);
                     } catch (e) {
                         console.error(`Failed to process React example in ${examplePath}`, e);
                         throw e;
                     }
 
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
+                    importTypes.forEach((importType) =>
+                        writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType))
+                    );
                 }
 
                 if (type === 'mixed' && providedExamples['reactFunctional']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional'])
+                    );
                 } else {
                     let reactDeclarativeScripts = null;
                     let reactDeclarativeConfigs = new Map();
 
                     if (vanillaToReactFunctional && options.reactFunctional !== false) {
-                        const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*', {ignore: ['**/*.tsx']}).length > 0;
+                        const hasFunctionalScripts =
+                            getMatchingPaths('*_reactFunctional.*', { ignore: ['**/*.tsx'] }).length > 0;
                         const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
 
-                        reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, {ignore: ['**/*.tsx']});
+                        reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, {
+                            ignore: ['**/*.tsx'],
+                        });
 
                         try {
-                            const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`), allStylesheets);
-                            importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
-                            reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, true)
+                            const getSource = vanillaToReactFunctional(
+                                deepCloneObject(bindings),
+                                extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`),
+                                allStylesheets
+                            );
+                            importTypes.forEach((importType) =>
+                                reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) })
+                            );
+                            reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, true);
                         } catch (e) {
                             console.error(`Failed to process React example in ${examplePath}`, e);
                             throw e;
                         }
 
-                        importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', reactScriptPostfix, reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
+                        importTypes.forEach((importType) =>
+                            writeExampleFiles(
+                                importType,
+                                'reactFunctional',
+                                reactScriptPostfix,
+                                reactDeclarativeScripts,
+                                reactDeclarativeConfigs.get(importType)
+                            )
+                        );
                     }
                 }
 
                 if (type === 'mixed' && providedExamples['reactFunctionalTs']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctionalTs', providedExamples['reactFunctionalTs']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'reactFunctionalTs', providedExamples['reactFunctionalTs'])
+                    );
                 } else {
                     let reactDeclarativeScripts = null;
                     let reactDeclarativeConfigs = new Map();
@@ -454,49 +545,72 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.tsx`);
 
                         try {
-                            const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''), allStylesheets);
-                            importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.tsx': getSource(importType)}));
+                            const getSource = vanillaToReactFunctionalTs(
+                                deepCloneObject(typedBindings),
+                                extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''),
+                                allStylesheets
+                            );
+                            importTypes.forEach((importType) =>
+                                reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) })
+                            );
                             reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
 
                             const interfaces = getInterfaceFileContents(typedBindings);
                             if (interfaces) {
-                                importTypes.forEach(importType =>
-                                    reactDeclarativeConfigs.set(importType,
-                                        {
-                                            ...reactDeclarativeConfigs.get(importType),
-                                            'interfaces.ts': interfaces
-                                        }));
+                                importTypes.forEach((importType) =>
+                                    reactDeclarativeConfigs.set(importType, {
+                                        ...reactDeclarativeConfigs.get(importType),
+                                        'interfaces.ts': interfaces,
+                                    })
+                                );
                             }
-
                         } catch (e) {
                             console.error(`Failed to process React Typescript example in ${examplePath}`, e);
                             throw e;
                         }
 
-                        importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctionalTs', reactScriptPostfix + '.tsx', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType), undefined, '.tsx'));
+                        importTypes.forEach((importType) =>
+                            writeExampleFiles(
+                                importType,
+                                'reactFunctionalTs',
+                                reactScriptPostfix + '.tsx',
+                                reactDeclarativeScripts,
+                                reactDeclarativeConfigs.get(importType),
+                                undefined,
+                                '.tsx'
+                            )
+                        );
                     }
                 }
             }
 
-
-            if(!skipFramework('angular')) {
+            if (!skipFramework('angular')) {
                 if (type === 'mixed' && providedExamples['angular']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'angular', providedExamples['angular'])
+                    );
                 } else {
                     const angularScripts = getMatchingPaths('*_angular*');
                     let angularConfigs = new Map();
                     try {
                         const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-                        const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames, allStylesheets);
+                        const getSource = vanillaToAngular(
+                            deepCloneObject(typedBindings),
+                            angularComponentFileNames,
+                            allStylesheets
+                        );
 
-                        importTypes.forEach(importType => {
+                        importTypes.forEach((importType) => {
                             let frameworkFiles = {
                                 'app.component.ts': getSource(importType),
-                                'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
+                                'app.module.ts': appModuleAngular.get(importType)(
+                                    angularComponentFileNames,
+                                    typedBindings
+                                ),
                             };
                             const interfaces = getInterfaceFileContents(typedBindings);
                             if (interfaces) {
-                                frameworkFiles = {...frameworkFiles, 'interfaces.ts': interfaces}
+                                frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces };
                             }
                             angularConfigs.set(importType, frameworkFiles);
                         });
@@ -506,20 +620,37 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         throw e;
                     }
 
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
+                    importTypes.forEach((importType) =>
+                        writeExampleFiles(
+                            importType,
+                            'angular',
+                            'angular',
+                            angularScripts,
+                            angularConfigs.get(importType),
+                            'app'
+                        )
+                    );
                 }
             }
 
-            if(!skipFramework('vue')) {
+            if (!skipFramework('vue')) {
                 if (type === 'mixed' && providedExamples['vue']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'vue', providedExamples['vue'])
+                    );
                 } else {
                     const vueScripts = getMatchingPaths('*_vue*');
                     let vueConfigs = new Map();
                     try {
-                        const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'), allStylesheets);
+                        const getSource = vanillaToVue(
+                            deepCloneObject(bindings),
+                            extractComponentFileNames(vueScripts, '_vue', 'Vue'),
+                            allStylesheets
+                        );
 
-                        importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+                        importTypes.forEach((importType) =>
+                            vueConfigs.set(importType, { 'main.js': getSource(importType) })
+                        );
                         vueConfigs = addRawScripts(vueConfigs, true);
                     } catch (e) {
                         console.error(`Failed to process Vue example in ${examplePath}`, e);
@@ -528,21 +659,39 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
                     // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
                     // from index.html will still including other non-component files
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'vue', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+                    importTypes.forEach((importType) =>
+                        writeExampleFiles(
+                            importType,
+                            'vue',
+                            'vue',
+                            vueScripts,
+                            vueConfigs.get(importType),
+                            undefined,
+                            'Vue'
+                        )
+                    );
                 }
             }
 
-            if(!skipFramework('vue3')) {
+            if (!skipFramework('vue3')) {
                 if (type === 'mixed' && providedExamples['vue3']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
+                    importTypes.forEach((importType) =>
+                        copyProvidedExample(importType, 'vue3', providedExamples['vue3'])
+                    );
                 } else {
                     if (vanillaToVue3) {
                         const vueScripts = getMatchingPaths('*_vue*');
                         let vueConfigs = new Map();
                         try {
-                            const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'), allStylesheets);
+                            const getSource = vanillaToVue3(
+                                bindings,
+                                extractComponentFileNames(vueScripts, '_vue', 'Vue'),
+                                allStylesheets
+                            );
 
-                            importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+                            importTypes.forEach((importType) =>
+                                vueConfigs.set(importType, { 'main.js': getSource(importType) })
+                            );
                             vueConfigs = addRawScripts(vueConfigs, true);
                         } catch (e) {
                             console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
@@ -551,7 +700,17 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
                         // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
                         // from index.html will still including other non-component files
-                        importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+                        importTypes.forEach((importType) =>
+                            writeExampleFiles(
+                                importType,
+                                'vue3',
+                                'vue',
+                                vueScripts,
+                                vueConfigs.get(importType),
+                                undefined,
+                                'Vue'
+                            )
+                        );
                     }
                 }
             }
@@ -559,39 +718,54 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
         if (!skipFramework('vanilla')) {
             if (type === 'mixed' && providedExamples['vanilla']) {
-                importTypes.forEach(importType => copyProvidedExample(importType, 'vanilla', providedExamples['vanilla']));
+                importTypes.forEach((importType) =>
+                    copyProvidedExample(importType, 'vanilla', providedExamples['vanilla'])
+                );
             } else {
-
                 inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
                 try {
-                    let jsFiles = {}
-                    const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
-                    tsScripts.forEach(tsFile => {
+                    let jsFiles = {};
+                    const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
+                    tsScripts.forEach((tsFile) => {
                         let jsFile = readAsJsFile(tsFile);
                         // replace Typescript new Grid( with Javascript new agGrid.Grid(
                         jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
                         // Chart classes that need scoping
-                        const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
+                        const chartImports = typedBindings.imports.find(
+                            (i) => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise')
+                        );
                         if (chartImports) {
-                            chartImports.imports.forEach(i => {
-                                const toReplace = `(?<!\\.)${i}([\\s\/.])`
-                                const reg = new RegExp(toReplace, "g");
-                                jsFile = jsFile.replace(reg, `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`);
-                            })
+                            chartImports.imports.forEach((i) => {
+                                const toReplace = `(?<!\\.)${i}([\\s\/.])`;
+                                const reg = new RegExp(toReplace, 'g');
+                                jsFile = jsFile.replace(
+                                    reg,
+                                    `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`
+                                );
+                            });
                         }
 
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
-                        jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
+                        jsFile = jsFile.replace(
+                            /LicenseManager\.setLicenseKey\(/g,
+                            'agGrid.LicenseManager.setLicenseKey('
+                        );
 
-                        const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
+                        const jsFileName = path
+                            .parse(tsFile)
+                            .base.replace('.ts', '.js')
+                            .replace('_typescript.js', '.js');
                         jsFiles[jsFileName] = jsFile;
                     });
 
-                    const updatedScripts = getMatchingPaths('*.{html,js}', {ignore: ['**/*_{angular,react,vue,vue3}.js']});
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, jsFiles));
-
+                    const updatedScripts = getMatchingPaths('*.{html,js}', {
+                        ignore: ['**/*_{angular,react,vue,vue3}.js'],
+                    });
+                    importTypes.forEach((importType) =>
+                        writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, jsFiles)
+                    );
                 } catch (e) {
                     console.error(`Failed to process Vanilla example in ${examplePath}`, e);
                     throw e;
@@ -599,15 +773,18 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             }
 
             if (type === 'mixed' && providedExamples['typescript']) {
-                importTypes.forEach(importType => copyProvidedExample(importType, 'typescript', providedExamples['typescript']));
+                importTypes.forEach((importType) =>
+                    copyProvidedExample(importType, 'typescript', providedExamples['typescript'])
+                );
             } else {
-
                 const htmlScripts = getMatchingPaths('*.html');
-                const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts', '**/interfaces.ts']});
+                const tsScripts = getMatchingPaths('*.ts', {
+                    ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts', '**/interfaces.ts'],
+                });
                 const tsConfigs = new Map();
                 try {
                     const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, allStylesheets);
-                    importTypes.forEach(importType => {
+                    importTypes.forEach((importType) => {
                         tsConfigs.set(importType, {
                             'main.ts': getSource(importType),
                         });
@@ -616,17 +793,24 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         if (interfaces) {
                             tsConfigs.set(importType, {
                                 ...tsConfigs.get(importType),
-                                'interfaces.ts': interfaces
+                                'interfaces.ts': interfaces,
                             });
                         }
-
                     });
                 } catch (e) {
                     console.error(`Failed to process Typescript example in ${examplePath}`, e);
                     throw e;
                 }
 
-                importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
+                importTypes.forEach((importType) =>
+                    writeExampleFiles(
+                        importType,
+                        'typescript',
+                        'typescript',
+                        [...htmlScripts, ...tsScripts],
+                        tsConfigs.get(importType)
+                    )
+                );
             }
         }
     };
@@ -634,13 +818,12 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
 const moduleMapping = require('./documentation/doc-pages/modules/modules.json');
 const modules = moduleMapping
-    .filter(moduleConfig => !moduleConfig.framework)
-    .map(moduleConfig => moduleConfig.module);
+    .filter((moduleConfig) => !moduleConfig.framework)
+    .map((moduleConfig) => moduleConfig.module);
 
 /** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
 function addPackageJson(type, framework, importType, basePath) {
-
-    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla']);
     if (!supportedFrameworks.has(framework)) {
         return;
     }
@@ -656,8 +839,8 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', "^14");
-        addDependency('@angular/platform-browser', "^14");
+        addDependency('@angular/core', '^14');
+        addDependency('@angular/platform-browser', '^14');
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -675,7 +858,7 @@ function addPackageJson(type, framework, importType, basePath) {
         if (type === 'grid' && framework === 'reactFunctionalTs') {
             addDependency('@ag-grid-community/react', agGridReactVersion);
         }
-        modules.forEach(m => addDependency(m, agGridVersion));
+        modules.forEach((m) => addDependency(m, agGridVersion));
     } else {
         if (type === 'grid') {
             if (framework === 'angular') {
@@ -702,21 +885,35 @@ function addPackageJson(type, framework, importType, basePath) {
 }
 
 function getGeneratorCode(prefix) {
-    const {parser} = require(`${prefix}vanilla-src-parser.ts`);
-    const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
-    const {vanillaToTypescript} = require(`${prefix}vanilla-to-typescript.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react.ts`);
-    const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
-    const {vanillaToReactFunctional} = require(`${prefix}vanilla-to-react-functional.ts`);
-    const {vanillaToReactFunctionalTs} = require(`${prefix}vanilla-to-react-functional-ts.ts`);
-    const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
+    const { parser } = require(`${prefix}vanilla-src-parser.ts`);
+    const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
+    const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
+    const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
+    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
+    const { vanillaToReactFunctional } = require(`${prefix}vanilla-to-react-functional.ts`);
+    const { vanillaToReactFunctionalTs } = require(`${prefix}vanilla-to-react-functional-ts.ts`);
+    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
+    return [
+        parser,
+        vanillaToVue,
+        vanillaToVue3,
+        vanillaToReact,
+        vanillaToReactFunctional,
+        vanillaToReactFunctionalTs,
+        vanillaToAngular,
+        vanillaToTypescript,
+    ];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
     const incremental = !!trigger;
-    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes, incremental);
+    const exampleGenerator = createExampleGenerator(
+        type,
+        `./src/example-generation/${type}-`,
+        importTypes,
+        incremental
+    );
     const regex = new RegExp(`<${type}-example.*?name=['"](.*?)['"].*?type=['"](.*?)['"](.*?options='(.*?)')?`, 'g');
 
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);
@@ -728,7 +925,7 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
             require('ts-node').register();
         }
         const importTypes = ['modules'];
-        if(!skipPackages()) {
+        if (!skipPackages()) {
             importTypes.push('packages');
         }
         generateExamples('grid', importTypes, scope, trigger, done);
@@ -767,8 +964,14 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
         console.log(`\u27F3 Generating all documentation examples...`);
     }
 
-    return new Promise(resolve => {
-        module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
+    return new Promise((resolve) => {
+        module.exports.generateChartExamples(
+            scope,
+            trigger,
+            chartsOnly
+                ? () => resolve()
+                : () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true),
+            true
+        );
     });
 };

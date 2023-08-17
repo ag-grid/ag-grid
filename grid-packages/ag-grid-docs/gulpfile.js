@@ -41,11 +41,6 @@ const populateDevFolder = () => {
 
     const styles = createCopyTask('../../grid-community-modules/styles/**/*.*', '../../grid-community-modules/styles/', '@ag-grid-community/styles');
 
-    const chartReact = createCopyTask('../../charts-community-modules/ag-charts-react/**/*.*', '../../charts-community-modules/ag-charts-react/', 'ag-charts-react');
-    const chartAngular = createCopyTask('../../charts-community-modules/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-community-modules/ag-charts-angular/', 'ag-charts-angular');
-    const chartVue = createCopyTask('../../charts-community-modules/ag-charts-vue/**/*.*', '../../charts-community-modules/ag-charts-vue/', 'ag-charts-vue');
-    const chartVue3 = createCopyTask('../../charts-community-modules/ag-charts-vue3/**/*.*', '../../charts-community-modules/ag-charts-vue3/', 'ag-charts-vue3');
-
     const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community/**/*.*', '../../grid-packages/ag-grid-community/', 'ag-grid-community');
     const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise/**/*.*', '../../grid-packages/ag-grid-enterprise/', 'ag-grid-enterprise');
     const packageAngular = createCopyTask('../../grid-packages/ag-grid-angular/dist/ag-grid-angular/**/*.*', '../../grid-packages/ag-grid-angular/', 'ag-grid-angular');
@@ -57,7 +52,6 @@ const populateDevFolder = () => {
         ...moduleCopyTasks,
         react, angular, vue, vue3,
         styles,
-        chartReact, chartAngular, chartVue, chartVue3,
         packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
 };

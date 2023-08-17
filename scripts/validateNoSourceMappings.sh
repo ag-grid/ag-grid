@@ -1,5 +1,5 @@
-COMMUNITY_ROOTS=("grid-community-modules" "charts-community-modules")
-ENTERPRISE_ROOTS=("grid-enterprise-modules" "charts-enterprise-modules")
+COMMUNITY_ROOTS=("grid-community-modules")
+ENTERPRISE_ROOTS=("grid-enterprise-modules")
 PACKAGES_ROOTS=("grid-packages")
 
 function forEachDirectory {

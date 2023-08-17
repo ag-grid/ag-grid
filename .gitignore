@@ -46,7 +46,6 @@ grid-community-modules/styles/*.css
 # compiled css files as SCSS
 grid-community-modules/styles/_css-content.scss
 
-charts-community-modules/**/dist
 grid-community-modules/**/dist
 grid-enterprise-modules/**/dist
 grid-packages/**/dist
@@ -101,12 +100,6 @@ grid-community-modules/csv-export/typings
 grid-enterprise-modules/core/typings
 grid-enterprise-modules/set-filter/typings
 grid-enterprise-modules/excel-export/typings
-
-charts-community-modules/ag-charts-react/lib
-charts-community-modules/ag-charts-react/umd
-charts-community-modules/ag-charts-vue/lib/**
-charts-community-modules/ag-charts-vue3/lib/**
-charts-community-modules/ag-charts-angular/dist
 
 
 ###### Remove once Nx fix the deep nested .gitignore

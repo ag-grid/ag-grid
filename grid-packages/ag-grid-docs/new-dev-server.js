@@ -237,27 +237,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
     });
 
 
-    lnk('../../charts-community-modules/ag-charts-react/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-react'
-    });
-    lnk('../../charts-community-modules/ag-charts-angular/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-angular'
-    });
-    lnk('../../charts-community-modules/ag-charts-vue/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-vue'
-    });
-    lnk('../../charts-community-modules/ag-charts-vue3/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-vue3'
-    });
-
     // old style packages
     lnk('../../grid-packages/ag-grid-community/', '_dev/', {
         force: true,
@@ -715,8 +694,6 @@ const watchAutoDocFiles = async () => {
         '../../grid-enterprise-modules/multi-filter/src/**/*.ts',
         '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
         '../../grid-community-modules/react/src/shared/**/*.ts',
-        '../../charts-community-modules/ag-charts-community/src/**/*.ts',
-        '../../charts-enterprise-modules/ag-charts-enterprise/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -753,7 +730,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 };
 
 const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
+    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules'];
     const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'ag-grid-documentation'];
     const modulesState = {};
 

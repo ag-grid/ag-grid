@@ -61,16 +61,6 @@ git reset grid-community-modules/vue/dist
 git reset grid-packages/ag-grid-vue/dist
 git reset grid-community-modules/vue3/dist
 git reset grid-community-modules/vue3/lib
-git reset charts-community-modules/ag-charts-angular/dist
-git reset charts-community-modules/ag-charts-community/dist
-git reset charts-community-modules/ag-charts-community/typings
-git reset charts-community-modules/ag-charts-react/lib
-git reset charts-community-modules/ag-charts-react/umd
-git reset charts-community-modules/ag-charts-vue/lib
-git reset charts-community-modules/ag-charts-vue/dist
-git reset charts-community-modules/ag-charts-vue3/lib
-git reset charts-community-modules/ag-charts-vue3/dist
-git reset charts-enterprise-modules/ag-charts-enterprise/dist
 git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles

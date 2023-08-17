@@ -6,13 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.github" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/umd" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-vue-example/dist" />
@@ -139,12 +132,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/set-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/advanced-filter/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/advanced-filter/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-anglar/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-community/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-vue/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-angular/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-react/lib" />
     </content>
     <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />

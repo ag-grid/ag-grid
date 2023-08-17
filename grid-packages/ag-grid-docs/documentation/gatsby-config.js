@@ -9,7 +9,7 @@ const isDevelopment = require("./src/utils/is-development")
 
 const agGridVersion = require("../../../grid-community-modules/core/package.json")
   .version
-const agChartsVersion = require("../../../charts-community-modules/ag-charts-community/package.json")
+const agChartsVersion = require("../../../node_modules/ag-charts-community/package.json")
   .version
 
 // We use graceful-fs to stop issues with running out of file handles, particularly on Windows

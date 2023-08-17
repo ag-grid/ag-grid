@@ -12,9 +12,6 @@ module.exports = merge(common, {
     },
 
     resolve: {
-        alias: {
-            "ag-charts-community": path.resolve(__dirname, "../../../charts-community-modules/ag-charts-community/src/main.ts")
-        },
         extensions: [".ts", ".tsx", ".js"]
     },
 
