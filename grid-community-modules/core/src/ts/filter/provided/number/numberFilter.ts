@@ -47,23 +47,29 @@ export interface INumberFilterParams extends IScalarFilterParams {
      */
     browserAutoComplete?: boolean | string;
     /**
-     * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.
+     * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs
+     * into a number that can be used for comparisons.
      */
     numberParser?: (text: string | null) => number | null;
+    /**
+     * Typically used alongside `allowedCharPattern`, this provides a custom formatter to convert the number value in the filter model
+     * into a string to be used in the filter input. This is the inverse of the `numberParser`.
+     */
+    numberFormatter?: (value: number | null) => string | null;
 }
 
-export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
+export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<number> {
     protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
         const { numberOfInputs } = options || {};
         const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
 
         if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
+            return `${this.formatValue(condition.filter)}-${this.formatValue(condition.filterTo)}`;
         }
 
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return `${condition.filter}`;
+            return this.formatValue(condition.filter);
         }
 
         return `${condition.type}`;
@@ -123,11 +129,18 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.numberFilterParams = params;
 
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
     }
 
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
+    }
+
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null): void {
+        const valueToSet = this.numberFilterParams.numberFormatter
+            ? this.numberFilterParams.numberFormatter(value ?? null)
+            : value;
+        super.setElementValue(element, valueToSet as any);
     }
 
     protected createValueElement(): HTMLElement {

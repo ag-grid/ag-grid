@@ -13,6 +13,11 @@ var saleFilterParams: INumberFilterParams = {
       ? null
       : parseFloat(text.replace(',', '.').replace('$', ''))
   },
+  numberFormatter: (value: number | null) => {
+    return value == null
+      ? null
+      : value.toString().replace('.', ',');
+  },
 }
 
 var saleValueFormatter = function (params: ValueFormatterParams) {

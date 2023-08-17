@@ -131,10 +131,11 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 
 export type Tuple<T> = (T | null)[];
 
-export abstract class SimpleFilterModelFormatter {
+export abstract class SimpleFilterModelFormatter<TValue = any> {
     constructor(
         private readonly localeService: LocaleService,
-        private optionsFactory: OptionsFactory
+        private optionsFactory: OptionsFactory,
+        protected readonly valueFormatter?: (value: TValue | null) => string | null
     ) {}
 
     // used by:
@@ -178,6 +179,10 @@ export abstract class SimpleFilterModelFormatter {
 
     public updateParams(params: { optionsFactory: OptionsFactory }) {
         this.optionsFactory = params.optionsFactory;
+    }
+
+    protected formatValue(value?: TValue | null): string {
+        return this.valueFormatter ? (this.valueFormatter(value ?? null) ?? '') : String(value);
     }
 }
 

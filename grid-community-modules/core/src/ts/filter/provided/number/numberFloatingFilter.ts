@@ -1,4 +1,4 @@
-import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter } from './numberFilter';
+import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
 import { FloatingFilterInputService, FloatingFilterTextInputService, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
@@ -81,7 +81,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
 
     public init(params: IFloatingFilterParams<NumberFilter>): void {
         super.init(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new NumberFilterModelFormatter(
+            this.localeService,
+            this.optionsFactory,
+            (params.filterParams as NumberFilterParams)?.numberFormatter
+        );
     }
 
     public onParamsUpdated(params: IFloatingFilterParams<NumberFilter>): void {
