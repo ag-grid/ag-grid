@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
     const filtered = list.filter( s => s != null && s !== '');
@@ -43,6 +44,21 @@ export const isComponentStateless = (Component: any) => {
         ) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
 }
 
+// CreateRoot is only available from React 18, which if used requires us to use flushSync.
+const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
+
+/**
+ * Wrapper around flushSync to provide backwards compatibility with React 16-17
+ * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
+ * as we do not want to use flushSync when we are likely to already be in a render cycle
+ */
+export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
+    if (createRootAndFlushSyncAvailable && useFlushSync) {
+        (ReactDOM as any).flushSync(fn);
+    } else {
+        fn();
+    }
+}
 
 /**
  * The aim of this function is to maintain references to prev or next values where possible.
@@ -102,3 +118,4 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     // Spread as we need to combine the old and new values
     return [...oldValues, ...newValues];
 }
+
