@@ -135,18 +135,28 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.highlightSelectedValue();
     }
 
-    private highlightSelectedValue(): void {
+    private getCurrentValueIndex(): number {
         const { values, value } = this;
 
-        if (value == null) { return; }
+        if (value == null) { return -1; }
 
         for (let i = 0; i < values.length; i++) {
             if (values[i] === value) {
-                this.highlightedItem = i;
-                break;
+                return i;
             }
         }
 
+        return -1;
+    }
+
+    private highlightSelectedValue(index?: number): void {
+        if (index == null) {
+            index = this.getCurrentValueIndex();
+        }
+
+        if (index === -1) { return; }
+
+        this.highlightedItem = index;
     }
 
     public setRowHeight(height: number): void {
@@ -173,7 +183,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     public showPicker() {
         super.showPicker();
-        this.highlightSelectedValue();
+        const currentValueIndex = this.getCurrentValueIndex();
+        if (currentValueIndex !== -1) {
+            // make sure the virtual list has been sized correctly
+            this.listComponent?.refresh();
+            this.listComponent?.ensureIndexVisible(currentValueIndex);
+        }
+        
+        this.highlightSelectedValue(currentValueIndex);
         this.listComponent!.refresh();
     }
 
