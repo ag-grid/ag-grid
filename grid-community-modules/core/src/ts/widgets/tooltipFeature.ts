@@ -60,7 +60,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.setBrowserTooltip(this.tooltip);            
+            this.setBrowserTooltip(this.tooltip);
         } else {
             this.createTooltipFeatureIfNeeded();
         }
@@ -85,7 +85,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.setBrowserTooltip(this.tooltip);            
+            this.setBrowserTooltip(this.tooltip);
         }
     }
 

@@ -6,7 +6,6 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { capitalise } from "../utils/string";
 import { doOnce } from "../utils/function";
 import { Events } from "../eventKeys";
 import { TooltipHideEvent, TooltipShowEvent } from "../events";
@@ -62,6 +61,9 @@ export class CustomTooltipFeature extends BeanStub {
     private tooltipMouseLeaveListener: (() => null) | null;
     private tooltipFocusInListener: (() => null) | null;
     private tooltipFocusOutListener: (() => null) | null;
+
+    private onBodyScrollEventCallback: (() => null) | undefined;
+    private onColumnMovedEventCallback: (() => null) | undefined;
 
     constructor(
         private parentComp: TooltipParentComp,
@@ -247,6 +249,17 @@ export class CustomTooltipFeature extends BeanStub {
         if (this.state === TooltipStates.SHOWING) {
             this.hideTooltip();
         }
+
+        if (this.onBodyScrollEventCallback) {
+            this.onBodyScrollEventCallback();
+            this.onBodyScrollEventCallback = undefined;
+        }
+
+        if (this.onColumnMovedEventCallback) {
+            this.onColumnMovedEventCallback();
+            this.onColumnMovedEventCallback = undefined;
+        }
+
         this.clearTimeouts();
         this.state = TooltipStates.NOTHING;
         this.lastMouseEvent = null;
@@ -328,6 +341,11 @@ export class CustomTooltipFeature extends BeanStub {
         }
 
         this.positionTooltip();
+
+        if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
+            this.onBodyScrollEventCallback = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
+            this.onColumnMovedEventCallback = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
+        }
 
         if (this.interactionEnabled) {
             if (this.tooltipTrigger === TooltipTrigger.HOVER) {
