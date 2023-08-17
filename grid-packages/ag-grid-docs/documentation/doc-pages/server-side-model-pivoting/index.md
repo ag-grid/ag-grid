@@ -153,7 +153,7 @@ The example demonstrates the following:
 
 - You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
 
-- Columns **Age, Country, Year** and **Sport** all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
+- Columns `Age, Country, Year` and `Sport` all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
 
 - Note that when you pivot, it is not possible to drill all the way down the leaf levels.
 

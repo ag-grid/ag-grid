@@ -464,11 +464,11 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
         }
 
-        const uniqueValuesToGroups = (id: string, key: string, uniqueValues: UniqueValue): ColDef | ColGroupDef => {
+        const uniqueValuesToGroups = (id: string, key: string, uniqueValues: UniqueValue, depth: number): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
             for (let key in uniqueValues) {
                 const item = uniqueValues[key];
-                const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item);
+                const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
                 children.push(child);
             }
 
@@ -500,6 +500,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
 
             const group: ColGroupDef = {
+                openByDefault: this.pivotDefaultExpanded === -1 || depth < this.pivotDefaultExpanded,
                 groupId: id,
                 headerName: key,
                 children,
@@ -510,7 +511,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         const res: (ColDef | ColGroupDef)[] = [];
         for (let key in uniqueValues) {
             const item = uniqueValues[key];
-            const col = uniqueValuesToGroups(key, key, item);
+            const col = uniqueValuesToGroups(key, key, item, 0);
             res.push(col);
         }
         return res;
