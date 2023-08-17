@@ -1,4 +1,3 @@
-
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
@@ -6,13 +5,12 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GetRowIdFunc, GetRowIdParams, Grid, GridOptions, GridReadyEvent, IDetailCellRendererParams } from '@ag-grid-community/core';
-import { IAccount } from './interfaces'
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent, ModuleRegistry, IDetailCellRendererParams, GetRowIdFunc } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { IAccount } from './interfaces'
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])

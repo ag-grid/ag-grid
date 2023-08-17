@@ -1,21 +1,15 @@
-"use strict"
+'use strict';
 
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
-import { ModuleRegistry } from "@ag-grid-community/core"
-import { AgGridReact } from "@ag-grid-community/react"
-import "@ag-grid-community/styles/ag-grid.css"
-import "@ag-grid-community/styles/ag-theme-alpine.css"
-import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel"
-import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"
-import { MenuModule } from "@ag-grid-enterprise/menu"
-import React, {
-  StrictMode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import { createRoot } from "react-dom/client"
+import React, { useState, useRef, StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from "@ag-grid-community/react";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
+import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
+import { MenuModule } from "@ag-grid-enterprise/menu";
+import { ModuleRegistry } from "@ag-grid-community/core";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])

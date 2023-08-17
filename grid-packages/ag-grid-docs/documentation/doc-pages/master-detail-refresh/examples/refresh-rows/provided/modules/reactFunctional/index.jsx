@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -130,4 +130,4 @@ const GridExample = () => {
 }
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(<StrictMode><GridExample /></StrictMode>);
