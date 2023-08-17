@@ -61,6 +61,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expression: string | null = null;
     private expressionFunction: Function | null;
     private expressionArgs: any[] | null;
+    private isValid: boolean = true;
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
     private expressionOperators: FilterExpressionOperators;
@@ -241,18 +242,19 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public applyExpression(): void {
-        this.expressionFunction = null;
-        this.expressionArgs = null;
-        this.appliedExpression = null;
-
         const expressionParser = this.createExpressionParser(this.expression);
+        expressionParser?.parseExpression();
+        this.applyExpressionFromParser(expressionParser)
+    }
 
-        if (!expressionParser) { return; }
-
-        expressionParser.parseExpression();
-        const isValid = expressionParser.isValid();
-
-        if (!isValid) { return; }
+    private applyExpressionFromParser(expressionParser: FilterExpressionParser | null): void {
+        this.isValid = !expressionParser || expressionParser.isValid();
+        if (!expressionParser || !this.isValid) {
+            this.expressionFunction = null;
+            this.expressionArgs = null;
+            this.appliedExpression = null;
+            return;
+        }
 
         const { functionBody, args } = expressionParser.getFunction();
 
@@ -267,6 +269,18 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             defaultValue = defaultValue(variableValues!);
         }
         return this.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
+    }
+
+    public updateValidity(): boolean {
+        const expressionParser = this.createExpressionParser(this.expression);
+        expressionParser?.parseExpression();
+        const isValid = !expressionParser || expressionParser.isValid();
+
+        if (isValid === this.isValid) { return false; }
+
+        this.applyExpressionFromParser(expressionParser);
+        this.ctrl.refreshComp();
+        return true;
     }
 
     private getColumnAutocompleteEntries(): AutocompleteEntry[] {

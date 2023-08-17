@@ -75,12 +75,16 @@ export class FilterManager extends BeanStub {
             this.refreshFiltersForAggregations();
             this.resetQuickFilterCache();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => {
+            this.resetQuickFilterCache();
+            this.updateAdvancedFilterColumns();
+        });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
             if (!this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
+            this.updateAdvancedFilterColumns();
         });
 
         this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
@@ -1003,6 +1007,13 @@ export class FilterManager extends BeanStub {
         if (!this.isAdvancedFilterEnabled()) { return; }
         this.advancedFilterService.setModel(expression);
         this.onFilterChanged({ source: 'advancedFilter' });
+    }
+
+    private updateAdvancedFilterColumns(): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        if (this.advancedFilterService.updateValidity()) {
+            this.onFilterChanged({ source: 'advancedFilter' });
+        }
     }
 
     public hasFloatingFilters(): boolean {

@@ -16,4 +16,6 @@ export interface IAdvancedFilterService {
     isHeaderActive(): boolean;
 
     getCtrl(): IAdvancedFilterCtrl;
+
+    updateValidity(): boolean;
 }
