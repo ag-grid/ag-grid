@@ -22,9 +22,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
-    const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), []);
-    const containerClasses = useMemo( ()=> classesList(cssClasses.container), []);
+    const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), [cssClasses]);
+    const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), [cssClasses]);
+    const containerClasses = useMemo( ()=> classesList(cssClasses.container), [cssClasses]);
 
     // no need to useMemo for boolean types
     const template1 = name === RowContainerName.CENTER;
