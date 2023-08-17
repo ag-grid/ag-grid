@@ -490,7 +490,7 @@ export class SetValueModel<V> implements IEventEmitter {
         // and when the users types a value in the mini filter.
         return (
             this.isInWindowsExcelMode()
-            && this.miniFilterText !== null
+            && _.exists(this.miniFilterText)
             && this.miniFilterText.length > 0
         );
     }
@@ -545,6 +545,10 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     public getModel(): SetFilterModelValue | null {
+        if (!this.hasSelections()) {
+            return null;
+        }
+
         // When excelMode = 'windows' and the user has ticked 'Add current selection to filter'
         // the filtering keys can be different from the selected keys, and they should be included
         // in the model.
@@ -552,15 +556,23 @@ export class SetValueModel<V> implements IEventEmitter {
             ? this.filteringKeys
             : null;
 
-        const modelKeys = filteringKeys && filteringKeys.size > 0
-            // Filtering keys are present, use a set structure to avoid duplicates
-            ? new Set<string | null>([
-                ...Array.from(filteringKeys ?? []).map(this.caseFormat),
-                ...Array.from(this.selectedKeys ?? []).map(this.caseFormat),
-            ])
-            : this.selectedKeys;
+        if (filteringKeys && filteringKeys.size > 0) {
+            if (this.selectedKeys) {
+                // When existing filtering keys are present along with selected keys,
+                // we combine them and return the result.
+                // We use a set structure to avoid duplicates
+                const modelKeys = new Set<string | null>([
+                    ...Array.from(filteringKeys),
+                    ...Array.from(this.selectedKeys).filter(key => !filteringKeys.has(key)).map(this.caseFormat),
+                ]);
+                return Array.from(modelKeys);
+            } else {
+                return Array.from(filteringKeys);
+            }
+        }
 
-        return this.hasSelections() ? Array.from(modelKeys) : null;
+        // No extra filtering keys are present - so just return the selected keys
+        return Array.from(this.selectedKeys);
     }
 
     public setModel(model: SetFilterModelValue | null): AgPromise<void> {

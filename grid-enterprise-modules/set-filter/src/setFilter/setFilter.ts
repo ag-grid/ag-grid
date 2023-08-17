@@ -667,10 +667,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             this.valueModel.selectAllMatchingMiniFilter();
         }
 
-        // Here we implement AG-9090 TC2 -
+        const shouldKeepCurrentSelection = this.valueModel.showAddCurrentSelectionToFilter() && this.valueModel.isAddCurrentSelectionToFilterChecked();
+
+        // Here we implement AG-9090 TC2
         // When 'Add current selection to filter' is visible and checked, but no filter is applied:
         // Do NOT apply the current selection as filter.
-        if (this.valueModel!.showAddCurrentSelectionToFilter() && this.valueModel!.isAddCurrentSelectionToFilterChecked() && !this.getModel()) {
+        if (shouldKeepCurrentSelection && !this.getModel()) {
             return false;
         }
 
@@ -678,9 +680,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         // keep appliedModelKeys in sync with the applied model
         const appliedModel = this.getModel();
-
-        const shouldKeepCurrentSelection = this.valueModel.showAddCurrentSelectionToFilter()
-            && this.valueModel.isAddCurrentSelectionToFilterChecked();
 
         if (appliedModel) {
             if (!shouldKeepCurrentSelection) {
@@ -1246,7 +1245,7 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
         }
 
         if (index === 1 && this.model.showAddCurrentSelectionToFilter()) {
-            return this.model.isAddCurrentSelectionToFilterChecked() || false;
+            return this.model.isAddCurrentSelectionToFilterChecked();
         }
 
         return this.model.isKeySelected(this.getRow(index));
