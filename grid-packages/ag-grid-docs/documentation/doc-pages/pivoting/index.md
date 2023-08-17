@@ -264,17 +264,17 @@ To open all pivot groups down to a given group depth level use the `pivotDefault
 |        { field: 'bronze', aggFunc: 'sum' },
 |        { field: 'bronze', aggFunc: 'sum' },
 |    ],
-|    // first (sport) row group will be open by default
+|    // first (sport) pivot group level will be open by default
 |    pivotDefaultExpanded: 1,
 |    // other grid options ...
 | }
 </snippet>
 
-In the snippet above, the first level row group `sport` will be expanded by default as `pivotDefaultExpanded = 1`.
+In the snippet above, the first pivot group level `sport` will be expanded by default as `pivotDefaultExpanded = 1`. 
 
-By default all column groups are collapsed. To expand all row groups set `pivotDefaultExpanded = -1`.
+By default all pivot group levels are collapsed. To expand all pivot group levels set `pivotDefaultExpanded = -1`.
 
-The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first `sport` row group is expanded by default as `pivotDefaultExpanded = 1`.
+The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first pivot group level `sport` is expanded by default as `pivotDefaultExpanded = 1`.
 
 <grid-example title='Open Pivot Group By Default' name='open-pivot-group-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
