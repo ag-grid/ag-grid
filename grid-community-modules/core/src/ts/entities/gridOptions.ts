@@ -961,7 +961,7 @@ export interface GridOptions<TData = any> {
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
-    /** Callback to perform additional sorting after the grid has sorted the rows. */
+    /** Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true` */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
     // *** Styling *** //
