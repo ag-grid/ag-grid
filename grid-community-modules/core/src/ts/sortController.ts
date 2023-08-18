@@ -145,7 +145,6 @@ export class SortController extends BeanStub {
     }
 
     /**
-     * @param includeRedundantColumns whether to include non-grouped, non-secondary, non-aggregated columns when pivot active
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     private getIndexedSortMap(): Map<Column, number> {
