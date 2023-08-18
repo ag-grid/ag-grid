@@ -1,5 +1,5 @@
 import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
-import { FloatingFilterInputService, FloatingFilterTextInputService, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams,TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
@@ -75,11 +75,14 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 }
 
+export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {
+}
+
 export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
     private allowedCharPattern: string | null;
 
-    public init(params: IFloatingFilterParams<NumberFilter>): void {
+    public init(params: INumberFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
             this.localeService,
@@ -88,7 +91,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         );
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<NumberFilter>): void {
+    public onParamsUpdated(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
@@ -105,7 +108,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         return this.filterModelFormatter;
     }
 
-    protected createFloatingFilterInputService(params: IFloatingFilterParams<NumberFilter>): FloatingFilterInputService {
+    protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
         this.allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (this.allowedCharPattern) {
             // need to use text input

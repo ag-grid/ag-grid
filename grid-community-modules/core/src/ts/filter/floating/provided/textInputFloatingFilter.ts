@@ -74,17 +74,30 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 }
 
+export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<TextFilter | NumberFilter> {
+    /**
+     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
+     * Possible values are:
+     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
+     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
+     * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
+     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+     * Default: `false`
+     */
+    browserAutoComplete?: boolean | string;
+};
+
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
     private floatingFilterInputService: FloatingFilterInputService;
 
-    protected params: IFloatingFilterParams<TextFilter | NumberFilter>;
+    protected params: ITextInputFloatingFilterParams;
 
     private applyActive: boolean;
 
-    protected abstract createFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(params: ITextInputFloatingFilterParams): FloatingFilterInputService;
 
     @PostConstruct
     private postConstruct(): void {
@@ -109,21 +122,21 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     }
 
-    public init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    public init(params: ITextInputFloatingFilterParams): void {
         this.setupFloatingFilterInputService(params);
         super.init(params);
         this.setTextInputParams(params);
     }
 
-    private setupFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    private setupFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
         this.floatingFilterInputService = this.createFloatingFilterInputService(params);
         this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
     }
 
-    private setTextInputParams(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    private setTextInputParams(params: ITextInputFloatingFilterParams): void {
         this.params = params;
 
-        const autoComplete = (params.filterParams as ITextFilterParams | undefined)?.browserAutoComplete ?? false;
+        const autoComplete = params.browserAutoComplete ?? false;
         this.floatingFilterInputService.setParams({
             ariaLabel: this.getAriaLabel(params),
             autoComplete,
@@ -139,12 +152,12 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    public onParamsUpdated(params: ITextInputFloatingFilterParams): void {
         super.onParamsUpdated(params);
         this.setTextInputParams(params);
     }
 
-    protected recreateFloatingFilterInputService(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
         const value = this.floatingFilterInputService.getValue();
         clearElement(this.eFloatingFilterInputContainer);
         this.destroyBean(this.floatingFilterInputService);
@@ -152,7 +165,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.floatingFilterInputService.setValue(value, true);
     }
 
-    private getAriaLabel(params: IFloatingFilterParams<TextFilter | NumberFilter>): string {
+    private getAriaLabel(params: ITextInputFloatingFilterParams): string {
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`

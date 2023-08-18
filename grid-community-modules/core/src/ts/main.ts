@@ -115,7 +115,8 @@ export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextF
 export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback } from "./filter/floating/floatingFilter";
-export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
+export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
+export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 

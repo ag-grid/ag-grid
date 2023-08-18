@@ -1,17 +1,19 @@
 import { TextFilter, TextFilterModel, TextFilterModelFormatter } from './textFilter';
-import { FloatingFilterInputService, FloatingFilterTextInputService, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
-import { IFloatingFilterParams } from '../../floating/floatingFilter';
+
+export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {
+}
 
 export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
 
-    public init(params: IFloatingFilterParams<TextFilter>): void {
+    public init(params: ITextFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<TextFilter>): void {
+    public onParamsUpdated(params: ITextFloatingFilterParams): void {
         super.onParamsUpdated(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
