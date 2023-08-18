@@ -130,6 +130,26 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         this.selectionStrategy.processNewRow(rowNode);
 
         const isNodeSelected = this.selectionStrategy.isNodeSelected(rowNode);
+
+        // if the node was selected but node is not selectable, we deselect the node.
+        // (could be due to user applying selected state directly, or a change in selectable)
+        if (isNodeSelected != false && !rowNode.selectable) {
+            this.selectionStrategy.setNodesSelected({
+                nodes: [rowNode],
+                newValue: false,
+                source: 'api',
+            });
+
+            // we need to shotgun reset here as if this was hierarchical, some group nodes
+            // may be changing from indeterminate to unchecked.
+            this.shotgunResetNodeSelectionState();
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'api',
+            };
+            this.eventService.dispatchEvent(event);
+            return;
+        }
         rowNode.setSelectedInitialValue(isNodeSelected);
     }
 
