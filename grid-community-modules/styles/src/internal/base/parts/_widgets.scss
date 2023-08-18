@@ -230,7 +230,7 @@
     }
 
     .ag-picker-field-wrapper {
-        border: 1px solid;
+        border: var(--ag-borders);
         border-color: var(--ag-border-color);
         border-radius: 5px;
 
