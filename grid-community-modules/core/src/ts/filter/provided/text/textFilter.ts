@@ -81,16 +81,6 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      */
     caseSensitive?: boolean;
     /**
-     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
-     * Possible values are:
-     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
-     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
-     * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
-     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
-     * Default: `false`
-     */
-    browserAutoComplete?: boolean | string;
-    /**
      * Formats the text before applying the filter compare logic.
      * Useful if you want to substitute accented characters, for example.
      */
@@ -273,7 +263,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const eValue = this.createManagedBean(new AgInputTextField());
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
-        eValue.setAutoComplete(this.textFilterParams.browserAutoComplete ?? false);
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());
     }
