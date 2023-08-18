@@ -80,7 +80,7 @@ const gridOptions = {
     ],
     rowModelType: 'serverSide',
     pivotMode: true,
-    // specify the field separator, e.g. '2000_gold' should be '_' which is the default
+    // specify the field separator, e.g. '2000_gold' should be '_' which is also the default
     serverSidePivotResultFieldSeparator: '_',
 }
 </snippet>
