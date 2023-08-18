@@ -144,9 +144,12 @@ export class GroupCellRendererCtrl extends BeanStub {
             }
         }
 
+        // we still want to render a group cell to show the checkbox, even if the value is undefined, null or empty string
+        const isBlankWithCheckbox = this.isUserWantsSelected() && (params.value === null || params.value === undefined || params.value === '')
+
         this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || (isNullValueAndNotMaster && !params.node.master) || skipCell);
 
-        if (this.cellIsBlank) { return; }
+        if (this.cellIsBlank && !isBlankWithCheckbox) { return; }
 
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
