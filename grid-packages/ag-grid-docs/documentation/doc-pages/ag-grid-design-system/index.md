@@ -10,6 +10,13 @@ The AG Grid design system replicates the Alpine & Alpine Dark AG Grid themes wit
 
 The design system has been built from the ground up to be consistent with the javasvscript library, aiding in the designer / developer handoff process.
 
+## Video introduction & Figma documentation
+
+<video-section id="C2ShUfsO6gE" title="Introducing the AG Grid Figma Design System">
+  <p class="font-size-responsive">Watch our short introduction video to the design system on Youtube. You'll learn how to get started with the design system, where to find complete grid templates, and how to build your own grids from scratch.</p>
+  <p class="font-size-responsive">The design system contains comprehensive documentation for all our components right within Figma. We also provide in depth tutorial videos for many of the individual sections.</p>
+</video-section>
+
 ## Download & Install
 
 To get started with the AG Grid design system first download the `.zip` file below. Within the zip archive you'll find a `AG-Grid-design-system-X.X.X.fig` Figma file, and a directory with a sample [Style Dictionary](https://amzn.github.io/style-dictionary/#/) project.
@@ -18,7 +25,7 @@ To start using the AG Grid Design System in Figma just drag and drop the `.fig` 
 
 The Figma file contains comprehensive documentation for how to use the design system and examples of pre-built grids including all our core features.
 
-<a href="../../../downloads/AG-Grid-design-system-30-0-0-preview.zip" download class="button">Download AG Grid Design System</a>
+<a href="../../../downloads/ag-grid-design-system-30.1.0.zip" download class="button">Download AG Grid Design System</a>
 
 ## Customising the Design System
 
@@ -34,10 +41,10 @@ If you have created your own theme in Figma using the variables feature you can 
 
 To export your Figma Variables as json...
 
-1. In the Resources panel go to the Plugins tab.
-2. Search for the [Variables Import Export plugin](https://www.figma.com/community/plugin/1254848311152928301).
-3. Click run for the [Variables Import Export plugin](https://www.figma.com/community/plugin/1254848311152928301) and select the 'Export variables' option.
-4. Click the 'Export variables' button and save the json to the `./tokens/` directory.
+1. In the Resources panel go to the Plugins tab and search for the [Design Tokens plugin](https://www.figma.com/community/plugin/888356646278934516/Design-Tokens).
+2. Click on the [Design Tokens plugin](https://www.figma.com/community/plugin/888356646278934516/Design-Tokens) and select the "Export Design Token File" option.
+3. Deselect all include types except for "Figma Variables".
+4. Click the 'Save & Export' button and save the json to the `./tokens/` directory.
 
 <image-caption src="ag-grid-design-system/resources/FDS-export-variables.png" alt="Export Figma Variables" constrained="false" centered="true"></image-caption>
 

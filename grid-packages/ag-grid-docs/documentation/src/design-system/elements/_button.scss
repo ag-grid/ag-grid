@@ -32,7 +32,7 @@ input[type='submit'],
     &:hover,
     &.hover {
         background-color: var(--button-hover-color);
-        color: var(--button-text-color);
+        color: var(--button-text-color) !important;
     }
 
     &:active {
