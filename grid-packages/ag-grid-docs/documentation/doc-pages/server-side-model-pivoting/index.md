@@ -62,7 +62,7 @@ these to the grid in order for the grid to display the correct columns for the a
 For instance, when pivoting on the `year` field, you must provide columns to the grid corresponding to each distinct 
 year present in the data, such as `2000`, `2002`, `2004`, and so on.
 
-### Pivot Result Fields (Simple)
+### Supplying Pivot Result Fields (Simple)
 
 The simplest way to provide pivot result columns is by supplying the fields containing your pivoted data to the
 `pivotResultFields` attribute in the `getRows` success callback. These fields are used to generate pivot result columns
@@ -123,7 +123,7 @@ The example below demonstrates this, note the following:
 When using managed columns, you can use [Pivot Callbacks](../pivoting/#pivot-result-column-definitions) to customise the pivot result column definitions.
 </note>
 
-### Pivot Result Columns (Advanced)
+### Creating Pivot Result Columns (Advanced)
 
 It is also possible to create your own pivot result columns and provide them to the grid. This offers complete flexibility
 but can become complex when column groups are involved.
