@@ -168,9 +168,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
+                const shouldRestoreFocus = eDocument.activeElement === eDocument.body;
                 this.beforeHidePicker();
 
-                if (this.isAlive()) {
+                if (shouldRestoreFocus && this.isAlive()) {
                     this.getFocusableElement().focus();
                 }
             },

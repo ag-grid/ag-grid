@@ -10,6 +10,8 @@ import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
 import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
+import { setAriaSelected } from "../utils/aria";
+import { VirtualList } from "./virtualList";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -27,12 +29,12 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public setState(value: TValue, selected: boolean): void {
-        let formattedValue = value;
+        let formattedValue: string = ''
 
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
         }
-        const rendererSuccessful = this.populateWithRenderer(formattedValue);
+        const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, formattedValue);
         }
@@ -42,6 +44,17 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public updateHighlighted(highlighted: boolean): void {
+        const eGui = this.getGui();
+        const parentId = `ag-rich-select-row-${this.getCompId()}`;
+
+        eGui.parentElement?.setAttribute('id', parentId);
+
+        if (highlighted) {
+            const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
+            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+        }
+
+        setAriaSelected(eGui.parentElement!, highlighted);
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     }
 
@@ -58,15 +71,11 @@ export class RichSelectRow<TValue> extends Component {
         eGui.appendChild(span);
     }
 
-    private populateWithRenderer(value: TValue): boolean {
+    private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
 
-        const { valueFormatter } = this.params;
-
-        const formattedValue = valueFormatter ? valueFormatter(value) : null;
-        const valueFormatted = exists(formattedValue) ? formattedValue : value;
 
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {

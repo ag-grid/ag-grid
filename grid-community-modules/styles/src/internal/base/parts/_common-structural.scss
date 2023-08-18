@@ -1254,6 +1254,10 @@
         display: flex;
         align-items: center;
         height: 100%;
+        .ag-picker-field-display {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     .ag-rich-select-list {

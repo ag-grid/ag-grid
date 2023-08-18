@@ -366,6 +366,10 @@ export class VirtualList extends TabGuardComp {
         this.model = model;
     }
 
+    public getAriaElement(): Element {
+        return this.eContainer;
+    }
+
     public destroy(): void {
         if (!this.isAlive()) { return; }
 

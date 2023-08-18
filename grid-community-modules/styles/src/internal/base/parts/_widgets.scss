@@ -353,6 +353,11 @@
         color: var(--ag-foreground-color);
     }
 
+    // Popups
+    .ag-popup-child:not(.ag-tooltip-custom) {
+        box-shadow: var(--ag-popup-shadow);
+    }
+
     ////////////////////////////////////////
     // Select
     ////////////////////////////////////////

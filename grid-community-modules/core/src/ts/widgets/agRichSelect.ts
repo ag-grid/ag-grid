@@ -6,6 +6,7 @@ import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
+import { setAriaControls } from "../utils/aria";
 import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
@@ -43,7 +44,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             pickerAriaLabelValue: 'Rich Select Field',
             pickerType: 'ag-list',
             ...config,
-        }, 'ag-rich-select', 'smallDown', 'listbox');
+        }, 'ag-rich-select', 'smallDown', 'combobox');
 
         const { cellRowHeight, value, valueList, searchDebounceDelay } = config || {};
 
@@ -78,9 +79,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private createListComponent(): void {
         this.listComponent = this.createManagedBean(new VirtualList({ cssIdentifier: 'rich-select' }))
-        this.listComponent.getGui().classList.add('ag-rich-select-list');
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
         this.listComponent.setParentComponent(this);
+
         this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
             this.onListValueSelected(e.value, e.fromEnterKey);
         });
@@ -89,10 +90,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.listComponent.setRowHeight(this.cellRowHeight);
         }
 
-        const eListComponent = this.listComponent.getGui();
+        const eListGui = this.listComponent.getGui();
+        const eListAriaEl = this.listComponent.getAriaElement();
 
-        this.addManagedListener(eListComponent, 'mousemove', this.onPickerMouseMove.bind(this));
-        this.addManagedListener(eListComponent, 'mousedown', e => e.preventDefault());
+        this.addManagedListener(eListGui, 'mousemove', this.onPickerMouseMove.bind(this));
+        this.addManagedListener(eListGui, 'mousedown', e => e.preventDefault());
+        eListGui.classList.add('ag-rich-select-list');
+
+        const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
+        eListAriaEl.setAttribute('id', listId);
+        setAriaControls(this.eWrapper, eListAriaEl);
     }
 
     private renderSelectedValue(): void {
@@ -358,6 +365,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const key = event.key;
 
         switch (key) {
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
+                event.preventDefault();
+                break;
             case KeyCode.DOWN:
             case KeyCode.UP:
                 this.onNavigationKeyDown(event, key);
