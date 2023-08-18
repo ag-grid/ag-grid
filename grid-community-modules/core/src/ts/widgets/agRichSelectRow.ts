@@ -40,7 +40,6 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
-        this.updateHighlighted(selected);
     }
 
     public updateHighlighted(highlighted: boolean): void {
