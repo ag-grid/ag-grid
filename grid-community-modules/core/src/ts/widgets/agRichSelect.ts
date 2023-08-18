@@ -164,6 +164,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (index === -1) { return; }
 
         this.highlightedItem = index;
+
+        if (this.listComponent) {
+            this.listComponent.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
+                cmp.updateHighlighted(this.highlightedItem === idx);
+            });
+        }
     }
 
     public setRowHeight(height: number): void {
@@ -195,10 +201,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             // make sure the virtual list has been sized correctly
             this.listComponent?.refresh();
             this.listComponent?.ensureIndexVisible(currentValueIndex);
+            this.highlightSelectedValue(currentValueIndex);
+        } else {
+            this.listComponent?.refresh();
         }
-        
-        this.highlightSelectedValue(currentValueIndex);
-        this.listComponent!.refresh();
     }
 
     protected beforeHidePicker(): void {
@@ -262,12 +268,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private selectListItem(index: number): void {
         if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) { return; }
 
-        this.highlightedItem = index;
         this.listComponent.ensureIndexVisible(index);
-
-        this.listComponent.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
-            cmp.updateHighlighted(index === idx);
-        });
+        this.highlightSelectedValue(index);
     }
 
     public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
