@@ -178,7 +178,7 @@ function addPivotResultCols(response, columnApi) {
 In the code above, `addPivotColDefs` does not create column groups for simplicity. However, the example below shows a
 more complex implementation that creates column groups. Note the following:
 
-- Column definitions are created from the `pivotFields` are returned from the server.
+- Column definitions are created from the `pivotFields` that are returned from the server.
 - These column definitions are then supplied to the grid via `columnApi.setPivotResultColumns()`.
 
 <grid-example title='Providing Pivot Result Columns' name='providing_pivot_result_columns' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
