@@ -117,7 +117,7 @@ The example below demonstrates this, note the following:
 - The pivot fields are returned from the server and then passed to the grid via the `getRows` success callback via the `pivotResultFields` property. These are logged to the console as a demonstration.
 - The grid splits the `pivotResultFields` by `_` and creates the pivot result columns and column groups where the generated columns use the provided fields to access the data from the rows.
 
-<grid-example title='Providing Pivot Result Fields' name='providing_pivot_result_fields' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Supplying Pivot Result Fields' name='supplying_pivot_result_fields' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 <note>
 When using managed columns, you can use [Pivot Callbacks](../pivoting/#pivot-result-column-definitions) to customise the pivot result column definitions.
@@ -181,7 +181,7 @@ more complex implementation that creates column groups. Note the following:
 - Column definitions are created from the `pivotFields` are returned from the server.
 - These column definitions are then supplied to the grid via `columnApi.setPivotResultColumns()`.
 
-<grid-example title='Providing Pivot Result Columns' name='providing_pivot_result_columns' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Creating Pivot Result Columns' name='creating_pivot_result_columns' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 <note>
 The pivot result columns are displayed in the order they are supplied to `columnApi.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
