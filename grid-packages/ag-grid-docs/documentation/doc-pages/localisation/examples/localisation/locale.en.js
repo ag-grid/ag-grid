@@ -367,6 +367,7 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelCellEditor: 'Cell Editor',
     ariaLabelDialog: 'Dialog',
     ariaLabelSelectField: 'Select Field',
+    ariaLabelRichSelectField: 'Rich Select Field',
     ariaLabelTooltip: 'Tooltip',
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelSubMenu: 'SubMenu',

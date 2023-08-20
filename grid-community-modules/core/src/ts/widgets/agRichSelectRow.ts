@@ -19,7 +19,7 @@ export class RichSelectRow<TValue> extends Component {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(private readonly params: RichSelectParams<TValue>) {
+    constructor(private readonly params: RichSelectParams<TValue>, private readonly wrapperEl: HTMLElement) {
         super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
@@ -51,6 +51,7 @@ export class RichSelectRow<TValue> extends Component {
         if (highlighted) {
             const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
             parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            this.wrapperEl.setAttribute('data-active-option', parentId);
         }
 
         setAriaSelected(eGui.parentElement!, highlighted);

@@ -289,7 +289,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createRowComponent(value: TValue): Component {
-        const row = new RichSelectRow<TValue>(this.config);
+        const row = new RichSelectRow<TValue>(this.config, this.eWrapper);
         row.setParentComponent(this.listComponent!);
 
         this.getContext().createBean(row);
