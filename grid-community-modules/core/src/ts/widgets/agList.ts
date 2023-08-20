@@ -6,8 +6,8 @@ import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
 
-export interface ListOption {
-    value: string;
+export interface ListOption<TValue = string> {
+    value: TValue;
     text?: string;
 }
 

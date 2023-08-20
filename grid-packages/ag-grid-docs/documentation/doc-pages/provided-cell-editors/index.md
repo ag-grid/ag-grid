@@ -71,7 +71,7 @@ Simple editor that uses HTML `select`.
 
 Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
 
-<interface-documentation interfaceName='ISelectCellEditorParams' names='["values"]'></interface-documentation>
+<interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap"]'></interface-documentation>
 
 <snippet transform={false}>
 columnDefs: [
@@ -79,6 +79,7 @@ columnDefs: [
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+            valueListGap: 0
         }
         // ...other props
     }
@@ -121,7 +122,7 @@ Benefits over browser's `select` are as follows:
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
+<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "valueListGap", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
 <snippet transform={false}>
 columnDefs: [

@@ -12,6 +12,7 @@ import { Autowired } from "../context/context";
 
 export interface IPickerFieldParams extends IAgLabelParams {
     pickerType: string;
+    pickerGap?: number;
     pickerAriaLabelKey: string;
     pickerAriaLabelValue: string;
 }
@@ -23,6 +24,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     protected pickerComponent: TComponent | undefined;
     protected isPickerDisplayed: boolean = false;
     private skipClick: boolean = false;
+    private pickerGap: number = 4;
 
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
@@ -53,6 +55,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
+
+        if (config?.pickerGap != null) {
+            this.pickerGap = config.pickerGap;
+        }
     }
 
     protected postConstruct() {
@@ -189,7 +195,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             ePopup: ePicker,
             position: 'under',
             keepWithinBounds: true,
-            nudgeY: 4
+            nudgeY: this.pickerGap
         });
 
         return addPopupRes.hideFunc;
@@ -255,6 +261,12 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     public getFocusableElement(): HTMLElement {
         return this.eWrapper;
+    }
+
+    public setPickerGap(gap: number): this {
+        this.pickerGap = gap;
+
+        return this;
     }
 
     protected destroy(): void {
