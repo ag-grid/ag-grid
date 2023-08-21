@@ -69,15 +69,6 @@ export class AutoGroupColService extends BeanStub {
         const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
-        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        const hasOwnData = colDef.valueGetter || colDef.field != null;
-        if (isSortingCoupled && !hasOwnData) {
-            // don't allow sort to be applied to a coupled column after creation
-            // as this will not have any impact, as the sort is then taken from the
-            // underlying columns
-            colDef.sort = undefined;
-        }
-
         colToUpdate.setColDef(colDef, null);
         this.columnFactory.applyColumnState(colToUpdate, colDef);
     }
