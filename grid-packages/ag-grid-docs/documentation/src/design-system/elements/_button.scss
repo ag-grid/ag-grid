@@ -110,8 +110,8 @@ input[type='submit'],
     background-color: transparent;
     box-shadow: none;
 
-    &:hover,
-    &:active {
+    &:not(.ag-button):hover,
+    &:not(.ag-button):active {
         color: var(--button-text-color);
         background-color: transparent;
     }
