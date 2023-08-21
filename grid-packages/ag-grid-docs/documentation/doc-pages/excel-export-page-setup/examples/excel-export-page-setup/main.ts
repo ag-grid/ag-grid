@@ -53,14 +53,19 @@ function getSheetConfig() {
   }
 }
 
-function onBtExport() {
+function onFormSubmit(e: SubmitEvent) {
+  e.preventDefault();
   const { pageSetup, margins } = getSheetConfig()
-  gridOptions.api!.exportDataAsExcel({ pageSetup, margins })
+  gridOptions.api!.exportDataAsExcel({ pageSetup, margins });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid');
+  const form = document.querySelector<HTMLFormElement>('form');
+
+  form?.addEventListener('submit', (e: SubmitEvent) => onFormSubmit(e));
+  
   new Grid(gridDiv, gridOptions)
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
