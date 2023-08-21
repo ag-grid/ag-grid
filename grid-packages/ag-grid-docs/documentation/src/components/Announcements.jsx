@@ -13,6 +13,26 @@ import {Icon} from "./Icon";
 const Announcements = ({framework}) => (
     <>
         <div className={styles.versions}>
+            <Version
+                version="30.1.0"
+                date="Aug 22"
+                highlights={[
+                    {
+                        text: 'AG Grid Design System',
+                        url: 'https://ag-grid.com/javascript-data-grid/ag-grid-design-system/',
+                    },
+                    {
+                        text: 'Advanced Filter',
+                        url: 'https://ag-grid.com/javascript-data-grid/filter-advanced/',
+                    },
+                    {
+                        text: 'SSRM Pivot Result Fields',
+                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-pivoting/#supplying-pivot-result-fields-simple',
+                    },
+                ]}
+            ></Version>
+        </div>
+        <div className={styles.versions}>
             <div className={versionStyles.version}>
             <header>
                 <b className="font-size-large">Version 30.0.6</b>
