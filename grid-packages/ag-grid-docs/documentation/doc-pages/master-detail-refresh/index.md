@@ -22,13 +22,13 @@ How the refresh occurs depends on the Refresh Strategy set on the Detail Cell Re
 
 <framework-specific-section frameworks="javascript,angular,vue">
 
-2. **Refresh Everything** - The Detail Panel will get destroyed and a fresh Detail Panel will be redrawn. This will result in `getDetailRowData(params)` getting called again. The Detail Grid will be a new instance and any changes in the Detail Grid (scrolling, column position, row selection, etc) will be lost. If the Detail Panel is using a custom template, then the template will be re-created. Use this option if you want to update the template or you want a fresh detail grid instance.
+2. **Refresh Everything** - The Detail Panel will get destroyed and a fresh Detail Panel will be redrawn. This will result in `getDetailRowData(params)` getting called again. The Detail Grid will be a new instance and any changes in the Detail Grid (scrolling, column position, row selection, etc.) will be lost. If the Detail Panel is using a custom template, then the template will be re-created. Use this option if you want to update the template or you want a fresh detail grid instance.
 
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 
-2. **Refresh Everything** - The Detail Panel will get destroyed and a fresh Detail Panel will be redrawn. This will result in `getDetailRowData(params)` getting called again. The Detail Grid will be a new instance and any changes in the Detail Grid (scrolling, column position, row selection etc) will be lost. Use this option if you want a fresh detail grid instance.
+2. **Refresh Everything** - The Detail Panel will get destroyed and a fresh Detail Panel will be redrawn. This will result in `getDetailRowData(params)` getting called again. The Detail Grid will be a new instance and any changes in the Detail Grid (scrolling, column position, row selection, etc.) will be lost. Use this option if you want a fresh detail grid instance.
 
 </framework-specific-section>
 
