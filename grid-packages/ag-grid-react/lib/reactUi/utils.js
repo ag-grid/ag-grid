@@ -111,17 +111,22 @@ function getNextValueIfDifferent(prev, next, maintainOrder) {
     var oldValues = [];
     var newValues = [];
     var prevMap = new Map();
+    var nextMap = new Map();
+    for (var i = 0; i < next.length; i++) {
+        var c = next[i];
+        nextMap.set(c.getInstanceId(), c);
+    }
     for (var i = 0; i < prev.length; i++) {
         var c = prev[i];
         prevMap.set(c.getInstanceId(), c);
+        if (nextMap.has(c.getInstanceId())) {
+            oldValues.push(c);
+        }
     }
     for (var i = 0; i < next.length; i++) {
         var c = next[i];
         var instanceId = c.getInstanceId();
-        if (prevMap.has(instanceId)) {
-            oldValues.push(c);
-        }
-        else {
+        if (!prevMap.has(instanceId)) {
             newValues.push(c);
         }
     }

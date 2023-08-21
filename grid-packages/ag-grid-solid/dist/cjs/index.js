@@ -1146,9 +1146,9 @@ const CellComp = props => {
   const [tabIndex, setTabIndex] = solidJs.createSignal(cellCtrl.getTabIndex());
   const [colId, setColId] = solidJs.createSignal(cellCtrl.getColumnIdSanitised());
   const [selectionCheckboxId, setSelectionCheckboxId] = solidJs.createSignal();
-  const [includeSelection, setIncludeSelection] = solidJs.createSignal(cellCtrl.getIncludeSelection());
-  const [includeRowDrag, setIncludeRowDrag] = solidJs.createSignal(cellCtrl.getIncludeRowDrag());
-  const [includeDndSource, setIncludeDndSource] = solidJs.createSignal(cellCtrl.getIncludeDndSource());
+  const [includeSelection, setIncludeSelection] = solidJs.createSignal(false);
+  const [includeRowDrag, setIncludeRowDrag] = solidJs.createSignal(false);
+  const [includeDndSource, setIncludeDndSource] = solidJs.createSignal(false);
   const forceWrapper = cellCtrl.isForceWrapper();
   let eCellWrapper;
   let eCellValue;
@@ -1191,6 +1191,9 @@ const CellComp = props => {
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
       setUserStyles: styles => setUserStyles(styles),
       getFocusableElement: () => eGui,
+      setIncludeSelection: include => setIncludeSelection(include),
+      setIncludeRowDrag: include => setIncludeRowDrag(include),
+      setIncludeDndSource: include => setIncludeDndSource(include),
       getCellEditor: () => cellEditor,
       getCellRenderer: () => cellRenderer ? cellRenderer : null,
       getParentOfValue: () => eCellValue ? eCellValue : eCellWrapper ? eCellWrapper : eGui,

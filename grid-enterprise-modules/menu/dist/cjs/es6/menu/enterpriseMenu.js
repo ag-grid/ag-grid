@@ -114,7 +114,8 @@ let EnterpriseMenuFactory = class EnterpriseMenuFactory extends core_1.BeanStub 
             if (!isKeyboardEvent || !eventSource) {
                 return;
             }
-            if (core_1._.isVisible(eventSource)) {
+            const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
+            if (isColumnStillVisible && core_1._.isVisible(eventSource)) {
                 const focusableEl = this.focusService.findTabbableParent(eventSource);
                 if (focusableEl) {
                     if (column) {

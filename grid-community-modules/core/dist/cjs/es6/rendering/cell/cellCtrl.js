@@ -47,9 +47,6 @@ class CellCtrl extends beanStub_1.BeanStub {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
         this.colIdSanitised = string_1.escapeString(this.column.getId());
         if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
             this.tabIndex = -1;
@@ -131,6 +128,7 @@ class CellCtrl extends beanStub_1.BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
         }
@@ -232,6 +230,15 @@ class CellCtrl extends beanStub_1.BeanStub {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
+    }
+    setupControlComps() {
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     }
     isForceWrapper() {
         // text selection requires the value to be wrapped in another element

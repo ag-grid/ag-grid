@@ -14393,7 +14393,8 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
-            if (e.key === KeyCode.ENTER) {
+            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                e.preventDefault();
                 _this.toggleExpanded();
             }
         });
@@ -60446,7 +60447,8 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             if (!isKeyboardEvent || !eventSource) {
                 return;
             }
-            if (_.isVisible(eventSource)) {
+            var isColumnStillVisible = _this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
+            if (isColumnStillVisible && _.isVisible(eventSource)) {
                 var focusableEl = _this.focusService.findTabbableParent(eventSource);
                 if (focusableEl) {
                     if (column) {

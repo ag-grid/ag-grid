@@ -205,20 +205,14 @@ var SortController = /** @class */ (function (_super) {
             }
         });
         var indexMap = new Map();
-        allSortedCols.forEach(function (col, idx) {
-            if (col.getSort()) {
-                indexMap.set(col, idx);
-            }
-            // add the group cols back
-            if (isSortLinked) {
-                var sourceCols = _this.columnModel.getSourceColumnsForGroupColumn(col);
-                sourceCols === null || sourceCols === void 0 ? void 0 : sourceCols.forEach(function (sourceCol) {
-                    if (sourceCol.getSort()) {
-                        indexMap.set(sourceCol, idx);
-                    }
-                });
-            }
-        });
+        allSortedCols.forEach(function (col, idx) { return indexMap.set(col, idx); });
+        // add the row group cols back
+        if (isSortLinked) {
+            sortedRowGroupCols.forEach(function (col) {
+                var groupDisplayCol = _this.columnModel.getGroupDisplayColumnForGroup(col.getId());
+                indexMap.set(col, indexMap.get(groupDisplayCol));
+            });
+        }
         return indexMap;
     };
     SortController.prototype.getColumnsWithSortingOrdered = function () {

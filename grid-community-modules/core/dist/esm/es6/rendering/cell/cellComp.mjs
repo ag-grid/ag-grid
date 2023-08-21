@@ -25,9 +25,6 @@ export class CellComp extends Component {
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}"/>`);
         const eGui = this.getGui();
         this.forceWrapper = cellCtrl.isForceWrapper();
-        this.includeSelection = cellCtrl.getIncludeSelection();
-        this.includeRowDrag = cellCtrl.getIncludeRowDrag();
-        this.includeDndSource = cellCtrl.getIncludeDndSource();
         this.refreshWrapper(false);
         const setAttribute = (name, value) => {
             if (value != null && value != '') {
@@ -47,6 +44,9 @@ export class CellComp extends Component {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
+            setIncludeSelection: include => this.includeSelection = include,
+            setIncludeRowDrag: include => this.includeRowDrag = include,
+            setIncludeDndSource: include => this.includeDndSource = include,
             setRenderDetails: (compDetails, valueToDisplay, force) => this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
             getCellEditor: () => this.cellEditor || null,

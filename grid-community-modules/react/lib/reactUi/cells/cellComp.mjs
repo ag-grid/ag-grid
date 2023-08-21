@@ -58,9 +58,6 @@ const jsxShowValue = (showDetails, key, parentId, cellRendererRef, showCellWrapp
 const CellComp = (props) => {
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
-    const includeSelection = cellCtrl.getIncludeSelection();
-    const includeRowDrag = cellCtrl.getIncludeRowDrag();
-    const includeDndSource = cellCtrl.getIncludeDndSource();
     const tabIndex = cellCtrl.getTabIndex();
     const colId = cellCtrl.getColumnIdSanitised();
     const cellInstanceId = cellCtrl.getInstanceId();
@@ -69,6 +66,9 @@ const CellComp = (props) => {
     const [editDetails, setEditDetails] = useState();
     const [renderKey, setRenderKey] = useState(1);
     const [userStyles, setUserStyles] = useState();
+    const [includeSelection, setIncludeSelection] = useState(false);
+    const [includeRowDrag, setIncludeRowDrag] = useState(false);
+    const [includeDndSource, setIncludeDndSource] = useState(false);
     const [jsEditorComp, setJsEditorComp] = useState();
     // useMemo as more then just accessing a boolean on the cellCtrl
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
@@ -216,6 +216,9 @@ const CellComp = (props) => {
             addOrRemoveCssClass: (name, on) => cssClassManager.current.addOrRemoveCssClass(name, on),
             setUserStyles: (styles) => setUserStyles(styles),
             getFocusableElement: () => eGui.current,
+            setIncludeSelection: include => setIncludeSelection(include),
+            setIncludeRowDrag: include => setIncludeRowDrag(include),
+            setIncludeDndSource: include => setIncludeDndSource(include),
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,

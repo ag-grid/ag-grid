@@ -60469,7 +60469,8 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
-            if (e.key === agGridCommunity.KeyCode.ENTER) {
+            if (e.key === agGridCommunity.KeyCode.ENTER || e.key === agGridCommunity.KeyCode.SPACE) {
+                e.preventDefault();
                 _this.toggleExpanded();
             }
         });
@@ -61824,7 +61825,8 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             if (!isKeyboardEvent || !eventSource) {
                 return;
             }
-            if (agGridCommunity._.isVisible(eventSource)) {
+            var isColumnStillVisible = _this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
+            if (isColumnStillVisible && agGridCommunity._.isVisible(eventSource)) {
                 var focusableEl = _this.focusService.findTabbableParent(eventSource);
                 if (focusableEl) {
                     if (column) {

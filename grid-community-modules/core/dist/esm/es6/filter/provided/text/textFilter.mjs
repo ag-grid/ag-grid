@@ -53,7 +53,7 @@ export class TextFilter extends SimpleFilter {
             filterType: this.getFilterType(),
             type,
         };
-        const values = this.getValues(position);
+        const values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -77,13 +77,19 @@ export class TextFilter extends SimpleFilter {
         return [this.eValuesFrom[position], this.eValuesTo[position]];
     }
     getValues(position) {
+        return this.getValuesWithSideEffects(position, false);
+    }
+    getValuesWithSideEffects(position, applySideEffects) {
         const result = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            var _a;
             if (index < numberOfInputs) {
-                const value = makeNull(element.getValue());
-                const cleanValue = (this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                let value = makeNull(element.getValue());
+                if (applySideEffects && this.textFilterParams.trimInput) {
+                    value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
         return result;

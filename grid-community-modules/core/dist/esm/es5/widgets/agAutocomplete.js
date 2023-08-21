@@ -109,7 +109,7 @@ var AgAutocomplete = /** @class */ (function (_super) {
                 break;
             case KeyCode.SPACE:
                 if (event.ctrlKey && !this.isListOpen) {
-                    event.preventDefault;
+                    event.preventDefault();
                     this.forceOpenList();
                 }
                 break;

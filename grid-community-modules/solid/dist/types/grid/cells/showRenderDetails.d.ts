@@ -9,7 +9,7 @@ declare const ShowRenderDetails: (props: {
     includeDndSource: boolean;
     includeRowDrag: boolean;
     includeSelection: boolean;
-    setSelectionCheckboxId: Setter<string>;
+    setSelectionCheckboxId: Setter<string | undefined>;
     cellCtrl: CellCtrl;
     cellInstanceId: string;
     setECellValue: (eCellValue: HTMLElement) => void;

@@ -18,6 +18,9 @@ export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
+    setIncludeSelection(include: boolean): void;
+    setIncludeRowDrag(include: boolean): void;
+    setIncludeDndSource(include: boolean): void;
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -69,6 +72,7 @@ export declare class CellCtrl extends BeanStub {
     getIsCellRenderer(): boolean;
     getValueToDisplay(): any;
     private showValue;
+    private setupControlComps;
     isForceWrapper(): boolean;
     private isIncludeControl;
     refreshShouldDestroy(): boolean;

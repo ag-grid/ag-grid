@@ -74,9 +74,6 @@ var CellCtrl = /** @class */ (function (_super) {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         _this.instanceId = column.getId() + '-' + instanceIdSequence++;
         var colDef = _this.column.getColDef();
-        _this.includeSelection = _this.isIncludeControl(colDef.checkboxSelection);
-        _this.includeRowDrag = _this.isIncludeControl(colDef.rowDrag);
-        _this.includeDndSource = _this.isIncludeControl(colDef.dndSource);
         _this.colIdSanitised = string_1.escapeString(_this.column.getId());
         if (!_this.beans.gridOptionsService.is('suppressCellFocus')) {
             _this.tabIndex = -1;
@@ -161,6 +158,7 @@ var CellCtrl = /** @class */ (function (_super) {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
         }
@@ -264,6 +262,15 @@ var CellCtrl = /** @class */ (function (_super) {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
+    };
+    CellCtrl.prototype.setupControlComps = function () {
+        var colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     };
     CellCtrl.prototype.isForceWrapper = function () {
         // text selection requires the value to be wrapped in another element

@@ -3673,7 +3673,6 @@ var AutoGroupColService = /** @class */ (function (_super) {
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
             // because we only accept the sort on creation of the col
-            res.sort = undefined;
             res.sortIndex = undefined;
             res.initialSort = undefined;
         }
@@ -7724,7 +7723,7 @@ var ColumnModel = /** @class */ (function (_super) {
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            flexingColumns.forEach(function (col) { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0); });
+            flexingColumns.forEach(function (col) { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0, source); });
             // No columns should flex, but all have been changed. Swap arrays so events fire properly.
             // Expensive logic won't execute as flex columns is empty.
             changedColumns = flexingColumns;
@@ -15478,7 +15477,7 @@ var TextFilter = /** @class */ (function (_super) {
             filterType: this.getFilterType(),
             type: type,
         };
-        var values = this.getValues(position);
+        var values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -15502,14 +15501,20 @@ var TextFilter = /** @class */ (function (_super) {
         return [this.eValuesFrom[position], this.eValuesTo[position]];
     };
     TextFilter.prototype.getValues = function (position) {
+        return this.getValuesWithSideEffects(position, false);
+    };
+    TextFilter.prototype.getValuesWithSideEffects = function (position, applySideEffects) {
         var _this = this;
         var result = [];
         this.forEachPositionInput(position, function (element, index, _elPosition, numberOfInputs) {
+            var _a;
             if (index < numberOfInputs) {
                 var value = makeNull(element.getValue());
-                var cleanValue = (_this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                if (applySideEffects && _this.textFilterParams.trimInput) {
+                    value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
         return result;
@@ -26594,9 +26599,6 @@ var CellCtrl = /** @class */ (function (_super) {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         _this.instanceId = column.getId() + '-' + instanceIdSequence$3++;
         var colDef = _this.column.getColDef();
-        _this.includeSelection = _this.isIncludeControl(colDef.checkboxSelection);
-        _this.includeRowDrag = _this.isIncludeControl(colDef.rowDrag);
-        _this.includeDndSource = _this.isIncludeControl(colDef.dndSource);
         _this.colIdSanitised = escapeString(_this.column.getId());
         if (!_this.beans.gridOptionsService.is('suppressCellFocus')) {
             _this.tabIndex = -1;
@@ -26681,6 +26683,7 @@ var CellCtrl = /** @class */ (function (_super) {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
         }
@@ -26784,6 +26787,15 @@ var CellCtrl = /** @class */ (function (_super) {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
+    };
+    CellCtrl.prototype.setupControlComps = function () {
+        var colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     };
     CellCtrl.prototype.isForceWrapper = function () {
         // text selection requires the value to be wrapped in another element
@@ -31347,9 +31359,6 @@ var CellComp = /** @class */ (function (_super) {
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\"/>");
         var eGui = _this.getGui();
         _this.forceWrapper = cellCtrl.isForceWrapper();
-        _this.includeSelection = cellCtrl.getIncludeSelection();
-        _this.includeRowDrag = cellCtrl.getIncludeRowDrag();
-        _this.includeDndSource = cellCtrl.getIncludeDndSource();
         _this.refreshWrapper(false);
         var setAttribute = function (name, value) {
             if (value != null && value != '') {
@@ -31369,6 +31378,9 @@ var CellComp = /** @class */ (function (_super) {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setUserStyles: function (styles) { return addStylesToElement(eGui, styles); },
             getFocusableElement: function () { return _this.getFocusableElement(); },
+            setIncludeSelection: function (include) { return _this.includeSelection = include; },
+            setIncludeRowDrag: function (include) { return _this.includeRowDrag = include; },
+            setIncludeDndSource: function (include) { return _this.includeDndSource = include; },
             setRenderDetails: function (compDetails, valueToDisplay, force) {
                 return _this.setRenderDetails(compDetails, valueToDisplay, force);
             },
@@ -34837,6 +34849,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     };
     HeaderCellCtrl.prototype.addMouseDownListenerIfNeeded = function (eGui) {
         var _this = this;
@@ -35160,7 +35173,12 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         }
         var _b = this.getColumnGroupPaddingInfo(), numberOfParents = _b.numberOfParents, isSpanningTotal = _b.isSpanningTotal;
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        var headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', "0px");
+            eGui.style.setProperty('height', headerHeight + "px");
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
@@ -35168,7 +35186,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         var groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
-        var headerHeight = columnModel.getColumnHeaderRowHeight();
         var extraHeight = numberOfParents * groupHeaderHeight;
         eGui.style.setProperty('top', -extraHeight + "px");
         eGui.style.setProperty('height', headerHeight + extraHeight + "px");
@@ -43734,7 +43751,7 @@ var AgAutocomplete = /** @class */ (function (_super) {
                 break;
             case KeyCode.SPACE:
                 if (event.ctrlKey && !this.isListOpen) {
-                    event.preventDefault;
+                    event.preventDefault();
                     this.forceOpenList();
                 }
                 break;
@@ -46385,20 +46402,14 @@ var SortController = /** @class */ (function (_super) {
             }
         });
         var indexMap = new Map();
-        allSortedCols.forEach(function (col, idx) {
-            if (col.getSort()) {
-                indexMap.set(col, idx);
-            }
-            // add the group cols back
-            if (isSortLinked) {
-                var sourceCols = _this.columnModel.getSourceColumnsForGroupColumn(col);
-                sourceCols === null || sourceCols === void 0 ? void 0 : sourceCols.forEach(function (sourceCol) {
-                    if (sourceCol.getSort()) {
-                        indexMap.set(sourceCol, idx);
-                    }
-                });
-            }
-        });
+        allSortedCols.forEach(function (col, idx) { return indexMap.set(col, idx); });
+        // add the row group cols back
+        if (isSortLinked) {
+            sortedRowGroupCols.forEach(function (col) {
+                var groupDisplayCol = _this.columnModel.getGroupDisplayColumnForGroup(col.getId());
+                indexMap.set(col, indexMap.get(groupDisplayCol));
+            });
+        }
         return indexMap;
     };
     SortController.prototype.getColumnsWithSortingOrdered = function () {

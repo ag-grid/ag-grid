@@ -3076,7 +3076,7 @@ var ColumnModel = /** @class */ (function (_super) {
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            flexingColumns.forEach(function (col) { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0); });
+            flexingColumns.forEach(function (col) { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0, source); });
             // No columns should flex, but all have been changed. Swap arrays so events fire properly.
             // Expensive logic won't execute as flex columns is empty.
             changedColumns = flexingColumns;

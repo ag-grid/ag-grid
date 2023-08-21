@@ -44,9 +44,6 @@ var CellComp = /** @class */ (function (_super) {
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\"/>");
         var eGui = _this.getGui();
         _this.forceWrapper = cellCtrl.isForceWrapper();
-        _this.includeSelection = cellCtrl.getIncludeSelection();
-        _this.includeRowDrag = cellCtrl.getIncludeRowDrag();
-        _this.includeDndSource = cellCtrl.getIncludeDndSource();
         _this.refreshWrapper(false);
         var setAttribute = function (name, value) {
             if (value != null && value != '') {
@@ -66,6 +63,9 @@ var CellComp = /** @class */ (function (_super) {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setUserStyles: function (styles) { return dom_1.addStylesToElement(eGui, styles); },
             getFocusableElement: function () { return _this.getFocusableElement(); },
+            setIncludeSelection: function (include) { return _this.includeSelection = include; },
+            setIncludeRowDrag: function (include) { return _this.includeRowDrag = include; },
+            setIncludeDndSource: function (include) { return _this.includeDndSource = include; },
             setRenderDetails: function (compDetails, valueToDisplay, force) {
                 return _this.setRenderDetails(compDetails, valueToDisplay, force);
             },

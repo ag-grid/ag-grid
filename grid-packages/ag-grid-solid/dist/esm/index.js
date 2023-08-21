@@ -1144,9 +1144,9 @@ const CellComp = props => {
   const [tabIndex, setTabIndex] = createSignal(cellCtrl.getTabIndex());
   const [colId, setColId] = createSignal(cellCtrl.getColumnIdSanitised());
   const [selectionCheckboxId, setSelectionCheckboxId] = createSignal();
-  const [includeSelection, setIncludeSelection] = createSignal(cellCtrl.getIncludeSelection());
-  const [includeRowDrag, setIncludeRowDrag] = createSignal(cellCtrl.getIncludeRowDrag());
-  const [includeDndSource, setIncludeDndSource] = createSignal(cellCtrl.getIncludeDndSource());
+  const [includeSelection, setIncludeSelection] = createSignal(false);
+  const [includeRowDrag, setIncludeRowDrag] = createSignal(false);
+  const [includeDndSource, setIncludeDndSource] = createSignal(false);
   const forceWrapper = cellCtrl.isForceWrapper();
   let eCellWrapper;
   let eCellValue;
@@ -1189,6 +1189,9 @@ const CellComp = props => {
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
       setUserStyles: styles => setUserStyles(styles),
       getFocusableElement: () => eGui,
+      setIncludeSelection: include => setIncludeSelection(include),
+      setIncludeRowDrag: include => setIncludeRowDrag(include),
+      setIncludeDndSource: include => setIncludeDndSource(include),
       getCellEditor: () => cellEditor,
       getCellRenderer: () => cellRenderer ? cellRenderer : null,
       getParentOfValue: () => eCellValue ? eCellValue : eCellWrapper ? eCellWrapper : eGui,

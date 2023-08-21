@@ -93,7 +93,7 @@ var TextFilter = /** @class */ (function (_super) {
             filterType: this.getFilterType(),
             type: type,
         };
-        var values = this.getValues(position);
+        var values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -117,14 +117,20 @@ var TextFilter = /** @class */ (function (_super) {
         return [this.eValuesFrom[position], this.eValuesTo[position]];
     };
     TextFilter.prototype.getValues = function (position) {
+        return this.getValuesWithSideEffects(position, false);
+    };
+    TextFilter.prototype.getValuesWithSideEffects = function (position, applySideEffects) {
         var _this = this;
         var result = [];
         this.forEachPositionInput(position, function (element, index, _elPosition, numberOfInputs) {
+            var _a;
             if (index < numberOfInputs) {
                 var value = generic_1.makeNull(element.getValue());
-                var cleanValue = (_this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                if (applySideEffects && _this.textFilterParams.trimInput) {
+                    value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
         return result;

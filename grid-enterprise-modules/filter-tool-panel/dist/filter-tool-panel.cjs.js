@@ -156,7 +156,8 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
-            if (e.key === core.KeyCode.ENTER) {
+            if (e.key === core.KeyCode.ENTER || e.key === core.KeyCode.SPACE) {
+                e.preventDefault();
                 _this.toggleExpanded();
             }
         });

@@ -94,9 +94,6 @@ var jsxShowValue = function (showDetails, key, parentId, cellRendererRef, showCe
 var CellComp = function (props) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var cellCtrl = props.cellCtrl, printLayout = props.printLayout, editingRow = props.editingRow;
-    var includeSelection = cellCtrl.getIncludeSelection();
-    var includeRowDrag = cellCtrl.getIncludeRowDrag();
-    var includeDndSource = cellCtrl.getIncludeDndSource();
     var tabIndex = cellCtrl.getTabIndex();
     var colId = cellCtrl.getColumnIdSanitised();
     var cellInstanceId = cellCtrl.getInstanceId();
@@ -105,7 +102,10 @@ var CellComp = function (props) {
     var _b = react_1.useState(), editDetails = _b[0], setEditDetails = _b[1];
     var _c = react_1.useState(1), renderKey = _c[0], setRenderKey = _c[1];
     var _d = react_1.useState(), userStyles = _d[0], setUserStyles = _d[1];
-    var _e = react_1.useState(), jsEditorComp = _e[0], setJsEditorComp = _e[1];
+    var _e = react_1.useState(false), includeSelection = _e[0], setIncludeSelection = _e[1];
+    var _f = react_1.useState(false), includeRowDrag = _f[0], setIncludeRowDrag = _f[1];
+    var _g = react_1.useState(false), includeDndSource = _g[0], setIncludeDndSource = _g[1];
+    var _h = react_1.useState(), jsEditorComp = _h[0], setJsEditorComp = _h[1];
     // useMemo as more then just accessing a boolean on the cellCtrl
     var forceWrapper = react_1.useMemo(function () { return cellCtrl.isForceWrapper(); }, [cellCtrl]);
     var eGui = react_1.useRef(null);
@@ -116,7 +116,7 @@ var CellComp = function (props) {
     var cellWrapperDestroyFuncs = react_1.useRef([]);
     // when setting the ref, we also update the state item to force a re-render
     var eCellValue = react_1.useRef();
-    var _f = react_1.useState(0), cellValueVersion = _f[0], setCellValueVersion = _f[1];
+    var _j = react_1.useState(0), cellValueVersion = _j[0], setCellValueVersion = _j[1];
     var setCellValueRef = react_1.useCallback(function (ref) {
         eCellValue.current = ref;
         setCellValueVersion(function (v) { return v + 1; });
@@ -252,6 +252,9 @@ var CellComp = function (props) {
             addOrRemoveCssClass: function (name, on) { return cssClassManager.current.addOrRemoveCssClass(name, on); },
             setUserStyles: function (styles) { return setUserStyles(styles); },
             getFocusableElement: function () { return eGui.current; },
+            setIncludeSelection: function (include) { return setIncludeSelection(include); },
+            setIncludeRowDrag: function (include) { return setIncludeRowDrag(include); },
+            setIncludeDndSource: function (include) { return setIncludeDndSource(include); },
             getCellEditor: function () { return cellEditorRef.current || null; },
             getCellRenderer: function () { return cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current; },
             getParentOfValue: function () { return eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current; },

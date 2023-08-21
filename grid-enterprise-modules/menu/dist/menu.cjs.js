@@ -145,7 +145,8 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             if (!isKeyboardEvent || !eventSource) {
                 return;
             }
-            if (core._.isVisible(eventSource)) {
+            var isColumnStillVisible = _this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
+            if (isColumnStillVisible && core._.isVisible(eventSource)) {
                 var focusableEl = _this.focusService.findTabbableParent(eventSource);
                 if (focusableEl) {
                     if (column) {

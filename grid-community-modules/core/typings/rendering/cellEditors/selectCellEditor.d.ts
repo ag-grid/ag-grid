@@ -3,7 +3,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 export interface ISelectCellEditorParams<TValue = any> {
     /** List of values to display */
     values: TValue[];
-    /** The space in pixels between the value display and the list of items. Default: 4 */
+    /** The space in pixels between the value display and the list of items. Default: `4` */
     valueListGap?: number;
 }
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any> extends ISelectCellEditorParams<TValue>, ICellEditorParams<TData, TValue, TContext> {

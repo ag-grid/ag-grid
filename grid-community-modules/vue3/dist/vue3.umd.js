@@ -5532,7 +5532,6 @@ let autoGroupColService_AutoGroupColService = class AutoGroupColService extends 
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
             // because we only accept the sort on creation of the col
-            res.sort = undefined;
             res.sortIndex = undefined;
             res.initialSort = undefined;
         }
@@ -9372,7 +9371,7 @@ let columnModel_ColumnModel = class ColumnModel extends beanStub_BeanStub {
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            flexingColumns.forEach(col => { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0); });
+            flexingColumns.forEach(col => { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0, source); });
             // No columns should flex, but all have been changed. Swap arrays so events fire properly.
             // Expensive logic won't execute as flex columns is empty.
             changedColumns = flexingColumns;
@@ -16487,7 +16486,7 @@ class textFilter_TextFilter extends simpleFilter_SimpleFilter {
             filterType: this.getFilterType(),
             type,
         };
-        const values = this.getValues(position);
+        const values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -16511,13 +16510,19 @@ class textFilter_TextFilter extends simpleFilter_SimpleFilter {
         return [this.eValuesFrom[position], this.eValuesTo[position]];
     }
     getValues(position) {
+        return this.getValuesWithSideEffects(position, false);
+    }
+    getValuesWithSideEffects(position, applySideEffects) {
         const result = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            var _a;
             if (index < numberOfInputs) {
-                const value = makeNull(element.getValue());
-                const cleanValue = (this.textFilterParams.trimInput ? textFilter_TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                let value = makeNull(element.getValue());
+                if (applySideEffects && this.textFilterParams.trimInput) {
+                    value = (_a = textFilter_TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
         return result;
@@ -26876,9 +26881,6 @@ class cellCtrl_CellCtrl extends beanStub_BeanStub {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + cellCtrl_instanceIdSequence++;
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
         this.colIdSanitised = escapeString(this.column.getId());
         if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
             this.tabIndex = -1;
@@ -26960,6 +26962,7 @@ class cellCtrl_CellCtrl extends beanStub_BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
         }
@@ -27061,6 +27064,15 @@ class cellCtrl_CellCtrl extends beanStub_BeanStub {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
+    }
+    setupControlComps() {
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     }
     isForceWrapper() {
         // text selection requires the value to be wrapped in another element
@@ -31339,9 +31351,6 @@ class cellComp_CellComp extends component_Component {
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}"/>`);
         const eGui = this.getGui();
         this.forceWrapper = cellCtrl.isForceWrapper();
-        this.includeSelection = cellCtrl.getIncludeSelection();
-        this.includeRowDrag = cellCtrl.getIncludeRowDrag();
-        this.includeDndSource = cellCtrl.getIncludeDndSource();
         this.refreshWrapper(false);
         const setAttribute = (name, value) => {
             if (value != null && value != '') {
@@ -31361,6 +31370,9 @@ class cellComp_CellComp extends component_Component {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
+            setIncludeSelection: include => this.includeSelection = include,
+            setIncludeRowDrag: include => this.includeRowDrag = include,
+            setIncludeDndSource: include => this.includeDndSource = include,
             setRenderDetails: (compDetails, valueToDisplay, force) => this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
             getCellEditor: () => this.cellEditor || null,
@@ -34551,6 +34563,7 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
     addMouseDownListenerIfNeeded(eGui) {
         // we add a preventDefault in the DragService for Safari only
@@ -34864,7 +34877,12 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
         }
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', `0px`);
+            eGui.style.setProperty('height', `${headerHeight}px`);
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
@@ -34872,7 +34890,6 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
         const extraHeight = numberOfParents * groupHeaderHeight;
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
@@ -42666,7 +42683,7 @@ class agAutocomplete_AgAutocomplete extends component_Component {
                 break;
             case KeyCode.SPACE:
                 if (event.ctrlKey && !this.isListOpen) {
-                    event.preventDefault;
+                    event.preventDefault();
                     this.forceOpenList();
                 }
                 break;
@@ -45131,20 +45148,14 @@ let sortController_SortController = SortController_1 = class SortController exte
             }
         });
         const indexMap = new Map();
-        allSortedCols.forEach((col, idx) => {
-            if (col.getSort()) {
-                indexMap.set(col, idx);
-            }
-            // add the group cols back
-            if (isSortLinked) {
-                const sourceCols = this.columnModel.getSourceColumnsForGroupColumn(col);
-                sourceCols === null || sourceCols === void 0 ? void 0 : sourceCols.forEach(sourceCol => {
-                    if (sourceCol.getSort()) {
-                        indexMap.set(sourceCol, idx);
-                    }
-                });
-            }
-        });
+        allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
+        // add the row group cols back
+        if (isSortLinked) {
+            sortedRowGroupCols.forEach(col => {
+                const groupDisplayCol = this.columnModel.getGroupDisplayColumnForGroup(col.getId());
+                indexMap.set(col, indexMap.get(groupDisplayCol));
+            });
+        }
         return indexMap;
     }
     getColumnsWithSortingOrdered() {

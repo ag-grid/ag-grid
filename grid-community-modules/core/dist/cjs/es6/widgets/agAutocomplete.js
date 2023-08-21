@@ -96,7 +96,7 @@ class AgAutocomplete extends component_1.Component {
                 break;
             case keyCode_1.KeyCode.SPACE:
                 if (event.ctrlKey && !this.isListOpen) {
-                    event.preventDefault;
+                    event.preventDefault();
                     this.forceOpenList();
                 }
                 break;

@@ -91,7 +91,6 @@ let AutoGroupColService = class AutoGroupColService extends beanStub_1.BeanStub 
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
             // because we only accept the sort on creation of the col
-            res.sort = undefined;
             res.sortIndex = undefined;
             res.initialSort = undefined;
         }
