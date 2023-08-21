@@ -59,7 +59,8 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER) {
+            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                e.preventDefault();
                 this.toggleExpanded();
             }
         });
