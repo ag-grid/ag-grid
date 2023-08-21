@@ -248,7 +248,7 @@ const CodeOptions = ({ exampleInfo }) => {
                             href={`/packages-modules`}
                             role="tooltip"
                             title={
-                                exampleInfo.exampleImportType === 'packages'
+                                exampleInfo.importType === 'packages'
                                     ? 'Example is using AG Grid packages where all the grid features are included by default. Click for more info.'
                                     : 'Example is using AG Grid modules to minimise application bundle size and only includes the modules required to demonstrate the given feature. Click for more info.'
                             }

@@ -3,7 +3,7 @@ title: "Master / Detail - Other"
 enterprise: true
 ---
 
-Here we discuss areas of Master / Detail that didn't quite fit with the other sections within the documentation.
+Here we discuss areas of Master / Detail that don't quite fit within the other sections of the documentation.
 
 ## Syncing Detail Scrolling with Master
 
@@ -11,7 +11,7 @@ By default, the Detail Grid takes up the width of the Master Grid and does not m
 
 The underlying feature of the grid that allows the Detail Grid to span the width of the Master Grid is called [Full Width Row](/full-width-rows/).
 
-It is possible to have the Detail Grid sit within the same container as the Master Grid's cells and hence move with the Master Grid's horizontal scrolling. This is achieved by 'Embedding the Full Width Row' and is set via the grid property `embedFullWidthRows=true` for the Master Grid. This tells the grid to layout (embed) the Detail Panel with the other rows.
+It is possible to have the Detail Grid sit within the same container as the Master Grid's cells and hence move with the Master Grid's horizontal scrolling. This is achieved by [Embedding the Full Width Row](/full-width-rows/#embedded-full-width-rows) and is set via the grid property `embedFullWidthRows=true` for the Master Grid. This tells the grid to layout (embed) the Detail Panel with the other rows.
 
 In the example below, notice that horizontal scrolling is combined for both Master Grid and Detail Grid using the Embed Full Width Rows feature.
 
