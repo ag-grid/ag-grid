@@ -90,19 +90,25 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     const oldValues: T[] = [];
     const newValues: T[] = [];
     const prevMap: Map<string, T> = new Map();
+    const nextMap: Map<string, T> = new Map();
 
+    for (let i = 0; i < next.length; i++) {
+        const c = next[i];
+        nextMap.set(c.getInstanceId(), c);
+    }
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
-        prevMap.set(c.getInstanceId(), c)
+        prevMap.set(c.getInstanceId(), c);
+        if(nextMap.has(c.getInstanceId())){
+            oldValues.push(c);
+        }
     }
 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
         const instanceId = c.getInstanceId();
-        if (prevMap.has(instanceId)) {
-            oldValues.push(c);
-        } else {
-            newValues.push(c)
+        if (!prevMap.has(instanceId)) {          
+            newValues.push(c);
         }
     }
 
