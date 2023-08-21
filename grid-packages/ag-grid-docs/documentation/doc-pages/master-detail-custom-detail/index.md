@@ -33,7 +33,7 @@ This example shows a custom Detail Cell Renderer that uses a form rather than a 
 
 ## Custom Detail With Grid
 
-It is possible to provide a Customer Detail Grid that does a similar job to the default Detail Cell Renderer. This example demonstrates displaying a custom grid as the detail.
+It is possible to provide a Custom Detail Grid that does a similar job to the default Detail Cell Renderer. This example demonstrates displaying a custom grid as the detail.
 
 <grid-example title='Custom Detail Cell Renderer with Grid' name='custom-detail-with-grid' type='mixed' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
  
@@ -66,11 +66,11 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 
 ## Refreshing
 
-When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderer's.
+When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
 
 It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
 
-This pattern is similar to how refresh works for normal grid Cell Renderer's.
+This pattern is similar to how refresh works for normal grid Cell Renderers.
 
 The example below shows how components can optionally refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on all Detail Cell Renderers after the transaction is applied. Only the first Detail Cell Renderer returns `false` so it is the only one that updates.
 
