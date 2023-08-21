@@ -109,11 +109,6 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
-            'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js',
-                format: 'cjs'
-            },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
@@ -191,10 +186,6 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },

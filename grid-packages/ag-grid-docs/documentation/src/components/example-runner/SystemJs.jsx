@@ -299,7 +299,6 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             "@ag-grid-community/core": `${localPrefix}/@ag-grid-community/core`,
             "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export`,
             "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model`,
-            "ag-charts-community": `${localPrefix}/ag-charts-community`,
             "@ag-grid-enterprise/advanced-filter": `${localPrefix}/@ag-grid-enterprise/advanced-filter`,
             "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules`,
             "@ag-grid-enterprise/charts": `${localPrefix}/@ag-grid-enterprise/charts`,
@@ -320,7 +319,6 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             "@ag-grid-enterprise/sparklines": `${localPrefix}/@ag-grid-enterprise/sparklines`,
             "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
             "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
-            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
             /* END OF GRID MODULES DEV - DO NOT DELETE */
         };
 

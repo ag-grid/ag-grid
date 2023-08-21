@@ -161,9 +161,9 @@ function servePackage(app, framework) {
     app.use(`/dev/${framework}`, express.static(`./_dev/${framework}`));
 }
 
-function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
+function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules) {
     console.log("Serving modules");
-    gridCommunityModules.concat(gridEnterpriseModules).concat(chartCommunityModules).concat(chartEnterpriseModules).forEach(module => {
+    gridCommunityModules.concat(gridEnterpriseModules).forEach(module => {
         console.log(`Serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
@@ -177,7 +177,7 @@ function getTscPath() {
     return 'node_modules/.bin/tsc';
 }
 
-function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
+function symlinkModules(gridCommunityModules, gridEnterpriseModules) {
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
     if (fs.existsSync('_dev')) {
@@ -218,23 +218,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 force: true,
                 type: linkType,
                 rename: module.moduleDirName
-            });
-        });
-
-    chartCommunityModules
-        .forEach(module => {
-            lnk(module.rootDir, '_dev/', {
-                force: true,
-                type: linkType,
-                rename: module.publishedName
-            });
-        });
-    chartEnterpriseModules
-        .forEach(module => {
-            lnk(module.rootDir, '_dev/', {
-                force: true,
-                type: linkType,
-                rename: module.publishedName
             });
         });
 
@@ -367,7 +350,7 @@ function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModu
     updateWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
 }
 
-function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
+function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules) {
     console.log("Updating SystemJS mapping with modules...");
 
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
@@ -376,8 +359,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
         '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
-        gridCommunityModules.concat(chartCommunityModules),
-        gridEnterpriseModules.concat(chartEnterpriseModules),
+        gridCommunityModules,
+        gridEnterpriseModules,
         module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`,
         module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`);
 
@@ -614,7 +597,7 @@ function updateModuleChangedHash(moduleRoot) {
     cp.spawnSync(npm, ['run', 'hash'], {cwd: resolvedPath});
 }
 
-function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules, chartEnterpriseModules) {
+function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules) {
     console.log("Updating framework SystemJS boilerplate config with modules...");
 
     const systemJsFiles = [
@@ -638,8 +621,8 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
         let updateFileLines = updateBetweenStrings(fileLines,
             '            /* START OF MODULES - DO NOT DELETE */',
             '            /* END OF MODULES - DO NOT DELETE */',
-            gridCommunityModules.concat(chartsCommunityModules),
-            gridEnterpriseModules.concat(chartEnterpriseModules),
+            gridCommunityModules,
+            gridEnterpriseModules,
             getModuleConfig,
             getModuleConfig,
         );
@@ -733,8 +716,8 @@ const watchAutoDocFiles = async () => {
     }).on('change', debounce(() => generateAutoDocFiles()));
 };
 
-const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) => {
-    serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules) => {
+    serveCoreModules(app, gridCommunityModules, gridEnterpriseModules);
 
     servePackage(app, '@ag-grid-community/angular');
     servePackage(app, '@ag-grid-community/vue');
@@ -806,7 +789,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
             }
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules} = getAllModules();
+            const {gridCommunityModules, gridEnterpriseModules } = getAllModules();
 
             const app = express();
 
@@ -848,12 +831,12 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             }
 
             addWebpackMiddleware(app, chartsOnly);
-            symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            symlinkModules(gridCommunityModules, gridEnterpriseModules);
 
-            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
-            updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules);
+            updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules);
 
-            serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
+            serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules);
 
             if (skipExampleGeneration) {
                 console.log("Skipping Example Generation");
