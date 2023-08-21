@@ -46,7 +46,7 @@ Below shows a simple Master Detail setup with two levels of Master Detail. The e
 
 ## Example: Auto Height
 
-The next example is identical to the previous except all the Detail Grid's have property `detailRowAutoHeight=true`. Notice that this removes all vertical scrolls from all the Detail Grids, leaving just the main Master Grid with a vertical scroll.
+The next example is identical to the previous except all the Detail Grids have property `detailRowAutoHeight=true`. Notice that this removes all vertical scrolls from all the Detail Grids, leaving just the main Master Grid with a vertical scroll.
 
 <grid-example title='Nesting Auto-Height' name='nesting-autoheight' type='generated' options='{ "enterprise": true, "exampleHeight": 425, "modules":["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
