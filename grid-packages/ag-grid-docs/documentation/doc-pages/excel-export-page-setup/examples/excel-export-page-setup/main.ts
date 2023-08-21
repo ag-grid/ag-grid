@@ -64,14 +64,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid');
   const form = document.querySelector<HTMLFormElement>('form');
 
-  if (!gridDiv) { return; }
-
   form?.addEventListener('submit', (e) => onFormSubmit(e));
 
-  new Grid(gridDiv, gridOptions)
-  fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-    .then(response => response.json())
-    .then(data =>
-      gridOptions.api!.setRowData(data.filter((rec: any) => rec.country != null))
-    )
+  if (gridDiv) {
+    new Grid(gridDiv, gridOptions)
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+      .then(response => response.json())
+      .then(data =>
+        gridOptions.api!.setRowData(data.filter((rec: any) => rec.country != null))
+      )
+  }
 })
