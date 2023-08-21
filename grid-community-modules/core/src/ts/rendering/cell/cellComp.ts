@@ -78,9 +78,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.getGui();
 
         this.forceWrapper = cellCtrl.isForceWrapper();
-        this.includeSelection = cellCtrl.getIncludeSelection();
-        this.includeRowDrag = cellCtrl.getIncludeRowDrag();
-        this.includeDndSource = cellCtrl.getIncludeDndSource();
 
         this.refreshWrapper(false);
 
@@ -102,7 +99,11 @@ export class CellComp extends Component implements TooltipParentComp {
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
-            getFocusableElement: () => this.getFocusableElement(),            
+            getFocusableElement: () => this.getFocusableElement(),
+            
+            setIncludeSelection: include => this.includeSelection = include,
+            setIncludeRowDrag: include => this.includeRowDrag = include,
+            setIncludeDndSource: include => this.includeDndSource = include,
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
