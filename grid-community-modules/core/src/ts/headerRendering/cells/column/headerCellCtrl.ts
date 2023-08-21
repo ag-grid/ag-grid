@@ -115,6 +115,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
     private addMouseDownListenerIfNeeded(eGui: HTMLElement): void {
@@ -486,7 +487,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
 
-        if (numberOfParents === 0) { return; }
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', `0px`);
+            eGui.style.setProperty('height', `${headerHeight}px`);
+            return;
+        }
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
@@ -495,7 +503,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
 
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
         const extraHeight = numberOfParents * groupHeaderHeight;
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
