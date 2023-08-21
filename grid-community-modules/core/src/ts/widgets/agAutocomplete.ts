@@ -139,7 +139,7 @@ export class AgAutocomplete extends Component {
                 break;
             case KeyCode.SPACE:
                 if (event.ctrlKey && !this.isListOpen) {
-                    event.preventDefault;
+                    event.preventDefault();
                     this.forceOpenList();
                 }
                 break;
