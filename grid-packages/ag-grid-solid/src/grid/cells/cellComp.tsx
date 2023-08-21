@@ -40,9 +40,9 @@ const CellComp = (props: {
     const [tabIndex, setTabIndex] = createSignal<number|undefined>(cellCtrl.getTabIndex());
     const [colId, setColId] = createSignal<string>(cellCtrl.getColumnIdSanitised());
     const [selectionCheckboxId, setSelectionCheckboxId] = createSignal<string>();
-    const [includeSelection, setIncludeSelection] = createSignal<boolean>(cellCtrl.getIncludeSelection());
-    const [includeRowDrag, setIncludeRowDrag] = createSignal<boolean>(cellCtrl.getIncludeRowDrag());
-    const [includeDndSource, setIncludeDndSource] = createSignal<boolean>(cellCtrl.getIncludeDndSource());
+    const [includeSelection, setIncludeSelection] = createSignal<boolean>(false);
+    const [includeRowDrag, setIncludeRowDrag] = createSignal<boolean>(false);
+    const [includeDndSource, setIncludeDndSource] = createSignal<boolean>(false);
 
     const forceWrapper = cellCtrl.isForceWrapper();
 
@@ -93,6 +93,9 @@ const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui,
+            setIncludeSelection: include => setIncludeSelection(include),
+            setIncludeRowDrag: include => setIncludeRowDrag(include),
+            setIncludeDndSource: include => setIncludeDndSource(include),
             
             getCellEditor: () => cellEditor,
             getCellRenderer: () => cellRenderer ? cellRenderer : null,
