@@ -51,6 +51,10 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
+    setIncludeSelection(include: boolean): void;
+    setIncludeRowDrag(include: boolean): void;
+    setIncludeDndSource(include: boolean): void;
+
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -116,9 +120,6 @@ export class CellCtrl extends BeanStub {
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
 
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
         this.colIdSanitised = escapeString(this.column.getId())!;
         if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
             this.tabIndex = -1;
@@ -226,6 +227,7 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
 
         if (eCellWrapper) {
             this.setupAutoHeight(eCellWrapper);
@@ -339,6 +341,17 @@ export class CellCtrl extends BeanStub {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
+    }
+
+    private setupControlComps(): void {
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     }
 
     public isForceWrapper(): boolean {

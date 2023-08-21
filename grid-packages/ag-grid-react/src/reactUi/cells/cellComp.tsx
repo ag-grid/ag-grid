@@ -136,9 +136,6 @@ const CellComp = (props: {
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
 
-    const includeSelection = cellCtrl.getIncludeSelection();
-    const includeRowDrag = cellCtrl.getIncludeRowDrag();
-    const includeDndSource = cellCtrl.getIncludeDndSource();
     const tabIndex = cellCtrl.getTabIndex();
     const colId = cellCtrl.getColumnIdSanitised();
     const cellInstanceId = cellCtrl.getInstanceId();
@@ -149,6 +146,10 @@ const CellComp = (props: {
     const [renderKey, setRenderKey] = useState<number>(1);
 
     const [userStyles, setUserStyles] = useState<CellStyle>();
+
+    const [includeSelection, setIncludeSelection] = useState<boolean>(false);
+    const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
+    const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
 
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
@@ -327,6 +328,10 @@ const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
+
+            setIncludeSelection: include => setIncludeSelection(include),
+            setIncludeRowDrag: include => setIncludeRowDrag(include),
+            setIncludeDndSource: include => setIncludeDndSource(include),
             
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
