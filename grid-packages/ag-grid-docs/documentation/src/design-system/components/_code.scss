@@ -42,13 +42,13 @@ pre.code {
     margin: 0 0 $size-2;
     padding: 0;
     border: 2px solid var(--bright-blue-gray);
-    overflow: visible;
-    overflow-y: auto !important;
+    overflow: auto !important;
 }
 
 pre.code > code {
     position: relative;
-    z-index: 1;
+    display: inline-block;
+    padding: $vertical-padding $size-2;
     font-size: 0.9375em;
     background-color: white;
     background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
@@ -58,12 +58,7 @@ pre.code > code {
     border: none;
     border-radius: 0;
     box-shadow: inset 0 $vertical-padding 0 0 white, inset 0 $vertical-padding * -1 0 0 white;
-    overflow-x: auto !important;
-}
-
-pre.code > code {
-    padding: $vertical-padding $size-2;
-    display: block;
+    z-index: 1;
 }
 
 pre.code.line-numbers.line-numbers code {
@@ -214,7 +209,7 @@ code[class*='language-css'] {
 }
 
 .language-css .token.property {
-    color: var(--tag-color)
+    color: var(--tag-color);
 }
 
 .line-numbers .line-numbers-rows {

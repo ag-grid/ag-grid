@@ -25,7 +25,10 @@ To help understand the interface for `applyTransaction()` and `applyTransactionA
 applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction
 
 // batch takes a RowDataTransaction and the result is provided some time later via a callback
-applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void
+applyTransactionAsync(
+    rowDataTransaction: RowDataTransaction,
+    callback?: (res: RowNodeTransaction) => void
+): void
 ```
 
 Use Async Transactions if you have a high volume of streaming data going into the grid and don't want the grid's rendering and recalculating to be a bottleneck.

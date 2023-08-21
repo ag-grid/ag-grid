@@ -46,7 +46,7 @@ Below shows an example using `setTimeout()` to simulate lazying loading of data 
 
 ## Dynamic Definitions
 
-There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row, a new Detail Grid instance is created. It is possible to dynamically create Detail Cell Renderer Params so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
+There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row, a new Detail Grid instance is created. It is possible to dynamically create Detail Cell Renderer Params so each Detail Grid gets its own version of the params, allowing each Detail Grid to be configured differently.
 
 This is done by providing a function to `detailCellRendererParams` that in turn returns the params to use for that Detail Grid.
 

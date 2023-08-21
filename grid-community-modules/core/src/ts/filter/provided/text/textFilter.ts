@@ -202,7 +202,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             type,
         };
 
-        const values = this.getValues(position);
+        const values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -231,13 +231,19 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected getValues(position: number): Tuple<string> {
+        return this.getValuesWithSideEffects(position, false);
+    }
+
+    private getValuesWithSideEffects(position: number, applySideEffects: boolean): Tuple<string> {
         const result: Tuple<string> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                const value = makeNull(element.getValue());
-                const cleanValue = (this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                let value = makeNull(element.getValue());
+                if (applySideEffects && this.textFilterParams.trimInput) {
+                    value = TextFilter.trimInput(value) ?? null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
 

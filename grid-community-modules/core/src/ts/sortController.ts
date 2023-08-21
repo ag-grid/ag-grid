@@ -201,21 +201,16 @@ export class SortController extends BeanStub {
         });
 
         const indexMap: Map<Column, number> = new Map();
-        allSortedCols.forEach((col, idx) => {
-            if (col.getSort()) {
-                indexMap.set(col, idx);
-            }
 
-            // add the group cols back
-            if (isSortLinked) {
-                const sourceCols = this.columnModel.getSourceColumnsForGroupColumn(col);
-                sourceCols?.forEach(sourceCol => {
-                    if (sourceCol.getSort()) {
-                        indexMap.set(sourceCol, idx);
-                    }
-                });
-            }
-        });
+        allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
+
+        // add the row group cols back
+        if (isSortLinked) {
+            sortedRowGroupCols.forEach(col => {
+                const groupDisplayCol =  this.columnModel.getGroupDisplayColumnForGroup(col.getId())!;
+                indexMap.set(col, indexMap.get(groupDisplayCol)!);
+            });
+        }
 
         return indexMap;
     }

@@ -247,11 +247,6 @@ const AboutPage = () => {
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <img src="../images/team/becca.jpg" alt="Rebecca Mihigo, Customer Experience Manager" />
-                                <h3>Rebecca Mihigo</h3>
-                                <p>Customer Experience Manager</p>
-                            </div>
-                            <div>
                                 <img
                                     src="../images/team/kathryn.png"
                                     alt="Kathryn Knapman, Customer Experience Manager"

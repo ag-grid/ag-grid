@@ -68,6 +68,7 @@ export class AutoGroupColService extends BeanStub {
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
+
         colToUpdate.setColDef(colDef, null);
         this.columnFactory.applyColumnState(colToUpdate, colDef);
     }
@@ -105,7 +106,6 @@ export class AutoGroupColService extends BeanStub {
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
             // because we only accept the sort on creation of the col
-            res.sort = undefined;
             res.sortIndex = undefined;
             res.initialSort = undefined;
         }
