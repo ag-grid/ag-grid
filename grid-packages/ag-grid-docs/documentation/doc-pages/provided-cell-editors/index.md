@@ -96,7 +96,7 @@ Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor a
 |editing and 2) single click to open the Select.
 |
 |We also observed different results while using keyboard navigation to control editing, e.g.
-|while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
+|while using `Enter` to start editing. Some browsers would open the Select, others would not.
 |This is down to the browser implementation and given there is no API for opening the
 |Select, there is nothing the grid can do.
 |
