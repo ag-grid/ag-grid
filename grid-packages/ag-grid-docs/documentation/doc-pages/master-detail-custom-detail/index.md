@@ -3,9 +3,9 @@ title: "Custom Detail"
 enterprise: true
 ---
 
-When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display the Detail Grid inside one row of the Master Grid. You can provide a customer Detail Cell Renderer to display something else if the default Detail Cell Renderer doesn't do what you want.
+When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display the Detail Grid inside one row of the Master Grid. You can provide a custom Detail Cell Renderer to display something else if the default Detail Cell Renderer doesn't do what you want.
 
-Configure the grid to use a customer Detail Cell Renderer using the grid property `detailCellRenderer`.
+Configure the grid to use a custom Detail Cell Renderer using the grid property `detailCellRenderer`.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -19,7 +19,7 @@ const gridOptions = {
 The Detail Cell Renderer should be a [Cell Renderer](/component-cell-renderer/) component. See [Cell Renderer](/component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
 
-The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Customer Detail" is shown.
+The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Custom Detail" is shown.
 
 <grid-example title='Simple Detail Cell Renderer' name='simple-custom-detail' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
