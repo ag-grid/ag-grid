@@ -111,7 +111,7 @@ constructor(private http: HttpClient) {}
         this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/small-olympic-winners.json').subscribe(data => params.api!.setRowData(data.filter((rec: any) => rec.country != null)));
     }
 
-    onFormSubmit(e: SubmitEvent) {
+    onFormSubmit(e: any) {
         e.preventDefault();
         const { pageSetup, margins } = getSheetConfig();
         this.gridApi.exportDataAsExcel({ pageSetup, margins });
