@@ -11,7 +11,7 @@ import { KeyCode } from '../../constants/keyCode';
 export interface ISelectCellEditorParams<TValue = any> {
     /** List of values to display */
     values: TValue[];
-    /** The space in pixels between the value display and the list of items. Default: 4 */
+    /** The space in pixels between the value display and the list of items. Default: `4` */
     valueListGap?: number;
 }
 
