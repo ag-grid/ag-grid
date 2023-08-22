@@ -56,7 +56,8 @@ export class SortService extends BeanStub {
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
             const childrenUnbalanced = rowNode.areChildrenUnbalanced();
-            
+            const childrenPreSort = rowNode.childrenAfterAggFilter;
+
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
@@ -82,8 +83,8 @@ export class SortService extends BeanStub {
 
             // maintain groups position relative to unbalanced children for groupMaintainOrder situations
             if (childrenUnbalanced && groupMaintainOrder) {
-                let nonGroupRowsInOrder = rowNode.childrenAfterSort.filter(row => !row.group);
-                let rowGroupsInOrder = rowNode.childrenAfterSort.filter(row => row.group);
+                const nonGroupRowsInOrder = rowNode.childrenAfterSort.filter(row => !row.group);
+                const rowGroupsInOrder = childrenPreSort?.filter(row => row.group) ?? [];
                 const groupsFirstInitially = rowNode.childrenAfterAggFilter![0]?.group
                 rowNode.childrenAfterSort = (groupsFirstInitially)
                     ? [...rowGroupsInOrder, ...nonGroupRowsInOrder]
